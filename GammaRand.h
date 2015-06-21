@@ -7,8 +7,8 @@ class RANDLIBSHARED_EXPORT GammaRand : public RandomVariable
 {
     double k, theta;
     double thetaInv; // 1.0 / theta
-    double cdfCoef; // gamma(k)
-    double pdfCoef; // 1 / (gamma(k) * theta ^ k)
+    double cdfCoef; // 1.0 / gamma(k)
+    double pdfCoef; // 1.0 / (gamma(k) * theta ^ k)
 public:
     GammaRand(double shape, double scale);
 

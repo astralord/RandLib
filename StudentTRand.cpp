@@ -7,15 +7,20 @@ StudentTRand::StudentTRand(int degree) :
     setDegree(degree);
 }
 
-void StudentTRand::setDegree(int degree)
+void StudentTRand::setDegree(double degree)
 {
-    v = degree;
+    v = std::max(degree, MIN_POSITIVE);
     Y.setDegree(v);
+
+    pdfCoef = std::tgamma(.5 * (v + 1));
+    pdfCoef /= (qSqrt(v * M_PI) * std::tgamma(.5 * v));
 }
 
 double StudentTRand::pdf(double x)
 {
-    return x;
+    double y = 1 + x * x / v;
+    y = qPow(y, -.5 * (v + 1));
+    return pdfCoef * y;
 }
 
 double StudentTRand::cdf(double x)

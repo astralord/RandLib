@@ -10,11 +10,12 @@ class RANDLIBSHARED_EXPORT StudentTRand : public RandomVariable
     int v;
     NormalRand X;
     ChiSquaredRand Y;
+    double pdfCoef;
 public:
     StudentTRand(int degree);
 
-    void setDegree(int degree);
-    int getDegree() { return v; }
+    void setDegree(double degree);
+    double getDegree() { return v; }
 
     virtual double pdf(double x);
     virtual double cdf(double x);

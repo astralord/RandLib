@@ -18,13 +18,16 @@ void StableRand::setAlphaAndBeta(double exponent, double skewness)
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
 
-    B = 0;
-    S = 1;
     if (alpha != 1 && qFabs(beta) > MIN_POSITIVE)
     {
         B = beta * std::tan(M_PI_2 * alpha);
         S = std::pow(1 + B * B, 0.5 * alphaInv);
         B = std::atan(B);
+    }
+    else
+    {
+        B = 0;
+        S = 1;
     }
 }
 
