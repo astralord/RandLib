@@ -7,37 +7,37 @@ DEFINES += RANDLIB_LIBRARY
 
 SOURCES += \
     RandomVariable.cpp \
-    UniformRand.cpp \
-    NormalRand.cpp \
-    CauchyRand.cpp \
-    LevyRand.cpp \
-    ExponentialRand.cpp \
-    LaplaceRand.cpp \
-    LogNormalRand.cpp \
-    ChiSquaredRand.cpp \
-    StudentTRand.cpp \
-    BetaRand.cpp \
-    GammaRand.cpp \
-    StableRand.cpp \
-    FisherSnedecorRand.cpp
+    continuous/BetaRand.cpp \
+    continuous/CauchyRand.cpp \
+    continuous/ChiSquaredRand.cpp \
+    continuous/ExponentialRand.cpp \
+    continuous/FisherSnedecorRand.cpp \
+    continuous/GammaRand.cpp \
+    continuous/LaplaceRand.cpp \
+    continuous/LevyRand.cpp \
+    continuous/LogNormalRand.cpp \
+    continuous/NormalRand.cpp \
+    continuous/StableRand.cpp \
+    continuous/StudentTRand.cpp \
+    continuous/UniformRand.cpp
 
 HEADERS +=\
     randlib_global.h \
     RandomVariable.h \
-    UniformRand.h \
-    NormalRand.h \
-    CauchyRand.h \
-    LevyRand.h \
-    ExponentialRand.h \
-    LaplaceRand.h \
-    LogNormalRand.h \
-    ChiSquaredRand.h \
     RandomGenerators.h \
-    StudentTRand.h \
-    BetaRand.h \
-    GammaRand.h \
-    StableRand.h \
-    FisherSnedecorRand.h
+    continuous/BetaRand.h \
+    continuous/CauchyRand.h \
+    continuous/ChiSquaredRand.h \
+    continuous/ExponentialRand.h \
+    continuous/FisherSnedecorRand.h \
+    continuous/GammaRand.h \
+    continuous/LaplaceRand.h \
+    continuous/LevyRand.h \
+    continuous/LogNormalRand.h \
+    continuous/NormalRand.h \
+    continuous/StableRand.h \
+    continuous/StudentTRand.h \
+    continuous/UniformRand.h
 
 unix {
     target.path = /usr/lib

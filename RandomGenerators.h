@@ -1,17 +1,19 @@
 #ifndef RANDOMGENERATORS_H
 #define RANDOMGENERATORS_H
 
-#include <NormalRand.h>
-#include <CauchyRand.h>
-#include <LevyRand.h>
-#include <ExponentialRand.h>
-#include <LaplaceRand.h>
-#include <LogNormalRand.h>
-#include <ChiSquaredRand.h>
-#include <StableRand.h>
-#include <GammaRand.h>
-#include <BetaRand.h>
-#include <StudentTRand.h>
-#include <FisherSnedecorRand.h>
+#include <RandomVariable.h>
+
+#include <continuous/NormalRand.h>
+#include <continuous/CauchyRand.h>
+#include <continuous/LevyRand.h>
+#include <continuous/ExponentialRand.h>
+#include <continuous/LaplaceRand.h>
+#include <continuous/LogNormalRand.h>
+#include <continuous/ChiSquaredRand.h>
+#include <continuous/StableRand.h>
+#include <continuous/GammaRand.h>
+#include <continuous/BetaRand.h>
+#include <continuous/StudentTRand.h>
+#include <continuous/FisherSnedecorRand.h>
 
 #endif // RANDOMGENERATORS_H
