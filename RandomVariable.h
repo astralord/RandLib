@@ -31,8 +31,11 @@ protected:
     // TODO: create math class for it
     double factorial(int n);
     double doubleFactorial(int n);
+<<<<<<< HEAD
     double lowerIncGamma(double a, double x);
     double upperIncGamma(double a, double x);
+=======
+>>>>>>> 40068e8485c8670ce8d7f39d6c822f820d31fc77
 
 public:
     RandomVariable();
