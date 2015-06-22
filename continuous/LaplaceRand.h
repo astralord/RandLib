@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "ExponentialRand.h"
 
-class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
 {
     double mu, b;
     double bInv; /// 1 / b

@@ -9,7 +9,7 @@
  * X ~ Levy(mu, c)
  * X ~ Stable(0.5, 1, mu, c)
  */
-class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRand
 {
     double mu, c_2; /// c_2 = 0.5 * c
     double sqrtc_2pi; /// sqrtc_2pi = sqrt(0.5 * c / pi)

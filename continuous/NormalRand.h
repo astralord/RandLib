@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "UniformRand.h"
 
-class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 {
     double mu, sigma;
     double sigmaSqrt2Inv; /// 1 / (sigma * sqrt(2))

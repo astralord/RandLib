@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "GammaRand.h"
 
-class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 {
     double alpha, beta;
     GammaRand X, Y;

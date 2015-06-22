@@ -23,22 +23,6 @@ void ChiSquaredRand::setDegree(int degrees)
     }
 }
 
-double ChiSquaredRand::factorial(int n)
-{
-    double res = 1.0;
-    for (int i = 2; i <= n; ++i)
-        res *= i;
-    return res;
-}
-
-double ChiSquaredRand::doubleFactorial(int n)
-{
-    double res = 1.0;
-    for (int i = n % 2 + 2; i <= n; i += 2)
-        res *= i;
-    return res;
-}
-
 double ChiSquaredRand::pdf(double x)
 {
     if (x <= 0)

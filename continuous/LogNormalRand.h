@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "NormalRand.h"
 
-class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
 {
     double expMu, expSigmaSq;
     NormalRand X;

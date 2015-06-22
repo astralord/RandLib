@@ -5,7 +5,7 @@
 #include "ChiSquaredRand.h"
 #include "NormalRand.h"
 
-class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
 {
     int v;
     NormalRand X;

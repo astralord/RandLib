@@ -3,7 +3,7 @@
 
 #include <RandomVariable.h>
 
-class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
 {
     double a, b;
     double c; /// c = 1 / (b - a)

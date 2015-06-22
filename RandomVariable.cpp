@@ -20,6 +20,22 @@ unsigned long RandomVariable::SHR3()
     return randValue;
 }
 
+double RandomVariable::factorial(int n)
+{
+    double res = 1.0;
+    for (int i = 2; i <= n; ++i)
+        res *= i;
+    return res;
+}
+
+double RandomVariable::doubleFactorial(int n)
+{
+    double res = 1.0;
+    for (int i = n % 2 + 2; i <= n; i += 2)
+        res *= i;
+    return res;
+}
+
 void RandomVariable::_cdf(const std::vector<double> &x, std::vector<double> &y)
 {
     size_t size = std::min(x.size(), y.size());
@@ -45,21 +61,21 @@ void RandomVariable::sample(std::vector<double> &outputData) {
         outputData[i] = value();
 }
 
-void ContinuousRandom::_pdf(const std::vector<double> &x, std::vector<double> &y)
+void ContinuousRand::_pdf(const std::vector<double> &x, std::vector<double> &y)
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = pdf(x[i]);
 }
 
-void ContinuousRandom::_pdf(const QVector<double> &x, QVector<double> &y)
+void ContinuousRand::_pdf(const QVector<double> &x, QVector<double> &y)
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = pdf(x[i]);
 }
 
-double ContinuousRandom::likelihood(const std::vector<double> &sample)
+double ContinuousRand::likelihood(const std::vector<double> &sample)
 {
     double res = 1.0;
     for (size_t i = 0; i != sample.size(); ++i)
@@ -67,7 +83,7 @@ double ContinuousRandom::likelihood(const std::vector<double> &sample)
     return res;
 }
 
-double ContinuousRandom::loglikelihood(const std::vector<double> &sample)
+double ContinuousRand::loglikelihood(const std::vector<double> &sample)
 {
     double res = 0.0;
     for (size_t i = 0; i != sample.size(); ++i)

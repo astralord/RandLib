@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "UniformRand.h"
 
-class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
 {
     double xm, alpha;
     double alphaInv;

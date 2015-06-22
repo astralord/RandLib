@@ -7,7 +7,7 @@
 #include "CauchyRand.h"
 #include "LevyRand.h"
 
-class RANDLIBSHARED_EXPORT StableRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
 {
     double alpha, beta, sigma, mu;
     UniformRand U;

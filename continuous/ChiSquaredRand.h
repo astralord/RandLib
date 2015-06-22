@@ -4,15 +4,11 @@
 #include <RandomVariable.h>
 #include "NormalRand.h"
 
-class RANDLIBSHARED_EXPORT ChiSquaredRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT ChiSquaredRand : public ContinuousRand
 {
     int k;
     double pdfCoef;
     NormalRand X;
-
-    // TODO: create math class for it
-    double factorial(int n);
-    double doubleFactorial(int n);
 
 public:
     ChiSquaredRand(int k);
