@@ -25,13 +25,14 @@ public:
     virtual double pdf(double x);
     virtual double cdf(double x);
     virtual double value();
+
     inline double M() { return beta; }
     inline double Var() { return beta * beta; }
 
     inline double Skewness() { return 2.0; }
     inline double ExcessiveKurtosis() { return 6.0; }
 
-    inline double Entropy() { return 1 - qLn(l); }
+    inline double Entropy() { return 1 - std::log(l); }
 };
 
 #endif // EXPONENTIALRAND_H

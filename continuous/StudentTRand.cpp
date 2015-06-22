@@ -19,7 +19,7 @@ void StudentTRand::setDegree(double degree)
 double StudentTRand::pdf(double x)
 {
     double y = 1 + x * x / v;
-    y = qPow(y, -.5 * (v + 1));
+    y = std::pow(y, -.5 * (v + 1));
     return pdfCoef * y;
 }
 

@@ -34,7 +34,7 @@ void StableRand::setAlphaAndBeta(double exponent, double skewness)
 void StableRand::setSigma(double scale)
 {
     sigma = std::max(scale, MIN_POSITIVE);
-    logSigma = qLn(sigma);
+    logSigma = std::log(sigma);
 }
 
 void StableRand::setMu(double location)
@@ -75,7 +75,7 @@ double StableRand::value()
     {
         double pi_2_beta_V = M_PI_2 + beta * V;
         rv = pi_2_beta_V * qTan(V);
-        rv -= qLn(W * qFastCos(V) / pi_2_beta_V);
+        rv -= std::log(W * qFastCos(V) / pi_2_beta_V);
         rv += logSigma;
         rv *= M_2_PI * beta;
     }

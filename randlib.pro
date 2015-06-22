@@ -19,7 +19,8 @@ SOURCES += \
     continuous/NormalRand.cpp \
     continuous/StableRand.cpp \
     continuous/StudentTRand.cpp \
-    continuous/UniformRand.cpp
+    continuous/UniformRand.cpp \
+    continuous/ParetoRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -37,7 +38,8 @@ HEADERS +=\
     continuous/NormalRand.h \
     continuous/StableRand.h \
     continuous/StudentTRand.h \
-    continuous/UniformRand.h
+    continuous/UniformRand.h \
+    continuous/ParetoRand.h
 
 unix {
     target.path = /usr/lib

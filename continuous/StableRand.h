@@ -22,10 +22,10 @@ public:
     void setSigma(double scale);
     void setMu(double location);
 
-    inline double getAlpha() { return alpha; }
-    inline double getBeta() { return beta; }
-    inline double getSigma() { return sigma; }
-    inline double getMu() { return mu; }
+    double getAlpha() { return alpha; }
+    double getBeta() { return beta; }
+    double getSigma() { return sigma; }
+    double getMu() { return mu; }
 
     virtual double pdf(double x);
     virtual double cdf(double x);

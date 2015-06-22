@@ -21,10 +21,11 @@ public:
     virtual double pdf(double x);
     virtual double cdf(double x);
     virtual double value();
+
     inline double M() { return NAN; }
     inline double Var() { return INFINITY; }
 
-    inline double Entropy() { return qLn(4 * gamma * M_PI); }
+    inline double Entropy() { return std::log(4 * gamma * M_PI); }
 };
 
 #endif // CAUCHYRAND_H

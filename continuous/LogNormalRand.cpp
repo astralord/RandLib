@@ -10,28 +10,28 @@ LogNormalRand::LogNormalRand(double location, double scale) :
 void LogNormalRand::setLocation(double location)
 {
     X.setMean(location);
-    expMu = qExp(X.M());
+    expMu = std::exp(X.M());
 }
 
 void LogNormalRand::setScale(double scale)
 {
     X.setSigma(scale * scale);
-    expSigmaSq = qExp(X.Var());
+    expSigmaSq = std::exp(X.Var());
 }
 
 double LogNormalRand::pdf(double x)
 {
-    return (x > 0) ? X.pdf(qLn(x)) / x : 0;
+    return (x > 0) ? X.pdf(std::log(x)) / x : 0;
 }
 
 double LogNormalRand::cdf(double x)
 {
-    return (x > 0) ? X.cdf(qLn(x)) : 0;
+    return (x > 0) ? X.cdf(std::log(x)) : 0;
 }
 
 double LogNormalRand::value()
 {
-    return qExp(X.value());
+    return std::exp(X.value());
 }
 
 double LogNormalRand::ExcessKurtosis()

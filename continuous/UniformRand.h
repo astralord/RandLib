@@ -24,7 +24,7 @@ public:
     inline double Skewness() { return 0; }
     inline double ExcessKurtosis() { return -1.2; }
 
-    inline double Entropy() { return (b == a) ? -INFINITY : qLn(b - a); }
+    inline double Entropy() { return (b == a) ? -INFINITY : std::log(b - a); }
 
 };
 

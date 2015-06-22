@@ -15,5 +15,6 @@
 #include <continuous/BetaRand.h>
 #include <continuous/StudentTRand.h>
 #include <continuous/FisherSnedecorRand.h>
+#include <continuous/ParetoRand.h>
 
 #endif // RANDOMGENERATORS_H

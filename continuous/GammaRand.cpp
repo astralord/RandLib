@@ -7,33 +7,33 @@ GammaRand::GammaRand(double shape, double scale)
 
 void GammaRand::setParameters(double shape, double scale)
 {
-    k = qMax(shape, MIN_POSITIVE);
-    theta = qMax(scale, MIN_POSITIVE);
+    k = std::max(shape, MIN_POSITIVE);
+    theta = std::max(scale, MIN_POSITIVE);
     thetaInv = 1.0 / theta;
     cdfCoef = 1.0 / std::tgamma(k);
-    pdfCoef = cdfCoef * qPow(thetaInv, k);
+    pdfCoef = cdfCoef * std::pow(thetaInv, k);
 }
 
 void GammaRand::setShape(double shape)
 {
-    k = qMax(shape, MIN_POSITIVE);
+    k = std::max(shape, MIN_POSITIVE);
     cdfCoef = 1.0 / std::tgamma(k);
-    pdfCoef = cdfCoef * qPow(thetaInv, k);
+    pdfCoef = cdfCoef * std::pow(thetaInv, k);
 }
 
 void GammaRand::setScale(double scale)
 {
-    theta = qMax(scale, MIN_POSITIVE);
+    theta = std::max(scale, MIN_POSITIVE);
     thetaInv = 1.0 / theta;
-    pdfCoef = cdfCoef * qPow(thetaInv, k);
+    pdfCoef = cdfCoef * std::pow(thetaInv, k);
 }
 
 double GammaRand::pdf(double x)
 {
     if (x < 0)
         return 0;
-    double y = qPow(x, k - 1);
-    y *= qExp(-x * thetaInv);
+    double y = std::pow(x, k - 1);
+    y *= std::exp(-x * thetaInv);
     return pdfCoef * y;
 }
 

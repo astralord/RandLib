@@ -23,7 +23,7 @@ double LaplaceRand::pdf(double x)
 {
     double y = -std::fabs(x - mu);
     y *= bInv;
-    y = qExp(y);
+    y = std::exp(y);
     y *= bInv;
     return .5 * y;
 }
@@ -33,8 +33,8 @@ double LaplaceRand::cdf(double x)
     double y = x - mu;
     y *= bInv;
     if (x < mu)
-        return .5 * qExp(y);
-    y = -.5 * qExp(-y);
+        return .5 * std::exp(y);
+    y = -.5 * std::exp(-y);
     return y + 1;
 }
 

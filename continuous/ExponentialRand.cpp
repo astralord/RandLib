@@ -10,7 +10,7 @@ ExponentialRand::ExponentialRand(double rate) :
     double de = 7.697117470131487, te = de, ve = 3.949659822581572e-3;
 
     fe[0] = 1.;
-    fe[255] = qExp(-de);
+    fe[255] = std::exp(-de);
 
     double q = ve / fe[255];
     ke[0] = (de / q) * m2;
@@ -21,10 +21,10 @@ ExponentialRand::ExponentialRand(double rate) :
 
     for (size_t i = 254; i >= 1; --i)
     {
-       de = -qLn(ve / de + qExp(-de));
+       de = -std::log(ve / de + std::exp(-de));
        ke[i + 1] = (de / te) * m2;
        te = de;
-       fe[i] = qExp(-de);
+       fe[i] = std::exp(-de);
        we[i] = de / m2;
     }
 }
@@ -37,12 +37,12 @@ void ExponentialRand::setRate(double rate)
 
 double ExponentialRand::pdf(double x)
 {
-    return (x > 0) ? l * qExp(-l * x) : 0;
+    return (x > 0) ? l * std::exp(-l * x) : 0;
 }
 
 double ExponentialRand::cdf(double x)
 {
-    return (x > 0) ? 1 - qExp(-l * x) : 0;
+    return (x > 0) ? 1 - std::exp(-l * x) : 0;
 }
 
 double ExponentialRand::ziggurat()
@@ -57,9 +57,9 @@ double ExponentialRand::ziggurat()
             return x;
 
         if (iz == 0)
-            return (7.69711 - qLn(U.value()));
+            return (7.69711 - std::log(U.value()));
 
-        if (fe[iz] + U.value() * (fe[iz - 1] - fe[iz]) < qExp(-x))
+        if (fe[iz] + U.value() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
             return x;
     }
 }

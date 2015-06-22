@@ -44,7 +44,7 @@ double ChiSquaredRand::pdf(double x)
     if (x <= 0)
         return 0;
     double y = std::pow(x, .5 * k - 1);
-    y *= qExp(-.5 * x);
+    y *= std::exp(-.5 * x);
     return pdfCoef * y;
 }
 

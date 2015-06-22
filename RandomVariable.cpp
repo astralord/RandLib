@@ -71,6 +71,6 @@ double ContinuousRandom::loglikelihood(const std::vector<double> &sample)
 {
     double res = 0.0;
     for (size_t i = 0; i != sample.size(); ++i)
-        res += qLn(pdf(sample[i]));
+        res += std::log(pdf(sample[i]));
     return res;
 }

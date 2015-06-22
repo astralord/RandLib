@@ -27,7 +27,7 @@ double LevyRand::pdf(double x)
         return 0;
     double xInv = 1.0 / (x - mu);
     double y = -c_2 * xInv;
-    y = qExp(y);
+    y = std::exp(y);
     y *= xInv;
     y *= std::sqrt(xInv);
     return sqrtc_2pi * y;

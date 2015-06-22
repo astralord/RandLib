@@ -11,7 +11,7 @@ NormalRand::NormalRand(double mean, double sigma) :
     double dn = 3.442619855899, tn = dn, vn = 9.91256303526217e-3;
 
     fn[0] = 1.;
-    fn[127] = qExp(-.5 * dn * dn);
+    fn[127] = std::exp(-.5 * dn * dn);
 
     double q = vn / fn[127];
 
@@ -23,12 +23,12 @@ NormalRand::NormalRand(double mean, double sigma) :
 
     for (size_t i = 126; i >= 1; --i)
     {
-        dn = -qLn(vn / dn + qExp(-.5 * dn * dn));
+        dn = -std::log(vn / dn + std::exp(-.5 * dn * dn));
         dn += dn;
         dn = std::sqrt(dn);
         kn[i + 1] = (dn / tn) * m1;
         tn = dn;
-        fn[i] = qExp(-.5 * dn * dn);
+        fn[i] = std::exp(-.5 * dn * dn);
         wn[i] = dn / m1;
     }
 }
@@ -49,7 +49,7 @@ double NormalRand::pdf(double x)
     double y = x - mu; /// x - mu
     y *= sigmaSqrt2Inv; /// (x - mu) / (sigma * sqrt(2))
     y *= y; /// (((x - mu) / sigma) ^ 2) / 2
-    y = qExp(-y); /// exp((((x - mu) / sigma) ^ 2) / 2)
+    y = std::exp(-y); /// exp((((x - mu) / sigma) ^ 2) / 2)
     return M_1_SQRTPI * sigmaSqrt2Inv * y; /// exp((((x - mu) / sigma) ^ 2) / 2) / (sigma * sqrt(2pi))
 }
 
@@ -77,8 +77,8 @@ double NormalRand::ziggurat()
         {
             double y;
             do {
-                y = -qLn(U.value());
-                x = -qLn(U.value()) * 0.2904764; /// 1.0 / 3.44262
+                y = -std::log(U.value());
+                x = -std::log(U.value()) * 0.2904764; /// 1.0 / 3.44262
             } while (y + y < x * x);
 
             //TODO: maybe we need more accuracy?
@@ -87,7 +87,7 @@ double NormalRand::ziggurat()
         }
 
         /// Handle the wedges of other strips
-        if (fn[iz] + U.value() * (fn[iz - 1] - fn[iz]) < qExp(-.5 * x * x))
+        if (fn[iz] + U.value() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
             return x;
     }
 }
