@@ -39,7 +39,7 @@ double GammaRand::pdf(double x)
 
 double GammaRand::cdf(double x)
 {
-    return cdfCoef * x;
+    return cdfCoef * lowerIncGamma(k, x * thetaInv);
 }
 
 double GammaRand::value()

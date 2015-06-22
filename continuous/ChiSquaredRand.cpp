@@ -6,37 +6,24 @@ ChiSquaredRand::ChiSquaredRand(int k) :
     setDegree(k);
 }
 
-void ChiSquaredRand::setDegree(int degrees)
+void ChiSquaredRand::setDegree(int degree)
 {
-    k = std::max(degrees, 1);
+    k = std::max(degree, 1);
     if (k % 2 == 0)
     {
         size_t k_2 = .5 * k;
-        pdfCoef = factorial(k_2 - 1);
-        pdfCoef *= (1 << k_2);
-        pdfCoef = 1.0 / pdfCoef;
+        pdfCoef = 1.0 / factorial(k_2 - 1);
+        cdfCoef = pdfCoef;
+        pdfCoef /= (1 << k_2);
     }
     else
     {
         pdfCoef = 1.0 / doubleFactorial(k - 2);
+        cdfCoef = pdfCoef;
+        cdfCoef *= M_1_SQRTPI;
+        cdfCoef *= (1 << (size_t)(.5 * (k - 1)));
         pdfCoef *= M_1_SQRT2PI;
     }
-}
-
-double ChiSquaredRand::factorial(int n)
-{
-    double res = 1.0;
-    for (int i = 2; i <= n; ++i)
-        res *= i;
-    return res;
-}
-
-double ChiSquaredRand::doubleFactorial(int n)
-{
-    double res = 1.0;
-    for (int i = n % 2 + 2; i <= n; i += 2)
-        res *= i;
-    return res;
 }
 
 double ChiSquaredRand::pdf(double x)
@@ -50,7 +37,7 @@ double ChiSquaredRand::pdf(double x)
 
 double ChiSquaredRand::cdf(double x)
 {
-    return x;
+    return cdfCoef * lowerIncGamma(.5 * k, .5 * x);
 }
 
 double ChiSquaredRand::value()

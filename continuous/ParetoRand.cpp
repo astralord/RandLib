@@ -39,5 +39,6 @@ double ParetoRand::cdf(double x)
 
 double ParetoRand::value()
 {
+    // TODO: too slow, find a way to make it faster
     return xm / std::pow(U.value(), alphaInv);
 }

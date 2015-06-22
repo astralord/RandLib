@@ -17,4 +17,6 @@
 #include <continuous/FisherSnedecorRand.h>
 #include <continuous/ParetoRand.h>
 
+#include <discrete/PoissonRand.h>
+
 #endif // RANDOMGENERATORS_H

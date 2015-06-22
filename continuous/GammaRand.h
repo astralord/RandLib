@@ -3,7 +3,7 @@
 
 #include <RandomVariable.h>
 
-class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
 {
     double k, theta;
     double thetaInv; // 1.0 / theta

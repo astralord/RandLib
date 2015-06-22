@@ -26,6 +26,14 @@ protected:
 
     //TODO: add other algorithms
     unsigned long SHR3();
+
+    /// useful functions
+    // TODO: create math class for it
+    double factorial(int n);
+    double doubleFactorial(int n);
+    double lowerIncGamma(double a, double x);
+    double upperIncGamma(double a, double x);
+
 public:
     RandomVariable();
     void seedRand(unsigned long seed);
@@ -47,10 +55,10 @@ public:
 /**
  * @brief The ContinuousRandom class
  */
-class RANDLIBSHARED_EXPORT ContinuousRandom : public RandomVariable
+class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable
 {
 public:
-    ContinuousRandom() : RandomVariable() {}
+    ContinuousRand() : RandomVariable() {}
 
     virtual double pdf(double x) = 0;
 
@@ -66,7 +74,7 @@ public:
  */
 
 template <typename T>
-class RANDLIBSHARED_EXPORT DiscreteRandom : public RandomVariable
+class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable
 {
 public:
     virtual double P(T x) = 0;

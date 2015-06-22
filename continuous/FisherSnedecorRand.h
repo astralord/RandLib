@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "ChiSquaredRand.h"
 
-class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRandom
+class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
 {
     int d1, d2;
     ChiSquaredRand U1, U2;
