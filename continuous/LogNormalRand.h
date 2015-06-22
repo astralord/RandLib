@@ -13,20 +13,20 @@ public:
     LogNormalRand(double location, double scale);
     void setLocation(double location);
     void setScale(double scale);
-    double getLocation() { return X.M(); }
-    double getScale() { return X.getSigma(); }
+    inline double getLocation() const { return X.M(); }
+    inline double getScale() const { return X.getSigma(); }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return expMu * std::sqrt(expSigmaSq); }
-    inline double Var() { return (expSigmaSq - 1) * expMu * expMu * expSigmaSq; }
+    inline double M() const override { return expMu * std::sqrt(expSigmaSq); }
+    inline double Var() const override { return (expSigmaSq - 1) * expMu * expMu * expSigmaSq; }
 
-    inline double Median() { return expMu; }
-    inline double Mode() { return expMu / expSigmaSq; }
-    inline double Skewness() { return (expSigmaSq + 2) * std::sqrt(expSigmaSq - 1); }
-    inline double ExcessKurtosis();
+    inline double Median() const { return expMu; }
+    inline double Mode() const{ return expMu / expSigmaSq; }
+    inline double Skewness() const { return (expSigmaSq + 2) * std::sqrt(expSigmaSq - 1); }
+    inline double ExcessKurtosis() const;
 };
 
 #endif // LOGNORMALRAND_H

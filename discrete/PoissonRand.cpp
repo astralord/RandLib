@@ -12,12 +12,12 @@ void PoissonRand::setRate(double rate)
     exp_l = std::exp(-l);
 }
 
-double PoissonRand::P(int k)
+double PoissonRand::P(int k) const
 {
-    return (k > 0) ? exp_l * std::pow(l, k) / RandMath::fastFactorial(k) : 0;
+    return (k >= 0) ? exp_l * std::pow(l, k) / RandMath::fastFactorial(k) : 0;
 }
 
-double PoissonRand::cdf(double x)
+double PoissonRand::cdf(double x) const
 {
     return x;
 }

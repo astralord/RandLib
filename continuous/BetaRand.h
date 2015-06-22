@@ -15,15 +15,15 @@ public:
     void setParameters(double shape1, double shape2);
     void setAlpha(double shape1);
     void setBeta(double shape2);
-    double getAlpha() { return alpha; }
-    double getBeta() { return beta; }
+    inline double getAlpha() const { return alpha; }
+    inline double getBeta() const { return beta; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return alpha / (alpha + beta); }
-    inline double Var() {
+    inline double M() const override { return alpha / (alpha + beta); }
+    inline double Var() const override {
         double denom = alpha + beta;
         denom *= denom * (denom + 1);
         return alpha * beta / denom;

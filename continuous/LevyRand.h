@@ -20,15 +20,15 @@ public:
 
     void setLocation(double location);
     void setScale(double scale);
-    double getLocation() { return mu; }
-    double getScale() { return c_2 + c_2; }
+    inline double getLocation() const { return mu; }
+    inline double getScale() const { return c_2 + c_2; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return INFINITY; }
-    inline double Var() { return INFINITY; }
+    inline double M() const override { return INFINITY; }
+    inline double Var() const override { return INFINITY; }
 };
 
 /**
@@ -45,12 +45,15 @@ public:
 
     void setLocation(double location) { LevyRand::setLocation(-location); }
     void setScale(double scale) { LevyRand::setScale(scale); }
-    double getLocation() { return -LevyRand::getLocation(); }
-    double getScale() { return LevyRand::getScale(); }
+    double getLocation() const { return -LevyRand::getLocation(); }
+    double getScale() const { return LevyRand::getScale(); }
 
-    virtual double pdf(double x) { return LevyRand::pdf(-x); }
-    virtual double cdf(double x) { return 1.0 - LevyRand::pdf(-x); }
-    virtual double value() { return -LevyRand::value(); }
+    virtual double pdf(double x) const override { return LevyRand::pdf(-x); }
+    virtual double cdf(double x) const override { return 1.0 - LevyRand::pdf(-x); }
+    virtual double value() override { return -LevyRand::value(); }
+
+    inline double M() const override { return -INFINITY; }
+    inline double Var() const override { return INFINITY; }
 };
 
 #endif // LEVYRAND_H

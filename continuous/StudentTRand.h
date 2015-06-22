@@ -15,14 +15,14 @@ public:
     StudentTRand(int degree);
 
     void setDegree(double degree);
-    double getDegree() { return v; }
+    inline double getDegree() const { return v; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return (v > 1) ? 0 : NAN; }
-    inline double Var() {
+    inline double M() const override { return (v > 1) ? 0 : NAN; }
+    inline double Var() const override {
         if (v > 2)
             return (double)v / (v - 2);
         return (v > 1) ? INFINITY : NAN;

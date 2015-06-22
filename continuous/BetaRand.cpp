@@ -35,14 +35,14 @@ void BetaRand::setBeta(double shape2)
     pdfCoef = std::tgamma(alpha + beta) / (gammaA + gammaB);
 }
 
-double BetaRand::pdf(double x)
+double BetaRand::pdf(double x) const
 {
     double rv = std::pow(x, alpha - 1);
     rv *= std::pow(1 - x, beta - 1);
     return pdfCoef * rv;
 }
 
-double BetaRand::cdf(double x)
+double BetaRand::cdf(double x) const
 {
     return x;
 }

@@ -27,11 +27,11 @@ public:
     RandomVariable();
     void seedRand(unsigned long seed);
 
-    virtual double cdf(double x) = 0;
+    virtual double cdf(double x) const = 0;
     virtual double value() = 0;
 
-    virtual double M() = 0;
-    virtual double Var() = 0;
+    virtual double M() const = 0;
+    virtual double Var() const = 0;
 
     void _cdf(const std::vector<double> &x, std::vector<double> &y);
     void sample(std::vector<double> &outputData);
@@ -49,24 +49,33 @@ class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable
 public:
     ContinuousRand() : RandomVariable() {}
 
-    virtual double pdf(double x) = 0;
+    virtual double pdf(double x) const = 0;
 
-    void _pdf(const std::vector<double> &x, std::vector<double> &y);
-    void _pdf(const QVector<double> &x, QVector<double> &y);
+    void _pdf(const std::vector<double> &x, std::vector<double> &y) const;
+    void _pdf(const QVector<double> &x, QVector<double> &y) const;
 
-    double likelihood(const std::vector<double> &value);
-    double loglikelihood(const std::vector<double> &value);
+    double likelihood(const std::vector<double> &value) const;
+    double loglikelihood(const std::vector<double> &value) const;
 };
 
-/**
- * @brief The DiscreteRandom class
- */
 
-template <typename T>
-class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable
+
+class RANDLIBSHARED_EXPORT DiscreteIntRand : public RandomVariable
 {
 public:
-    virtual double P(T x) = 0;
+    virtual double P(int x) const = 0;
+
+    void probs(const std::vector<int> &x, std::vector<double> &y) const;
+    void probs(const QVector<int> &x, QVector<double> &y) const;
+};
+
+class RANDLIBSHARED_EXPORT DiscreteDoubleRand : public RandomVariable
+{
+public:
+    virtual double P(double x) const = 0;
+
+    void probs(const std::vector<double> &x, std::vector<double> &y) const;
+    void probs(const QVector<double> &x, QVector<double> &y) const;
 };
 
 #endif // RANDOMVARIABLE_H

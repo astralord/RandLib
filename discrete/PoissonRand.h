@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include <continuous/UniformRand.h>
 
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteIntRand
 {
     double l;
     double exp_l; // exp{-l}
@@ -13,14 +13,14 @@ public:
     PoissonRand(double rate);
 
     void setRate(double rate);
-    double getRate() { return l; }
+    inline double getRate() const { return l; }
 
-    virtual double P(int k);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double P(int k) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return l; }
-    inline double Var() { return l; }
+    inline double M() const override { return l; }
+    inline double Var() const override { return l; }
 
 };
 

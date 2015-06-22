@@ -22,17 +22,17 @@ public:
     void setSigma(double scale);
     void setMu(double location);
 
-    double getAlpha() { return alpha; }
-    double getBeta() { return beta; }
-    double getSigma() { return sigma; }
-    double getMu() { return mu; }
+    inline double getAlpha() const { return alpha; }
+    inline double getBeta() const { return beta; }
+    inline double getSigma()  const{ return sigma; }
+    inline double getMu() const { return mu; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return (alpha > 1) ? mu : NAN; }
-    inline double Var() { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
+    inline double M() const override { return (alpha > 1) ? mu : NAN; }
+    inline double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
 };
 
 

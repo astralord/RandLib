@@ -44,7 +44,7 @@ void NormalRand::setSigma(double rootVar)
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
 }
 
-double NormalRand::pdf(double x)
+double NormalRand::pdf(double x) const
 {
     double y = x - mu; /// x - mu
     y *= sigmaSqrt2Inv; /// (x - mu) / (sigma * sqrt(2))
@@ -53,7 +53,7 @@ double NormalRand::pdf(double x)
     return M_1_SQRTPI * sigmaSqrt2Inv * y; /// exp((((x - mu) / sigma) ^ 2) / 2) / (sigma * sqrt(2pi))
 }
 
-double NormalRand::cdf(double x)
+double NormalRand::cdf(double x) const
 {
     double y = x - mu; /// x - mu
     y *= sigmaSqrt2Inv; /// (x - mu) / (sigma * sqrt(2))

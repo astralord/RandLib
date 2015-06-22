@@ -28,7 +28,7 @@ void GammaRand::setScale(double scale)
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
 }
 
-double GammaRand::pdf(double x)
+double GammaRand::pdf(double x) const
 {
     if (x < 0)
         return 0;
@@ -37,7 +37,7 @@ double GammaRand::pdf(double x)
     return pdfCoef * y;
 }
 
-double GammaRand::cdf(double x)
+double GammaRand::cdf(double x) const
 {
     return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }

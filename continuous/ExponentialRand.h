@@ -19,20 +19,20 @@ public:
     ExponentialRand(double rate);
 
     void setRate(double rate);
-    double getRate() { return l; }
-    double getScale() { return beta; }
+    inline double getRate() const { return l; }
+    inline double getScale() const { return beta; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return beta; }
-    inline double Var() { return beta * beta; }
+    inline double M() const override { return beta; }
+    inline double Var() const override { return beta * beta; }
 
-    inline double Skewness() { return 2.0; }
-    inline double ExcessiveKurtosis() { return 6.0; }
+    inline double Skewness() const { return 2.0; }
+    inline double ExcessiveKurtosis() const { return 6.0; }
 
-    inline double Entropy() { return 1 - std::log(l); }
+    inline double Entropy() const { return 1 - std::log(l); }
 };
 
 #endif // EXPONENTIALRAND_H

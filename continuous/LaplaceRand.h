@@ -15,15 +15,15 @@ public:
 
     void setLocation(double location);
     void setScale(double scale);
-    double getLocation() { return mu; }
-    double getScale() { return b; }
+    inline double getLocation() const { return mu; }
+    inline double getScale() const { return b; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return mu; }
-    inline double Var() { return 2 * b * b; }
+    inline double M() const override { return mu; }
+    inline double Var() const override { return 2 * b * b; }
 };
 
 #endif // LAPLACERAND_H

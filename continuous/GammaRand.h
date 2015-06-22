@@ -15,15 +15,15 @@ public:
     void setParameters(double shape, double scale);
     void setShape(double shape);
     void setScale(double scale);
-    double getShape() { return k; }
-    double getScale() { return theta; }
+    inline double getShape() const { return k; }
+    inline double getScale() const { return theta; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return k * theta; }
-    inline double Var() { return k * theta * theta; }
+    inline double M() const override { return k * theta; }
+    inline double Var() const override { return k * theta * theta; }
 };
 
 #endif // GAMMARAND_H

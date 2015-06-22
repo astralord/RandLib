@@ -15,12 +15,12 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     U2.setDegree(d2);
 }
 
-double FisherSnedecorRand::pdf(double x)
+double FisherSnedecorRand::pdf(double x) const
 {
     return x;
 }
 
-double FisherSnedecorRand::cdf(double x)
+double FisherSnedecorRand::cdf(double x) const
 {
     return x;
 }

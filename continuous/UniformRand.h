@@ -13,18 +13,18 @@ public:
     UniformRand(double minValue, double maxValue);
     void setBoundaries(double minValue, double maxValue);
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return .5 * (b + a); }
-    inline double Var() { return (b - a) * (b - a) / 12; }
+    inline double M() const override { return .5 * (b + a); }
+    inline double Var() const override { return (b - a) * (b - a) / 12; }
 
-    inline double Median() { return .5 * (b + a); }
-    inline double Skewness() { return 0; }
-    inline double ExcessKurtosis() { return -1.2; }
+    inline double Median() const { return .5 * (b + a); }
+    inline double Skewness() const { return 0; }
+    inline double ExcessKurtosis() const { return -1.2; }
 
-    inline double Entropy() { return (b == a) ? -INFINITY : std::log(b - a); }
+    inline double Entropy() const { return (b == a) ? -INFINITY : std::log(b - a); }
 
 };
 

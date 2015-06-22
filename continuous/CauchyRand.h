@@ -15,17 +15,17 @@ public:
 
     void setLocation(double location);
     void setScale(double scale);
-    double getLocation() { return x0; }
-    double getScale() { return gamma; }
+    inline double getLocation() const { return x0; }
+    inline double getScale() const { return gamma; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return NAN; }
-    inline double Var() { return INFINITY; }
+    inline double M() const override { return NAN; }
+    inline double Var() const override { return INFINITY; }
 
-    inline double Entropy() { return std::log(4 * gamma * M_PI); }
+    inline double Entropy() const { return std::log(4 * gamma * M_PI); }
 };
 
 #endif // CAUCHYRAND_H

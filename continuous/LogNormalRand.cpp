@@ -19,12 +19,12 @@ void LogNormalRand::setScale(double scale)
     expSigmaSq = std::exp(X.Var());
 }
 
-double LogNormalRand::pdf(double x)
+double LogNormalRand::pdf(double x) const
 {
     return (x > 0) ? X.pdf(std::log(x)) / x : 0;
 }
 
-double LogNormalRand::cdf(double x)
+double LogNormalRand::cdf(double x) const
 {
     return (x > 0) ? X.cdf(std::log(x)) : 0;
 }
@@ -34,7 +34,7 @@ double LogNormalRand::value()
     return std::exp(X.value());
 }
 
-double LogNormalRand::ExcessKurtosis()
+double LogNormalRand::ExcessKurtosis() const
 {
     double expSigma2Sq = expSigmaSq * expSigmaSq;
     double res = expSigma2Sq; /// exp(2s^2)

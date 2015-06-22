@@ -5,12 +5,12 @@ UniformRand::UniformRand(double minValue, double maxValue)
     setBoundaries(minValue, maxValue);
 }
 
-double UniformRand::pdf(double x)
+double UniformRand::pdf(double x) const
 {
     return (x >= a && x <= b) ? c : 0;
 }
 
-double UniformRand::cdf(double x)
+double UniformRand::cdf(double x) const
 {
     if (x < a)
         return 0;

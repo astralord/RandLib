@@ -14,18 +14,18 @@ public:
     ChiSquaredRand(int k);
 
     void setDegree(int degree);
-    size_t getDegree() { return k; }
+    inline size_t getDegree() const { return k; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
-    virtual double value();
+    virtual double pdf (double x) const override;
+    virtual double cdf(double x) const override;
+    virtual double value() override;
 
-    inline double M() { return (double)k; }
-    inline double Var() { return k + k; }
+    inline double M() const override { return k; }
+    inline double Var() const override { return k + k; }
 
-    inline double Mode() { return std::max(k - 2, 0); }
-    inline double Skewness() { return std::sqrt(8.0 / k); }
-    inline double ExcessKurtosis() { return 12.0 / k; }
+    inline double Mode() const { return std::max(k - 2, 0); }
+    inline double Skewness() const { return std::sqrt(8.0 / k); }
+    inline double ExcessKurtosis() const { return 12.0 / k; }
 };
 
 #endif // CHISQUAREDRAND_H

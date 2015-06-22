@@ -42,12 +42,12 @@ void StableRand::setMu(double location)
     mu = location;
 }
 
-double StableRand::pdf(double x)
+double StableRand::pdf(double x) const
 {
     return x;
 }
 
-double StableRand::cdf(double x)
+double StableRand::cdf(double x) const
 {
     return x;
 }

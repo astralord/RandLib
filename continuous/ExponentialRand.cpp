@@ -35,12 +35,12 @@ void ExponentialRand::setRate(double rate)
     beta = 1.0 / l;
 }
 
-double ExponentialRand::pdf(double x)
+double ExponentialRand::pdf(double x) const
 {
     return (x > 0) ? l * std::exp(-l * x) : 0;
 }
 
-double ExponentialRand::cdf(double x)
+double ExponentialRand::cdf(double x) const
 {
     return (x > 0) ? 1 - std::exp(-l * x) : 0;
 }

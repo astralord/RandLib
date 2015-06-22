@@ -26,7 +26,7 @@ void ChiSquaredRand::setDegree(int degree)
     }
 }
 
-double ChiSquaredRand::pdf(double x)
+double ChiSquaredRand::pdf(double x) const
 {
     if (x <= 0)
         return 0;
@@ -35,7 +35,7 @@ double ChiSquaredRand::pdf(double x)
     return pdfCoef * y;
 }
 
-double ChiSquaredRand::cdf(double x)
+double ChiSquaredRand::cdf(double x) const
 {
     return cdfCoef * RandMath::lowerIncGamma(.5 * k, .5 * x);
 }

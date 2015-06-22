@@ -19,7 +19,7 @@ void LaplaceRand::setScale(double scale)
     X.setRate(bInv);
 }
 
-double LaplaceRand::pdf(double x)
+double LaplaceRand::pdf(double x) const
 {
     double y = -std::fabs(x - mu);
     y *= bInv;
@@ -28,7 +28,7 @@ double LaplaceRand::pdf(double x)
     return .5 * y;
 }
 
-double LaplaceRand::cdf(double x)
+double LaplaceRand::cdf(double x) const
 {
     double y = x - mu;
     y *= bInv;

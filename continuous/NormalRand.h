@@ -25,19 +25,19 @@ public:
 
     void setMean(double mean);
     void setSigma(double rootVar);
-    double getSigma() { return sigma; }
+    double getSigma() const { return sigma; }
 
-    virtual double pdf(double x);
-    virtual double cdf(double x);
+    virtual double pdf (double x) const;
+    virtual double cdf(double x) const;
     virtual double value();
 
-    inline double M() { return mu; }
-    inline double Var() { return sigma * sigma; }
+    inline double M() const { return mu; }
+    inline double Var() const { return sigma * sigma; }
 
-    inline double Median() { return mu; }
-    inline double Mode() { return mu; }
-    inline double Skewness() { return 0; }
-    inline double ExcessKurtosis() { return 0; }
+    inline double Median() const { return mu; }
+    inline double Mode() const { return mu; }
+    inline double Skewness() const { return 0; }
+    inline double ExcessKurtosis() const { return 0; }
 };
 
 

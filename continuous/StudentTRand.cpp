@@ -16,14 +16,14 @@ void StudentTRand::setDegree(double degree)
     pdfCoef /= (qSqrt(v * M_PI) * std::tgamma(.5 * v));
 }
 
-double StudentTRand::pdf(double x)
+double StudentTRand::pdf(double x) const
 {
     double y = 1 + x * x / v;
     y = std::pow(y, -.5 * (v + 1));
     return pdfCoef * y;
 }
 
-double StudentTRand::cdf(double x)
+double StudentTRand::cdf(double x) const
 {
     return x;
 }
