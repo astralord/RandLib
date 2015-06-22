@@ -21,7 +21,8 @@ SOURCES += \
     continuous/StudentTRand.cpp \
     continuous/UniformRand.cpp \
     continuous/ParetoRand.cpp \
-    discrete/PoissonRand.cpp
+    discrete/PoissonRand.cpp \
+    RandMath.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -41,7 +42,8 @@ HEADERS +=\
     continuous/StudentTRand.h \
     continuous/UniformRand.h \
     continuous/ParetoRand.h \
-    discrete/PoissonRand.h
+    discrete/PoissonRand.h \
+    RandMath.h
 
 unix {
     target.path = /usr/lib

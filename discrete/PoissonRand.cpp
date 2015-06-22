@@ -14,7 +14,7 @@ void PoissonRand::setRate(double rate)
 
 double PoissonRand::P(int k)
 {
-    return (k > 0) ? exp_l * std::pow(l, k) / factorial(k) : 0;
+    return (k > 0) ? exp_l * std::pow(l, k) / RandMath::fastFactorial(k) : 0;
 }
 
 double PoissonRand::cdf(double x)

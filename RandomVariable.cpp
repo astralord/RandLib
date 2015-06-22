@@ -20,42 +20,6 @@ unsigned long RandomVariable::SHR3()
     return randValue;
 }
 
-double RandomVariable::factorial(int n)
-{
-    double res = 1.0;
-    for (int i = 2; i <= n; ++i)
-        res *= i;
-    return res;
-}
-
-double RandomVariable::doubleFactorial(int n)
-{
-    double res = 1.0;
-    for (int i = n % 2 + 2; i <= n; i += 2)
-        res *= i;
-    return res;
-}
-
-double RandomVariable::lowerIncGamma(double a, double x)
-{
-    double sum = 0;
-    double term = 1.0 / a;
-    int n = 1;
-    while (term > MIN_POSITIVE)
-    {
-        sum = sum + term;
-        term *= (x / (a + n));
-        ++n;
-    }
-    return std::pow(x, a) * std::exp(-x) * sum;
-}
-
-double RandomVariable::upperIncGamma(double a, double x)
-{
-    // TODO: find useful approximation
-    return std::tgamma(a) - lowerIncGamma(a, x);
-}
-
 void RandomVariable::_cdf(const std::vector<double> &x, std::vector<double> &y)
 {
     size_t size = std::min(x.size(), y.size());
