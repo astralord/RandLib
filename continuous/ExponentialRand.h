@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
     double ziggurat();
 
 public:
-    ExponentialRand(double rate);
+    ExponentialRand(double rate = 1);
 
     void setRate(double rate);
     inline double getRate() const { return l; }

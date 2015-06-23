@@ -1,7 +1,6 @@
 #include "LogNormalRand.h"
 
-LogNormalRand::LogNormalRand(double location, double scale) :
-    X(0, 1)
+LogNormalRand::LogNormalRand(double location, double scale)
 {
     setLocation(location);
     setScale(scale);

@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
     void swapBoundaries();
 
 public:
-    UniformRand(double minValue, double maxValue);
+    UniformRand(double minValue = 0, double maxValue = 1);
     void setBoundaries(double minValue, double maxValue);
 
     virtual double f(double x) const override;

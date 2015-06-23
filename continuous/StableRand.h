@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
     double logSigma; /// coefficients for alpha == 1
 
 public:
-    StableRand(double exponent, double skewness, double scale, double location);
+    StableRand(double exponent, double skewness, double scale = 1, double location = 0);
 
     void setAlphaAndBeta(double exponent, double skewness);
     void setSigma(double scale);

@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     double ziggurat();
 
 public:
-    NormalRand(double mean, double sigma);
+    NormalRand(double mean = 0, double sigma = 1);
 
     void setMean(double mean);
     void setSigma(double rootVar);

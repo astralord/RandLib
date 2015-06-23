@@ -2,12 +2,15 @@
 #define RANDMATH_H
 
 #include <QtMath>
+#include <cmath>
 #include "randlib_global.h"
 
+static constexpr double M_SQRT3     = 1.73205080756887729353;
 static constexpr double M_SQRTPI    = 1.77245385090551602730;
 static constexpr double M_SQRT2PI   = 2.50662827463100050242;
 static constexpr double M_1_SQRTPI  = 0.56418958354775628695;
 static constexpr double M_1_SQRT2PI = 0.39894228040143267794;
+static constexpr double M_1_E       = 0.36787944117144232160;
 
 static constexpr double MIN_POSITIVE = 1e-21;
 

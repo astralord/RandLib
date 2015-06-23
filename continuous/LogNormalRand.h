@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
     NormalRand X;
 
 public:
-    LogNormalRand(double location, double scale);
+    LogNormalRand(double location = 0, double scale = 1);
     void setLocation(double location);
     void setScale(double scale);
     inline double getLocation() const { return X.M(); }

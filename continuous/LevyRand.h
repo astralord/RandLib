@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRand
     NormalRand X;
 
 public:
-    LevyRand(double location, double scale);
+    LevyRand(double location = 0, double scale = 1);
 
     void setLocation(double location);
     void setScale(double scale);

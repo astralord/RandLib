@@ -1,7 +1,6 @@
 #include "ChiSquaredRand.h"
 
-ChiSquaredRand::ChiSquaredRand(int k) :
-    X(0, 1)
+ChiSquaredRand::ChiSquaredRand(int k)
 {
     setDegree(k);
 }
@@ -11,18 +10,17 @@ void ChiSquaredRand::setDegree(int degree)
     k = std::max(degree, 1);
     if (k % 2 == 0)
     {
-        int k_2 = .5 * k;
+        int k_2 = k >> 1;
         pdfCoef = 1.0 / RandMath::fastFactorial(k_2 - 1);
         cdfCoef = pdfCoef;
         pdfCoef /= (1 << k_2);
     }
     else
     {
-        pdfCoef = 1.0 / RandMath::doubleFactorial(k - 2);
+        pdfCoef = M_1_SQRTPI / RandMath::doubleFactorial(k - 2);
         cdfCoef = pdfCoef;
-        cdfCoef *= M_1_SQRTPI;
-        cdfCoef *= (1 << (int)(.5 * (k - 1)));
-        pdfCoef *= M_1_SQRT2PI;
+        cdfCoef *= (1 << ((k - 1) >> 1));
+        pdfCoef *= M_SQRT1_2;
     }
 }
 

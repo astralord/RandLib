@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
     ExponentialRand X;
 
 public:
-    LaplaceRand(double location, double scale);
+    LaplaceRand(double location = 0, double scale = 1);
 
     void setLocation(double location);
     void setScale(double scale);

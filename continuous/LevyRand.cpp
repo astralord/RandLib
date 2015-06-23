@@ -1,7 +1,6 @@
 #include "LevyRand.h"
 
-LevyRand::LevyRand(double location, double scale) :
-    X(0.0, 1.0)
+LevyRand::LevyRand(double location, double scale)
 {
     setLocation(location);
     setScale(scale);

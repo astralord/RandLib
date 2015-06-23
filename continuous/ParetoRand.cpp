@@ -1,7 +1,7 @@
 #include "ParetoRand.h"
 
 ParetoRand::ParetoRand(double shape, double scale) :
-    U(0, 1)
+    E(scale)
 {
     setParameters(shape, scale);
 }
@@ -12,6 +12,7 @@ void ParetoRand::setParameters(double shape, double scale)
     alpha = std::max(scale, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
+    E.setRate(alpha);
 }
 
 void ParetoRand::setShape(double shape)
@@ -25,6 +26,7 @@ void ParetoRand::setScale(double scale)
     alpha = std::max(scale, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
+    E.setRate(alpha);
 }
 
 double ParetoRand::f(double x) const
@@ -39,6 +41,5 @@ double ParetoRand::F(double x) const
 
 double ParetoRand::value()
 {
-    // TODO: too slow, find a way to make it faster
-    return xm / std::pow(U.value(), alphaInv);
+    return xm * std::exp(E.value());
 }

@@ -1,8 +1,7 @@
 #include "StableRand.h"
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location) :
-    U(-M_PI_2, M_PI_2),
-    E(1)
+    U(-M_PI_2, M_PI_2)
 {
     setAlphaAndBeta(exponent, skewness);
     setSigma(scale);

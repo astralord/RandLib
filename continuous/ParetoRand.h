@@ -2,14 +2,14 @@
 #define PARETORAND_H
 
 #include <RandomVariable.h>
-#include "UniformRand.h"
+#include "ExponentialRand.h"
 
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
 {
     double xm, alpha;
     double alphaInv;
     double pdfCoef;
-    UniformRand U;
+    ExponentialRand E;
 
 public:
     ParetoRand(double shape, double scale);

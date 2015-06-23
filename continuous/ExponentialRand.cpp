@@ -1,7 +1,6 @@
 #include "ExponentialRand.h"
 
-ExponentialRand::ExponentialRand(double rate) :
-    U(0, 1)
+ExponentialRand::ExponentialRand(double rate)
 {
     setRate(rate);
 
@@ -47,8 +46,8 @@ double ExponentialRand::F(double x) const
 
 double ExponentialRand::ziggurat()
 {
-    for (;;)
-    {
+    int iter = 0;
+    do {
         unsigned long jz = SHR3();
         unsigned long iz = jz & 255;
         double x = jz * we[iz];
@@ -61,7 +60,8 @@ double ExponentialRand::ziggurat()
 
         if (fe[iz] + U.value() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
             return x;
-    }
+    } while (++iter <= 1e9); /// one billion should be enough
+    return 0;
 }
 
 double ExponentialRand::value()

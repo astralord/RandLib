@@ -6,6 +6,19 @@
 #include <RandMath.h>
 #include "randlib_global.h"
 
+//TODO: implement
+// Beta ++-
+// Gamma -++
+// Stable +--
+// Fisher Snedecor ++-
+// Binomial ---
+// Multinomial ---
+// Weibull ---
+// Triangular ---
+// Logistic ---
+// Rayleigh ---
+// ALL: http://www.mathworks.com/help/stats/makedist.html
+
 /**
  * @brief The RandomVariable class
  */
@@ -25,6 +38,8 @@ protected:
 
 public:
     RandomVariable();
+    virtual ~RandomVariable() {}
+
     void seedRand(unsigned long seed);
 
     virtual double F(double x) const = 0;
@@ -46,6 +61,7 @@ class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable
 {
 public:
     ContinuousRand() : RandomVariable() {}
+    virtual ~ContinuousRand() {}
 
     virtual double f(double x) const = 0;
 
@@ -64,6 +80,9 @@ public:
 class RANDLIBSHARED_EXPORT DiscreteIntRand : public RandomVariable
 {
 public:
+    DiscreteIntRand() : RandomVariable() {}
+    virtual ~DiscreteIntRand() {}
+
     virtual double P(int x) const = 0;
 
     void pmf(const std::vector<int> &x, std::vector<double> &y) const;
@@ -80,6 +99,9 @@ public:
 class RANDLIBSHARED_EXPORT DiscreteDoubleRand : public RandomVariable
 {
 public:
+    DiscreteDoubleRand() : RandomVariable() {}
+    virtual ~DiscreteDoubleRand() {}
+
     virtual double P(double x) const = 0;
 
     void pmf(const std::vector<double> &x, std::vector<double> &y) const;

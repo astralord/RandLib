@@ -17,9 +17,9 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     U2.setDegree(d2);
     gammaB = RandMath::gammaHalf(d2);
 
-    a = .5 * d1 - 1;
+    a = (d1 >> 1) - 1;
     b = (double)d1 / d2;
-    c = -.5 * (d1 + d2);
+    c = -(d1 + d2) >> 1;
 
     pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
     pdfCoef *= std::pow(b, a + 1);
@@ -31,9 +31,9 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
     U1.setDegree(d1);
     gammaA = RandMath::gammaHalf(d1);
 
-    a = .5 * d1 - 1;
+    a = (d1 >> 1) - 1;
     b = (double)d1 / d2;
-    c = -.5 * (d1 + d2);
+    c = -(d1 + d2) >> 1;
 
     pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
     pdfCoef *= std::pow(b, a + 1);
@@ -46,7 +46,7 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
     gammaB = RandMath::gammaHalf(d2);
 
     b = (double)d1 / d2;
-    c = -.5 * (d1 + d2);
+    c = -(d1 + d2) >> 1;
 
     pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
     pdfCoef *= std::pow(b, a + 1);

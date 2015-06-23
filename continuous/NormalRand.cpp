@@ -65,8 +65,8 @@ double NormalRand::F(double x) const
 
 double NormalRand::ziggurat()
 {
-    for(;;)
-    {
+    int iter = 0;
+    do {
         long hz = SHR3();
         unsigned long iz = hz & 127;
         double x = hz * wn[iz];
@@ -89,7 +89,8 @@ double NormalRand::ziggurat()
         /// Handle the wedges of other strips
         if (fn[iz] + U.value() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
             return x;
-    }
+    } while (++iter <= 1e9); /// one billion should be enough
+    return 0;
 }
 
 double NormalRand::value()

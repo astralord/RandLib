@@ -2,13 +2,24 @@
 #define GAMMARAND_H
 
 #include <RandomVariable.h>
+#include "UniformRand.h"
+#include "ExponentialRand.h"
+#include "NormalRand.h"
 
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
 {
     double k, theta;
-    double thetaInv; // 1.0 / theta
-    double cdfCoef; // 1.0 / gamma(k)
-    double pdfCoef; // 1.0 / (gamma(k) * theta ^ k)
+    double kInv, thetaInv; /// 1.0 / k and 1.0 / theta
+    double valueCoef; /// (e + k) / (k * e)
+    double cdfCoef; /// 1.0 / gamma(k)
+    double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
+    UniformRand U;
+    ExponentialRand E;
+    NormalRand N;
+
+    double m, s, s_2, d, b, w, v, c; /// constants for sampling
+    void setConstants();
+
 public:
     GammaRand(double shape, double scale);
 

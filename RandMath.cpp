@@ -113,7 +113,7 @@ long double RandMath::lowerIncGamma(double a, double x)
     double sum = 0;
     double term = 1.0 / a;
     int n = 1;
-    while (term > MIN_POSITIVE)
+    while (std::fabs(term) > MIN_POSITIVE)
     {
         sum = sum + term;
         term *= (x / (a + n));
@@ -150,9 +150,9 @@ long double RandMath::gammaHalf(int k)
         return 0;
 
     if (k % 2 == 0)
-        return fastFactorial(.5 * k - 1);
+        return fastFactorial((k >> 1) - 1);
 
-    int n = (k - 1) / 2;
+    int n = (k - 1) >> 1;
     long double res = fastFactorial(k - 1);
     res /= (fastFactorial(n) * (1 << (n + n)));
     return res * M_SQRTPI;

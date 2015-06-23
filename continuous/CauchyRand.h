@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
     UniformRand U;
 
 public:
-    CauchyRand(double location, double scale);
+    CauchyRand(double location = 0, double scale = 1);
 
     void setLocation(double location);
     void setScale(double scale);

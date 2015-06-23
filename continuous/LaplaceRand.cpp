@@ -1,7 +1,6 @@
 #include "LaplaceRand.h"
 
-LaplaceRand::LaplaceRand(double location, double scale) :
-    X(1)
+LaplaceRand::LaplaceRand(double location, double scale)
 {
     setLocation(location);
     setScale(scale);
