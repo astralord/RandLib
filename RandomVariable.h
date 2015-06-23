@@ -27,55 +27,69 @@ public:
     RandomVariable();
     void seedRand(unsigned long seed);
 
-    virtual double cdf(double x) const = 0;
+    virtual double F(double x) const = 0;
+
     virtual double value() = 0;
+    void sample(std::vector<double> &outputData);
+    void sample(QVector<double> &outputData);
 
     virtual double M() const = 0;
     virtual double Var() const = 0;
 
-    void _cdf(const std::vector<double> &x, std::vector<double> &y);
-    void sample(std::vector<double> &outputData);
-
-    void _cdf(const QVector<double> &x, QVector<double> &y);
-    void sample(QVector<double> &outputData);
 };
 
 
 /**
- * @brief The ContinuousRandom class
+ * @brief The ContinuousRand class
  */
 class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable
 {
 public:
     ContinuousRand() : RandomVariable() {}
 
-    virtual double pdf(double x) const = 0;
+    virtual double f(double x) const = 0;
 
-    void _pdf(const std::vector<double> &x, std::vector<double> &y) const;
-    void _pdf(const QVector<double> &x, QVector<double> &y) const;
+    void pdf(const std::vector<double> &x, std::vector<double> &y) const;
+    void pdf(const QVector<double> &x, QVector<double> &y) const;
 
-    double likelihood(const std::vector<double> &value) const;
-    double loglikelihood(const std::vector<double> &value) const;
+    void cdf(const std::vector<double> &x, std::vector<double> &y);
+    void cdf(const QVector<double> &x, QVector<double> &y);
+
+    double likelihood(const std::vector<double> &sample) const;
+    double loglikelihood(const std::vector<double> &sample) const;
 };
 
 
-
+//TODO: make value integer!
 class RANDLIBSHARED_EXPORT DiscreteIntRand : public RandomVariable
 {
 public:
     virtual double P(int x) const = 0;
 
-    void probs(const std::vector<int> &x, std::vector<double> &y) const;
-    void probs(const QVector<int> &x, QVector<double> &y) const;
+    void pmf(const std::vector<int> &x, std::vector<double> &y) const;
+    void pmf(const QVector<int> &x, QVector<double> &y) const;
+
+    void cdf(const std::vector<int> &x, std::vector<double> &y);
+    void cdf(const QVector<int> &x, QVector<double> &y);
+
+    double likelihood(const std::vector<int> &sample) const;
+    double loglikelihood(const std::vector<int> &sample) const;
 };
+
 
 class RANDLIBSHARED_EXPORT DiscreteDoubleRand : public RandomVariable
 {
 public:
     virtual double P(double x) const = 0;
 
-    void probs(const std::vector<double> &x, std::vector<double> &y) const;
-    void probs(const QVector<double> &x, QVector<double> &y) const;
+    void pmf(const std::vector<double> &x, std::vector<double> &y) const;
+    void pmf(const QVector<double> &x, QVector<double> &y) const;
+
+    void cdf(const std::vector<double> &x, std::vector<double> &y);
+    void cdf(const QVector<double> &x, QVector<double> &y);
+
+    double likelihood(const std::vector<double> &sample) const;
+    double loglikelihood(const std::vector<double> &sample) const;
 };
 
 #endif // RANDOMVARIABLE_H

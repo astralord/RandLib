@@ -20,8 +20,8 @@ public:
     inline double getShape() const { return xm; }
     inline double getScale() const { return alpha; }
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }

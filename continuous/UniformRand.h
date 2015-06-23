@@ -13,8 +13,8 @@ public:
     UniformRand(double minValue, double maxValue);
     void setBoundaries(double minValue, double maxValue);
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return .5 * (b + a); }

@@ -23,8 +23,8 @@ public:
     inline double getLocation() const { return mu; }
     inline double getScale() const { return c_2 + c_2; }
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return INFINITY; }
@@ -48,8 +48,8 @@ public:
     double getLocation() const { return -LevyRand::getLocation(); }
     double getScale() const { return LevyRand::getScale(); }
 
-    virtual double pdf(double x) const override { return LevyRand::pdf(-x); }
-    virtual double cdf(double x) const override { return 1.0 - LevyRand::pdf(-x); }
+    virtual double f(double x) const override { return LevyRand::f(-x); }
+    virtual double F(double x) const override { return 1.0 - LevyRand::f(-x); }
     virtual double value() override { return -LevyRand::value(); }
 
     inline double M() const override { return -INFINITY; }

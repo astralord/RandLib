@@ -4,6 +4,7 @@
 #include <QtMath>
 #include "randlib_global.h"
 
+static constexpr double M_SQRTPI    = 1.77245385090551602730;
 static constexpr double M_SQRT2PI   = 2.50662827463100050242;
 static constexpr double M_1_SQRTPI  = 0.56418958354775628695;
 static constexpr double M_1_SQRT2PI = 0.39894228040143267794;
@@ -63,6 +64,23 @@ public:
      * @return
      */
     static long double upperIncGamma(double a, double x);
+
+    /**
+     * @brief betaFun
+     * Calculate Beta function
+     * @param x
+     * @param y
+     * @return Gamma(x) * Gamma(y) / Gamma(x + y)
+     */
+    static long double betaFun(double x, double y);
+
+    /**
+     * @brief gammaHalf
+     * Calculate Gamma function of half integer: gamma(k/2)
+     * @param k
+     * @return
+     */
+    static long double gammaHalf(int k);
 };
 
 #endif // RANDMATH_H

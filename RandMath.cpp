@@ -72,6 +72,9 @@ long double RandMath::getTenthFactorial(int n)
 
 long double RandMath::fastFactorial(int n)
 {
+    if (n < 0)
+        return 0;
+
     if (n > 250)
         return stirlingFactorial(n);
 
@@ -123,4 +126,34 @@ long double RandMath::upperIncGamma(double a, double x)
 {
     // TODO: find useful approximation
     return std::tgamma(a) - lowerIncGamma(a, x);
+}
+
+long double RandMath::betaFun(double x, double y)
+{
+    if (x > y)
+    {
+        long double res = std::tgamma(x);
+        res /= std::tgamma(x + y);
+        return res * std::tgamma(y);
+    }
+    else
+    {
+        long double res = std::tgamma(y);
+        res /= std::tgamma(x + y);
+        return res * std::tgamma(x);
+    }
+}
+
+long double RandMath::gammaHalf(int k)
+{
+    if (k < 0)
+        return 0;
+
+    if (k % 2 == 0)
+        return fastFactorial(.5 * k - 1);
+
+    int n = (k - 1) / 2;
+    long double res = fastFactorial(k - 1);
+    res /= (fastFactorial(n) * (1 << (n + n)));
+    return res * M_SQRTPI;
 }

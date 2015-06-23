@@ -11,7 +11,7 @@ void ChiSquaredRand::setDegree(int degree)
     k = std::max(degree, 1);
     if (k % 2 == 0)
     {
-        size_t k_2 = .5 * k;
+        int k_2 = .5 * k;
         pdfCoef = 1.0 / RandMath::fastFactorial(k_2 - 1);
         cdfCoef = pdfCoef;
         pdfCoef /= (1 << k_2);
@@ -21,12 +21,12 @@ void ChiSquaredRand::setDegree(int degree)
         pdfCoef = 1.0 / RandMath::doubleFactorial(k - 2);
         cdfCoef = pdfCoef;
         cdfCoef *= M_1_SQRTPI;
-        cdfCoef *= (1 << (size_t)(.5 * (k - 1)));
+        cdfCoef *= (1 << (int)(.5 * (k - 1)));
         pdfCoef *= M_1_SQRT2PI;
     }
 }
 
-double ChiSquaredRand::pdf(double x) const
+double ChiSquaredRand::f(double x) const
 {
     if (x <= 0)
         return 0;
@@ -35,7 +35,7 @@ double ChiSquaredRand::pdf(double x) const
     return pdfCoef * y;
 }
 
-double ChiSquaredRand::cdf(double x) const
+double ChiSquaredRand::F(double x) const
 {
     return cdfCoef * RandMath::lowerIncGamma(.5 * k, .5 * x);
 }

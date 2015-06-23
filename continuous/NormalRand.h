@@ -27,8 +27,8 @@ public:
     void setSigma(double rootVar);
     double getSigma() const { return sigma; }
 
-    virtual double pdf (double x) const;
-    virtual double cdf(double x) const;
+    virtual double f(double x) const;
+    virtual double F(double x) const;
     virtual double value();
 
     inline double M() const { return mu; }

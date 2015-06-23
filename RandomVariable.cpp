@@ -20,20 +20,6 @@ unsigned long RandomVariable::SHR3()
     return randValue;
 }
 
-void RandomVariable::_cdf(const std::vector<double> &x, std::vector<double> &y)
-{
-    size_t size = std::min(x.size(), y.size());
-    for (size_t i = 0; i != size; ++i)
-        y[i] = cdf(x[i]);
-}
-
-void RandomVariable::_cdf(const QVector<double> &x, QVector<double> &y)
-{
-    size_t size = std::min(x.size(), y.size());
-    for (size_t i = 0; i != size; ++i)
-        y[i] = cdf(x[i]);
-}
-
 void RandomVariable::sample(QVector<double> &outputData)
 {
     for (int i = 0; i != outputData.size(); ++i)
@@ -45,25 +31,42 @@ void RandomVariable::sample(std::vector<double> &outputData) {
         outputData[i] = value();
 }
 
-void ContinuousRand::_pdf(const std::vector<double> &x, std::vector<double> &y) const
+
+/// CONTINUOUS
+
+void ContinuousRand::pdf(const std::vector<double> &x, std::vector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
-        y[i] = pdf(x[i]);
+        y[i] = f(x[i]);
 }
 
-void ContinuousRand::_pdf(const QVector<double> &x, QVector<double> &y) const
+void ContinuousRand::pdf(const QVector<double> &x, QVector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
-        y[i] = pdf(x[i]);
+        y[i] = f(x[i]);
+}
+
+void ContinuousRand::cdf(const std::vector<double> &x, std::vector<double> &y)
+{
+    size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
+        y[i] = F(x[i]);
+}
+
+void ContinuousRand::cdf(const QVector<double> &x, QVector<double> &y)
+{
+    size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
+        y[i] = F(x[i]);
 }
 
 double ContinuousRand::likelihood(const std::vector<double> &sample) const
 {
     double res = 1.0;
     for (size_t i = 0; i != sample.size(); ++i)
-        res *= pdf(sample[i]);
+        res *= f(sample[i]);
     return res;
 }
 
@@ -71,36 +74,101 @@ double ContinuousRand::loglikelihood(const std::vector<double> &sample) const
 {
     double res = 0.0;
     for (size_t i = 0; i != sample.size(); ++i)
-        res += std::log(pdf(sample[i]));
+        res += std::log(f(sample[i]));
     return res;
 }
 
 
-void DiscreteIntRand::probs(const std::vector<int> &x, std::vector<double> &y) const
+/// DISCRETE INTEGER
+
+void DiscreteIntRand::pmf(const std::vector<int> &x, std::vector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = P(x[i]);
 }
 
-void DiscreteIntRand::probs(const QVector<int> &x, QVector<double> &y) const
+void DiscreteIntRand::pmf(const QVector<int> &x, QVector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = P(x[i]);
 }
 
+void DiscreteIntRand::cdf(const std::vector<int> &x, std::vector<double> &y)
+{
+    size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
+        y[i] = F(x[i]);
+}
 
-void DiscreteDoubleRand::probs(const std::vector<double> &x, std::vector<double> &y) const
+void DiscreteIntRand::cdf(const QVector<int> &x, QVector<double> &y)
+{
+    size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
+        y[i] = F(x[i]);
+}
+
+double DiscreteIntRand::likelihood(const std::vector<int> &sample) const
+{
+    double res = 1.0;
+    for (size_t i = 0; i != sample.size(); ++i)
+        res *= P(sample[i]);
+    return res;
+}
+
+double DiscreteIntRand::loglikelihood(const std::vector<int> &sample) const
+{
+    double res = 0.0;
+    for (size_t i = 0; i != sample.size(); ++i)
+        res += std::log(P(sample[i]));
+    return res;
+}
+
+
+/// DISCRETE DOUBLE
+
+void DiscreteDoubleRand::pmf(const std::vector<double> &x, std::vector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = P(x[i]);
 }
 
-void DiscreteDoubleRand::probs(const QVector<double> &x, QVector<double> &y) const
+void DiscreteDoubleRand::pmf(const QVector<double> &x, QVector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = P(x[i]);
+}
+
+void DiscreteDoubleRand::cdf(const std::vector<double> &x, std::vector<double> &y)
+{
+    size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
+        y[i] = F(x[i]);
+}
+
+void DiscreteDoubleRand::cdf(const QVector<double> &x, QVector<double> &y)
+{
+    size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
+        y[i] = F(x[i]);
+}
+
+
+double DiscreteDoubleRand::likelihood(const std::vector<double> &sample) const
+{
+    double res = 1.0;
+    for (size_t i = 0; i != sample.size(); ++i)
+        res *= P(sample[i]);
+    return res;
+}
+
+double DiscreteDoubleRand::loglikelihood(const std::vector<double> &sample) const
+{
+    double res = 0.0;
+    for (size_t i = 0; i != sample.size(); ++i)
+        res += std::log(P(sample[i]));
+    return res;
 }

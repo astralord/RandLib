@@ -27,8 +27,8 @@ public:
     inline double getSigma()  const{ return sigma; }
     inline double getMu() const { return mu; }
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return (alpha > 1) ? mu : NAN; }

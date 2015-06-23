@@ -42,12 +42,12 @@ void StableRand::setMu(double location)
     mu = location;
 }
 
-double StableRand::pdf(double x) const
+double StableRand::f(double x) const
 {
     return x;
 }
 
-double StableRand::cdf(double x) const
+double StableRand::F(double x) const
 {
     return x;
 }
@@ -65,17 +65,17 @@ double StableRand::value()
 
     if (alpha != 1) /// the most common case
     {
-        double alphaV = alpha * V;
-        rv = S * qFastSin(alphaV + B);
-        W /= qFastCos(V - alphaV - B);
+        double alphaVB = alpha * V + B;
+        rv = S * qFastSin(alphaVB);
+        W /= qFastCos(V - alphaVB);
         rv *= W;
         rv *= std::pow(W * qFastCos(V), -alphaInv);
     }
     else
     {
-        double pi_2_beta_V = M_PI_2 + beta * V;
-        rv = pi_2_beta_V * qTan(V);
-        rv -= std::log(W * qFastCos(V) / pi_2_beta_V);
+        double pi_2BetaV = M_PI_2 + beta * V;
+        rv = pi_2BetaV * std::tan(V);
+        rv -= std::log(W * qFastCos(V) / pi_2BetaV);
         rv += logSigma;
         rv *= M_2_PI * beta;
     }

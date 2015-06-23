@@ -27,12 +27,12 @@ void ParetoRand::setScale(double scale)
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
-double ParetoRand::pdf(double x) const
+double ParetoRand::f(double x) const
 {
     return (x >= xm) ? pdfCoef / std::pow(x, alpha + 1) : 0;
 }
 
-double ParetoRand::cdf(double x) const
+double ParetoRand::F(double x) const
 {
     return (x > xm) ? 1 - std::pow(xm / x, alpha) : 0;
 }

@@ -16,8 +16,8 @@ public:
     void setDegree(int degree);
     inline size_t getDegree() const { return k; }
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return k; }

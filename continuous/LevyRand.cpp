@@ -21,7 +21,7 @@ void LevyRand::setScale(double scale)
     c_2 *= .5;
 }
 
-double LevyRand::pdf(double x) const
+double LevyRand::f(double x) const
 {
     if (x <= mu)
         return 0;
@@ -33,7 +33,7 @@ double LevyRand::pdf(double x) const
     return sqrtc_2pi * y;
 }
 
-double LevyRand::cdf(double x) const
+double LevyRand::F(double x) const
 {
     if (x <= mu)
         return 0;

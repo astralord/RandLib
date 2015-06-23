@@ -17,9 +17,12 @@ double PoissonRand::P(int k) const
     return (k >= 0) ? exp_l * std::pow(l, k) / RandMath::fastFactorial(k) : 0;
 }
 
-double PoissonRand::cdf(double x) const
+double PoissonRand::F(double x) const
 {
-    return x;
+    if (x <= 0)
+        return 0;
+    int k = qFloor(x);
+    return RandMath::upperIncGamma(k + 1, l) / RandMath::fastFactorial(k);
 }
 
 double PoissonRand::value()

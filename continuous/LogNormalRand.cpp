@@ -19,14 +19,14 @@ void LogNormalRand::setScale(double scale)
     expSigmaSq = std::exp(X.Var());
 }
 
-double LogNormalRand::pdf(double x) const
+double LogNormalRand::f(double x) const
 {
-    return (x > 0) ? X.pdf(std::log(x)) / x : 0;
+    return (x > 0) ? X.f(std::log(x)) / x : 0;
 }
 
-double LogNormalRand::cdf(double x) const
+double LogNormalRand::F(double x) const
 {
-    return (x > 0) ? X.cdf(std::log(x)) : 0;
+    return (x > 0) ? X.F(std::log(x)) : 0;
 }
 
 double LogNormalRand::value()

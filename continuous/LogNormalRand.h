@@ -16,8 +16,8 @@ public:
     inline double getLocation() const { return X.M(); }
     inline double getScale() const { return X.getSigma(); }
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return expMu * std::sqrt(expSigmaSq); }

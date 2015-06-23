@@ -18,7 +18,7 @@ void CauchyRand::setScale(double scale)
     gammaInv = 1.0 / gamma;
 }
 
-double CauchyRand::pdf(double x) const
+double CauchyRand::f(double x) const
 {
     double y = x - x0; /// x - x0
     y *= y; /// (x - x0) ^ 2
@@ -27,7 +27,7 @@ double CauchyRand::pdf(double x) const
     return M_1_PI / y; /// gamma / (pi * (gamma ^ 2 + (x - x0) ^ 2))
 }
 
-double CauchyRand::cdf(double x) const
+double CauchyRand::F(double x) const
 {
     double y = x - x0; /// x - x0
     y *= gammaInv; /// (x - x0) / gamma

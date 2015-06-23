@@ -18,8 +18,8 @@ public:
     inline double getAlpha() const { return alpha; }
     inline double getBeta() const { return beta; }
 
-    virtual double pdf (double x) const override;
-    virtual double cdf(double x) const override;
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
     virtual double value() override;
 
     inline double M() const override { return alpha / (alpha + beta); }
