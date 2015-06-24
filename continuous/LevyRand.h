@@ -27,8 +27,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return INFINITY; }
-    inline double Var() const override { return INFINITY; }
+    double M() const override { return INFINITY; }
+    double Var() const override { return INFINITY; }
 };
 
 /**

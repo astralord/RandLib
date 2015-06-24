@@ -5,6 +5,14 @@
 #include <cmath>
 #include "randlib_global.h"
 
+#ifndef INFINITY
+static const double INFINITY    = std::numeric_limits<double>::infinity();
+#endif
+
+#ifndef NAN
+static const double NAN         = std::numeric_limits<double>::quiet_NaN();
+#endif
+
 static constexpr double M_SQRT3     = 1.73205080756887729353;
 static constexpr double M_SQRTPI    = 1.77245385090551602730;
 static constexpr double M_SQRT2PI   = 2.50662827463100050242;

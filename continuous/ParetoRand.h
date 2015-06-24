@@ -24,8 +24,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
-    inline double Var() const override {
+    double M() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
+    double Var() const override {
         if (alpha > 2)
         {
             double var = xm / (alpha - 1);

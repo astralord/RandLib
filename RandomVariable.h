@@ -3,12 +3,11 @@
 
 #include <QVector>
 #include <QtMath>
-#include <RandMath.h>
+#include "RandMath.h"
 #include "randlib_global.h"
 
 //TODO: implement
 // Beta ++-
-// Gamma -++
 // Stable +--
 // Fisher Snedecor ++-
 // Binomial ---
@@ -24,23 +23,17 @@
  */
 class RANDLIBSHARED_EXPORT RandomVariable {
 
-    /**
-     * @brief randValue
-     * real value of random variable
-     * (totally private)
-     */
-    unsigned long randValue;
+    unsigned long X, Y, Z, W, C;
 
 protected:
 
-    //TODO: add other algorithms
-    unsigned long SHR3();
+    unsigned long fastKISS();
 
 public:
     RandomVariable();
     virtual ~RandomVariable() {}
 
-    void seedRand(unsigned long seed);
+    void seedRand();
 
     virtual double F(double x) const = 0;
 

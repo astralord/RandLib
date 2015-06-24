@@ -6,7 +6,7 @@ RandMath::RandMath()
 
 long double RandMath::stirlingFactorial(int n)
 {
-    double fact = M_SQRT2PI * std::sqrt(n);
+    double fact = M_SQRT2PI * std::sqrt(static_cast<double>(n));
     return fact * std::pow(n / M_E, n);
 }
 

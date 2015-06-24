@@ -33,8 +33,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return k * theta; }
-    inline double Var() const override { return k * theta * theta; }
+    double M() const override { return k * theta; }
+    double Var() const override { return k * theta * theta; }
 };
 
 #endif // GAMMARAND_H

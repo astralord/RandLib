@@ -20,8 +20,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return k; }
-    inline double Var() const override { return k + k; }
+    double M() const override { return k; }
+    double Var() const override { return k + k; }
 
     inline double Mode() const { return std::max(k - 2, 0); }
     inline double Skewness() const { return std::sqrt(8.0 / k); }

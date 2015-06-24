@@ -3,6 +3,8 @@ QT       -= gui
 TARGET = randlib
 TEMPLATE = lib
 
+CONFIG += c++11
+
 DEFINES += RANDLIB_LIBRARY
 
 SOURCES += \
@@ -26,7 +28,6 @@ SOURCES += \
 
 HEADERS +=\
     randlib_global.h \
-    RandomVariable.h \
     RandomGenerators.h \
     continuous/BetaRand.h \
     continuous/CauchyRand.h \
@@ -43,11 +44,11 @@ HEADERS +=\
     continuous/UniformRand.h \
     continuous/ParetoRand.h \
     discrete/PoissonRand.h \
-    RandMath.h
+    RandMath.h \
+    RandomVariable.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
 
-CONFIG += c++11

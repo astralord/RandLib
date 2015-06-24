@@ -74,6 +74,27 @@ double GammaRand::F(double x) const
 
 double GammaRand::value()
 {
+    double rv = 0;
+
+    /// GA algorithm for integers and half-integers
+    int k_int = (int)std::floor(k);
+    if (std::fabs(k - k_int) < MIN_POSITIVE) /// Erlang distribution
+    {
+        for (int i = 0; i != k_int; ++i)
+            rv += E.value();
+        return theta * rv;
+    }
+
+    if (std::fabs(k - k_int - .5) < MIN_POSITIVE)
+    {
+        for (int i = 0; i != k_int; ++i)
+            rv += E.value();
+        double n = N.value();
+        rv += .5 * n * n;
+        return theta * rv;
+    }
+
+    /// GS algorithm for small k < 1
     if (k <= 1.0)
     {
         int iter = 0;
@@ -82,19 +103,21 @@ double GammaRand::value()
             double e = E.value();
             if (P <= 1)
             {
-                double rv = std::pow(P, kInv);
+                rv = std::pow(P, kInv);
                 if (rv <= e)
                     return theta * rv;
             }
             else
             {
-                double rv = -std::log(valueCoef - kInv * P);
+                rv = -std::log(valueCoef - kInv * P);
                 if ((1 - k) * std::log(rv) <= e)
                     return theta * rv;
             }
         } while (++iter < 1e9); /// one billion should be enough
     }
-    else if (k <= 3.0)
+
+    /// GP algorithm for 1 < k < 3
+    if (k <= 3.0)
     {
         double e1, e2;
         do {
@@ -103,44 +126,40 @@ double GammaRand::value()
         } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
         return theta * k * e1;
     }
-    else
-    {
-        double rv;
-        int iter = 0;
-        do {
-            double u = U.value();
-            if (u <= 0.0095722652)
-            {
-                double e1 = E.value();
-                double e2 = E.value();
-                rv = b * (1 + e1 / d);
-                if (m * (rv / b - std::log(rv / m)) + c <= e2)
-                    return theta * rv;
-            }
-            else
-            {
-                double n;
-                do {
-                    n = N.value();
-                    rv = s * n + m;
-                } while (rv < 0 || rv > b);
-                u = U.value();
-                double S = .5 * n * n;
-                if (n > 0)
-                {
-                    if (u < 1 - w * S)
-                        return theta * rv;
-                }
-                else
-                {
-                    if (u < 1 + S * (v * n - w))
-                        return theta * rv;
-                }
-                if (std::log(u) < m * std::log(rv / m) + m - rv + S)
-                    return theta * rv;
 
+    /// GO algorithm for most common case k > 3
+    int iter = 0;
+    do {
+        double u = U.value();
+        if (u <= 0.0095722652)
+        {
+            double e1 = E.value();
+            double e2 = E.value();
+            rv = b * (1 + e1 / d);
+            if (m * (rv / b - std::log(rv / m)) + c <= e2)
+                return theta * rv;
+        }
+        else
+        {
+            double n;
+            do {
+                n = N.value();
+                rv = s * n + m;
+            } while (rv < 0 || rv > b);
+            u = U.value();
+            double S = .5 * n * n;
+            if (n > 0)
+            {
+                if (u < 1 - w * S)
+                    return theta * rv;
             }
-        } while (++iter < 1e9); /// one billion should be enough
-    }
+            else if (u < 1 + S * (v * n - w))
+                return theta * rv;
+
+            if (std::log(u) < m * std::log(rv / m) + m - rv + S)
+                return theta * rv;
+
+        }
+    } while (++iter < 1e9); /// one billion should be enough
     return 0;
 }

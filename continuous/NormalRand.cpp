@@ -57,7 +57,7 @@ double NormalRand::F(double x) const
 {
     double y = x - mu; /// x - mu
     y *= sigmaSqrt2Inv; /// (x - mu) / (sigma * sqrt(2))
-    y = erf(y); /// erf((x - mu) / (sigma * sqrt(2)))
+    y = std::erf(y); /// erf((x - mu) / (sigma * sqrt(2)))
     ++y; /// 1 + erf((x - mu) / (sigma * sqrt(2)))
     return .5 * y; /// (1 + erf((x - mu) / (sigma * sqrt(2)))) / 2
 }
@@ -67,7 +67,7 @@ double NormalRand::ziggurat()
 {
     int iter = 0;
     do {
-        long hz = SHR3();
+        long hz = fastKISS();
         unsigned long iz = hz & 127;
         double x = hz * wn[iz];
         if (std::fabs(hz) < kn[iz])

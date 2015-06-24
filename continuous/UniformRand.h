@@ -17,8 +17,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return .5 * (b + a); }
-    inline double Var() const override { return (b - a) * (b - a) / 12; }
+    double M() const override { return .5 * (b + a); }
+    double Var() const override { return (b - a) * (b - a) / 12; }
 
     inline double Median() const { return .5 * (b + a); }
     inline double Skewness() const { return 0; }

@@ -31,8 +31,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return (alpha > 1) ? mu : NAN; }
-    inline double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
+    double M() const override { return (alpha > 1) ? mu : NAN; }
+    double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
 };
 
 

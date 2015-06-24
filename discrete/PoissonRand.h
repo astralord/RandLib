@@ -13,18 +13,18 @@ public:
     PoissonRand(double rate);
 
     void setRate(double rate);
-    inline double getRate() const { return l; }
+     double getRate() const { return l; }
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return l; }
-    inline double Var() const override { return l; }
+     double M() const override { return l; }
+     double Var() const override { return l; }
 
-    inline double Mode() const { return qFloor(l); } /// and also qCeil(l) - 1
-    inline double Skewness() const { return 1.0 / std::sqrt(l); }
-    inline double ExcessiveKurtosis() const { return 1.0 / l; }
+     double Mode() const { return qFloor(l); } /// and also qCeil(l) - 1
+     double Skewness() const { return 1.0 / std::sqrt(l); }
+     double ExcessiveKurtosis() const { return 1.0 / l; }
 };
 
 #endif // POISSONRAND_H

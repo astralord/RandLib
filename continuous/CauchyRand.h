@@ -22,8 +22,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return NAN; }
-    inline double Var() const override { return INFINITY; }
+    double M() const override { return NAN; }
+    double Var() const override { return INFINITY; }
 
     inline double Entropy() const { return std::log(4 * gamma * M_PI); }
 };

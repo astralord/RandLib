@@ -1,23 +1,34 @@
-#include "randomvariable.h"
+#include <RandomVariable.h>
 #include <time.h>
 
 RandomVariable::RandomVariable()
 {
     /// maybe we should do it in more elegant way
-    seedRand(time(0));
+    seedRand();
 }
 
-void RandomVariable::seedRand(unsigned long seed)
+void RandomVariable::seedRand()
 {
-    randValue ^= seed;
+    X = 123456789 ^ time(0);
+    Y = 234567891 ^ time(0);
+    Z = 345678912 ^ time(0);
+    W = 456789123 ^ time(0);
+    C = 0;
 }
 
-unsigned long RandomVariable::SHR3()
+unsigned long RandomVariable::fastKISS()
 {
-    randValue ^= (randValue << 17);
-    randValue ^= (randValue >> 13);
-    randValue ^= (randValue << 5);
-    return randValue;
+    Y ^= Y << 5;
+    Y ^= Y >> 7;
+    Y ^= Y << 22;
+
+    int t = Z + W + C;
+    Z = W;
+    C = t < 0;
+    W = t & 2147483647;
+    X += 1411392427;
+
+    return X + Y + W;
 }
 
 void RandomVariable::sample(QVector<double> &outputData)

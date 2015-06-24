@@ -39,7 +39,7 @@ double LevyRand::F(double x) const
     double y = x - mu;
     y = c_2 / y;
     y = std::sqrt(y);
-    return erfc(y);
+    return std::erfc(y);
 }
 
 double LevyRand::value()

@@ -22,8 +22,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return alpha / (alpha + beta); }
-    inline double Var() const override {
+    double M() const override { return alpha / (alpha + beta); }
+    double Var() const override {
         double denom = alpha + beta;
         denom *= denom * (denom + 1);
         return alpha * beta / denom;

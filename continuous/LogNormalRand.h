@@ -20,8 +20,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return expMu * std::sqrt(expSigmaSq); }
-    inline double Var() const override { return (expSigmaSq - 1) * expMu * expMu * expSigmaSq; }
+    double M() const override { return expMu * std::sqrt(expSigmaSq); }
+    double Var() const override { return (expSigmaSq - 1) * expMu * expMu * expSigmaSq; }
 
     inline double Median() const { return expMu; }
     inline double Mode() const{ return expMu / expSigmaSq; }

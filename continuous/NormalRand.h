@@ -31,8 +31,8 @@ public:
     virtual double F(double x) const;
     virtual double value();
 
-    inline double M() const { return mu; }
-    inline double Var() const { return sigma * sigma; }
+    double M() const { return mu; }
+    double Var() const { return sigma * sigma; }
 
     inline double Median() const { return mu; }
     inline double Mode() const { return mu; }

@@ -21,7 +21,7 @@ double UniformRand::F(double x) const
 
 double UniformRand::value()
 {
-    double rv = .5 + (signed)SHR3() * .23283064e-9; /// ~ U(0, 1)
+    double rv = .5 + (signed)fastKISS() * .23283064e-9; /// ~ U(0, 1)
     rv *= (b - a); /// ~ U(0, b - a)
     return rv + a; /// ~ U(a, b)
 }

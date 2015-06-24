@@ -26,8 +26,8 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    inline double M() const override { return beta; }
-    inline double Var() const override { return beta * beta; }
+    double M() const override { return beta; }
+    double Var() const override { return beta * beta; }
 
     inline double Skewness() const { return 2.0; }
     inline double ExcessiveKurtosis() const { return 6.0; }
