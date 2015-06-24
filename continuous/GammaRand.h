@@ -5,6 +5,10 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 #include "NormalRand.h"
+#include <functional>
+
+
+// TODO: add function pointers for k
 
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
 {
@@ -21,20 +25,26 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
     void setConstants();
 
 public:
-    GammaRand(double shape, double scale);
+    GammaRand(double shape = 1, double scale = 1);
 
     void setParameters(double shape, double scale);
-    void setShape(double shape);
-    void setScale(double scale);
     inline double getShape() const { return k; }
     inline double getScale() const { return theta; }
 
+    virtual double value() override;
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double value() override;
 
     double M() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }
+
+private:
+    std::function<double ()> valuePtr;
+    double valueForIntegerShape();
+    double valueForHalfIntegerShape();
+    double valueForSmallShape();
+    double valueForMediumShape();
+    double valueForLargeShape();
 };
 
 #endif // GAMMARAND_H

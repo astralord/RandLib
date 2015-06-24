@@ -3,10 +3,14 @@
 
 #include <RandomVariable.h>
 
+/**
+ * @brief The UniformRand class
+ */
 class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
 {
     double a, b;
     double c; /// c = 1 / (b - a)
+    // TODO: make macro from it
     void swapBoundaries();
 
 public:
@@ -26,6 +30,7 @@ public:
 
     inline double Entropy() const { return (b == a) ? -INFINITY : std::log(b - a); }
 
+    bool fitToData(const QVector<double> &sample);
 };
 
 #endif // UNIFORMRAND_H

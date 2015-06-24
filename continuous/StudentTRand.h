@@ -5,9 +5,10 @@
 #include "ChiSquaredRand.h"
 #include "NormalRand.h"
 
+//TODO: degree should be int or double??
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
 {
-    int v;
+    double v;
     NormalRand X;
     ChiSquaredRand Y;
     double pdfCoef;
@@ -24,7 +25,7 @@ public:
     double M() const override { return (v > 1) ? 0 : NAN; }
     double Var() const override {
         if (v > 2)
-            return (double)v / (v - 2);
+            return v / (v - 2);
         return (v > 1) ? INFINITY : NAN;
     }
 };

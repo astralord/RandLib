@@ -2,23 +2,21 @@
 #define CHISQUAREDRAND_H
 
 #include <RandomVariable.h>
-#include "NormalRand.h"
+#include "GammaRand.h"
 
-class RANDLIBSHARED_EXPORT ChiSquaredRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 {
     int k;
     double pdfCoef, cdfCoef;
-    NormalRand X;
 
 public:
-    ChiSquaredRand(int k);
+    ChiSquaredRand(int degree = 1);
 
     void setDegree(int degree);
     inline size_t getDegree() const { return k; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double value() override;
 
     double M() const override { return k; }
     double Var() const override { return k + k; }

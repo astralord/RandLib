@@ -5,27 +5,6 @@ UniformRand::UniformRand(double minValue, double maxValue)
     setBoundaries(minValue, maxValue);
 }
 
-double UniformRand::f(double x) const
-{
-    return (x >= a && x <= b) ? c : 0;
-}
-
-double UniformRand::F(double x) const
-{
-    if (x < a)
-        return 0;
-    if (x > b)
-        return 1;
-    return c * (x - a);
-}
-
-double UniformRand::value()
-{
-    double rv = .5 + (signed)fastKISS() * .23283064e-9; /// ~ U(0, 1)
-    rv *= (b - a); /// ~ U(0, b - a)
-    return rv + a; /// ~ U(a, b)
-}
-
 void UniformRand::setBoundaries(double minValue, double maxValue)
 {
     a = minValue;
@@ -46,4 +25,40 @@ void UniformRand::swapBoundaries()
     b -= a;
     a += b;
     b = -b;
+}
+
+double UniformRand::value()
+{
+    double rv = .5 + (signed)fastKISS() * .23283064e-9; /// ~ U(0, 1)
+    rv *= (b - a); /// ~ U(0, b - a)
+    return rv + a; /// ~ U(a, b)
+}
+
+double UniformRand::f(double x) const
+{
+    return (x >= a && x <= b) ? c : 0;
+}
+
+double UniformRand::F(double x) const
+{
+    if (x < a)
+        return 0;
+    if (x > b)
+        return 1;
+    return c * (x - a);
+}
+
+bool UniformRand::fitToData(const QVector<double> &sample)
+{
+    double maxVar = sample.at(0), minVar = maxVar;
+    foreach (double var, sample) {
+        maxVar = std::max(var, maxVar);
+        minVar = std::min(var, minVar);
+    }
+
+    if (std::isnan(minVar) || std::isinf(minVar) ||
+       (std::isnan(maxVar) || std::isinf(maxVar)))
+        return false;
+
+    setBoundaries(minVar, maxVar);
 }

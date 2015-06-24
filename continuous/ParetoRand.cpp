@@ -1,7 +1,6 @@
 #include "ParetoRand.h"
 
-ParetoRand::ParetoRand(double shape, double scale) :
-    E(scale)
+ParetoRand::ParetoRand(double shape, double scale)
 {
     setParameters(shape, scale);
 }

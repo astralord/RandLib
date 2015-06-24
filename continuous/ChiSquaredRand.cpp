@@ -1,8 +1,8 @@
 #include "ChiSquaredRand.h"
 
-ChiSquaredRand::ChiSquaredRand(int k)
+ChiSquaredRand::ChiSquaredRand(int degree)
 {
-    setDegree(k);
+    setDegree(degree);
 }
 
 void ChiSquaredRand::setDegree(int degree)
@@ -22,6 +22,8 @@ void ChiSquaredRand::setDegree(int degree)
         cdfCoef *= (1 << ((k - 1) >> 1));
         pdfCoef *= M_SQRT1_2;
     }
+
+    GammaRand::setParameters(.5 * k, 2);
 }
 
 double ChiSquaredRand::f(double x) const
@@ -36,20 +38,4 @@ double ChiSquaredRand::f(double x) const
 double ChiSquaredRand::F(double x) const
 {
     return cdfCoef * RandMath::lowerIncGamma(.5 * k, .5 * x);
-}
-
-double ChiSquaredRand::value()
-{
-    // TODO: Check if this can be replaced with gamma distribution generator
-    // and maybe it should if k is too big
-    // tip: Y ~ Gamma(k / 2, 2)
-
-    double rv = 0;
-    for (int i = 0; i != k; ++i)
-    {
-        double x = X.value();
-        x *= x;
-        rv += x;
-    }
-    return rv;
 }

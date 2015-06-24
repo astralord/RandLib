@@ -12,6 +12,7 @@
 #include <continuous/ChiSquaredRand.h>
 #include <continuous/StableRand.h>
 #include <continuous/GammaRand.h>
+#include <continuous/ErlangRand.h>
 #include <continuous/BetaRand.h>
 #include <continuous/StudentTRand.h>
 #include <continuous/FisherSnedecorRand.h>

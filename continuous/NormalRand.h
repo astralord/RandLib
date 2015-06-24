@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     double ziggurat();
 
 public:
-    NormalRand(double mean = 0, double sigma = 1);
+    NormalRand(double mean = 0, double var = 1);
 
     void setMean(double mean);
     void setSigma(double rootVar);
@@ -38,6 +38,8 @@ public:
     inline double Mode() const { return mu; }
     inline double Skewness() const { return 0; }
     inline double ExcessKurtosis() const { return 0; }
+
+    bool fitToData(const QVector<double> &sample);
 };
 
 

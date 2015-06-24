@@ -1,10 +1,10 @@
 #include "NormalRand.h"
+#include <QDebug>
 
-NormalRand::NormalRand(double mean, double sigma) :
-    U(0, 1)
+NormalRand::NormalRand(double mean, double var)
 {
     setMean(mean);
-    setSigma(sigma);
+    setSigma(std::sqrt(std::max(var, MIN_POSITIVE)));
 
     /// Set up ziggurat tables
     const double m1 = 2147483648.0;
@@ -96,4 +96,26 @@ double NormalRand::ziggurat()
 double NormalRand::value()
 {
     return mu + sigma * ziggurat();
+}
+
+bool NormalRand::fitToData(const QVector<double> &sample)
+{
+    double average = 0.0, deviation = 0.0;
+    foreach (double var, sample) {
+        average += var;
+    }
+    average /= sample.size();
+    if (std::isnan(average) || std::isinf(average))
+        return false;
+
+    foreach (double var, sample) {
+        double currDev = (var - average);
+        deviation += currDev * currDev;
+    }
+    deviation /= (sample.size() - 1);
+    if (std::isnan(deviation) || std::isinf(deviation))
+        return false;
+
+    setMean(average);
+    setSigma(std::sqrt(deviation));
 }

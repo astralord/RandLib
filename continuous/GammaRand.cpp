@@ -24,36 +24,33 @@ void GammaRand::setParameters(double shape, double scale)
     theta = std::max(scale, MIN_POSITIVE);
     thetaInv = 1.0 / theta;
 
-    cdfCoef = 1.0 / std::tgamma(k);
+    cdfCoef = 1.0 / std::tgamma(k); // TODO: if k is integer, we can use fastFactorial
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
     valueCoef = kInv + M_1_E;
 
-    if (k <= 1)
+    int k_int = (int)std::floor(k);
+    if (std::fabs(k - k_int) < MIN_POSITIVE)
+    {
+        valuePtr = std::bind(&GammaRand::valueForIntegerShape, this);
+    }
+    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE)
+    {
+        valuePtr = std::bind(&GammaRand::valueForHalfIntegerShape, this);
+    }
+    else if (k <= 1)
+    {
         U.setBoundaries(0, 1 + k * M_1_E);
-    else if (k > 3)
+        valuePtr = std::bind(&GammaRand::valueForSmallShape, this);
+    }
+    else if (k <= 3)
+    {
+        valuePtr = std::bind(&GammaRand::valueForMediumShape, this);
+    }
+    else
+    {
         setConstants();
-}
-
-void GammaRand::setShape(double shape)
-{
-    k = std::max(shape, MIN_POSITIVE);
-    kInv = 1.0 / k;
-
-    cdfCoef = 1.0 / std::tgamma(k);
-    pdfCoef = cdfCoef * std::pow(thetaInv, k);
-    valueCoef = kInv + M_1_E;
-
-    if (k <= 1)
-        U.setBoundaries(0, 1 + k * M_1_E);
-    else if (k > 3)
-        setConstants();
-}
-
-void GammaRand::setScale(double scale)
-{
-    theta = std::max(scale, MIN_POSITIVE);
-    thetaInv = 1.0 / theta;
-    pdfCoef = cdfCoef * std::pow(thetaInv, k);
+        valuePtr = std::bind(&GammaRand::valueForLargeShape, this);
+    }
 }
 
 double GammaRand::f(double x) const
@@ -72,62 +69,64 @@ double GammaRand::F(double x) const
     return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }
 
-double GammaRand::value()
+double GammaRand::valueForIntegerShape()
 {
+    /// Erlang distribution
     double rv = 0;
+    for (int i = 0; i < k; ++i)
+        rv += E.value();
+    return rv;
+}
 
-    /// GA algorithm for integers and half-integers
-    int k_int = (int)std::floor(k);
-    if (std::fabs(k - k_int) < MIN_POSITIVE) /// Erlang distribution
-    {
-        for (int i = 0; i != k_int; ++i)
-            rv += E.value();
-        return theta * rv;
-    }
+double GammaRand::valueForHalfIntegerShape()
+{
+    /// GA algorithm
+    double rv = 0;
+    for (int i = 0; i < k - 1; ++i)
+        rv += E.value();
+    double n = N.value();
+    return rv + .5 * n * n;
+}
 
-    if (std::fabs(k - k_int - .5) < MIN_POSITIVE)
-    {
-        for (int i = 0; i != k_int; ++i)
-            rv += E.value();
-        double n = N.value();
-        rv += .5 * n * n;
-        return theta * rv;
-    }
-
+double GammaRand::valueForSmallShape()
+{
     /// GS algorithm for small k < 1
-    if (k <= 1.0)
-    {
-        int iter = 0;
-        do {
-            double P = U.value();
-            double e = E.value();
-            if (P <= 1)
-            {
-                rv = std::pow(P, kInv);
-                if (rv <= e)
-                    return theta * rv;
-            }
-            else
-            {
-                rv = -std::log(valueCoef - kInv * P);
-                if ((1 - k) * std::log(rv) <= e)
-                    return theta * rv;
-            }
-        } while (++iter < 1e9); /// one billion should be enough
-    }
+    double rv = 0;
+    int iter = 0;
+    do {
+        double P = U.value();
+        double e = E.value();
+        if (P <= 1)
+        {
+            rv = std::pow(P, kInv);
+            if (rv <= e)
+                return rv;
+        }
+        else
+        {
+            rv = -std::log(valueCoef - kInv * P);
+            if ((1 - k) * std::log(rv) <= e)
+                return rv;
+        }
+    } while (++iter < 1e9); /// one billion should be enough
+    return 0; /// shouldn't end up here
+}
 
+double GammaRand::valueForMediumShape()
+{
     /// GP algorithm for 1 < k < 3
-    if (k <= 3.0)
-    {
-        double e1, e2;
-        do {
-            e1 = E.value();
-            e2 = E.value();
-        } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
-        return theta * k * e1;
-    }
+    double e1, e2;
+    do {
+        e1 = E.value();
+        e2 = E.value();
+    } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
+    return k * e1;
+}
 
+double GammaRand::valueForLargeShape()
+{
     /// GO algorithm for most common case k > 3
+    double rv = 0;
     int iter = 0;
     do {
         double u = U.value();
@@ -137,7 +136,7 @@ double GammaRand::value()
             double e2 = E.value();
             rv = b * (1 + e1 / d);
             if (m * (rv / b - std::log(rv / m)) + c <= e2)
-                return theta * rv;
+                return rv;
         }
         else
         {
@@ -151,15 +150,21 @@ double GammaRand::value()
             if (n > 0)
             {
                 if (u < 1 - w * S)
-                    return theta * rv;
+                    return rv;
             }
             else if (u < 1 + S * (v * n - w))
-                return theta * rv;
+                return rv;
 
             if (std::log(u) < m * std::log(rv / m) + m - rv + S)
-                return theta * rv;
+                return rv;
 
         }
     } while (++iter < 1e9); /// one billion should be enough
-    return 0;
+    return 0; /// shouldn't end up here
+}
+
+double GammaRand::value()
+{
+    double rv = valuePtr();
+    return theta * rv;
 }

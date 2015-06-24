@@ -1,19 +1,15 @@
 #include <RandomVariable.h>
 #include <time.h>
+#include <QDebug>
+
+unsigned long RandomVariable::startPoint = 123456789;
 
 RandomVariable::RandomVariable()
 {
-    /// maybe we should do it in more elegant way
-    seedRand();
-}
-
-void RandomVariable::seedRand()
-{
-    X = 123456789 ^ time(0);
-    Y = 234567891 ^ time(0);
-    Z = 345678912 ^ time(0);
-    W = 456789123 ^ time(0);
+    startPoint ^= time(0);
+    X = Y = Z = W = startPoint;
     C = 0;
+    startPoint = fastKISS();
 }
 
 unsigned long RandomVariable::fastKISS()
@@ -31,13 +27,24 @@ unsigned long RandomVariable::fastKISS()
     return X + Y + W;
 }
 
-void RandomVariable::sample(QVector<double> &outputData)
+void DoubleRand::sample(QVector<double> &outputData)
 {
     for (int i = 0; i != outputData.size(); ++i)
         outputData[i] = value();
 }
 
-void RandomVariable::sample(std::vector<double> &outputData) {
+void DoubleRand::sample(std::vector<double> &outputData) {
+    for (size_t i = 0; i != outputData.size(); ++i)
+        outputData[i] = value();
+}
+
+void IntRand::sample(QVector<int> &outputData)
+{
+    for (int i = 0; i != outputData.size(); ++i)
+        outputData[i] = value();
+}
+
+void IntRand::sample(std::vector<int> &outputData) {
     for (size_t i = 0; i != outputData.size(); ++i)
         outputData[i] = value();
 }
@@ -106,14 +113,14 @@ void DiscreteIntRand::pmf(const QVector<int> &x, QVector<double> &y) const
         y[i] = P(x[i]);
 }
 
-void DiscreteIntRand::cdf(const std::vector<int> &x, std::vector<double> &y)
+void DiscreteIntRand::cdf(const std::vector<int> &x, std::vector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 
-void DiscreteIntRand::cdf(const QVector<int> &x, QVector<double> &y)
+void DiscreteIntRand::cdf(const QVector<int> &x, QVector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
@@ -153,14 +160,14 @@ void DiscreteDoubleRand::pmf(const QVector<double> &x, QVector<double> &y) const
         y[i] = P(x[i]);
 }
 
-void DiscreteDoubleRand::cdf(const std::vector<double> &x, std::vector<double> &y)
+void DiscreteDoubleRand::cdf(const std::vector<double> &x, std::vector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 
-void DiscreteDoubleRand::cdf(const QVector<double> &x, QVector<double> &y)
+void DiscreteDoubleRand::cdf(const QVector<double> &x, QVector<double> &y) const
 {
     size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)

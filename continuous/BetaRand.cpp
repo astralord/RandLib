@@ -1,7 +1,6 @@
 #include "BetaRand.h"
 
-BetaRand::BetaRand(double shape1, double shape2) :
-    X(shape1, 1), Y(shape2, 1)
+BetaRand::BetaRand(double shape1, double shape2)
 {
     setParameters(shape1, shape2);
 }
@@ -9,11 +8,11 @@ BetaRand::BetaRand(double shape1, double shape2) :
 void BetaRand::setParameters(double shape1, double shape2)
 {
     alpha = std::max(shape1, MIN_POSITIVE);
-    X.setShape(alpha);
+    X.setParameters(alpha, 1);
     gammaA = std::tgamma(alpha);
 
     beta = std::max(shape2, MIN_POSITIVE);
-    Y.setShape(beta);
+    Y.setParameters(beta, 1);
     gammaB = std::tgamma(beta);
 
     pdfCoef = std::tgamma(alpha + beta) / (gammaA * gammaB);
@@ -22,7 +21,7 @@ void BetaRand::setParameters(double shape1, double shape2)
 void BetaRand::setAlpha(double shape1)
 {
     alpha = std::max(shape1, MIN_POSITIVE);
-    X.setShape(alpha);
+    X.setParameters(alpha, 1);
     gammaA = std::tgamma(alpha);
     pdfCoef = std::tgamma(alpha + beta) / (gammaA * gammaB);
 }
@@ -30,7 +29,7 @@ void BetaRand::setAlpha(double shape1)
 void BetaRand::setBeta(double shape2)
 {
     beta = std::max(shape2, MIN_POSITIVE);
-    Y.setShape(beta);
+    Y.setParameters(beta, 1);
     gammaB = std::tgamma(beta);
     pdfCoef = std::tgamma(alpha + beta) / (gammaA * gammaB);
 }

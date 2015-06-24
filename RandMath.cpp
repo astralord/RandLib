@@ -75,7 +75,7 @@ long double RandMath::fastFactorial(int n)
     if (n < 0)
         return 0;
 
-    if (n > 250)
+    if (n > 255)
         return stirlingFactorial(n);
 
     int residue = n % 10;
@@ -101,11 +101,18 @@ long double RandMath::fastFactorial(int n)
 
 long double RandMath::doubleFactorial(int n)
 {
-    //TODO: make it faster as factorial
-    double res = 1.0;
-    for (int i = n % 2 + 2; i <= n; i += 2)
-        res *= i;
-    return res;
+    long double n_fact = fastFactorial(n);
+    if (n % 2 == 0)
+        return (1 << n) * n_fact;
+    return fastFactorial(2 * n + 1) / (2 * n * n_fact);
+}
+
+long double RandMath::binomialCoef(int n, int k)
+{
+    long double n_fact = fastFactorial(n);
+    long double k_fact = fastFactorial(k);
+    long double k_n_fact = fastFactorial(n - k);
+    return n_fact / (k_fact * k_n_fact);
 }
 
 long double RandMath::lowerIncGamma(double a, double x)
@@ -156,4 +163,32 @@ long double RandMath::gammaHalf(int k)
     long double res = fastFactorial(k - 1);
     res /= (fastFactorial(n) * (1 << (n + n)));
     return res * M_SQRTPI;
+}
+
+long double RandMath::adaptiveSimpsonsAux(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
+                               double a, double b, double epsilon, double S, double fa, double fb, double fc, int bottom)
+{
+    // TODO: rewrite recursion into loop
+    double c = .5 * (a + b), h = (b - a) / 12.0;
+    double d = .5 * (a + c), e = .5 * (c + b);
+    double fd = fun(rv, d), fe = fun(rv, e);
+    double Sleft = h * (fa + 4 * fd + fc);
+    double Sright = h * (fc + 4 * fe + fb);
+    double S2 = Sleft + Sright;
+    if (bottom <= 0 || std::fabs(S2 - S) <= 15.0 * epsilon)
+        return S2 + (S2 - S) / 15.0;
+    epsilon *= .5;
+    --bottom;
+
+    return adaptiveSimpsonsAux(fun, rv, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
+    adaptiveSimpsonsAux(fun, rv, c, b, epsilon, Sright, fc, fb, fe, bottom);
+}
+
+long double RandMath::integral(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
+                               double a, double b, double epsilon, int maxRecursionDepth)
+{
+    double c = .5 * (a + b), h = (b - a) / 6.0;
+    double fa = fun(rv, a), fb = fun(rv, b), fc = fun(rv, c);
+    double S = h * (fa + 4 * fc + fb);
+    return adaptiveSimpsonsAux(fun, rv, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }

@@ -6,7 +6,7 @@
 
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
 {
-    double expMu, expSigmaSq;
+    double expMu, expVar;
     NormalRand X;
 
 public:
@@ -20,13 +20,15 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return expMu * std::sqrt(expSigmaSq); }
-    double Var() const override { return (expSigmaSq - 1) * expMu * expMu * expSigmaSq; }
+    double M() const override { return expMu * std::sqrt(expVar); }
+    double Var() const override { return (expVar - 1) * expMu * expMu * expVar; }
 
     inline double Median() const { return expMu; }
-    inline double Mode() const{ return expMu / expSigmaSq; }
-    inline double Skewness() const { return (expSigmaSq + 2) * std::sqrt(expSigmaSq - 1); }
+    inline double Mode() const{ return expMu / expVar; }
+    inline double Skewness() const { return (expVar + 2) * std::sqrt(expVar - 1); }
     inline double ExcessKurtosis() const;
+
+    bool fitToData(const QVector<double> &sample);
 };
 
 #endif // LOGNORMALRAND_H

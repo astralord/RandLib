@@ -25,9 +25,9 @@ double PoissonRand::F(double x) const
     return RandMath::upperIncGamma(k + 1, l) / RandMath::fastFactorial(k);
 }
 
-double PoissonRand::value()
+int PoissonRand::value()
 {
-    double y = 0;
+    int y = 0;
     double u = U.value();
     double p = exp_l, s = p;
     while (s < u) {

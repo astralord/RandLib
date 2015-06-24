@@ -1,7 +1,6 @@
 #include "StudentTRand.h"
 
-StudentTRand::StudentTRand(int degree) :
-    Y(degree)
+StudentTRand::StudentTRand(int degree)
 {
     setDegree(degree);
 }
@@ -9,7 +8,7 @@ StudentTRand::StudentTRand(int degree) :
 void StudentTRand::setDegree(double degree)
 {
     v = std::max(degree, MIN_POSITIVE);
-    Y.setDegree(v);
+    Y.setDegree(static_cast<int>(v));
 
     pdfCoef = std::tgamma(.5 * (v + 1));
     pdfCoef /= (std::sqrt(v * M_PI) * std::tgamma(.5 * v));
@@ -31,5 +30,5 @@ double StudentTRand::value()
 {
     //v = 1 -> cauchy
     //v = inf -> normal
-    return X.value() * std::sqrt((double)v / Y.value());
+    return X.value() * std::sqrt(v / Y.value());
 }

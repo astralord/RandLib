@@ -31,29 +31,4 @@ public:
     double Var() const override { return INFINITY; }
 };
 
-/**
- * @brief The LevyNegativeRand class
- * -X ~ Levy(mu, c)
- *  X ~ Stable(0.5, -1, mu, c)
- */
-
-class RANDLIBSHARED_EXPORT LevyNegativeRand : public LevyRand
-{
-
-public:
-    LevyNegativeRand(double location, double scale) : LevyRand(-location, scale) {}
-
-    void setLocation(double location) { LevyRand::setLocation(-location); }
-    void setScale(double scale) { LevyRand::setScale(scale); }
-    double getLocation() const { return -LevyRand::getLocation(); }
-    double getScale() const { return LevyRand::getScale(); }
-
-    virtual double f(double x) const override { return LevyRand::f(-x); }
-    virtual double F(double x) const override { return 1.0 - LevyRand::f(-x); }
-    virtual double value() override { return -LevyRand::value(); }
-
-    inline double M() const override { return -INFINITY; }
-    inline double Var() const override { return INFINITY; }
-};
-
 #endif // LEVYRAND_H
