@@ -61,4 +61,5 @@ bool UniformRand::fitToData(const QVector<double> &sample)
         return false;
 
     setBoundaries(minVar, maxVar);
+    return true;
 }

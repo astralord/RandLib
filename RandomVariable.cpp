@@ -10,6 +10,10 @@ RandomVariable::RandomVariable()
     X = Y = Z = W = startPoint;
     C = 0;
     startPoint = fastKISS();
+
+    N = 0;
+    CODE = 1;
+    Q = 0;
 }
 
 unsigned long RandomVariable::fastKISS()
@@ -25,6 +29,24 @@ unsigned long RandomVariable::fastKISS()
     X += 1411392427;
 
     return X + Y + W;
+}
+
+unsigned long RandomVariable::quasiGen()
+{
+    if (N > 0)
+    {
+        unsigned value = N;
+        CODE = 1;
+        while (value & 1) {
+            value >>= 1;
+            ++CODE;
+        }
+
+        Q ^= 1 << (32 - CODE);
+    }
+
+    ++N;
+    return Q;
 }
 
 void DoubleRand::sample(QVector<double> &outputData)

@@ -118,4 +118,5 @@ bool NormalRand::fitToData(const QVector<double> &sample)
 
     setMean(average);
     setSigma(std::sqrt(deviation));
+    return true;
 }

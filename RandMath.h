@@ -26,6 +26,8 @@ static constexpr double M_SQRT2PI   = 2.50662827463100050242;
 static constexpr double M_1_SQRTPI  = 0.56418958354775628695;
 static constexpr double M_1_SQRT2PI = 0.39894228040143267794;
 
+static constexpr double M_LN_2      = 0.69314718055994530942;
+
 static constexpr double MIN_POSITIVE = 1e-21;
 
 class RANDLIBSHARED_EXPORT RandMath

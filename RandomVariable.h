@@ -25,10 +25,13 @@
  */
 class RANDLIBSHARED_EXPORT RandomVariable {
 
+    /// Variables for pseudo generator
     static unsigned long startPoint;
     unsigned long X, Y, Z, W;
     bool C;
 
+    /// Variables for quasi generator
+    unsigned N, CODE, Q;
 protected:
     /**
      * @brief fastKISS
@@ -36,6 +39,8 @@ protected:
      * @return random variable uniformly distributed from 0 to 2^32-1
      */
     unsigned long fastKISS();
+
+    unsigned long quasiGen();
 
 public:
     RandomVariable();
