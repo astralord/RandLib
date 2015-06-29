@@ -164,7 +164,7 @@ long double RandMath::gammaHalf(int k)
     res /= (fastFactorial(n) * (1 << (n + n)));
     return res * M_SQRTPI;
 }
-
+/*
 long double RandMath::adaptiveSimpsonsAux(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
                                double a, double b, double epsilon, double S, double fa, double fb, double fc, int bottom)
 {
@@ -192,3 +192,4 @@ long double RandMath::integral(std::function<double (const RandomVariable &, dou
     double S = h * (fa + 4 * fc + fb);
     return adaptiveSimpsonsAux(fun, rv, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
+*/

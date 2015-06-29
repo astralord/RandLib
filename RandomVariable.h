@@ -23,6 +23,7 @@
 /**
  * @brief The RandomVariable class
  */
+template< typename T >
 class RANDLIBSHARED_EXPORT RandomVariable {
 
     /// Variables for pseudo generator
@@ -45,12 +46,20 @@ protected:
 public:
     RandomVariable();
     virtual ~RandomVariable() {}
+
+    virtual T value() = 0;
+
+    void sample(QVector<T> &outputData);
+
     /**
      * @brief F
      * @param x
      * @return P(X < x)
      */
     virtual double F(double x) const = 0;
+
+    void cdf(const QVector<double> &x, QVector<double> &y);
+
     /**
      * @brief M
      * @return Mathematical expectation
@@ -63,101 +72,40 @@ public:
     virtual double Var() const = 0;
 };
 
-/**
- * @brief The IntRand class
- * Distribution over integer values
- * (beware: values cannot be greater than 2^32)
- */
-class RANDLIBSHARED_EXPORT IntRand : public RandomVariable
-{
-public:
-    IntRand() : RandomVariable() {}
-    virtual ~IntRand() {}
-
-    virtual int value() = 0;
-
-    void sample(std::vector<int> &outputData);
-    void sample(QVector<int> &outputData);
-};
-
-/**
- * @brief The DoubleRand class
- */
-class RANDLIBSHARED_EXPORT DoubleRand : public RandomVariable
-{
-public:
-    DoubleRand() : RandomVariable() {}
-    virtual ~DoubleRand() {}
-
-    virtual double value() = 0;
-
-    void sample(std::vector<double> &outputData);
-    void sample(QVector<double> &outputData);
-};
 
 /**
  * @brief The ContinuousRand class
  */
-class RANDLIBSHARED_EXPORT ContinuousRand : public DoubleRand
+class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable<double>
 {
 public:
-    ContinuousRand() : DoubleRand() {}
+    ContinuousRand() : RandomVariable() {}
     virtual ~ContinuousRand() {}
 
     virtual double f(double x) const = 0;
 
-    void pdf(const std::vector<double> &x, std::vector<double> &y) const;
     void pdf(const QVector<double> &x, QVector<double> &y) const;
 
-    void cdf(const std::vector<double> &x, std::vector<double> &y);
-    void cdf(const QVector<double> &x, QVector<double> &y);
-
-    double likelihood(const std::vector<double> &sample) const;
-    double loglikelihood(const std::vector<double> &sample) const;
+    double likelihood(const QVector<double> &sample) const;
+    double loglikelihood(const QVector<double> &sample) const;
 };
 
-
 /**
- * @brief The DiscreteIntRand class
+ *@brief The DiscreteRand class
  */
-class RANDLIBSHARED_EXPORT DiscreteIntRand : public IntRand
+template< typename T >
+class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable<T>
 {
 public:
-    DiscreteIntRand() : IntRand() {}
-    virtual ~DiscreteIntRand() {}
+    DiscreteRand() : RandomVariable<T>() {}
+    virtual ~DiscreteRand() {}
 
-    virtual double P(int x) const = 0;
+    virtual double P(T x) const = 0;
 
-    void pmf(const std::vector<int> &x, std::vector<double> &y) const;
-    void pmf(const QVector<int> &x, QVector<double> &y) const;
+    void pmf(const QVector<T> &x, QVector<double> &y) const;
 
-    void cdf(const std::vector<int> &x, std::vector<double> &y) const;
-    void cdf(const QVector<int> &x, QVector<double> &y) const;
-
-    double likelihood(const std::vector<int> &sample) const;
-    double loglikelihood(const std::vector<int> &sample) const;
-};
-
-
-/**
- * @brief The DiscreteDoubleRand class
- */
-class RANDLIBSHARED_EXPORT DiscreteDoubleRand : public DoubleRand
-{
-public:
-    DiscreteDoubleRand() : DoubleRand() {}
-    virtual ~DiscreteDoubleRand() {}
-
-    virtual double P(double x) const = 0;
-
-    void pmf(const std::vector<double> &x, std::vector<double> &y) const;
-    void pmf(const QVector<double> &x, QVector<double> &y) const;
-
-    void cdf(const std::vector<double> &x, std::vector<double> &y) const;
-    void cdf(const QVector<double> &x, QVector<double> &y) const;
-
-    double likelihood(const std::vector<double> &sample) const;
-    double loglikelihood(const std::vector<double> &sample) const;
+    double likelihood(const QVector<T> &sample) const;
+    double loglikelihood(const QVector<T> &sample) const;
 };
 
 #endif // RANDOMVARIABLE_H

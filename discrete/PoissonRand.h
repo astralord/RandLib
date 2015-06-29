@@ -4,7 +4,7 @@
 #include <RandomVariable.h>
 #include "../continuous/UniformRand.h"
 
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteIntRand
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>
 {
     double l;
     double exp_l; /// exp(-l)
