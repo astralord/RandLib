@@ -1,9 +1,17 @@
 #include "ExponentialRand.h"
 
+unsigned long ExponentialRand::ke[256] = {0};
+double ExponentialRand::we[256] = {0};
+double ExponentialRand::fe[256] = {0};
+bool ExponentialRand::dummy = ExponentialRand::setupTables();
+
 ExponentialRand::ExponentialRand(double rate)
 {
     setRate(rate);
+}
 
+bool ExponentialRand::setupTables()
+{
     /// Set up ziggurat tables
     const double m2 = 4294967296.;
     double de = 7.697117470131487, te = de, ve = 3.949659822581572e-3;
@@ -26,6 +34,7 @@ ExponentialRand::ExponentialRand(double rate)
        fe[i] = std::exp(-de);
        we[i] = de / m2;
     }
+    return true;
 }
 
 void ExponentialRand::setRate(double rate)

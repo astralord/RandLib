@@ -9,11 +9,15 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     double mu, sigma;
     double sigmaSqrt2Inv; /// 1 / (sigma * sqrt(2))
 
-    //TODO: find a way to initialize them only once!!!
+    //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
-    unsigned long kn[128];
-    double wn[128], fn[128];
+    static unsigned long kn[128];
+    static double wn[128], fn[128];
+    static bool dummy;
+    static bool setupTables();
+
     UniformRand U;
+
     /**
      * @brief ziggurat
      * @return standard normal variable: X ~ N(0,1)

@@ -1,11 +1,19 @@
 #include "NormalRand.h"
 #include <QDebug>
 
+unsigned long NormalRand::kn[128] = {0};
+double NormalRand::wn[128] = {0};
+double NormalRand::fn[128] = {0};
+bool NormalRand::dummy = NormalRand::setupTables();
+
 NormalRand::NormalRand(double mean, double var)
 {
     setMean(mean);
     setSigma(std::sqrt(std::max(var, MIN_POSITIVE)));
+}
 
+bool NormalRand::setupTables()
+{
     /// Set up ziggurat tables
     const double m1 = 2147483648.0;
     double dn = 3.442619855899, tn = dn, vn = 9.91256303526217e-3;
@@ -24,13 +32,13 @@ NormalRand::NormalRand(double mean, double var)
     for (size_t i = 126; i >= 1; --i)
     {
         dn = -std::log(vn / dn + std::exp(-.5 * dn * dn));
-        dn += dn;
-        dn = std::sqrt(dn);
+        dn = std::sqrt(dn + dn);
         kn[i + 1] = (dn / tn) * m1;
         tn = dn;
         fn[i] = std::exp(-.5 * dn * dn);
         wn[i] = dn / m1;
     }
+    return true;
 }
 
 void NormalRand::setMean(double mean)
@@ -61,7 +69,6 @@ double NormalRand::F(double x) const
     ++y; /// 1 + erf((x - mu) / (sigma * sqrt(2)))
     return .5 * y; /// (1 + erf((x - mu) / (sigma * sqrt(2)))) / 2
 }
-
 
 double NormalRand::ziggurat()
 {

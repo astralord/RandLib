@@ -8,10 +8,13 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
 {
     double l, beta;
 
-    //TODO: find a way to initialize them only once!!!
+    //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
-    unsigned long ke[256];
-    float we[256], fe[256];
+    static unsigned long ke[256];
+    static double we[256], fe[256];
+    static bool dummy;
+    static bool setupTables();
+
     UniformRand U;
     double ziggurat();
 
