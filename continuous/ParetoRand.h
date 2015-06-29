@@ -1,7 +1,7 @@
 #ifndef PARETORAND_H
 #define PARETORAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand

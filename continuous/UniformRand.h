@@ -1,7 +1,7 @@
 #ifndef UNIFORMRAND_H
 #define UNIFORMRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 
 /**
  * @brief The UniformRand class

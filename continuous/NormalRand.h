@@ -1,7 +1,7 @@
 #ifndef NORMALRAND_H
 #define NORMALRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "UniformRand.h"
 
 class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand

@@ -1,7 +1,7 @@
 #ifndef FISHERSNEDECORRAND_H
 #define FISHERSNEDECORRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "ChiSquaredRand.h"
 
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand

@@ -1,7 +1,7 @@
 #ifndef POISSONRAND_H
 #define POISSONRAND_H
 
-#include <RandomVariable.h>
+#include "DiscreteRand.h"
 #include "../continuous/UniformRand.h"
 
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>

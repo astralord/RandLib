@@ -47,8 +47,16 @@ public:
     RandomVariable();
     virtual ~RandomVariable() {}
 
+    /**
+     * @brief value
+     * @return random variable
+     */
     virtual T value() = 0;
 
+    /**
+     * @brief sample
+     * @param outputData
+     */
     void sample(QVector<T> &outputData);
 
     /**
@@ -58,6 +66,11 @@ public:
      */
     virtual double F(double x) const = 0;
 
+    /**
+     * @brief cdf
+     * @param x input vector
+     * @param y output vector: y = P(X < x)
+     */
     void cdf(const QVector<double> &x, QVector<double> &y);
 
     /**
@@ -70,42 +83,6 @@ public:
      * @return Variance
      */
     virtual double Var() const = 0;
-};
-
-
-/**
- * @brief The ContinuousRand class
- */
-class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable<double>
-{
-public:
-    ContinuousRand() : RandomVariable() {}
-    virtual ~ContinuousRand() {}
-
-    virtual double f(double x) const = 0;
-
-    void pdf(const QVector<double> &x, QVector<double> &y) const;
-
-    double likelihood(const QVector<double> &sample) const;
-    double loglikelihood(const QVector<double> &sample) const;
-};
-
-/**
- *@brief The DiscreteRand class
- */
-template< typename T >
-class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable<T>
-{
-public:
-    DiscreteRand() : RandomVariable<T>() {}
-    virtual ~DiscreteRand() {}
-
-    virtual double P(T x) const = 0;
-
-    void pmf(const QVector<T> &x, QVector<double> &y) const;
-
-    double likelihood(const QVector<T> &sample) const;
-    double loglikelihood(const QVector<T> &sample) const;
 };
 
 #endif // RANDOMVARIABLE_H

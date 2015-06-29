@@ -1,7 +1,7 @@
 #ifndef CHISQUAREDRAND_H
 #define CHISQUAREDRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "GammaRand.h"
 
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand

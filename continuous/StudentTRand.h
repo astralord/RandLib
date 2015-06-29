@@ -1,7 +1,7 @@
 #ifndef STUDENTTRAND_H
 #define STUDENTTRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "ChiSquaredRand.h"
 #include "NormalRand.h"
 

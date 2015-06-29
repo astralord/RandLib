@@ -1,7 +1,7 @@
 #ifndef BETARAND_H
 #define BETARAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "GammaRand.h"
 
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand

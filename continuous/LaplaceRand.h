@@ -1,7 +1,7 @@
 #ifndef LAPLACERAND_H
 #define LAPLACERAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
 class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand

@@ -1,7 +1,7 @@
 #ifndef EXPONENTIALRAND_H
 #define EXPONENTIALRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "UniformRand.h"
 
 class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand

@@ -1,7 +1,7 @@
 #ifndef LEVYRAND_H
 #define LEVYRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "NormalRand.h"
 
 /**

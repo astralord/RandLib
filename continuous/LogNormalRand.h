@@ -1,7 +1,7 @@
 #ifndef LOGNORMALRAND_H
 #define LOGNORMALRAND_H
 
-#include <RandomVariable.h>
+#include "ContinuousRand.h"
 #include "NormalRand.h"
 
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
