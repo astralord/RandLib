@@ -32,10 +32,12 @@ public:
     double M() const override { return beta; }
     double Var() const override { return beta * beta; }
 
-    inline double Skewness() const { return 2.0; }
-    inline double ExcessiveKurtosis() const { return 6.0; }
+    static constexpr double Skewness() { return 2.0; }
+    static constexpr double ExcessiveKurtosis() { return 6.0; }
 
     inline double Entropy() const { return 1 - std::log(l); }
+
+    bool fitToData(const QVector<double> &sample);
 };
 
 #endif // EXPONENTIALRAND_H

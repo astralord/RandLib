@@ -77,3 +77,25 @@ double ExponentialRand::value()
 {
     return beta * ziggurat();
 }
+
+bool ExponentialRand::fitToData(const QVector<double> &sample)
+{
+    if (sample.size() == 0)
+        return false;
+
+    /// Calculate rate
+    double average = 0.0;
+    for (double var : sample) {
+        if (var < 0)
+            return false;
+        average += var;
+    }
+    average /= sample.size();
+    if (average <= 0)
+        return false;
+
+    setRate(1.0 / average);
+    return true;
+
+
+}

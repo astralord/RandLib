@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     /// Tables for ziggurat
     static unsigned long kn[128];
     static double wn[128], fn[128];
-    static bool dummy;
+    static const bool dummy;
     static bool setupTables();
 
     UniformRand U;
@@ -40,35 +40,10 @@ public:
 
     inline double Median() const { return mu; }
     inline double Mode() const { return mu; }
-    inline double Skewness() const { return 0; }
-    inline double ExcessKurtosis() const { return 0; }
+    static constexpr double Skewness() { return 0; }
+    static constexpr double ExcessKurtosis() { return 0; }
 
     bool fitToData(const QVector<double> &sample);
 };
-
-
-/*
-
-double erfinv(double p)
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    double t = M_SQRT2;
-    t *= ((p < 0.5) ? sqrt(-log(p)) : sqrt(-log(1 - p)));
-    double c[] = {2.515517, 0.802853, 0.010328};
-    double d[] = {1.432788, 0.189269, 0.001308};
-    double res = t - ((c[2] * t + c[1]) * t + c[0]) /
-               (((d[2] * t + d[1]) * t + d[0]) * t + 1.0);
-    return ((p < 0.5) ? -res : res);
-}
-
-double erfcinv(double p)
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    return erfinv(1 - p);
-}
-
- * */
 
 #endif // NORMALRAND_H

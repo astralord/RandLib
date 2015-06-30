@@ -4,6 +4,7 @@
 #include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
+// TODO: maybe E/Erlang is faster for generator
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
 {
     double xm, alpha;
@@ -39,6 +40,8 @@ public:
     inline double Mode() const { return xm; }
 
     inline double Entropy() const { return std::log(xm * alphaInv) + alphaInv + 1; }
+
+    bool fitToData(const QVector<double> &sample);
 };
 
 #endif // PARETORAND_H

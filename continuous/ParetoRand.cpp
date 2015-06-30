@@ -42,3 +42,27 @@ double ParetoRand::value()
 {
     return xm * std::exp(E.value());
 }
+
+bool ParetoRand::fitToData(const QVector<double> &sample)
+{
+    if (sample.size() == 0)
+        return false;
+
+    /// Calculate xm
+    double minVar = sample.at(0);
+    for (double var : sample)
+    {
+        minVar = std::min(minVar, var);
+        if (minVar <= 0)
+            return false;
+    }
+
+    /// Calculate alpha
+    double alpha = 0.0;
+    for (double var : sample)
+        alpha += std::log(var / minVar);
+    alpha = sample.size() / alpha;
+
+    setParameters(minVar, alpha);
+    return true;
+}

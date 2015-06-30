@@ -25,8 +25,8 @@ public:
     double Var() const override { return (b - a) * (b - a) / 12; }
 
     inline double Median() const { return .5 * (b + a); }
-    inline double Skewness() const { return 0; }
-    inline double ExcessKurtosis() const { return -1.2; }
+    static constexpr double Skewness() { return 0; }
+    static constexpr double ExcessKurtosis() { return -1.2; }
 
     inline double Entropy() const { return (b == a) ? -INFINITY : std::log(b - a); }
 

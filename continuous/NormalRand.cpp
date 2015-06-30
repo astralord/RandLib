@@ -4,7 +4,7 @@
 unsigned long NormalRand::kn[128] = {0};
 double NormalRand::wn[128] = {0};
 double NormalRand::fn[128] = {0};
-bool NormalRand::dummy = NormalRand::setupTables();
+const bool NormalRand::dummy = NormalRand::setupTables();
 
 NormalRand::NormalRand(double mean, double var)
 {
@@ -107,21 +107,23 @@ double NormalRand::value()
 
 bool NormalRand::fitToData(const QVector<double> &sample)
 {
-    double average = 0.0, deviation = 0.0;
-    foreach (double var, sample) {
+    if (sample.size() == 0)
+        return false;
+
+    /// Calculate mu
+    double average = 0.0;
+    for (double var : sample) {
         average += var;
     }
     average /= sample.size();
-    if (std::isnan(average) || std::isinf(average))
-        return false;
 
-    foreach (double var, sample) {
+    /// Calculate sigma
+    double deviation = 0.0;
+    for (double var : sample) {
         double currDev = (var - average);
         deviation += currDev * currDev;
     }
-    deviation /= (sample.size() - 1);
-    if (std::isnan(deviation) || std::isinf(deviation))
-        return false;
+    deviation /= std::max(sample.size() - 1, 1);
 
     setMean(average);
     setSigma(std::sqrt(deviation));

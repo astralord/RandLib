@@ -6,6 +6,8 @@
 #include "RandMath.h"
 #include "randlib_global.h"
 
+#include <QDebug>
+
 //TODO: Distribution (value, pdf, cdf)
 // Beta (++-)
 // Stable (+--)
@@ -17,7 +19,7 @@
 // Weibull (---)
 // Triangular (---)
 // Logistic (---)
-// Rayleigh (---)
+// Log-logistic (---)
 // ALL: http://www.mathworks.com/help/stats/makedist.html
 
 /**
@@ -31,8 +33,6 @@ class RANDLIBSHARED_EXPORT RandomVariable {
     unsigned long X, Y, Z, W;
     bool C;
 
-    /// Variables for quasi generator
-    unsigned N, CODE, Q;
 protected:
     /**
      * @brief fastKISS

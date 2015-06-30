@@ -24,7 +24,10 @@ void GammaRand::setParameters(double shape, double scale)
     theta = std::max(scale, MIN_POSITIVE);
     thetaInv = 1.0 / theta;
 
-    cdfCoef = 1.0 / std::tgamma(k); // TODO: if k is integer, we can use fastFactorial
+    if (std::fabs(k - std::round(k)) < MIN_POSITIVE)
+        cdfCoef = 1.0 / RandMath::fastFactorial(k);
+    else
+        cdfCoef = 1.0 / std::tgamma(k);
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
     valueCoef = kInv + M_1_E;
 
@@ -71,7 +74,6 @@ double GammaRand::F(double x) const
 
 double GammaRand::valueForIntegerShape()
 {
-    /// Erlang distribution
     double rv = 0;
     for (int i = 0; i < k; ++i)
         rv += E.value();
@@ -80,7 +82,6 @@ double GammaRand::valueForIntegerShape()
 
 double GammaRand::valueForHalfIntegerShape()
 {
-    /// GA algorithm
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
         rv += E.value();
@@ -90,7 +91,6 @@ double GammaRand::valueForHalfIntegerShape()
 
 double GammaRand::valueForSmallShape()
 {
-    /// GS algorithm for small k < 1
     double rv = 0;
     int iter = 0;
     do {
@@ -114,7 +114,6 @@ double GammaRand::valueForSmallShape()
 
 double GammaRand::valueForMediumShape()
 {
-    /// GP algorithm for 1 < k < 3
     double e1, e2;
     do {
         e1 = E.value();
@@ -125,7 +124,6 @@ double GammaRand::valueForMediumShape()
 
 double GammaRand::valueForLargeShape()
 {
-    /// GO algorithm for most common case k > 3
     double rv = 0;
     int iter = 0;
     do {
@@ -157,7 +155,6 @@ double GammaRand::valueForLargeShape()
 
             if (std::log(u) < m * std::log(rv / m) + m - rv + S)
                 return rv;
-
         }
     } while (++iter < 1e9); /// one billion should be enough
     return 0; /// shouldn't end up here

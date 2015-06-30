@@ -164,6 +164,28 @@ long double RandMath::gammaHalf(int k)
     res /= (fastFactorial(n) * (1 << (n + n)));
     return res * M_SQRTPI;
 }
+
+long double RandMath::erfInv(double p)
+{
+    if (p < 0.5)
+        return -erfInv(1 - p);
+    if (p <= 0)
+        return -INFINITY;
+    if (p >= 1)
+        return INFINITY;
+    double t = M_SQRT2 * std::sqrt(-std::log(p));
+    static constexpr double c[] = {2.515517, 0.802853, 0.010328};
+    static constexpr double d[] = {1.432788, 0.189269, 0.001308};
+    long double numen = (c[2] * t + c[1]) * t + c[0];
+    long double denom = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
+    return t - numen / denom;
+}
+
+long double RandMath::erfcinv(double p)
+{
+    return erfInv(1 - p);
+}
+
 /*
 long double RandMath::adaptiveSimpsonsAux(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
                                double a, double b, double epsilon, double S, double fa, double fb, double fc, int bottom)

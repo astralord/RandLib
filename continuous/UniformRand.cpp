@@ -50,15 +50,13 @@ double UniformRand::F(double x) const
 
 bool UniformRand::fitToData(const QVector<double> &sample)
 {
+    if (sample.size() == 0)
+        return false;
     double maxVar = sample.at(0), minVar = maxVar;
-    foreach (double var, sample) {
+    for (double var : sample) {
         maxVar = std::max(var, maxVar);
         minVar = std::min(var, minVar);
     }
-
-    if (std::isnan(minVar) || std::isinf(minVar) ||
-       (std::isnan(maxVar) || std::isinf(maxVar)))
-        return false;
 
     setBoundaries(minVar, maxVar);
     return true;

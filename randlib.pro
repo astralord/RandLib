@@ -27,7 +27,8 @@ SOURCES += \
     RandMath.cpp \
     continuous/ErlangRand.cpp \
     continuous/ContinuousRand.cpp \
-    discrete/DiscreteRand.cpp
+    discrete/DiscreteRand.cpp \
+    continuous/RayleighRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -51,7 +52,8 @@ HEADERS +=\
     RandomVariable.h \
     continuous/ErlangRand.h \
     continuous/ContinuousRand.h \
-    discrete/DiscreteRand.h
+    discrete/DiscreteRand.h \
+    continuous/RayleighRand.h
 
 unix {
     target.path = /usr/lib

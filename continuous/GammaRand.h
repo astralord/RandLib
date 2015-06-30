@@ -41,11 +41,11 @@ public:
 
 private:
     std::function<double ()> valuePtr;
-    double valueForIntegerShape();
-    double valueForHalfIntegerShape();
-    double valueForSmallShape();
-    double valueForMediumShape();
-    double valueForLargeShape();
+    double valueForIntegerShape();     /// Erlang distribution
+    double valueForHalfIntegerShape(); /// GA algorithm for k = [n] + 0.5
+    double valueForSmallShape();       /// GS algorithm for small k < 1
+    double valueForMediumShape();      /// GP algorithm for 1 < k < 3
+    double valueForLargeShape();       /// GO algorithm for the most common case k > 3
 };
 
 #endif // GAMMARAND_H

@@ -12,10 +12,6 @@ RandomVariable<T>::RandomVariable()
     X = Y = Z = W = startPoint;
     C = 0;
     startPoint = fastKISS();
-
-    N = 0;
-    CODE = 1;
-    Q = 0;
 }
 
 template< typename T>
@@ -32,25 +28,6 @@ unsigned long RandomVariable<T>::fastKISS()
     X += 1411392427;
 
     return X + Y + W;
-}
-
-template< typename T>
-unsigned long RandomVariable<T>::quasiGen()
-{
-    if (N > 0)
-    {
-        unsigned value = N;
-        CODE = 1;
-        while (value & 1) {
-            value >>= 1;
-            ++CODE;
-        }
-
-        Q ^= 1 << (32 - CODE);
-    }
-
-    ++N;
-    return Q;
 }
 
 template< typename T>
