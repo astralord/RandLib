@@ -14,7 +14,6 @@ NormalRand::NormalRand(double mean, double var)
 
 bool NormalRand::setupTables()
 {
-    /// Set up ziggurat tables
     const double m1 = 2147483648.0;
     double dn = 3.442619855899, tn = dn, vn = 9.91256303526217e-3;
 
@@ -74,7 +73,7 @@ double NormalRand::ziggurat()
 {
     int iter = 0;
     do {
-        long hz = fastKISS();
+        long hz = B.getRand();
         unsigned long iz = hz & 127;
         double x = hz * wn[iz];
         if (std::fabs(hz) < kn[iz])

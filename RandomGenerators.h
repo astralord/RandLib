@@ -3,6 +3,10 @@
 
 #include <RandomVariable.h>
 
+/// DISCRETE
+#include <discrete/UniformDiscreteRand.h>
+#include <discrete/PoissonRand.h>
+
 /// CONTINUOUS
 /// Most used
 #include <continuous/UniformRand.h>
@@ -24,7 +28,5 @@
 /// Advanced
 #include <continuous/StableRand.h>
 
-/// DISCRETE
-#include <discrete/PoissonRand.h>
 
 #endif // RANDOMGENERATORS_H

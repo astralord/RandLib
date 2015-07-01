@@ -26,22 +26,8 @@
  * @brief The RandomVariable class
  */
 template< typename T >
-class RANDLIBSHARED_EXPORT RandomVariable {
-
-    /// Variables for pseudo generator
-    static unsigned long startPoint;
-    unsigned long X, Y, Z, W;
-    bool C;
-
-protected:
-    /**
-     * @brief fastKISS
-     * Random variable generator Keep It Simply Stupid
-     * @return random variable uniformly distributed from 0 to 2^32-1
-     */
-    unsigned long fastKISS();
-
-    unsigned long quasiGen();
+class RANDLIBSHARED_EXPORT RandomVariable
+{
 
 public:
     RandomVariable();

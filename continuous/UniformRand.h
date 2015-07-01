@@ -2,20 +2,26 @@
 #define UNIFORMRAND_H
 
 #include "ContinuousRand.h"
+#include "../BasicRandGenerator.h"
 
 /**
  * @brief The UniformRand class
+ * Continuous uniform distribution: X ~ U(a, b)
  */
 class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
 {
     double a, b;
     double c; /// c = 1 / (b - a)
-    // TODO: make macro from it
+    BasicRandGenerator B;
+
     void swapBoundaries();
 
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
-    void setBoundaries(double minValue, double maxValue);
+
+    void setBoundaries(double minValue, double maxValue);    
+    inline double getA() { return a; }
+    inline double getB() { return b; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;

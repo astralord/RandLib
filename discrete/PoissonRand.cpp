@@ -21,7 +21,7 @@ double PoissonRand::F(double x) const
 {
     if (x <= 0)
         return 0;
-    int k = qFloor(x);
+    int k = std::floor(x);
     return RandMath::upperIncGamma(k + 1, l) / RandMath::fastFactorial(k);
 }
 

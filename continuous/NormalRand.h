@@ -3,6 +3,7 @@
 
 #include "ContinuousRand.h"
 #include "UniformRand.h"
+#include "../BasicRandGenerator.h"
 
 class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 {
@@ -14,9 +15,11 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     static unsigned long kn[128];
     static double wn[128], fn[128];
     static const bool dummy;
+    /// Set up ziggurat tables
     static bool setupTables();
 
     UniformRand U;
+    BasicRandGenerator B;
 
     /**
      * @brief ziggurat

@@ -57,7 +57,7 @@ double ExponentialRand::ziggurat()
 {
     int iter = 0;
     do {
-        unsigned long jz = fastKISS();
+        unsigned long jz = B.getRand();
         unsigned long iz = jz & 255;
         double x = jz * we[iz];
 
