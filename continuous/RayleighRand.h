@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
+/**
+ * @brief The RayleighRand class
+ */
 class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
 {
     double sigma;

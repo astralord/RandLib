@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
+/**
+ * @brief The LaplaceRand class
+ */
 class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
 {
     double mu, b;

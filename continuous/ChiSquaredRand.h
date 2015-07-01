@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "GammaRand.h"
 
+/**
+ * @brief The ChiSquaredRand class
+ */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 {
     int k;

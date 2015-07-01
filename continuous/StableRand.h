@@ -8,6 +8,9 @@
 #include "CauchyRand.h"
 #include "LevyRand.h"
 
+/**
+ * @brief The StableRand class
+ */
 class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
 {
     double alpha, beta, mu, sigma;

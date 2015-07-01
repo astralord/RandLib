@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "GammaRand.h"
 
+/**
+ * @brief The BetaRand class
+ */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 {
     double alpha, beta;

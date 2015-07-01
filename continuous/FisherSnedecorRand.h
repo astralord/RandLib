@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "ChiSquaredRand.h"
 
+/**
+ * @brief The FisherSnedecorRand class
+ */
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
 {
     int d1, d2;

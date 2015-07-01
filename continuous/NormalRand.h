@@ -5,6 +5,9 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
+/**
+ * @brief The NormalRand class
+ */
 class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 {
     double mu, sigma;

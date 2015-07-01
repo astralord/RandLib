@@ -5,7 +5,9 @@
 #include "ChiSquaredRand.h"
 #include "NormalRand.h"
 
-//TODO: degree should be int or double??
+/**
+ * @brief The StudentTRand class
+ */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
 {
     double v;

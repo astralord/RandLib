@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "UniformRand.h"
 
+/**
+ * @brief The CauchyRand class
+ */
 class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
 {
     double x0, gamma;

@@ -4,6 +4,9 @@
 #include "DiscreteRand.h"
 #include "../continuous/UniformRand.h"
 
+/**
+ * @brief The PoissonRand class
+ */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>
 {
     double l;

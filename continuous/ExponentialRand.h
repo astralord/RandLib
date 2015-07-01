@@ -5,6 +5,9 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
+/**
+ * @brief The ExponentialRand class
+ */
 class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
 {
     double l, beta;

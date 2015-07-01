@@ -4,6 +4,9 @@
 #include "ContinuousRand.h"
 #include "NormalRand.h"
 
+/**
+ * @brief The LogNormalRand class
+ */
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
 {
     double expMu, expVar;

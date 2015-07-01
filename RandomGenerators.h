@@ -2,18 +2,19 @@
 #define RANDOMGENERATORS_H
 
 #include <RandomVariable.h>
+#include <BasicRandGenerator.h>
 
 /// DISCRETE
 #include <discrete/UniformDiscreteRand.h>
 #include <discrete/PoissonRand.h>
 
 /// CONTINUOUS
-/// Most used
+
 #include <continuous/UniformRand.h>
 #include <continuous/NormalRand.h>
 #include <continuous/ExponentialRand.h>
 #include <continuous/GammaRand.h>
-/// Fairly common
+
 #include <continuous/CauchyRand.h>
 #include <continuous/LevyRand.h>
 #include <continuous/LaplaceRand.h>
@@ -25,7 +26,7 @@
 #include <continuous/FisherSnedecorRand.h>
 #include <continuous/ParetoRand.h>
 #include <continuous/RayleighRand.h>
-/// Advanced
+
 #include <continuous/StableRand.h>
 
 
