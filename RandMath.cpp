@@ -102,9 +102,11 @@ long double RandMath::fastFactorial(int n)
 long double RandMath::doubleFactorial(int n)
 {
     long double n_fact = fastFactorial(n);
-    if (n % 2 == 0)
-        return (1 << n) * n_fact;
-    return fastFactorial(2 * n + 1) / (2 * n * n_fact);
+    if (n & 1) {
+        n <<= 1;
+        return fastFactorial(n + 1) / (n * n_fact);
+    }
+    return (1 << n) * n_fact;
 }
 
 long double RandMath::binomialCoef(int n, int k)
@@ -156,13 +158,15 @@ long double RandMath::gammaHalf(int k)
     if (k < 0)
         return 0;
 
-    if (k % 2 == 0)
-        return fastFactorial((k >> 1) - 1);
+    if (k & 1)
+    {
+        int n = (k - 1) >> 1;
+        long double res = fastFactorial(k - 1);
+        res /= (fastFactorial(n) * (1 << (n + n)));
+        return res * M_SQRTPI;
+    }
 
-    int n = (k - 1) >> 1;
-    long double res = fastFactorial(k - 1);
-    res /= (fastFactorial(n) * (1 << (n + n)));
-    return res * M_SQRTPI;
+    return fastFactorial((k >> 1) - 1);
 }
 
 long double RandMath::erfInv(double p)

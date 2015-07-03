@@ -26,6 +26,7 @@
 #include <continuous/FisherSnedecorRand.h>
 #include <continuous/ParetoRand.h>
 #include <continuous/RayleighRand.h>
+#include <continuous/TriangularRand.h>
 
 #include <continuous/StableRand.h>
 

@@ -8,20 +8,6 @@
 
 #include <QDebug>
 
-//TODO: Distribution (value, pdf, cdf)
-// Beta (++-)
-// Stable (+--)
-// Fisher Snedecor (++-)
-// StudentTRand (++-)
-
-// Binomial (---)
-// Multinomial (---)
-// Weibull (---)
-// Triangular (---)
-// Logistic (---)
-// Log-logistic (---)
-// ALL: http://www.mathworks.com/help/stats/makedist.html
-
 /**
  * @brief The RandomVariable class
  */

@@ -30,7 +30,8 @@ SOURCES += \
     discrete/DiscreteRand.cpp \
     continuous/RayleighRand.cpp \
     discrete/UniformDiscreteRand.cpp \
-    BasicRandGenerator.cpp
+    BasicRandGenerator.cpp \
+    continuous/TriangularRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -57,7 +58,8 @@ HEADERS +=\
     discrete/DiscreteRand.h \
     continuous/RayleighRand.h \
     discrete/UniformDiscreteRand.h \
-    BasicRandGenerator.h
+    BasicRandGenerator.h \
+    continuous/TriangularRand.h
 
 unix {
     target.path = /usr/lib
