@@ -5,10 +5,6 @@
 #include <cmath>
 #include "randlib_global.h"
 #include <functional>
-#include <RandomVariable.h>
-
-template< typename T>
-class RandomVariable;
 
 #ifndef INFINITY
 #include <limits>

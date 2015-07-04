@@ -8,60 +8,60 @@ CONFIG += c++11
 DEFINES += RANDLIB_LIBRARY
 
 SOURCES += \
-    RandomVariable.cpp \
-    continuous/BetaRand.cpp \
-    continuous/CauchyRand.cpp \
-    continuous/ChiSquaredRand.cpp \
-    continuous/ExponentialRand.cpp \
-    continuous/FisherSnedecorRand.cpp \
-    continuous/GammaRand.cpp \
-    continuous/LaplaceRand.cpp \
-    continuous/LevyRand.cpp \
-    continuous/LogNormalRand.cpp \
-    continuous/NormalRand.cpp \
-    continuous/StableRand.cpp \
-    continuous/StudentTRand.cpp \
-    continuous/UniformRand.cpp \
-    continuous/ParetoRand.cpp \
-    discrete/PoissonRand.cpp \
     RandMath.cpp \
-    continuous/ErlangRand.cpp \
-    continuous/ContinuousRand.cpp \
-    discrete/DiscreteRand.cpp \
-    continuous/RayleighRand.cpp \
-    discrete/UniformDiscreteRand.cpp \
-    BasicRandGenerator.cpp \
-    continuous/TriangularRand.cpp \
-    continuous/LogisticRand.cpp
+    variables/RandomVariable.cpp \
+    variables/BasicRandGenerator.cpp \
+    variables/continuous/BetaRand.cpp \
+    variables/continuous/CauchyRand.cpp \
+    variables/continuous/ChiSquaredRand.cpp \
+    variables/continuous/ExponentialRand.cpp \
+    variables/continuous/FisherSnedecorRand.cpp \
+    variables/continuous/GammaRand.cpp \
+    variables/continuous/LaplaceRand.cpp \
+    variables/continuous/LevyRand.cpp \
+    variables/continuous/LogNormalRand.cpp \
+    variables/continuous/NormalRand.cpp \
+    variables/continuous/StableRand.cpp \
+    variables/continuous/StudentTRand.cpp \
+    variables/continuous/UniformRand.cpp \
+    variables/continuous/ParetoRand.cpp \
+    variables/continuous/ErlangRand.cpp \
+    variables/continuous/ContinuousRand.cpp \
+    variables/continuous/RayleighRand.cpp \
+    variables/continuous/TriangularRand.cpp \
+    variables/continuous/LogisticRand.cpp \
+    variables/discrete/DiscreteRand.cpp \
+    variables/discrete/UniformDiscreteRand.cpp \
+    variables/discrete/PoissonRand.cpp
 
 HEADERS +=\
     randlib_global.h \
-    RandomGenerators.h \
-    continuous/BetaRand.h \
-    continuous/CauchyRand.h \
-    continuous/ChiSquaredRand.h \
-    continuous/ExponentialRand.h \
-    continuous/FisherSnedecorRand.h \
-    continuous/GammaRand.h \
-    continuous/LaplaceRand.h \
-    continuous/LevyRand.h \
-    continuous/LogNormalRand.h \
-    continuous/NormalRand.h \
-    continuous/StableRand.h \
-    continuous/StudentTRand.h \
-    continuous/UniformRand.h \
-    continuous/ParetoRand.h \
-    discrete/PoissonRand.h \
     RandMath.h \
-    RandomVariable.h \
-    continuous/ErlangRand.h \
-    continuous/ContinuousRand.h \
-    discrete/DiscreteRand.h \
-    continuous/RayleighRand.h \
-    discrete/UniformDiscreteRand.h \
-    BasicRandGenerator.h \
-    continuous/TriangularRand.h \
-    continuous/LogisticRand.h
+    variables/RandomGenerators.h \
+    variables/RandomVariable.h \
+    variables/BasicRandGenerator.h \
+    variables/continuous/BetaRand.h \
+    variables/continuous/CauchyRand.h \
+    variables/continuous/ChiSquaredRand.h \
+    variables/continuous/ExponentialRand.h \
+    variables/continuous/FisherSnedecorRand.h \
+    variables/continuous/GammaRand.h \
+    variables/continuous/LaplaceRand.h \
+    variables/continuous/LevyRand.h \
+    variables/continuous/LogNormalRand.h \
+    variables/continuous/NormalRand.h \
+    variables/continuous/StableRand.h \
+    variables/continuous/StudentTRand.h \
+    variables/continuous/UniformRand.h \
+    variables/continuous/ParetoRand.h \
+    variables/continuous/ErlangRand.h \
+    variables/continuous/ContinuousRand.h \
+    variables/continuous/RayleighRand.h \
+    variables/continuous/TriangularRand.h \
+    variables/continuous/LogisticRand.h \
+    variables/discrete/DiscreteRand.h \
+    variables/discrete/UniformDiscreteRand.h \
+    variables/discrete/PoissonRand.h
 
 unix {
     target.path = /usr/lib

@@ -1,4 +1,4 @@
-#include <RandomVariable.h>
+#include "RandomVariable.h"
 
 template< typename T>
 RandomVariable<T>::RandomVariable()
