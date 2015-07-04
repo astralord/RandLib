@@ -8,9 +8,9 @@
 
 #include <functional>
 
-
-// TODO: add function pointers for k
-
+/**
+ * @brief The GammaRand class
+ */
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
 {
     double k, theta;

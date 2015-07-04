@@ -27,6 +27,7 @@
 #include <continuous/ParetoRand.h>
 #include <continuous/RayleighRand.h>
 #include <continuous/TriangularRand.h>
+#include <continuous/LogisticRand.h>
 
 #include <continuous/StableRand.h>
 
