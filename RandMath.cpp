@@ -190,14 +190,14 @@ long double RandMath::erfcinv(double p)
     return erfInv(1 - p);
 }
 
-/*
-long double RandMath::adaptiveSimpsonsAux(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
-                               double a, double b, double epsilon, double S, double fa, double fb, double fc, int bottom)
+
+long double RandMath::adaptiveSimpsonsAux(std::function<double (double)> fun, double a, double b,
+                                          double epsilon, double S, double fa, double fb, double fc, int bottom)
 {
     // TODO: rewrite recursion into loop
     double c = .5 * (a + b), h = (b - a) / 12.0;
     double d = .5 * (a + c), e = .5 * (c + b);
-    double fd = fun(rv, d), fe = fun(rv, e);
+    double fd = fun(d), fe = fun(e);
     double Sleft = h * (fa + 4 * fd + fc);
     double Sright = h * (fc + 4 * fe + fb);
     double S2 = Sleft + Sright;
@@ -206,16 +206,17 @@ long double RandMath::adaptiveSimpsonsAux(std::function<double (const RandomVari
     epsilon *= .5;
     --bottom;
 
-    return adaptiveSimpsonsAux(fun, rv, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
-    adaptiveSimpsonsAux(fun, rv, c, b, epsilon, Sright, fc, fb, fe, bottom);
+    return adaptiveSimpsonsAux(fun, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
+    adaptiveSimpsonsAux(fun, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
-long double RandMath::integral(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
+
+long double RandMath::integral(std::function<double (double)> fun,
                                double a, double b, double epsilon, int maxRecursionDepth)
 {
     double c = .5 * (a + b), h = (b - a) / 6.0;
-    double fa = fun(rv, a), fb = fun(rv, b), fc = fun(rv, c);
+    double fa = fun(a), fb = fun(b), fc = fun(c);
     double S = h * (fa + 4 * fc + fb);
-    return adaptiveSimpsonsAux(fun, rv, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
+    return adaptiveSimpsonsAux(fun, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
-*/
+

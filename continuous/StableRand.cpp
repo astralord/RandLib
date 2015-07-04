@@ -38,6 +38,8 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
 
     if (alpha == 2) /// X ~ Normal(mu, 2sigma^2)
     {
+        N.setMean(mu);
+        N.setSigma(sigma * M_SQRT2);
         valuePtr = std::bind(&StableRand::valueNormal, this);
         pdfPtr = std::bind(&StableRand::pdfNormal, this, std::placeholders::_1);
         cdfPtr = std::bind(&StableRand::cdfNormal, this, std::placeholders::_1);
@@ -46,6 +48,8 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     {
         if (beta == 0) /// X ~ Cauchy(mu, sigma)
         {
+            C.setLocation(mu);
+            C.setScale(sigma);
             valuePtr = std::bind(&StableRand::valueCauchy, this);
             pdfPtr = std::bind(&StableRand::pdfCauchy, this, std::placeholders::_1);
             cdfPtr = std::bind(&StableRand::cdfCauchy, this, std::placeholders::_1);
@@ -53,38 +57,38 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
         else /// just alpha == 1
         {
             logSigma = std::log(sigma);
-            theta0 = 0;
-            A = 1;
+            pdfCoef = 0.5 / beta;
 
             valuePtr = std::bind(&StableRand::valueForAlphaEqualOne, this);
             pdfPtr = std::bind(&StableRand::pdfForAlphaEqualOne, this, std::placeholders::_1);
             cdfPtr = std::bind(&StableRand::cdfForAlphaEqualOne, this, std::placeholders::_1);
         }
     }
-    else if (alpha == .5)
+    else if (alpha == .5 && beta == 1) /// X ~ Levy(mu, sigma)
     {
-        if (beta == 1) /// X ~ Levy(mu, sigma)
-        {
-            valuePtr = std::bind(&StableRand::valueLevy, this);
-            pdfPtr = std::bind(&StableRand::pdfLevy, this, std::placeholders::_1);
-            cdfPtr = std::bind(&StableRand::cdfLevy, this, std::placeholders::_1);
-        }
-        else if (beta == -1) /// -X ~ Levy(mu, sigma)
-        {
-            valuePtr = std::bind(&StableRand::valueLevyNegative, this);
-            pdfPtr = std::bind(&StableRand::pdfLevyNegative, this, std::placeholders::_1);
-            cdfPtr = std::bind(&StableRand::cdfLevyNegative, this, std::placeholders::_1);
-        }
+        L.setLocation(mu);
+        L.setScale(sigma);
+        valuePtr = std::bind(&StableRand::valueLevy, this);
+        pdfPtr = std::bind(&StableRand::pdfLevy, this, std::placeholders::_1);
+        cdfPtr = std::bind(&StableRand::cdfLevy, this, std::placeholders::_1);
     }
-    else if (alpha != 1) /// Common case
+    else if (alpha == .5 && beta == -1) /// -X ~ Levy(mu, sigma)
+    {
+        L.setLocation(mu);
+        L.setScale(sigma);
+        valuePtr = std::bind(&StableRand::valueLevyNegative, this);
+        pdfPtr = std::bind(&StableRand::pdfLevyNegative, this, std::placeholders::_1);
+        cdfPtr = std::bind(&StableRand::cdfLevyNegative, this, std::placeholders::_1);
+    }
+    else /// Common case: alpha != 1
     {
         B = beta * std::tan(M_PI_2 * alpha);
         zeta = -B;
         S = std::pow(1 + B * B, .5 * alphaInv);
         B = std::atan(B);
         pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
-        theta0 = alphaInv * B;
-        A = std::pow(qFastCos(B), alpham1Inv);
+        xi = alphaInv * B;
+        integrandCoef = std::pow(qFastCos(B), alpham1Inv);
 
         valuePtr = std::bind(&StableRand::valueForCommonAlpha, this);
         pdfPtr = std::bind(&StableRand::pdfForCommonAlpha, this, std::placeholders::_1);
@@ -102,8 +106,7 @@ double StableRand::value()
         ++iter;
     } while ((std::isnan(rv) || std::isinf(rv)) &&
              iter < 10); /// if we got nan 10 times - we have a problem, get out
-    /// and return shifted-scaled
-    return mu + sigma * rv;
+    return rv;
 }
 
 double StableRand::valueForCommonAlpha()
@@ -116,7 +119,7 @@ double StableRand::valueForCommonAlpha()
     rv *= W_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
     rv *= std::pow(W_adj * qFastCos(V), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
                                                    /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
-    return rv;
+    return mu + sigma * rv;
 }
 
 double StableRand::valueForAlphaEqualOne()
@@ -124,11 +127,13 @@ double StableRand::valueForAlphaEqualOne()
     double V = U.value();
     double W = E.value();
     double pi_2BetaV = M_PI_2 + beta * V;
-    double rv = pi_2BetaV * std::tan(V);
-    rv -= std::log(W * qFastCos(V) / pi_2BetaV);
-    rv += logSigma;
-    rv *= M_2_PI * beta;
-    return rv;
+
+    double rv = logSigma;
+    rv -= std::log(M_PI_2 * W * qFastCos(V) / pi_2BetaV);
+    rv *= beta;
+    rv += pi_2BetaV * std::tan(V);
+    rv *= M_2_PI;
+    return mu + sigma * rv;
 }
 
 double StableRand::f(double x) const
@@ -138,99 +143,74 @@ double StableRand::f(double x) const
 
 double StableRand::pdfForCommonAlpha(double x)
 {
-    if (std::fabs(x - mu) < MIN_POSITIVE)
+    x = (x - mu) / sigma; /// Standardize
+
+    if (std::fabs(x) < MIN_POSITIVE)
     {
         double numen = std::tgamma(1 + alphaInv);
-        numen *= qFastCos(theta0);
-        double denom = M_PI * std::pow(1 + theta0 * theta0, .5 * alphaInv);
-        return numen / denom;
+        numen *= qFastCos(xi);
+        double denom = std::pow(1 + xi * xi, .5 * alphaInv);
+        return M_1_PI * numen / denom;
     }
 
-    x = (x - mu) / sigma + zeta;
-    double x_adj = std::pow(x - zeta, alpha_alpham1);
-
-    if (x > zeta)
+    double xiAdj = xi; /// +- xi
+    if (x > 0)
     {
         if (alpha < 1 && beta == -1)
             return 0;
-
-        // NOT QUICK, BUT RIGHT
-        /*g = @(theta) xshift(:) .* V(theta) - 1;
-        R = repmat([-theta0, pi/2 ],numel(xshift),1);
-        if abs(beta) < 1
-            theta2 = bisectionSolver(g,R,alpha);
-        else
-            theta2 = bisectionSolver(g,R,alpha,beta,xshift);
-        end
-        theta2 = reshape(theta2,size(xshift));
-        % change variables so the two integrals go from
-        % 0 to 1/2 and 1/2 to 1.
-        theta2shift1 = 2*(theta2 + theta0);
-        theta2shift2 = 2*(pi/2 - theta2);
-        g1 = @(theta)  xshift .* ...
-            V(theta2shift1 * theta - theta0);
-        g2 = @(theta)  xshift .* ...
-            V(theta2shift2 * (theta - .5) + theta2);
-        zexpz = @(z) max(0,z .* exp(-z)); % use max incase of NaN
-
-        p(x > zeta) = c2 .* ...
-            (theta2shift1 .* quadv(@(theta) zexpz( g1(theta) ),...
-                                    0 , .5, tol) ...
-           + theta2shift2 .* quadv(@(theta) zexpz( g2(theta) ),...
-                                   .5 , 1, tol) );  */
-
-        // QUICK
-        double y = integralPDF(-theta0, MIN_POSITIVE, 10, x_adj);
-        return pdfCoef / (x - zeta) * y;
     }
     else
     {
         if (alpha < 1 && beta == 1)
             return 0;
-        double y = integralPDF(theta0, MIN_POSITIVE, 10, -x_adj);
-        return -pdfCoef / (x - zeta) * y;
+        x = -x;
+        xiAdj = -xi;
     }
+
+    double xAdj = std::pow(x, alpha_alpham1);
+    integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+    return pdfCoef * RandMath::integral(integrandPtr, -xiAdj, M_PI_2) / x;
 }
 
-double StableRand::integrand(double gamma, double gamma0, double coef) const
+double StableRand::pdfForAlphaEqualOne(double x)
 {
-    double cosGammaInv = 1.0 / std::max(qFastCos(gamma), MIN_POSITIVE);
-    double gammaAdj = alpha * (gamma - gamma0);
-    double y = std::max(cosGammaInv * qFastSin(gammaAdj), MIN_POSITIVE);
-    y = std::pow(y, -alpha_alpham1);
-    y *= qFastCos(gammaAdj - gamma);
-    double u = coef * A * y * cosGammaInv;
+    x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
+
+    double xAdj = std::exp(-M_PI * x * pdfCoef);
+    integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
+    return std::fabs(pdfCoef) * RandMath::integral(integrandPtr, -M_PI_2, M_PI_2) / sigma;
+}
+
+double StableRand::integrandForAlphaEqualOne(double theta, double x_adj) const
+{
+    double cosTheta = qFastCos(theta);
+    /// if theta ~ +-pi / 2
+    if (std::fabs(cosTheta) < MIN_POSITIVE)
+        return 0;
+    double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
+    double u = M_2_PI * thetaAdj;
+    u *= std::exp(thetaAdj * qFastSin(theta) / beta);
+    u *= x_adj;
     return u * std::exp(-u);
 }
 
-double StableRand::adaptiveSimpsonsAux(double coef, double gamma0, double a, double b, double epsilon, double S,
-                                       double fa, double fb, double fc, int bottom) const
+double StableRand::integrandForCommonAlpha(double theta, double x_adj, double xi_adj) const
 {
-    // TODO: rewrite recursion into loop
-    double c = .5 * (a + b), h = (b - a) / 12.0;
-    double d = .5 * (a + c), e = .5 * (c + b);
-    double fd = integrand(d, gamma0, coef), fe = integrand(e, gamma0, coef);
-    double Sleft = h * (fa + 4 * fd + fc);
-    double Sright = h * (fc + 4 * fe + fb);
-
-    double S2 = Sleft + Sright;
-    double dev = (S2 - S) / 15.0;
-    if (bottom <= 0 || std::fabs(dev) <= epsilon)
-        return S2 + dev;
-
-    epsilon *= .5;
-    --bottom;
-
-    return adaptiveSimpsonsAux(coef, gamma0, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
-           adaptiveSimpsonsAux(coef, gamma0, c, b, epsilon, Sright, fc, fb, fe, bottom);
-}
-
-double StableRand::integralPDF(double gamma0, double epsilon, int maxRecursionDepth, double coef) const
-{
-    double c = .5 * (gamma0 + M_PI_2), h = (M_PI_2 - gamma0) / 6.0;
-    double fa = integrand(gamma0, gamma0, coef), fb = integrand(M_PI_2, gamma0, coef), fc = integrand(c, gamma0, coef);
-    double S = h * (fa + 4 * fc + fb);
-    return adaptiveSimpsonsAux(coef, gamma0, gamma0, M_PI_2, epsilon, S, fa, fb, fc, maxRecursionDepth);
+    double thetaAdj = alpha * (theta + xi_adj);
+    double sinThetaAdj = qFastSin(thetaAdj);
+    /// if theta ~ 0
+    if (std::fabs(sinThetaAdj) < MIN_POSITIVE)
+        return 0;
+    double cosTheta = qFastCos(theta);
+    double y = cosTheta / sinThetaAdj;
+    /// if theta ~ pi / 2
+    if (std::fabs(y) < MIN_POSITIVE)
+        return 0;
+    y = std::pow(y, alpha_alpham1);
+    y *= qFastCos(thetaAdj - theta);
+    y /= cosTheta;
+    double u = integrandCoef * x_adj * y;
+    return u * std::exp(-u);
 }
 
 double StableRand::F(double x) const

@@ -26,7 +26,7 @@ class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
     double logSigma; /// coefficients for alpha == 1
     double alpham1Inv, alpha_alpham1; /// 1 / (alpha - 1) and alpha / (alpha - 1)
     double pdfCoef;
-    double zeta, theta0, A;
+    double zeta, xi, integrandCoef;
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
@@ -46,6 +46,7 @@ public:
     double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
 
 private:
+    /// value
     std::function<double ()> valuePtr;
     double valueForCommonAlpha();
     double valueForAlphaEqualOne();
@@ -54,18 +55,22 @@ private:
     double valueLevy() { return L.value(); }
     double valueLevyNegative() { return -L.value(); }
 
+    /// pdf
     std::function<double (double)> pdfPtr;
+    std::function<double (double)> integrandPtr; /// integrand for calculation of pdf
+
     double pdfForCommonAlpha(double x);
-    double pdfForAlphaEqualOne(double x) { return x; }
+    double integrandForCommonAlpha(double theta, double x_adj, double xi_adj) const;
+
+    double pdfForAlphaEqualOne(double x);
+    double integrandForAlphaEqualOne(double theta, double x_adj) const;
+
     double pdfNormal(double x) { return N.f(x); }
     double pdfCauchy(double x) { return C.f(x); }
     double pdfLevy(double x) { return L.f(x); }
     double pdfLevyNegative(double x) { return L.f(-x); }
 
-    double integrand(double gamma, double gamma0, double coef) const;
-    double integralPDF(double gamma0, double epsilon, int maxRecursionDepth, double coef) const;
-    double adaptiveSimpsonsAux(double coef, double gamma0, double a, double b, double epsilon, double S, double fa, double fb, double fc, int bottom) const;
-
+    /// cdf
     std::function<double (double)> cdfPtr;
     double cdfForCommonAlpha(double x) { return x; }
     double cdfForAlphaEqualOne(double x) { return x; }
@@ -73,7 +78,6 @@ private:
     double cdfCauchy(double x) { return C.F(x); }
     double cdfLevy(double x) { return L.F(x); }
     double cdfLevyNegative(double x) { return 1.0 - L.F(-x); }
-
 };
 
 #endif // STABLERAND_H

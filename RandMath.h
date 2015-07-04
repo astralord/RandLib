@@ -129,12 +129,12 @@ public:
      * @param fun
      * @return
      */
-    /*static long double integral(std::function<double(const RandomVariable&, double)> fun, const RandomVariable &rv,
-                                double a, double b, double epsilon = MIN_POSITIVE, int maxRecursionDepth = 3);
+    static long double integral(std::function<double (double)> fun, double a, double b,
+                                double epsilon = MIN_POSITIVE, int maxRecursionDepth = 10);
 private:
-    static long double adaptiveSimpsonsAux(std::function<double (const RandomVariable &, double)> fun, const RandomVariable &rv,
-                                           double a, double b, double epsilon, double S, double fa, double fb, double fc, int bottom);
-*/
+
+    static long double adaptiveSimpsonsAux(std::function<double (double)> fun, double a, double b,
+                                           double epsilon, double S, double fa, double fb, double fc, int bottom);
 };
 
 #endif // RANDMATH_H
