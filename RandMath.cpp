@@ -190,14 +190,22 @@ long double RandMath::erfcinv(double p)
     return erfInv(1 - p);
 }
 
+long double RandMath::integral(const std::function<double (double)> funPtr,
+                               double a, double b, double epsilon, int maxRecursionDepth)
+{
+    double c = .5 * (a + b), h = (b - a) / 6.0;
+    double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);
+    double S = h * (fa + 4 * fc + fb);
+    return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
+}
 
-long double RandMath::adaptiveSimpsonsAux(std::function<double (double)> fun, double a, double b,
+long double RandMath::adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
                                           double epsilon, double S, double fa, double fb, double fc, int bottom)
 {
     // TODO: rewrite recursion into loop
     double c = .5 * (a + b), h = (b - a) / 12.0;
     double d = .5 * (a + c), e = .5 * (c + b);
-    double fd = fun(d), fe = fun(e);
+    double fd = funPtr(d), fe = funPtr(e);
     double Sleft = h * (fa + 4 * fd + fc);
     double Sright = h * (fc + 4 * fe + fb);
     double S2 = Sleft + Sright;
@@ -206,17 +214,112 @@ long double RandMath::adaptiveSimpsonsAux(std::function<double (double)> fun, do
     epsilon *= .5;
     --bottom;
 
-    return adaptiveSimpsonsAux(fun, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
-    adaptiveSimpsonsAux(fun, c, b, epsilon, Sright, fc, fb, fe, bottom);
+    return adaptiveSimpsonsAux(funPtr, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
+            adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
-
-long double RandMath::integral(std::function<double (double)> fun,
-                               double a, double b, double epsilon, int maxRecursionDepth)
+bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
 {
-    double c = .5 * (a + b), h = (b - a) / 6.0;
-    double fa = fun(a), fb = fun(b), fc = fun(c);
-    double S = h * (fa + 4 * fc + fb);
-    return adaptiveSimpsonsAux(fun, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
+    double fa = funPtr(a);
+    if (fa == 0)
+    {
+        root = a;
+        return true;
+    }
+    double fb = funPtr(b);
+    if (fb == 0)
+    {
+        root = b;
+        return true;
+    }
+    if (fa * fb > 0)
+        return false; /// error - the root is not bracketed
+    if (std::fabs(fa) < std::fabs(fb))
+    {
+        SWAP(a, b);
+        SWAP(fa, fb);
+    }
+    double c = a, fc = fa;
+    bool mflag = true;
+    double s = b, fs = 1, d = 0;
+    while (std::fabs(b - a) > epsilon)
+    {
+        if (std::fabs(fc - fa) > MIN_POSITIVE &&
+            std::fabs(fb - fc) > MIN_POSITIVE)
+        {
+            /// inverse quadratic interpolation
+            double numen = a * fb * fc;
+            double denom = (fa - fb) * (fa - fc);
+            s = numen / denom;
+
+            numen = b * fa * fc;
+            denom = (fb - fa) * (fb - fc);
+            s += numen / denom;
+
+            numen = c * fa * fb;
+            denom = (fc - fa) * (fc - fb);
+            s += numen / denom;
+        }
+        else
+        {
+            /// secant method
+            s = b - fb * (b - a) / (fb - fa);
+        }
+
+        if (s < 0.25 * (3 * a + b) || s > b ||
+            (mflag && std::fabs(s - b) >= 0.5 * std::fabs(b - c)) ||
+            (!mflag && std::fabs(s - b) >= 0.5 * std::fabs(d - c)) ||
+            (mflag && std::fabs(b - c) < epsilon) ||
+            (!mflag && std::fabs(c - d) < epsilon))
+        {
+            s = 0.5 * (a + b);
+            mflag = true;
+        }
+        else
+            mflag = false;
+
+        fs = funPtr(s);
+        if (std::fabs(fs) < epsilon)
+        {
+            root = s;
+            return true;
+        }
+
+        d = c;
+        c = b;
+        fc = fb;
+
+        if (fa * fs < 0)
+        {
+            b = s;
+            fb = fs;
+        }
+        else
+        {
+            a = s;
+            fa = fs;
+        }
+
+        if (std::fabs(fa) < std::fabs(fb))
+        {
+            SWAP(a, b);
+            SWAP(fa, fb);
+        }
+    }
+
+    root = (std::fabs(fs) < std::fabs(fb)) ? s : b;
+    return true;
 }
+
+double RandMath::linearInterpolation(double a, double b, double fa, double fb, double x)
+{
+    if (b == a)
+        return fa;
+
+    double fx = x - a;
+    fx /= (b - a);
+    fx *= (fb - fa);
+    return fx + fa;
+}
+
 

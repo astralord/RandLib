@@ -60,10 +60,16 @@ private:
     std::function<double (double)> integrandPtr; /// integrand for calculation of pdf
 
     double pdfForCommonAlpha(double x);
-    double integrandForCommonAlpha(double theta, double x_adj, double xi_adj) const;
+    double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
+    double rootFunctionForCommonAlpha(double theta, double xAdj, double xiAdj) const {
+        return integrandAuxForCommonAlpha(theta, xAdj, xiAdj) - 1.0; }
+    double integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const;
 
     double pdfForAlphaEqualOne(double x);
-    double integrandForAlphaEqualOne(double theta, double x_adj) const;
+    double integrandAuxForAlphaEqualOne(double theta, double xAdj) const;
+    double rootFunctionForAlphaEqualOne(double theta, double xAdj) const {
+        return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0; }
+    double integrandForAlphaEqualOne(double theta, double xAdj) const;
 
     double pdfNormal(double x) { return N.f(x); }
     double pdfCauchy(double x) { return C.f(x); }

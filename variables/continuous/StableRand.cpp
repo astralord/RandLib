@@ -145,12 +145,15 @@ double StableRand::pdfForCommonAlpha(double x)
 {
     x = (x - mu) / sigma; /// Standardize
 
-    if (std::fabs(x) < MIN_POSITIVE)
+    if (std::fabs(x) < 0.1) /// if we are close to 0 then we do interpolation avoiding dangerous values
     {
         double numen = std::tgamma(1 + alphaInv);
         numen *= qFastCos(xi);
-        double denom = std::pow(1 + xi * xi, .5 * alphaInv);
-        return M_1_PI * numen / denom;
+        double denom = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
+        double y0 =  M_1_PI * numen / denom; /// f(0)
+        double b = (x > 0) ? 0.11 : -0.11;
+        double y1 = pdfForCommonAlpha(mu + sigma * b);
+        return RandMath::linearInterpolation(0, b, y0, y1, x);
     }
 
     double xiAdj = xi; /// +- xi
@@ -168,8 +171,17 @@ double StableRand::pdfForCommonAlpha(double x)
     }
 
     double xAdj = std::pow(x, alpha_alpham1);
+
+    /// find peak of integrand
+    integrandPtr = std::bind(&StableRand::rootFunctionForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+    double theta0 = M_PI_4 - .5 * xiAdj;
+    RandMath::findRoot(integrandPtr, -xiAdj, std::max(-xiAdj, 0.99 * M_PI_2), theta0);
+
+    /// calculate two integrals
     integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
-    return pdfCoef * RandMath::integral(integrandPtr, -xiAdj, M_PI_2) / x;
+    double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
+    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
+    return pdfCoef * (int1 + int2) / x;
 }
 
 double StableRand::pdfForAlphaEqualOne(double x)
@@ -177,39 +189,61 @@ double StableRand::pdfForAlphaEqualOne(double x)
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
     double xAdj = std::exp(-M_PI * x * pdfCoef);
+
+    /// find peak of integrand
+    integrandPtr = std::bind(&StableRand::rootFunctionForAlphaEqualOne, this, std::placeholders::_1, xAdj);
+    double theta0 = 0;
+    if (beta > 0)
+        RandMath::findRoot(integrandPtr, -M_PI_2, 0.99 * M_PI_2, theta0);
+    else
+        RandMath::findRoot(integrandPtr, -0.99 * M_PI_2, M_PI_2, theta0);
+
     integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
-    return std::fabs(pdfCoef) * RandMath::integral(integrandPtr, -M_PI_2, M_PI_2) / sigma;
+    double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0);
+    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
+
+    return std::fabs(pdfCoef) * (int1 + int2) / sigma;
 }
 
-double StableRand::integrandForAlphaEqualOne(double theta, double x_adj) const
+double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
 {
     double cosTheta = qFastCos(theta);
     /// if theta ~ +-pi / 2
     if (std::fabs(cosTheta) < MIN_POSITIVE)
-        return 0;
+        return 0.0;
     double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
     double u = M_2_PI * thetaAdj;
     u *= std::exp(thetaAdj * qFastSin(theta) / beta);
-    u *= x_adj;
+    return u * xAdj;
+}
+
+double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
+{
+    double u = integrandAuxForAlphaEqualOne(theta, xAdj);
     return u * std::exp(-u);
 }
 
-double StableRand::integrandForCommonAlpha(double theta, double x_adj, double xi_adj) const
+double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
 {
-    double thetaAdj = alpha * (theta + xi_adj);
+    double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = qFastSin(thetaAdj);
     /// if theta ~ 0
     if (std::fabs(sinThetaAdj) < MIN_POSITIVE)
-        return 0;
+        return 0.0;
     double cosTheta = qFastCos(theta);
     double y = cosTheta / sinThetaAdj;
     /// if theta ~ pi / 2
     if (std::fabs(y) < MIN_POSITIVE)
-        return 0;
+        return 0.0;
     y = std::pow(y, alpha_alpham1);
     y *= qFastCos(thetaAdj - theta);
     y /= cosTheta;
-    double u = integrandCoef * x_adj * y;
+    return integrandCoef * xAdj * y;
+}
+
+double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const
+{
+    double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
     return u * std::exp(-u);
 }
 

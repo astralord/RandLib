@@ -5,6 +5,7 @@
 #include <cmath>
 #include "randlib_global.h"
 #include <functional>
+#include <QDebug>
 
 #ifndef INFINITY
 #include <limits>
@@ -25,8 +26,14 @@ static constexpr double M_1_SQRT2PI = 0.39894228040143267794;
 
 static constexpr double MIN_POSITIVE = 1e-21;
 
+#define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
+
 class RANDLIBSHARED_EXPORT RandMath
 {
+public:
+    RandMath();
+
+private:
     /**
      * @brief getTenthFactorial
      * @param n = 10 * k <= 250
@@ -42,8 +49,6 @@ class RANDLIBSHARED_EXPORT RandMath
     static long double stirlingFactorial(int n);
 
 public:
-    RandMath();
-
     /**
      * @brief fastFactorial
      * Calculate n! using table values for small n <= 255
@@ -119,18 +124,53 @@ public:
      */
     static long double erfcinv(double p);
 
-
     /**
      * @brief integral
-     * @param fun
+     * @param funPtr integrand
+     * @param a lower boundary
+     * @param b upper boundary
+     * @param epsilon tolerance
+     * @param maxRecursionDepth how deep should the algorithm go
      * @return
      */
-    static long double integral(std::function<double (double)> fun, double a, double b,
-                                double epsilon = MIN_POSITIVE, int maxRecursionDepth = 10);
+    static long double integral(const std::function<double (double)> funPtr, double a, double b,
+                                double epsilon = 1e-10, int maxRecursionDepth = 10);
 private:
 
-    static long double adaptiveSimpsonsAux(std::function<double (double)> fun, double a, double b,
+    /**
+     * @brief adaptiveSimpsonsAux
+     * auxiliary function for calculation of integral
+     * @param funPtr
+     * @param a lower boundary
+     * @param b upper boundary
+     * @param epsilon
+     * @param S
+     * @param fa
+     * @param fb
+     * @param fc
+     * @param bottom
+     * @return
+     */
+    static long double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
                                            double epsilon, double S, double fa, double fb, double fc, int bottom);
+
+public:
+
+    /**
+     * @brief findRoot
+     * Brent's root-finding procedure
+     * @param funPtr
+     * @param a lower boundary
+     * @param b upper boundary
+     * @param root such var as funPtr(var) = 0
+     * @param epsilon tolerance
+     * @return true if success, false otherwise
+     */
+    static bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double & root,
+                         double epsilon = 1e-10);
+
+
+    static double linearInterpolation(double a, double b, double fa, double fb, double x);
 };
 
 #endif // RANDMATH_H
