@@ -151,6 +151,7 @@ double StableRand::pdfForCommonAlpha(double x)
         numen *= qFastCos(xi);
         double denom = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
         double y0 =  M_1_PI * numen / denom; /// f(0)
+        if (std::fabs(x) < 1e-6) return y0;
         double b = (x > 0) ? 0.11 : -0.11;
         double y1 = pdfForCommonAlpha(mu + sigma * b);
         return RandMath::linearInterpolation(0, b, y0, y1, x);
