@@ -54,14 +54,14 @@ bool RayleighRand::fitToData(const QVector<double> &sample)
     sigmaEst = std::sqrt(sigmaEst);
 
     if (N > 30)
-        setScale((1 + 0.1252 / N) * sigmaEst); // err < 1e-6
+        setScale((1 + 0.1252 / N) * sigmaEst); /// err < 1e-6
     else
     {
         double coef = RandMath::fastFactorial(N - 1);
         coef *= N * coef;
         coef *= M_1_SQRTPI * std::sqrt(static_cast<double>(N));
         coef /= RandMath::fastFactorial(N << 1);
-        int pow2N = 1 << N; // < 2^31
+        int pow2N = 1 << N; /// < 2^31
         coef *= pow2N;
         coef *= pow2N;
 

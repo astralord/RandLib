@@ -15,9 +15,8 @@ void RandomVariable<T>::sample(QVector<T> &outputData)
 template< typename T>
 void RandomVariable<T>::cdf(const QVector<double> &x, QVector<double> &y)
 {
-    if (x.size() != y.size())
-        return;
-    for (int i = 0; i != x.size(); ++i)
+    int size = std::min(x.size(), y.size());
+    for (int i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 

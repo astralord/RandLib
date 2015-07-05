@@ -35,6 +35,7 @@ public:
 
     void setMean(double mean);
     void setSigma(double rootVar);
+    void setVar(double var) { setSigma(std::sqrt(std::max(var, MIN_POSITIVE))); }
     double getSigma() const { return sigma; }
 
     virtual double f(double x) const;
