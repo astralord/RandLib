@@ -169,7 +169,15 @@ public:
     static bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double & root,
                          double epsilon = 1e-10);
 
-
+    /**
+     * @brief linearInterpolation
+     * @param a
+     * @param b
+     * @param fa
+     * @param fb
+     * @param x
+     * @return
+     */
     static double linearInterpolation(double a, double b, double fa, double fb, double x);
 };
 

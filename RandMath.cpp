@@ -162,7 +162,7 @@ long double RandMath::gammaHalf(int k)
     {
         int n = (k - 1) >> 1;
         long double res = fastFactorial(k - 1);
-        res /= (fastFactorial(n) * (1 << (n + n)));
+        res /= (fastFactorial(n) * (1 << (n << 1)));
         return res * M_SQRTPI;
     }
 
