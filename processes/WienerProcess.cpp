@@ -13,7 +13,7 @@ bool WienerProcess::generate(const QVector<double> &time, QVector<double> &outpu
     NormalRand rv;
     for (int i = 1; i < size; ++i)
     {
-        rv.setSigma(std::sqrt(time[i] - time[i - 1]));
+        rv.setVar(time[i] - time[i - 1]);
         output[i] = output[i - 1] + rv.value();
     }
     return true;

@@ -34,7 +34,8 @@ SOURCES += \
     variables/discrete/UniformDiscreteRand.cpp \
     variables/discrete/PoissonRand.cpp \
     processes/StochasticProcess.cpp \
-    processes/WienerProcess.cpp
+    processes/WienerProcess.cpp \
+    variables/continuous/NakagamiRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -65,7 +66,8 @@ HEADERS +=\
     variables/discrete/UniformDiscreteRand.h \
     variables/discrete/PoissonRand.h \
     processes/StochasticProcess.h \
-    processes/WienerProcess.h
+    processes/WienerProcess.h \
+    variables/continuous/NakagamiRand.h
 
 unix {
     target.path = /usr/lib
