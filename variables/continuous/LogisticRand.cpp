@@ -18,11 +18,11 @@ void LogisticRand::setScale(double scale)
 
 double LogisticRand::f(double x) const
 {
-    double numen = std::exp((mu - x) / s);
-    double denom = (1 + numen);
-    denom *= denom;
-    denom *= s;
-    return numen / denom;
+    double numerator = std::exp((mu - x) / s);
+    double denominator = (1 + numerator);
+    denominator *= denominator;
+    denominator *= s;
+    return numerator / denominator;
 }
 
 double LogisticRand::F(double x) const

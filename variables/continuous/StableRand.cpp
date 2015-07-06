@@ -147,10 +147,10 @@ double StableRand::pdfForCommonAlpha(double x)
 
     if (std::fabs(x) < 0.1) /// if we are close to 0 then we do interpolation avoiding dangerous values
     {
-        double numen = std::tgamma(1 + alphaInv);
-        numen *= qFastCos(xi);
-        double denom = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
-        double y0 =  M_1_PI * numen / denom; /// f(0)
+        double numerator = std::tgamma(1 + alphaInv);
+        numerator *= qFastCos(xi);
+        double denominator = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
+        double y0 =  M_1_PI * numerator / denominator; /// f(0)
         if (std::fabs(x) < MIN_POSITIVE)
             return y0;
         double b = (x > 0) ? 0.11 : -0.11;

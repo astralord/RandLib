@@ -32,11 +32,11 @@ public:
     double Var() const override {
         if (d2 <= 4)
             return INFINITY; /*or NAN*/
-        double numen = 2 * d2 * d2 * (d1 + d2 - 2);
-        double denom = d2 - 2;
-        denom *= denom;
-        denom *= d1 * (d2 - 4);
-        return numen / denom;
+        double numerator = 2 * d2 * d2 * (d1 + d2 - 2);
+        double denominator = d2 - 2;
+        denominator *= denominator;
+        denominator *= d1 * (d2 - 4);
+        return numerator / denominator;
     }
 };
 

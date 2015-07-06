@@ -27,9 +27,9 @@ public:
 
     double M() const override { return alpha / (alpha + beta); }
     double Var() const override {
-        double denom = alpha + beta;
-        denom *= denom * (denom + 1);
-        return alpha * beta / denom;
+        double denominator = alpha + beta;
+        denominator *= denominator * (denominator + 1);
+        return alpha * beta / denominator;
     }
 };
 

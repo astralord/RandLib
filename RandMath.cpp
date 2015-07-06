@@ -92,10 +92,10 @@ long double RandMath::fastFactorial(int n)
     {
         /// go  down
         int nNext = n - residue + 10;
-        double denom = 1;
+        double denominator = 1;
         for (int i = 0; i < 10 - residue; ++i)
-            denom *= nNext - i;
-        return getTenthFactorial(nNext) / denom;
+            denominator *= nNext - i;
+        return getTenthFactorial(nNext) / denominator;
     }
 }
 
@@ -180,9 +180,9 @@ long double RandMath::erfInv(double p)
     double t = M_SQRT2 * std::sqrt(-std::log(p));
     static constexpr double c[] = {2.515517, 0.802853, 0.010328};
     static constexpr double d[] = {1.432788, 0.189269, 0.001308};
-    long double numen = (c[2] * t + c[1]) * t + c[0];
-    long double denom = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
-    return t - numen / denom;
+    long double numerator = (c[2] * t + c[1]) * t + c[0];
+    long double denominator = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
+    return t - numerator / denominator;
 }
 
 long double RandMath::erfcinv(double p)
@@ -248,17 +248,17 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
             std::fabs(fb - fc) > MIN_POSITIVE)
         {
             /// inverse quadratic interpolation
-            double numen = a * fb * fc;
-            double denom = (fa - fb) * (fa - fc);
-            s = numen / denom;
+            double numerator = a * fb * fc;
+            double denominator = (fa - fb) * (fa - fc);
+            s = numerator / denominator;
 
-            numen = b * fa * fc;
-            denom = (fb - fa) * (fb - fc);
-            s += numen / denom;
+            numerator = b * fa * fc;
+            denominator = (fb - fa) * (fb - fc);
+            s += numerator / denominator;
 
-            numen = c * fa * fb;
-            denom = (fc - fa) * (fc - fb);
-            s += numen / denom;
+            numerator = c * fa * fb;
+            denominator = (fc - fa) * (fc - fb);
+            s += numerator / denominator;
         }
         else
         {

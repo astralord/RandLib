@@ -62,7 +62,7 @@ double FisherSnedecorRand::F(double x) const
 
 double FisherSnedecorRand::value()
 {
-    double numen = d2 * U1.value();
-    double denom = d1 * U2.value();
-    return numen / denom;
+    double numerator = d2 * U1.value();
+    double denominator = d1 * U2.value();
+    return numerator / denominator;
 }
