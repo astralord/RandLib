@@ -8,7 +8,7 @@ NakagamiRand::NakagamiRand(double shape, double spread)
 void NakagamiRand::setParameters(double shape, double spread)
 {
     m = std::max(shape, 0.5);
-    w = std::max(spread, 0.5);
+    w = std::max(spread, MIN_POSITIVE);
 
     sigma = m / w;
     gammaMInv = 1.0 / std::tgamma(m);
