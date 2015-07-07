@@ -29,6 +29,7 @@
 #include "continuous/TriangularRand.h"
 #include "continuous/LogisticRand.h"
 #include "continuous/NakagamiRand.h"
+#include "continuous/WaldRand.h"
 
 #include "continuous/StableRand.h"
 
