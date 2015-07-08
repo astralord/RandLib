@@ -25,10 +25,12 @@ bool WienerProcess::generate(double T, QVector<double> &output)
     if (size <= 0)
         return false;
     output[0] = 0;
-    NormalRand rv(0, T / size);
+    if (size <= 1)
+        return true;
+    NormalRand rv(0, T / (size - 1));
     for (int i = 1; i < size; ++i)
     {
         output[i] = output[i - 1] + rv.value();
     }
-    return false;
+    return true;
 }

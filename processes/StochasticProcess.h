@@ -4,6 +4,9 @@
 #include "randlib_global.h"
 #include <QVector>
 
+/**
+ * @brief The StochasticProcess class
+ */
 class RANDLIBSHARED_EXPORT StochasticProcess
 {
 public:
