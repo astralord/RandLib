@@ -96,6 +96,4 @@ bool ExponentialRand::fitToData(const QVector<double> &sample)
 
     setRate(1.0 / average);
     return true;
-
-
 }

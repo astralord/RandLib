@@ -30,6 +30,7 @@
 #include "continuous/LogisticRand.h"
 #include "continuous/NakagamiRand.h"
 #include "continuous/WaldRand.h"
+#include "continuous/WeibullRand.h"
 
 #include "continuous/StableRand.h"
 
