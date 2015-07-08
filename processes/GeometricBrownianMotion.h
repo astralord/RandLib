@@ -15,7 +15,9 @@ public:
     inline double getVolatility() { return sigma; }
 
     bool generate(const QVector<double> &time, QVector<double> &output);
-    bool generate(double T, QVector<double> &output);
+
+    virtual void M(const QVector<double> &time, QVector<double> &output) const;
+    virtual void Var(const QVector<double> &time, QVector<double> &output) const;
 };
 
 #endif // GEOMETRICBROWNIANMOTION_H

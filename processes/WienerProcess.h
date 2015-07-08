@@ -13,7 +13,9 @@ public:
     WienerProcess();
 
     static bool generate(const QVector<double> &time, QVector<double> &output);
-    static bool generate(double T, QVector<double> &output);
+
+    virtual void M(const QVector<double> &time, QVector<double> &output) const;
+    virtual void Var(const QVector<double> &time, QVector<double> &output) const;
 };
 
 #endif // WIENERPROCESS_H

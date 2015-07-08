@@ -10,7 +10,7 @@ void GeometricBrownianMotion::setParameters(double drift, double volatility, dou
     mu = drift;
     sigma = volatility;
     S0 = initialValue;
-    generateCoef = mu - .5 * .5 * sigma;
+    generateCoef = mu - .5 * sigma * sigma;
 }
 
 bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<double> &output)
@@ -29,21 +29,20 @@ bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<doub
     return true;
 }
 
-bool GeometricBrownianMotion::generate(double T, QVector<double> &output)
+void GeometricBrownianMotion::M(const QVector<double> &time, QVector<double> &output) const
 {
-    int size = output.size();
-    if (size <= 0)
-        return false;
-    WienerProcess::generate(T, output);
-    if (size <= 1)
-        return true;
-    double deltaT = T / (size - 1);
-    for (int i = 1; i < size; ++i)
-    {
-        output[i] *= sigma;
-        output[i] += generateCoef * deltaT * i;
-        output[i] = S0 * std::exp(output[i]);
-    }
+    int size = std::min(time.size(), output.size());
+    for (int i = 0; i < size; ++i)
+        output[i] = S0 * std::exp(mu * time[i]);
+}
 
-    return true;
+void GeometricBrownianMotion::Var(const QVector<double> &time, QVector<double> &output) const
+{
+    int size = std::min(time.size(), output.size());
+    for (int i = 0; i < size; ++i)
+    {
+        output[i] = S0 * std::exp(mu * time[i]);
+        output[i] *= output[i];
+        output[i] *= (std::exp(sigma * sigma * time[i]) - 1);
+    }
 }

@@ -11,6 +11,17 @@ class RANDLIBSHARED_EXPORT StochasticProcess
 {
 public:
     StochasticProcess();
+
+    /**
+     * @brief M
+     * @return Mathematical expectation
+     */
+    virtual void M(const QVector<double> &time, QVector<double> &output) const = 0;
+    /**
+     * @brief Var
+     * @return Variance
+     */
+    virtual void Var(const QVector<double> &time, QVector<double> &output) const = 0;
 };
 
 #endif // STOCHASTICPROCESS_H
