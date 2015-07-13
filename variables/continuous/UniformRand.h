@@ -27,7 +27,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return .5 * (b + a); }
+    double E() const override { return .5 * (b + a); }
     double Var() const override { return (b - a) * (b - a) / 12; }
 
     inline double Median() const { return .5 * (b + a); }

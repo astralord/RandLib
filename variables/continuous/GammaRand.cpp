@@ -76,7 +76,7 @@ double GammaRand::valueForIntegerShape()
 {
     double rv = 0;
     for (int i = 0; i < k; ++i)
-        rv += E.value();
+        rv += Exp.value();
     return rv;
 }
 
@@ -84,7 +84,7 @@ double GammaRand::valueForHalfIntegerShape()
 {
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
-        rv += E.value();
+        rv += Exp.value();
     double n = N.value();
     return rv + .5 * n * n;
 }
@@ -95,7 +95,7 @@ double GammaRand::valueForSmallShape()
     int iter = 0;
     do {
         double P = U.value();
-        double e = E.value();
+        double e = Exp.value();
         if (P <= 1)
         {
             rv = std::pow(P, kInv);
@@ -116,8 +116,8 @@ double GammaRand::valueForMediumShape()
 {
     double e1, e2;
     do {
-        e1 = E.value();
-        e2 = E.value();
+        e1 = Exp.value();
+        e2 = Exp.value();
     } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
     return k * e1;
 }
@@ -130,8 +130,8 @@ double GammaRand::valueForLargeShape()
         double u = U.value();
         if (u <= 0.0095722652)
         {
-            double e1 = E.value();
-            double e2 = E.value();
+            double e1 = Exp.value();
+            double e2 = Exp.value();
             rv = b * (1 + e1 / d);
             if (m * (rv / b - std::log(rv / m)) + c <= e2)
                 return rv;

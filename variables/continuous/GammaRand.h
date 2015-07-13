@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
     double cdfCoef; /// 1.0 / gamma(k)
     double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
     UniformRand U;
-    ExponentialRand E;
+    ExponentialRand Exp;
     NormalRand N;
 
     double m, s, s_2, d, b, w, v, c; /// constants for sampling
@@ -36,7 +36,7 @@ public:
     virtual double f(double x) const override;
     virtual double F(double x) const override;
 
-    double M() const override { return k * theta; }
+    double E() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }
 
 private:

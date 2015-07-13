@@ -31,7 +31,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return (a + b + c) / 3; }
+    double E() const override { return (a + b + c) / 3; }
     double Var() const override { return (a * (a - b) + b * (b - c) + c * (c - a)) / 18; }
 };
 

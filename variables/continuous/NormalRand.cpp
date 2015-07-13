@@ -9,7 +9,7 @@ const bool NormalRand::dummy = NormalRand::setupTables();
 NormalRand::NormalRand(double mean, double var)
 {
     setMean(mean);
-    setSigma(std::sqrt(std::max(var, MIN_POSITIVE)));
+    setVar(var);
 }
 
 bool NormalRand::setupTables()

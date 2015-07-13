@@ -21,7 +21,7 @@ public:
     virtual double F(double x) const;
     virtual double value();
 
-    double M() const { return mu; }
+    double E() const { return mu; }
     double Var() const {
         double sPi = s * M_PI;
         return sPi * sPi / 3;

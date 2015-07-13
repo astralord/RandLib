@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
     double xm, alpha;
     double alphaInv;
     double pdfCoef;
-    ExponentialRand E;
+    ExponentialRand Exp;
 
 public:
     ParetoRand(double shape, double scale);
@@ -25,7 +25,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
+    double E() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
     double Var() const override {
         if (alpha > 2)
         {

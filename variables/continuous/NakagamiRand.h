@@ -26,7 +26,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return std::tgamma(m + 0.5) * gammaMInv * std::sqrt(w / m); }
+    double E() const override { return std::tgamma(m + 0.5) * gammaMInv * std::sqrt(w / m); }
     double Var() const override {
         double res = std::tgamma(m + 0.5) * gammaMInv;
         res *= res;

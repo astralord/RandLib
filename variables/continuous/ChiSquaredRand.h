@@ -21,7 +21,7 @@ public:
     virtual double f(double x) const override;
     virtual double F(double x) const override;
 
-    double M() const override { return k; }
+    double E() const override { return k; }
     double Var() const override { return k + k; }
 
     inline double Mode() const { return std::max(k - 2, 0); }

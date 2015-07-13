@@ -25,7 +25,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return alpha / (alpha + beta); }
+    double E() const override { return alpha / (alpha + beta); }
     double Var() const override {
         double denominator = alpha + beta;
         denominator *= denominator * (denominator + 1);

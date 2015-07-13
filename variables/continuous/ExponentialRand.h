@@ -34,7 +34,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return beta; }
+    double E() const override { return beta; }
     double Var() const override { return beta * beta; }
 
     static constexpr double Skewness() { return 2.0; }

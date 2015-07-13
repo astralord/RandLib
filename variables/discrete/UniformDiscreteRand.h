@@ -26,7 +26,7 @@ public:
     virtual double F(double x) const override;
     virtual int value() override;
 
-    double M() const override { return .5 * (b + a); }
+    double E() const override { return .5 * (b + a); }
     double Var() const override {
         double n2 = n * n;
         return (n2 * n2 - 1) / 12;

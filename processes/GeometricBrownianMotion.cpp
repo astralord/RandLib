@@ -29,7 +29,7 @@ bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<doub
     return true;
 }
 
-void GeometricBrownianMotion::M(const QVector<double> &time, QVector<double> &output) const
+void GeometricBrownianMotion::E(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)

@@ -112,7 +112,7 @@ double StableRand::value()
 double StableRand::valueForCommonAlpha()
 {
     double V = U.value();
-    double W = E.value();
+    double W = Exp.value();
     double alphaVB = alpha * V + B;
     double rv = S * qFastSin(alphaVB); /// S * sin(alpha * V + B)
     double W_adj = W / qFastCos(V - alphaVB);
@@ -125,7 +125,7 @@ double StableRand::valueForCommonAlpha()
 double StableRand::valueForAlphaEqualOne()
 {
     double V = U.value();
-    double W = E.value();
+    double W = Exp.value();
     double pi_2BetaV = M_PI_2 + beta * V;
 
     double rv = logSigma;

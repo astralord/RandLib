@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousRand
 {
     double l, k;
     double lInv; /// 1.0 / l
-    ExponentialRand E;
+    ExponentialRand Exp;
 
 public:
     WeibullRand(double scale = 1, double shape = 1);
@@ -23,7 +23,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return l * std::tgamma(1 + 1.0 / k); }
+    double E() const override { return l * std::tgamma(1 + 1.0 / k); }
     double Var() const override {
         double res = std::tgamma(1 + 1.0 / k);
         res *= res;

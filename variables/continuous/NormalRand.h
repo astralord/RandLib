@@ -42,7 +42,7 @@ public:
     virtual double F(double x) const;
     virtual double value();
 
-    double M() const { return mu; }
+    double E() const { return mu; }
     double Var() const { return sigma * sigma; }
 
     inline double Median() const { return mu; }

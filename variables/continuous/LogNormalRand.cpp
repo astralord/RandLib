@@ -9,7 +9,7 @@ LogNormalRand::LogNormalRand(double location, double scale)
 void LogNormalRand::setLocation(double location)
 {
     X.setMean(location);
-    expMu = std::exp(X.M());
+    expMu = std::exp(X.E());
 }
 
 void LogNormalRand::setScale(double scale)

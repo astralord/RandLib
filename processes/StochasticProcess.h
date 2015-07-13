@@ -16,7 +16,7 @@ public:
      * @brief M
      * @return Mathematical expectation
      */
-    virtual void M(const QVector<double> &time, QVector<double> &output) const = 0;
+    virtual void E(const QVector<double> &time, QVector<double> &output) const = 0;
     /**
      * @brief Var
      * @return Variance

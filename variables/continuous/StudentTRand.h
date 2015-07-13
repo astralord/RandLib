@@ -24,7 +24,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return (v > 1) ? 0 : NAN; }
+    double E() const override { return (v > 1) ? 0 : NAN; }
     double Var() const override {
         if (v > 2)
             return v / (v - 2);

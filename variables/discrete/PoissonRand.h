@@ -22,7 +22,7 @@ public:
     virtual double F(double x) const override;
     virtual int value() override;
 
-    double M() const override { return l; }
+    double E() const override { return l; }
     double Var() const override { return l; }
 
     inline double Mode() const { return qFloor(l); } /// and also qCeil(l) - 1

@@ -1,7 +1,19 @@
 #include "WienerProcess.h"
 
-WienerProcess::WienerProcess()
+WienerProcess::WienerProcess(double mean, double variance)
 {
+    setMean(mean);
+    setVar(variance);
+}
+
+void WienerProcess::setMean(double mean)
+{
+    mu = mean;
+}
+
+void WienerProcess::setVar(double variance)
+{
+    var = std::sqrt(std::max(variance, MIN_POSITIVE));
 }
 
 bool WienerProcess::generate(const QVector<double> &time, QVector<double> &output)
@@ -13,22 +25,25 @@ bool WienerProcess::generate(const QVector<double> &time, QVector<double> &outpu
     NormalRand rv;
     for (int i = 1; i < size; ++i)
     {
-        rv.setVar(time[i] - time[i - 1]);
-        output[i] = output[i - 1] + rv.value();
+        double deltaT = time[i] - time[i - 1];
+        output[i] = rv.value();
+        output[i] *= std::sqrt(var * deltaT);
+        output[i] += mu * deltaT;
+        output[i] += output[i - 1];
     }
     return true;
 }
 
-void WienerProcess::M(const QVector<double> &time, QVector<double> &output) const
+void WienerProcess::E(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)
-        output[i] = 0;
+        output[i] = mu * time[i];
 }
 
 void WienerProcess::Var(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)
-        output[i] = time[i];
+        output[i] = time[i] * var;
 }

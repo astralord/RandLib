@@ -49,7 +49,7 @@ public:
      * @brief M
      * @return Mathematical expectation
      */
-    virtual double M() const = 0;
+    virtual double E() const = 0;
     /**
      * @brief Var
      * @return Variance

@@ -30,5 +30,5 @@ double WeibullRand::F(double x) const
 
 double WeibullRand::value()
 {
-    return l * std::pow(E.value(), 1.0 / k);
+    return l * std::pow(Exp.value(), 1.0 / k);
 }

@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
 {
     double alpha, beta, mu, sigma;
     UniformRand U;
-    ExponentialRand E;
+    ExponentialRand Exp;
 
     // TODO: shouldn't collect them all
     NormalRand N;
@@ -42,7 +42,7 @@ public:
     virtual double F(double x) const override;
     virtual double value() override;
 
-    double M() const override { return (alpha > 1) ? mu : NAN; }
+    double E() const override { return (alpha > 1) ? mu : NAN; }
     double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
 
 private:
