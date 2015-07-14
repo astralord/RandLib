@@ -38,7 +38,8 @@ SOURCES += \
     variables/continuous/NakagamiRand.cpp \
     variables/continuous/WaldRand.cpp \
     processes/GeometricBrownianMotion.cpp \
-    variables/continuous/WeibullRand.cpp
+    variables/continuous/WeibullRand.cpp \
+    variables/discrete/RademacherRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -73,7 +74,8 @@ HEADERS +=\
     variables/continuous/NakagamiRand.h \
     variables/continuous/WaldRand.h \
     processes/GeometricBrownianMotion.h \
-    variables/continuous/WeibullRand.h
+    variables/continuous/WeibullRand.h \
+    variables/discrete/RademacherRand.h
 
 unix {
     target.path = /usr/lib

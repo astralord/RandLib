@@ -3,6 +3,7 @@
 
 #include "ContinuousRand.h"
 #include "ExponentialRand.h"
+#include "../discrete/RademacherRand.h"
 
 /**
  * @brief The LaplaceRand class
@@ -12,6 +13,7 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
     double mu, b;
     double bInv; /// 1 / b
     ExponentialRand X;
+    RademacherRand R;
 
 public:
     LaplaceRand(double location = 0, double scale = 1);

@@ -39,7 +39,6 @@ double LaplaceRand::F(double x) const
 
 double LaplaceRand::value()
 {
-    double rv = X.value(); /// ~ Exp(1/b)
-    rv -= X.value(); /// ~ Laplace(0, b)
-    return mu + rv;
+    double e = X.value();
+    return mu + ((R.value() > 0) ? e : -e);
 }

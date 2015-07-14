@@ -38,13 +38,10 @@ double CauchyRand::F(double x) const
 
 double CauchyRand::value()
 {
-    double u1, u2;
+    double x, y;
     do {
-        u1 = U.value();
-        u2 = U.value();
-    } while (u1 * u1 + u2 * u2 > 1.0 || u2 == 0.0);
-    u1 /= u2;
-    u1 *= gamma;
-    u1 += x0;
-    return u1;
+        x = U.value();
+        y = U.value();
+    } while (x * x + y * y > 1.0 || y == 0.0);
+    return x0 + gamma * x / y;
 }
