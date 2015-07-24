@@ -42,3 +42,45 @@ double LaplaceRand::value()
     double e = X.value();
     return mu + (((signed)B.getRand() > 0) ? e : -e);
 }
+
+bool LaplaceRand::fitToData(const QVector<double> &sample)
+{
+    if (sample.size() == 0)
+        return false;
+
+    /// Calculate median
+    /// we use root-finding algorithm for median search
+    /// it is better to use median-for-median algorithm
+    double median = 0.0;
+    double min = sample[0], max = min;
+    for (double var : sample) {
+        min = std::min(var, min);
+        max = std::max(var, max);
+    }
+    RandMath::findRoot([sample] (double med)
+    {
+        double x = 0;
+        for (double var : sample) {
+            if (var > med)
+                ++x;
+            else if (var < med)
+                --x;
+        }
+        return x;
+    },
+    min, max, median
+    );
+
+
+    /// Calculate scale
+    double deviation = 0.0;
+    for (double var : sample) {
+        deviation += std::fabs(var - median);
+    }
+    deviation /= sample.size();
+
+    setLocation(median);
+    setScale(deviation);
+    return true;
+}
+

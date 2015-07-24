@@ -29,6 +29,7 @@ public:
 
     double E() const override { return mu; }
     double Var() const override { return 2 * b * b; }
+    bool fitToData(const QVector<double> &sample);
 };
 
 #endif // LAPLACERAND_H
