@@ -52,6 +52,7 @@ void GammaRand::setParameters(double shape, double scale)
     else
     {
         setConstants();
+        U.setBoundaries(0, 1);
         valuePtr = std::bind(&GammaRand::valueForLargeShape, this);
     }
 }
@@ -114,12 +115,12 @@ double GammaRand::valueForSmallShape()
 
 double GammaRand::valueForMediumShape()
 {
-    double e1, e2;
+    double E1, E2;
     do {
-        e1 = Exp.value();
-        e2 = Exp.value();
-    } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
-    return k * e1;
+        E1 = Exp.value();
+        E2 = Exp.value();
+    } while (E2 < (k - 1) * (E1 - std::log(E1) - 1));
+    return k * E1;
 }
 
 double GammaRand::valueForLargeShape()

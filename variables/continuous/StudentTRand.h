@@ -10,15 +10,15 @@
  */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
 {
-    double v;
+    int v;
     NormalRand X;
     ChiSquaredRand Y;
     double pdfCoef;
 public:
     StudentTRand(int degree);
 
-    void setDegree(double degree);
-    inline double getDegree() const { return v; }
+    void setDegree(int degree);
+    inline int getDegree() const { return v; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;

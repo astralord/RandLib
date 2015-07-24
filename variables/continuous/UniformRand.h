@@ -11,7 +11,8 @@
 class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
 {
     double a, b;
-    double c; /// c = 1 / (b - a)
+    double c; /// 1 / (b - a)
+    double delta; /// (b - a) / RAND_MAX
     BasicRandGenerator B;
 
     void swapBoundaries();

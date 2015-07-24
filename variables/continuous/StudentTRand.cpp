@@ -5,10 +5,10 @@ StudentTRand::StudentTRand(int degree)
     setDegree(degree);
 }
 
-void StudentTRand::setDegree(double degree)
+void StudentTRand::setDegree(int degree)
 {
-    v = std::max(degree, MIN_POSITIVE);
-    Y.setDegree(static_cast<int>(v));
+    v = std::max(degree, 1);
+    Y.setDegree(v);
 
     pdfCoef = std::tgamma(.5 * (v + 1));
     pdfCoef /= (std::sqrt(v * M_PI) * std::tgamma(.5 * v));
@@ -30,5 +30,5 @@ double StudentTRand::value()
 {
     //v = 1 -> cauchy
     //v = inf -> normal
-    return X.value() * std::sqrt(v / Y.value());
+    return X.value() / std::sqrt(Y.value() / v);
 }

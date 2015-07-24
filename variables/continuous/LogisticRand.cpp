@@ -33,8 +33,7 @@ double LogisticRand::F(double x) const
 
 double LogisticRand::value()
 {
-    double rv = U.value();
-    rv = rv / (1 - rv);
-    rv = std::log(rv);
+    double rv = 1.0 / U.value();
+    rv = std::log(rv - 1);
     return mu + s * rv;
 }

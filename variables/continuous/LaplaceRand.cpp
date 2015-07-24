@@ -40,5 +40,5 @@ double LaplaceRand::F(double x) const
 double LaplaceRand::value()
 {
     double e = X.value();
-    return mu + ((R.value() > 0) ? e : -e);
+    return mu + (((signed)B.getRand() > 0) ? e : -e);
 }
