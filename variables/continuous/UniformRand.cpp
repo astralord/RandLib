@@ -28,7 +28,7 @@ void UniformRand::swapBoundaries()
     b = -b;
 }
 
-double UniformRand::value()
+double UniformRand::variate()
 {
     double rv = B.getRand() * delta; /// ~ U(0, 1)
     return rv + a; /// ~ U(a, b)

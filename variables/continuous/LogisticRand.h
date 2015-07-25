@@ -19,7 +19,7 @@ public:
 
     virtual double f(double x) const;
     virtual double F(double x) const;
-    virtual double value();
+    virtual double variate();
 
     double E() const { return mu; }
     double Var() const {

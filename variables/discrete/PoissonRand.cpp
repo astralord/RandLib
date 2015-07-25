@@ -25,10 +25,10 @@ double PoissonRand::F(double x) const
     return RandMath::upperIncGamma(k + 1, l) / RandMath::fastFactorial(k);
 }
 
-int PoissonRand::value()
+int PoissonRand::variate()
 {
     int y = 0;
-    double u = U.value();
+    double u = U.variate();
     double p = exp_l, s = p;
     while (s < u) {
         ++y;

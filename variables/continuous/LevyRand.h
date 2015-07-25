@@ -25,7 +25,7 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double value() override;
+    virtual double variate() override;
 
     double E() const override { return INFINITY; }
     double Var() const override { return INFINITY; }

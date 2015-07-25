@@ -38,9 +38,9 @@ double ParetoRand::F(double x) const
     return (x > xm) ? 1 - std::pow(xm / x, alpha) : 0;
 }
 
-double ParetoRand::value()
+double ParetoRand::variate()
 {
-    return xm * std::exp(Exp.value());
+    return xm * std::exp(Exp.variate());
 }
 
 bool ParetoRand::fitToData(const QVector<double> &sample)

@@ -56,9 +56,9 @@ double TriangularRand::F(double x) const
     return 1.0;
 }
 
-double TriangularRand::value()
+double TriangularRand::variate()
 {
-    double u = U.value();
+    double u = U.variate();
     if (u < constForGenerator)
         return a + std::sqrt(u * coefGenerator1);
     return b - std::sqrt((1 - u) * coefGenerator2);

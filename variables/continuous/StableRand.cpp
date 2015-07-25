@@ -96,7 +96,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     }
 }
 
-double StableRand::value()
+double StableRand::variate()
 {
     /// Get standard value
     double rv = 0;
@@ -111,8 +111,8 @@ double StableRand::value()
 
 double StableRand::valueForCommonAlpha()
 {
-    double V = U.value();
-    double W = Exp.value();
+    double V = U.variate();
+    double W = Exp.variate();
     double alphaVB = alpha * V + B;
     double rv = S * qFastSin(alphaVB); /// S * sin(alpha * V + B)
     double W_adj = W / qFastCos(V - alphaVB);
@@ -124,8 +124,8 @@ double StableRand::valueForCommonAlpha()
 
 double StableRand::valueForAlphaEqualOne()
 {
-    double V = U.value();
-    double W = Exp.value();
+    double V = U.variate();
+    double W = Exp.variate();
     double pi_2BetaV = M_PI_2 + beta * V;
 
     double rv = logSigma;

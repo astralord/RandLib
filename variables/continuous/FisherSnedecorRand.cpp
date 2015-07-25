@@ -60,9 +60,9 @@ double FisherSnedecorRand::F(double x) const
     return x;
 }
 
-double FisherSnedecorRand::value()
+double FisherSnedecorRand::variate()
 {
-    double numerator = d2 * U1.value();
-    double denominator = d1 * U2.value();
+    double numerator = d2 * U1.variate();
+    double denominator = d1 * U2.variate();
     return numerator / denominator;
 }

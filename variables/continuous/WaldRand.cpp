@@ -37,9 +37,9 @@ double WaldRand::F(double x) const
     return y + cdfCoef * z;
 }
 
-double WaldRand::value()
+double WaldRand::variate()
 {
-    double y = X.value();
+    double y = X.variate();
     y *= y;
     double my = mu * y;
     double x = 4 * l + my;
@@ -48,7 +48,7 @@ double WaldRand::value()
     x = my - x;
     x *= .5 / l;
     ++x;
-    if (U.value() <= 1.0 / (1 + x))
+    if (U.variate() <= 1.0 / (1 + x))
         return mu * x;
     return mu / x;
 }

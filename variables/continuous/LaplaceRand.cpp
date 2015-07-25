@@ -37,9 +37,9 @@ double LaplaceRand::F(double x) const
     return y + 1;
 }
 
-double LaplaceRand::value()
+double LaplaceRand::variate()
 {
-    double e = X.value();
+    double e = X.variate();
     return mu + (((signed)B.getRand() > 0) ? e : -e);
 }
 

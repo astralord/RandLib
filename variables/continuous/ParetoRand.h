@@ -23,7 +23,7 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double value() override;
+    virtual double variate() override;
 
     double E() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
     double Var() const override {

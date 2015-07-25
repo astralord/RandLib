@@ -20,7 +20,7 @@ double RademacherRand::F(double x) const
     return 1;
 }
 
-int RademacherRand::value()
+int RademacherRand::variate()
 {
     if ((signed)B.getRand() < 0)
         return -1;

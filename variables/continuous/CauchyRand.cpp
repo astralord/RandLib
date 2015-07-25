@@ -36,12 +36,12 @@ double CauchyRand::F(double x) const
     return y + .5; /// atan((x - x0) / gamma) / pi + 0.5
 }
 
-double CauchyRand::value()
+double CauchyRand::variate()
 {
     double x, y;
     do {
-        x = U.value();
-        y = U.value();
+        x = U.variate();
+        y = U.variate();
     } while (x * x + y * y > 1.0 || y == 0.0);
     return x0 + gamma * x / y;
 }

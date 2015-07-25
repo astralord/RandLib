@@ -40,7 +40,7 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double value() override;
+    virtual double variate() override;
 
     double E() const override { return (alpha > 1) ? mu : NAN; }
     double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
@@ -50,10 +50,10 @@ private:
     std::function<double ()> valuePtr;
     double valueForCommonAlpha();
     double valueForAlphaEqualOne();
-    double valueNormal() { return N.value(); }
-    double valueCauchy() { return C.value(); }
-    double valueLevy() { return L.value(); }
-    double valueLevyNegative() { return -L.value(); }
+    double valueNormal() { return N.variate(); }
+    double valueCauchy() { return C.variate(); }
+    double valueLevy() { return L.variate(); }
+    double valueLevyNegative() { return -L.variate(); }
 
     /// pdf
     std::function<double (double)> pdfPtr;

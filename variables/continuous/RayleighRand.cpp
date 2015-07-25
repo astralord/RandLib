@@ -27,9 +27,9 @@ double RayleighRand::F(double x) const
     return 1.0 - std::exp(-x * x / sigmaSq2);
 }
 
-double RayleighRand::value()
+double RayleighRand::variate()
 {
-    double rv = Exp.value();
+    double rv = Exp.variate();
     rv *= sigmaSq2;
     return std::sqrt(rv);
 }

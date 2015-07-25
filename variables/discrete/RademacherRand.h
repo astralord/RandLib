@@ -15,7 +15,7 @@ public:
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual int value() override;
+    virtual int variate() override;
 
     double E() const override { return 0; }
     double Var() const override { return 1; }

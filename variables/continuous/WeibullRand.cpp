@@ -28,7 +28,7 @@ double WeibullRand::F(double x) const
     return 1 - std::exp(-std::pow(x * lInv, k));
 }
 
-double WeibullRand::value()
+double WeibullRand::variate()
 {
-    return l * std::pow(Exp.value(), 1.0 / k);
+    return l * std::pow(Exp.variate(), 1.0 / k);
 }

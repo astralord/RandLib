@@ -77,7 +77,7 @@ double GammaRand::valueForIntegerShape()
 {
     double rv = 0;
     for (int i = 0; i < k; ++i)
-        rv += Exp.value();
+        rv += Exp.variate();
     return rv;
 }
 
@@ -85,8 +85,8 @@ double GammaRand::valueForHalfIntegerShape()
 {
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
-        rv += Exp.value();
-    double n = N.value();
+        rv += Exp.variate();
+    double n = N.variate();
     return rv + .5 * n * n;
 }
 
@@ -95,8 +95,8 @@ double GammaRand::valueForSmallShape()
     double rv = 0;
     int iter = 0;
     do {
-        double P = U.value();
-        double e = Exp.value();
+        double P = U.variate();
+        double e = Exp.variate();
         if (P <= 1)
         {
             rv = std::pow(P, kInv);
@@ -117,8 +117,8 @@ double GammaRand::valueForMediumShape()
 {
     double E1, E2;
     do {
-        E1 = Exp.value();
-        E2 = Exp.value();
+        E1 = Exp.variate();
+        E2 = Exp.variate();
     } while (E2 < (k - 1) * (E1 - std::log(E1) - 1));
     return k * E1;
 }
@@ -128,11 +128,11 @@ double GammaRand::valueForLargeShape()
     double rv = 0;
     int iter = 0;
     do {
-        double u = U.value();
+        double u = U.variate();
         if (u <= 0.0095722652)
         {
-            double e1 = Exp.value();
-            double e2 = Exp.value();
+            double e1 = Exp.variate();
+            double e2 = Exp.variate();
             rv = b * (1 + e1 / d);
             if (m * (rv / b - std::log(rv / m)) + c <= e2)
                 return rv;
@@ -141,10 +141,10 @@ double GammaRand::valueForLargeShape()
         {
             double n;
             do {
-                n = N.value();
+                n = N.variate();
                 rv = s * n + m;
             } while (rv < 0 || rv > b);
-            u = U.value();
+            u = U.variate();
             double S = .5 * n * n;
             if (n > 0)
             {
@@ -161,7 +161,7 @@ double GammaRand::valueForLargeShape()
     return 0; /// shouldn't end up here
 }
 
-double GammaRand::value()
+double GammaRand::variate()
 {
     double rv = valuePtr();
     return theta * rv;

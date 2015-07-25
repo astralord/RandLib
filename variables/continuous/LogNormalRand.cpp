@@ -28,9 +28,9 @@ double LogNormalRand::F(double x) const
     return (x > 0) ? X.F(std::log(x)) : 0;
 }
 
-double LogNormalRand::value()
+double LogNormalRand::variate()
 {
-    return std::exp(X.value());
+    return std::exp(X.variate());
 }
 
 double LogNormalRand::ExcessKurtosis() const

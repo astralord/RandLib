@@ -65,15 +65,15 @@ double ExponentialRand::ziggurat()
             return x;
 
         if (iz == 0)
-            return (7.69711 - std::log(U.value()));
+            return (7.69711 - std::log(U.variate()));
 
-        if (fe[iz] + U.value() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
+        if (fe[iz] + U.variate() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0;
 }
 
-double ExponentialRand::value()
+double ExponentialRand::variate()
 {
     return beta * ziggurat();
 }

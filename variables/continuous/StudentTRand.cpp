@@ -26,9 +26,9 @@ double StudentTRand::F(double x) const
     return x;
 }
 
-double StudentTRand::value()
+double StudentTRand::variate()
 {
     //v = 1 -> cauchy
     //v = inf -> normal
-    return X.value() / std::sqrt(Y.value() / v);
+    return X.variate() / std::sqrt(Y.variate() / v);
 }

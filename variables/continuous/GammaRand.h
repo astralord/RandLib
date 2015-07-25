@@ -32,7 +32,7 @@ public:
     inline double getShape() const { return k; }
     inline double getScale() const { return theta; }
 
-    virtual double value() override;
+    virtual double variate() override;
     virtual double f(double x) const override;
     virtual double F(double x) const override;
 

@@ -52,8 +52,8 @@ double BetaRand::F(double x) const
     return x;
 }
 
-double BetaRand::value()
+double BetaRand::variate()
 {
-    double x = X.value();
-    return x / (x + Y.value());
+    double x = X.variate();
+    return x / (x + Y.variate());
 }
