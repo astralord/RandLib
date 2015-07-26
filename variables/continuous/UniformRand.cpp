@@ -17,7 +17,7 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
         b = a + MIN_POSITIVE;
 
     c = 1.0 / (b - a);
-    delta = (b - a) * B.maxInv();
+    delta = (b - a) * BasicRandGenerator::maxInv();
 }
 
 void UniformRand::swapBoundaries()
@@ -30,7 +30,7 @@ void UniformRand::swapBoundaries()
 
 double UniformRand::variate()
 {
-    double rv = B.getRand() * delta; /// ~ U(0, 1)
+    double rv = BasicRandGenerator::getRand() * delta; /// ~ U(0, 1)
     return rv + a; /// ~ U(a, b)
 }
 

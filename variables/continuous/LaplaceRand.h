@@ -13,7 +13,6 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
     double mu, b;
     double bInv; /// 1 / b
     ExponentialRand X;
-    BasicRandGenerator B;
 
 public:
     LaplaceRand(double location = 0, double scale = 1);

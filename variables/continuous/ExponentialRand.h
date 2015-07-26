@@ -20,7 +20,6 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
     static bool setupTables();
 
     UniformRand U;
-    BasicRandGenerator B;
     double ziggurat();
 
 public:

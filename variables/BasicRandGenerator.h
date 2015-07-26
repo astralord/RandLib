@@ -11,8 +11,8 @@ class RANDLIBSHARED_EXPORT BasicRandGenerator
 {
     /// Variables for pseudo generator
     static unsigned long startPoint;
-    unsigned long X, Y, Z, W;
-    bool C;
+    static unsigned long X, Y, Z, W;
+    static bool C;
 
 public:
     BasicRandGenerator();
@@ -22,7 +22,7 @@ public:
      * Random variable generator Keep It Simply Stupid
      * @return random variable as standard rand() function
      */
-    unsigned long getRand();
+    static unsigned long getRand();
 
     /**
      * @brief maxValueInv

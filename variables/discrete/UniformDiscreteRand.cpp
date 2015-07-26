@@ -41,7 +41,7 @@ double UniformDiscreteRand::F(double x) const
 int UniformDiscreteRand::variate()
 {
     /// If we use modulo instead it would always return odd-even-odd-... values
-    double rv = .5 + (signed)B.getRand() * B.maxInv(); /// ~ U(0,1)
+    double rv = .5 + (signed)BasicRandGenerator::getRand() * BasicRandGenerator::maxInv(); /// ~ U(0,1)
     rv *= (n - 1); /// ~ U(0, b - a)
     return std::round(rv + a); /// ~ U(a, b)
 }

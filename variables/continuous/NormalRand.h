@@ -22,7 +22,6 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     static bool setupTables();
 
     UniformRand U;
-    BasicRandGenerator B;
 
     /**
      * @brief ziggurat

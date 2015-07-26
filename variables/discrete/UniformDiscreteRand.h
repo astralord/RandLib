@@ -12,8 +12,6 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand<int>
     int n, a, b;
     double nInv; // 1 / n
 
-    BasicRandGenerator B;
-
     void swapBoundaries();
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);

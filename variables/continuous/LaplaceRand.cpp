@@ -40,7 +40,7 @@ double LaplaceRand::F(double x) const
 double LaplaceRand::variate()
 {
     double e = X.variate();
-    return mu + (((signed)B.getRand() > 0) ? e : -e);
+    return mu + (((signed)BasicRandGenerator::getRand() > 0) ? e : -e);
 }
 
 bool LaplaceRand::fitToData(const QVector<double> &sample)

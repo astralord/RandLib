@@ -1,14 +1,15 @@
 #include "BasicRandGenerator.h"
 #include <time.h>
 
-unsigned long BasicRandGenerator::startPoint = 123456789;
+unsigned long BasicRandGenerator::startPoint = 123456789 ^ time(0);
+unsigned long BasicRandGenerator::X = startPoint;
+unsigned long BasicRandGenerator::Y = startPoint;
+unsigned long BasicRandGenerator::Z = startPoint;
+unsigned long BasicRandGenerator::W = startPoint;
+bool BasicRandGenerator::C = 0;
 
 BasicRandGenerator::BasicRandGenerator()
 {
-    startPoint ^= time(0);
-    X = Y = Z = W = startPoint;
-    C = 0;
-    startPoint = getRand();
 }
 
 unsigned long BasicRandGenerator::getRand()

@@ -72,7 +72,7 @@ double NormalRand::ziggurat()
 {
     int iter = 0;
     do {
-        long hz = B.getRand();
+        long hz = BasicRandGenerator::getRand();
         unsigned long iz = hz & 127;
         double x = hz * wn[iz];
         if (std::fabs(hz) < kn[iz])

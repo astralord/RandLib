@@ -9,7 +9,6 @@
  */
 class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteRand<int>
 {
-    BasicRandGenerator B;
 public:
     RademacherRand();
 
