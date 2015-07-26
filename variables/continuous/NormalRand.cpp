@@ -1,5 +1,4 @@
 #include "NormalRand.h"
-#include <QDebug>
 
 unsigned long NormalRand::kn[128] = {0};
 double NormalRand::wn[128] = {0};
@@ -83,8 +82,8 @@ double NormalRand::ziggurat()
         {
             double y;
             do {
-                y = -std::log(U.value());
-                x = -std::log(U.value()) * 0.2904764; /// 1.0 / 3.44262
+                y = -std::log(U.variate());
+                x = -std::log(U.variate()) * 0.2904764; /// 1.0 / 3.44262
             } while (y + y < x * x);
 
             //TODO: maybe we need more accuracy?
@@ -93,13 +92,13 @@ double NormalRand::ziggurat()
         }
 
         /// Handle the wedges of other strips
-        if (fn[iz] + U.value() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
+        if (fn[iz] + U.variate() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0;
 }
 
-double NormalRand::value()
+double NormalRand::variate()
 {
     return mu + sigma * ziggurat();
 }

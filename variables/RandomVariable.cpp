@@ -9,7 +9,7 @@ template< typename T>
 void RandomVariable<T>::sample(QVector<T> &outputData)
 {
     for (T &var : outputData)
-        var = value();
+        var = variate();
 }
 
 template< typename T>

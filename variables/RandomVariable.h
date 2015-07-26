@@ -23,7 +23,7 @@ public:
      * @brief value
      * @return random variable
      */
-    virtual T value() = 0;
+    virtual T variate() = 0;
 
     /**
      * @brief sample
