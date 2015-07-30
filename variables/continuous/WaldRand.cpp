@@ -31,15 +31,17 @@ double WaldRand::F(double x) const
     if (x <= 0)
         return 0;
     double a = std::sqrt(l / x);
-    double b = x / mu;
-    double y = X.F(a * b - a);
-    double z = X.F(-a * b - a);
-    return y + cdfCoef * z;
+    double b = a * x / mu;
+    double d1 = (b - a) / M_SQRT2;
+    double d2 = (-b - a) / M_SQRT2;
+    double y = 1 + std::erf(d1);
+    double z = 1 + std::erf(d2);
+    return .5 * (y + cdfCoef * z);
 }
 
 double WaldRand::variate()
 {
-    double y = X.variate();
+    double y = NormalRand::standardVariate();
     y *= y;
     double my = mu * y;
     double x = 4 * l + my;
@@ -48,7 +50,7 @@ double WaldRand::variate()
     x = my - x;
     x *= .5 / l;
     ++x;
-    if (U.variate() <= 1.0 / (1 + x))
+    if (UniformRand::standardVariate() <= 1.0 / (1 + x))
         return mu * x;
     return mu / x;
 }

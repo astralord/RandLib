@@ -11,7 +11,6 @@
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
 {
     int v;
-    NormalRand X;
     ChiSquaredRand Y;
     double pdfCoef;
 public:

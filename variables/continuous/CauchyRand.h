@@ -11,7 +11,6 @@ class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
 {
     double x0, gamma;
     double gammaInv; /// 1 / gamma
-    UniformRand U;
 
 public:
     CauchyRand(double location = 0, double scale = 1);

@@ -15,7 +15,6 @@ void LaplaceRand::setScale(double scale)
 {
     b = std::max(scale, MIN_POSITIVE);
     bInv = 1.0 / b;
-    X.setRate(bInv);
 }
 
 double LaplaceRand::f(double x) const
@@ -39,7 +38,7 @@ double LaplaceRand::F(double x) const
 
 double LaplaceRand::variate()
 {
-    double e = X.variate();
+    double e = ExponentialRand::variate(bInv);
     return mu + (((signed)BasicRandGenerator::getRand() > 0) ? e : -e);
 }
 

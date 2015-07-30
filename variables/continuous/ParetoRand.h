@@ -10,7 +10,6 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
     double xm, alpha;
     double alphaInv;
     double pdfCoef;
-    ExponentialRand Exp;
 
 public:
     ParetoRand(double shape, double scale);

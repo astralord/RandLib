@@ -10,8 +10,7 @@
 class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
 {
     double sigma;
-    double sigmaSq2; // 2 * sigma^2
-    ExponentialRand Exp;
+    double sigmaSqInv_2; // 2 * sigma^2
 
 public:
     RayleighRand(double scale = 1);
@@ -24,7 +23,7 @@ public:
     virtual double variate() override;
 
     double E() const override { return sigma * M_SQRTPI * M_SQRT1_2; }
-    double Var() const override { return (1 - M_PI_4) * sigmaSq2; }
+    double Var() const override { return (1 - M_PI_4) * sigmaSqInv_2; }
 
     inline double Median() const { return sigma * std::sqrt(2 * M_LN2); }
     inline double Mode() const { return sigma; }

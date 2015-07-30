@@ -13,8 +13,6 @@
 class RANDLIBSHARED_EXPORT WaldRand : public ContinuousRand
 {
     double mu, l;
-    NormalRand X;
-    UniformRand U;
 
     double pdfCoef; /// sqrt(l / (2 * pi))
     double cdfCoef; /// exp(2 * l / mu)

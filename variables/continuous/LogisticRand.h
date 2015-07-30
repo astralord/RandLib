@@ -7,7 +7,6 @@
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousRand
 {
     double mu, s;
-    UniformRand U;
 
 public:
     LogisticRand(double location = 0, double scale = 1);

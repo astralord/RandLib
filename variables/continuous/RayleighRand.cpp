@@ -8,15 +8,15 @@ RayleighRand::RayleighRand(double scale)
 void RayleighRand::setScale(double scale)
 {
     sigma = std::max(scale, MIN_POSITIVE);
-    sigmaSq2 = 2 * sigma * sigma;
+    sigmaSqInv_2 = 0.5 / sigma * sigma;
 }
 
 double RayleighRand::f(double x) const
 {
     if (x <= 0)
         return 0.0;
-    double y = x / sigmaSq2;
-    y *= std::exp(-x * x / sigmaSq2);
+    double y = x * sigmaSqInv_2;
+    y *= std::exp(-x * x * sigmaSqInv_2);
     return y + y;
 }
 
@@ -24,13 +24,12 @@ double RayleighRand::F(double x) const
 {
     if (x <= 0)
         return 0.0;
-    return 1.0 - std::exp(-x * x / sigmaSq2);
+    return 1.0 - std::exp(-x * x * sigmaSqInv_2);
 }
 
 double RayleighRand::variate()
 {
-    double rv = Exp.variate();
-    rv *= sigmaSq2;
+    double rv = ExponentialRand::variate(sigmaSqInv_2);
     return std::sqrt(rv);
 }
 

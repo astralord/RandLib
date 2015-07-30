@@ -11,7 +11,6 @@ void ParetoRand::setParameters(double shape, double scale)
     alpha = std::max(scale, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
-    Exp.setRate(alpha);
 }
 
 void ParetoRand::setShape(double shape)
@@ -25,7 +24,6 @@ void ParetoRand::setScale(double scale)
     alpha = std::max(scale, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
-    Exp.setRate(alpha);
 }
 
 double ParetoRand::f(double x) const
@@ -40,7 +38,7 @@ double ParetoRand::F(double x) const
 
 double ParetoRand::variate()
 {
-    return xm * std::exp(Exp.variate());
+    return xm * std::exp(ExponentialRand::variate(alpha));
 }
 
 bool ParetoRand::fitToData(const QVector<double> &sample)

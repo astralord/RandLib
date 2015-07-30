@@ -53,8 +53,19 @@ double ExponentialRand::F(double x) const
     return (x > 0) ? 1 - std::exp(-l * x) : 0;
 }
 
-double ExponentialRand::ziggurat()
+double ExponentialRand::variate()
 {
+    return beta * standardVariate();
+}
+
+double ExponentialRand::variate(double rate)
+{
+    return standardVariate() / rate;
+}
+
+double ExponentialRand::standardVariate()
+{
+    /// Ziggurat algorithm
     int iter = 0;
     do {
         unsigned long jz = BasicRandGenerator::getRand();
@@ -65,17 +76,12 @@ double ExponentialRand::ziggurat()
             return x;
 
         if (iz == 0)
-            return (7.69711 - std::log(U.variate()));
+            return (7.69711747013104972 + standardVariate());
 
-        if (fe[iz] + U.variate() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
+        if (fe[iz] + UniformRand::standardVariate() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0;
-}
-
-double ExponentialRand::variate()
-{
-    return beta * ziggurat();
 }
 
 bool ExponentialRand::fitToData(const QVector<double> &sample)

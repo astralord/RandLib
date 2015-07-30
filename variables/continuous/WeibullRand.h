@@ -11,7 +11,6 @@ class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousRand
 {
     double l, k;
     double lInv; /// 1.0 / l
-    ExponentialRand Exp;
 
 public:
     WeibullRand(double scale = 1, double shape = 1);

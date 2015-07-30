@@ -1,7 +1,6 @@
 ﻿#include "CauchyRand.h"
 
-CauchyRand::CauchyRand(double location, double scale) :
-    U(-1, 1)
+CauchyRand::CauchyRand(double location, double scale)
 {
     setLocation(location);
     setScale(scale);
@@ -40,8 +39,8 @@ double CauchyRand::variate()
 {
     double x, y;
     do {
-        x = U.variate();
-        y = U.variate();
+        x = UniformRand::variate(-1, 1);
+        y = UniformRand::variate(-1, 1);
     } while (x * x + y * y > 1.0 || y == 0.0);
     return x0 + gamma * x / y;
 }

@@ -30,5 +30,5 @@ double StudentTRand::variate()
 {
     //v = 1 -> cauchy
     //v = inf -> normal
-    return X.variate() / std::sqrt(Y.variate() / v);
+    return NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
 }

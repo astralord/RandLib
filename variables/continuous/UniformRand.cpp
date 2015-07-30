@@ -30,8 +30,18 @@ void UniformRand::swapBoundaries()
 
 double UniformRand::variate()
 {
-    double rv = BasicRandGenerator::getRand() * delta; /// ~ U(0, 1)
-    return rv + a; /// ~ U(a, b)
+    return a + BasicRandGenerator::getRand() * delta;
+}
+
+double UniformRand::variate(double minValue, double maxValue)
+{
+    return minValue + standardVariate() * (maxValue - minValue);
+}
+
+double UniformRand::standardVariate()
+{
+    static constexpr double coef = BasicRandGenerator::maxInv();
+    return BasicRandGenerator::getRand() * coef;
 }
 
 double UniformRand::f(double x) const

@@ -3,6 +3,7 @@
 
 #include "ContinuousRand.h"
 #include "UniformRand.h"
+#include "ExponentialRand.h"
 #include "../BasicRandGenerator.h"
 
 /**
@@ -21,14 +22,6 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     /// Set up ziggurat tables
     static bool setupTables();
 
-    UniformRand U;
-
-    /**
-     * @brief ziggurat
-     * @return standard normal variable: X ~ N(0,1)
-     */
-    double ziggurat();
-
 public:
     NormalRand(double mean = 0, double var = 1);
 
@@ -40,6 +33,9 @@ public:
     virtual double f(double x) const;
     virtual double F(double x) const;
     virtual double variate();
+
+    static double variate(double mean, double rootVar);
+    static double standardVariate();
 
     double E() const { return mu; }
     double Var() const { return sigma * sigma; }

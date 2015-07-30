@@ -19,9 +19,6 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
     static bool dummy;
     static bool setupTables();
 
-    UniformRand U;
-    double ziggurat();
-
 public:
     ExponentialRand(double rate = 1);
 
@@ -32,6 +29,9 @@ public:
     virtual double f(double x) const override;
     virtual double F(double x) const override;
     virtual double variate() override;
+
+    static double variate(double rate);
+    static double standardVariate();
 
     double E() const override { return beta; }
     double Var() const override { return beta * beta; }

@@ -68,7 +68,17 @@ double NormalRand::F(double x) const
     return .5 * y; /// (1 + erf((x - mu) / (sigma * sqrt(2)))) / 2
 }
 
-double NormalRand::ziggurat()
+double NormalRand::variate()
+{
+    return mu + sigma * standardVariate();
+}
+
+double NormalRand::variate(double mean, double rootVar)
+{
+    return mean + rootVar * standardVariate();
+}
+
+double NormalRand::standardVariate()
 {
     int iter = 0;
     do {
@@ -82,8 +92,8 @@ double NormalRand::ziggurat()
         {
             double y;
             do {
-                y = -std::log(U.variate());
-                x = -std::log(U.variate()) * 0.2904764; /// 1.0 / 3.44262
+                y = ExponentialRand::standardVariate();
+                x = ExponentialRand::standardVariate() * 0.2904764; /// 1.0 / 3.44262
             } while (y + y < x * x);
 
             //TODO: maybe we need more accuracy?
@@ -92,15 +102,10 @@ double NormalRand::ziggurat()
         }
 
         /// Handle the wedges of other strips
-        if (fn[iz] + U.variate() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
+        if (fn[iz] + UniformRand::standardVariate() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
-    return 0;
-}
-
-double NormalRand::variate()
-{
-    return mu + sigma * ziggurat();
+    return 0; /// fail due to some error
 }
 
 bool NormalRand::fitToData(const QVector<double> &sample)
