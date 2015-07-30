@@ -88,21 +88,33 @@ double NormalRand::standardVariate()
         if (std::fabs(hz) < kn[iz])
             return x;
 
-        if (iz == 0) /// Handle the base strip
+        if (iz == 0) /// handle the base strip
         {
-            double y;
-            do {
-                y = ExponentialRand::standardVariate();
+            static double z = 0;
+
+            if (z > 0) /// we don't have to generate another exponential variable as we already have one
+            {
                 x = ExponentialRand::standardVariate() * 0.2904764; /// 1.0 / 3.44262
-            } while (y + y < x * x);
+                z -= 0.5 * x * x;
+            }
+
+            if (z <= 0) /// if previous generation wasn't successful
+            {
+                double y;
+                do {
+                    x = ExponentialRand::standardVariate() * 0.2904764; /// 1.0 / 3.44262
+                    y = ExponentialRand::standardVariate();
+                    z = y - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
+                } while (z <= 0);
+            }
 
             //TODO: maybe we need more accuracy?
             x += 3.44262; /// + start of the right tail
             return (hz > 0) ? x : -x;
         }
 
-        /// Handle the wedges of other strips
-        if (fn[iz] + UniformRand::standardVariate() * (fn[iz - 1] - fn[iz]) < std::exp(-.5 * x * x))
+        /// handle the wedges of other strips
+        if (UniformRand::variate(fn[iz], fn[iz - 1]) < std::exp(-.5 * x * x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0; /// fail due to some error

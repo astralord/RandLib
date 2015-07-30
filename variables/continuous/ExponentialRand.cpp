@@ -78,7 +78,7 @@ double ExponentialRand::standardVariate()
         if (iz == 0)
             return (7.69711747013104972 + standardVariate());
 
-        if (fe[iz] + UniformRand::standardVariate() * (fe[iz - 1] - fe[iz]) < std::exp(-x))
+        if (UniformRand::variate(fe[iz], fe[iz - 1]) < std::exp(-x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0;
