@@ -3,7 +3,7 @@
 
 #include <QVector>
 #include <QtMath>
-#include "RandMath.h"
+#include "math/RandMath.h"
 #include "randlib_global.h"
 
 #include <QDebug>
@@ -20,7 +20,7 @@ public:
     virtual ~RandomVariable() {}
 
     /**
-     * @brief value
+     * @brief variate()
      * @return random variable
      */
     virtual T variate() = 0;

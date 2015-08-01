@@ -8,7 +8,6 @@ CONFIG += c++11
 DEFINES += RANDLIB_LIBRARY
 
 SOURCES += \
-    RandMath.cpp \
     variables/RandomVariable.cpp \
     variables/BasicRandGenerator.cpp \
     variables/continuous/BetaRand.cpp \
@@ -39,11 +38,12 @@ SOURCES += \
     variables/continuous/WaldRand.cpp \
     processes/GeometricBrownianMotion.cpp \
     variables/continuous/WeibullRand.cpp \
-    variables/discrete/RademacherRand.cpp
+    variables/discrete/RademacherRand.cpp \
+    math/RandMath.cpp \
+    math/Matrix.cpp
 
 HEADERS +=\
     randlib_global.h \
-    RandMath.h \
     variables/RandomGenerators.h \
     variables/RandomVariable.h \
     variables/BasicRandGenerator.h \
@@ -75,7 +75,9 @@ HEADERS +=\
     variables/continuous/WaldRand.h \
     processes/GeometricBrownianMotion.h \
     variables/continuous/WeibullRand.h \
-    variables/discrete/RademacherRand.h
+    variables/discrete/RademacherRand.h \
+    math/RandMath.h \
+    math/Matrix.h
 
 unix {
     target.path = /usr/lib

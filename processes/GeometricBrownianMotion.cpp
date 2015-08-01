@@ -18,7 +18,8 @@ bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<doub
     int size = std::min(time.size(), output.size());
     if (size <= 0)
         return false;
-    WienerProcess::generate(time, output);
+    if (!WienerProcess::generate(time, output))
+        return false;
     for (int i = 1; i < size; ++i)
     {
         output[i] *= sigma;

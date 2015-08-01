@@ -22,14 +22,10 @@ bool WienerProcess::generate(const QVector<double> &time, QVector<double> &outpu
     if (size <= 0)
         return false;
     output[0] = 0;
-    NormalRand rv;
     for (int i = 1; i < size; ++i)
     {
         double deltaT = time[i] - time[i - 1];
-        output[i] = rv.variate();
-        output[i] *= std::sqrt(var * deltaT);
-        output[i] += mu * deltaT;
-        output[i] += output[i - 1];
+        output[i] = NormalRand::variate(output[i - 1] + mu * deltaT, std::sqrt(var * deltaT));
     }
     return true;
 }

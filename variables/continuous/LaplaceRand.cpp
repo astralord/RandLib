@@ -49,15 +49,17 @@ bool LaplaceRand::fitToData(const QVector<double> &sample)
 
     /// Calculate median
     /// we use root-finding algorithm for median search
-    /// it is better to use median-for-median algorithm
+    /// but note, that it is better to use median-for-median algorithm
     double median = 0.0;
     double min = sample[0], max = min;
     for (double var : sample) {
         min = std::min(var, min);
         max = std::max(var, max);
     }
-    RandMath::findRoot([sample] (double med)
+
+    if (!RandMath::findRoot([sample] (double med)
     {
+        /// sum of sign(x) - derivative of sum of abs(x)
         double x = 0;
         for (double var : sample) {
             if (var > med)
@@ -68,7 +70,8 @@ bool LaplaceRand::fitToData(const QVector<double> &sample)
         return x;
     },
     min, max, median
-    );
+    ))
+        return false;
 
 
     /// Calculate scale
