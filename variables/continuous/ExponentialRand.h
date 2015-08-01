@@ -14,8 +14,9 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
 
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
-    static unsigned long ke[256];
-    static double we[256], fe[256];
+    static unsigned long stairWidth[256];
+    static double horizontalCoeffs[256], stairHeight[256];
+    static double constexpr x1 = 7.69711747013104972;
     static bool dummy;
     static bool setupTables();
 

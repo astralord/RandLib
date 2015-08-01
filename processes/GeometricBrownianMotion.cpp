@@ -8,7 +8,7 @@ GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility
 void GeometricBrownianMotion::setParameters(double drift, double volatility, double initialValue)
 {
     mu = drift;
-    sigma = volatility;
+    sigma = std::max(volatility, MIN_POSITIVE);
     S0 = initialValue;
     generateCoef = mu - .5 * sigma * sigma;
 }
@@ -20,6 +20,7 @@ bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<doub
         return false;
     if (!WienerProcess::generate(time, output))
         return false;
+    // TODO: add all coefs to WiererProcess
     for (int i = 1; i < size; ++i)
     {
         output[i] *= sigma;

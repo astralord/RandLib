@@ -1,8 +1,8 @@
 #include "NormalRand.h"
 
-unsigned long NormalRand::kn[128] = {0};
-double NormalRand::wn[128] = {0};
-double NormalRand::fn[128] = {0};
+unsigned long NormalRand::stairWidth[128] = {0};
+double NormalRand::horizontalCoeffs[128] = {0};
+double NormalRand::stairHeight[128] = {0};
 const bool NormalRand::dummy = NormalRand::setupTables();
 
 NormalRand::NormalRand(double mean, double var)
@@ -16,25 +16,25 @@ bool NormalRand::setupTables()
     const double m1 = 2147483648.0;
     double dn = 3.442619855899, tn = dn, vn = 9.91256303526217e-3;
 
-    fn[0] = 1.;
-    fn[127] = std::exp(-.5 * dn * dn);
+    stairHeight[0] = 1.;
+    stairHeight[127] = std::exp(-.5 * dn * dn);
 
-    double q = vn / fn[127];
+    double q = vn / stairHeight[127];
 
-    kn[0] = (dn / q) * m1;
-    kn[1] = 0;
+    stairWidth[0] = (dn / q) * m1;
+    stairWidth[1] = 0;
 
-    wn[0] = q / m1;
-    wn[127] = dn / m1;
+    horizontalCoeffs[0] = q / m1;
+    horizontalCoeffs[127] = dn / m1;
 
     for (size_t i = 126; i >= 1; --i)
     {
-        dn = -std::log(vn / dn + std::exp(-.5 * dn * dn));
+        dn = -std::log(vn / dn + stairHeight[i + 1]);
         dn = std::sqrt(dn + dn);
-        kn[i + 1] = (dn / tn) * m1;
+        stairWidth[i + 1] = (dn / tn) * m1;
         tn = dn;
-        fn[i] = std::exp(-.5 * dn * dn);
-        wn[i] = dn / m1;
+        stairHeight[i] = std::exp(-.5 * dn * dn);
+        horizontalCoeffs[i] = dn / m1;
     }
     return true;
 }
@@ -83,22 +83,22 @@ double NormalRand::standardVariate()
     int iter = 0;
     do {
         long hz = BasicRandGenerator::getRand();
-        unsigned long iz = hz & 127;
-        double x = hz * wn[iz];
-        if (std::fabs(hz) < kn[iz])
+        unsigned long stripId = hz & 127;
+        double x = hz * horizontalCoeffs[stripId];
+        if ((unsigned)std::abs(hz) < stairWidth[stripId])
             return x;
 
-        if (iz == 0) /// handle the base strip
+        if (stripId == 0) /// handle the base strip
         {
-            static double z = 0;
+            static double z = -1;
 
-            if (z > 0) /// we don't have to generate another exponential variable as we already have one
+            if (z >= 0) /// we don't have to generate another exponential variable as we already have one
             {
                 x = ExponentialRand::standardVariate() * 0.2904764; /// 1.0 / 3.44262
                 z -= 0.5 * x * x;
             }
 
-            if (z <= 0) /// if previous generation wasn't successful
+            if (z < 0) /// if previous generation wasn't successful
             {
                 double y;
                 do {
@@ -114,7 +114,7 @@ double NormalRand::standardVariate()
         }
 
         /// handle the wedges of other strips
-        if (UniformRand::variate(fn[iz], fn[iz - 1]) < std::exp(-.5 * x * x))
+        if (UniformRand::variate(stairHeight[stripId], stairHeight[stripId - 1]) < std::exp(-.5 * x * x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0; /// fail due to some error

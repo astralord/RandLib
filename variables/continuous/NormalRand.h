@@ -16,8 +16,8 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
-    static unsigned long kn[128];
-    static double wn[128], fn[128];
+    static unsigned long stairWidth[128];
+    static double horizontalCoeffs[128], stairHeight[128];
     static const bool dummy;
     /// Set up ziggurat tables
     static bool setupTables();

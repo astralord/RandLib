@@ -1,8 +1,8 @@
 #include "ExponentialRand.h"
 
-unsigned long ExponentialRand::ke[256] = {0};
-double ExponentialRand::we[256] = {0};
-double ExponentialRand::fe[256] = {0};
+unsigned long ExponentialRand::stairWidth[256] = {0};
+double ExponentialRand::horizontalCoeffs[256] = {0};
+double ExponentialRand::stairHeight[256] = {0};
 bool ExponentialRand::dummy = ExponentialRand::setupTables();
 
 ExponentialRand::ExponentialRand(double rate)
@@ -16,23 +16,23 @@ bool ExponentialRand::setupTables()
     const double m2 = 4294967296.;
     double de = 7.697117470131487, te = de, ve = 3.949659822581572e-3;
 
-    fe[0] = 1.;
-    fe[255] = std::exp(-de);
+    stairHeight[0] = 1.;
+    stairHeight[255] = std::exp(-de);
 
-    double q = ve / fe[255];
-    ke[0] = (de / q) * m2;
-    ke[1] = 0;
+    double q = ve / stairHeight[255];
+    stairWidth[0] = (de / q) * m2;
+    stairWidth[1] = 0;
 
-    we[0] = q / m2;
-    we[255] = de / m2;
+    horizontalCoeffs[0] = q / m2;
+    horizontalCoeffs[255] = de / m2;
 
-    for (size_t i = 254; i >= 1; --i)
+    for (unsigned i = 254; i >= 1; --i)
     {
-       de = -std::log(ve / de + std::exp(-de));
-       ke[i + 1] = (de / te) * m2;
+       de = -std::log(ve / de + stairHeight[i + 1]);
+       stairWidth[i + 1] = (de / te) * m2;
        te = de;
-       fe[i] = std::exp(-de);
-       we[i] = de / m2;
+       stairHeight[i] = std::exp(-de);
+       horizontalCoeffs[i] = de / m2;
     }
     return true;
 }
@@ -68,20 +68,23 @@ double ExponentialRand::standardVariate()
     /// Ziggurat algorithm
     int iter = 0;
     do {
-        unsigned long jz = BasicRandGenerator::getRand();
-        unsigned long iz = jz & 255;
-        double x = jz * we[iz];
+        unsigned long B = BasicRandGenerator::getRand();
+        unsigned long stairId = B & 255; /// get Uniform[0, 255]
+        double x = B * horizontalCoeffs[stairId]; /// get horizontal coordinate
 
-        if (jz < ke[iz])
+        if (B < stairWidth[stairId]) /// if we are under the stair - accept
             return x;
 
-        if (iz == 0)
-            return (7.69711747013104972 + standardVariate());
+        if (stairId == 0) /// if we catch the zero stair - launch fallback for tail
+            return (x1 + standardVariate());
 
-        if (UniformRand::variate(fe[iz], fe[iz - 1]) < std::exp(-x))
+        if (UniformRand::variate(stairHeight[stairId], stairHeight[stairId - 1]) < std::exp(-x)) /// if we are under the curve - accept
             return x;
-    } while (++iter <= 1e9); /// one billion should be enough
-    return 0;
+
+        /// rejection - go back
+
+    } while (++iter <= 1e9); /// one billion should be enough to be sure there is a bug
+    return 0; /// fail due to some error
 }
 
 bool ExponentialRand::fitToData(const QVector<double> &sample)
