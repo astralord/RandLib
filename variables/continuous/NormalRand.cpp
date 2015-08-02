@@ -13,25 +13,26 @@ NormalRand::NormalRand(double mean, double var)
 
 bool NormalRand::setupTables()
 {
-    const double m1 = 2147483648.0;
-    double dn = 3.442619855899, tn = dn, vn = 9.91256303526217e-3;
+    double constexpr m1 = 0.5 * BasicRandGenerator::max();
+    double constexpr vn = 9.91256303526217e-3; /// area under rectangle
+    double dn = x1, tn = dn;
 
-    stairHeight[0] = 1.;
-    stairHeight[127] = std::exp(-.5 * dn * dn);
+    stairHeight[127] = 1.;
+    stairHeight[0] = std::exp(-.5 * dn * dn);
 
-    double q = vn / stairHeight[127];
+    double q = vn / stairHeight[0];
 
-    stairWidth[0] = (dn / q) * m1;
-    stairWidth[1] = 0;
+    stairWidth[127] = (dn / q) * m1;
+    stairWidth[126] = 0;
 
-    horizontalCoeffs[0] = q / m1;
-    horizontalCoeffs[127] = dn / m1;
+    horizontalCoeffs[127] = q / m1;
+    horizontalCoeffs[0] = dn / m1;
 
-    for (size_t i = 126; i >= 1; --i)
+    for (unsigned i = 1; i <= 126; ++i)
     {
-        dn = -std::log(vn / dn + stairHeight[i + 1]);
+        dn = -std::log(vn / dn + stairHeight[i - 1]);
         dn = std::sqrt(dn + dn);
-        stairWidth[i + 1] = (dn / tn) * m1;
+        stairWidth[i - 1] = (dn / tn) * m1;
         tn = dn;
         stairHeight[i] = std::exp(-.5 * dn * dn);
         horizontalCoeffs[i] = dn / m1;
@@ -82,19 +83,19 @@ double NormalRand::standardVariate()
 {
     int iter = 0;
     do {
-        long hz = BasicRandGenerator::getRand();
-        unsigned long stripId = hz & 127;
-        double x = hz * horizontalCoeffs[stripId];
-        if ((unsigned)std::abs(hz) < stairWidth[stripId])
+        long B = BasicRandGenerator::getRand();
+        unsigned long stripId = B & 127;
+        double x = B * horizontalCoeffs[stripId];
+        if ((unsigned)std::abs(B) < stairWidth[stripId])
             return x;
 
-        if (stripId == 0) /// handle the base strip
+        if (stripId == 127) /// handle the base strip
         {
             static double z = -1;
 
             if (z >= 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::standardVariate() * 0.2904764; /// 1.0 / 3.44262
+                x = ExponentialRand::variate(x1);
                 z -= 0.5 * x * x;
             }
 
@@ -102,19 +103,18 @@ double NormalRand::standardVariate()
             {
                 double y;
                 do {
-                    x = ExponentialRand::standardVariate() * 0.2904764; /// 1.0 / 3.44262
+                    x = ExponentialRand::variate(x1);
                     y = ExponentialRand::standardVariate();
                     z = y - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
 
-            //TODO: maybe we need more accuracy?
-            x += 3.44262; /// + start of the right tail
-            return (hz > 0) ? x : -x;
+            x += x1; /// + start of the right tail
+            return (B > 0) ? x : -x;
         }
 
         /// handle the wedges of other strips
-        if (UniformRand::variate(stairHeight[stripId], stairHeight[stripId - 1]) < std::exp(-.5 * x * x))
+        if (UniformRand::variate(stairHeight[stripId], stairHeight[stripId + 1]) < std::exp(-.5 * x * x))
             return x;
     } while (++iter <= 1e9); /// one billion should be enough
     return 0; /// fail due to some error

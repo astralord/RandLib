@@ -25,10 +25,16 @@ public:
     static unsigned long getRand();
 
     /**
-     * @brief maxValueInv
+     * @brief maxInv
      * @return 2^(-32)
      */
     static constexpr double maxInv() { return .23283064e-9; }
+
+    /**
+     * @brief maxValue
+     * @return 2^32
+     */
+    static constexpr double max() { return 4294967296; }
 };
 
 

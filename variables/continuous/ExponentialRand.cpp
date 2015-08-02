@@ -1,7 +1,6 @@
 #include "ExponentialRand.h"
 
-unsigned long ExponentialRand::stairWidth[256] = {0};
-double ExponentialRand::horizontalCoeffs[256] = {0};
+double ExponentialRand::stairWidth[257] = {0};
 double ExponentialRand::stairHeight[256] = {0};
 bool ExponentialRand::dummy = ExponentialRand::setupTables();
 
@@ -13,26 +12,19 @@ ExponentialRand::ExponentialRand(double rate)
 bool ExponentialRand::setupTables()
 {
     /// Set up ziggurat tables
-    const double m2 = 4294967296.;
-    double de = 7.697117470131487, te = de, ve = 3.949659822581572e-3;
+    double constexpr A = 3.9496598225815571993e-3; /// area under rectangle
 
-    stairHeight[0] = 1.;
-    stairHeight[255] = std::exp(-de);
+    /// coordinates of the implicit rectangle in base layer
+    stairHeight[0] = std::exp(-x1);
+    stairWidth[0] = A / stairHeight[0];
+    /// implicit value for the top layer
+    stairWidth[256] = 0;
 
-    double q = ve / stairHeight[255];
-    stairWidth[0] = (de / q) * m2;
-    stairWidth[1] = 0;
-
-    horizontalCoeffs[0] = q / m2;
-    horizontalCoeffs[255] = de / m2;
-
-    for (unsigned i = 254; i >= 1; --i)
+    for (unsigned i = 1; i <= 255; ++i)
     {
-       de = -std::log(ve / de + stairHeight[i + 1]);
-       stairWidth[i + 1] = (de / te) * m2;
-       te = de;
-       stairHeight[i] = std::exp(-de);
-       horizontalCoeffs[i] = de / m2;
+        /// such y_i that f(x_{i+1}) = y_i
+        stairWidth[i] = -std::log(stairHeight[i - 1]);
+        stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
     }
     return true;
 }
@@ -68,17 +60,16 @@ double ExponentialRand::standardVariate()
     /// Ziggurat algorithm
     int iter = 0;
     do {
-        unsigned long B = BasicRandGenerator::getRand();
-        unsigned long stairId = B & 255; /// get Uniform[0, 255]
-        double x = B * horizontalCoeffs[stairId]; /// get horizontal coordinate
+        unsigned long stairId = BasicRandGenerator::getRand() & 255;
+        double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
 
-        if (B < stairWidth[stairId]) /// if we are under the stair - accept
+        if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
             return x;
 
-        if (stairId == 0) /// if we catch the zero stair - launch fallback for tail
-            return (x1 + standardVariate());
+        if (stairId == 0) /// if we catch the tail
+            return x1 + standardVariate();
 
-        if (UniformRand::variate(stairHeight[stairId], stairHeight[stairId - 1]) < std::exp(-x)) /// if we are under the curve - accept
+        if (UniformRand::variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-x)) /// if we are under the curve - accept
             return x;
 
         /// rejection - go back
