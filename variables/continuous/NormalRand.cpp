@@ -1,8 +1,7 @@
 #include "NormalRand.h"
 
-unsigned long NormalRand::stairWidth[128] = {0};
-double NormalRand::horizontalCoeffs[128] = {0};
-double NormalRand::stairHeight[128] = {0};
+double NormalRand::stairWidth[257] = {0};
+double NormalRand::stairHeight[256] = {0};
 const bool NormalRand::dummy = NormalRand::setupTables();
 
 NormalRand::NormalRand(double mean, double var)
@@ -13,29 +12,21 @@ NormalRand::NormalRand(double mean, double var)
 
 bool NormalRand::setupTables()
 {
-    double constexpr m1 = 0.5 * BasicRandGenerator::max();
-    double constexpr vn = 9.91256303526217e-3; /// area under rectangle
-    double dn = x1, tn = dn;
+    /// Set up ziggurat tables
+    double constexpr A = 4.92867323399e-3; /// area under rectangle
 
-    stairHeight[127] = 1.;
-    stairHeight[0] = std::exp(-.5 * dn * dn);
+    /// coordinates of the implicit rectangle in base layer
+    stairHeight[0] = std::exp(-.5 * x1 * x1);
+    stairWidth[0] = A / stairHeight[0];
+    /// implicit value for the top layer
+    stairWidth[256] = 0;
 
-    double q = vn / stairHeight[0];
-
-    stairWidth[127] = (dn / q) * m1;
-    stairWidth[126] = 0;
-
-    horizontalCoeffs[127] = q / m1;
-    horizontalCoeffs[0] = dn / m1;
-
-    for (unsigned i = 1; i <= 126; ++i)
+    for (unsigned i = 1; i <= 255; ++i)
     {
-        dn = -std::log(vn / dn + stairHeight[i - 1]);
-        dn = std::sqrt(dn + dn);
-        stairWidth[i - 1] = (dn / tn) * m1;
-        tn = dn;
-        stairHeight[i] = std::exp(-.5 * dn * dn);
-        horizontalCoeffs[i] = dn / m1;
+        /// such y_i that f(x_{i+1}) = y_i
+        stairWidth[i] = std::sqrt(-2 * std::log(stairHeight[i - 1]));
+        stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
+        qDebug() << stairWidth[i] << stairHeight[i];
     }
     return true;
 }
@@ -83,13 +74,14 @@ double NormalRand::standardVariate()
 {
     int iter = 0;
     do {
-        long B = BasicRandGenerator::getRand();
-        unsigned long stripId = B & 127;
-        double x = B * horizontalCoeffs[stripId];
-        if ((unsigned)std::abs(B) < stairWidth[stripId])
-            return x;
+        unsigned long B = BasicRandGenerator::getRand();
+        unsigned long stairId = B & 255;
+        double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
 
-        if (stripId == 127) /// handle the base strip
+        if (x < stairWidth[stairId + 1])
+            return ((signed)B > 0) ? x : -x;
+
+        if (stairId == 0) /// handle the base layer
         {
             static double z = -1;
 
@@ -109,13 +101,14 @@ double NormalRand::standardVariate()
                 } while (z <= 0);
             }
 
-            x += x1; /// + start of the right tail
-            return (B > 0) ? x : -x;
+            x += x1;
+            return ((signed)B > 0) ? x : -x;
         }
 
-        /// handle the wedges of other strips
-        if (UniformRand::variate(stairHeight[stripId], stairHeight[stripId + 1]) < std::exp(-.5 * x * x))
-            return x;
+        /// handle the wedges of other stairs
+        if (UniformRand::variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
+            return ((signed)B > 0) ? x : -x;
+
     } while (++iter <= 1e9); /// one billion should be enough
     return 0; /// fail due to some error
 }
