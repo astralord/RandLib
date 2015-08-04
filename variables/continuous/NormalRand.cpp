@@ -12,7 +12,6 @@ NormalRand::NormalRand(double mean, double var)
 
 bool NormalRand::setupTables()
 {
-    /// Set up ziggurat tables
     double constexpr A = 4.92867323399e-3; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
@@ -26,7 +25,6 @@ bool NormalRand::setupTables()
         /// such y_i that f(x_{i+1}) = y_i
         stairWidth[i] = std::sqrt(-2 * std::log(stairHeight[i - 1]));
         stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
-        qDebug() << stairWidth[i] << stairHeight[i];
     }
     return true;
 }

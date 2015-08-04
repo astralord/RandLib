@@ -11,7 +11,6 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>
 {
     double l;
     double exp_l; /// exp(-l)
-    UniformRand U;
 public:
     PoissonRand(double rate);
 

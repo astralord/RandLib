@@ -2,7 +2,7 @@
 #define UNIFORMDISCRETERAND_H
 
 #include "DiscreteRand.h"
-#include "../BasicRandGenerator.h"
+#include "../continuous/UniformRand.h"
 
 /**
  * @brief The UniformDiscreteRand class

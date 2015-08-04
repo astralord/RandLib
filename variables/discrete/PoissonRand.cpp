@@ -1,7 +1,6 @@
 #include "PoissonRand.h"
 
-PoissonRand::PoissonRand(double rate) :
-    U(0, 1)
+PoissonRand::PoissonRand(double rate)
 {
     setRate(rate);
 }
@@ -28,7 +27,7 @@ double PoissonRand::F(double x) const
 int PoissonRand::variate()
 {
     int y = 0;
-    double u = U.variate();
+    double u = UniformRand::standardVariate();
     double p = exp_l, s = p;
     while (s < u) {
         ++y;

@@ -8,6 +8,7 @@
 #include "discrete/DiscreteRand.h"
 #include "discrete/UniformDiscreteRand.h"
 #include "discrete/PoissonRand.h"
+#include "discrete/BernoulliRand.h"
 
 /// CONTINUOUS
 #include "continuous/UniformRand.h"
