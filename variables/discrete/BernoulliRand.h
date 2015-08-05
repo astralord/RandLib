@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand<int>
 
 public:
     BernoulliRand(double successProbability);
-    void setSuccessProbability(double successProbability);
+    inline void setSuccessProbability(double successProbability);
     inline double getSuccessProbability() { return p; }
 
     virtual double P(int k) const override;

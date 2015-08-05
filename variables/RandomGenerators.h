@@ -9,6 +9,7 @@
 #include "discrete/UniformDiscreteRand.h"
 #include "discrete/PoissonRand.h"
 #include "discrete/BernoulliRand.h"
+#include "discrete/GeometricRand.h"
 
 /// CONTINUOUS
 #include "continuous/UniformRand.h"
