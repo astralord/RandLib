@@ -42,7 +42,8 @@ SOURCES += \
     math/RandMath.cpp \
     math/Matrix.cpp \
     variables/discrete/BernoulliRand.cpp \
-    variables/discrete/GeometricRand.cpp
+    variables/discrete/GeometricRand.cpp \
+    variables/discrete/BinomialRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -81,7 +82,8 @@ HEADERS +=\
     math/RandMath.h \
     math/Matrix.h \
     variables/discrete/BernoulliRand.h \
-    variables/discrete/GeometricRand.h
+    variables/discrete/GeometricRand.h \
+    variables/discrete/BinomialRand.h
 
 unix {
     target.path = /usr/lib

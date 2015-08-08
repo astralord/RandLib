@@ -13,14 +13,13 @@ class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
     double a, b;
     double c; /// 1 / (b - a)
     double delta; /// (b - a) / RAND_MAX
-    void swapBoundaries();
 
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
 
     void setBoundaries(double minValue, double maxValue);    
-    inline double getA() { return a; }
-    inline double getB() { return b; }
+    inline double getA() const { return a; }
+    inline double getB() const { return b; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;

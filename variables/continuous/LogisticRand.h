@@ -13,13 +13,13 @@ public:
 
     void setLocation(double location);
     void setScale(double scale);
-    inline double getLocation() { return mu; }
-    inline double getScale() { return s; }
+    inline double getLocation() const { return mu; }
+    inline double getScale() const { return s; }
 
     virtual double f(double x) const;
     virtual double F(double x) const;
     virtual double variate();
-
+public:
     double E() const { return mu; }
     double Var() const {
         double sPi = s * M_PI;

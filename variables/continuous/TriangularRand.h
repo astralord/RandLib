@@ -15,8 +15,6 @@ class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousRand
     double coefGenerator2; /// (b - a) * (b - c)
     void setGeneratorConstants();
 
-    UniformRand U;
-
 public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);
 
@@ -31,6 +29,7 @@ public:
     virtual double F(double x) const override;
     virtual double variate() override;
 
+public:
     double E() const override { return (a + b + c) / 3; }
     double Var() const override { return (a * (a - b) + b * (b - c) + c * (c - a)) / 18; }
 };

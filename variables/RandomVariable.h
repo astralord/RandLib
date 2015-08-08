@@ -11,7 +11,6 @@
 /**
  * @brief The RandomVariable class
  */
-template< typename T >
 class RANDLIBSHARED_EXPORT RandomVariable
 {
 
@@ -23,13 +22,13 @@ public:
      * @brief variate()
      * @return random variable
      */
-    virtual T variate() = 0;
+    virtual double variate() = 0;
 
     /**
      * @brief sample
      * @param outputData
      */
-    void sample(QVector<T> &outputData);
+    virtual void sample(QVector<double> &outputData);
 
     /**
      * @brief F
@@ -50,6 +49,7 @@ public:
      * @return Mathematical expectation
      */
     virtual double E() const = 0;
+
     /**
      * @brief Var
      * @return Variance

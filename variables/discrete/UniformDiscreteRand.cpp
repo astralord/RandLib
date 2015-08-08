@@ -12,34 +12,25 @@ void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
     b = maxValue;
 
     if (b < a)
-        swapBoundaries();
+        SWAP(a, b);
 
     n = b - a + 1;
-    nInv = 1.0 / n;
-}
-
-void UniformDiscreteRand::swapBoundaries()
-{
-    a += b;
-    b -= a;
-    a += b;
-    b = -b;
+    delta = n * BasicRandGenerator::maxInv();
 }
 
 double UniformDiscreteRand::P(int k) const
 {
     if (k < a || k > b)
         return 0;
-    return nInv;
+    return 1.0 / n;
 }
 
 double UniformDiscreteRand::F(double x) const
 {
-    return nInv * (std::floor(x) - a + 1);
+    return (std::floor(x) - a + 1) / n;
 }
 
-int UniformDiscreteRand::variate()
+double UniformDiscreteRand::variate()
 {
-    /// If we use modulo instead it can happen to return odd-even-odd-... values
-    return std::floor(UniformRand::variate(a, b + 1));
+    return a + std::floor(BasicRandGenerator::getRand() * delta);
 }

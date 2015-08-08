@@ -6,7 +6,7 @@
 /**
  * @brief The ContinuousRand class
  */
-class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable<double>
+class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable
 {
 public:
     ContinuousRand() : RandomVariable() {}

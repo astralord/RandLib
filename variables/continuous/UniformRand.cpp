@@ -12,20 +12,12 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
 
     /// Sanity check
     if (b < a)
-        swapBoundaries();
+        SWAP(a, b);
     if (b - a < MIN_POSITIVE)
         b = a + MIN_POSITIVE;
 
     c = 1.0 / (b - a);
     delta = (b - a) * BasicRandGenerator::maxInv();
-}
-
-void UniformRand::swapBoundaries()
-{
-    a += b;
-    b -= a;
-    a += b;
-    b = -b;
 }
 
 double UniformRand::variate()

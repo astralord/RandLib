@@ -31,29 +31,13 @@ void GammaRand::setParameters(double shape, double scale)
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
     valueCoef = kInv + M_1_E;
 
-    int k_int = (int)std::floor(k);
-    if (std::fabs(k - k_int) < MIN_POSITIVE)
-    {
-        valuePtr = std::bind(&GammaRand::valueForIntegerShape, this);
-    }
-    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE)
-    {
-        valuePtr = std::bind(&GammaRand::valueForHalfIntegerShape, this);
-    }
-    else if (k <= 1)
-    {
+    if (k <= 1) {
         U.setBoundaries(0, 1 + k * M_1_E);
-        valuePtr = std::bind(&GammaRand::valueForSmallShape, this);
     }
-    else if (k <= 3)
-    {
-        valuePtr = std::bind(&GammaRand::valueForMediumShape, this);
-    }
-    else
+    else if (k > 3)
     {
         setConstants();
         U.setBoundaries(0, 1);
-        valuePtr = std::bind(&GammaRand::valueForLargeShape, this);
     }
 }
 
@@ -73,7 +57,30 @@ double GammaRand::F(double x) const
     return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }
 
-double GammaRand::valueForIntegerShape()
+double GammaRand::variate()
+{
+    double rv = 0;
+    int k_int = static_cast<int>(k);
+    if (std::fabs(k - k_int) < MIN_POSITIVE) {
+        rv = variateForIntegerShape();
+    }
+    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE) {
+        rv = variateForHalfIntegerShape();
+    }
+    else if (k <= 1) {
+        rv = variateForSmallShape();
+    }
+    else if (k <= 3) {
+        rv = variateForMediumShape();
+    }
+    else {
+        rv = variateForLargeShape();
+    }
+
+    return theta * rv;
+}
+
+double GammaRand::variateForIntegerShape()
 {
     double rv = 0;
     for (int i = 0; i < k; ++i)
@@ -81,7 +88,7 @@ double GammaRand::valueForIntegerShape()
     return rv;
 }
 
-double GammaRand::valueForHalfIntegerShape()
+double GammaRand::variateForHalfIntegerShape()
 {
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
@@ -90,7 +97,7 @@ double GammaRand::valueForHalfIntegerShape()
     return rv + .5 * n * n;
 }
 
-double GammaRand::valueForSmallShape()
+double GammaRand::variateForSmallShape()
 {
     double rv = 0;
     int iter = 0;
@@ -113,7 +120,7 @@ double GammaRand::valueForSmallShape()
     return 0; /// shouldn't end up here
 }
 
-double GammaRand::valueForMediumShape()
+double GammaRand::variateForMediumShape()
 {
     double E1, E2;
     do {
@@ -123,7 +130,7 @@ double GammaRand::valueForMediumShape()
     return k * E1;
 }
 
-double GammaRand::valueForLargeShape()
+double GammaRand::variateForLargeShape()
 {
     double rv = 0;
     int iter = 0;
@@ -159,10 +166,4 @@ double GammaRand::valueForLargeShape()
         }
     } while (++iter < 1e9); /// one billion should be enough
     return 0; /// shouldn't end up here
-}
-
-double GammaRand::variate()
-{
-    double rv = valuePtr();
-    return theta * rv;
 }

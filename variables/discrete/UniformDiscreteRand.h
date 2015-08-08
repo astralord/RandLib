@@ -2,7 +2,7 @@
 #define UNIFORMDISCRETERAND_H
 
 #include "DiscreteRand.h"
-#include "../continuous/UniformRand.h"
+#include "../BasicRandGenerator.h"
 
 /**
  * @brief The UniformDiscreteRand class
@@ -10,19 +10,18 @@
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand<int>
 {
     int n, a, b;
-    double nInv; // 1 / n
+    double delta;
 
-    void swapBoundaries();
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
 
     void setBoundaries(int minValue, int maxValue);
-    inline int getA() { return a; }
-    inline int getB() { return b; }
+    inline int getA() const { return a; }
+    inline int getB() const { return b; }
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual int variate() override;
+    virtual double variate() override;
 
     double E() const override { return .5 * (b + a); }
     double Var() const override {

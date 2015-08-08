@@ -35,3 +35,4 @@ double NakagamiRand::variate()
 {
     return std::sqrt(Y.variate());
 }
+

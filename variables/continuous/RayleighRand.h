@@ -22,6 +22,7 @@ public:
     virtual double F(double x) const override;
     virtual double variate() override;
 
+public:
     double E() const override { return sigma * M_SQRTPI * M_SQRT1_2; }
     double Var() const override { return (1 - M_PI_4) * sigmaSqInv_2; }
 

@@ -23,6 +23,7 @@ public:
     virtual double F(double x) const override;
     virtual double variate() override;
 
+public:
     double E() const override { return expMu * std::sqrt(expVar); }
     double Var() const override { return (expVar - 1) * expMu * expMu * expVar; }
 

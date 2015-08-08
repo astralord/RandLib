@@ -1,13 +1,13 @@
 #include "BernoulliRand.h"
 
-BernoulliRand::BernoulliRand(double successProbability)
+BernoulliRand::BernoulliRand(double probability)
 {
-    setSuccessProbability(successProbability);
+    setP(probability);
 }
 
-void BernoulliRand::setSuccessProbability(double successProbability)
+void BernoulliRand::setP(double probability)
 {
-    p = std::min(std::max(successProbability, 0.0), 1.0);
+    p = std::min(std::max(probability, 0.0), 1.0);
     generatorEdge = (1 - p) * BasicRandGenerator::max();
 }
 
@@ -21,8 +21,7 @@ double BernoulliRand::F(double x) const
     return (x < 0) ? 0 : ((x < 1) ? 1 - p : 1);
 }
 
-int BernoulliRand::variate()
+double BernoulliRand::variate()
 {
     return (BasicRandGenerator::getRand() < generatorEdge) ? 0 : 1;
 }
-

@@ -40,9 +40,6 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     {
         N.setMean(mu);
         N.setSigma(sigma * M_SQRT2);
-        valuePtr = std::bind(&StableRand::valueNormal, this);
-        pdfPtr = std::bind(&StableRand::pdfNormal, this, std::placeholders::_1);
-        cdfPtr = std::bind(&StableRand::cdfNormal, this, std::placeholders::_1);
     }
     else if (alpha == 1)
     {
@@ -50,35 +47,20 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
         {
             C.setLocation(mu);
             C.setScale(sigma);
-            valuePtr = std::bind(&StableRand::valueCauchy, this);
-            pdfPtr = std::bind(&StableRand::pdfCauchy, this, std::placeholders::_1);
-            cdfPtr = std::bind(&StableRand::cdfCauchy, this, std::placeholders::_1);
         }
         else /// just alpha == 1
         {
             logSigma = std::log(sigma);
             pdfCoef = 0.5 / beta;
-
-            valuePtr = std::bind(&StableRand::valueForAlphaEqualOne, this);
-            pdfPtr = std::bind(&StableRand::pdfForAlphaEqualOne, this, std::placeholders::_1);
-            cdfPtr = std::bind(&StableRand::cdfForAlphaEqualOne, this, std::placeholders::_1);
         }
     }
-    else if (alpha == .5 && beta == 1) /// X ~ Levy(mu, sigma)
+    else if (alpha == .5)
     {
-        L.setLocation(mu);
-        L.setScale(sigma);
-        valuePtr = std::bind(&StableRand::valueLevy, this);
-        pdfPtr = std::bind(&StableRand::pdfLevy, this, std::placeholders::_1);
-        cdfPtr = std::bind(&StableRand::cdfLevy, this, std::placeholders::_1);
-    }
-    else if (alpha == .5 && beta == -1) /// -X ~ Levy(mu, sigma)
-    {
-        L.setLocation(mu);
-        L.setScale(sigma);
-        valuePtr = std::bind(&StableRand::valueLevyNegative, this);
-        pdfPtr = std::bind(&StableRand::pdfLevyNegative, this, std::placeholders::_1);
-        cdfPtr = std::bind(&StableRand::cdfLevyNegative, this, std::placeholders::_1);
+        if (std::fabs(beta) == 1) /// +/- X ~ Levy(mu, sigma)
+        {
+            L.setLocation(mu);
+            L.setScale(sigma);
+        }
     }
     else /// Common case: alpha != 1
     {
@@ -89,27 +71,39 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
         pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
         xi = alphaInv * B;
         integrandCoef = std::pow(qFastCos(B), alpham1Inv);
-
-        valuePtr = std::bind(&StableRand::valueForCommonAlpha, this);
-        pdfPtr = std::bind(&StableRand::pdfForCommonAlpha, this, std::placeholders::_1);
-        cdfPtr = std::bind(&StableRand::cdfForCommonAlpha, this, std::placeholders::_1);
     }
 }
 
 double StableRand::variate()
 {
-    /// Get standard value
+    /// Check all 'good' cases
+    if (alpha == 2)
+        return N.variate();
+    if (alpha == 1 && beta == 0)
+        return C.variate();
+    if (alpha == .5 && beta == 1)
+    {
+        if (beta == 1)
+            return L.variate();
+        if (beta == -1)
+            return -L.variate();
+    }
+
+    /// Now check the others
     double rv = 0;
     int iter = 0;
     do {
-        rv = valuePtr();
+        if (alpha == 1)
+            rv = variateForAlphaEqualOne();
+        else
+            rv = variateForCommonAlpha();
         ++iter;
-    } while ((std::isnan(rv) || std::isinf(rv)) &&
+    } while ((std::isnan(rv) || std::isinf(rv)) && /// there could occure some numerical problems
              iter < 10); /// if we got nan 10 times - we have a problem, get out
     return rv;
 }
 
-double StableRand::valueForCommonAlpha()
+double StableRand::variateForCommonAlpha()
 {
     double V = U.variate();
     double W = Exp.variate();
@@ -122,7 +116,7 @@ double StableRand::valueForCommonAlpha()
     return mu + sigma * rv;
 }
 
-double StableRand::valueForAlphaEqualOne()
+double StableRand::variateForAlphaEqualOne()
 {
     double V = U.variate();
     double W = Exp.variate();
@@ -138,14 +132,30 @@ double StableRand::valueForAlphaEqualOne()
 
 double StableRand::f(double x) const
 {
-    return pdfPtr(x);
+    /// Check all 'good' cases
+    if (alpha == 2)
+        return N.f(x);
+    if (alpha == 1 && beta == 0)
+        return C.f(x);
+    if (alpha == .5 && beta == 1)
+    {
+        if (beta == 1)
+            return L.f(x);
+        if (beta == -1)
+            return L.f(-x);
+    }
+
+    /// Now check the others
+    if (alpha == 1)
+        return pdfForAlphaEqualOne(x);
+    return pdfForCommonAlpha(x);
 }
 
-double StableRand::pdfForCommonAlpha(double x)
+double StableRand::pdfForCommonAlpha(double x) const
 {
     x = (x - mu) / sigma; /// Standardize
 
-    if (std::fabs(x) < 0.1) /// if we are close to 0 then we do interpolation avoiding dangerous values
+    if (std::fabs(x) < 0.1) /// if we are close to 0 then we do interpolation avoiding dangerous variates
     {
         double numerator = std::tgamma(1 + alphaInv);
         numerator *= qFastCos(xi);
@@ -174,33 +184,45 @@ double StableRand::pdfForCommonAlpha(double x)
 
     double xAdj = std::pow(x, alpha_alpham1);
 
-    /// find peak of integrand
-    integrandPtr = std::bind(&StableRand::rootFunctionForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+    /// find the peak of integrand
     double theta0 = M_PI_4 - .5 * xiAdj;
-    RandMath::findRoot(integrandPtr, -xiAdj, std::max(-xiAdj, 0.99 * M_PI_2), theta0);
+    RandMath::findRoot([this, xAdj, xiAdj] (double theta)
+    {
+        return integrandAuxForCommonAlpha(theta, xAdj, xiAdj) - 1.0;
+    },
+    -xiAdj, std::max(-xiAdj, 0.99 * M_PI_2), theta0);
 
     /// calculate two integrals
-    integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
     double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
     return pdfCoef * (int1 + int2) / x;
 }
 
-double StableRand::pdfForAlphaEqualOne(double x)
+double StableRand::pdfForAlphaEqualOne(double x) const
 {
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
     double xAdj = std::exp(-M_PI * x * pdfCoef);
 
     /// find peak of integrand
-    integrandPtr = std::bind(&StableRand::rootFunctionForAlphaEqualOne, this, std::placeholders::_1, xAdj);
     double theta0 = 0;
-    if (beta > 0)
-        RandMath::findRoot(integrandPtr, -M_PI_2, 0.99 * M_PI_2, theta0);
-    else
-        RandMath::findRoot(integrandPtr, -0.99 * M_PI_2, M_PI_2, theta0);
+    if (beta > 0) {
+        RandMath::findRoot([this, xAdj] (double theta)
+        {
+            return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
+        },
+        -M_PI_2, 0.99 * M_PI_2, theta0);
+    }
+    else {
+        RandMath::findRoot([this, xAdj] (double theta)
+        {
+            return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
+        },
+        -0.99 * M_PI_2, M_PI_2, theta0);
+    }
 
-    integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
     double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
 
@@ -251,5 +273,21 @@ double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiA
 
 double StableRand::F(double x) const
 {
-    return cdfPtr(x);
+    /// Check all 'good' cases
+    if (alpha == 2)
+        return N.F(x);
+    if (alpha == 1 && beta == 0)
+        return C.F(x);
+    if (alpha == .5 && beta == 1)
+    {
+        if (beta == 1)
+            return L.F(x);
+        if (beta == -1)
+            return 1.0 - L.f(-x);
+    }
+
+    /// Now check the others
+    if (alpha == 1)
+        return cdfForAlphaEqualOne(x);
+    return cdfForCommonAlpha(x);
 }

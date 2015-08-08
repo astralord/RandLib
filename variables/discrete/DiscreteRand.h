@@ -7,10 +7,10 @@
  *@brief The DiscreteRand class
  */
 template< typename T >
-class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable<T>
+class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable
 {
 public:
-    DiscreteRand() : RandomVariable<T>() {}
+    DiscreteRand() : RandomVariable() {}
     virtual ~DiscreteRand() {}
 
     virtual double P(T x) const = 0;

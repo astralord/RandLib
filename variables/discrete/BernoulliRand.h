@@ -13,13 +13,13 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand<int>
     unsigned long generatorEdge; /// such value that probability of (BasicRandGenerator's variate > generatorEdge) is equal p
 
 public:
-    BernoulliRand(double successProbability);
-    inline void setSuccessProbability(double successProbability);
-    inline double getSuccessProbability() { return p; }
+    BernoulliRand(double probability = 0.5);
+    void setP(double probability);
+    inline double getP() const { return p; }
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual int variate() override;
+    virtual double variate() override;
 
     double E() const override { return p; }
     double Var() const override { return p * (1 - p); }

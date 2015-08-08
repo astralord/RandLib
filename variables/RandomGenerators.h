@@ -10,13 +10,14 @@
 #include "discrete/PoissonRand.h"
 #include "discrete/BernoulliRand.h"
 #include "discrete/GeometricRand.h"
+#include "discrete/RademacherRand.h"
+#include "discrete/BinomialRand.h"
 
 /// CONTINUOUS
 #include "continuous/UniformRand.h"
 #include "continuous/NormalRand.h"
 #include "continuous/ExponentialRand.h"
 #include "continuous/GammaRand.h"
-
 #include "continuous/CauchyRand.h"
 #include "continuous/LevyRand.h"
 #include "continuous/LaplaceRand.h"

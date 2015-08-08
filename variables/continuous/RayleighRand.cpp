@@ -29,8 +29,7 @@ double RayleighRand::F(double x) const
 
 double RayleighRand::variate()
 {
-    double rv = ExponentialRand::variate(sigmaSqInv_2);
-    return std::sqrt(rv);
+    return std::sqrt(ExponentialRand::variate(sigmaSqInv_2));
 }
 
 bool RayleighRand::fitToData(const QVector<double> &sample)

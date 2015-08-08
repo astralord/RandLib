@@ -16,7 +16,7 @@ public:
     ChiSquaredRand(int degree = 1);
 
     void setDegree(int degree);
-    inline size_t getDegree() const { return k; }
+    inline int getDegree() const { return k; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
