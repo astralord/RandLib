@@ -30,9 +30,9 @@ public:
     void setVar(double var) { setSigma(std::sqrt(std::max(var, MIN_POSITIVE))); }
     double getSigma() const { return sigma; }
 
-    virtual double f(double x) const;
-    virtual double F(double x) const;
-    virtual double variate();
+    virtual double f(double x) const override;
+    virtual double F(double x) const override;
+    virtual double variate() const override;
 
     static double variate(double mean, double rootVar);
     static double standardVariate();

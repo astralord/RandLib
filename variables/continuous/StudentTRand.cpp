@@ -26,7 +26,7 @@ double StudentTRand::F(double x) const
     return x;
 }
 
-double StudentTRand::variate()
+double StudentTRand::variate() const
 {
     //v = 1 -> cauchy
     //v = inf -> normal

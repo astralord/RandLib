@@ -39,7 +39,7 @@ double WaldRand::F(double x) const
     return .5 * (y + cdfCoef * z);
 }
 
-double WaldRand::variate()
+double WaldRand::variate() const
 {
     double y = NormalRand::standardVariate();
     y *= y;

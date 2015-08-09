@@ -23,7 +23,7 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
     double E() const override { return mu; }
     double Var() const override { return 2 * b * b; }

@@ -30,7 +30,7 @@ double UniformDiscreteRand::F(double x) const
     return (std::floor(x) - a + 1) / n;
 }
 
-double UniformDiscreteRand::variate()
+double UniformDiscreteRand::variate() const
 {
     return a + std::floor(BasicRandGenerator::getRand() * delta);
 }

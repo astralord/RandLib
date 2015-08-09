@@ -19,7 +19,7 @@ public:
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
     double E() const override { return p; }
     double Var() const override { return p * (1 - p); }

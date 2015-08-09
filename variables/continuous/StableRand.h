@@ -14,8 +14,6 @@
 class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
 {
     double alpha, beta, mu, sigma;
-    UniformRand U;
-    ExponentialRand Exp;
 
     // TODO: shouldn't storage them all
     NormalRand N;
@@ -40,14 +38,15 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
     double E() const override { return (alpha > 1) ? mu : NAN; }
     double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
 
 private:
-    double variateForCommonAlpha();
-    double variateForAlphaEqualOne();
+    /// variate
+    double variateForCommonAlpha() const;
+    double variateForAlphaEqualOne() const;
 
     /// pdf
     double pdfForCommonAlpha(double x) const;

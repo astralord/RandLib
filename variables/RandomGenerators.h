@@ -34,8 +34,8 @@
 #include "continuous/NakagamiRand.h"
 #include "continuous/WaldRand.h"
 #include "continuous/WeibullRand.h"
-
 #include "continuous/StableRand.h"
+#include "continuous/GeometricStableRand.h"
 
 
 #endif // RANDOMGENERATORS_H

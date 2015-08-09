@@ -2,7 +2,7 @@
 #include <QDebug>
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location) :    
-    U(-M_PI_2, M_PI_2), N(0, M_SQRT2)
+    N(0, M_SQRT2)
 {
     setParameters(exponent, skewness, scale, location);
 }
@@ -74,7 +74,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     }
 }
 
-double StableRand::variate()
+double StableRand::variate() const
 {
     /// Check all 'good' cases
     if (alpha == 2)
@@ -103,29 +103,29 @@ double StableRand::variate()
     return rv;
 }
 
-double StableRand::variateForCommonAlpha()
+double StableRand::variateForCommonAlpha() const
 {
-    double V = U.variate();
-    double W = Exp.variate();
-    double alphaVB = alpha * V + B;
+    double v = UniformRand::variate(-M_PI_2, M_PI_2);
+    double w = ExponentialRand::standardVariate();
+    double alphaVB = alpha * v + B;
     double rv = S * qFastSin(alphaVB); /// S * sin(alpha * V + B)
-    double W_adj = W / qFastCos(V - alphaVB);
-    rv *= W_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
-    rv *= std::pow(W_adj * qFastCos(V), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
+    double w_adj = w / qFastCos(v - alphaVB);
+    rv *= w_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
+    rv *= std::pow(w_adj * qFastCos(v), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
                                                    /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
     return mu + sigma * rv;
 }
 
-double StableRand::variateForAlphaEqualOne()
+double StableRand::variateForAlphaEqualOne() const
 {
-    double V = U.variate();
-    double W = Exp.variate();
-    double pi_2BetaV = M_PI_2 + beta * V;
+    double v = UniformRand::variate(-M_PI_2, M_PI_2);
+    double w = ExponentialRand::standardVariate();
+    double pi_2BetaV = M_PI_2 + beta * v;
 
     double rv = logSigma;
-    rv -= std::log(M_PI_2 * W * qFastCos(V) / pi_2BetaV);
+    rv -= std::log(M_PI_2 * w * qFastCos(v) / pi_2BetaV);
     rv *= beta;
-    rv += pi_2BetaV * std::tan(V);
+    rv += pi_2BetaV * std::tan(v);
     rv *= M_2_PI;
     return mu + sigma * rv;
 }

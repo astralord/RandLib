@@ -31,7 +31,7 @@ double NakagamiRand::F(double x) const
     return RandMath::lowerIncGamma(m, sigma * x * x) * gammaMInv;
 }
 
-double NakagamiRand::variate()
+double NakagamiRand::variate() const
 {
     return std::sqrt(Y.variate());
 }

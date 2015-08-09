@@ -26,7 +26,7 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
     double E() const override { return (d2 > 2) ? d2 / (d2 - 2) : INFINITY /*or NAN*/; }
     double Var() const override {

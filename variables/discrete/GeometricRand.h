@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand<int>
     static constexpr unsigned tableSize = 16;
     // TODO: don't storage both variables (including tableSize)
     double table[tableSize];
-    ExponentialRand Exp;
+    ExponentialRand W;
 
 public:
     GeometricRand(double probability);
@@ -25,11 +25,11 @@ public:
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
 private:
-    double variateForSmallP();
-    double variateForLargeP();
+    double variateForSmallP() const;
+    double variateForLargeP() const;
 
 public:
     double E() const override { return 1.0 / p; }

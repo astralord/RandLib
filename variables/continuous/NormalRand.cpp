@@ -58,7 +58,7 @@ double NormalRand::F(double x) const
     return .5 * y; /// (1 + erf((x - mu) / (sigma * sqrt(2)))) / 2
 }
 
-double NormalRand::variate()
+double NormalRand::variate() const
 {
     return mu + sigma * standardVariate();
 }

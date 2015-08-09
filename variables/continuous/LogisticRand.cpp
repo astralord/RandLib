@@ -31,7 +31,7 @@ double LogisticRand::F(double x) const
     return 1.0 / (1 + expX);
 }
 
-double LogisticRand::variate()
+double LogisticRand::variate() const
 {
     return mu + s * std::log(1.0 / UniformRand::standardVariate() - 1);
 }

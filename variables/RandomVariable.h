@@ -22,7 +22,7 @@ public:
      * @brief variate()
      * @return random variable
      */
-    virtual double variate() = 0;
+    virtual double variate() const = 0;
 
     /**
      * @brief sample

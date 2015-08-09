@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
     double cdfCoef; /// 1.0 / gamma(k)
     double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
     UniformRand U;
-    ExponentialRand Exp;
+    ExponentialRand W;
     NormalRand N;
 
     double m, s, s_2, d, b, w, v, c; /// constants for sampling
@@ -34,14 +34,14 @@ public:
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
 private:
-    double variateForIntegerShape();     /// Erlang distribution
-    double variateForHalfIntegerShape(); /// GA algorithm for k = [n] + 0.5
-    double variateForSmallShape();       /// GS algorithm for small k < 1
-    double variateForMediumShape();      /// GP algorithm for 1 < k < 3
-    double variateForLargeShape();       /// GO algorithm for the most common case k > 3
+    double variateForIntegerShape() const;     /// Erlang distribution
+    double variateForHalfIntegerShape() const; /// GA algorithm for k = [n] + 0.5
+    double variateForSmallShape() const;       /// GS algorithm for small k < 1
+    double variateForMediumShape() const;      /// GP algorithm for 1 < k < 3
+    double variateForLargeShape() const;       /// GO algorithm for the most common case k > 3
 
     double E() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }

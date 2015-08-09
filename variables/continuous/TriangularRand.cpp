@@ -56,7 +56,7 @@ double TriangularRand::F(double x) const
     return 1.0;
 }
 
-double TriangularRand::variate()
+double TriangularRand::variate() const
 {
     double u = UniformRand::standardVariate();
     if (u < constForGenerator)

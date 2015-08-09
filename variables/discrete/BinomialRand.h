@@ -25,7 +25,7 @@ public:
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
     // WRITE var!
     double E() const override { return n * p; }

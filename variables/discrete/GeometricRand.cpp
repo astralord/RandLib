@@ -16,7 +16,7 @@ void GeometricRand::setProbability(double probability)
     /// otherwise we choose table method
     if (p < 0.2)
     {
-        Exp.setRate(-std::log(1 - p));
+        W.setRate(-std::log(1 - p));
     }
     else
     {
@@ -40,19 +40,19 @@ double GeometricRand::F(double x) const
     return 1 - std::pow(1 - p, std::floor(x) + 1);
 }
 
-double GeometricRand::variate()
+double GeometricRand::variate() const
 {
     if (p < 0.2)
         return variateForSmallP();
     return variateForLargeP();
 }
 
-double GeometricRand::variateForSmallP()
+double GeometricRand::variateForSmallP() const
 {
-    return std::floor(Exp.variate());
+    return std::floor(W.variate());
 }
 
-double GeometricRand::variateForLargeP()
+double GeometricRand::variateForLargeP() const
 {
     double U = UniformRand::standardVariate();
     /// handle tail by recursion

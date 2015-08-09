@@ -19,12 +19,12 @@ public:
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;
-    virtual double variate() override;
+    virtual double variate() const override;
 
     double E() const override { return l; }
     double Var() const override { return l; }
 
-    inline double Mode() const { return qFloor(l); } /// and also qCeil(l) - 1
+    inline double Mode() const { return std::floor(l); }
     inline double Skewness() const { return 1.0 / std::sqrt(l); }
     inline double ExcessiveKurtosis() const { return 1.0 / l; }
 };

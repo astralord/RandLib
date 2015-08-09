@@ -57,7 +57,7 @@ double GammaRand::F(double x) const
     return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }
 
-double GammaRand::variate()
+double GammaRand::variate() const
 {
     double rv = 0;
     int k_int = static_cast<int>(k);
@@ -80,30 +80,30 @@ double GammaRand::variate()
     return theta * rv;
 }
 
-double GammaRand::variateForIntegerShape()
+double GammaRand::variateForIntegerShape() const
 {
     double rv = 0;
     for (int i = 0; i < k; ++i)
-        rv += Exp.variate();
+        rv += W.variate();
     return rv;
 }
 
-double GammaRand::variateForHalfIntegerShape()
+double GammaRand::variateForHalfIntegerShape() const
 {
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
-        rv += Exp.variate();
+        rv += W.variate();
     double n = N.variate();
     return rv + .5 * n * n;
 }
 
-double GammaRand::variateForSmallShape()
+double GammaRand::variateForSmallShape() const
 {
     double rv = 0;
     int iter = 0;
     do {
         double P = U.variate();
-        double e = Exp.variate();
+        double e = W.variate();
         if (P <= 1)
         {
             rv = std::pow(P, kInv);
@@ -120,17 +120,17 @@ double GammaRand::variateForSmallShape()
     return 0; /// shouldn't end up here
 }
 
-double GammaRand::variateForMediumShape()
+double GammaRand::variateForMediumShape() const
 {
     double E1, E2;
     do {
-        E1 = Exp.variate();
-        E2 = Exp.variate();
+        E1 = W.variate();
+        E2 = W.variate();
     } while (E2 < (k - 1) * (E1 - std::log(E1) - 1));
     return k * E1;
 }
 
-double GammaRand::variateForLargeShape()
+double GammaRand::variateForLargeShape() const
 {
     double rv = 0;
     int iter = 0;
@@ -138,8 +138,8 @@ double GammaRand::variateForLargeShape()
         double u = U.variate();
         if (u <= 0.0095722652)
         {
-            double e1 = Exp.variate();
-            double e2 = Exp.variate();
+            double e1 = W.variate();
+            double e2 = W.variate();
             rv = b * (1 + e1 / d);
             if (m * (rv / b - std::log(rv / m)) + c <= e2)
                 return rv;

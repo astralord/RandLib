@@ -42,7 +42,7 @@ double LevyRand::F(double x) const
     return std::erfc(y);
 }
 
-double LevyRand::variate()
+double LevyRand::variate() const
 {
     double rv = X.variate();
     rv *= rv;

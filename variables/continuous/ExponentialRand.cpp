@@ -45,7 +45,7 @@ double ExponentialRand::F(double x) const
     return (x > 0) ? 1 - std::exp(-l * x) : 0;
 }
 
-double ExponentialRand::variate()
+double ExponentialRand::variate() const
 {
     return beta * standardVariate();
 }

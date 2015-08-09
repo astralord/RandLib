@@ -36,7 +36,7 @@ double ParetoRand::F(double x) const
     return (x > xm) ? 1 - std::pow(xm / x, alpha) : 0;
 }
 
-double ParetoRand::variate()
+double ParetoRand::variate() const
 {
     return xm * std::exp(ExponentialRand::variate(alpha));
 }

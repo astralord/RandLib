@@ -52,7 +52,7 @@ double BetaRand::F(double x) const
     return x;
 }
 
-double BetaRand::variate()
+double BetaRand::variate() const
 {
     if (alpha == beta)
     {

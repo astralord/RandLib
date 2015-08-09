@@ -36,7 +36,7 @@ double LaplaceRand::F(double x) const
     return y + 1;
 }
 
-double LaplaceRand::variate()
+double LaplaceRand::variate() const
 {
     double e = ExponentialRand::variate(bInv);
     return mu + (((signed)BasicRandGenerator::getRand() > 0) ? e : -e);

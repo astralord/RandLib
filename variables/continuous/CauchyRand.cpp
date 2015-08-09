@@ -35,7 +35,7 @@ double CauchyRand::F(double x) const
     return y + .5; /// atan((x - x0) / gamma) / pi + 0.5
 }
 
-double CauchyRand::variate()
+double CauchyRand::variate() const
 {
     double x, y;
     do {

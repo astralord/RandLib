@@ -20,7 +20,7 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
     delta = (b - a) * BasicRandGenerator::maxInv();
 }
 
-double UniformRand::variate()
+double UniformRand::variate() const
 {
     return a + BasicRandGenerator::getRand() * delta;
 }

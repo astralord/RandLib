@@ -28,7 +28,7 @@ double LogNormalRand::F(double x) const
     return (x > 0) ? X.F(std::log(x)) : 0;
 }
 
-double LogNormalRand::variate()
+double LogNormalRand::variate() const
 {
     return std::exp(X.variate());
 }

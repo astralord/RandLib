@@ -27,7 +27,7 @@ double RayleighRand::F(double x) const
     return 1.0 - std::exp(-x * x * sigmaSqInv_2);
 }
 
-double RayleighRand::variate()
+double RayleighRand::variate() const
 {
     return std::sqrt(ExponentialRand::variate(sigmaSqInv_2));
 }

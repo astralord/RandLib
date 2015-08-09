@@ -24,7 +24,7 @@ double PoissonRand::F(double x) const
     return RandMath::upperIncGamma(k + 1, l) / RandMath::fastFactorial(k);
 }
 
-double PoissonRand::variate()
+double PoissonRand::variate() const
 {
     int y = 0;
     double u = UniformRand::standardVariate();

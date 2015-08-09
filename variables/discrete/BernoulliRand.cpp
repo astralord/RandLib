@@ -21,7 +21,7 @@ double BernoulliRand::F(double x) const
     return (x < 0) ? 0 : ((x < 1) ? 1 - p : 1);
 }
 
-double BernoulliRand::variate()
+double BernoulliRand::variate() const
 {
     return (BasicRandGenerator::getRand() < generatorEdge) ? 0 : 1;
 }
