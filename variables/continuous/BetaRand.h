@@ -9,6 +9,7 @@
  */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 {
+protected:
     double alpha, beta;
     GammaRand X, Y;
     double gammaA, gammaB, pdfCoef;

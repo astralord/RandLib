@@ -36,6 +36,8 @@
 #include "continuous/WeibullRand.h"
 #include "continuous/StableRand.h"
 #include "continuous/GeometricStableRand.h"
+#include "continuous/MaxwellBoltzmannRand.h"
+#include "continuous/BetaPrimeRand.h"
 
 
 #endif // RANDOMGENERATORS_H

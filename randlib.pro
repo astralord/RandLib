@@ -44,7 +44,9 @@ SOURCES += \
     variables/discrete/BernoulliRand.cpp \
     variables/discrete/GeometricRand.cpp \
     variables/discrete/BinomialRand.cpp \
-    variables/continuous/GeometricStableRand.cpp
+    variables/continuous/GeometricStableRand.cpp \
+    variables/continuous/MaxwellBoltzmannRand.cpp \
+    variables/continuous/BetaPrimeRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -85,7 +87,9 @@ HEADERS +=\
     variables/discrete/BernoulliRand.h \
     variables/discrete/GeometricRand.h \
     variables/discrete/BinomialRand.h \
-    variables/continuous/GeometricStableRand.h
+    variables/continuous/GeometricStableRand.h \
+    variables/continuous/MaxwellBoltzmannRand.h \
+    variables/continuous/BetaPrimeRand.h
 
 unix {
     target.path = /usr/lib
