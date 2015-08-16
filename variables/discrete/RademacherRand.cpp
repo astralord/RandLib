@@ -22,7 +22,7 @@ double RademacherRand::F(double x) const
 
 double RademacherRand::variate() const
 {
-    if ((signed)BasicRandGenerator::getRand() < 0)
+    if ((signed)BasicRandGenerator::variate() < 0)
         return -1;
     return 1;
 }

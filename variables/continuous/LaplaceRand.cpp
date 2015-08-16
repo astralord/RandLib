@@ -39,7 +39,7 @@ double LaplaceRand::F(double x) const
 double LaplaceRand::variate() const
 {
     double e = ExponentialRand::variate(bInv);
-    return mu + (((signed)BasicRandGenerator::getRand() > 0) ? e : -e);
+    return mu + (((signed)BasicRandGenerator::variate() > 0) ? e : -e);
 }
 
 bool LaplaceRand::fitToData(const QVector<double> &sample)

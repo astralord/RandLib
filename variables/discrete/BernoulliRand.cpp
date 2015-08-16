@@ -8,12 +8,12 @@ BernoulliRand::BernoulliRand(double probability)
 void BernoulliRand::setP(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
-    generatorEdge = (1 - p) * BasicRandGenerator::max();
+    generatorEdge = (1 - p) * BasicRandGenerator::maxValue();
 }
 
 double BernoulliRand::P(int k) const
 {
-    return (k == 0) ? 1 - p : ((k == 1) ? p : 0);
+    return (k == 0) ? (1 - p) : ((k == 1) ? p : 0);
 }
 
 double BernoulliRand::F(double x) const
@@ -23,5 +23,5 @@ double BernoulliRand::F(double x) const
 
 double BernoulliRand::variate() const
 {
-    return (BasicRandGenerator::getRand() < generatorEdge) ? 0 : 1;
+    return (BasicRandGenerator::variate() < generatorEdge) ? 0 : 1;
 }

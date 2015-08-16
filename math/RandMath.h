@@ -62,6 +62,15 @@ public:
     static long double fastFactorial(int n);
 
     /**
+     * @brief fastLogFactorial
+     * Calculate log(n!) using table values for small n <= 254
+     * and approximate formula for large n > 254
+     * @param n integer number
+     * @return
+     */
+    static long double fastLogFactorial(int n);
+
+    /**
      * @brief doubleFactorial
      * Calculate n!!
      * @param n

@@ -15,7 +15,6 @@ void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
         SWAP(a, b);
 
     n = b - a + 1;
-    delta = n * BasicRandGenerator::maxInv();
 }
 
 double UniformDiscreteRand::P(int k) const
@@ -32,5 +31,5 @@ double UniformDiscreteRand::F(double x) const
 
 double UniformDiscreteRand::variate() const
 {
-    return a + std::floor(BasicRandGenerator::getRand() * delta);
+    return a + BasicRandGenerator::variate() % n;
 }

@@ -3,38 +3,30 @@
 
 #include "randlib_global.h"
 
+enum GeneratorType {
+    FASTKISS, // 2 ^ 121
+    JLKISS64, // 2 ^ 250
+    MWC256, // 2 ^ 8222
+    CMWC4096, // 2 ^ 131086
+    SUPERKISS // 54767 * 2 ^ 1337279
+};
+
 /**
  * @brief The BasicRandGenerator class
- * Generate random variable uniformly distributed between 0 and 2^32-1
  */
 class RANDLIBSHARED_EXPORT BasicRandGenerator
 {
     /// Variables for pseudo generator
-    static unsigned long startPoint;
-    static unsigned long X, Y, Z, W;
-    static bool C;
+    static unsigned long long startPoint;
+    static unsigned long long X, Y;
+    static unsigned int Z1, Z2, C1, C2;
 
 public:
     BasicRandGenerator();
 
-    /**
-     * @brief getRand
-     * Random variable generator Keep It Simply Stupid
-     * @return random variable as standard rand() function
-     */
-    static unsigned long getRand();
+    static unsigned long long variate();
 
-    /**
-     * @brief maxInv
-     * @return 2^(-32)
-     */
-    static constexpr double maxInv() { return .23283064e-9; }
-
-    /**
-     * @brief maxValue
-     * @return 2^32
-     */
-    static constexpr double max() { return 4294967296; }
+    static constexpr unsigned long long maxValue() { return 18446744073709551615ULL; }
 };
 
 

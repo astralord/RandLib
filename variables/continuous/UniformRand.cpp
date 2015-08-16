@@ -17,12 +17,11 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
         b = a + MIN_POSITIVE;
 
     c = 1.0 / (b - a);
-    delta = (b - a) * BasicRandGenerator::maxInv();
 }
 
 double UniformRand::variate() const
 {
-    return a + BasicRandGenerator::getRand() * delta;
+    return a + standardVariate() * (b - a);
 }
 
 double UniformRand::variate(double minValue, double maxValue)
@@ -32,8 +31,11 @@ double UniformRand::variate(double minValue, double maxValue)
 
 double UniformRand::standardVariate()
 {
-    static constexpr double coef = BasicRandGenerator::maxInv();
-    return BasicRandGenerator::getRand() * coef;
+    double x;
+    unsigned long long a = BasicRandGenerator::variate();
+    a = (a >> 12) | 0x3FF0000000000000ULL; // Take upper 52 bits
+    *((unsigned long long *)&x) = a; // Make a double from bits
+    return x - 1.0;
 }
 
 double UniformRand::f(double x) const

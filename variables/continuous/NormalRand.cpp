@@ -72,7 +72,7 @@ double NormalRand::standardVariate()
 {
     int iter = 0;
     do {
-        unsigned long B = BasicRandGenerator::getRand();
+        unsigned long B = BasicRandGenerator::variate();
         unsigned long stairId = B & 255;
         double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
 

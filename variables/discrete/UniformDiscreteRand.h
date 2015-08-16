@@ -10,7 +10,6 @@
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand<int>
 {
     int n, a, b;
-    double delta;
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
