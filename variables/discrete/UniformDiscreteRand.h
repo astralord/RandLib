@@ -13,10 +13,11 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand<int>
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
+    virtual void setName() override;
 
     void setBoundaries(int minValue, int maxValue);
-    inline int getA() const { return a; }
-    inline int getB() const { return b; }
+    inline int getMinValue() const { return a; }
+    inline int getMaxValue() const { return b; }
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;

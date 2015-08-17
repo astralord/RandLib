@@ -5,6 +5,11 @@ StudentTRand::StudentTRand(int degree)
     setDegree(degree);
 }
 
+void StudentTRand::setName()
+{
+    nameStr = "Student's t(" + toStringWithPrecision(getDegree()) + ")";
+}
+
 void StudentTRand::setDegree(int degree)
 {
     v = std::max(degree, 1);
@@ -12,6 +17,8 @@ void StudentTRand::setDegree(int degree)
 
     pdfCoef = std::tgamma(.5 * (v + 1));
     pdfCoef /= (std::sqrt(v * M_PI) * std::tgamma(.5 * v));
+
+    setName();
 }
 
 double StudentTRand::f(double x) const

@@ -16,6 +16,7 @@ class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand<int>
 
 public:
     BinomialRand(int number, double probability);
+    virtual void setName() override;
 
     void setN(int number);
     inline double getN() const { return n; }

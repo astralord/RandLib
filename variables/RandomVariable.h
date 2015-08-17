@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QtMath>
+#include <string>
 #include "math/RandMath.h"
 #include "randlib_global.h"
 
@@ -14,9 +15,25 @@
 class RANDLIBSHARED_EXPORT RandomVariable
 {
 
+protected:
+    std::string nameStr;
+
+    std::string toStringWithPrecision(const double a_value, const int n = 6);
+
 public:
     RandomVariable();
     virtual ~RandomVariable() {}
+
+    /**
+     * @brief name
+     * @return
+     */
+    std::string name() const { return nameStr; }
+
+    /**
+     * @brief setName
+     */
+    virtual void setName() = 0;
 
     /**
      * @brief variate()

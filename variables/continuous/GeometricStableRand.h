@@ -12,6 +12,7 @@ class RANDLIBSHARED_EXPORT GeometricStableRand : public ContinuousRand
 
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
+    virtual void setName() override;
 
     void setParameters(double exponent, double skewness, double scale, double location);
     inline double getAlpha() const { return S.getAlpha(); }

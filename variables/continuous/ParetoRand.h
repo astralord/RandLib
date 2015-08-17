@@ -13,6 +13,7 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
 
 public:
     ParetoRand(double shape, double scale);
+    virtual void setName() override;
 
     void setParameters(double shape, double scale);
     void setShape(double shape);
@@ -24,7 +25,6 @@ public:
     virtual double F(double x) const override;
     virtual double variate() const override;
 
-public:
     double E() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
     double Var() const override {
         if (alpha > 2)

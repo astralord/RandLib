@@ -5,11 +5,18 @@ WeibullRand::WeibullRand(double scale, double shape)
     setParameters(scale, shape);
 }
 
+void WeibullRand::setName()
+{
+    nameStr = "Weibull(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+}
+
 void WeibullRand::setParameters(double scale, double shape)
 {
     l = std::max(scale, MIN_POSITIVE);
     k = std::max(shape, MIN_POSITIVE);
     lInv = 1.0 / l;
+
+    setName();
 }
 
 double WeibullRand::f(double x) const

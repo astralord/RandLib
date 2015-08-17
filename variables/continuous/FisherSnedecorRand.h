@@ -17,6 +17,7 @@ class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
 
 public:
     FisherSnedecorRand(int degree1, int degree2);
+    virtual void setName() override;
 
     void setDegrees(int degree1, int degree2);
     void setFirstDegree(int degree1);

@@ -5,6 +5,11 @@ FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2)
     setDegrees(degree1, degree2);
 }
 
+void FisherSnedecorRand::setName()
+{
+    nameStr = "Fisher(" + toStringWithPrecision(getFirstDegree()) + ", " + toStringWithPrecision(getSecondDegree()) + ")";
+}
+
 void FisherSnedecorRand::setDegrees(int degree1, int degree2)
 {
     d1 = std::max(degree1, 1);
@@ -21,6 +26,7 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
 
     pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
     pdfCoef *= std::pow(b, a + 1);
+    setName();
 }
 
 void FisherSnedecorRand::setFirstDegree(int degree1)
@@ -35,6 +41,7 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
 
     pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
     pdfCoef *= std::pow(b, a + 1);
+    setName();
 }
 
 void FisherSnedecorRand::setSecondDegree(int degree2)
@@ -48,6 +55,7 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
 
     pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
     pdfCoef *= std::pow(b, a + 1);
+    setName();
 }
 
 double FisherSnedecorRand::f(double x) const

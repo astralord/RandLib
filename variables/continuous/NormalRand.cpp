@@ -10,9 +10,14 @@ NormalRand::NormalRand(double mean, double var)
     setVar(var);
 }
 
+void NormalRand::setName()
+{
+    nameStr = "Normal(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getVar()) + ")";
+}
+
 bool NormalRand::setupTables()
 {
-    double constexpr A = 4.92867323399e-3; /// area under rectangle
+    constexpr double A = 4.92867323399e-3; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
     stairHeight[0] = std::exp(-.5 * x1 * x1);
@@ -32,12 +37,14 @@ bool NormalRand::setupTables()
 void NormalRand::setMean(double mean)
 {
     mu = mean;
+    setName();
 }
 
 void NormalRand::setSigma(double rootVar)
 {
     sigma = std::max(rootVar, MIN_POSITIVE);
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
+    setName();
 }
 
 double NormalRand::f(double x) const
@@ -82,16 +89,16 @@ double NormalRand::standardVariate()
         if (stairId == 0) /// handle the base layer
         {
             static double z = -1;
+            double y;
 
             if (z >= 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::variate(x1);
-                z -= 0.5 * x * x;
+                y = ExponentialRand::standardVariate();
+                z = y - 0.5 * z * z;
             }
 
             if (z < 0) /// if previous generation wasn't successful
             {
-                double y;
                 do {
                     x = ExponentialRand::variate(x1);
                     y = ExponentialRand::standardVariate();

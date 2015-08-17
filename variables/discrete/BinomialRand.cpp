@@ -6,6 +6,11 @@ BinomialRand::BinomialRand(int number, double probability)
     setP(probability);
 }
 
+void BinomialRand::setName()
+{
+    nameStr = "Binomial(" + toStringWithPrecision(getN()) + ", " + toStringWithPrecision(getP()) + ")";
+}
+
 void BinomialRand::setN(int number)
 {
     n = std::max(number, 1);
@@ -14,7 +19,9 @@ void BinomialRand::setN(int number)
 void BinomialRand::setP(double probability)
 {
     p = std::min(std::max(probability, MIN_POSITIVE), 1.0);
-    B.setP(p);
+    B.setProbability(p);
+
+    setName();
 }
 
 double BinomialRand::P(int k) const

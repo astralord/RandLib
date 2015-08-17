@@ -5,10 +5,16 @@ RayleighRand::RayleighRand(double scale)
     setScale(scale);
 }
 
+void RayleighRand::setName()
+{
+    nameStr = "Rayleigh(" + toStringWithPrecision(getScale()) + ")";
+}
+
 void RayleighRand::setScale(double scale)
 {
     sigma = std::max(scale, MIN_POSITIVE);
     sigmaSqInv_2 = 0.5 / sigma * sigma;
+    setName();
 }
 
 double RayleighRand::f(double x) const

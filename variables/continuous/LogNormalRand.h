@@ -14,6 +14,8 @@ class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
 
 public:
     LogNormalRand(double location = 0, double scale = 1);
+    virtual void setName() override;
+
     void setLocation(double location);
     void setScale(double scale);
     inline double getLocation() const { return X.E(); }
@@ -23,7 +25,6 @@ public:
     virtual double F(double x) const override;
     virtual double variate() const override;
 
-public:
     double E() const override { return expMu * std::sqrt(expVar); }
     double Var() const override { return (expVar - 1) * expMu * expMu * expVar; }
 

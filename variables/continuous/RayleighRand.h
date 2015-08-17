@@ -14,6 +14,7 @@ class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
 
 public:
     RayleighRand(double scale = 1);
+    virtual void setName() override;
 
     void setScale(double scale);
     inline double getScale() const { return sigma; }
@@ -22,7 +23,6 @@ public:
     virtual double F(double x) const override;
     virtual double variate() const override;
 
-public:
     double E() const override { return sigma * M_SQRTPI * M_SQRT1_2; }
     double Var() const override { return (1 - M_PI_4) * sigmaSqInv_2; }
 

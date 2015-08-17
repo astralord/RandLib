@@ -9,6 +9,11 @@ ExponentialRand::ExponentialRand(double rate)
     setRate(rate);
 }
 
+void ExponentialRand::setName()
+{
+    nameStr = "Exponential(" + toStringWithPrecision(getRate()) + ")";
+}
+
 bool ExponentialRand::setupTables()
 {
     /// Set up ziggurat tables
@@ -33,6 +38,7 @@ void ExponentialRand::setRate(double rate)
 {
     l = std::max(rate, MIN_POSITIVE);
     beta = 1.0 / l;
+    setName();
 }
 
 double ExponentialRand::f(double x) const

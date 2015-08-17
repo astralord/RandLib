@@ -10,6 +10,7 @@ class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
 {
 public:
     BetaPrimeRand(double shape1, double shape2);
+    virtual void setName() override;
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;

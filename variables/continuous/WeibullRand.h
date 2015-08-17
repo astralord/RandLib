@@ -14,6 +14,8 @@ class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousRand
 
 public:
     WeibullRand(double scale = 1, double shape = 1);
+    virtual void setName() override;
+
     void setParameters(double scale, double shape);
     inline double getScale() const { return l; }
     inline double getShape() const { return k; }

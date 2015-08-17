@@ -3,6 +3,12 @@
 ErlangRand::ErlangRand(int shape, double rate)
 {
     setParameters(shape, rate);
+    setName();
+}
+
+void ErlangRand::setName()
+{
+    nameStr = "Erlang(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }
 
 void ErlangRand::setParameters(int shape, double rate)

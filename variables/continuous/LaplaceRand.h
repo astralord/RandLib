@@ -15,6 +15,7 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
 
 public:
     LaplaceRand(double location = 0, double scale = 1);
+    virtual void setName() override;
 
     void setLocation(double location);
     void setScale(double scale);

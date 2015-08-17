@@ -10,6 +10,7 @@ class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousRand
 
 public:
     LogisticRand(double location = 0, double scale = 1);
+    virtual void setName() override;
 
     void setLocation(double location);
     void setScale(double scale);
@@ -19,7 +20,7 @@ public:
     virtual double f(double x) const override;
     virtual double F(double x) const override;
     virtual double variate() const override;
-public:
+
     double E() const { return mu; }
     double Var() const {
         double sPi = s * M_PI;

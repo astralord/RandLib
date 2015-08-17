@@ -5,6 +5,11 @@ GammaRand::GammaRand(double shape, double scale)
     setParameters(shape, scale);
 }
 
+void GammaRand::setName()
+{
+    nameStr = "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+}
+
 void GammaRand::setConstants()
 {
     m = k - 1;
@@ -39,6 +44,7 @@ void GammaRand::setParameters(double shape, double scale)
         setConstants();
         U.setBoundaries(0, 1);
     }
+    setName();
 }
 
 double GammaRand::f(double x) const

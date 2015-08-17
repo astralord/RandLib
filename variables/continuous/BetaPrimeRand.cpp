@@ -3,6 +3,12 @@
 BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
     : BetaRand(shape1, shape2)
 {
+    setName();
+}
+
+void BetaPrimeRand::setName()
+{
+    nameStr = "Beta Prime(" + toStringWithPrecision(getAlpha()) + ", " + toStringWithPrecision(getBeta()) + ")";
 }
 
 double BetaPrimeRand::f(double x) const

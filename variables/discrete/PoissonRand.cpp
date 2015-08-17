@@ -5,10 +5,17 @@ PoissonRand::PoissonRand(double rate)
     setRate(rate);
 }
 
+void PoissonRand::setName()
+{
+    nameStr = "Poisson(" + toStringWithPrecision(getRate()) + ")";
+}
+
 void PoissonRand::setRate(double rate)
 {
     l = std::max(rate, MIN_POSITIVE);
     exp_l = std::exp(-l);
+
+    setName();
 }
 
 double PoissonRand::P(int k) const

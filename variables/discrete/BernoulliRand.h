@@ -14,8 +14,10 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand<int>
 
 public:
     BernoulliRand(double probability = 0.5);
-    void setP(double probability);
-    inline double getP() const { return p; }
+    virtual void setName() override;
+
+    void setProbability(double probability);
+    inline double getProbability() const { return p; }
 
     virtual double P(int k) const override;
     virtual double F(double x) const override;

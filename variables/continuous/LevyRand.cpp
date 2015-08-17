@@ -6,9 +6,15 @@ LevyRand::LevyRand(double location, double scale)
     setScale(scale);
 }
 
+void LevyRand::setName()
+{
+    nameStr = "Levy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+}
+
 void LevyRand::setLocation(double location)
 {
     mu = location;
+    setName();
 }
 
 void LevyRand::setScale(double scale)
@@ -18,6 +24,7 @@ void LevyRand::setScale(double scale)
     X.setSigma(1.0 / sqrtc_2pi); /// X ~ N(0, 1 / c ^ (0.5))
     sqrtc_2pi *= M_1_SQRT2PI;
     c_2 *= .5;
+    setName();
 }
 
 double LevyRand::f(double x) const

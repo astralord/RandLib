@@ -6,6 +6,11 @@ UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
     setBoundaries(minValue, maxValue);
 }
 
+void UniformDiscreteRand::setName()
+{
+    nameStr = "Uniform(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
+}
+
 void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
 {
     a = minValue;
@@ -15,6 +20,8 @@ void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
         SWAP(a, b);
 
     n = b - a + 1;
+
+    setName();
 }
 
 double UniformDiscreteRand::P(int k) const

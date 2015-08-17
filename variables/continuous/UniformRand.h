@@ -15,10 +15,11 @@ class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
 
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
+    virtual void setName() override;
 
     void setBoundaries(double minValue, double maxValue);    
-    inline double getA() const { return a; }
-    inline double getB() const { return b; }
+    inline double getMinValue() const { return a; }
+    inline double getMaxValue() const { return b; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;

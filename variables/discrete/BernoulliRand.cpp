@@ -2,13 +2,20 @@
 
 BernoulliRand::BernoulliRand(double probability)
 {
-    setP(probability);
+    setProbability(probability);
 }
 
-void BernoulliRand::setP(double probability)
+void BernoulliRand::setName()
+{
+    nameStr = "Bernoulli(" + toStringWithPrecision(getProbability()) + ")";
+}
+
+void BernoulliRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
     generatorEdge = (1 - p) * BasicRandGenerator::maxValue();
+
+    setName();
 }
 
 double BernoulliRand::P(int k) const

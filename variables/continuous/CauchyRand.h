@@ -14,6 +14,7 @@ class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
 
 public:
     CauchyRand(double location = 0, double scale = 1);
+    virtual void setName() override;
 
     void setLocation(double location);
     void setScale(double scale);

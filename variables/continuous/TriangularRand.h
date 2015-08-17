@@ -17,6 +17,7 @@ class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousRand
 
 public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);
+    virtual void setName() override;
 
     void setLowerLimit(double lowerLimit);
     void setMode(double mode);

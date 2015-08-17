@@ -18,6 +18,8 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousRand
 
 public:
     NakagamiRand(double shape = 0.5, double spread = 1);
+    virtual void setName() override;
+
     void setParameters(double shape, double spread);
     inline double getShape() const { return m; }
     inline double getSpread() const { return w; }

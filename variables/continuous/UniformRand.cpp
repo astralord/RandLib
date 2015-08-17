@@ -5,6 +5,11 @@ UniformRand::UniformRand(double minValue, double maxValue)
     setBoundaries(minValue, maxValue);
 }
 
+void UniformRand::setName()
+{
+    nameStr = "Uniform(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
+}
+
 void UniformRand::setBoundaries(double minValue, double maxValue)
 {
     a = minValue;
@@ -17,6 +22,8 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
         b = a + MIN_POSITIVE;
 
     c = 1.0 / (b - a);
+
+    setName();
 }
 
 double UniformRand::variate() const

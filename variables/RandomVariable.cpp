@@ -1,7 +1,16 @@
 #include "RandomVariable.h"
+#include <sstream>      // std::ostringstream
+#include <iomanip>      // std::setprecision
 
 RandomVariable::RandomVariable()
 {
+}
+
+std::string RandomVariable::toStringWithPrecision(const double a_value, const int n)
+{
+    std::ostringstream out;
+    out << std::setprecision(n) << a_value;
+    return out.str();
 }
 
 void RandomVariable::sample(QVector<double> &outputData)

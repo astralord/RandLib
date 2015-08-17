@@ -7,6 +7,14 @@ TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit
     setUpperLimit(upperLimit);
 }
 
+void TriangularRand::setName()
+{
+    nameStr = "Triangular("
+            + toStringWithPrecision(getLowerLimit()) + ", "
+            + toStringWithPrecision(getMode()) + ", "
+            + toStringWithPrecision(getUpperLimit()) + ")";
+}
+
 void TriangularRand::setGeneratorConstants()
 {
     constForGenerator = (c - a) / (b - a);
@@ -30,6 +38,8 @@ void TriangularRand::setUpperLimit(double upperLimit)
 {
     b = upperLimit;
     setGeneratorConstants();
+
+    setName();
 }
 
 double TriangularRand::f(double x) const

@@ -17,18 +17,21 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
     static double stairWidth[257], stairHeight[256];
-    static double constexpr x1 = 3.6541528853610088;
+    static constexpr double x1 = 3.6541528853610088;
     static const bool dummy;
     /// Set up ziggurat tables
     static bool setupTables();
 
 public:
     NormalRand(double mean = 0, double var = 1);
+    virtual void setName() override;
 
     void setMean(double mean);
     void setSigma(double rootVar);
     void setVar(double var) { setSigma(std::sqrt(std::max(var, MIN_POSITIVE))); }
+    double getMean() const { return mu; }
     double getSigma() const { return sigma; }
+    double getVar() const { return sigma * sigma; }
 
     virtual double f(double x) const override;
     virtual double F(double x) const override;

@@ -2,6 +2,12 @@
 
 RademacherRand::RademacherRand()
 {
+    setName();
+}
+
+void RademacherRand::setName()
+{
+    nameStr = "Rademacher";
 }
 
 double RademacherRand::P(int k) const

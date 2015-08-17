@@ -20,6 +20,8 @@ class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand<int>
 
 public:
     GeometricRand(double probability);
+    virtual void setName() override;
+
     void setProbability(double probability);
     inline double getProbability() const { return p; }
 

@@ -5,18 +5,25 @@ ParetoRand::ParetoRand(double shape, double scale)
     setParameters(shape, scale);
 }
 
+void ParetoRand::setName()
+{
+    nameStr = "Pareto(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+}
+
 void ParetoRand::setParameters(double shape, double scale)
 {
     xm = std::max(shape, MIN_POSITIVE);
     alpha = std::max(scale, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
+    setName();
 }
 
 void ParetoRand::setShape(double shape)
 {
     xm = std::max(shape, MIN_POSITIVE);
     pdfCoef = alpha * std::pow(xm, alpha);
+    setName();
 }
 
 void ParetoRand::setScale(double scale)
@@ -24,6 +31,7 @@ void ParetoRand::setScale(double scale)
     alpha = std::max(scale, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
+    setName();
 }
 
 double ParetoRand::f(double x) const

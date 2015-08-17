@@ -27,6 +27,7 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
 
 public:
     GammaRand(double shape = 1, double scale = 1);
+    virtual void setName() override;
 
     void setParameters(double shape, double scale);
     inline double getShape() const { return k; }

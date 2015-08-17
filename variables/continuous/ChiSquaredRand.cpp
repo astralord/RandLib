@@ -5,12 +5,17 @@ ChiSquaredRand::ChiSquaredRand(int degree)
     setDegree(degree);
 }
 
+void ChiSquaredRand::setName()
+{
+    nameStr = "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
+}
+
 void ChiSquaredRand::setDegree(int degree)
 {
     k = std::max(degree, 1);
     if (k & 1)
     {
-        pdfCoef = M_1_SQRTPI / RandMath::doubleFactorial(k - 2);
+        pdfCoef = M_1_SQRTPI / RandMath::fastDoubleFactorial(k - 2);
         cdfCoef = pdfCoef;
         cdfCoef *= (1 << ((k - 1) >> 1));
         pdfCoef *= M_SQRT1_2;
@@ -24,6 +29,7 @@ void ChiSquaredRand::setDegree(int degree)
     }
 
     GammaRand::setParameters(.5 * k, 2);
+    setName();
 }
 
 double ChiSquaredRand::f(double x) const
