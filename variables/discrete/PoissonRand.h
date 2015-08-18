@@ -18,9 +18,9 @@ public:
     void setRate(double rate);
     inline double getRate() const { return l; }
 
-    virtual double P(int k) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double P(int k) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return l; }
     double Var() const override { return l; }

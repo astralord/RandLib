@@ -24,9 +24,9 @@ public:
     inline double getLocation() const { return mu; }
     inline double getScale() const { return c_2 + c_2; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return INFINITY; }
     double Var() const override { return INFINITY; }

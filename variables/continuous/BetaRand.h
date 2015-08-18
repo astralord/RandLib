@@ -23,9 +23,9 @@ public:
     inline double getAlpha() const { return alpha; }
     inline double getBeta() const { return beta; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return alpha / (alpha + beta); }
     double Var() const override {

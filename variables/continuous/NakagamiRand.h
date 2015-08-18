@@ -24,9 +24,9 @@ public:
     inline double getShape() const { return m; }
     inline double getSpread() const { return w; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
 public:
     double E() const override { return std::tgamma(m + 0.5) * gammaMInv * std::sqrt(w / m); }

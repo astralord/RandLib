@@ -21,9 +21,9 @@ public:
     inline double getLocation() const { return X.E(); }
     inline double getScale() const { return X.getSigma(); }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return expMu * std::sqrt(expVar); }
     double Var() const override { return (expVar - 1) * expMu * expMu * expVar; }

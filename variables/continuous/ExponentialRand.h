@@ -27,9 +27,9 @@ public:
     inline double getRate() const { return l; }
     inline double getScale() const { return beta; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     static double variate(double rate);
     static double standardVariate();

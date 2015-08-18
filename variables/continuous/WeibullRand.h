@@ -20,9 +20,9 @@ public:
     inline double getScale() const { return l; }
     inline double getShape() const { return k; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return l * std::tgamma(1 + 1.0 / k); }
     double Var() const override {

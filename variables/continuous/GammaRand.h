@@ -33,9 +33,9 @@ public:
     inline double getShape() const { return k; }
     inline double getScale() const { return theta; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
 private:
     double variateForIntegerShape() const;     /// Erlang distribution

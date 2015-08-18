@@ -21,9 +21,9 @@ public:
     inline double getLocation() const { return x0; }
     inline double getScale() const { return gamma; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return NAN; }
     double Var() const override { return INFINITY; }

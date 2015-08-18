@@ -20,9 +20,9 @@ public:
     inline double getSigma() const { return sigma; }
     inline double getMu() const { return mu; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return (S.getAlpha()> 1) ? mu : NAN; }
     // write correct Variance!

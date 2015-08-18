@@ -21,9 +21,9 @@ public:
     inline double getShape() const { return xm; }
     inline double getScale() const { return alpha; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
     double Var() const override {

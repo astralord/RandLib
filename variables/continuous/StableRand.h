@@ -37,9 +37,9 @@ public:
     inline double getSigma() const { return sigma; }
     inline double getMu() const { return mu; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return (alpha > 1) ? mu : NAN; }
     double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }

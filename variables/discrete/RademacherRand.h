@@ -13,9 +13,9 @@ public:
     RademacherRand();
     virtual void setName() override;
 
-    virtual double P(int k) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double P(int k) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return 0; }
     double Var() const override { return 1; }

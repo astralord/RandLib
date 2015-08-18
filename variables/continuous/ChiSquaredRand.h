@@ -19,8 +19,8 @@ public:
     void setDegree(int degree);
     inline int getDegree() const { return k; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
+    double f(double x) const override;
+    double F(double x) const override;
 
     double E() const override { return k; }
     double Var() const override { return k + k; }

@@ -12,9 +12,9 @@ public:
     BetaPrimeRand(double shape1, double shape2);
     virtual void setName() override;
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return (beta > 1) ? alpha / (beta - 1) : INFINITY; }
     double Var() const override {

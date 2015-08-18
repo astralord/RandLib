@@ -24,9 +24,9 @@ public:
     inline double getMean() const { return mu; }
     inline double getShape() const { return l; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return mu; }
     double Var() const override { return mu * mu * mu / l; }

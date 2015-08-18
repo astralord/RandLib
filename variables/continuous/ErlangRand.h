@@ -18,7 +18,6 @@ public:
 
     void setParameters(int shape, double rate);
 
-
     inline int getShape() const { return static_cast<int>(GammaRand::getShape()); }
     inline double getRate() const { return 1.0 / GammaRand::getScale(); }
 };

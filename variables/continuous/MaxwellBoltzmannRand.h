@@ -20,9 +20,9 @@ public:
     void setScale(double scale);
     inline double getScale() const { return a; }
 
-    virtual double f(double x) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double f(double x) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return 2 * M_1_SQRTPI * M_SQRT2 * a; }
     double Var() const override { return a * a * (3 - 8.0 * M_1_PI); }

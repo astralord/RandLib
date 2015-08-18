@@ -19,9 +19,9 @@ public:
     void setProbability(double probability);
     inline double getProbability() const { return p; }
 
-    virtual double P(int k) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double P(int k) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return p; }
     double Var() const override { return p * (1 - p); }

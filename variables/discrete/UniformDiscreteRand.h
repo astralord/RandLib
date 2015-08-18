@@ -19,9 +19,9 @@ public:
     inline int getMinValue() const { return a; }
     inline int getMaxValue() const { return b; }
 
-    virtual double P(int k) const override;
-    virtual double F(double x) const override;
-    virtual double variate() const override;
+    double P(int k) const override;
+    double F(double x) const override;
+    double variate() const override;
 
     double E() const override { return .5 * (b + a); }
     double Var() const override {
