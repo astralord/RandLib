@@ -27,6 +27,13 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    void sample(QVector<double> &outputData);
+
+private:
+    double variateForEqualParameters() const;
+    double variateForDifferentParameters() const;
+
+public:
     double E() const override { return alpha / (alpha + beta); }
     double Var() const override {
         double denominator = alpha + beta;

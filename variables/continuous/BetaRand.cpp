@@ -63,16 +63,36 @@ double BetaRand::F(double x) const
 double BetaRand::variate() const
 {
     if (alpha == beta)
-    {
-        int iter = 0;
-        do {
-            double u1 = UniformRand::standardVariate();
-            double u2 = UniformRand::standardVariate();
-            if (u2 <= std::pow(4 * u1 * (1 - u1), alpha - 1))
-                return u1;
-        } while (++iter <= 1e9); /// one billion should be enough
-        return 0; /// fail
+        return variateForEqualParameters();
+    return variateForDifferentParameters();
+}
+
+void BetaRand::sample(QVector<double> &outputData)
+{
+    if (alpha == beta) {
+        for (double &var : outputData)
+            var = variateForEqualParameters();
     }
+    else {
+        for (double &var : outputData)
+            var = variateForDifferentParameters();
+    }
+}
+
+double BetaRand::variateForEqualParameters() const
+{
+    int iter = 0;
+    do {
+        double u1 = UniformRand::standardVariate();
+        double u2 = UniformRand::standardVariate();
+        if (u2 <= std::pow(4 * u1 * (1 - u1), alpha - 1))
+            return u1;
+    } while (++iter <= 1e9); /// one billion should be enough
+    return 0; /// fail
+}
+
+double BetaRand::variateForDifferentParameters() const
+{
     double x = X.variate();
     return x / (x + Y.variate());
 }

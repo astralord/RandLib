@@ -25,6 +25,9 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    static double variate(double location, double scale);
+    static double standardVariate();
+
     double E() const override { return NAN; }
     double Var() const override { return INFINITY; }
 

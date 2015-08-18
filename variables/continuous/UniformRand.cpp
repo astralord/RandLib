@@ -40,8 +40,8 @@ double UniformRand::standardVariate()
 {
     double x;
     unsigned long long a = BasicRandGenerator::variate();
-    a = (a >> 12) | 0x3FF0000000000000ULL; // Take upper 52 bits
-    *((unsigned long long *)&x) = a; // Make a double from bits
+    a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bits
+    *((unsigned long long *)&x) = a; /// Make a double from bits
     return x - 1.0;
 }
 

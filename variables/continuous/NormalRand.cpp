@@ -49,20 +49,20 @@ void NormalRand::setSigma(double rootVar)
 
 double NormalRand::f(double x) const
 {
-    double y = x - mu; /// x - mu
-    y *= sigmaSqrt2Inv; /// (x - mu) / (sigma * sqrt(2))
-    y *= y; /// (((x - mu) / sigma) ^ 2) / 2
-    y = std::exp(-y); /// exp((((x - mu) / sigma) ^ 2) / 2)
-    return M_1_SQRTPI * sigmaSqrt2Inv * y; /// exp((((x - mu) / sigma) ^ 2) / 2) / (sigma * sqrt(2pi))
+    double y = x - mu;
+    y *= sigmaSqrt2Inv;
+    y *= y;
+    y = std::exp(-y);
+    return M_1_SQRTPI * sigmaSqrt2Inv * y;
 }
 
 double NormalRand::F(double x) const
 {
-    double y = x - mu; /// x - mu
-    y *= sigmaSqrt2Inv; /// (x - mu) / (sigma * sqrt(2))
-    y = std::erf(y); /// erf((x - mu) / (sigma * sqrt(2)))
-    ++y; /// 1 + erf((x - mu) / (sigma * sqrt(2)))
-    return .5 * y; /// (1 + erf((x - mu) / (sigma * sqrt(2)))) / 2
+    double y = x - mu;
+    y *= sigmaSqrt2Inv;
+    y = std::erf(y);
+    ++y;
+    return .5 * y;
 }
 
 double NormalRand::variate() const

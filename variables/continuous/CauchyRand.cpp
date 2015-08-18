@@ -26,28 +26,38 @@ void CauchyRand::setScale(double scale)
 
 double CauchyRand::f(double x) const
 {
-    double y = x - x0; /// x - x0
-    y *= y; /// (x - x0) ^ 2
-    y *= gammaInv; /// (x - x0) ^ 2 / gamma
-    y += gamma; /// gamma + (x - x0) ^ 2 / gamma
-    return M_1_PI / y; /// gamma / (pi * (gamma ^ 2 + (x - x0) ^ 2))
+    double y = x - x0;
+    y *= y;
+    y *= gammaInv;
+    y += gamma;
+    return M_1_PI / y;
 }
 
 double CauchyRand::F(double x) const
 {
-    double y = x - x0; /// x - x0
-    y *= gammaInv; /// (x - x0) / gamma
-    y = std::atan(y); /// atan((x - x0) / gamma)
-    y *= M_1_PI; /// atan((x - x0) / gamma) / pi
-    return y + .5; /// atan((x - x0) / gamma) / pi + 0.5
+    double y = x - x0;
+    y *= gammaInv;
+    y = std::atan(y);
+    y *= M_1_PI;
+    return y + .5;
 }
 
 double CauchyRand::variate() const
+{
+    return CauchyRand::variate(x0, gamma);
+}
+
+double CauchyRand::variate(double location, double scale)
+{
+    return location + scale * standardVariate();
+}
+
+double CauchyRand::standardVariate()
 {
     double x, y;
     do {
         x = UniformRand::variate(-1, 1);
         y = UniformRand::variate(-1, 1);
     } while (x * x + y * y > 1.0 || y == 0.0);
-    return x0 + gamma * x / y;
+    return x / y;
 }
