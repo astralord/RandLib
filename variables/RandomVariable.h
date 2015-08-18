@@ -1,13 +1,15 @@
 #ifndef RANDOMVARIABLE_H
 #define RANDOMVARIABLE_H
 
-#include <QVector>
-#include <QtMath>
+#include <cmath>
+#include <complex>
 #include <string>
+
 #include "math/RandMath.h"
 #include "randlib_global.h"
 
 #include <QDebug>
+#include <QVector>
 
 /**
  * @brief The RandomVariable class
@@ -60,6 +62,23 @@ public:
      * @param y output vector: y = P(X < x)
      */
     void cdf(const QVector<double> &x, QVector<double> &y);
+
+    /**
+     * @brief CF
+     * @param x
+     * @return Characteristic function (inverse Fourier transform of probability function)
+     */
+    virtual std::complex<double> CF(double x) const // = 0
+    {
+        return std::complex<double>(x);
+    }
+
+    /**
+     * @brief cf
+     * @param x input vector
+     * @param y output vector: y = CF(x)
+     */
+    void cf(const QVector<double> &x, QVector<std::complex<double>> &y);
 
     /**
      * @brief M

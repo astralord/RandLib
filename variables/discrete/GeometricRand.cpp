@@ -54,6 +54,18 @@ double GeometricRand::variate() const
     return variateForLargeP();
 }
 
+void GeometricRand::sample(QVector<double> &outputData)
+{
+    if (p < 0.2) {
+        for (double &var : outputData)
+            var = variateForSmallP();
+    }
+    else {
+        for (double &var : outputData)
+            var = variateForLargeP();
+    }
+}
+
 double GeometricRand::variateForSmallP() const
 {
     return std::floor(W.variate());

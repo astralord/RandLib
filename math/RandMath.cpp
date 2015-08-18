@@ -25,7 +25,7 @@ long double RandMath::stirlingLogFactorial(int n)
     return std::round(fact);
 }
 
-long double RandMath::fastFactorial(int n)
+long double RandMath::factorial(int n)
 {
     if (n < 0)
         return 0;
@@ -54,7 +54,7 @@ long double RandMath::fastFactorial(int n)
     }
 }
 
-long double RandMath::fastLogFactorial(int n)
+long double RandMath::logFactorial(int n)
 {
     if (n <= 1)
         return 0;
@@ -65,21 +65,21 @@ long double RandMath::fastLogFactorial(int n)
    return logFactorialTable[n - 2];
 }
 
-long double RandMath::fastDoubleFactorial(int n)
+long double RandMath::doubleFactorial(int n)
 {
-    long double n_fact = fastFactorial(n);
+    long double n_fact = factorial(n);
     if (n & 1) {
         n <<= 1;
-        return fastFactorial(n + 1) / (n * n_fact);
+        return factorial(n + 1) / (n * n_fact);
     }
     return (1 << n) * n_fact;
 }
 
 long double RandMath::binomialCoef(int n, int k)
 {
-    long double n_fact = fastFactorial(n);
-    long double k_fact = fastFactorial(k);
-    long double k_n_fact = fastFactorial(n - k);
+    long double n_fact = factorial(n);
+    long double k_fact = factorial(k);
+    long double k_n_fact = factorial(n - k);
     return n_fact / (k_fact * k_n_fact);
 }
 
@@ -127,12 +127,12 @@ long double RandMath::gammaHalf(int k)
     if (k & 1)
     {
         int n = (k - 1) >> 1;
-        long double res = fastFactorial(k - 1);
-        res /= (fastFactorial(n) * (1 << (n << 1)));
+        long double res = factorial(k - 1);
+        res /= (factorial(n) * (1 << (n << 1)));
         return res * M_SQRTPI;
     }
 
-    return fastFactorial((k >> 1) - 1);
+    return factorial((k >> 1) - 1);
 }
 
 long double RandMath::erfInv(double p)

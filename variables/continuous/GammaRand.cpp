@@ -30,7 +30,7 @@ void GammaRand::setParameters(double shape, double scale)
     thetaInv = 1.0 / theta;
 
     if (std::fabs(k - std::round(k)) < MIN_POSITIVE)
-        cdfCoef = 1.0 / RandMath::fastFactorial(k);
+        cdfCoef = 1.0 / RandMath::factorial(k);
     else
         cdfCoef = 1.0 / std::tgamma(k);
     pdfCoef = cdfCoef * std::pow(thetaInv, k);

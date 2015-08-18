@@ -29,6 +29,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    void sample(QVector<double> &outputData);
+
 private:
     double variateForSmallP() const;
     double variateForLargeP() const;

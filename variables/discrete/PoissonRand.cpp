@@ -20,7 +20,7 @@ void PoissonRand::setRate(double rate)
 
 double PoissonRand::P(int k) const
 {
-    return (k >= 0) ? exp_l * std::pow(l, k) / RandMath::fastFactorial(k) : 0;
+    return (k >= 0) ? exp_l * std::pow(l, k) / RandMath::factorial(k) : 0;
 }
 
 double PoissonRand::F(double x) const
@@ -28,7 +28,7 @@ double PoissonRand::F(double x) const
     if (x <= 0)
         return 0;
     int k = std::floor(x);
-    return RandMath::upperIncGamma(k + 1, l) / RandMath::fastFactorial(k);
+    return RandMath::upperIncGamma(k + 1, l) / RandMath::factorial(k);
 }
 
 double PoissonRand::variate() const

@@ -122,7 +122,7 @@ public:
      * @param n integer number
      * @return n!
      */
-    static long double fastFactorial(int n);
+    static long double factorial(int n);
 
     /**
      * @brief fastLogFactorial
@@ -131,7 +131,7 @@ public:
      * @param n integer number
      * @return
      */
-    static long double fastLogFactorial(int n);
+    static long double logFactorial(int n);
 
     /**
      * @brief doubleFactorial
@@ -139,7 +139,7 @@ public:
      * @param n
      * @return
      */
-    static long double fastDoubleFactorial(int n);
+    static long double doubleFactorial(int n);
 
     /**
      * @brief binomialCoef
