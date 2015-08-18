@@ -3,8 +3,11 @@
 
 #include <QtMath>
 #include <cmath>
-#include "randlib_global.h"
 #include <functional>
+#include <complex>
+
+#include "randlib_global.h"
+
 #include <QDebug>
 
 #ifndef INFINITY

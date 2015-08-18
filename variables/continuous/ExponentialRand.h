@@ -10,7 +10,7 @@
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
 {
-    double l, beta;
+    double lambda, beta;
 
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
@@ -24,14 +24,15 @@ public:
     virtual void setName() override;
 
     void setRate(double rate);
-    inline double getRate() const { return l; }
+    inline double getRate() const { return lambda; }
     inline double getScale() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
+    std::complex<double> CF(double t) const override;
     double variate() const override;
 
-    static double variate(double rate);
+    static double variate(double lambda);
     static double standardVariate();
 
     double E() const override { return beta; }
@@ -40,7 +41,7 @@ public:
     static constexpr double Skewness() { return 2.0; }
     static constexpr double ExcessiveKurtosis() { return 6.0; }
 
-    inline double Entropy() const { return 1 - std::log(l); }
+    inline double Entropy() const { return 1 - std::log(lambda); }
 
     bool fitToData(const QVector<double> &sample);
 };

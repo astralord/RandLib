@@ -63,6 +63,11 @@ double GammaRand::F(double x) const
     return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }
 
+std::complex<double> GammaRand::CF(double t) const
+{
+    return std::pow(std::complex<double>(1.0, -theta * t), -k);
+}
+
 double GammaRand::variate() const
 {
     double rv = 0;

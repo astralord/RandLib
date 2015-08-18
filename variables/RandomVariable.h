@@ -2,7 +2,6 @@
 #define RANDOMVARIABLE_H
 
 #include <cmath>
-#include <complex>
 #include <string>
 
 #include "math/RandMath.h"
@@ -68,9 +67,9 @@ public:
      * @param x
      * @return Characteristic function (inverse Fourier transform of probability function)
      */
-    virtual std::complex<double> CF(double x) const // = 0
+    virtual std::complex<double> CF(double t) const // = 0
     {
-        return std::complex<double>(x);
+        return std::complex<double>(t);
     }
 
     /**
@@ -78,7 +77,7 @@ public:
      * @param x input vector
      * @param y output vector: y = CF(x)
      */
-    void cf(const QVector<double> &x, QVector<std::complex<double>> &y);
+    void cf(const QVector<double> &t, QVector<std::complex<double>> &y);
 
     /**
      * @brief M
