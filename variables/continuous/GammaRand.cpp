@@ -86,6 +86,32 @@ double GammaRand::variate() const
     return theta * rv;
 }
 
+void GammaRand::sample(QVector<double> &outputData)
+{
+    int k_int = static_cast<int>(k);
+
+    if (std::fabs(k - k_int) < MIN_POSITIVE) {
+        for (double &var : outputData)
+            var = theta * variateForIntegerShape();
+    }
+    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE) {
+        for (double &var : outputData)
+            var = theta * variateForHalfIntegerShape();
+    }
+    else if (k <= 1) {
+        for (double &var : outputData)
+            var = theta * variateForSmallShape();
+    }
+    else if (k <= 3) {
+        for (double &var : outputData)
+            var = theta * variateForMediumShape();
+    }
+    else {
+        for (double &var : outputData)
+            var = theta * variateForLargeShape();
+    }
+}
+
 double GammaRand::variateForIntegerShape() const
 {
     double rv = 0;

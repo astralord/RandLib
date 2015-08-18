@@ -37,6 +37,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    void sample(QVector<double> &outputData);
+
 private:
     double variateForIntegerShape() const;     /// Erlang distribution
     double variateForHalfIntegerShape() const; /// GA algorithm for k = [n] + 0.5
