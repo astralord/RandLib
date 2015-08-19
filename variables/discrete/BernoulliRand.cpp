@@ -13,7 +13,7 @@ void BernoulliRand::setName()
 void BernoulliRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
-    generatorEdge = (1 - p) * BasicRandGenerator::maxValue();
+    generatorEdge = (1 - p) * RandGenerator::maxValue();
 
     setName();
 }
@@ -30,5 +30,5 @@ double BernoulliRand::F(double x) const
 
 double BernoulliRand::variate() const
 {
-    return (BasicRandGenerator::variate() < generatorEdge) ? 0 : 1;
+    return (RandGenerator::variate() < generatorEdge) ? 0 : 1;
 }

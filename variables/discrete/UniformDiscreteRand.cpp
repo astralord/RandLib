@@ -38,5 +38,5 @@ double UniformDiscreteRand::F(double x) const
 
 double UniformDiscreteRand::variate() const
 {
-    return a + BasicRandGenerator::variate() % n;
+    return a + RandGenerator::variate() % n;
 }

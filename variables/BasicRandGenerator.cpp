@@ -1,16 +1,18 @@
 #include "BasicRandGenerator.h"
 #include <time.h>
 
-BasicRandGenerator::BasicRandGenerator()
+template < char Generator >
+unsigned long long BasicRandGenerator<Generator>::variate()
 {
+    if (Generator == JLKISS64)
+        return BasicRandGenerator<Generator>::rand_JLKISS64();
+    else
+        return BasicRandGenerator<Generator>::rand_JKISS32();
 }
 
-unsigned long long BasicRandGenerator::variate()
+template < char Generator >
+unsigned long long BasicRandGenerator<Generator>::rand_JLKISS64()
 {
-    return BasicRandGenerator::JLKISS64();
-}
-
-unsigned long long BasicRandGenerator::JLKISS64() {
     static unsigned long long X = 123456789 ^ time(0);
     static unsigned long long Y = X ^ X;
     static unsigned int Z1 = X ^ Y;
@@ -33,7 +35,8 @@ unsigned long long BasicRandGenerator::JLKISS64() {
      return X + Y + Z1 + ((unsigned long long)Z2 << 32);
 }
 
-unsigned long BasicRandGenerator::JKISS32()
+template < char Generator >
+unsigned long BasicRandGenerator<Generator>::rand_JKISS32()
 {
     static unsigned int X = 123456789 ^ time(0);
     static unsigned int Y = X ^ X;
@@ -53,3 +56,6 @@ unsigned long BasicRandGenerator::JKISS32()
 
     return X + Y + W;
 }
+
+template class BasicRandGenerator<JLKISS64>;
+template class BasicRandGenerator<JKISS32>;
