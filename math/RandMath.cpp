@@ -1,37 +1,19 @@
 #include "RandMath.h"
 
 constexpr long double RandMath::factorialTable[];
-constexpr double RandMath::logFactorialTable[];
 
-RandMath::RandMath()
+long double RandMath::stirlingLogFactorial(unsigned n)
 {
+    long double logN = std::log(n);
+    long double fact = n * (logN - 1);
+    fact += 0.5 * (M_LN2 + M_LNPI + logN); /// += 0.5 * log(2 * pi * n)
+    return fact + 1.0 / (12.0 * n);
 }
 
-long double RandMath::stirlingFactorial(int n)
+long double RandMath::factorial(unsigned n)
 {
-    long double fact = M_SQRT2PI * std::sqrt(static_cast<double>(n));
-    fact *= std::pow(n / M_E, n);
-    double secondCoef = 1.0 / (12.0 * n);
-    double thirdCoef = 0.5 * secondCoef * secondCoef;
-    return std::round((1.0 + secondCoef + thirdCoef) * fact);
-}
-
-long double RandMath::stirlingLogFactorial(int n)
-{
-    long double fact = n * std::log(n) - n;
-    double piN = M_PI * n;
-    fact += 0.5 * std::log(piN + piN);
-    fact += 1.0 / (12.0 * n);
-    return std::round(fact);
-}
-
-long double RandMath::factorial(int n)
-{
-    if (n < 0)
-        return 0;
-
     if (n > 255)
-        return stirlingFactorial(n);
+        return std::tgamma(static_cast<double>(n + 1));
 
     int residue = n % 10;
     if (residue <= 5)
@@ -54,18 +36,12 @@ long double RandMath::factorial(int n)
     }
 }
 
-long double RandMath::logFactorial(int n)
+long double RandMath::logFactorial(unsigned n)
 {
-    if (n <= 1)
-        return 0;
-
-    if (n > 255)
-        return stirlingLogFactorial(n);
-
-   return logFactorialTable[n - 2];
+    return (n > 255) ? stirlingLogFactorial(n) : std::log(factorial(n));
 }
 
-long double RandMath::doubleFactorial(int n)
+long double RandMath::doubleFactorial(unsigned n)
 {
     long double n_fact = factorial(n);
     if (n & 1) {
@@ -75,7 +51,7 @@ long double RandMath::doubleFactorial(int n)
     return (1 << n) * n_fact;
 }
 
-long double RandMath::binomialCoef(int n, int k)
+long double RandMath::binomialCoef(unsigned n, unsigned k)
 {
     long double n_fact = factorial(n);
     long double k_fact = factorial(k);
@@ -119,14 +95,11 @@ long double RandMath::betaFun(double x, double y)
     }
 }
 
-long double RandMath::gammaHalf(int k)
+long double RandMath::gammaHalf(unsigned k)
 {
-    if (k < 0)
-        return 0;
-
     if (k & 1)
     {
-        int n = (k - 1) >> 1;
+        unsigned n = (k - 1) >> 1;
         long double res = factorial(k - 1);
         res /= (factorial(n) * (1 << (n << 1)));
         return res * M_SQRTPI;
