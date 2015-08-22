@@ -1,6 +1,16 @@
 #include "RandMath.h"
 
 constexpr long double RandMath::factorialTable[];
+long double RandMath::logFactorialTable[maxFactorialTableValue] = {0};
+const bool RandMath::isLogFactorialTableReady = RandMath::setupLogFactorialTable();
+
+bool RandMath::setupLogFactorialTable()
+{
+    logFactorialTable[0] = logFactorialTable[1] = 0;
+    for (unsigned i = 2; i != maxFactorialTableValue; ++i)
+        logFactorialTable[i] = std::log(factorialForSmallValue(i));
+    return true;
+}
 
 long double RandMath::stirlingLogFactorial(unsigned n)
 {
@@ -10,11 +20,8 @@ long double RandMath::stirlingLogFactorial(unsigned n)
     return fact + 1.0 / (12.0 * n);
 }
 
-long double RandMath::factorial(unsigned n)
+long double RandMath::factorialForSmallValue(unsigned n)
 {
-    if (n > 255)
-        return std::tgamma(static_cast<double>(n + 1));
-
     int residue = n % 10;
     if (residue <= 5)
     {
@@ -25,20 +32,23 @@ long double RandMath::factorial(unsigned n)
             fact *= nPrev + i;
         return fact;
     }
-    else
-    {
-        /// go  down
-        int nNext = n - residue + 10;
-        double denominator = 1;
-        for (int i = 0; i < 10 - residue; ++i)
-            denominator *= nNext - i;
-        return factorialTable[nNext / 10] / denominator;
-    }
+
+    /// go  down
+    int nNext = n - residue + 10;
+    double denominator = 1;
+    for (int i = 0; i < 10 - residue; ++i)
+        denominator *= nNext - i;
+    return factorialTable[nNext / 10] / denominator;
+}
+
+long double RandMath::factorial(unsigned n)
+{
+    return (n > maxFactorialTableValue) ? std::tgamma(static_cast<double>(n + 1)) : factorialForSmallValue(n);
 }
 
 long double RandMath::logFactorial(unsigned n)
 {
-    return (n > 255) ? stirlingLogFactorial(n) : std::log(factorial(n));
+    return (n > maxFactorialTableValue) ? stirlingLogFactorial(n) : logFactorialTable[n];
 }
 
 long double RandMath::doubleFactorial(unsigned n)

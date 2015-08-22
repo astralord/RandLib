@@ -39,6 +39,12 @@ public:
     RandMath() {}
 
 private:
+
+    /**
+     * @brief maxFactorialTableValue maximum value for input parameter to use table methods
+     */
+    static constexpr unsigned maxFactorialTableValue = 255;
+
     static constexpr long double factorialTable[] =
     {
         1,
@@ -70,11 +76,33 @@ private:
     };
 
     /**
+     * @brief isLogFactorialTableReady
+     */
+    static const bool isLogFactorialTableReady;
+    /**
+     * @brief logFactorialTable table of log(n!) for n from 0 to maxFactorialTableValue
+     */
+    static long double logFactorialTable[maxFactorialTableValue];
+    /**
+     * @brief setupLogFactorialTable
+     * @return
+     */
+    static bool setupLogFactorialTable();
+
+    /**
      * @brief stirlingLogFactorial
      * @param n integer number
      * @return log(n!) according to Moivre-Stirling formula
      */
     static long double stirlingLogFactorial(unsigned n);
+
+    /**
+     * @brief factorialForSmallValue
+     * Get n! using product method with table
+     * @param n non-negative integer number
+     * @return
+     */
+    static long double factorialForSmallValue(unsigned n);
 
 public:
     /**
