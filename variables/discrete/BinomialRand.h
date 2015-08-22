@@ -18,11 +18,11 @@ public:
     BinomialRand(int number, double probability);
     virtual void setName() override;
 
-    void setN(int number);
-    inline double getN() const { return n; }
+    void setNumber(int number);
+    inline double getNumber() const { return n; }
 
-    void setP(double probability);
-    inline double getP() const { return p; }
+    void setProbability(double probability);
+    inline double getProbability() const { return p; }
 
     double P(int k) const override;
     double F(double x) const override;

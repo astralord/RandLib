@@ -2,21 +2,21 @@
 
 BinomialRand::BinomialRand(int number, double probability)
 {
-    setN(number);
-    setP(probability);
+    setNumber(number);
+    setProbability(probability);
 }
 
 void BinomialRand::setName()
 {
-    nameStr = "Binomial(" + toStringWithPrecision(getN()) + ", " + toStringWithPrecision(getP()) + ")";
+    nameStr = "Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
 }
 
-void BinomialRand::setN(int number)
+void BinomialRand::setNumber(int number)
 {
     n = std::max(number, 1);
 }
 
-void BinomialRand::setP(double probability)
+void BinomialRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, MIN_POSITIVE), 1.0);
     B.setProbability(p);

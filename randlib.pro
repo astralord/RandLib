@@ -46,7 +46,8 @@ SOURCES += \
     variables/discrete/BinomialRand.cpp \
     variables/continuous/GeometricStableRand.cpp \
     variables/continuous/MaxwellBoltzmannRand.cpp \
-    variables/continuous/BetaPrimeRand.cpp
+    variables/continuous/BetaPrimeRand.cpp \
+    variables/discrete/NegativeBinomialRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -89,7 +90,8 @@ HEADERS +=\
     variables/discrete/BinomialRand.h \
     variables/continuous/GeometricStableRand.h \
     variables/continuous/MaxwellBoltzmannRand.h \
-    variables/continuous/BetaPrimeRand.h
+    variables/continuous/BetaPrimeRand.h \
+    variables/discrete/NegativeBinomialRand.h
 
 unix {
     target.path = /usr/lib

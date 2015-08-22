@@ -44,7 +44,7 @@ double CauchyRand::F(double x) const
 
 double CauchyRand::variate() const
 {
-    return CauchyRand::variate(x0, gamma);
+    return x0 + gamma * standardVariate();
 }
 
 double CauchyRand::variate(double location, double scale)
