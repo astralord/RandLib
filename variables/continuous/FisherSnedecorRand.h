@@ -2,7 +2,7 @@
 #define FISHERSNEDECORRAND_H
 
 #include "ContinuousRand.h"
-#include "ChiSquaredRand.h"
+#include "BetaRand.h"
 
 /**
  * @brief The FisherSnedecorRand class
@@ -12,8 +12,9 @@ class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
     int d1, d2;
     double gammaA, gammaB; /// gamma(.5 * d1) and gamma(.5 * d2)
     double pdfCoef;
-    double a, b, c; /// constants for optimization
-    ChiSquaredRand U1, U2;
+    double a, d1_d2, c, d2_d1; /// constants for optimization
+
+    BetaRand B;
 
 public:
     FisherSnedecorRand(int degree1, int degree2);
@@ -28,6 +29,7 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+    void sample(QVector<double> &outputData);
 
     double E() const override { return (d2 > 2) ? d2 / (d2 - 2) : INFINITY /*or NAN*/; }
     double Var() const override {

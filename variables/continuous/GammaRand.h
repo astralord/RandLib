@@ -46,6 +46,7 @@ private:
     double variateForMediumShape() const;      /// GP algorithm for 1 < k < 3
     double variateForLargeShape() const;       /// GO algorithm for the most common case k > 3
 
+public:
     double E() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }
 };

@@ -67,10 +67,12 @@ double GammaRand::variate() const
 {
     double rv = 0;
     int k_int = static_cast<int>(k);
-    if (std::fabs(k - k_int) < MIN_POSITIVE) {
+    if (std::fabs(k - k_int) < MIN_POSITIVE &&
+            k < 5) {
         rv = variateForIntegerShape();
     }
-    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE) {
+    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE &&
+             k < 5) {
         rv = variateForHalfIntegerShape();
     }
     else if (k <= 1) {
@@ -90,11 +92,13 @@ void GammaRand::sample(QVector<double> &outputData)
 {
     int k_int = static_cast<int>(k);
 
-    if (std::fabs(k - k_int) < MIN_POSITIVE) {
+    if (std::fabs(k - k_int) < MIN_POSITIVE &&
+            k < 5) {
         for (double &var : outputData)
             var = theta * variateForIntegerShape();
     }
-    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE) {
+    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE &&
+             k < 5) {
         for (double &var : outputData)
             var = theta * variateForHalfIntegerShape();
     }
