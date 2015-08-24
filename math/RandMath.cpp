@@ -118,25 +118,25 @@ long double RandMath::gammaHalf(unsigned k)
     return factorial((k >> 1) - 1);
 }
 
-long double RandMath::erfInv(double p)
+long double RandMath::erfInv(double x)
 {
-    if (p < 0.5)
-        return -erfInv(1 - p);
-    if (p <= 0)
-        return -INFINITY;
-    if (p >= 1)
-        return INFINITY;
-    double t = M_SQRT2 * std::sqrt(-std::log(p));
+    if (x < 0)
+        return -erfInv(-x);
+    if (x >= 1.0)
+        return NAN;
+    double p = 0.5 * (x + 1);
+    double y = std::sqrt(-std::log(p));
+    double t = M_SQRT2 * y;
     static constexpr double c[] = {2.515517, 0.802853, 0.010328};
     static constexpr double d[] = {1.432788, 0.189269, 0.001308};
-    long double numerator = (c[2] * t + c[1]) * t + c[0];
-    long double denominator = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
-    return t - numerator / denominator;
+    double numerator = (c[2] * t + c[1]) * t + c[0];
+    double denominator = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
+    return M_SQRT1_2 * (numerator / denominator) - y;
 }
 
-long double RandMath::erfcinv(double p)
+long double RandMath::erfcinv(double x)
 {
-    return erfInv(1 - p);
+    return erfInv(1 - x);
 }
 
 long double RandMath::adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
