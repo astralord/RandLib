@@ -39,7 +39,7 @@ double GeometricStableRand::variate() const
     double x = S.variate();
     if (S.getAlpha() == 1)
     {
-        double rv = x + M_2_PI * e * S.getBeta() * std::log(sigma * e);
+        double rv = x + M_2_PI * S.getBeta() * std::log(sigma * e);
         return e * (mu + sigma * rv);
     }
     return mu * e + std::pow(e, 1.0 / S.getAlpha()) * sigma * x;
