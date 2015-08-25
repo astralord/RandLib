@@ -36,18 +36,25 @@ bool ExponentialRand::setupTables()
 
 void ExponentialRand::setRate(double rate)
 {
-    l = std::max(rate, MIN_POSITIVE);
-    beta = 1.0 / l;
+    lambda = std::max(rate, MIN_POSITIVE);
+    beta = 1.0 / lambda;
 }
 
 double ExponentialRand::f(double x) const
 {
-    return (x > 0) ? l * std::exp(-l * x) : 0;
+    return (x > 0) ? lambda * std::exp(-lambda * x) : 0;
 }
 
 double ExponentialRand::F(double x) const
 {
-    return (x > 0) ? 1 - std::exp(-l * x) : 0;
+    return (x > 0) ? 1 - std::exp(-lambda * x) : 0;
+}
+
+std::complex<double> ExponentialRand::CF(double t) const
+{
+    double rate2 = lambda * lambda;
+    double denominator = rate2 + t * t;
+    return std::complex<double>(rate2 / denominator, lambda * t / denominator);
 }
 
 double ExponentialRand::variate() const

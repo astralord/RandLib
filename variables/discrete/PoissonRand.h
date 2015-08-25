@@ -9,25 +9,26 @@
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>
 {
-    double l;
-    double exp_l; /// exp(-l)
+    double lambda;
+    double expLambda; /// exp(-l)
 public:
     PoissonRand(double rate);
     virtual std::string name() override;
 
     void setRate(double rate);
-    inline double getRate() const { return l; }
+    inline double getRate() const { return lambda; }
 
     double P(int k) const override;
     double F(double x) const override;
+    std::complex<double> CF(double t) const override;
     double variate() const override;
 
-    double E() const override { return l; }
-    double Var() const override { return l; }
+    double E() const override { return lambda; }
+    double Var() const override { return lambda; }
 
-    inline double Mode() const { return std::floor(l); }
-    inline double Skewness() const { return 1.0 / std::sqrt(l); }
-    inline double ExcessiveKurtosis() const { return 1.0 / l; }
+    inline double Mode() const { return std::floor(lambda); }
+    inline double Skewness() const { return 1.0 / std::sqrt(lambda); }
+    inline double ExcessiveKurtosis() const { return 1.0 / lambda; }
 };
 
 #endif // POISSONRAND_H

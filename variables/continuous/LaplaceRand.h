@@ -25,6 +25,7 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+    std::complex<double> CF(double t) const override;
 
     double E() const override { return mu; }
     double Var() const override { return 2 * b * b; }
