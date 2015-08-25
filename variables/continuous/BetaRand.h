@@ -13,6 +13,7 @@ protected:
     double alpha, beta;
     GammaRand X, Y;
     double gammaA, gammaB, pdfCoef;
+
 public:
     BetaRand(double shape1, double shape2);
     virtual void setName() override;
@@ -40,6 +41,12 @@ public:
         denominator *= denominator * (denominator + 1);
         return alpha * beta / denominator;
     }
+
+    /**
+     * @brief getInvBetaFunction
+     * @return 1 / B(alpha, beta)
+     */
+    inline double getInvBetaFunction() { return pdfCoef; }
 };
 
 #endif // BETARAND_H

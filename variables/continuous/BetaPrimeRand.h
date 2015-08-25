@@ -16,6 +16,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    void sample(QVector<double> &outputData);
+
     double E() const override { return (beta > 1) ? alpha / (beta - 1) : INFINITY; }
     double Var() const override {
         if (beta <= 2)

@@ -28,6 +28,14 @@ double BetaPrimeRand::F(double x) const
 
 double BetaPrimeRand::variate() const
 {
-    double b = BetaRand::variate();
-    return b / (1 - b);
+    //return X.variate() / Y.variate();
+    double x = BetaRand::variate();
+    return x / (1.0 - x);
+}
+
+void BetaPrimeRand::sample(QVector<double> &outputData)
+{
+    BetaRand::sample(outputData);
+    for (double &var : outputData)
+        var = var / (1.0 - var);
 }

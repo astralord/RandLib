@@ -2,7 +2,7 @@
 #define FISHERSNEDECORRAND_H
 
 #include "ContinuousRand.h"
-#include "BetaRand.h"
+#include "BetaPrimeRand.h"
 
 /**
  * @brief The FisherSnedecorRand class
@@ -10,11 +10,10 @@
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
 {
     int d1, d2;
-    double gammaA, gammaB; /// gamma(.5 * d1) and gamma(.5 * d2)
     double pdfCoef;
     double a, d1_d2, c, d2_d1; /// constants for optimization
 
-    BetaRand B;
+    BetaPrimeRand B;
 
 public:
     FisherSnedecorRand(int degree1, int degree2);

@@ -14,10 +14,7 @@ void FisherSnedecorRand::setName()
 void FisherSnedecorRand::setDegrees(int degree1, int degree2)
 {
     d1 = std::max(degree1, 1);
-    gammaA = RandMath::gammaHalf(d1);
-
     d2 = std::max(degree2, 1);
-    gammaB = RandMath::gammaHalf(d2);
 
     B.setParameters(.5 * d1, .5 * d2);
 
@@ -26,7 +23,7 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
+    pdfCoef = B.getInvBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
 
     setName();
@@ -35,7 +32,6 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
 void FisherSnedecorRand::setFirstDegree(int degree1)
 {
     d1 = std::max(degree1, 1);
-    gammaA = RandMath::gammaHalf(d1);
 
     B.setAlpha(.5 * d1);
 
@@ -44,7 +40,7 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
+    pdfCoef = B.getInvBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
 
     setName();
@@ -53,7 +49,6 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
 void FisherSnedecorRand::setSecondDegree(int degree2)
 {
     d2 = std::max(degree2, 1);
-    gammaB = RandMath::gammaHalf(d2);
 
     B.setBeta(.5 * d2);
 
@@ -61,7 +56,7 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
     d2_d1 = 1.0 / d1_d2;
     c = -.5 * (d1 + d2);
 
-    pdfCoef = RandMath::gammaHalf(d1 + d2) / (gammaA * gammaB);
+    pdfCoef = B.getInvBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
 
     setName();
@@ -79,13 +74,12 @@ double FisherSnedecorRand::F(double x) const
 
 double FisherSnedecorRand::variate() const
 {
-    double x = B.variate();
-    return d2_d1 * x / (1.0 - x);
+    return d2_d1 * B.variate();
 }
 
 void FisherSnedecorRand::sample(QVector<double> &outputData)
 {
     B.sample(outputData);
     for (double &var : outputData)
-        var = d2_d1 * var / (1.0 - var);
+        var = d2_d1 * var;
 }
