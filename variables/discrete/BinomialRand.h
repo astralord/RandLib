@@ -27,6 +27,7 @@ public:
     double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
+    std::complex<double> CF(double t) const override;
 
     // WRITE var!
     double E() const override { return n * p; }

@@ -43,3 +43,8 @@ double BinomialRand::variate() const
         sum += B.variate();
     return sum;
 }
+
+std::complex<double> BinomialRand::CF(double t) const
+{
+    return std::pow(B.CF(t), n);
+}

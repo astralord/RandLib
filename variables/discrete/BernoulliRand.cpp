@@ -32,3 +32,8 @@ double BernoulliRand::variate() const
 {
     return (BasicRandGenerator::variate() < generatorEdge) ? 0 : 1;
 }
+
+std::complex<double> BernoulliRand::CF(double t) const
+{
+    return std::complex<double>(1 - p + p * std::cos(t), std::sin(t));
+}

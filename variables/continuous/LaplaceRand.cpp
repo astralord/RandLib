@@ -49,6 +49,13 @@ double LaplaceRand::variate() const
     return mu + (((signed)BasicRandGenerator::variate() > 0) ? e : -e);
 }
 
+std::complex<double> LaplaceRand::CF(double t) const
+{
+    double bt = b * t;
+    double denominator = 1 + bt * bt;
+    return std::complex<double>(std::cos(t) / denominator, std::sin(t) / denominator);
+}
+
 bool LaplaceRand::fitToData(const QVector<double> &sample)
 {
     if (sample.size() == 0)
