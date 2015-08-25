@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
 
 public:
     ExponentialRand(double rate = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setRate(double rate);
     inline double getRate() const { return l; }

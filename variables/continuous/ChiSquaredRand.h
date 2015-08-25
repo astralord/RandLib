@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 
 public:
     ChiSquaredRand(int degree = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setDegree(int degree);
     inline int getDegree() const { return k; }

@@ -16,7 +16,7 @@ protected:
 
 public:
     BetaRand(double shape1, double shape2);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setParameters(double shape1, double shape2);
     void setAlpha(double shape1);

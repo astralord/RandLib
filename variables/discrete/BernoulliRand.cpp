@@ -5,17 +5,15 @@ BernoulliRand::BernoulliRand(double probability)
     setProbability(probability);
 }
 
-void BernoulliRand::setName()
+std::string BernoulliRand::name()
 {
-    nameStr = "Bernoulli(" + toStringWithPrecision(getProbability()) + ")";
+    return "Bernoulli(" + toStringWithPrecision(getProbability()) + ")";
 }
 
 void BernoulliRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
     generatorEdge = (1 - p) * RandGenerator::maxValue();
-
-    setName();
 }
 
 double BernoulliRand::P(int k) const

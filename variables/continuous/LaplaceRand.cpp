@@ -6,22 +6,20 @@ LaplaceRand::LaplaceRand(double location, double scale)
     setScale(scale);
 }
 
-void LaplaceRand::setName()
+std::string LaplaceRand::name()
 {
-    nameStr = "Laplace(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Laplace(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
 void LaplaceRand::setLocation(double location)
 {
     mu = location;
-    setName();
 }
 
 void LaplaceRand::setScale(double scale)
 {
     b = std::max(scale, MIN_POSITIVE);
     bInv = 1.0 / b;
-    setName();
 }
 
 double LaplaceRand::f(double x) const

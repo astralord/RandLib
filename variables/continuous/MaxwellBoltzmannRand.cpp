@@ -6,15 +6,14 @@ MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale)
     C.setDegree(3);
 }
 
-void MaxwellBoltzmannRand::setName()
+std::string MaxwellBoltzmannRand::name()
 {
-    nameStr = "Maxwell-Boltzmann(" + toStringWithPrecision(getScale()) + ")";
+    return "Maxwell-Boltzmann(" + toStringWithPrecision(getScale()) + ")";
 }
 
 void MaxwellBoltzmannRand::setScale(double scale)
 {
     a = std::max(scale, MIN_POSITIVE);
-    setName();
 }
 
 double MaxwellBoltzmannRand::f(double x) const

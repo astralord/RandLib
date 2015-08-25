@@ -7,9 +7,9 @@ TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit
     setUpperLimit(upperLimit);
 }
 
-void TriangularRand::setName()
+std::string TriangularRand::name()
 {
-    nameStr = "Triangular("
+    return "Triangular("
             + toStringWithPrecision(getLowerLimit()) + ", "
             + toStringWithPrecision(getMode()) + ", "
             + toStringWithPrecision(getUpperLimit()) + ")";
@@ -38,8 +38,6 @@ void TriangularRand::setUpperLimit(double upperLimit)
 {
     b = upperLimit;
     setGeneratorConstants();
-
-    setName();
 }
 
 double TriangularRand::f(double x) const

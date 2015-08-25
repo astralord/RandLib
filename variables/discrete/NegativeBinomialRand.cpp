@@ -6,13 +6,13 @@ NegativeBinomialRand<T>::NegativeBinomialRand(T number, double probability) :
 {
     setNumber(number);
     setProbability(probability);
-    setName();
+    name();
 }
 
 template< typename T>
-void NegativeBinomialRand<T>::setName()
+std::string NegativeBinomialRand<T>::name()
 {
-    nameStr = "Negative Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
+    return "Negative Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
 }
 
 template< typename T>

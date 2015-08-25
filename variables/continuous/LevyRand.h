@@ -17,7 +17,7 @@ class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRand
 
 public:
     LevyRand(double location = 0, double scale = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setLocation(double location);
     void setScale(double scale);

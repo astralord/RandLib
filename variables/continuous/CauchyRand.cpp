@@ -6,22 +6,20 @@ CauchyRand::CauchyRand(double location, double scale)
     setScale(scale);
 }
 
-void CauchyRand::setName()
+std::string CauchyRand::name()
 {
-    nameStr = "Cauchy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Cauchy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
 void CauchyRand::setLocation(double location)
 {
     x0 = location;
-    setName();
 }
 
 void CauchyRand::setScale(double scale)
 {
     gamma = std::max(scale, MIN_POSITIVE);
     gammaInv = 1.0 / gamma;
-    setName();
 }
 
 double CauchyRand::f(double x) const

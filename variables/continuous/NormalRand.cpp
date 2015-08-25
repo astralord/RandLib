@@ -10,9 +10,9 @@ NormalRand::NormalRand(double mean, double var)
     setVar(var);
 }
 
-void NormalRand::setName()
+std::string NormalRand::name()
 {
-    nameStr = "Normal(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getVar()) + ")";
+    return "Normal(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getVar()) + ")";
 }
 
 bool NormalRand::setupTables()
@@ -37,14 +37,12 @@ bool NormalRand::setupTables()
 void NormalRand::setMean(double mean)
 {
     mu = mean;
-    setName();
 }
 
 void NormalRand::setSigma(double rootVar)
 {
     sigma = std::max(rootVar, MIN_POSITIVE);
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
-    setName();
 }
 
 double NormalRand::f(double x) const

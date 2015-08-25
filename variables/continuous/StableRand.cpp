@@ -7,9 +7,9 @@ StableRand::StableRand(double exponent, double skewness, double scale, double lo
     setParameters(exponent, skewness, scale, location);
 }
 
-void StableRand::setName()
+std::string StableRand::name()
 {
-    nameStr = "Stable("
+    return "Stable("
             + toStringWithPrecision(getAlpha()) + ", "
             + toStringWithPrecision(getBeta()) + ", "
             + toStringWithPrecision(getSigma()) + ", "
@@ -81,8 +81,6 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
         xi = alphaInv * B;
         integrandCoef = std::pow(qFastCos(B), alpham1Inv);
     }
-
-    setName();
 }
 
 double StableRand::variate() const

@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
     double pdfCoef;
 public:
     StudentTRand(int degree);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setDegree(int degree);
     inline int getDegree() const { return v; }

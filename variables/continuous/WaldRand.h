@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT WaldRand : public ContinuousRand
     double cdfCoef; /// exp(2 * l / mu)
 public:
     WaldRand(double mean = 1, double shape = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setParameters(double mean, double shape);
     inline double getMean() const { return mu; }

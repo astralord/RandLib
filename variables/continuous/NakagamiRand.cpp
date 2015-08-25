@@ -5,9 +5,9 @@ NakagamiRand::NakagamiRand(double shape, double spread)
     setParameters(shape, spread);
 }
 
-void NakagamiRand::setName()
+std::string NakagamiRand::name()
 {
-    nameStr = "Nakagami(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getSpread()) + ")";
+    return "Nakagami(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getSpread()) + ")";
 }
 
 void NakagamiRand::setParameters(double shape, double spread)
@@ -20,7 +20,6 @@ void NakagamiRand::setParameters(double shape, double spread)
     pdfCoef = 2.0 * std::pow(m / w, m) * gammaMInv;
 
     Y.setParameters(m, w / m);
-    setName();
 }
 
 double NakagamiRand::f(double x) const

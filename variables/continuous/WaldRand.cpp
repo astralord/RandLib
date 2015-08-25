@@ -5,9 +5,9 @@ WaldRand::WaldRand(double mean, double shape)
     setParameters(mean, shape);
 }
 
-void WaldRand::setName()
+std::string WaldRand::name()
 {
-    nameStr = "Wald(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getShape()) + ")";
+    return "Wald(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getShape()) + ")";
 }
 
 void WaldRand::setParameters(double mean, double shape)
@@ -16,8 +16,6 @@ void WaldRand::setParameters(double mean, double shape)
     l = std::max(shape, MIN_POSITIVE);
     pdfCoef = std::sqrt(.5 * l * M_1_PI);
     cdfCoef = std::exp(2 * l / mu);
-
-    setName();
 }
 
 double WaldRand::f(double x) const

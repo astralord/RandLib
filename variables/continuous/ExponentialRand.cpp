@@ -9,9 +9,9 @@ ExponentialRand::ExponentialRand(double rate)
     setRate(rate);
 }
 
-void ExponentialRand::setName()
+std::string ExponentialRand::name()
 {
-    nameStr = "Exponential(" + toStringWithPrecision(getRate()) + ")";
+    return "Exponential(" + toStringWithPrecision(getRate()) + ")";
 }
 
 bool ExponentialRand::setupTables()
@@ -38,7 +38,6 @@ void ExponentialRand::setRate(double rate)
 {
     l = std::max(rate, MIN_POSITIVE);
     beta = 1.0 / l;
-    setName();
 }
 
 double ExponentialRand::f(double x) const

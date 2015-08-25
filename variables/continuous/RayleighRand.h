@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
 
 public:
     RayleighRand(double scale = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setScale(double scale);
     inline double getScale() const { return sigma; }

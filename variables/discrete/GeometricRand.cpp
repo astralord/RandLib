@@ -5,9 +5,9 @@ GeometricRand::GeometricRand(double probability)
     setProbability(probability);
 }
 
-void GeometricRand::setName()
+std::string GeometricRand::name()
 {
-    nameStr = "Geometric(" + toStringWithPrecision(getProbability()) + ")";
+    return "Geometric(" + toStringWithPrecision(getProbability()) + ")";
 }
 
 void GeometricRand::setProbability(double probability)
@@ -33,8 +33,6 @@ void GeometricRand::setProbability(double probability)
             table[i] = table[i - 1] + prod;
         }
     }
-
-    setName();
 }
 
 double GeometricRand::P(int k) const

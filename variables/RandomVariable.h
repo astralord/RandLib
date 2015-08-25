@@ -18,7 +18,6 @@ class RANDLIBSHARED_EXPORT RandomVariable
 {
 
 protected:
-    std::string nameStr;
 
     std::string toStringWithPrecision(const double a_value, const int n = 6);
 
@@ -27,15 +26,9 @@ public:
     virtual ~RandomVariable() {}
 
     /**
-     * @brief name
-     * @return
+     * @brief getName
      */
-    std::string name() const { return nameStr; }
-
-    /**
-     * @brief setName
-     */
-    virtual void setName() = 0;
+    virtual std::string name() = 0;
 
     /**
      * @brief variate()

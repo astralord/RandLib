@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
 
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setBoundaries(double minValue, double maxValue);    
     inline double getMinValue() const { return a; }

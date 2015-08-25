@@ -24,7 +24,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 
 public:
     NormalRand(double mean = 0, double var = 1);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setMean(double mean);
     void setSigma(double rootVar);

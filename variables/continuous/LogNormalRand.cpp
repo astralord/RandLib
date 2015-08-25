@@ -6,23 +6,21 @@ LogNormalRand::LogNormalRand(double location, double scale)
     setScale(scale);
 }
 
-void LogNormalRand::setName()
+std::string LogNormalRand::name()
 {
-    nameStr = "Log-Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Log-Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
 void LogNormalRand::setLocation(double location)
 {
     X.setMean(location);
     expMu = std::exp(X.E());
-    setName();
 }
 
 void LogNormalRand::setScale(double scale)
 {
     X.setSigma(scale);
     expVar = std::exp(X.Var());
-    setName();
 }
 
 double LogNormalRand::f(double x) const

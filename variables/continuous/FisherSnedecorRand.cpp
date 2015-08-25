@@ -6,9 +6,9 @@ FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2) :
     setDegrees(degree1, degree2);
 }
 
-void FisherSnedecorRand::setName()
+std::string FisherSnedecorRand::name()
 {
-    nameStr = "Fisher(" + toStringWithPrecision(getFirstDegree()) + ", " + toStringWithPrecision(getSecondDegree()) + ")";
+    return "Fisher(" + toStringWithPrecision(getFirstDegree()) + ", " + toStringWithPrecision(getSecondDegree()) + ")";
 }
 
 void FisherSnedecorRand::setDegrees(int degree1, int degree2)
@@ -25,8 +25,6 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
 
     pdfCoef = B.getInvBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
-
-    setName();
 }
 
 void FisherSnedecorRand::setFirstDegree(int degree1)
@@ -42,8 +40,6 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
 
     pdfCoef = B.getInvBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
-
-    setName();
 }
 
 void FisherSnedecorRand::setSecondDegree(int degree2)
@@ -58,8 +54,6 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
 
     pdfCoef = B.getInvBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
-
-    setName();
 }
 
 double FisherSnedecorRand::f(double x) const

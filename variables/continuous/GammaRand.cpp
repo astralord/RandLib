@@ -5,9 +5,9 @@ GammaRand::GammaRand(double shape, double scale)
     setParameters(shape, scale);
 }
 
-void GammaRand::setName()
+std::string GammaRand::name()
 {
-    nameStr = "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
 void GammaRand::setConstants()
@@ -44,7 +44,6 @@ void GammaRand::setParameters(double shape, double scale)
         setConstants();
         U.setBoundaries(0, 1);
     }
-    setName();
 }
 
 double GammaRand::f(double x) const

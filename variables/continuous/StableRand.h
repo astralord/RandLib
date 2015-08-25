@@ -28,7 +28,7 @@ class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setParameters(double exponent, double skewness, double scale, double location);
 

@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ContinuousRand
 
 public:
     MaxwellBoltzmannRand(double scale);
-    virtual void setName() override;
+    virtual std::string name() override;
 
     void setScale(double scale);
     inline double getScale() const { return a; }

@@ -6,9 +6,9 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
     setParameters(exponent, skewness, scale, location);
 }
 
-void GeometricStableRand::setName()
+std::string GeometricStableRand::name()
 {
-    nameStr = "Geometric Stable("
+    return "Geometric Stable("
             + toStringWithPrecision(getAlpha()) + ", "
             + toStringWithPrecision(getBeta()) + ", "
             + toStringWithPrecision(getSigma()) + ", "
@@ -20,7 +20,6 @@ void GeometricStableRand::setParameters(double exponent, double skewness, double
     S.setParameters(exponent, skewness, 1, 0);
     sigma = std::max(scale, MIN_POSITIVE);
     mu = location;
-    setName();
 }
 
 double GeometricStableRand::f(double x) const

@@ -5,9 +5,9 @@ ChiSquaredRand::ChiSquaredRand(int degree)
     setDegree(degree);
 }
 
-void ChiSquaredRand::setName()
+std::string ChiSquaredRand::name()
 {
-    nameStr = "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
+    return "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
 }
 
 void ChiSquaredRand::setDegree(int degree)
@@ -29,7 +29,6 @@ void ChiSquaredRand::setDegree(int degree)
     }
 
     GammaRand::setParameters(.5 * k, 2);
-    setName();
 }
 
 double ChiSquaredRand::f(double x) const
