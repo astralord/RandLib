@@ -42,6 +42,7 @@ public:
 
     double E() const { return mu; }
     double Var() const { return sigma * sigma; }
+    double quantile(double p);
 
     inline double Median() const { return mu; }
     inline double Mode() const { return mu; }

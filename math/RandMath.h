@@ -175,20 +175,6 @@ public:
      */
     static long double gammaHalf(unsigned k);
 
-    /**
-     * @brief erfInv
-     * @param p
-     * @return inversed error function
-     */
-    static long double erfInv(double x);
-
-    /**
-     * @brief erfcinv
-     * @param p
-     * @return inversed additional error function
-     */
-    static long double erfcinv(double x);
-
 private:
 
     /**

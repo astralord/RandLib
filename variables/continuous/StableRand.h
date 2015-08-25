@@ -20,6 +20,8 @@ class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
     CauchyRand C;
     LevyRand L;
 
+    friend class GeometricStableRand;
+
     double B, S, alphaInv; /// coefficients for alpha != 1
     double logSigma; /// coefficients for alpha == 1
     double alpham1Inv, alpha_alpham1; /// 1 / (alpha - 1) and alpha / (alpha - 1)

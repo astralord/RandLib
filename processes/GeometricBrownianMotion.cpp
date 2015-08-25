@@ -20,7 +20,7 @@ bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<doub
         return false;
     if (!WienerProcess::generate(time, output))
         return false;
-    // TODO: add all coefs to WiererProcess
+    // TODO: add all coefs to WienerProcess
     for (int i = 1; i < size; ++i)
     {
         output[i] *= sigma;
