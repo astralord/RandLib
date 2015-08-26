@@ -18,8 +18,10 @@ public:
 
     void sample(QVector<double> &outputData);
 
-    double E() const override { return (beta > 1) ? alpha / (beta - 1) : INFINITY; }
+    double E() const override { return (Y.getShape() > 1) ? X.getShape() / (Y.getShape() - 1) : INFINITY; }
     double Var() const override {
+        double alpha = X.getShape();
+        double beta = Y.getShape();
         if (beta <= 2)
             return INFINITY;
         double betaAdj = beta - 1;

@@ -9,10 +9,10 @@
  */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 {
+
 protected:
-    double alpha, beta;
     GammaRand X, Y;
-    double gammaA, gammaB, pdfCoef;
+    double pdfCoef;
 
 public:
     BetaRand(double shape1, double shape2);
@@ -21,8 +21,8 @@ public:
     void setParameters(double shape1, double shape2);
     void setAlpha(double shape1);
     void setBeta(double shape2);
-    inline double getAlpha() const { return alpha; }
-    inline double getBeta() const { return beta; }
+    inline double getAlpha() const { return X.getShape(); }
+    inline double getBeta() const { return Y.getShape(); }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -35,8 +35,10 @@ private:
     double variateForDifferentParameters() const;
 
 public:
-    double E() const override { return alpha / (alpha + beta); }
+    double E() const override { return X.getShape() / (X.getShape() + Y.getShape()); }
     double Var() const override {
+        double alpha = X.getShape();
+        double beta = Y.getShape();
         double denominator = alpha + beta;
         denominator *= denominator * (denominator + 1);
         return alpha * beta / denominator;
@@ -46,7 +48,7 @@ public:
      * @brief getInvBetaFunction
      * @return 1 / B(alpha, beta)
      */
-    inline double getInvBetaFunction() { return pdfCoef; }
+    inline double getInverseBetaFunction() { return pdfCoef; }
 };
 
 #endif // BETARAND_H

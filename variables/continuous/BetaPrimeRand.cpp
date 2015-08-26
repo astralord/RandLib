@@ -14,6 +14,8 @@ double BetaPrimeRand::f(double x) const
 {
     if (x <= 0)
         return 0;
+    double alpha = X.getShape();
+    double beta = Y.getShape();
     double rv = std::pow(x, alpha - 1);
     rv *= std::pow(1 + x, -alpha - beta);
     return pdfCoef * rv;

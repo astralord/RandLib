@@ -50,6 +50,12 @@ private:
 public:
     double E() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }
+
+    /**
+     * @brief getInverseGammaFunction
+     * @return 1.0 / Gamma(k)
+     */
+    inline double getInverseGammaFunction() { return cdfCoef; }
 };
 
 #endif // GAMMARAND_H

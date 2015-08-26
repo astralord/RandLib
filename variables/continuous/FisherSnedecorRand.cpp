@@ -23,7 +23,7 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = B.getInvBetaFunction();
+    pdfCoef = B.getInverseBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
 }
 
@@ -38,7 +38,7 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = B.getInvBetaFunction();
+    pdfCoef = B.getInverseBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
 }
 
@@ -52,7 +52,7 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
     d2_d1 = 1.0 / d1_d2;
     c = -.5 * (d1 + d2);
 
-    pdfCoef = B.getInvBetaFunction();
+    pdfCoef = B.getInverseBetaFunction();
     pdfCoef *= std::pow(d1_d2, a + 1);
 }
 
