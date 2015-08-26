@@ -8,7 +8,7 @@ class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteRand<int>
     unsigned N, K, n;
 public:
     HyperGeometricRand();
-    virtual void setName() override;
+    virtual std::string name() override;
 
     double P(int k) const override;
     double F(double x) const override;

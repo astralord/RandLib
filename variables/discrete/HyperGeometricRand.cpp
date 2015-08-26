@@ -5,8 +5,23 @@ HyperGeometricRand::HyperGeometricRand()
 
 }
 
-void HyperGeometricRand::setName()
+std::string HyperGeometricRand::name()
 {
-    nameStr = "Hyper-Geometric(" + toStringWithPrecision(1) + ")";
+    return "Hyper-Geometric(" + toStringWithPrecision(1) + ")";
+}
+
+double HyperGeometricRand::P(int k) const
+{
+    return 1.0 * k;
+}
+
+double HyperGeometricRand::F(double x) const
+{
+    return x;
+}
+
+double HyperGeometricRand::variate() const
+{
+    return 1.0;
 }
 
