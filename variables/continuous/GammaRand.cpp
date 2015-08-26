@@ -10,7 +10,7 @@ std::string GammaRand::name()
     return "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
-void GammaRand::setConstants()
+void GammaRand::setConstantsForGenerator()
 {
     m = k - 1;
     s_2 = std::sqrt(8.0 * k / 3) + k;
@@ -36,13 +36,9 @@ void GammaRand::setParameters(double shape, double scale)
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
     valueCoef = kInv + M_1_E;
 
-    if (k <= 1) {
-        U.setBoundaries(0, 1 + k * M_1_E);
-    }
-    else if (k > 3)
+    if (k > 3)
     {
-        setConstants();
-        U.setBoundaries(0, 1);
+        setConstantsForGenerator();
     }
 }
 
@@ -124,7 +120,7 @@ double GammaRand::variateForIntegerShape() const
 {
     double rv = 0;
     for (int i = 0; i < k; ++i)
-        rv += W.variate();
+        rv += ExponentialRand::standardVariate();
     return rv;
 }
 
@@ -132,8 +128,8 @@ double GammaRand::variateForHalfIntegerShape() const
 {
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
-        rv += W.variate();
-    double n = N.variate();
+        rv += ExponentialRand::standardVariate();
+    double n = NormalRand::standardVariate();
     return rv + .5 * n * n;
 }
 
@@ -142,17 +138,18 @@ double GammaRand::variateForSmallShape() const
     double rv = 0;
     int iter = 0;
     do {
-        double P = U.variate();
-        double e = W.variate();
-        if (P <= 1)
+        double u = UniformRand::standardVariate();
+        double p = k * valueCoef * u;
+        double e = ExponentialRand::standardVariate();
+        if (p <= 1)
         {
-            rv = std::pow(P, kInv);
+            rv = std::pow(p, kInv);
             if (rv <= e)
                 return rv;
         }
         else
         {
-            rv = -std::log(valueCoef - kInv * P);
+            rv = -std::log(valueCoef * (1 - u));
             if ((1 - k) * std::log(rv) <= e)
                 return rv;
         }
@@ -162,12 +159,12 @@ double GammaRand::variateForSmallShape() const
 
 double GammaRand::variateForMediumShape() const
 {
-    double E1, E2;
+    double e1, e2;
     do {
-        E1 = W.variate();
-        E2 = W.variate();
-    } while (E2 < (k - 1) * (E1 - std::log(E1) - 1));
-    return k * E1;
+        e1 = ExponentialRand::standardVariate();
+        e2 = ExponentialRand::standardVariate();
+    } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
+    return k * e1;
 }
 
 double GammaRand::variateForLargeShape() const
@@ -175,11 +172,11 @@ double GammaRand::variateForLargeShape() const
     double rv = 0;
     int iter = 0;
     do {
-        double u = U.variate();
+        double u = UniformRand::standardVariate();
         if (u <= 0.0095722652)
         {
-            double e1 = W.variate();
-            double e2 = W.variate();
+            double e1 = ExponentialRand::standardVariate();
+            double e2 = ExponentialRand::standardVariate();
             rv = b * (1 + e1 / d);
             if (m * (rv / b - std::log(rv / m)) + c <= e2)
                 return rv;
@@ -188,10 +185,10 @@ double GammaRand::variateForLargeShape() const
         {
             double n;
             do {
-                n = N.variate();
+                n = NormalRand::standardVariate();
                 rv = s * n + m;
             } while (rv < 0 || rv > b);
-            u = U.variate();
+            u = UniformRand::standardVariate();
             double S = .5 * n * n;
             if (n > 0)
             {

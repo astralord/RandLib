@@ -18,12 +18,8 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
     double valueCoef; /// (e + k) / (k * e)
     double cdfCoef; /// 1.0 / gamma(k)
     double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
-    UniformRand U;
-    ExponentialRand W;
-    NormalRand N;
-
     double m, s, s_2, d, b, w, v, c; /// constants for sampling
-    void setConstants();
+    void setConstantsForGenerator();
 
 public:
     GammaRand(double shape = 1, double scale = 1);
