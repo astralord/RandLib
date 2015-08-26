@@ -62,7 +62,7 @@ double BetaRand::variate() const
 
 void BetaRand::sample(QVector<double> &outputData)
 {
-    if (X.getScale() == Y.getShape()) {
+    if (X.getShape() == Y.getShape()) {
         for (double &var : outputData)
             var = variateForEqualParameters();
     }
