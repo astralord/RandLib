@@ -79,27 +79,6 @@ private:
     };
 
     /**
-     * @brief isLogFactorialTableReady
-     */
-    static const bool isLogFactorialTableReady;
-    /**
-     * @brief logFactorialTable table of log(n!) for n from 0 to maxFactorialTableValue
-     */
-    static long double logFactorialTable[maxFactorialTableValue];
-    /**
-     * @brief setupLogFactorialTable
-     * @return
-     */
-    static bool setupLogFactorialTable();
-
-    /**
-     * @brief stirlingLogFactorial
-     * @param n integer number
-     * @return log(n!) according to Moivre-Stirling formula
-     */
-    static long double stirlingLogFactorial(unsigned n);
-
-    /**
      * @brief factorialForSmallValue
      * Get n! using product method with table
      * @param n non-negative integer number
@@ -109,22 +88,13 @@ private:
 
 public:
     /**
-     * @brief fastFactorial
+     * @brief factorial
      * Calculate n! using table values for small n <= 255
      * and Moivre-Stirling formula for large n > 255
      * @param n non-negative integer number
      * @return n!
      */
     static long double factorial(unsigned n);
-
-    /**
-     * @brief fastLogFactorial
-     * Calculate log(n!) using factorial function for small n <= 255
-     * and Moivre-Stirling formula for large n > 255
-     * @param n non-negative integer number
-     * @return
-     */
-    static long double logFactorial(unsigned n);
 
     /**
      * @brief doubleFactorial

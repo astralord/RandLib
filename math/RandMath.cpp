@@ -1,24 +1,6 @@
 #include "RandMath.h"
 
 constexpr long double RandMath::factorialTable[];
-long double RandMath::logFactorialTable[maxFactorialTableValue] = {0};
-const bool RandMath::isLogFactorialTableReady = RandMath::setupLogFactorialTable();
-
-bool RandMath::setupLogFactorialTable()
-{
-    logFactorialTable[0] = logFactorialTable[1] = 0;
-    for (unsigned i = 2; i != maxFactorialTableValue; ++i)
-        logFactorialTable[i] = std::log(factorialForSmallValue(i));
-    return true;
-}
-
-long double RandMath::stirlingLogFactorial(unsigned n)
-{
-    long double logN = std::log(n);
-    long double fact = n * (logN - 1);
-    fact += 0.5 * (M_LN2 + M_LNPI + logN); /// += 0.5 * log(2 * pi * n)
-    return fact + 1.0 / (12.0 * n);
-}
 
 long double RandMath::factorialForSmallValue(unsigned n)
 {
@@ -44,11 +26,6 @@ long double RandMath::factorialForSmallValue(unsigned n)
 long double RandMath::factorial(unsigned n)
 {
     return (n > maxFactorialTableValue) ? std::tgamma(static_cast<double>(n + 1)) : factorialForSmallValue(n);
-}
-
-long double RandMath::logFactorial(unsigned n)
-{
-    return (n > maxFactorialTableValue) ? stirlingLogFactorial(n) : logFactorialTable[n];
 }
 
 long double RandMath::doubleFactorial(unsigned n)
