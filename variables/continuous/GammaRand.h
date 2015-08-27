@@ -37,8 +37,8 @@ public:
     void sample(QVector<double> &outputData);
 
 private:
-    double variateForIntegerShape() const;     /// Erlang distribution
-    double variateForHalfIntegerShape() const; /// GA algorithm for k = [n] + 0.5
+    double variateForIntegerShape() const;     /// Erlang distribution (use for k < 5)
+    double variateForHalfIntegerShape() const; /// GA algorithm for k = [n] + 0.5 and k < 5
     double variateForSmallShape() const;       /// GS algorithm for small k < 1
     double variateForMediumShape() const;      /// GP algorithm for 1 < k < 3
     double variateForLargeShape() const;       /// GO algorithm for the most common case k > 3
