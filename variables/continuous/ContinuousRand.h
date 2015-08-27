@@ -12,6 +12,12 @@ public:
     ContinuousRand() : RandomVariable() {}
     virtual ~ContinuousRand() {}
 
+    /**
+     * @brief f
+     * probability density function
+     * @param x
+     * @return
+     */
     virtual double f(double x) const = 0;
 
     void pdf(const QVector<double> &x, QVector<double> &y) const;

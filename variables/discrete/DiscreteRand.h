@@ -13,6 +13,12 @@ public:
     DiscreteRand() : RandomVariable() {}
     virtual ~DiscreteRand() {}
 
+    /**
+     * @brief P
+     * probability to get x
+     * @param x
+     * @return
+     */
     virtual double P(T x) const = 0;
 
     void pmf(const QVector<T> &x, QVector<double> &y) const;

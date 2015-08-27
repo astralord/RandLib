@@ -13,6 +13,7 @@
 #include "discrete/RademacherRand.h"
 #include "discrete/BinomialRand.h"
 #include "discrete/NegativeBinomialRand.h"
+#include "discrete/HyperGeometricRand.h"
 
 /// CONTINUOUS
 #include "continuous/UniformRand.h"
