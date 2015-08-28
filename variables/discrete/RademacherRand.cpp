@@ -2,7 +2,6 @@
 
 RademacherRand::RademacherRand()
 {
-    name();
 }
 
 std::string RademacherRand::name()

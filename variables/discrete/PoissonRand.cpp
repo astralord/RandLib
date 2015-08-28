@@ -49,3 +49,16 @@ double PoissonRand::variate() const
     }
     return y;
 }
+
+double PoissonRand::variate(double rate)
+{
+    int y = 0;
+    double u = UniformRand::standardVariate();
+    double p = std::exp(-rate), s = p;
+    while (s < u) {
+        ++y;
+        p *= rate / y;
+        s += p;
+    }
+    return y;
+}
