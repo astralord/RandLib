@@ -1,8 +1,7 @@
 #include "StableRand.h"
 #include <QDebug>
 
-StableRand::StableRand(double exponent, double skewness, double scale, double location) :    
-    N(0, M_SQRT2)
+StableRand::StableRand(double exponent, double skewness, double scale, double location)
 {
     setParameters(exponent, skewness, scale, location);
 }
@@ -63,13 +62,10 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
             pdfCoef = 0.5 / beta;
         }
     }
-    else if (alpha == .5)
+    else if (alpha == .5 && std::fabs(beta) == 1) /// +/- X ~ Levy(mu, sigma)
     {
-        if (std::fabs(beta) == 1) /// +/- X ~ Levy(mu, sigma)
-        {
-            L.setLocation(mu);
-            L.setScale(sigma);
-        }
+        L.setLocation(mu);
+        L.setScale(sigma);
     }
     else /// Common case: alpha != 1
     {
@@ -91,50 +87,78 @@ double StableRand::variate() const
     if (alpha == 1 && beta == 0)
         return C.variate();
     if (alpha == .5 && beta == 1)
-    {
-        if (beta == 1)
-            return L.variate();
-        if (beta == -1)
-            return -L.variate();
-    }
+        return L.variate();
+    if (alpha == .5 && beta == -1)
+        return -L.variate();
 
     /// Now check the others
-    double rv = 0;
-    int iter = 0;
-    do {
-        if (alpha == 1)
-            rv = variateForAlphaEqualOne();
-        else
-            rv = variateForCommonAlpha();
-        ++iter;
-    } while ((std::isnan(rv) || std::isinf(rv)) && /// there could occure some numerical problems
-             iter < 10); /// if we got nan 10 times - we have a problem, get out
-    return rv;
+    if (alpha == 1)
+        return variateForAlphaEqualOne();
+    return variateForCommonAlpha();
+}
+
+void StableRand::sample(QVector<double> &outputData)
+{
+    /// Check all 'good' cases
+    if (alpha == 2) {
+        for (double &var : outputData)
+            var = N.variate();
+    }
+    else if (alpha == 1 && beta == 0) {
+        for (double &var : outputData)
+            var = C.variate();
+    }
+    else if (alpha == .5 && beta == 1) {
+        for (double &var : outputData)
+            var = L.variate();
+    }
+    else if (alpha == .5 && beta == -1) {
+        for (double &var : outputData)
+            var = -L.variate();
+    }
+    else if (alpha == 1) {
+        for (double &var : outputData)
+            var = variateForAlphaEqualOne();
+    }
+    else {
+        for (double &var : outputData)
+            var = variateForCommonAlpha();
+    }
 }
 
 double StableRand::variateForCommonAlpha() const
 {
-    double v = UniformRand::variate(-M_PI_2, M_PI_2);
-    double w = ExponentialRand::standardVariate();
-    double alphaVB = alpha * v + B;
-    double rv = S * qFastSin(alphaVB); /// S * sin(alpha * V + B)
-    double w_adj = w / qFastCos(v - alphaVB);
-    rv *= w_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
-    rv *= std::pow(w_adj * qFastCos(v), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
-                                                   /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
+    int iter = 0;
+    double rv;
+    do {
+        double v = UniformRand::variate(-M_PI_2, M_PI_2);
+        double w = ExponentialRand::standardVariate();
+        double alphaVB = alpha * v + B;
+        rv = S * qFastSin(alphaVB); /// S * sin(alpha * V + B)
+        double w_adj = w / qFastCos(v - alphaVB);
+        rv *= w_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
+        rv *= std::pow(w_adj * qFastCos(v), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
+                                                       /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
+    } while ((std::isnan(rv) || std::isinf(rv)) && /// there could occure some numerical problems
+             ++iter < 10); /// if we got nan 10 times - we have a problem, get out
     return mu + sigma * rv;
 }
 
 double StableRand::variateForAlphaEqualOne() const
 {
-    double v = UniformRand::variate(-M_PI_2, M_PI_2);
-    double w = ExponentialRand::standardVariate();
-    double pi_2BetaV = M_PI_2 + beta * v;
+    int iter = 0;
+    double rv;
+    do {
+        double v = UniformRand::variate(-M_PI_2, M_PI_2);
+        double w = ExponentialRand::standardVariate();
+        double pi_2BetaV = M_PI_2 + beta * v;
 
-    double rv = logSigma;
-    rv -= std::log(M_PI_2 * w * qFastCos(v) / pi_2BetaV);
-    rv *= beta;
-    rv += pi_2BetaV * std::tan(v);
+        rv = logSigma;
+        rv -= std::log(M_PI_2 * w * qFastCos(v) / pi_2BetaV);
+        rv *= beta;
+        rv += pi_2BetaV * std::tan(v);
+    } while ((std::isnan(rv) || std::isinf(rv)) && /// there could occure some numerical problems
+             ++iter < 10); /// if we got nan 10 times - we have a problem, get out
     rv *= M_2_PI;
     return mu + sigma * rv;
 }
@@ -147,12 +171,9 @@ double StableRand::f(double x) const
     if (alpha == 1 && beta == 0)
         return C.f(x);
     if (alpha == .5 && beta == 1)
-    {
-        if (beta == 1)
-            return L.f(x);
-        if (beta == -1)
-            return L.f(-x);
-    }
+        return L.f(x);
+    if (alpha == .5 && beta == -1)
+        return L.f(-x);
 
     /// Now check the others
     if (alpha == 1)
@@ -288,12 +309,9 @@ double StableRand::F(double x) const
     if (alpha == 1 && beta == 0)
         return C.F(x);
     if (alpha == .5 && beta == 1)
-    {
-        if (beta == 1)
-            return L.F(x);
-        if (beta == -1)
-            return 1.0 - L.f(-x);
-    }
+        return L.F(x);
+    if (alpha == .5 && beta == -1)
+        return 1.0 - L.f(-x);
 
     /// Now check the others
     if (alpha == 1)
