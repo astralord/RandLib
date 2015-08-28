@@ -36,13 +36,20 @@ private:
     double variateForLargeP() const;
 
 public:
-    double E() const override { return 1.0 / p; }
+    double E() const override { return 1.0 / p - 1; }
     double Var() const override { return (1 - p) / (p * p); }
 
-    // TODO: add median and entropy
-    static double constexpr Mode() { return 1; }
+    inline double Median() const { return std::ceil(-M_LN2 / std::log(1 - p)) - 1; }
+    static double constexpr Mode() { return 0; }
     inline double Skewness() { return (2 - p) / std::sqrt(1 - p); }
-    inline double ExcessiveKurtosis() { return 1.0 / (p * (1 - p)) - 6; }
+    inline double ExcessiveKurtosis() { return p * p / (1 - p) + 6; }
+
+    inline double Entropy() const {
+        double q = 1 - p;
+        double a = -q * std::log(q);
+        double b = -p * std::log(p);
+        return (a + b) / (M_LN2 * p);
+    }
 };
 
 #endif // GEOMETRICRAND_H
