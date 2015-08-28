@@ -3,7 +3,6 @@
 ErlangRand::ErlangRand(int shape, double rate)
 {
     setParameters(shape, rate);
-    name();
 }
 
 std::string ErlangRand::name()
