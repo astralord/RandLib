@@ -77,7 +77,7 @@ double GeometricRand::variateForLargeP() const
     if (U > table[tableSize - 1])
         return tableSize + variateForLargeP();
     /// handle the main body
-    unsigned x = 0;
+    int x = 0;
     while (U > table[x])
         ++x;
     return x;

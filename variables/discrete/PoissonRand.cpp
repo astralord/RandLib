@@ -52,13 +52,11 @@ double PoissonRand::variate() const
 
 double PoissonRand::variate(double rate)
 {
-    int y = 0;
-    double u = UniformRand::standardVariate();
-    double p = std::exp(-rate), s = p;
-    while (s < u) {
+    int y = -1;
+    double s = 0;
+    do {
+        s += ExponentialRand::variate(rate);
         ++y;
-        p *= rate / y;
-        s += p;
-    }
+    } while (s < 1);
     return y;
 }

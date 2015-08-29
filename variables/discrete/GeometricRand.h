@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand<int>
 {
     double p, q;
 
-    static constexpr unsigned tableSize = 16;
+    static constexpr int tableSize = 16;
     // TODO: don't storage both variables (including tableSize)
     double table[tableSize];
     ExponentialRand W;

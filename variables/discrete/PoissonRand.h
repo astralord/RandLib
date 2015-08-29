@@ -3,6 +3,7 @@
 
 #include "DiscreteRand.h"
 #include "../continuous/UniformRand.h"
+#include "../continuous/ExponentialRand.h"
 
 /**
  * @brief The PoissonRand class
