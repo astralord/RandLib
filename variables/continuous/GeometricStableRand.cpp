@@ -44,3 +44,21 @@ double GeometricStableRand::variate() const
     return mu * e + std::pow(e, 1.0 / S.getAlpha()) * sigma * x;
 }
 
+void GeometricStableRand::sample(QVector<double> &outputData)
+{
+    S.sample(outputData);
+    if (S.getAlpha() == 1) {
+        for (double &var : outputData) {
+            double e = ExponentialRand::standardVariate();
+            var += M_2_PI * S.getBeta() * std::log(sigma * e);
+            var = e * (mu + sigma * var);
+        }
+    }
+    else {
+        for (double &var : outputData) {
+            double e = ExponentialRand::standardVariate();
+            var = mu * e + std::pow(e, 1.0 / S.getAlpha()) * sigma * var;
+        }
+    }
+}
+
