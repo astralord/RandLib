@@ -26,8 +26,7 @@ public:
     void sample(QVector<double> &outputData);
 
     double E() const override { return (S.getAlpha()> 1) ? mu : NAN; }
-    // TODO: write correct Variance!
-    double Var() const override { return (S.getAlpha() == 2) ? sigma : INFINITY; }
+    double Var() const override { return (S.getAlpha() == 2) ? 2 * sigma * sigma : INFINITY; }
 };
 
 #endif // GEOMETRICSTABLERAND_H

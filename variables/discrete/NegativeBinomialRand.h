@@ -25,14 +25,18 @@ public:
     inline double getProbability() const { return p; }
     inline T getNumber() const { return r; }
 
-    //TODO!
     double P(int r) const override;
     double F(double x) const override;
     double variate() const override;
 
-    //TODO!
-    double E() const override { return 0; }
-    double Var() const override { return 0; }
+private:
+    double variateThroughGeometric() const;
+    double variateThroughGammaPoisson() const;
+
+public:
+
+    double E() const override { return p * r / (1 - p); }
+    double Var() const override { return E() / (1 - p); }
 };
 
 typedef NegativeBinomialRand<int> PascaleRand;
