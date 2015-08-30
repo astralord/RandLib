@@ -23,13 +23,11 @@ double BetaPrimeRand::f(double x) const
 
 double BetaPrimeRand::F(double x) const
 {
-    //TODO
-    return x;
+    return (x <= 0) ? 0 : RandMath::incompleteBetaFun(x / (1 + x), X.getShape(), Y.getShape());
 }
 
 double BetaPrimeRand::variate() const
 {
-    //return X.variate() / Y.variate();
     double x = BetaRand::variate();
     return x / (1.0 - x);
 }
