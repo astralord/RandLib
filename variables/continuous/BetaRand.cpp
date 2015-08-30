@@ -56,7 +56,7 @@ double BetaRand::F(double x) const
         return 0;
     if (x >= 1)
         return 1;
-    return x;
+    return RandMath::incompleteBetaFun(x, X.getShape(), Y.getShape());
 }
 
 double BetaRand::variate() const
