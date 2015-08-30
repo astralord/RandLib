@@ -31,6 +31,8 @@ double BinomialRand::P(int k) const
 
 double BinomialRand::F(double x) const
 {
+    if (x < 0)
+        return 0;
     return x;
 }
 
