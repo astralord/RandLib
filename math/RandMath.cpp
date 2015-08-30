@@ -68,16 +68,24 @@ long double RandMath::upperIncGamma(double a, double x)
 
 double RandMath::betaFun(double a, double b)
 {
+    double sum = a + b;
+    if (sum > 30)
+    {
+        double lgammaA = std::lgamma(a);
+        double lgammaB = (a == b) ? lgammaA : std::lgamma(b);
+        return std::exp(lgammaA + lgammaB - std::lgamma(sum));
+    }
+
     if (a > b)
     {
         double res = std::tgamma(a);
-        res /= std::tgamma(a + b);
+        res /= std::tgamma(sum);
         return res * std::tgamma(b);
     }
     else
     {
         double gammaB = std::tgamma(b);
-        double res = gammaB / std::tgamma(a + b);
+        double res = gammaB / std::tgamma(sum);
         return (a == b) ? res * gammaB : res * std::tgamma(a);
     }
 }
