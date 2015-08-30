@@ -134,11 +134,29 @@ public:
     /**
      * @brief betaFun
      * Calculate Beta function
-     * @param x
-     * @param y
-     * @return Gamma(x) * Gamma(y) / Gamma(x + y)
+     * @param a
+     * @param b
+     * @return Gamma(a) * Gamma(b) / Gamma(a + b)
      */
-    static long double betaFun(double x, double y);
+    static long double betaFun(double a, double b);
+
+    /**
+     * @brief regulBetaFun
+     * @param x
+     * @param a
+     * @param b
+     * @return
+     */
+    static long double regulBetaFun(double x, double a, double b);
+
+    /**
+     * @brief incompleteBetaFun
+     * @param x
+     * @param a
+     * @param b
+     * @return
+     */
+    static long double incompleteBetaFun(double x, double a, double b);
 
     /**
      * @brief gammaHalf
