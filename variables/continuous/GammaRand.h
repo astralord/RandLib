@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
 {
     double k, theta;
     double kInv, thetaInv; /// 1.0 / k and 1.0 / theta
-    double valueCoef; /// (e + k) / (k * e)
+    double variateCoef; /// (e + k) / (k * e)
     double cdfCoef; /// 1.0 / gamma(k)
     double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
     double m, s, s_2, d, b, w, v, c; /// constants for sampling

@@ -3,6 +3,7 @@
 
 #include "ContinuousRand.h"
 #include "GammaRand.h"
+#include "NormalRand.h"
 
 /**
  * @brief The BetaRand class
@@ -12,7 +13,10 @@ class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 
 protected:
     GammaRand X, Y;
+    NormalRand N; // TODO: we need to storage N OR (X AND Y)
+    static constexpr double edgeForGenerators = 8.0;
     double pdfCoef;
+    double variateCoef;
 
 public:
     BetaRand(double shape1, double shape2);
@@ -31,8 +35,11 @@ public:
     void sample(QVector<double> &outputData);
 
 private:
-    double variateForEqualParameters() const;
+    double variateForSmallEqualParameters() const;
+    double variateForLargeEqualParameters() const;
     double variateForDifferentParameters() const;
+
+    void setVariateConstants();
 
 public:
     double E() const override { return X.getShape() / (X.getShape() + Y.getShape()); }

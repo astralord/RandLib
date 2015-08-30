@@ -34,7 +34,7 @@ void GammaRand::setParameters(double shape, double scale)
     else
         cdfCoef = 1.0 / std::tgamma(k);
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
-    valueCoef = kInv + M_1_E;
+    variateCoef = kInv + M_1_E;
 
     if (k > 3)
     {
@@ -139,7 +139,7 @@ double GammaRand::variateForSmallShape() const
     int iter = 0;
     do {
         double u = UniformRand::standardVariate();
-        double p = k * valueCoef * u;
+        double p = k * variateCoef * u;
         double e = ExponentialRand::standardVariate();
         if (p <= 1)
         {
@@ -149,7 +149,7 @@ double GammaRand::variateForSmallShape() const
         }
         else
         {
-            rv = -std::log(valueCoef * (1 - u));
+            rv = -std::log(variateCoef * (1 - u));
             if ((1 - k) * std::log(rv) <= e)
                 return rv;
         }
