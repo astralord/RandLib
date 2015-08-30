@@ -138,7 +138,7 @@ public:
      * @param b
      * @return Gamma(a) * Gamma(b) / Gamma(a + b)
      */
-    static long double betaFun(double a, double b);
+    static double betaFun(double a, double b);
 
     /**
      * @brief regulBetaFun

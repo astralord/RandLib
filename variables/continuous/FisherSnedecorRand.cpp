@@ -1,7 +1,6 @@
 #include "FisherSnedecorRand.h"
 
-FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2) :
-    B(1, 1) /// fictitious, parameters will be changed later
+FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2)
 {
     setDegrees(degree1, degree2);
 }
@@ -58,12 +57,19 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
 
 double FisherSnedecorRand::f(double x) const
 {
-    return (x >= 0) ? pdfCoef * std::pow(x, a) * std::pow(1 + d1_d2 * x, c) : 0;
+    return (x < 0) ? 0 : pdfCoef * std::pow(x, a) * std::pow(1 + d1_d2 * x, c);
 }
 
 double FisherSnedecorRand::F(double x) const
 {
-    return x;
+    if (x <= 0)
+        return 0;
+
+    return RandMath::integral([this] (double t)
+    {
+        return f(t);
+    },
+    0, x);
 }
 
 double FisherSnedecorRand::variate() const

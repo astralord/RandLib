@@ -66,18 +66,18 @@ long double RandMath::upperIncGamma(double a, double x)
     return std::tgamma(a) - lowerIncGamma(a, x);
 }
 
-long double RandMath::betaFun(double a, double b)
+double RandMath::betaFun(double a, double b)
 {
     if (a > b)
     {
-        long double res = std::tgamma(a);
+        double res = std::tgamma(a);
         res /= std::tgamma(a + b);
         return res * std::tgamma(b);
     }
     else
     {
-        long double gammaB = std::tgamma(b);
-        long double res = gammaB / std::tgamma(a + b);
+        double gammaB = std::tgamma(b);
+        double res = gammaB / std::tgamma(a + b);
         return (a == b) ? res * gammaB : res * std::tgamma(a);
     }
 }

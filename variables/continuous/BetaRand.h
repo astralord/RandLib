@@ -19,7 +19,7 @@ protected:
     double variateCoef;
 
 public:
-    BetaRand(double shape1, double shape2);
+    BetaRand(double shape1 = 1, double shape2 = 1);
     virtual std::string name() override;
 
     void setParameters(double shape1, double shape2);
@@ -55,7 +55,7 @@ public:
      * @brief getInvBetaFunction
      * @return 1 / B(alpha, beta)
      */
-    inline double getInverseBetaFunction() { return pdfCoef; }
+    inline double getInverseBetaFunction() const { return pdfCoef; }
 };
 
 #endif // BETARAND_H

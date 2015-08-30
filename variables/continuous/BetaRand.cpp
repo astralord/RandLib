@@ -18,7 +18,17 @@ void BetaRand::setParameters(double shape1, double shape2)
     double beta = std::max(shape2, MIN_POSITIVE);
     Y.setParameters(beta, 1);
 
-    pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    if (alpha + beta > 30)
+    {
+        /// we use log(Gamma(x)) in order to avoid too big numbers
+        double logGammaX = std::log(X.getInverseGammaFunction());
+        double logGammaY = std::log(Y.getInverseGammaFunction());
+        pdfCoef = std::lgamma(alpha + beta) + logGammaX + logGammaY;
+        pdfCoef = std::exp(pdfCoef);
+    }
+    else {
+        pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    }
     setVariateConstants();
 }
 
@@ -56,7 +66,11 @@ double BetaRand::F(double x) const
         return 0;
     if (x >= 1)
         return 1;
-    return RandMath::incompleteBetaFun(x, X.getShape(), Y.getShape());
+    return RandMath::integral([this] (double t)
+    {
+        return f(t);
+    },
+    0, x);
 }
 
 double BetaRand::variate() const
