@@ -42,8 +42,8 @@ long double RandMath::binomialCoef(unsigned n, unsigned k)
 {
     long double n_fact = factorial(n);
     long double k_fact = factorial(k);
-    long double k_n_fact = factorial(n - k);
-    return n_fact / (k_fact * k_n_fact);
+    long double n_k_fact = factorial(n - k);
+    return n_fact / (k_fact * n_k_fact);
 }
 
 long double RandMath::lowerIncGamma(double a, double x)
