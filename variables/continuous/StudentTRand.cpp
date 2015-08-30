@@ -28,7 +28,12 @@ double StudentTRand::f(double x) const
 
 double StudentTRand::F(double x) const
 {
-    return x;
+    double absY = RandMath::integral([this] (double t)
+    {
+        return f(t);
+    },
+    0, std::fabs(x));
+    return (x > 0) ? 0.5 + absY : 0.5 - absY;
 }
 
 double StudentTRand::variate() const
