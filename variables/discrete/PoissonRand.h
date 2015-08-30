@@ -3,6 +3,7 @@
 
 #include "DiscreteRand.h"
 #include "../continuous/UniformRand.h"
+#include "../continuous/ExponentialRand.h"
 
 /**
  * @brief The PoissonRand class
@@ -22,6 +23,7 @@ public:
     double F(double x) const override;
     std::complex<double> CF(double t) const override;
     double variate() const override;
+    static double variate(double rate);
 
     double E() const override { return lambda; }
     double Var() const override { return lambda; }

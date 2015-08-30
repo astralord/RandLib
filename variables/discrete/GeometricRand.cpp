@@ -13,6 +13,7 @@ std::string GeometricRand::name()
 void GeometricRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, MIN_POSITIVE), 1.0);
+    q = 1.0 - p;
 
     /// we use two different generators for two different cases
     /// if p < 0.2 then the tail is too heavy
@@ -27,9 +28,9 @@ void GeometricRand::setProbability(double probability)
     {
         table[0] = p;
         double prod = p;
-        for (unsigned i = 1; i < tableSize; ++i)
+        for (int i = 1; i < tableSize; ++i)
         {
-            prod *= (1 - p);
+            prod *= q;
             table[i] = table[i - 1] + prod;
         }
     }
@@ -37,12 +38,12 @@ void GeometricRand::setProbability(double probability)
 
 double GeometricRand::P(int k) const
 {
-    return p * std::pow(1 - p, k);
+    return p * std::pow(q, k);
 }
 
 double GeometricRand::F(double x) const
 {
-    return 1 - std::pow(1 - p, std::floor(x) + 1);
+    return 1 - std::pow(q, std::floor(x) + 1);
 }
 
 double GeometricRand::variate() const
@@ -76,7 +77,7 @@ double GeometricRand::variateForLargeP() const
     if (U > table[tableSize - 1])
         return tableSize + variateForLargeP();
     /// handle the main body
-    unsigned x = 0;
+    int x = 0;
     while (U > table[x])
         ++x;
     return x;

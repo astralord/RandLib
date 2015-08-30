@@ -49,3 +49,14 @@ double PoissonRand::variate() const
     }
     return y;
 }
+
+double PoissonRand::variate(double rate)
+{
+    int y = -1;
+    double s = 0;
+    do {
+        s += ExponentialRand::variate(rate);
+        ++y;
+    } while (s < 1);
+    return y;
+}
