@@ -22,7 +22,7 @@ void GeometricRand::setProbability(double probability)
     /// otherwise we choose table method
     if (p < 0.2)
     {
-        W.setRate(-std::log(1 - p));
+        W.setRate(-std::log(q));
     }
     else
     {

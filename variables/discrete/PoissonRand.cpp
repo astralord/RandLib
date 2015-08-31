@@ -55,8 +55,8 @@ double PoissonRand::variate(double rate)
     int y = -1;
     double s = 0;
     do {
-        s += ExponentialRand::variate(rate);
+        s += ExponentialRand::standardVariate();
         ++y;
-    } while (s < 1);
+    } while (s < rate);
     return y;
 }

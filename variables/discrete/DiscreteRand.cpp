@@ -12,6 +12,15 @@ void DiscreteRand<T>::pmf(const QVector<T> &x, QVector<double> &y) const
 template< typename T>
 double DiscreteRand<T>::likelihood(const QVector<T> &sample) const
 {
+    double res = 1.0;
+    for (int i = 0; i != sample.size(); ++i)
+        res *= std::log(P(sample[i]));
+    return res;
+}
+
+template< typename T>
+double DiscreteRand<T>::loglikelihood(const QVector<T> &sample) const
+{
     double res = 0.0;
     for (int i = 0; i != sample.size(); ++i)
         res += std::log(P(sample[i]));
