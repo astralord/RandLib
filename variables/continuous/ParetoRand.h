@@ -4,7 +4,10 @@
 #include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
-// TODO: maybe E/Erlang is faster for generator
+
+/**
+ * @brief The ParetoRand class
+ */
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
 {
     double xm, alpha;
@@ -24,6 +27,15 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+    static double variate(double shape, double scale);
+
+private:
+    static double variateForAlphaOne();
+    static double variateForAlphaTwo();
+    static double variateForCommonAlpha(double scale);
+
+public:
+    void sample(QVector<double> &outputData);
 
     double E() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
     double Var() const override {

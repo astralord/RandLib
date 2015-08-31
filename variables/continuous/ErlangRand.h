@@ -13,7 +13,7 @@
 class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
 {
 public:
-    ErlangRand(int shape, double rate);
+    ErlangRand(int shape = 1, double rate = 1);
     virtual std::string name() override;
 
     void setParameters(int shape, double rate);
