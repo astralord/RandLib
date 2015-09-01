@@ -17,9 +17,13 @@ std::string GeometricStableRand::name()
 
 void GeometricStableRand::setParameters(double exponent, double skewness, double scale, double location)
 {
-    S.setParameters(exponent, skewness, 1, 0);
     sigma = std::max(scale, MIN_POSITIVE);
     mu = location;
+
+    if (std::fabs(exponent - 1) < MIN_POSITIVE)
+        S.setParameters(1.0, skewness, sigma, mu);
+    else
+        S.setParameters(exponent, skewness, 1, 0);
 }
 
 double GeometricStableRand::f(double x) const
@@ -53,8 +57,8 @@ void GeometricStableRand::sample(QVector<double> &outputData)
         double beta = S.getBeta();
         for (double &var : outputData) {
             double e = ExponentialRand::standardVariate();
-            var += M_2_PI * beta * std::log(sigma * e);
-            var = e * (mu + sigma * var);
+            var += M_2_PI * beta * sigma * std::log(sigma * e);
+            var *= e;
         }
     }
     else {
