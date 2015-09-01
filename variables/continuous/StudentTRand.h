@@ -4,6 +4,7 @@
 #include "ContinuousRand.h"
 #include "ChiSquaredRand.h"
 #include "NormalRand.h"
+#include "CauchyRand.h"
 
 /**
  * @brief The StudentTRand class
@@ -23,6 +24,8 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+
+    void sample(QVector<double> &outputData);
 
     double E() const override { return (v > 1) ? 0 : NAN; }
     double Var() const override {

@@ -25,6 +25,10 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+
+    static double variate(double location, double scale);
+    void sample(QVector<double> &outputData);
+
     std::complex<double> CF(double t) const override;
 
     double E() const override { return mu; }

@@ -43,8 +43,19 @@ double LaplaceRand::F(double x) const
 
 double LaplaceRand::variate() const
 {
-    double e = ExponentialRand::variate(bInv);
-    return mu + (((signed)RandGenerator::variate() > 0) ? e : -e);
+    return LaplaceRand::variate(mu, b);
+}
+
+double LaplaceRand::variate(double location, double scale)
+{
+    double e = scale * ExponentialRand::standardVariate();
+    return location + (((signed)RandGenerator::variate() > 0) ? e : -e);
+}
+
+void LaplaceRand::sample(QVector<double> &outputData)
+{
+    for (double &var : outputData)
+        var = LaplaceRand::variate(mu, b);
 }
 
 std::complex<double> LaplaceRand::CF(double t) const

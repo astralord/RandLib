@@ -38,7 +38,21 @@ double StudentTRand::F(double x) const
 
 double StudentTRand::variate() const
 {
-    //v = 1 -> cauchy
     //v = inf -> normal
+    if (v == 1)
+        return CauchyRand::standardVariate();
     return NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
+}
+
+void StudentTRand::sample(QVector<double> &outputData)
+{
+    //v = inf -> normal
+    if (v == 1) {
+        for (double &var : outputData)
+            var = CauchyRand::standardVariate();
+    }
+    else {
+        for (double &var : outputData)
+            var = NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
+    }
 }
