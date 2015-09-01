@@ -196,7 +196,7 @@ public:
      * @param maxRecursionDepth how deep should the algorithm go
      * @return
      */
-    static long double integral(const std::function<double (double)> funPtr, double a, double b,
+    static long double integral(const std::function<double (double)> &funPtr, double a, double b,
                                 double epsilon = 1e-10, int maxRecursionDepth = 10);
 
 

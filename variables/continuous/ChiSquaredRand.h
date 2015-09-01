@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
     double pdfCoef, cdfCoef;
 
 public:
-    ChiSquaredRand(int degree = 1);
+    explicit ChiSquaredRand(int degree = 1);
     virtual std::string name() override;
 
     void setDegree(int degree);

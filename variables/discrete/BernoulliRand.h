@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand<int>
     unsigned long long generatorEdge; /// such value that probability of (BasicRandGenerator's variate > generatorEdge) is equal p
 
 public:
-    BernoulliRand(double probability = 0.5);
+    explicit BernoulliRand(double probability = 0.5);
     virtual std::string name() override;
 
     void setProbability(double probability);

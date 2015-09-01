@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
     double sigmaSqInv_2; // 2 * sigma^2
 
 public:
-    RayleighRand(double scale = 1);
+    explicit RayleighRand(double scale = 1);
     virtual std::string name() override;
 
     void setScale(double scale);

@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ContinuousRand
     ChiSquaredRand C;
 
 public:
-    MaxwellBoltzmannRand(double scale);
+    explicit MaxwellBoltzmannRand(double scale);
     virtual std::string name() override;
 
     void setScale(double scale);

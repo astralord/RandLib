@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand<int>
     ExponentialRand W;
 
 public:
-    GeometricRand(double probability);
+    explicit GeometricRand(double probability);
     virtual std::string name() override;
 
     void setProbability(double probability);

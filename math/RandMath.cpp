@@ -136,7 +136,7 @@ long double RandMath::adaptiveSimpsonsAux(const std::function<double (double)> &
             adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
-long double RandMath::integral(const std::function<double (double)> funPtr,
+long double RandMath::integral(const std::function<double (double)> &funPtr,
                                double a, double b, double epsilon, int maxRecursionDepth)
 {
     double c = .5 * (a + b), h = (b - a) / 6.0;

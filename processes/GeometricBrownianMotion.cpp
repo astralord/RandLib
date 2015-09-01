@@ -45,6 +45,6 @@ void GeometricBrownianMotion::Var(const QVector<double> &time, QVector<double> &
     {
         output[i] = S0 * std::exp(mu * time[i]);
         output[i] *= output[i];
-        output[i] *= (std::exp(sigma * sigma * time[i]) - 1);
+        output[i] *= std::expm1(sigma * sigma * time[i]);
     }
 }

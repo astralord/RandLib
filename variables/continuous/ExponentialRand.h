@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
     static bool setupTables();
 
 public:
-    ExponentialRand(double rate = 1);
+    explicit ExponentialRand(double rate = 1);
     virtual std::string name() override;
 
     void setRate(double rate);
