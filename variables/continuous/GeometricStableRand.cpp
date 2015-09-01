@@ -36,28 +36,31 @@ double GeometricStableRand::variate() const
 {
     double e = ExponentialRand::standardVariate();
     double x = S.variate();
-    if (S.getAlpha() == 1)
+    double alphaInv = 1.0 / S.getAlpha();
+    if (alphaInv == 1)
     {
         double rv = x + M_2_PI * S.getBeta() * std::log(sigma * e);
         return e * (mu + sigma * rv);
     }
-    return mu * e + std::pow(e, 1.0 / S.getAlpha()) * sigma * x;
+    return mu * e + std::pow(e, alphaInv) * sigma * x;
 }
 
 void GeometricStableRand::sample(QVector<double> &outputData)
 {
     S.sample(outputData);
-    if (S.getAlpha() == 1) {
+    double alphaInv = 1.0 / S.getAlpha();
+    if (alphaInv == 1) {
+        double beta = S.getBeta();
         for (double &var : outputData) {
             double e = ExponentialRand::standardVariate();
-            var += M_2_PI * S.getBeta() * std::log(sigma * e);
+            var += M_2_PI * beta * std::log(sigma * e);
             var = e * (mu + sigma * var);
         }
     }
     else {
         for (double &var : outputData) {
             double e = ExponentialRand::standardVariate();
-            var = mu * e + std::pow(e, 1.0 / S.getAlpha()) * sigma * var;
+            var = mu * e + std::pow(e, alphaInv) * sigma * var;
         }
     }
 }
