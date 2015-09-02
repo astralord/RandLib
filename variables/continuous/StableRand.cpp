@@ -216,11 +216,12 @@ double StableRand::pdfForCommonAlpha(double x) const
 
     /// find the peak of integrand
     double theta0 = M_PI_4 - .5 * xiAdj;
+    static constexpr double almostPI_2 = 0.99 * M_PI_2;
     RandMath::findRoot([this, xAdj, xiAdj] (double theta)
     {
         return integrandAuxForCommonAlpha(theta, xAdj, xiAdj) - 1.0;
     },
-    -xiAdj, std::max(-xiAdj, 0.99 * M_PI_2), theta0);
+    -xiAdj, std::max(-xiAdj, almostPI_2), theta0);
 
     /// calculate two integrals
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
@@ -237,19 +238,20 @@ double StableRand::pdfForAlphaEqualOne(double x) const
 
     /// find peak of integrand
     double theta0 = 0;
+    static constexpr double almostPI_2 = 0.99 * M_PI_2;
     if (beta > 0) {
         RandMath::findRoot([this, xAdj] (double theta)
         {
             return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
         },
-        -M_PI_2, 0.99 * M_PI_2, theta0);
+        -M_PI_2, almostPI_2, theta0);
     }
     else {
         RandMath::findRoot([this, xAdj] (double theta)
         {
             return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
         },
-        -0.99 * M_PI_2, M_PI_2, theta0);
+        -almostPI_2, M_PI_2, theta0);
     }
 
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);

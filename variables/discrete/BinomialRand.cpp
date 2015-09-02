@@ -47,7 +47,7 @@ double BinomialRand::F(double x) const
 
 double BinomialRand::variate() const
 {
-    unsigned sum = 0;
+    int sum = 0;
     for (int i = 0; i != n; ++i)
         sum += B.variate();
     return sum;
