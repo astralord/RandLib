@@ -38,12 +38,12 @@ void GeometricRand::setProbability(double probability)
 
 double GeometricRand::P(int k) const
 {
-    return p * std::pow(q, k);
+    return (k < 0) ? 0 : p * std::pow(q, k);
 }
 
 double GeometricRand::F(double x) const
 {
-    return 1 - std::pow(q, std::floor(x) + 1);
+    return (k < 0) ? 0 : 1 - std::pow(q, std::floor(x) + 1);
 }
 
 double GeometricRand::variate() const
