@@ -30,18 +30,18 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     mu = location;
 
     /// Should be cautious, known distributions in priority
-    if (std::fabs(alpha - 2) < MIN_POSITIVE)
+    if (RandMath::areEqual(alpha, 2))
         alpha = 2;
-    else if (std::fabs(alpha - 1) < MIN_POSITIVE)
+    else if (RandMath::areEqual(alpha, 1))
         alpha = 1;
-    else if (std::fabs(alpha - .5) < MIN_POSITIVE)
-        alpha = .5;
+    else if (RandMath::areEqual(alpha, 0.5))
+        alpha = 0.5;
 
     if (std::fabs(beta) < MIN_POSITIVE)
         beta = 0;
-    else if (std::fabs(beta - 1) < MIN_POSITIVE)
+    else if (RandMath::areEqual(beta, 1))
         beta = 1;
-    else if (std::fabs(beta + 1) < MIN_POSITIVE)
+    else if (RandMath::areEqual(beta, -1))
         beta = -1;
 
     if (alpha == 2) /// X ~ Normal(mu, 2sigma^2)

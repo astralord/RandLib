@@ -2,6 +2,17 @@
 
 constexpr long double RandMath::factorialTable[];
 
+bool RandMath::areEqual(double a, double b, double eps)
+{
+    if (a == b)
+        return true;
+    a = std::fabs(a);
+    b = std::fabs(b);
+    if (std::fabs(b - a) < eps * std::max(a, b))
+        return true;
+    return false;
+}
+
 long double RandMath::factorialForSmallValue(unsigned n)
 {
     int residue = n % 10;

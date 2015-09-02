@@ -1,9 +1,8 @@
 #include "GeometricStableRand.h"
 
 GeometricStableRand::GeometricStableRand(double exponent, double skewness, double scale, double location) :
-    S(exponent, skewness)
+    StableRand(exponent, skewness, scale, location)
 {
-    setParameters(exponent, skewness, scale, location);
 }
 
 std::string GeometricStableRand::name()
@@ -13,17 +12,6 @@ std::string GeometricStableRand::name()
             + toStringWithPrecision(getBeta()) + ", "
             + toStringWithPrecision(getSigma()) + ", "
             + toStringWithPrecision(getMu()) + ")";
-}
-
-void GeometricStableRand::setParameters(double exponent, double skewness, double scale, double location)
-{
-    sigma = std::max(scale, MIN_POSITIVE);
-    mu = location;
-
-    if (std::fabs(exponent - 1) < MIN_POSITIVE)
-        S.setParameters(1.0, skewness, sigma, mu);
-    else
-        S.setParameters(exponent, skewness, 1, 0);
 }
 
 double GeometricStableRand::f(double x) const
@@ -38,33 +26,30 @@ double GeometricStableRand::F(double x) const
 
 double GeometricStableRand::variate() const
 {
-    double e = ExponentialRand::standardVariate();
-    double x = S.variate();
-    double alphaInv = 1.0 / S.getAlpha();
+    double W = ExponentialRand::standardVariate();
+    double Y = StableRand::variate();
     if (alphaInv == 1)
-    {
-        double rv = x + M_2_PI * S.getBeta() * std::log(sigma * e);
-        return e * (mu + sigma * rv);
-    }
-    return mu * e + std::pow(e, alphaInv) * sigma * x;
+        return W * (Y + M_2_PI * beta * sigma * std::log(sigma * W));
+    double W_adj = std::pow(W, alphaInv);
+    return W_adj * Y + mu * (W - W_adj);
 }
 
 void GeometricStableRand::sample(QVector<double> &outputData)
 {
-    S.sample(outputData);
-    double alphaInv = 1.0 / S.getAlpha();
+    StableRand::sample(outputData);
     if (alphaInv == 1) {
-        double beta = S.getBeta();
         for (double &var : outputData) {
-            double e = ExponentialRand::standardVariate();
-            var += M_2_PI * beta * sigma * std::log(sigma * e);
-            var *= e;
+            double W = ExponentialRand::standardVariate();
+            var += M_2_PI * beta * sigma * std::log(sigma * W);
+            var *= W;
         }
     }
     else {
         for (double &var : outputData) {
-            double e = ExponentialRand::standardVariate();
-            var = mu * e + std::pow(e, alphaInv) * sigma * var;
+            double W = ExponentialRand::standardVariate();
+            double W_adj = std::pow(W, alphaInv);
+            var *= W_adj;
+            var += mu * (W - W_adj);
         }
     }
 }

@@ -41,6 +41,15 @@ class RANDLIBSHARED_EXPORT RandMath
 public:
     RandMath() {}
 
+    /**
+     * @brief areEqual
+     * @param a
+     * @param b
+     * @param eps
+     * @return |a - b| < eps * max(a, b)
+     */
+    static bool areEqual(double a, double b, double eps = 0.001);
+
 private:
 
     /**

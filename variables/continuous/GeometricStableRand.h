@@ -4,29 +4,19 @@
 #include "StableRand.h"
 #include "ExponentialRand.h"
 
-class RANDLIBSHARED_EXPORT GeometricStableRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT GeometricStableRand : public StableRand
 {
-    double mu, sigma;
-
-    StableRand S;
-
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual std::string name() override;
-
-    void setParameters(double exponent, double skewness, double scale, double location);
-    inline double getAlpha() const { return S.getAlpha(); }
-    inline double getBeta() const { return S.getBeta(); }
-    inline double getSigma() const { return sigma; }
-    inline double getMu() const { return mu; }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
     void sample(QVector<double> &outputData);
 
-    double E() const override { return (S.getAlpha()> 1) ? mu : NAN; }
-    double Var() const override { return (S.getAlpha() == 2) ? 2 * sigma * sigma : INFINITY; }
+    double E() const override { return (alpha > 1) ? mu : INFINITY; }
+    double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
 };
 
 #endif // GEOMETRICSTABLERAND_H

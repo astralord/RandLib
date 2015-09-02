@@ -13,6 +13,7 @@
  */
 class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
 {
+protected:
     double alpha, beta, mu, sigma;
 
     // TODO: shouldn't storage them all
