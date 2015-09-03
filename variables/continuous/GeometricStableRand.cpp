@@ -26,6 +26,8 @@ double GeometricStableRand::F(double x) const
 
 double GeometricStableRand::variate() const
 {
+    if (alpha == 2 && mu == 0 && beta == 0)
+        return LaplaceRand::variate(0, sigma);
     double W = ExponentialRand::standardVariate();
     double Y = StableRand::variate();
     if (alphaInv == 1)
@@ -36,20 +38,27 @@ double GeometricStableRand::variate() const
 
 void GeometricStableRand::sample(QVector<double> &outputData)
 {
-    StableRand::sample(outputData);
-    if (alphaInv == 1) {
+    if (alpha == 2 && mu == 0 && beta == 0) {
         for (double &var : outputData) {
-            double W = ExponentialRand::standardVariate();
-            var += M_2_PI * beta * sigma * std::log(sigma * W);
-            var *= W;
+            var = LaplaceRand::variate(0, sigma);
         }
     }
     else {
-        for (double &var : outputData) {
-            double W = ExponentialRand::standardVariate();
-            double W_adj = std::pow(W, alphaInv);
-            var *= W_adj;
-            var += mu * (W - W_adj);
+        StableRand::sample(outputData);
+        if (alphaInv == 1) {
+            for (double &var : outputData) {
+                double W = ExponentialRand::standardVariate();
+                var += M_2_PI * beta * sigma * std::log(sigma * W);
+                var *= W;
+            }
+        }
+        else {
+            for (double &var : outputData) {
+                double W = ExponentialRand::standardVariate();
+                double W_adj = std::pow(W, alphaInv);
+                var *= W_adj;
+                var += mu * (W - W_adj);
+            }
         }
     }
 }
