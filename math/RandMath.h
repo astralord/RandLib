@@ -93,7 +93,7 @@ private:
      * @param n non-negative integer number
      * @return
      */
-    static long double factorialForSmallValue(unsigned n);
+    static long double factorialForSmallValue(size_t n);
 
 public:
     /**
@@ -103,7 +103,7 @@ public:
      * @param n non-negative integer number
      * @return n!
      */
-    static long double factorial(unsigned n);
+    static long double factorial(size_t n);
 
     /**
      * @brief doubleFactorial
@@ -111,7 +111,7 @@ public:
      * @param n
      * @return
      */
-    static long double doubleFactorial(unsigned n);
+    static long double doubleFactorial(size_t n);
 
     /**
      * @brief binomialCoef
@@ -120,7 +120,7 @@ public:
      * @param k
      * @return C(n,k) = n! / (k! * (n - k)!)
      */
-    static long double binomialCoef(unsigned n, unsigned k);
+    static long double binomialCoef(size_t n, size_t k);
 
     /**
      * @brief lowerIncGamma
@@ -156,7 +156,7 @@ public:
      * @param b
      * @return
      */
-    static long double regulBetaFun(double x, double a, double b);
+    static long double regularizedBetaFun(double x, double a, double b);
 
     /**
      * @brief incompleteBetaFun

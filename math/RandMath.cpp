@@ -13,7 +13,7 @@ bool RandMath::areEqual(double a, double b, double eps)
     return false;
 }
 
-long double RandMath::factorialForSmallValue(unsigned n)
+long double RandMath::factorialForSmallValue(size_t n)
 {
     int residue = n % 10;
     if (residue <= 5)
@@ -34,12 +34,12 @@ long double RandMath::factorialForSmallValue(unsigned n)
     return factorialTable[nNext / 10] / denominator;
 }
 
-long double RandMath::factorial(unsigned n)
+long double RandMath::factorial(size_t n)
 {
     return (n > maxFactorialTableValue) ? std::tgamma(static_cast<double>(n + 1)) : factorialForSmallValue(n);
 }
 
-long double RandMath::doubleFactorial(unsigned n)
+long double RandMath::doubleFactorial(size_t n)
 {
     long double n_fact = factorial(n);
     if (n & 1) {
@@ -49,8 +49,10 @@ long double RandMath::doubleFactorial(unsigned n)
     return (1 << n) * n_fact;
 }
 
-long double RandMath::binomialCoef(unsigned n, unsigned k)
+long double RandMath::binomialCoef(size_t n, size_t k)
 {
+    if (k > n)
+        return 0;
     long double n_fact = factorial(n);
     long double k_fact = factorial(k);
     long double n_k_fact = factorial(n - k);
@@ -73,7 +75,6 @@ long double RandMath::lowerIncGamma(double a, double x)
 
 long double RandMath::upperIncGamma(double a, double x)
 {
-    // TODO: find useful approximation
     return std::tgamma(a) - lowerIncGamma(a, x);
 }
 
@@ -101,7 +102,7 @@ double RandMath::betaFun(double a, double b)
     }
 }
 
-long double RandMath::regulBetaFun(double x, double a, double b)
+long double RandMath::regularizedBetaFun(double x, double a, double b)
 {
     return integral([a, b] (double t)
     {
@@ -112,7 +113,7 @@ long double RandMath::regulBetaFun(double x, double a, double b)
 
 long double RandMath::incompleteBetaFun(double x, double a, double b)
 {
-    return regulBetaFun(x, a, b) / betaFun(a, b);
+    return regularizedBetaFun(x, a, b) / betaFun(a, b);
 }
 
 long double RandMath::gammaHalf(unsigned k)

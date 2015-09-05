@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousRand
     double constForGenerator; /// (c - a) / (b - a)
     double coefGenerator1; /// (b - a) * (c - a)
     double coefGenerator2; /// (b - a) * (b - c)
-    void setGeneratorConstants();
+    void setConstantsForGenerator();
 
 public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);

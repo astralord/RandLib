@@ -37,6 +37,7 @@ public:
 
     double E() const override { return beta; }
     double Var() const override { return beta * beta; }
+    double quantile(double p);
 
     static constexpr double Skewness() { return 2.0; }
     static constexpr double ExcessiveKurtosis() { return 6.0; }

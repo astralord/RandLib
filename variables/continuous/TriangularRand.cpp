@@ -15,7 +15,7 @@ std::string TriangularRand::name()
             + toStringWithPrecision(getUpperLimit()) + ")";
 }
 
-void TriangularRand::setGeneratorConstants()
+void TriangularRand::setConstantsForGenerator()
 {
     constForGenerator = (c - a) / (b - a);
     coefGenerator1 = (b - a) * (c - a);
@@ -25,19 +25,19 @@ void TriangularRand::setGeneratorConstants()
 void TriangularRand::setLowerLimit(double lowerLimit)
 {
     a = lowerLimit;
-    setGeneratorConstants();
+    setConstantsForGenerator();
 }
 
 void TriangularRand::setMode(double mode)
 {
     c = mode;
-    setGeneratorConstants();
+    setConstantsForGenerator();
 }
 
 void TriangularRand::setUpperLimit(double upperLimit)
 {
     b = upperLimit;
-    setGeneratorConstants();
+    setConstantsForGenerator();
 }
 
 double TriangularRand::f(double x) const

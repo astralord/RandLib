@@ -90,6 +90,11 @@ double ExponentialRand::standardVariate()
     return 0; /// fail due to some error
 }
 
+double ExponentialRand::quantile(double p)
+{
+    return -beta * std::log(p);
+}
+
 bool ExponentialRand::fitToData(const QVector<double> &sample)
 {
     if (sample.size() == 0)
