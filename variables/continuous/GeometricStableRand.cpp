@@ -36,6 +36,37 @@ double GeometricStableRand::variate() const
     return W_adj * Y + mu * (W - W_adj);
 }
 
+double GeometricStableRand::variateForAlphaEqualOne() const
+{
+    double U = UniformRand::variate(-M_PI_2, M_PI_2);
+    double W1 = ExponentialRand::standardVariate();
+    double W2 = ExponentialRand::standardVariate();
+    double pi_2BetaU = M_PI_2 + beta * U;
+    double X = logSigma;
+    X += std::log(sigma * W2 * pi_2BetaU / (M_PI_2 * W1 * std::cos(U)));
+    X *= beta;
+    X += pi_2BetaU * std::tan(U);
+    X *= M_2_PI * sigma;
+    X += mu;
+    X *= W2;
+    return X;
+}
+
+double GeometricStableRand::variateForCommonAlpha() const
+{
+    double U = UniformRand::variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::standardVariate();
+    double alphaUB = alpha * U + B;
+    double X = S * std::sin(alphaUB);
+    double W_adj = W / std::cos(U - alphaUB);
+    X *= W_adj;
+    W = ExponentialRand::standardVariate();
+    W_adj *= std::cos(U);
+    W_adj = W / W_adj;
+    X *= std::pow(W_adj, alphaInv);
+    return X * sigma + mu * W;
+}
+
 void GeometricStableRand::sample(QVector<double> &outputData)
 {
     if (alpha == 2 && mu == 0 && beta == 0) {
@@ -44,20 +75,14 @@ void GeometricStableRand::sample(QVector<double> &outputData)
         }
     }
     else {
-        StableRand::sample(outputData);
         if (alphaInv == 1) {
             for (double &var : outputData) {
-                double W = ExponentialRand::standardVariate();
-                var += M_2_PI * beta * sigma * std::log(sigma * W);
-                var *= W;
+                var = variateForAlphaEqualOne();
             }
         }
         else {
             for (double &var : outputData) {
-                double W = ExponentialRand::standardVariate();
-                double W_adj = std::pow(W, alphaInv);
-                var *= W_adj;
-                var += mu * (W - W_adj);
+                var = variateForCommonAlpha();
             }
         }
     }

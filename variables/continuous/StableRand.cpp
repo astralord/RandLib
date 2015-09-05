@@ -75,7 +75,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
         B = std::atan(B);
         pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
         xi = alphaInv * B;
-        integrandCoef = std::pow(qFastCos(B), alpham1Inv);
+        integrandCoef = std::pow(std::cos(B), alpham1Inv);
     }
 }
 
@@ -128,39 +128,28 @@ void StableRand::sample(QVector<double> &outputData)
 
 double StableRand::variateForCommonAlpha() const
 {
-    int iter = 0;
-    double rv;
-    do {
-        double v = UniformRand::variate(-M_PI_2, M_PI_2);
-        double w = ExponentialRand::standardVariate();
-        double alphaVB = alpha * v + B;
-        rv = S * qFastSin(alphaVB); /// S * sin(alpha * V + B)
-        double w_adj = w / qFastCos(v - alphaVB);
-        rv *= w_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
-        rv *= std::pow(w_adj * qFastCos(v), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
-                                                       /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
-    } while ((std::isnan(rv) || std::isinf(rv)) && /// there could occure some numerical problems
-             ++iter < 10); /// if we got nan 10 times - we have a problem, get out
-    return mu + sigma * rv;
+    double U = UniformRand::variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::standardVariate();
+    double alphaUB = alpha * U + B;
+    double X = S * std::sin(alphaUB); /// S * sin(alpha * V + B)
+    double W_adj = W / std::cos(U - alphaUB);
+    X *= W_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
+    X *= std::pow(W_adj * std::cos(U), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
+                                                   /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
+    return mu + sigma * X;
 }
 
 double StableRand::variateForAlphaEqualOne() const
 {
-    int iter = 0;
-    double rv;
-    do {
-        double v = UniformRand::variate(-M_PI_2, M_PI_2);
-        double w = ExponentialRand::standardVariate();
-        double pi_2BetaV = M_PI_2 + beta * v;
-
-        rv = logSigma;
-        rv -= std::log(M_PI_2 * w * qFastCos(v) / pi_2BetaV);
-        rv *= beta;
-        rv += pi_2BetaV * std::tan(v);
-    } while ((std::isnan(rv) || std::isinf(rv)) && /// there could occure some numerical problems
-             ++iter < 10); /// if we got nan 10 times - we have a problem, get out
-    rv *= M_2_PI;
-    return mu + sigma * rv;
+    double U = UniformRand::variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::standardVariate();
+    double pi_2BetaU = M_PI_2 + beta * U;
+    double X = logSigma;
+    X -= std::log(M_PI_2 * W * std::cos(U) / pi_2BetaU);
+    X *= beta;
+    X += pi_2BetaU * std::tan(U);
+    X *= M_2_PI;
+    return mu + sigma * X;
 }
 
 double StableRand::f(double x) const
@@ -188,7 +177,7 @@ double StableRand::pdfForCommonAlpha(double x) const
     if (std::fabs(x) < 0.1) /// if we are close to 0 then we do interpolation avoiding dangerous variates
     {
         double numerator = std::tgamma(1 + alphaInv);
-        numerator *= qFastCos(xi);
+        numerator *= std::cos(xi);
         double denominator = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
         double y0 =  M_1_PI * numerator / denominator; /// f(0)
         if (std::fabs(x) < MIN_POSITIVE)
@@ -263,13 +252,13 @@ double StableRand::pdfForAlphaEqualOne(double x) const
 
 double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
 {
-    double cosTheta = qFastCos(theta);
+    double cosTheta = std::cos(theta);
     /// if theta ~ +-pi / 2
     if (std::fabs(cosTheta) < MIN_POSITIVE)
         return 0.0;
     double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
     double u = M_2_PI * thetaAdj;
-    u *= std::exp(thetaAdj * qFastSin(theta) / beta);
+    u *= std::exp(thetaAdj * std::sin(theta) / beta);
     return u * xAdj;
 }
 
@@ -282,17 +271,17 @@ double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
 double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
 {
     double thetaAdj = alpha * (theta + xiAdj);
-    double sinThetaAdj = qFastSin(thetaAdj);
+    double sinThetaAdj = std::sin(thetaAdj);
     /// if theta ~ 0
     if (std::fabs(sinThetaAdj) < MIN_POSITIVE)
         return 0.0;
-    double cosTheta = qFastCos(theta);
+    double cosTheta = std::cos(theta);
     double y = cosTheta / sinThetaAdj;
     /// if theta ~ pi / 2
     if (std::fabs(y) < MIN_POSITIVE)
         return 0.0;
     y = std::pow(y, alpha_alpham1);
-    y *= qFastCos(thetaAdj - theta);
+    y *= std::cos(thetaAdj - theta);
     y /= cosTheta;
     return integrandCoef * xAdj * y;
 }
