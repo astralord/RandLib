@@ -38,6 +38,11 @@ double LogNormalRand::variate() const
     return std::exp(X.variate());
 }
 
+double LogNormalRand::quantile(double p)
+{
+    return std::exp(X.quantile(p));
+}
+
 double LogNormalRand::ExcessKurtosis() const
 {
     double expVarSq = expVar * expVar;

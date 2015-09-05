@@ -122,12 +122,13 @@ double NormalRand::quantile(double p)
         return -quantile(1 - p);
     if (p <= 0 || p >= 1)
         return NAN;
-    double t = M_SQRT2 * std::sqrt(-std::log(p));
+    double t = -std::log(p);
+    t = std::sqrt(t + t);
     static constexpr double c[] = {2.515517, 0.802853, 0.010328};
     static constexpr double d[] = {1.432788, 0.189269, 0.001308};
     double numerator = (c[2] * t + c[1]) * t + c[0];
     double denominator = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
-    return numerator / denominator - t;
+    return mu + sigma * (numerator / denominator - t);
 }
 
 bool NormalRand::fitToData(const QVector<double> &sample)

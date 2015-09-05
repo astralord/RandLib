@@ -27,6 +27,7 @@ public:
 
     double E() const override { return expMu * std::sqrt(expVar); }
     double Var() const override { return (expVar - 1) * expMu * expMu * expVar; }
+    double quantile(double p);
 
     inline double Median() const { return expMu; }
     inline double Mode() const{ return expMu / expVar; }
