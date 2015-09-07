@@ -3,7 +3,7 @@ QT       -= gui
 TARGET = randlib
 TEMPLATE = lib
 
-CONFIG += c++11
+CONFIG += c++14
 
 DEFINES += RANDLIB_LIBRARY
 
@@ -49,7 +49,8 @@ SOURCES += \
     variables/continuous/BetaPrimeRand.cpp \
     variables/discrete/NegativeBinomialRand.cpp \
     variables/discrete/HyperGeometricRand.cpp \
-    variables/discrete/ZipfRand.cpp
+    variables/discrete/ZipfRand.cpp \
+    variables/discrete/YuleRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -95,7 +96,8 @@ HEADERS +=\
     variables/continuous/BetaPrimeRand.h \
     variables/discrete/NegativeBinomialRand.h \
     variables/discrete/HyperGeometricRand.h \
-    variables/discrete/ZipfRand.h
+    variables/discrete/ZipfRand.h \
+    variables/discrete/YuleRand.h
 
 unix {
     target.path = /usr/lib

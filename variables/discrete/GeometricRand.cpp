@@ -49,33 +49,38 @@ double GeometricRand::F(double x) const
 double GeometricRand::variate() const
 {
     if (p < 0.2)
-        return variateForSmallP();
-    return variateForLargeP();
+        return variateByExponential();
+    return variateByTable();
+}
+
+double GeometricRand::variate(double probability)
+{
+    return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
 }
 
 void GeometricRand::sample(QVector<double> &outputData)
 {
     if (p < 0.2) {
         for (double &var : outputData)
-            var = variateForSmallP();
+            var = variateByExponential();
     }
     else {
         for (double &var : outputData)
-            var = variateForLargeP();
+            var = variateByTable();
     }
 }
 
-double GeometricRand::variateForSmallP() const
+double GeometricRand::variateByExponential() const
 {
     return std::floor(W.variate());
 }
 
-double GeometricRand::variateForLargeP() const
+double GeometricRand::variateByTable() const
 {
     double U = UniformRand::standardVariate();
     /// handle tail by recursion
     if (U > table[tableSize - 1])
-        return tableSize + variateForLargeP();
+        return tableSize + variateByTable();
     /// handle the main body
     int x = 0;
     while (U > table[x])

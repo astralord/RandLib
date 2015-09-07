@@ -28,12 +28,13 @@ public:
     double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
+    static double variate(double probability);
 
     void sample(QVector<double> &outputData);
 
 private:
-    double variateForSmallP() const;
-    double variateForLargeP() const;
+    double variateByExponential() const;
+    double variateByTable() const;
 
 public:
     double E() const override { return q / p; }

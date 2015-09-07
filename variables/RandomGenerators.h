@@ -14,6 +14,8 @@
 #include "discrete/BinomialRand.h"
 #include "discrete/NegativeBinomialRand.h"
 #include "discrete/HyperGeometricRand.h"
+#include "discrete/YuleRand.h"
+#include "discrete/ZipfRand.h"
 
 /// CONTINUOUS
 #include "continuous/UniformRand.h"
