@@ -24,6 +24,8 @@ public:
     static constexpr double Skewness() { return 0; }
     static constexpr double ExcessiveKurtosis() { return -2; }
 
+    std::complex<double> CF(double t) const override;
+    
     static constexpr double Entropy() { return M_LN2; }
 };
 
