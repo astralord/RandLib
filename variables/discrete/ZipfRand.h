@@ -29,8 +29,12 @@ public:
     double variate() const override;
 
     double E() const override { return harmonicNumber(s - 1, N) * denominator; }
-    // TODO
-    double Var() const override { return 1; }
+    double Var() const override {
+        double numerator = harmonicNumber(s - 1, N);
+        numerator *= numerator;
+        numerator = harmonicNumber(s - 2, N) * harmonicNumber(s, N) - numerator;
+        return numerator * denominator * denominator;
+    }
 };
 
 #endif // ZIPFRAND_H
