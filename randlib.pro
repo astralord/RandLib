@@ -54,7 +54,7 @@ SOURCES += \
 
 HEADERS +=\
     randlib_global.h \
-    variables/RandomGenerators.h \
+    variables/RandomVariables.h \
     variables/RandomVariable.h \
     variables/BasicRandGenerator.h \
     variables/continuous/BetaRand.h \
