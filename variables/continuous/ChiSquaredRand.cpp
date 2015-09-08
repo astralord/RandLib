@@ -12,6 +12,5 @@ std::string ChiSquaredRand::name()
 
 void ChiSquaredRand::setDegree(int degree)
 {
-    k = std::max(degree, 1);
-    GammaRand::setParameters(.5 * k, 2);
+    GammaRand::setParameters(.5 * std::max(degree, 1), 2);
 }
