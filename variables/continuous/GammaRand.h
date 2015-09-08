@@ -47,6 +47,10 @@ public:
     double E() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }
 
+    inline double Mode() { return (k < 1) ? 0 : (k - 1) * theta; }
+    inline double Skewness() { return 2.0 / std::sqrt(k); }
+    inline double ExcessKurtosis() { return 6.0 * kInv; }
+    
     /**
      * @brief getInverseGammaFunction
      * @return 1.0 / Gamma(k)
