@@ -25,7 +25,11 @@ public:
     double variate() const override;
 
     double E() const override { return static_cast<double>(n * K) / N; }
-    double Var() const override { return 1; }
+    double Var() const override {
+        size_t numerator = n * K * (N - K) * (N  - n);
+        size_t denominator = N * N * (N - 1);
+        return static_cast<double>(numerator) / denominator;
+    }
 };
 
 #endif // HYPERGEOMETRICRAND_H
