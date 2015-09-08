@@ -2,8 +2,7 @@
 #define MATRIX_H
 
 #include "randlib_global.h"
-#include <QVector>
-#include <QDebug>
+#include <vector>
 
 /**
  * @brief The Matrix class
@@ -11,20 +10,22 @@
  */
 class RANDLIBSHARED_EXPORT Matrix
 {
-    unsigned n, m;
-    QVector<double> data;
+    size_t n, m;
+    std::vector<double> data;
 public:
-    Matrix(unsigned height, unsigned width);
-    inline unsigned getHeight() { return n; }
-    inline unsigned getWidth() { return m; }
+    Matrix(const size_t height, const size_t width,
+           const double initial_value = 0.0);
+    Matrix(const Matrix & other);
+    Matrix & operator=(const Matrix & other);
+    
+    inline size_t height() { return n; }
+    inline size_t width() { return m; }
 
-    double &operator()(unsigned i, unsigned j) {
-        return data[i * n + j];
-    }
+    double &operator()(const size_t i, const size_t j);
+    double operator()(const size_t i, const size_t j) const;
 
     // TODO:
     // addition and multiplication
 };
-
 
 #endif // MATRIX_H
