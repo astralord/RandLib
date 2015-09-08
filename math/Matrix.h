@@ -18,8 +18,8 @@ public:
     Matrix(const Matrix & other);
     Matrix & operator=(const Matrix & other);
     
-    inline size_t height() { return n; }
-    inline size_t width() { return m; }
+    inline size_t height() const { return n; }
+    inline size_t width() const { return m; }
 
     double &operator()(const size_t i, const size_t j);
     double operator()(const size_t i, const size_t j) const;
