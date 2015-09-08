@@ -12,22 +12,22 @@ std::string ParetoRand::name()
 
 void ParetoRand::setParameters(double shape, double scale)
 {
-    xm = std::max(shape, MIN_POSITIVE);
-    alpha = std::max(scale, MIN_POSITIVE);
+    xm = std::max(scale, MIN_POSITIVE);
+    alpha = std::max(shape, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
 void ParetoRand::setShape(double shape)
 {
-    xm = std::max(shape, MIN_POSITIVE);
+    alpha = std::max(shape, MIN_POSITIVE);
+    alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
 void ParetoRand::setScale(double scale)
 {
-    alpha = std::max(scale, MIN_POSITIVE);
-    alphaInv = 1.0 / alpha;
+    xm = std::max(scale, MIN_POSITIVE);
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
@@ -48,11 +48,11 @@ double ParetoRand::variate() const
 
 double ParetoRand::variate(double shape, double scale)
 {
-    if (scale == 1)
-        return shape * variateForAlphaOne();
-    if (scale == 2)
-        return shape * variateForAlphaTwo();
-    return shape * variateForCommonAlpha(scale);
+    if (shape == 1)
+        return scale * variateForAlphaOne();
+    if (shape == 2)
+        return scale * variateForAlphaTwo();
+    return scale * variateForCommonAlpha(shape);
 }
 
 double ParetoRand::variateForAlphaOne()
@@ -65,9 +65,9 @@ double ParetoRand::variateForAlphaTwo()
     return 1.0 / std::sqrt(UniformRand::standardVariate());
 }
 
-double ParetoRand::variateForCommonAlpha(double scale)
+double ParetoRand::variateForCommonAlpha(double shape)
 {
-    return std::exp(ExponentialRand::variate(scale));
+    return std::exp(ExponentialRand::variate(shape));
 }
 
 void ParetoRand::sample(QVector<double> &outputData)

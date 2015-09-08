@@ -33,6 +33,12 @@ double YuleRand::F(double x) const
 
 double YuleRand::variate() const
 {
-    return GeometricRand::variate(exp(-ExponentialRand::variate(ro))) + 1;
+    return YuleRand::variate(ro);
+}
+
+double YuleRand::variate(double shape)
+{
+    double prob = 1.0 / ParetoRand::variate(shape, 1.0);
+    return GeometricRand::variate(prob) + 1;
 }
 

@@ -32,7 +32,7 @@ public:
 private:
     static double variateForAlphaOne();
     static double variateForAlphaTwo();
-    static double variateForCommonAlpha(double scale);
+    static double variateForCommonAlpha(double shape);
 
 public:
     void sample(QVector<double> &outputData);

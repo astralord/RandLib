@@ -4,6 +4,7 @@
 #include "DiscreteRand.h"
 #include "GeometricRand.h"
 #include "../continuous/ExponentialRand.h"
+#include "../continuous/ParetoRand.h"
 
 /**
  * @brief The YuleRand class
@@ -22,6 +23,7 @@ public:
     double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
+    static double variate(double shape);
 
 public:
     double E() const override { return (ro <= 1) ? INFINITY : ro / (ro - 1); }

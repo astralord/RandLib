@@ -55,7 +55,18 @@ double GeometricRand::variate() const
 
 double GeometricRand::variate(double probability)
 {
-    return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
+    if (probability < 0.2)
+        return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
+
+    double U = UniformRand::standardVariate();
+    int x = 0;
+    double prod = probability, sum = prod, q = 1 - probability;
+    while (U > sum) {
+        prod *= q;
+        sum += prod;
+        ++x;
+    }
+    return x;
 }
 
 void GeometricRand::sample(QVector<double> &outputData)
