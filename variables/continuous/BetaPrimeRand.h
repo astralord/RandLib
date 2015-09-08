@@ -30,7 +30,7 @@ public:
         return numerator / denominator;
     }
     
-    inline double Mode() { return (X.getShape() < 1) ? 0 : (X.getShape() - 1) / (Y.getShape() + 1);
+    inline double Mode() { return (X.getShape() < 1) ? 0 : (X.getShape() - 1) / (Y.getShape() + 1); }
     double Skewness() {
         double alpha = X.getShape();
         double beta = Y.getShape();

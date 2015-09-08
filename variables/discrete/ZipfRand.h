@@ -12,10 +12,8 @@ class ZipfRand : public DiscreteRand<int>
     double s;
     size_t N;
 
-    double denominator; /// 1 / harmonic_number
+    double invHarmonicNumber; /// 1 / harmonic_number
 
-    // TODO: replace to RandMath
-    static double harmonicNumber(double exponent, size_t number);
 public:
     ZipfRand(double exponent, size_t number);
     virtual std::string name() override;
@@ -28,12 +26,12 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return harmonicNumber(s - 1, N) * denominator; }
+    double E() const override { return RandMath::harmonicNumber(s - 1, N) * invHarmonicNumber; }
     double Var() const override {
-        double numerator = harmonicNumber(s - 1, N);
+        double numerator = RandMath::harmonicNumber(s - 1, N);
         numerator *= numerator;
-        numerator = harmonicNumber(s - 2, N) * harmonicNumber(s, N) - numerator;
-        return numerator * denominator * denominator;
+        numerator = RandMath::harmonicNumber(s - 2, N) * RandMath::harmonicNumber(s, N) - numerator;
+        return numerator * invHarmonicNumber * invHarmonicNumber;
     }
 };
 

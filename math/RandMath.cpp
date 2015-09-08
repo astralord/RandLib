@@ -261,4 +261,14 @@ double RandMath::linearInterpolation(double a, double b, double fa, double fb, d
     return fx + fa;
 }
 
+double RandMath::harmonicNumber(double exponent, size_t number)
+{
+    if (exponent < 1 || number < 1)
+        return 0;
+    double res = 1.0;
+    for (size_t i = 1; i != number; ++i)
+        res += std::pow(i + 1, -exponent);
+    return res;
+}
+
 

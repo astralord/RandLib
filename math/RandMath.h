@@ -231,6 +231,14 @@ public:
      * @return f(x)
      */
     static double linearInterpolation(double a, double b, double fa, double fb, double x);
+
+    /**
+     * @brief harmonicNumber
+     * @param exponent
+     * @param number
+     * @return sum_{i=1}^{number} i^{-exponent}
+     */
+    static double harmonicNumber(double exponent, size_t number);
 };
 
 #endif // RANDMATH_H
