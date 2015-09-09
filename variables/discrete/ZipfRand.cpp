@@ -34,3 +34,15 @@ double ZipfRand::variate() const
     return 1.0;
 }
 
+double ZipfRand::E() const
+{
+    return RandMath::harmonicNumber(s - 1, N) * invHarmonicNumber;
+}
+
+double ZipfRand::Var() const
+{
+    double numerator = RandMath::harmonicNumber(s - 1, N);
+    numerator *= numerator;
+    numerator = RandMath::harmonicNumber(s - 2, N) * RandMath::harmonicNumber(s, N) - numerator;
+    return numerator * invHarmonicNumber * invHarmonicNumber;
+}
