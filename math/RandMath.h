@@ -22,13 +22,17 @@ static double NAN = std::numeric_limits<double>::quiet_NaN();
 
 #define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
 
-constexpr double M_1_E       = 0.36787944117144232160;
 constexpr double M_SQRT3     = 1.73205080756887729353;
+constexpr double M_SQRT5     = 2.23606797749978969640;
 constexpr double M_SQRTPI    = 1.77245385090551602730;
 constexpr double M_SQRT2PI   = 2.50662827463100050242;
 constexpr double M_1_SQRTPI  = 0.56418958354775628695;
 constexpr double M_1_SQRT2PI = 0.39894228040143267794;
-constexpr double M_LNPI      = std::log(M_PI);
+constexpr double M_1_E       = 0.36787944117144232160;
+constexpr double M_LNPI      = 1.14472988585494001741;
+constexpr double M_EULER     = 0.57721566490153286061;
+constexpr double M_APERY     = 1.20205690315959428539;
+
 
 constexpr double MIN_POSITIVE = 1e-21;
 
