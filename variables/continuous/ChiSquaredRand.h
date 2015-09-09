@@ -13,8 +13,8 @@ public:
     explicit ChiSquaredRand(int degree = 1);
     virtual std::string name() override;
 
-    void setDegree(int degree);
-    inline int getDegree() const { return k + k; }
+    void setDegree(size_t degree);
+    inline size_t getDegree() const { return k + k; }
 };
 
 #endif // CHISQUAREDRAND_H
