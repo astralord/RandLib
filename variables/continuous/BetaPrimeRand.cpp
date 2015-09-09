@@ -25,11 +25,7 @@ double BetaPrimeRand::F(double x) const
 {
     if (x <= 0)
         return 0;
-    return RandMath::integral([this] (double t)
-    {
-        return f(t);
-    },
-    0, x);
+    return BetaRand::F(x / (1.0 + x));
 }
 
 double BetaPrimeRand::variate() const
