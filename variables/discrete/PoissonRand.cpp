@@ -61,6 +61,12 @@ std::complex<double> PoissonRand::CF(double t) const
     return std::exp(y);
 }
 
+double PoissonRand::Median() const
+{
+    /// this value is approximate
+    return std::floor(lambda + 1.0 / 3 - 0.02 / lambda);
+}
+
 double PoissonRand::Mode() const
 {
     return std::floor(lambda);
@@ -71,7 +77,7 @@ double PoissonRand::Skewness() const
     return 1.0 / std::sqrt(lambda);
 }
 
-double PoissonRand::ExcessiveKurtosis() const
+double PoissonRand::ExcessKurtosis() const
 {
     return 1.0 / lambda;
 }

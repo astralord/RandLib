@@ -51,9 +51,9 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    inline double Mode();
-    inline double Skewness();
-    inline double ExcessKurtosis();
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
     
     /**
      * @brief getInverseGammaFunction

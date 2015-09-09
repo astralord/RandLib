@@ -198,17 +198,17 @@ std::complex<double> GammaRand::CF(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -k);
 }
 
-double GammaRand::Mode()
+double GammaRand::Mode() const
 {
     return (k < 1) ? 0 : (k - 1) * theta;
 }
 
-double GammaRand::Skewness()
+double GammaRand::Skewness() const
 {
     return 2.0 / std::sqrt(k);
 }
 
-double GammaRand::ExcessKurtosis()
+double GammaRand::ExcessKurtosis() const
 {
     return 6.0 * kInv;
 }

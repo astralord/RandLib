@@ -20,9 +20,10 @@ public:
     double E() const override { return 0; }
     double Var() const override { return 1; }
 
-    static constexpr double Median() { return 0; }
-    static constexpr double Skewness() { return 0; }
-    static constexpr double ExcessiveKurtosis() { return -2; }
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     std::complex<double> CF(double t) const override;
     

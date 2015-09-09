@@ -38,3 +38,25 @@ double UniformDiscreteRand::variate() const
 {
     return a + RandGenerator::variate() % n;
 }
+
+double UniformDiscreteRand::Median() const
+{
+    return .5 * (b + a);
+}
+
+double UniformDiscreteRand::Mode() const
+{
+    /// any from {a, ..., b}
+    return variate();
+}
+
+double UniformDiscreteRand::Skewness() const
+{
+    return 0.0;
+}
+
+double UniformDiscreteRand::ExcessKurtosis() const
+{
+    double n2 = n * n;
+    return -1.2 * (n2 + 1) / (n2 - 1);
+}

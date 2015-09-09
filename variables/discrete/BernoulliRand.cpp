@@ -42,17 +42,23 @@ std::complex<double> BernoulliRand::CF(double t) const
     return std::complex<double>(q + p * std::cos(t), std::sin(t));
 }
 
-double BernoulliRand::Median()
+double BernoulliRand::Median() const
 {
     return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : 0.5);
 }
 
-double BernoulliRand::Skewness()
+double BernoulliRand::Mode() const
+{
+    /// if q == p -> this can be any of {0, 1}
+    return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : variate());
+}
+
+double BernoulliRand::Skewness() const
 {
     return (q - p) / std::sqrt(p * q);
 }
 
-double BernoulliRand::ExcessiveKurtosis()
+double BernoulliRand::ExcessKurtosis() const
 {
     return 1.0 / (p * q) - 6;
 }

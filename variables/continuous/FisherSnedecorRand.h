@@ -28,6 +28,7 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+
     void sample(QVector<double> &outputData);
 
     double E() const override;

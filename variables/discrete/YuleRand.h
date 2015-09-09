@@ -29,7 +29,7 @@ public:
     double E() const override;
     double Var() const override;
 
-    static constexpr double Mode() { return 1.0; }
+    double Mode() const override;
 };
 
 #endif // YULERAND_H

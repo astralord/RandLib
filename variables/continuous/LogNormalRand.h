@@ -30,10 +30,10 @@ public:
 
     double quantile(double p);
 
-    inline double Median() const { return expMu; }
-    inline double Mode() const{ return expMu / expVar; }
-    inline double Skewness() const { return (expVar + 2) * std::sqrt(expVar - 1); }
-    inline double ExcessKurtosis() const;
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     bool fitToData(const QVector<double> &sample);
 };

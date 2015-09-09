@@ -53,3 +53,8 @@ double YuleRand::Var() const
     return aux * aux / (ro - 2);
 }
 
+double YuleRand::Mode() const
+{
+    return 1.0;
+}
+

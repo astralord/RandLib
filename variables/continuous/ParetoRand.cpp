@@ -112,6 +112,29 @@ double ParetoRand::Mode() const
     return xm;
 }
 
+double ParetoRand::Skewness() const
+{
+    if (alpha <= 3)
+        return INFINITY;
+    double skewness = (alpha - 2.0) / alpha;
+    skewness = std::sqrt(skewness);
+    skewness *= (1 + alpha) / (alpha - 3);
+    return skewness + skewness;
+}
+
+double ParetoRand::ExcessKurtosis() const
+{
+    if (alpha <= 4)
+        return INFINITY;
+    double numerator = alpha + 1;
+    numerator *= alpha;
+    numerator -= 6;
+    numerator *= alpha;
+    numerator -= 2;
+    double denominator = alpha * (alpha - 3) * (alpha - 4);
+    return 6.0 * numerator / denominator;
+}
+
 double ParetoRand::Entropy() const
 {
     return std::log(xm * alphaInv) + alphaInv + 1;

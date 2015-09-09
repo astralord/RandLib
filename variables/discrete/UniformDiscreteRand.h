@@ -29,12 +29,10 @@ public:
         return (n2 * n2 - 1) / 12;
     }
 
-    inline double Median() const { return .5 * (b + a); }
-    static constexpr double Skewness() { return 0; }
-    inline double ExcessKurtosis() {
-        double n2 = n * n;
-        return -1.2 * (n2 + 1) / (n2 - 1);
-    }
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     inline double Entropy() { return std::log(n); }
 };

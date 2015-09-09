@@ -131,6 +131,26 @@ double NormalRand::quantile(double p)
     return mu + sigma * (numerator / denominator - t);
 }
 
+double NormalRand::Median() const
+{
+    return mu;
+}
+
+double NormalRand::Mode() const
+{
+    return mu;
+}
+
+double NormalRand::Skewness() const
+{
+    return 0.0;
+}
+
+double NormalRand::ExcessKurtosis() const
+{
+    return 0.0;
+}
+
 bool NormalRand::fitToData(const QVector<double> &sample)
 {
     if (sample.size() == 0)

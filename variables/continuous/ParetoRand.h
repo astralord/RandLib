@@ -40,8 +40,10 @@ public:
     double E() const override;
     double Var() const override;
 
-    inline double Median() const;
-    inline double Mode() const;
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     inline double Entropy() const;
 

@@ -57,12 +57,12 @@ double RayleighRand::Mode() const
     return sigma;
 }
 
-constexpr double RayleighRand::Skewness()
+double RayleighRand::Skewness() const
 {
     return 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
 }
 
-constexpr double RayleighRand::ExcessKurtosis()
+double RayleighRand::ExcessKurtosis() const
 {
     return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }

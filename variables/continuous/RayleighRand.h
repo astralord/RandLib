@@ -26,10 +26,10 @@ public:
     double E() const override;
     double Var() const override;
 
-    inline double Median() const;
-    inline double Mode() const;
-    static constexpr double Skewness();
-    static constexpr double ExcessKurtosis();
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     bool fitToData(const QVector<double> &sample);
 };

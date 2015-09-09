@@ -83,6 +83,32 @@ public:
      * @param y output vector: y = CF(x)
      */
     void cf(const QVector<double> &t, QVector<std::complex<double>> &y);
+
+    /**
+     * @brief Median
+     * @return such x that P(X < x) = 0.5
+     */
+    virtual double Median() const { return 0; }
+
+    /**
+     * @brief Mode
+     * @return the most probable value
+     */
+    virtual double Mode() const { return 0; }
+
+    /**
+     * @brief Skewness
+     * @return E[((X - mu) / sigma) ^ 3]
+     * where mu is central moment and sigma is standard deviation
+     */
+    virtual double Skewness() const { return 0; }
+
+    /**
+     * @brief ExcessKurtosis
+     * @return mu_4 / sigma ^ 4 - 3
+     * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
+     */
+    virtual double ExcessKurtosis() const { return 0; }
 };
 
 #endif // RANDOMVARIABLE_H

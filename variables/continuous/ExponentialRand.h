@@ -40,8 +40,10 @@ public:
     std::complex<double> CF(double t) const override;
     double quantile(double p);
 
-    static constexpr double Skewness() { return 2.0; }
-    static constexpr double ExcessiveKurtosis() { return 6.0; }
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     inline double Entropy() const;
 

@@ -53,6 +53,21 @@ double LogNormalRand::quantile(double p)
     return std::exp(X.quantile(p));
 }
 
+double LogNormalRand::Median() const
+{
+    return expMu;
+}
+
+double LogNormalRand::Mode() const
+{
+    return expMu / expVar;
+}
+
+double LogNormalRand::Skewness() const
+{
+    return (expVar + 2) * std::sqrt(expVar - 1);
+}
+
 double LogNormalRand::ExcessKurtosis() const
 {
     double expVarSq = expVar * expVar;

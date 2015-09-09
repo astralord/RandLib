@@ -29,9 +29,10 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    inline double Mode() const;
-    inline double Skewness() const;
-    inline double ExcessiveKurtosis() const;
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 #endif // POISSONRAND_H

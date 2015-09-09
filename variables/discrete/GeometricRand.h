@@ -40,10 +40,10 @@ public:
     double E() const override { return q / p; }
     double Var() const override { return q / (p * p); }
 
-    inline double Median() const;
-    static double constexpr Mode() { return 0; }
-    inline double Skewness();
-    inline double ExcessiveKurtosis();
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     inline double Entropy() const;
 };

@@ -45,10 +45,10 @@ public:
 
     double quantile(double p);
 
-    inline double Median() const { return mu; }
-    inline double Mode() const { return mu; }
-    static constexpr double Skewness() { return 0; }
-    static constexpr double ExcessKurtosis() { return 0; }
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     bool fitToData(const QVector<double> &sample);
 };

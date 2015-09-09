@@ -95,6 +95,26 @@ double ExponentialRand::quantile(double p)
     return -beta * std::log(p);
 }
 
+double ExponentialRand::Median() const
+{
+    return beta * M_LN2;
+}
+
+double ExponentialRand::Mode() const
+{
+    return 0.0;
+}
+
+double ExponentialRand::Skewness() const
+{
+    return 2.0;
+}
+
+double ExponentialRand::ExcessKurtosis() const
+{
+    return 6.0;
+}
+
 double ExponentialRand::Entropy() const
 {
     return 1 - std::log(lambda);

@@ -24,10 +24,10 @@ public:
     double E() const { return mu; }
     double Var() const;
 
-    inline double Median() const { return mu; }
-    inline double Mode() const { return mu; }
-    static constexpr double Skewness() { return 0; }
-    static constexpr double ExcessKurtosis() { return 1.2; }
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 #endif // LOGISTICRAND_H

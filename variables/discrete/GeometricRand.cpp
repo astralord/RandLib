@@ -104,12 +104,17 @@ double GeometricRand::Median() const
     return std::ceil(-M_LN2 / std::log(q)) - 1;
 }
 
-double GeometricRand::Skewness()
+double GeometricRand::Mode() const
+{
+    return 0.0;
+}
+
+double GeometricRand::Skewness() const
 {
     return (2 - p) / std::sqrt(q);
 }
 
-double GeometricRand::ExcessiveKurtosis()
+double GeometricRand::ExcessKurtosis() const
 {
     return p * p / q + 6;
 }

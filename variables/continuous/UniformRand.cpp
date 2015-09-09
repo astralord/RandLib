@@ -57,6 +57,27 @@ double UniformRand::standardVariate()
     return x - 1.0;
 }
 
+double UniformRand::Median() const
+{
+    return .5 * (b + a);
+}
+
+double UniformRand::Mode() const
+{
+    /// this can be any value in [a, b]
+    return variate();
+}
+
+double UniformRand::Skewness() const
+{
+    return 0.0;
+}
+
+double UniformRand::ExcessKurtosis() const
+{
+    return -1.2;
+}
+
 double UniformRand::Entropy() const
 {
     return (b == a) ? -INFINITY : std::log(b - a);

@@ -46,3 +46,23 @@ double LogisticRand::Var() const
     double sPi = s * M_PI;
     return sPi * sPi / 3;
 }
+
+double LogisticRand::Median() const
+{
+    return mu;
+}
+
+double LogisticRand::Mode() const
+{
+    return mu;
+}
+
+double LogisticRand::Skewness() const
+{
+    return 0;
+}
+
+double LogisticRand::ExcessKurtosis() const
+{
+    return 1.2;
+}

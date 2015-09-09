@@ -170,6 +170,19 @@ double BetaRand::Var() const
 
 }
 
+double BetaRand::quantile(double p) const
+{
+    double root = 0;
+    if (p <= 0 || p >= 1)
+        return NAN;
+    RandMath::findRoot([this, p] (double x)
+    {
+        return BetaRand::F(x) - p;
+    },
+    0, 1, root);
+    return root;
+}
+
 double BetaRand::Median() const
 {
     double alpha = X.getShape();
@@ -205,17 +218,4 @@ double BetaRand::ExcessKurtosis() const
     --kurtosis;
     kurtosis /= (sum + 3);
     return 6 * kurtosis;
-}
-
-double BetaRand::quantile(double p) const
-{
-    double root = 0;
-    if (p <= 0 || p >= 1)
-        return NAN;
-    RandMath::findRoot([this, p] (double x)
-    {
-        return BetaRand::F(x) - p;
-    },
-    0, 1, root);
-    return root;
 }
