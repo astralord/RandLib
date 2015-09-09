@@ -18,9 +18,7 @@ void YuleRand::setShape(double shape)
 
 double YuleRand::P(int k) const
 {
-    if (k < 1)
-        return 0;
-    return ro * gamma1pRo * std::tgamma(k) / std::tgamma(k + ro + 1);
+    return (k < 1) ? 0 : ro * gamma1pRo * std::tgamma(k) / std::tgamma(k + ro + 1);
 }
 
 double YuleRand::F(double x) const
