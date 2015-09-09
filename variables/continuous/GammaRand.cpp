@@ -28,18 +28,20 @@ void GammaRand::setParameters(double shape, double scale)
     kInv = 1.0 / k;
     theta = std::max(scale, MIN_POSITIVE);
     thetaInv = 1.0 / theta;
-
-    if (std::fabs(k - std::round(k)) < MIN_POSITIVE)
+   
+    double k_round = std::round(k);
+    if (RandMath::areEqual(k, k_round)) {
+        k = k_round
         cdfCoef = 1.0 / RandMath::factorial(k - 1);
-    else
+    }
+    else {
         cdfCoef = 1.0 / std::tgamma(k);
+    }
     pdfCoef = cdfCoef * std::pow(thetaInv, k);
     variateCoef = kInv + M_1_E;
 
     if (k > 3)
-    {
         setConstantsForGenerator();
-    }
 }
 
 double GammaRand::f(double x) const
@@ -53,62 +55,53 @@ double GammaRand::f(double x) const
 
 double GammaRand::F(double x) const
 {
-    if (x < 0)
-        return 0;
-    return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
+    return (x < 0) ? 0 : cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }
 
 double GammaRand::variate() const
 {
-    double rv = 0;
-    int k_int = static_cast<int>(k);
-    if (std::fabs(k - k_int) < MIN_POSITIVE &&
-            k < 5) {
-        rv = variateForIntegerShape();
+    if (k < 5) {
+        double k_round = std::round(k);
+        if (RandMath::areEqual(k, k_round))
+            return theta * variateForIntegerShape();
+        if (RandMath::areEqual(k - 0.5, k_round))
+            return theta * variateForIntegerShape();
+        if (k <= 1)
+            return theta * variateForSmallShape();
+        if (k <= 3)
+            return theta * variateForMediumShape();
     }
-    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE &&
-             k < 5) {
-        rv = variateForHalfIntegerShape();
-    }
-    else if (k <= 1) {
-        rv = variateForSmallShape();
-    }
-    else if (k <= 3) {
-        rv = variateForMediumShape();
-    }
-    else {
-        rv = variateForLargeShape();
-    }
-
-    return theta * rv;
+    return theta * variateForLargeShape();
 }
 
 void GammaRand::sample(QVector<double> &outputData)
 {
-    int k_int = static_cast<int>(k);
-
-    if (std::fabs(k - k_int) < MIN_POSITIVE &&
-            k < 5) {
-        for (double &var : outputData)
-            var = theta * variateForIntegerShape();
+    if (k < 5) {
+        double k_round = std::round(k);
+        if (RandMath::areEqual(k, k_round)) {
+            for (double &var : outputData)
+                var = theta * variateForIntegerShape();
+            return;
+        }
+        if (RandMath::areEqual(k - 0.5, k_round)) {
+            for (double &var : outputData)
+                var = theta * variateForHalfIntegerShape();
+            return;
+        }
+        if (k <= 1) {
+            for (double &var : outputData)
+                var = theta * variateForSmallShape();
+            return;
+        }
+        if (k <= 3) {
+            for (double &var : outputData)
+                var = theta * variateForMediumShape();
+            return;
+        }
     }
-    else if (std::fabs(k - k_int - .5) < MIN_POSITIVE &&
-             k < 5) {
-        for (double &var : outputData)
-            var = theta * variateForHalfIntegerShape();
-    }
-    else if (k <= 1) {
-        for (double &var : outputData)
-            var = theta * variateForSmallShape();
-    }
-    else if (k <= 3) {
-        for (double &var : outputData)
-            var = theta * variateForMediumShape();
-    }
-    else {
-        for (double &var : outputData)
-            var = theta * variateForLargeShape();
-    }
+    
+    for (double &var : outputData)
+        var = theta * variateForLargeShape();
 }
 
 double GammaRand::variateForIntegerShape() const
@@ -124,8 +117,8 @@ double GammaRand::variateForHalfIntegerShape() const
     double rv = 0;
     for (int i = 0; i < k - 1; ++i)
         rv += ExponentialRand::standardVariate();
-    double n = NormalRand::standardVariate();
-    return rv + .5 * n * n;
+    double N = NormalRand::standardVariate();
+    return rv + .5 * N * N;
 }
 
 double GammaRand::variateForSmallShape() const
@@ -133,19 +126,19 @@ double GammaRand::variateForSmallShape() const
     double rv = 0;
     int iter = 0;
     do {
-        double u = UniformRand::standardVariate();
-        double p = k * variateCoef * u;
-        double e = ExponentialRand::standardVariate();
+        double U = UniformRand::standardVariate();
+        double p = k * variateCoef * U;
+        double W = ExponentialRand::standardVariate();
         if (p <= 1)
         {
             rv = std::pow(p, kInv);
-            if (rv <= e)
+            if (rv <= W)
                 return rv;
         }
         else
         {
-            rv = -std::log(variateCoef * (1 - u));
-            if ((1 - k) * std::log(rv) <= e)
+            rv = -std::log(variateCoef * (1 - U));
+            if ((1 - k) * std::log(rv) <= W)
                 return rv;
         }
     } while (++iter < 1e9); /// one billion should be enough
@@ -154,12 +147,12 @@ double GammaRand::variateForSmallShape() const
 
 double GammaRand::variateForMediumShape() const
 {
-    double e1, e2;
+    double W1, W2;
     do {
-        e1 = ExponentialRand::standardVariate();
-        e2 = ExponentialRand::standardVariate();
-    } while (e2 < (k - 1) * (e1 - std::log(e1) - 1));
-    return k * e1;
+        W1 = ExponentialRand::standardVariate();
+        W2 = ExponentialRand::standardVariate();
+    } while (W2 < (k - 1) * (W1 - std::log(W1) - 1));
+    return k * W1;
 }
 
 double GammaRand::variateForLargeShape() const
@@ -167,33 +160,33 @@ double GammaRand::variateForLargeShape() const
     double rv = 0;
     int iter = 0;
     do {
-        double u = UniformRand::standardVariate();
-        if (u <= 0.0095722652)
+        double U = UniformRand::standardVariate();
+        if (U <= 0.0095722652)
         {
-            double e1 = ExponentialRand::standardVariate();
-            double e2 = ExponentialRand::standardVariate();
-            rv = b * (1 + e1 / d);
-            if (m * (rv / b - std::log(rv / m)) + c <= e2)
+            double W1 = ExponentialRand::standardVariate();
+            double W2 = ExponentialRand::standardVariate();
+            rv = b * (1 + W1 / d);
+            if (m * (rv / b - std::log(rv / m)) + c <= W2)
                 return rv;
         }
         else
         {
-            double n;
+            double N;
             do {
-                n = NormalRand::standardVariate();
-                rv = s * n + m;
+                N = NormalRand::standardVariate();
+                rv = s * N + m;
             } while (rv < 0 || rv > b);
-            u = UniformRand::standardVariate();
-            double S = .5 * n * n;
-            if (n > 0)
+            U = UniformRand::standardVariate();
+            double S = .5 * N * N;
+            if (N > 0)
             {
-                if (u < 1 - w * S)
+                if (U < 1 - w * S)
                     return rv;
             }
-            else if (u < 1 + S * (v * n - w))
+            else if (U < 1 + S * (v * N - w))
                 return rv;
 
-            if (std::log(u) < m * std::log(rv / m) + m - rv + S)
+            if (std::log(U) < m * std::log(rv / m) + m - rv + S)
                 return rv;
         }
     } while (++iter < 1e9); /// one billion should be enough
