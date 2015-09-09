@@ -26,13 +26,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return RandMath::harmonicNumber(s - 1, N) * invHarmonicNumber; }
-    double Var() const override {
-        double numerator = RandMath::harmonicNumber(s - 1, N);
-        numerator *= numerator;
-        numerator = RandMath::harmonicNumber(s - 2, N) * RandMath::harmonicNumber(s, N) - numerator;
-        return numerator * invHarmonicNumber * invHarmonicNumber;
-    }
+    double E() const override;
+    double Var() const override;
 };
 
 #endif // ZIPFRAND_H
