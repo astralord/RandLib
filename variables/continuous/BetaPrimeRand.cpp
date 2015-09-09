@@ -62,6 +62,12 @@ double BetaPrimeRand::Var() const
     return numerator / denominator;
 }
 
+double BetaPrimeRand::Median()
+{
+    //TODO:
+    return 1.0;
+}
+
 double BetaPrimeRand::Mode()
 {
     return (X.getShape() < 1) ? 0 : (X.getShape() - 1) / (Y.getShape() + 1);
@@ -79,5 +85,17 @@ double BetaPrimeRand::Skewness()
     aux += alpha;
     aux += aux;
     return aux * skewness / (beta - 3);
+}
 
+double BetaPrimeRand::ExcessKurtosis()
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    if (beta <= 4)
+        return INFINITY;
+    double betam1 = beta - 1;
+    double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
+    numerator += 5 * beta - 11;
+    double denominator = (beta - 3) * (beta - 4);
+    return 6 * numerator / denominator;
 }
