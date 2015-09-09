@@ -29,7 +29,7 @@ public:
     double variate() const override;
 
 public:
-    double E() const override { return std::tgamma(m + 0.5) * gammaMInv * std::sqrt(w / m); }
+    double E() const override;
     double Var() const override {
         double res = std::tgamma(m + 0.5) * gammaMInv;
         res *= res;

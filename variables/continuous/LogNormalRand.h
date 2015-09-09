@@ -25,8 +25,9 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return expMu * std::sqrt(expVar); }
-    double Var() const override { return (expVar - 1) * expMu * expMu * expVar; }
+    double E() const override;
+    double Var() const override;
+
     double quantile(double p);
 
     inline double Median() const { return expMu; }

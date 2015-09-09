@@ -71,3 +71,8 @@ double TriangularRand::variate() const
         return a + std::sqrt(u * coefGenerator1);
     return b - std::sqrt((1 - u) * coefGenerator2);
 }
+
+double TriangularRand::Var() const
+{
+    return (a * (a - b) + b * (b - c) + c * (c - a)) / 18;
+}

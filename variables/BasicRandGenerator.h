@@ -29,11 +29,11 @@ public:
     static constexpr unsigned long long maxValue() { return 18446744073709551615ULL; }
 };
 
-#ifdef JKISS32RAND
+//#ifdef JKISS32RAND
 typedef BasicRandGenerator<JKISS32> RandGenerator;
-#else
+/*#else
 typedef BasicRandGenerator<> RandGenerator;
-#endif
+#endif*/
 
 
 #endif // BASICRANDGENERATOR_H

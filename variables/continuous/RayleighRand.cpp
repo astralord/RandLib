@@ -37,6 +37,37 @@ double RayleighRand::variate() const
     return std::sqrt(ExponentialRand::variate(sigmaSqInv_2));
 }
 
+double RayleighRand::E() const
+{
+    return sigma * M_SQRTPI * M_SQRT1_2;
+}
+
+double RayleighRand::Var() const
+{
+    return (1 - M_PI_4) * sigmaSqInv_2;
+}
+
+double RayleighRand::Median() const
+{
+    return sigma * std::sqrt(M_LN2 + M_LN2);
+}
+
+double RayleighRand::Mode() const
+{
+    return sigma;
+}
+
+double RayleighRand::Skewness()
+{
+    return 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+}
+
+double RayleighRand::ExcessKurtosis()
+{
+    double piMinus4 = (M_PI - 4);
+    return (6 * M_PI - 16.0 / piMinus4) / piMinus4;
+}
+
 bool RayleighRand::fitToData(const QVector<double> &sample)
 {
     if (sample.size() == 0)

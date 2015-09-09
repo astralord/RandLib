@@ -24,6 +24,20 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
     c = 1.0 / (b - a);
 }
 
+double UniformRand::f(double x) const
+{
+    return (x >= a && x <= b) ? c : 0;
+}
+
+double UniformRand::F(double x) const
+{
+    if (x < a)
+        return 0;
+    if (x > b)
+        return 1;
+    return c * (x - a);
+}
+
 double UniformRand::variate() const
 {
     return a + standardVariate() * (b - a);
@@ -43,18 +57,9 @@ double UniformRand::standardVariate()
     return x - 1.0;
 }
 
-double UniformRand::f(double x) const
+double UniformRand::Entropy() const
 {
-    return (x >= a && x <= b) ? c : 0;
-}
-
-double UniformRand::F(double x) const
-{
-    if (x < a)
-        return 0;
-    if (x > b)
-        return 1;
-    return c * (x - a);
+    return (b == a) ? -INFINITY : std::log(b - a);
 }
 
 bool UniformRand::fitToData(const QVector<double> &sample)

@@ -56,6 +56,18 @@ public:
     void cdf(const QVector<double> &x, QVector<double> &y);
 
     /**
+     * @brief M
+     * @return Mathematical expectation
+     */
+    virtual double E() const = 0;
+
+    /**
+     * @brief Var
+     * @return Variance
+     */
+    virtual double Var() const = 0;
+
+    /**
      * @brief CF
      * @param x
      * @return Characteristic function (inverse Fourier transform of probability function)
@@ -71,18 +83,6 @@ public:
      * @param y output vector: y = CF(x)
      */
     void cf(const QVector<double> &t, QVector<std::complex<double>> &y);
-
-    /**
-     * @brief M
-     * @return Mathematical expectation
-     */
-    virtual double E() const = 0;
-
-    /**
-     * @brief Var
-     * @return Variance
-     */
-    virtual double Var() const = 0;
 };
 
 #endif // RANDOMVARIABLE_H

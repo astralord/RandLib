@@ -35,7 +35,7 @@ public:
     static constexpr double Skewness() { return 0; }
     static constexpr double ExcessKurtosis() { return -1.2; }
 
-    inline double Entropy() const { return (b == a) ? -INFINITY : std::log(b - a); }
+    inline double Entropy() const;
 
     bool fitToData(const QVector<double> &sample);
 };

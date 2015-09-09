@@ -31,7 +31,7 @@ public:
     double E() const override { return NAN; }
     double Var() const override { return INFINITY; }
 
-    inline double Entropy() const { return std::log(4 * gamma * M_PI); }
+    inline double Entropy() const;
 };
 
 #endif // CAUCHYRAND_H

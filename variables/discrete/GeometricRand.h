@@ -40,16 +40,12 @@ public:
     double E() const override { return q / p; }
     double Var() const override { return q / (p * p); }
 
-    inline double Median() const { return std::ceil(-M_LN2 / std::log(q)) - 1; }
+    inline double Median() const;
     static double constexpr Mode() { return 0; }
-    inline double Skewness() { return (2 - p) / std::sqrt(q); }
-    inline double ExcessiveKurtosis() { return p * p / q + 6; }
+    inline double Skewness();
+    inline double ExcessiveKurtosis();
 
-    inline double Entropy() const {
-        double a = -q * std::log(q);
-        double b = -p * std::log(p);
-        return (a + b) / (M_LN2 * p);
-    }
+    inline double Entropy() const;
 };
 
 #endif // GEOMETRICRAND_H

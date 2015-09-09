@@ -23,13 +23,13 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return sigma * M_SQRTPI * M_SQRT1_2; }
-    double Var() const override { return (1 - M_PI_4) * sigmaSqInv_2; }
+    double E() const override;
+    double Var() const override;
 
-    inline double Median() const { return sigma * std::sqrt(2 * M_LN2); }
-    inline double Mode() const { return sigma; }
-    static constexpr double Skewness() { return 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5); }
-    static constexpr double ExcessKurtosis() { return (6 * M_PI / (M_PI - 4) - 16 / (M_PI - 4) / (M_PI - 4)); }
+    inline double Median() const;
+    inline double Mode() const;
+    static constexpr double Skewness();
+    static constexpr double ExcessKurtosis();
 
     bool fitToData(const QVector<double> &sample);
 };

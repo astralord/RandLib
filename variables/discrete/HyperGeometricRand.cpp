@@ -56,3 +56,16 @@ double HyperGeometricRand::variate() const
     return sum;
 }
 
+double HyperGeometricRand::E() const
+{
+    return static_cast<double>(n * K) / N;
+}
+
+double HyperGeometricRand::Var() const
+{
+    size_t numerator = n * K * (N - K) * (N  - n);
+    size_t denominator = N * N * (N - 1);
+    return static_cast<double>(numerator) / denominator;
+
+}
+

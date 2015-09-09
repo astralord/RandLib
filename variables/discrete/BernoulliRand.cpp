@@ -13,17 +13,18 @@ std::string BernoulliRand::name()
 void BernoulliRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
-    generatorEdge = (1 - p) * RandGenerator::maxValue();
+    q = 1.0 - p;
+    generatorEdge = q * RandGenerator::maxValue();
 }
 
 double BernoulliRand::P(int k) const
 {
-    return (k == 0) ? (1 - p) : ((k == 1) ? p : 0);
+    return (k == 0) ? q : ((k == 1) ? p : 0);
 }
 
 double BernoulliRand::F(double x) const
 {
-    return (x < 0) ? 0 : ((x < 1) ? 1 - p : 1);
+    return (x < 0) ? 0 : ((x < 1) ? q : 1);
 }
 
 double BernoulliRand::variate() const
@@ -33,10 +34,30 @@ double BernoulliRand::variate() const
 
 double BernoulliRand::variate(double p)
 {
-    return (RandGenerator::variate() < (1 - p) * RandGenerator::maxValue()) ? 0 : 1;
+    return (RandGenerator::variate() < q * RandGenerator::maxValue()) ? 0 : 1;
 }
 
 std::complex<double> BernoulliRand::CF(double t) const
 {
-    return std::complex<double>(1 - p + p * std::cos(t), std::sin(t));
+    return std::complex<double>(q + p * std::cos(t), std::sin(t));
+}
+
+double BernoulliRand::Median()
+{
+    return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : 0.5);
+}
+
+double BernoulliRand::Skewness()
+{
+    return (q - p) / std::sqrt(p * q);
+}
+
+double BernoulliRand::ExcessiveKurtosis()
+{
+    return 1.0 / (p * q) - 6;
+}
+
+double BernoulliRand::Entropy()
+{
+    return -(p * std::log(p) + q * std::log(q));
 }

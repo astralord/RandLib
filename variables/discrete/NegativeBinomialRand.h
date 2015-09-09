@@ -34,9 +34,8 @@ private:
     double variateThroughGammaPoisson() const;
 
 public:
-
-    double E() const override { return p * r / (1 - p); }
-    double Var() const override { return E() / (1 - p); }
+    double E() const override;
+    double Var() const override;
 };
 
 typedef NegativeBinomialRand<int> PascaleRand;

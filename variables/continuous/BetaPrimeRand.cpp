@@ -44,3 +44,40 @@ void BetaPrimeRand::sample(QVector<double> &outputData)
     for (double &var : outputData)
         var = var / (1.0 - var);
 }
+
+double BetaPrimeRand::E() const
+{
+    return (Y.getShape() > 1) ? X.getShape() / (Y.getShape() - 1) : INFINITY;
+}
+
+double BetaPrimeRand::Var() const
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    if (beta <= 2)
+        return INFINITY;
+    double betaAdj = beta - 1;
+    double numerator = alpha * (alpha + betaAdj);
+    double denominator = (betaAdj - 1) * betaAdj * betaAdj;
+    return numerator / denominator;
+}
+
+double BetaPrimeRand::Mode()
+{
+    return (X.getShape() < 1) ? 0 : (X.getShape() - 1) / (Y.getShape() + 1);
+}
+
+double BetaPrimeRand::Skewness()
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    if (beta <= 3)
+        return INFINITY;
+    double aux = alpha + beta - 1;
+    double skewness = (beta - 2) / (alpha * aux);
+    skewness = std::sqrt(skewness);
+    aux += alpha;
+    aux += aux;
+    return aux * skewness / (beta - 3);
+
+}

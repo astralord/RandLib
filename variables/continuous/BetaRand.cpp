@@ -146,11 +146,26 @@ void BetaRand::setVariateConstants()
     if (alpha > edgeForGenerators && std::fabs(alpha - Y.getShape()) < MIN_POSITIVE)
     {
         double t = 1.0 / (alpha + alpha + 1);
-        variateCoef = std::sqrt(0.5 * M_PI * M_E * M_E * M_E * t);
-        variateCoef *= std::pow(0.25 * (1 - 3 * t), alpha - 1);
+        variateCoef = M_E * std::sqrt(0.5 * M_PI * M_E * t);
+        variateCoef *= std::pow(0.25 - 0.75 * t, alpha - 1);
         variateCoef *= pdfCoef; /// /= Beta(alpha, alpha)
 
         N.setMean(0.5);
         N.setVar(0.25 * t);
     }
+}
+
+double BetaRand::E() const
+{
+    return X.getShape() / (X.getShape() + Y.getShape());
+}
+
+double BetaRand::Var() const
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    double denominator = alpha + beta;
+    denominator *= denominator * (denominator + 1);
+    return alpha * beta / denominator;
+
 }

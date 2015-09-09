@@ -34,7 +34,6 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
-    std::complex<double> CF(double t) const override;
     double variate() const override;
 
     void sample(QVector<double> &outputData);
@@ -50,8 +49,10 @@ public:
     double E() const override { return k * theta; }
     double Var() const override { return k * theta * theta; }
 
-    inline double Mode() { return (k < 1) ? 0 : (k - 1) * theta; }
-    inline double Skewness() { return 2.0 / std::sqrt(k); }
+    std::complex<double> CF(double t) const override;
+
+    inline double Mode();
+    inline double Skewness();
     inline double ExcessKurtosis() { return 6.0 * kInv; }
     
     /**

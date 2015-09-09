@@ -37,3 +37,16 @@ double WeibullRand::variate() const
 {
     return l * std::pow(ExponentialRand::standardVariate(), 1.0 / k);
 }
+
+double WeibullRand::E() const
+{
+    return l * std::tgamma(1 + 1.0 / k);
+}
+
+double WeibullRand::Var() const
+{
+    double res = std::tgamma(1 + 1.0 / k);
+    res *= res;
+    res += std::tgamma(1 + 2.0 / k);
+    return l * l * res;
+}

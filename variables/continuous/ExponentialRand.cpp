@@ -50,13 +50,6 @@ double ExponentialRand::F(double x) const
     return (x > 0) ? 1 - std::exp(-lambda * x) : 0;
 }
 
-std::complex<double> ExponentialRand::CF(double t) const
-{
-    double rate2 = lambda * lambda;
-    double denominator = rate2 + t * t;
-    return std::complex<double>(rate2 / denominator, lambda * t / denominator);
-}
-
 double ExponentialRand::variate() const
 {
     return beta * standardVariate();
@@ -90,9 +83,21 @@ double ExponentialRand::standardVariate()
     return 0; /// fail due to some error
 }
 
+std::complex<double> ExponentialRand::CF(double t) const
+{
+    double rate2 = lambda * lambda;
+    double denominator = rate2 + t * t;
+    return std::complex<double>(rate2 / denominator, lambda * t / denominator);
+}
+
 double ExponentialRand::quantile(double p)
 {
     return -beta * std::log(p);
+}
+
+double ExponentialRand::Entropy() const
+{
+    return 1 - std::log(lambda);
 }
 
 bool ExponentialRand::fitToData(const QVector<double> &sample)

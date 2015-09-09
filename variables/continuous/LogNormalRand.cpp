@@ -38,6 +38,16 @@ double LogNormalRand::variate() const
     return std::exp(X.variate());
 }
 
+double LogNormalRand::E() const
+{
+    return expMu * std::sqrt(expVar);
+}
+
+double LogNormalRand::Var() const
+{
+    return (expVar - 1) * expMu * expMu * expVar;
+}
+
 double LogNormalRand::quantile(double p)
 {
     return std::exp(X.quantile(p));

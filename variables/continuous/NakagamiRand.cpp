@@ -41,3 +41,15 @@ double NakagamiRand::variate() const
     return std::sqrt(Y.variate());
 }
 
+double NakagamiRand::E() const
+{
+    return std::tgamma(m + 0.5) * gammaMInv * std::sqrt(w / m);
+}
+
+double NakagamiRand::Var() const
+{
+    double res = std::tgamma(m + 0.5) * gammaMInv;
+    res *= res;
+    return w * (1 - res / m);
+}
+

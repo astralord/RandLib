@@ -99,3 +99,25 @@ double GeometricRand::variateByTable() const
     return x;
 }
 
+double GeometricRand::Median() const
+{
+    return std::ceil(-M_LN2 / std::log(q)) - 1;
+}
+
+double GeometricRand::Skewness()
+{
+    return (2 - p) / std::sqrt(q);
+}
+
+double GeometricRand::ExcessiveKurtosis()
+{
+    return p * p / q + 6;
+}
+
+double GeometricRand::Entropy() const
+{
+    double a = -q * std::log(q);
+    double b = -p * std::log(p);
+    return (a + b) / (M_LN2 * p);
+}
+

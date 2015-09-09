@@ -58,11 +58,6 @@ double GammaRand::F(double x) const
     return cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
 }
 
-std::complex<double> GammaRand::CF(double t) const
-{
-    return std::pow(std::complex<double>(1.0, -theta * t), -k);
-}
-
 double GammaRand::variate() const
 {
     double rv = 0;
@@ -203,4 +198,24 @@ double GammaRand::variateForLargeShape() const
         }
     } while (++iter < 1e9); /// one billion should be enough
     return 0; /// shouldn't end up here
+}
+
+std::complex<double> GammaRand::CF(double t) const
+{
+    return std::pow(std::complex<double>(1.0, -theta * t), -k);
+}
+
+double GammaRand::Mode()
+{
+    return (k < 1) ? 0 : (k - 1) * theta;
+}
+
+double GammaRand::Skewness()
+{
+    return 2.0 / std::sqrt(k);
+}
+
+double GammaRand::ExcessKurtosis()
+{
+    return 6.0 * kInv;
 }

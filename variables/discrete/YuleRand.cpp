@@ -42,3 +42,16 @@ double YuleRand::variate(double shape)
     return GeometricRand::variate(prob) + 1;
 }
 
+double YuleRand::E() const
+{
+    return (ro <= 1) ? INFINITY : ro / (ro - 1);
+}
+
+double YuleRand::Var() const
+{
+    if (ro <= 2)
+        return INFINITY;
+    double aux = ro / (ro - 1);
+    return aux * aux / (ro - 2);
+}
+

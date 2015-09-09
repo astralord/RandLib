@@ -24,13 +24,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return l * std::tgamma(1 + 1.0 / k); }
-    double Var() const override {
-        double res = std::tgamma(1 + 1.0 / k);
-        res *= res;
-        res += std::tgamma(1 + 2.0 / k);
-        return l * l * res;
-    }
+    double E() const override;
+    double Var() const override;
 };
 
 #endif // WEIBULLRAND_H

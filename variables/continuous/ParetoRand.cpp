@@ -86,6 +86,37 @@ void ParetoRand::sample(QVector<double> &outputData)
     }
 }
 
+double ParetoRand::E() const
+{
+    return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY;
+}
+
+double ParetoRand::Var() const
+{
+    if (alpha > 2)
+    {
+        double var = xm / (alpha - 1);
+        var *= var;
+        return alpha * var / (alpha - 2);
+    }
+    return (alpha > 1) ? INFINITY : NAN;
+}
+
+double ParetoRand::Median() const
+{
+    return xm * std::pow(2.0, alphaInv);
+}
+
+double ParetoRand::Mode() const
+{
+    return xm;
+}
+
+double ParetoRand::Entropy() const
+{
+    return std::log(xm * alphaInv) + alphaInv + 1;
+}
+
 bool ParetoRand::fitToData(const QVector<double> &sample)
 {
     if (sample.size() == 0)

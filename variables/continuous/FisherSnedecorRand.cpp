@@ -83,3 +83,20 @@ void FisherSnedecorRand::sample(QVector<double> &outputData)
     for (double &var : outputData)
         var = d2_d1 * var;
 }
+
+double FisherSnedecorRand::E() const
+{
+    return (d2 > 2) ? d2 / (d2 - 2) : INFINITY /*or NAN*/;
+}
+
+double FisherSnedecorRand::Var() const
+{
+    if (d2 <= 4)
+        return INFINITY; /*or NAN*/
+    double numerator = 2 * d2 * d2 * (d1 + d2 - 2);
+    double denominator = d2 - 2;
+    denominator *= denominator;
+    denominator *= d1 * (d2 - 4);
+    return numerator / denominator;
+
+}

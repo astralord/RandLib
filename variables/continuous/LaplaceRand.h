@@ -29,10 +29,11 @@ public:
     static double variate(double location, double scale);
     void sample(QVector<double> &outputData);
 
-    std::complex<double> CF(double t) const override;
-
     double E() const override { return mu; }
     double Var() const override { return 2 * b * b; }
+
+    std::complex<double> CF(double t) const override;
+
     bool fitToData(const QVector<double> &sample);
 };
 

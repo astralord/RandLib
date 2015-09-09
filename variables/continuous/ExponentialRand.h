@@ -29,7 +29,6 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
-    std::complex<double> CF(double t) const override;
     double variate() const override;
 
     static double variate(double lambda);
@@ -37,12 +36,14 @@ public:
 
     double E() const override { return beta; }
     double Var() const override { return beta * beta; }
+
+    std::complex<double> CF(double t) const override;
     double quantile(double p);
 
     static constexpr double Skewness() { return 2.0; }
     static constexpr double ExcessiveKurtosis() { return 6.0; }
 
-    inline double Entropy() const { return 1 - std::log(lambda); }
+    inline double Entropy() const;
 
     bool fitToData(const QVector<double> &sample);
 };

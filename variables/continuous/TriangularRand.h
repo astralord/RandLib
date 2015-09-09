@@ -32,7 +32,7 @@ public:
 
 public:
     double E() const override { return (a + b + c) / 3; }
-    double Var() const override { return (a * (a - b) + b * (b - c) + c * (c - a)) / 18; }
+    double Var() const override;
 };
 
 #endif // TRIANGULARRAND_H

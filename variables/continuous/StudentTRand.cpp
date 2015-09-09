@@ -56,3 +56,16 @@ void StudentTRand::sample(QVector<double> &outputData)
             var = NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
     }
 }
+
+double StudentTRand::E() const
+{
+    return (v > 1) ? 0 : NAN;
+}
+
+double StudentTRand::Var() const
+{
+    if (v > 2)
+        return v / (v - 2);
+    return (v > 1) ? INFINITY : NAN;
+
+}

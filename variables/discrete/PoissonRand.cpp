@@ -29,14 +29,6 @@ double PoissonRand::F(double x) const
     return RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);
 }
 
-std::complex<double> PoissonRand::CF(double t) const
-{
-    std::complex<double> y(0.0, t);
-    y = std::exp(y) - 1.0;
-    y *= lambda;
-    return std::exp(y);
-}
-
 double PoissonRand::variate() const
 {
     int y = 0;
@@ -59,4 +51,27 @@ double PoissonRand::variate(double rate)
         ++y;
     } while (s < rate);
     return y;
+}
+
+std::complex<double> PoissonRand::CF(double t) const
+{
+    std::complex<double> y(0.0, t);
+    y = std::exp(y) - 1.0;
+    y *= lambda;
+    return std::exp(y);
+}
+
+double PoissonRand::Mode() const
+{
+    return std::floor(lambda);
+}
+
+double PoissonRand::Skewness() const
+{
+    return 1.0 / std::sqrt(lambda);
+}
+
+double PoissonRand::ExcessiveKurtosis() const
+{
+    return 1.0 / lambda;
 }

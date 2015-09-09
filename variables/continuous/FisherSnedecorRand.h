@@ -30,16 +30,8 @@ public:
     double variate() const override;
     void sample(QVector<double> &outputData);
 
-    double E() const override { return (d2 > 2) ? d2 / (d2 - 2) : INFINITY /*or NAN*/; }
-    double Var() const override {
-        if (d2 <= 4)
-            return INFINITY; /*or NAN*/
-        double numerator = 2 * d2 * d2 * (d1 + d2 - 2);
-        double denominator = d2 - 2;
-        denominator *= denominator;
-        denominator *= d1 * (d2 - 4);
-        return numerator / denominator;
-    }
+    double E() const override;
+    double Var() const override;
 };
 
 #endif // FISHERSNEDECORRAND_H

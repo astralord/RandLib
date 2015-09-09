@@ -37,21 +37,13 @@ private:
 public:
     void sample(QVector<double> &outputData);
 
-    double E() const override { return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY; }
-    double Var() const override {
-        if (alpha > 2)
-        {
-            double var = xm / (alpha - 1);
-            var *= var;
-            return alpha * var / (alpha - 2);
-        }
-        return (alpha > 1) ? INFINITY : NAN;
-    }
+    double E() const override;
+    double Var() const override;
 
-    inline double Median() const { return xm * std::pow(2.0, alphaInv); }
-    inline double Mode() const { return xm; }
+    inline double Median() const;
+    inline double Mode() const;
 
-    inline double Entropy() const { return std::log(xm * alphaInv) + alphaInv + 1; }
+    inline double Entropy() const;
 
     bool fitToData(const QVector<double> &sample);
 };

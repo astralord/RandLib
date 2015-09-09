@@ -42,14 +42,8 @@ private:
     void setVariateConstants();
 
 public:
-    double E() const override { return X.getShape() / (X.getShape() + Y.getShape()); }
-    double Var() const override {
-        double alpha = X.getShape();
-        double beta = Y.getShape();
-        double denominator = alpha + beta;
-        denominator *= denominator * (denominator + 1);
-        return alpha * beta / denominator;
-    }
+    double E() const override;
+    double Var() const override;
 
     /**
      * @brief getInvBetaFunction

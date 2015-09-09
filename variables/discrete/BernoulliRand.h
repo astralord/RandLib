@@ -9,7 +9,7 @@
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand<int>
 {
-    double p;
+    double p, q;
     unsigned long long generatorEdge; /// such value that probability of (BasicRandGenerator's variate > generatorEdge) is equal p
 
 public:
@@ -24,16 +24,17 @@ public:
     double variate() const override;
     static double variate(double p);
 
-    std::complex<double> CF(double t) const override;
-
     double E() const override { return p; }
     double Var() const override { return p * (1 - p); }
 
-    inline double Median() { return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : 0.5); }
-    inline double Skewness() { return (1 - 2 * p) / std::sqrt(p * (1 - p)); }
-    inline double ExcessiveKurtosis() { return 1.0 / (p * (1 - p)) - 6; }
+    std::complex<double> CF(double t) const override;
 
-    inline double Entropy() { return -(p * std::log(p) + (1- p) * std::log(1 - p)); }
+    inline double Median();
+    inline double Skewness();
+    inline double ExcessiveKurtosis();
+
+    inline double Entropy();
+
 };
 
 #endif // BERNOULLIRAND_H

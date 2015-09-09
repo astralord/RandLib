@@ -27,12 +27,8 @@ public:
 
     void sample(QVector<double> &outputData);
 
-    double E() const override { return (v > 1) ? 0 : NAN; }
-    double Var() const override {
-        if (v > 2)
-            return v / (v - 2);
-        return (v > 1) ? INFINITY : NAN;
-    }
+    double E() const override;
+    double Var() const override;
 };
 
 #endif // STUDENTTRAND_H

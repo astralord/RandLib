@@ -59,3 +59,8 @@ double CauchyRand::standardVariate()
     } while (x * x + y * y > 1.0 || y == 0.0);
     return x / y;
 }
+
+double CauchyRand::Entropy() const
+{
+     return std::log(4 * gamma * M_PI);
+}

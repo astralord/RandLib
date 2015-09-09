@@ -22,10 +22,7 @@ public:
     double variate() const override;
 
     double E() const { return mu; }
-    double Var() const {
-        double sPi = s * M_PI;
-        return sPi * sPi / 3;
-    }
+    double Var() const;
 
     inline double Median() const { return mu; }
     inline double Mode() const { return mu; }
