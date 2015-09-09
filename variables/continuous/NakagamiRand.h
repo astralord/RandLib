@@ -30,11 +30,7 @@ public:
 
 public:
     double E() const override;
-    double Var() const override {
-        double res = std::tgamma(m + 0.5) * gammaMInv;
-        res *= res;
-        return w * (1 - res / m);
-    }
+    double Var() const override;
 };
 
 #endif // NAKAGAMIRAND_H

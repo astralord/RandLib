@@ -19,6 +19,7 @@ static double NAN = std::numeric_limits<double>::quiet_NaN();
 
 #define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
 
+#ifndef QMATH_H
 constexpr double M_E         = 2.71828182845904523536;
 constexpr double M_LOG2E     = 1.44269504088896340760;
 constexpr double M_LOG10E    = 0.43429448190325182765;
@@ -32,6 +33,7 @@ constexpr double M_2_PI      = 0.63661977236758134308;
 constexpr double M_2_SQRTPI  = 1.12837916709551257390;
 constexpr double M_SQRT2     = 1.41421356237309504880;
 constexpr double M_SQRT1_2   = 0.70710678118654752440;
+#endif
 
 constexpr double M_SQRT3     = 1.73205080756887729353;
 constexpr double M_SQRT5     = 2.23606797749978969640;
@@ -166,7 +168,7 @@ public:
     static double betaFun(double a, double b);
 
     /**
-     * @brief regulBetaFun
+     * @brief regularizedBetaFun
      * @param x
      * @param a
      * @param b

@@ -57,15 +57,14 @@ double RayleighRand::Mode() const
     return sigma;
 }
 
-double RayleighRand::Skewness()
+constexpr double RayleighRand::Skewness()
 {
     return 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
 }
 
-double RayleighRand::ExcessKurtosis()
+constexpr double RayleighRand::ExcessKurtosis()
 {
-    double piMinus4 = (M_PI - 4);
-    return (6 * M_PI - 16.0 / piMinus4) / piMinus4;
+    return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }
 
 bool RayleighRand::fitToData(const QVector<double> &sample)

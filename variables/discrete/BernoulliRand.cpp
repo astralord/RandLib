@@ -34,7 +34,7 @@ double BernoulliRand::variate() const
 
 double BernoulliRand::variate(double p)
 {
-    return (RandGenerator::variate() < q * RandGenerator::maxValue()) ? 0 : 1;
+    return (RandGenerator::variate() < (1.0 - p) * RandGenerator::maxValue()) ? 0 : 1;
 }
 
 std::complex<double> BernoulliRand::CF(double t) const

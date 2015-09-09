@@ -53,7 +53,7 @@ public:
 
     inline double Mode();
     inline double Skewness();
-    inline double ExcessKurtosis() { return 6.0 * kInv; }
+    inline double ExcessKurtosis();
     
     /**
      * @brief getInverseGammaFunction

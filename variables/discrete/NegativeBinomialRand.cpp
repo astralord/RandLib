@@ -73,12 +73,14 @@ double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
     return PoissonRand::variate(Y.variate());
 }
 
-double NegativeBinomialRand::E() const
+template< typename T >
+double NegativeBinomialRand<T>::E() const
 {
     return p * r / (1 - p);
 }
 
-double NegativeBinomialRand::Var() const
+template< typename T >
+double NegativeBinomialRand<T>::Var() const
 {
     return E() / (1 - p);
 }
