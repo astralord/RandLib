@@ -21,8 +21,10 @@ public:
     double E() const override;
     double Var() const override;
     
+    double Median();
     inline double Mode();
     double Skewness();
+    double ExcessKurtosis();
 };
 
 #endif // BETAPRIMERAND_H
