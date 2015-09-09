@@ -58,18 +58,18 @@ double BetaPrimeRand::Var() const
     return numerator / denominator;
 }
 
-double BetaPrimeRand::Median()
+double BetaPrimeRand::Median() const
 {
-    //TODO:
-    return 1.0;
+    double betaMedian = BetaRand::Median();
+    return betaMedian / (1.0 + betaMedian);
 }
 
-double BetaPrimeRand::Mode()
+double BetaPrimeRand::Mode() const
 {
     return (X.getShape() < 1) ? 0 : (X.getShape() - 1) / (Y.getShape() + 1);
 }
 
-double BetaPrimeRand::Skewness()
+double BetaPrimeRand::Skewness() const
 {
     double alpha = X.getShape();
     double beta = Y.getShape();
@@ -83,7 +83,7 @@ double BetaPrimeRand::Skewness()
     return aux * skewness / (beta - 3);
 }
 
-double BetaPrimeRand::ExcessKurtosis()
+double BetaPrimeRand::ExcessKurtosis() const
 {
     double alpha = X.getShape();
     double beta = Y.getShape();

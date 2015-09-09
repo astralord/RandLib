@@ -31,7 +31,7 @@ void GammaRand::setParameters(double shape, double scale)
    
     double k_round = std::round(k);
     if (RandMath::areEqual(k, k_round)) {
-        k = k_round
+        k = k_round;
         cdfCoef = 1.0 / RandMath::factorial(k - 1);
     }
     else {

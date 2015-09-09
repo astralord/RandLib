@@ -1,6 +1,6 @@
 #include "ErlangRand.h"
 
-ErlangRand::ErlangRand(int shape, double rate)
+ErlangRand::ErlangRand(size_t shape, double rate)
 {
     setParameters(shape, rate);
 }

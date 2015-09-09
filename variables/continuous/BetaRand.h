@@ -45,6 +45,13 @@ public:
     double E() const override;
     double Var() const override;
 
+    double Median() const;
+    double Mode() const;
+    double Skewness() const;
+    double ExcessKurtosis() const;
+
+    double quantile(double p) const;
+
     /**
      * @brief getInvBetaFunction
      * @return 1 / B(alpha, beta)

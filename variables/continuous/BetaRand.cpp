@@ -169,3 +169,53 @@ double BetaRand::Var() const
     return alpha * beta / denominator;
 
 }
+
+double BetaRand::Median() const
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    return (alpha - 1) / (alpha + beta - 2);
+}
+
+double BetaRand::Mode() const
+{
+    return quantile(0.5);
+}
+
+double BetaRand::Skewness() const
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    double skewness = (alpha + beta + 1) / (alpha * beta);
+    skewness = std::sqrt(skewness);
+    skewness *= (alpha - beta);
+    skewness /= (alpha + beta + 2);
+    return skewness + skewness;
+}
+
+double BetaRand::ExcessKurtosis() const
+{
+    double alpha = X.getShape();
+    double beta = Y.getShape();
+    double sum = alpha + beta;
+    double kurtosis = alpha - beta;
+    kurtosis *= kurtosis;
+    kurtosis *= (sum + 1);
+    kurtosis /= (alpha * beta * (sum + 2));
+    --kurtosis;
+    kurtosis /= (sum + 3);
+    return 6 * kurtosis;
+}
+
+double BetaRand::quantile(double p) const
+{
+    double root = 0;
+    if (p <= 0 || p >= 1)
+        return NAN;
+    RandMath::findRoot([this, p] (double x)
+    {
+        return BetaRand::F(x) - p;
+    },
+    0, 1, root);
+    return root;
+}
