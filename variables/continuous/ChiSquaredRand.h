@@ -14,7 +14,7 @@ public:
     virtual std::string name() override;
 
     void setDegree(size_t degree);
-    inline size_t getDegree() const { return k + k; }
+    inline size_t getDegree() const { return static_cast<size_t>(k + k); }
 };
 
 #endif // CHISQUAREDRAND_H
