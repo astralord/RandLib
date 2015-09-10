@@ -43,6 +43,8 @@ double UniformDiscreteRand::quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
+    if (p == 0)
+        return -INFINITY;
     double x = p * n + a - 1;
     double xFloor = std::floor(x);
     if RandMath::areEqual(x, xFloor)
