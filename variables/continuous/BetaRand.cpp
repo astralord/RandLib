@@ -76,7 +76,7 @@ double BetaRand::F(double x) const
 double BetaRand::variate() const
 {
     double alpha = X.getShape(), beta = Y.getShape();
-    if (std::fabs(alpha - beta) > MIN_POSITIVE || alpha < 1)
+    if (!RandMath::areEqual(alpha, beta) || alpha < 1)
         return variateForDifferentParameters();
     if (alpha == 1)
         return UniformRand::standardVariate();
@@ -88,7 +88,7 @@ double BetaRand::variate() const
 void BetaRand::sample(QVector<double> &outputData)
 {
     double alpha = X.getShape(), beta = Y.getShape();
-    if (std::fabs(alpha - beta) > MIN_POSITIVE || alpha < 1) {
+    if (!RandMath::areEqual(alpha, beta) || alpha < 1) {
         for (double &var : outputData)
             var = variateForDifferentParameters();
     }
