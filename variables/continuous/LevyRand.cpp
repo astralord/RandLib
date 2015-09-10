@@ -55,3 +55,17 @@ double LevyRand::variate() const
     return mu + rv;
 }
 
+double LevyRand::Mode() const
+{
+    return c / 3.0 + mu;
+}
+
+double LevyRand::Skewness() const
+{
+    return NAN;
+}
+
+double LevyRand::ExcessKurtosis() const
+{
+    return NAN;
+}
