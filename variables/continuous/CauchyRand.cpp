@@ -60,17 +60,17 @@ double CauchyRand::standardVariate()
     return x / y;
 }
 
-double E() const
+double CauchyRand::E() const
 { 
     return NAN;
 }
 
-double Var() const
+double CauchyRand::Var() const
 {
     return INFINITY; 
 }
     
-double quantile(double p) const
+double CauchyRand::quantile(double p) const
 {
     if (p < 0 || p > 1)
          return NAN;
@@ -81,22 +81,22 @@ double quantile(double p) const
     return x0 + gamma * std::tan(M_PI * (p - 0.5));
 }
 
-double Median() const
+double CauchyRand::Median() const
 {
     return x0;
 }
 
-double Mode() const
+double CauchyRand::Mode() const
 {
     return x0;
 }
 
-double Skewness() const
+double CauchyRand::Skewness() const
 {
     return NAN;
 }
 
-double ExcessKurtosis() const
+double CauchyRand::ExcessKurtosis() const
 {
     return NAN;
 }
