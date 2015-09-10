@@ -60,6 +60,47 @@ double CauchyRand::standardVariate()
     return x / y;
 }
 
+double E() const
+{ 
+    return NAN;
+}
+
+double Var() const
+{
+    return INFINITY; 
+}
+    
+double quantile(double p) const
+{
+    if (p < 0 || p > 1)
+         return NAN;
+    if (p == 0)
+        return -INFINITY;
+    if (p == 1)
+        return INFINITY;
+    return x0 + gamma * std::tan(M_PI * (p - 0.5));
+}
+
+double Median() const
+{
+    return x0;
+}
+
+double Mode() const
+{
+    return x0;
+}
+
+double Skewness() const
+{
+    return NAN;
+}
+
+double ExcessKurtosis() const
+{
+    return NAN;
+}
+    
 double CauchyRand::Entropy() const
 {
      return std::log(4 * gamma * M_PI);
