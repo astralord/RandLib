@@ -32,6 +32,11 @@ public:
     double E() const override { return mu; }
     double Var() const override { return 2 * b * b; }
 
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
+    
     std::complex<double> CF(double t) const override;
 
     bool fitToData(const QVector<double> &sample);
