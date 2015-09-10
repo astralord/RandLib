@@ -46,3 +46,8 @@ double ZipfRand::Var() const
     numerator = RandMath::harmonicNumber(s - 2, N) * RandMath::harmonicNumber(s, N) - numerator;
     return numerator * invHarmonicNumber * invHarmonicNumber;
 }
+
+double ZipfRand::Mode() const
+{
+    return 1.0;
+}
