@@ -20,12 +20,14 @@ public:
     double E() const override { return 0; }
     double Var() const override { return 1; }
 
+    std::complex<double> CF(double t) const override;
+
+    double quantile(double p) const override;
+
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
-
-    std::complex<double> CF(double t) const override;
     
     static constexpr double Entropy() { return M_LN2; }
 };

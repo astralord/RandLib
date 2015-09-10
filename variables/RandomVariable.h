@@ -85,10 +85,29 @@ public:
     void cf(const QVector<double> &t, QVector<std::complex<double>> &y);
 
     /**
-     * @brief Median
-     * @return such x that P(X < x) = 0.5
+     * @brief quantile
+     * @param p
+     * @return such x that F(x) = p
      */
-    virtual double Median() const { return 0; }
+    virtual double quantile(double p) const {
+        if (p < 0 || p > 1)
+            return NAN;
+        double root = 0;
+        RandMath::findRoot([this, p] (double x)
+        {
+            return BetaRand::F(x) - p;
+        },
+        0, 1, root);
+        return root;
+    }
+
+    /**
+     * @brief Median
+     * @return such x that F(x) = 0.5
+     */
+    virtual double Median() const {
+        return quantile(0.5);
+    }
 
     /**
      * @brief Mode

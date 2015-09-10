@@ -116,12 +116,16 @@ double NormalRand::standardVariate()
     return 0; /// fail due to some error
 }
 
-double NormalRand::quantile(double p)
+double NormalRand::quantile(double p) const
 {
     if (p < 0.5)
         return -quantile(1 - p);
-    if (p <= 0 || p >= 1)
+    if (p < 0 || p > 1)
         return NAN;
+    if (p == 0)
+        return -INFINITY;
+    if (p == 1)
+        return INFINITY;
     double t = -std::log(p);
     t = std::sqrt(t + t);
     static constexpr double c[] = {2.515517, 0.802853, 0.010328};

@@ -32,6 +32,16 @@ double RademacherRand::variate() const
     return 1;
 }
 
+std::complex<double> RademacherRand::CF(double t) const
+{
+    return std::cos(t);
+}
+
+double RademacherRand::quantile(double p) const
+{
+
+}
+
 double RademacherRand::Median() const
 {
     return 0.0;
@@ -51,9 +61,4 @@ double RademacherRand::Skewness() const
 double RademacherRand::ExcessKurtosis() const
 {
     return -2.0;
-}
-
-std::complex<double> RademacherRand::CF(double t) const
-{
-    return std::cos(t);
 }

@@ -42,6 +42,15 @@ std::complex<double> BernoulliRand::CF(double t) const
     return std::complex<double>(q + p * std::cos(t), std::sin(t));
 }
 
+double BernoulliRand::quantile(double p) const
+{
+    if (p == 1)
+        return 1;
+    if (p == q)
+        return 0;
+    return -INFINITY;
+}
+
 double BernoulliRand::Median() const
 {
     return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : 0.5);

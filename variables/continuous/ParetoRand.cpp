@@ -102,6 +102,17 @@ double ParetoRand::Var() const
     return (alpha > 1) ? INFINITY : NAN;
 }
 
+double ParetoRand::quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 1)
+        return INFINITY;
+    if (p == 0)
+        return -INFINITY;
+    return xm / std::pow(1 - p, alphaInv);
+}
+
 double ParetoRand::Median() const
 {
     return xm * std::pow(2.0, alphaInv);

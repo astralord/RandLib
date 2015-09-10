@@ -90,9 +90,15 @@ std::complex<double> ExponentialRand::CF(double t) const
     return std::complex<double>(rate2 / denominator, lambda * t / denominator);
 }
 
-double ExponentialRand::quantile(double p)
+double ExponentialRand::quantile(double p) const
 {
-    return -beta * std::log(p);
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return -INFINITY;
+    if (p == 1)
+        return INFINITY;
+    return -beta * std::log(1.0 - p);
 }
 
 double ExponentialRand::Median() const

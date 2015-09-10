@@ -40,6 +40,8 @@ public:
     double E() const override { return q / p; }
     double Var() const override { return q / (p * p); }
 
+    double quantile(double F) const override;
+
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;

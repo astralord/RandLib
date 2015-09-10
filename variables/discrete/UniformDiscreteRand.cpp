@@ -39,6 +39,11 @@ double UniformDiscreteRand::variate() const
     return a + RandGenerator::variate() % n;
 }
 
+double UniformDiscreteRand::quantile(double p) const
+{
+
+}
+
 double UniformDiscreteRand::Median() const
 {
     return .5 * (b + a);

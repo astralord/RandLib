@@ -99,6 +99,17 @@ double GeometricRand::variateByTable() const
     return x;
 }
 
+double GeometricRand::quantile(double F) const
+{
+    if (F < 0 || F > 1)
+        return NAN;
+    if (F == 0)
+        return -INFINITY;
+    if (F == 1)
+        return INFINITY;
+    return std::log(1 + F) / std::log(1 - p);
+}
+
 double GeometricRand::Median() const
 {
     return std::ceil(-M_LN2 / std::log(q)) - 1;

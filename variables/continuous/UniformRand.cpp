@@ -57,6 +57,15 @@ double UniformRand::standardVariate()
     return x - 1.0;
 }
 
+double UniformRand::quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return -INFINITY;
+    return a + (b - a) * p;
+}
+
 double UniformRand::Median() const
 {
     return .5 * (b + a);

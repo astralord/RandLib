@@ -31,6 +31,8 @@ public:
     double E() const override { return .5 * (b + a); }
     double Var() const override { return (b - a) * (b - a) / 12; }
 
+    double quantile(double p) const override;
+
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;

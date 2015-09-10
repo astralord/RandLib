@@ -43,7 +43,7 @@ public:
     double E() const { return mu; }
     double Var() const { return sigma * sigma; }
 
-    double quantile(double p);
+    double quantile(double p) const override;
 
     double Median() const override;
     double Mode() const override;

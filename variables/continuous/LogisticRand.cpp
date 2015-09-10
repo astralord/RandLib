@@ -47,6 +47,17 @@ double LogisticRand::Var() const
     return sPi * sPi / 3;
 }
 
+double LogisticRand::quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return -INFINITY;
+    if (p == 1)
+        return INFINITY;
+    return mu - s * std::log(1.0 / p - 1);
+}
+
 double LogisticRand::Median() const
 {
     return mu;

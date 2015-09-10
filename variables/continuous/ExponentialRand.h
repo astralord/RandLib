@@ -38,7 +38,7 @@ public:
     double Var() const override { return beta * beta; }
 
     std::complex<double> CF(double t) const override;
-    double quantile(double p);
+    double quantile(double p) const override;
 
     double Median() const override;
     double Mode() const override;

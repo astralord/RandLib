@@ -47,6 +47,13 @@ double RayleighRand::Var() const
     return (1 - M_PI_4) * sigmaSqInv_2;
 }
 
+double RayleighRand::quantile(double p) const
+{
+    if (p <= 0 || p >= 1)
+        return NAN;
+    return sigma * std::sqrt(-2 * std::log(1 - p));
+}
+
 double RayleighRand::Median() const
 {
     return sigma * std::sqrt(M_LN2 + M_LN2);
