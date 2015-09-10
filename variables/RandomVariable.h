@@ -95,7 +95,7 @@ public:
         double root = 0;
         RandMath::findRoot([this, p] (double x)
         {
-            return BetaRand::F(x) - p;
+            return F(x) - p;
         },
         0, 1, root);
         return root;
