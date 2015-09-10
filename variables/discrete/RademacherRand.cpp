@@ -39,7 +39,13 @@ std::complex<double> RademacherRand::CF(double t) const
 
 double RademacherRand::quantile(double p) const
 {
-
+    if (p == 0)
+        return -INFINITY;
+    if (p == 0.5)
+        return -1;
+    if (p == 1)
+        return 1;
+    return NAN;
 }
 
 double RademacherRand::Median() const
