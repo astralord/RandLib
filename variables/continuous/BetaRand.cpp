@@ -170,29 +170,11 @@ double BetaRand::Var() const
 
 }
 
-double BetaRand::quantile(double p) const
-{
-    double root = 0;
-    if (p <= 0 || p >= 1)
-        return NAN;
-    RandMath::findRoot([this, p] (double x)
-    {
-        return BetaRand::F(x) - p;
-    },
-    0, 1, root);
-    return root;
-}
-
-double BetaRand::Median() const
+double BetaRand::Mode() const
 {
     double alpha = X.getShape();
     double beta = Y.getShape();
     return (alpha - 1) / (alpha + beta - 2);
-}
-
-double BetaRand::Mode() const
-{
-    return quantile(0.5);
 }
 
 double BetaRand::Skewness() const
