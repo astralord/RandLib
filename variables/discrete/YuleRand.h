@@ -30,6 +30,8 @@ public:
     double Var() const override;
 
     double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 #endif // YULERAND_H
