@@ -25,7 +25,8 @@ public:
     virtual ~RandomVariable() {}
 
     /**
-     * @brief getName
+     * @brief name
+     * @return name of distribution, for instance "Normal(0, 1)"
      */
     virtual std::string name() = 0;
 
