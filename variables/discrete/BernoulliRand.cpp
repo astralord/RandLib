@@ -44,11 +44,13 @@ std::complex<double> BernoulliRand::CF(double t) const
 
 double BernoulliRand::quantile(double p) const
 {
-    if (p == 1)
-        return 1;
+    if (p == 0)
+        return -INFINITY;
     if (p == q)
         return 0;
-    return -INFINITY;
+    if (p == 1)
+        return 1;
+    return NAN;
 }
 
 double BernoulliRand::Median() const
