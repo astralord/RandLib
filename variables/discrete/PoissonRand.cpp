@@ -61,11 +61,6 @@ std::complex<double> PoissonRand::CF(double t) const
     return std::exp(y);
 }
 
-double PoissonRand::quantile(double p) const
-{
-
-}
-
 double PoissonRand::Median() const
 {
     /// this value is approximate
