@@ -28,6 +28,8 @@ public:
 
     double E() const override;
     double Var() const override;
+    
+    double Mode() const override;
 };
 
 #endif // ZIPFRAND_H
