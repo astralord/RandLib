@@ -90,16 +90,8 @@ public:
      * @param p
      * @return such x that F(x) = p
      */
-    virtual double quantile(double p) const {
-        if (p < 0 || p > 1)
-            return NAN;
-        double root = 0;
-        RandMath::findRoot([this, p] (double x)
-        {
-            return F(x) - p;
-        },
-        0, 1, root);
-        return root;
+    virtual double quantile(double p) const { // = 0
+        return 1.0;
     }
 
     /**
