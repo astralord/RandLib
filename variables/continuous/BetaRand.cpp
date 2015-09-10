@@ -167,7 +167,19 @@ double BetaRand::Var() const
     double denominator = alpha + beta;
     denominator *= denominator * (denominator + 1);
     return alpha * beta / denominator;
+}
 
+double BetaRand::quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    double root = 0;
+    RandMath::findRoot([this, p] (double x)
+    {
+        return F(x) - p;
+    },
+    0, 1, root);
+    return root;
 }
 
 double BetaRand::Mode() const
