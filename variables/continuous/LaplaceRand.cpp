@@ -65,6 +65,26 @@ std::complex<double> LaplaceRand::CF(double t) const
     return std::complex<double>(std::cos(t) / denominator, std::sin(t) / denominator);
 }
 
+double Median() const
+{
+    return mu;
+}
+
+double Mode() const
+{
+    return mu;
+}
+
+double Skewness() const
+{
+    return 0.0;
+}
+
+double ExcessKurtosis() const
+{
+    return 3.0;
+}
+    
 bool LaplaceRand::fitToData(const QVector<double> &sample)
 {
     if (sample.size() == 0)
