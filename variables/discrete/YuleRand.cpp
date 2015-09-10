@@ -58,3 +58,23 @@ double YuleRand::Mode() const
     return 1.0;
 }
 
+double YuleRand::Skewness() const
+{
+    if (ro <= 3)
+        return INFINITY;
+    double skewness = ro + 1;
+    skewness *= skewness;
+    skewness *= std::sqrt(ro - 2);
+    return skewness / (ro * (ro - 3));
+}
+
+double YuleRand::ExcessKurtosis() const
+{
+    if (ro <= 4)
+        return INFINITY;
+    double numerator = 11 * ro * ro - 49;
+    numerator *= ro;
+    numerator -= 22;
+    double denominator = ro * (ro - 4) * (ro - 3);
+    return ro + 3 + numerator / denominator;
+}
