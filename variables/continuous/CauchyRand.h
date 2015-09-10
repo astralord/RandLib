@@ -28,8 +28,8 @@ public:
     static double variate(double location, double scale);
     static double standardVariate();
 
-    double E() const override { return NAN; }
-    double Var() const override { return INFINITY; }
+    double E() const override;
+    double Var() const override;
 
     double quantile() const override;
 
