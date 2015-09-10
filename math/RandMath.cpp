@@ -104,11 +104,12 @@ double RandMath::betaFun(double a, double b)
 
 long double RandMath::regularizedBetaFun(double x, double a, double b)
 {
+    double upperBoundary = std::min(1.0, std::max(0.0, x));
     return integral([a, b] (double t)
     {
         return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
     },
-    0, x);
+    0, upperBoundary);
 }
 
 long double RandMath::incompleteBetaFun(double x, double a, double b)
@@ -132,7 +133,6 @@ long double RandMath::gammaHalf(unsigned k)
 long double RandMath::adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
                                           double epsilon, double S, double fa, double fb, double fc, int bottom)
 {
-    // TODO: rewrite recursion into loop
     double c = .5 * (a + b), h = (b - a) / 12.0;
     double d = .5 * (a + c), e = .5 * (c + b);
     double fd = funPtr(d), fe = funPtr(e);
@@ -145,12 +145,14 @@ long double RandMath::adaptiveSimpsonsAux(const std::function<double (double)> &
     --bottom;
 
     return adaptiveSimpsonsAux(funPtr, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
-            adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
+           adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
 long double RandMath::integral(const std::function<double (double)> &funPtr,
                                double a, double b, double epsilon, int maxRecursionDepth)
 {
+    if (a > b)
+        SWAP(a, b);
     double c = .5 * (a + b), h = (b - a) / 6.0;
     double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);
     double S = h * (fa + 4 * fc + fb);
