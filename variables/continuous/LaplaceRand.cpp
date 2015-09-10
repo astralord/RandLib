@@ -65,22 +65,22 @@ std::complex<double> LaplaceRand::CF(double t) const
     return std::complex<double>(std::cos(t) / denominator, std::sin(t) / denominator);
 }
 
-double Median() const
+double LaplaceRand::Median() const
 {
     return mu;
 }
 
-double Mode() const
+double LaplaceRand::Mode() const
 {
     return mu;
 }
 
-double Skewness() const
+double LaplaceRand::Skewness() const
 {
     return 0.0;
 }
 
-double ExcessKurtosis() const
+double LaplaceRand::ExcessKurtosis() const
 {
     return 3.0;
 }
