@@ -30,6 +30,10 @@ public:
 
     double E() const override { return INFINITY; }
     double Var() const override { return INFINITY; }
+    
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 #endif // LEVYRAND_H
