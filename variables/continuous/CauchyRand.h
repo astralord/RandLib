@@ -31,6 +31,13 @@ public:
     double E() const override { return NAN; }
     double Var() const override { return INFINITY; }
 
+    double quantile() const override;
+
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
+
     inline double Entropy() const;
 };
 
