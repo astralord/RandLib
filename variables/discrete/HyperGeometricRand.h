@@ -9,16 +9,16 @@
  */
 class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteRand<int>
 {
-    size_t N, K, n;
+    int N, K, n;
     double pdfDenominator; /// C(N, n)
 public:
-    HyperGeometricRand(size_t totalSize, size_t drawsNum, size_t successesNum);
+    HyperGeometricRand(int totalSize, int drawsNum, int successesNum);
     virtual std::string name() override;
 
-    void setParameters(size_t totalSize, size_t drawsNum, size_t successesNum);
-    inline size_t getTotalSize() { return N; }
-    inline size_t getDrawsNum() { return n; }
-    inline size_t getSuccessesNum() { return K; }
+    void setParameters(int totalSize, int drawsNum, int successesNum);
+    inline int getTotalSize() { return N; }
+    inline int getDrawsNum() { return n; }
+    inline int getSuccessesNum() { return K; }
 
     double P(int k) const override;
     double F(double x) const override;

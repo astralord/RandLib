@@ -1,6 +1,6 @@
 #include "HyperGeometricRand.h"
 
-HyperGeometricRand::HyperGeometricRand(size_t totalSize, size_t drawsNum, size_t successesNum)
+HyperGeometricRand::HyperGeometricRand(int totalSize, int drawsNum, int successesNum)
 {
     setParameters(totalSize, drawsNum, successesNum);
 }
@@ -12,7 +12,7 @@ std::string HyperGeometricRand::name()
                              + toStringWithPrecision(K) + ")";
 }
 
-void HyperGeometricRand::setParameters(size_t totalSize, size_t drawsNum, size_t successesNum)
+void HyperGeometricRand::setParameters(int totalSize, int drawsNum, int successesNum)
 {
     N = totalSize;
     n = std::min(N, drawsNum);
@@ -23,17 +23,16 @@ void HyperGeometricRand::setParameters(size_t totalSize, size_t drawsNum, size_t
 
 double HyperGeometricRand::P(int k) const
 {
-    size_t kUns = static_cast<size_t>(k);
-    if (k < 0 || kUns > n || kUns > K || n - kUns > N - K)
+    if (k < 0 || k > n || k > K || n - k > N - K)
         return 0;
-    return RandMath::binomialCoef(K, kUns) * RandMath::binomialCoef(N - K, n - kUns) * pdfDenominator;
+    return RandMath::binomialCoef(K, k) * RandMath::binomialCoef(N - K, n - k) * pdfDenominator;
 }
 
 double HyperGeometricRand::F(double x) const
 {
-    size_t k = static_cast<size_t>(std::floor(x));
+    int k = static_cast<int>(std::floor(x));
     double sum = 0;
-    for (size_t i = 0; i < k; ++i)
+    for (int i = 0; i < k; ++i)
         sum += P(i);
     return sum;
 }
@@ -43,7 +42,7 @@ double HyperGeometricRand::variate() const
     size_t sum = 0;
     double p = static_cast<double>(K) / N;
     double successesLeft = K;
-    for (size_t i = 0; i != n; ++i)
+    for (int i = 0; i != n; ++i)
     {
         bool isSuccess = BernoulliRand::variate(p);
         sum += isSuccess;
@@ -63,10 +62,9 @@ double HyperGeometricRand::E() const
 
 double HyperGeometricRand::Var() const
 {
-    size_t numerator = n * K * (N - K) * (N  - n);
-    size_t denominator = N * N * (N - 1);
-    return static_cast<double>(numerator) / denominator;
-
+    double numerator = n * K * (N - K) * (N  - n);
+    double denominator = N * N * (N - 1);
+    return numerator / denominator;
 }
 
 double HyperGeometricRand::Mode() const
@@ -80,8 +78,8 @@ double HyperGeometricRand::Skewness() const
     double skewness = N - 1;
     skewness /= n * K * (N - K) * (N - n);
     skewness = std::sqrt(skewness);
-    skewness *= (N - K - K);
-    skewness *= (N - n - n);
+    skewness *= N - K - K;
+    skewness *= N - n - n;
     return skewness / (N - 2);
 }
 
