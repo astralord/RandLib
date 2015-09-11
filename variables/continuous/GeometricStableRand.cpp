@@ -88,7 +88,7 @@ void GeometricStableRand::sample(QVector<double> &outputData)
     }
 }
 
-double GeometricStableRand::ExcessKurtosis()
+double GeometricStableRand::ExcessKurtosis() const
 {
     return (alpha == 2) ? 3.0 : NAN;
 }

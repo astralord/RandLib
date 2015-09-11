@@ -79,95 +79,46 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     }
 }
 
-double StableRand::variate() const
+double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
 {
-    /// Check all 'good' cases
-    if (alpha == 2)
-        return N.variate();
-    if (alpha == 1 && beta == 0)
-        return C.variate();
-    if (alpha == .5 && beta == 1)
-        return L.variate();
-    if (alpha == .5 && beta == -1)
-        return -L.variate();
-
-    /// Now check the others
-    if (alpha == 1)
-        return variateForAlphaEqualOne();
-    return variateForCommonAlpha();
+    double cosTheta = std::cos(theta);
+    /// if theta ~ +-pi / 2
+    if (std::fabs(cosTheta) < MIN_POSITIVE)
+        return 0.0;
+    double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
+    double u = M_2_PI * thetaAdj;
+    u *= std::exp(thetaAdj * std::sin(theta) / beta);
+    return u * xAdj;
 }
 
-void StableRand::sample(QVector<double> &outputData)
+double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
 {
-    /// Check all 'good' cases
-    if (alpha == 2) {
-        for (double &var : outputData)
-            var = N.variate();
-    }
-    else if (alpha == 1 && beta == 0) {
-        for (double &var : outputData)
-            var = C.variate();
-    }
-    else if (alpha == .5 && beta == 1) {
-        for (double &var : outputData)
-            var = L.variate();
-    }
-    else if (alpha == .5 && beta == -1) {
-        for (double &var : outputData)
-            var = -L.variate();
-    }
-    else if (alpha == 1) {
-        for (double &var : outputData)
-            var = variateForAlphaEqualOne();
-    }
-    else {
-        for (double &var : outputData)
-            var = variateForCommonAlpha();
-    }
+    double u = integrandAuxForAlphaEqualOne(theta, xAdj);
+    return u * std::exp(-u);
 }
 
-double StableRand::variateForCommonAlpha() const
+double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
 {
-    double U = UniformRand::variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::standardVariate();
-    double alphaUB = alpha * U + B;
-    double X = S * std::sin(alphaUB); /// S * sin(alpha * V + B)
-    double W_adj = W / std::cos(U - alphaUB);
-    X *= W_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
-    X *= std::pow(W_adj * std::cos(U), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
-                                                   /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
-    return mu + sigma * X;
+    double thetaAdj = alpha * (theta + xiAdj);
+    double sinThetaAdj = std::sin(thetaAdj);
+    /// if theta ~ 0
+    if (std::fabs(sinThetaAdj) < MIN_POSITIVE)
+        return 0.0;
+    double cosTheta = std::cos(theta);
+    double y = cosTheta / sinThetaAdj;
+    /// if theta ~ pi / 2
+    if (std::fabs(y) < MIN_POSITIVE)
+        return 0.0;
+    y = std::pow(y, alpha_alpham1);
+    y *= std::cos(thetaAdj - theta);
+    y /= cosTheta;
+    return integrandCoef * xAdj * y;
 }
 
-double StableRand::variateForAlphaEqualOne() const
+double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const
 {
-    double U = UniformRand::variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::standardVariate();
-    double pi_2BetaU = M_PI_2 + beta * U;
-    double X = logSigma;
-    X -= std::log(M_PI_2 * W * std::cos(U) / pi_2BetaU);
-    X *= beta;
-    X += pi_2BetaU * std::tan(U);
-    X *= M_2_PI;
-    return mu + sigma * X;
-}
-
-double StableRand::f(double x) const
-{
-    /// Check all 'good' cases
-    if (alpha == 2)
-        return N.f(x);
-    if (alpha == 1 && beta == 0)
-        return C.f(x);
-    if (alpha == .5 && beta == 1)
-        return L.f(x);
-    if (alpha == .5 && beta == -1)
-        return L.f(-x);
-
-    /// Now check the others
-    if (alpha == 1)
-        return pdfForAlphaEqualOne(x);
-    return pdfForCommonAlpha(x);
+    double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
+    return u * std::exp(-u);
 }
 
 double StableRand::pdfForCommonAlpha(double x) const
@@ -250,46 +201,22 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     return std::fabs(pdfCoef) * (int1 + int2) / sigma;
 }
 
-double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
+double StableRand::f(double x) const
 {
-    double cosTheta = std::cos(theta);
-    /// if theta ~ +-pi / 2
-    if (std::fabs(cosTheta) < MIN_POSITIVE)
-        return 0.0;
-    double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
-    double u = M_2_PI * thetaAdj;
-    u *= std::exp(thetaAdj * std::sin(theta) / beta);
-    return u * xAdj;
-}
+    /// Check all 'good' cases
+    if (alpha == 2)
+        return N.f(x);
+    if (alpha == 1 && beta == 0)
+        return C.f(x);
+    if (alpha == .5 && beta == 1)
+        return L.f(x);
+    if (alpha == .5 && beta == -1)
+        return L.f(-x);
 
-double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
-{
-    double u = integrandAuxForAlphaEqualOne(theta, xAdj);
-    return u * std::exp(-u);
-}
-
-double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
-{
-    double thetaAdj = alpha * (theta + xiAdj);
-    double sinThetaAdj = std::sin(thetaAdj);
-    /// if theta ~ 0
-    if (std::fabs(sinThetaAdj) < MIN_POSITIVE)
-        return 0.0;
-    double cosTheta = std::cos(theta);
-    double y = cosTheta / sinThetaAdj;
-    /// if theta ~ pi / 2
-    if (std::fabs(y) < MIN_POSITIVE)
-        return 0.0;
-    y = std::pow(y, alpha_alpham1);
-    y *= std::cos(thetaAdj - theta);
-    y /= cosTheta;
-    return integrandCoef * xAdj * y;
-}
-
-double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const
-{
-    double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
-    return u * std::exp(-u);
+    /// Now check the others
+    if (alpha == 1)
+        return pdfForAlphaEqualOne(x);
+    return pdfForCommonAlpha(x);
 }
 
 double StableRand::F(double x) const
@@ -308,6 +235,79 @@ double StableRand::F(double x) const
     if (alpha == 1)
         return cdfForAlphaEqualOne(x);
     return cdfForCommonAlpha(x);
+}
+
+double StableRand::variateForCommonAlpha() const
+{
+    double U = UniformRand::variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::standardVariate();
+    double alphaUB = alpha * U + B;
+    double X = S * std::sin(alphaUB); /// S * sin(alpha * V + B)
+    double W_adj = W / std::cos(U - alphaUB);
+    X *= W_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
+    X *= std::pow(W_adj * std::cos(U), -alphaInv);/// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
+                                                   /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
+    return mu + sigma * X;
+}
+
+double StableRand::variateForAlphaEqualOne() const
+{
+    double U = UniformRand::variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::standardVariate();
+    double pi_2BetaU = M_PI_2 + beta * U;
+    double X = logSigma;
+    X -= std::log(M_PI_2 * W * std::cos(U) / pi_2BetaU);
+    X *= beta;
+    X += pi_2BetaU * std::tan(U);
+    X *= M_2_PI;
+    return mu + sigma * X;
+}
+
+double StableRand::variate() const
+{
+    /// Check all 'good' cases
+    if (alpha == 2)
+        return N.variate();
+    if (alpha == 1 && beta == 0)
+        return C.variate();
+    if (alpha == .5 && beta == 1)
+        return L.variate();
+    if (alpha == .5 && beta == -1)
+        return -L.variate();
+
+    /// Now check the others
+    if (alpha == 1)
+        return variateForAlphaEqualOne();
+    return variateForCommonAlpha();
+}
+
+void StableRand::sample(QVector<double> &outputData)
+{
+    /// Check all 'good' cases
+    if (alpha == 2) {
+        for (double &var : outputData)
+            var = N.variate();
+    }
+    else if (alpha == 1 && beta == 0) {
+        for (double &var : outputData)
+            var = C.variate();
+    }
+    else if (alpha == .5 && beta == 1) {
+        for (double &var : outputData)
+            var = L.variate();
+    }
+    else if (alpha == .5 && beta == -1) {
+        for (double &var : outputData)
+            var = -L.variate();
+    }
+    else if (alpha == 1) {
+        for (double &var : outputData)
+            var = variateForAlphaEqualOne();
+    }
+    else {
+        for (double &var : outputData)
+            var = variateForCommonAlpha();
+    }
 }
 
 double StableRand::Skewness() const
