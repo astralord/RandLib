@@ -185,8 +185,8 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
     double s = b, fs = 1, d = 0;
     while (std::fabs(b - a) > epsilon)
     {
-        if (std::fabs(fc - fa) > MIN_POSITIVE &&
-            std::fabs(fb - fc) > MIN_POSITIVE)
+        if (areEqual(fc, fa) > MIN_POSITIVE &&
+            areEqual(fb, fc) > MIN_POSITIVE)
         {
             /// inverse quadratic interpolation
             double numerator = a * fb * fc;
@@ -207,11 +207,15 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
             s = b - fb * (b - a) / (fb - fa);
         }
 
+        double absDiffSB2 = std::fabs(s - b);
+        absDiffSB2 += absDiffSB2;
+        double absDiffBC = std::fabs(b - c);
+        double absDiffCD = std::fabs(c - d);
         if (s < 0.25 * (3 * a + b) || s > b ||
-            (mflag && std::fabs(s - b) >= 0.5 * std::fabs(b - c)) ||
-            (!mflag && std::fabs(s - b) >= 0.5 * std::fabs(d - c)) ||
-            (mflag && std::fabs(b - c) < epsilon) ||
-            (!mflag && std::fabs(c - d) < epsilon))
+            (mflag && absDiffSB2 >= absDiffBC) ||
+            (!mflag && absDiffSB2 >= absDiffCD) ||
+            (mflag && absDiffBC < epsilon) ||
+            (!mflag && absDiffCD < epsilon))
         {
             s = 0.5 * (a + b);
             mflag = true;
