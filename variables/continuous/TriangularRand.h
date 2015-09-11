@@ -31,8 +31,13 @@ public:
     double variate() const override;
 
 public:
-    double E() const override { return (a + b + c) / 3; }
+    double E() const override;
     double Var() const override;
+    
+    double Median() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 #endif // TRIANGULARRAND_H
