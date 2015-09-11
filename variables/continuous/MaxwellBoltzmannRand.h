@@ -26,6 +26,10 @@ public:
 
     double E() const override;
     double Var() const override;
+    
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 #endif // MAXWELLBOLTZMANNRAND_H
