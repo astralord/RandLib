@@ -53,3 +53,13 @@ double NakagamiRand::Var() const
     return w * (1 - res / m);
 }
 
+double NakagamiRand::Median() const
+{
+    return std::sqrt(w);
+}
+
+double NakagamiRand::Mode() const
+{
+    double mode = (2 * m - 1) * w / m;
+    return std::sqrt(mode + mode);
+}
