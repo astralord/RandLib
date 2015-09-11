@@ -310,6 +310,16 @@ double StableRand::F(double x) const
     return cdfForCommonAlpha(x);
 }
 
+double StableRand::Skewness() const
+{
+    return (alpha == 2) ? 0 : NAN;
+}
+
+double StableRand::ExcessKurtosis() const
+{
+    return (alpha == 2) ? 0 : NAN;
+}
+
 
 std::string HoltsmarkRand::name()
 {
