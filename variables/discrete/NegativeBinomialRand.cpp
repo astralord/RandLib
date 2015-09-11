@@ -85,5 +85,26 @@ double NegativeBinomialRand<T>::Var() const
     return E() / (1 - p);
 }
 
+template< typename T >
+double NegativeBinomialRand<T>::Mode() const
+{
+    return (r > 1) ? std::floor((r - 1) * p / (1 - p)) : 0;
+}
+
+template< typename T >
+double NegativeBinomialRand<T>::Skewness() const
+{
+    return (1 + p) / std::sqrt(p * r);
+}
+
+template< typename T >
+double NegativeBinomialRand<T>::ExcessKurtosis() const
+{
+    double kurtosis = (1 - p);
+    kurtosis *= kurtosis;
+    kurtosis += 6 * p;
+    return kurtosis / r;
+}
+
 template class NegativeBinomialRand<int>;
 template class NegativeBinomialRand<double>;
