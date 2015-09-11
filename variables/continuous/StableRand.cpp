@@ -309,3 +309,19 @@ double StableRand::F(double x) const
         return cdfForAlphaEqualOne(x);
     return cdfForCommonAlpha(x);
 }
+
+
+std::string HoltsmarkRand::name()
+{
+    return "Holtsmark("
+            + toStringWithPrecision(getSigma()) + ", "
+            + toStringWithPrecision(getMu()) + ")";
+}
+
+
+std::string LandauRand::name()
+{
+    return "Landau("
+            + toStringWithPrecision(getSigma()) + ", "
+            + toStringWithPrecision(getMu()) + ")";
+}

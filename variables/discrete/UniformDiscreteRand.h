@@ -23,11 +23,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return .5 * (b + a); }
-    double Var() const override {
-        double n2 = n * n;
-        return (n2 * n2 - 1) / 12;
-    }
+    double E() const override;
+    double Var() const override;
 
     double quantile(double p) const override;
 

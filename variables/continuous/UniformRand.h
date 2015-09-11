@@ -28,8 +28,8 @@ public:
     static double variate(double minValue, double maxValue);
     static double standardVariate();
 
-    double E() const override { return .5 * (b + a); }
-    double Var() const override { return (b - a) * (b - a) / 12; }
+    double E() const override;
+    double Var() const override;
 
     double quantile(double p) const override;
 

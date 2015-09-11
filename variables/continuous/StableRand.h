@@ -66,4 +66,25 @@ private:
     double cdfForAlphaEqualOne(double x) const { return x; }
 };
 
+
+/**
+ * @brief The HoltsmarkRand class
+ */
+class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
+{
+public:
+    HoltsmarkRand(double scale = 1, double location = 0) : StableRand(1.5, 0.0, scale, location) {}
+    virtual std::string name() override;
+};
+
+/**
+ * @brief The LandauRand class
+ */
+class RANDLIBSHARED_EXPORT LandauRand : public StableRand
+{
+public:
+    LandauRand(double scale = 1, double location = 0) : StableRand(1.0, 1.0, scale, location) {}
+    virtual std::string name() override;
+};
+
 #endif // STABLERAND_H

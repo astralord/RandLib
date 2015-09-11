@@ -57,6 +57,16 @@ double UniformRand::standardVariate()
     return x - 1.0;
 }
 
+double UniformRand::E() const
+{
+    return .5 * (b + a);
+}
+
+double UniformRand::Var() const
+{
+    return (b - a) * (b - a) / 12;
+}
+
 double UniformRand::quantile(double p) const
 {
     if (p < 0 || p > 1)

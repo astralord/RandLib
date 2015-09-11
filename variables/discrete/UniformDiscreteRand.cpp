@@ -39,6 +39,16 @@ double UniformDiscreteRand::variate() const
     return a + RandGenerator::variate() % n;
 }
 
+double UniformDiscreteRand::E() const
+{
+    return .5 * (b + a);
+}
+
+double UniformDiscreteRand::Var() const
+{
+    return (n * n - 1) / 12;
+}
+
 double UniformDiscreteRand::quantile(double p) const
 {
     if (p < 0 || p > 1)
