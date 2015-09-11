@@ -59,3 +59,22 @@ double WaldRand::variate() const
         return mu * x;
     return mu / x;
 }
+
+double WaldRand::Mode() const
+{
+    double aux = 1.5 * mu / l;
+    double mode = 1 + aux * aux;
+    mode = std::sqrt(mode);
+    mode -= aux;
+    return mu * mode;
+}
+
+double WaldRand::Skewness() const
+{
+    return 3 * std::sqrt(mu / l);
+}
+
+double WaldRand::ExcessKurtosis() const
+{
+    return 15 * mu / l;
+}
