@@ -62,14 +62,7 @@ double FisherSnedecorRand::f(double x) const
 
 double FisherSnedecorRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-
-    return RandMath::integral([this] (double t)
-    {
-        return f(t);
-    },
-    0, x);
+    return B.F(d1_d2 * x);
 }
 
 double FisherSnedecorRand::variate() const
@@ -98,5 +91,42 @@ double FisherSnedecorRand::Var() const
     denominator *= denominator;
     denominator *= d1 * (d2 - 4);
     return numerator / denominator;
+}
 
+double FisherSnedecorRand::Median() const
+{
+    return d2_d1 * B.Median();
+}
+
+double FisherSnedecorRand::Mode() const
+{
+    if (d1 <= 2)
+        return 0.0;
+    return d2_d1 * (d1 - 2) / (d2 + 2);
+}
+
+double FisherSnedecorRand::Skewness() const
+{
+    if (d2 <= 6)
+        return INFINITY;
+    double skewness = 8 * (d2 - 4);
+    double aux = d1 + d2 - 2;
+    skewness /= d1 * aux;
+    skewness = std::sqrt(skewness);
+    skewness *= d1 + aux;
+    skewness /= d2 - 6;
+    return skewness;
+}
+
+double FisherSnedecorRand::ExcessKurtosis() const
+{
+    if (d2 <= 8)
+        return INFINITY;
+    double kurtosis = d2 - 2;
+    kurtosis *= kurtosis;
+    kurtosis *= d2 - 4;
+    kurtosis /= d1 * (d1 + d2 - 2);
+    kurtosis += 5 * d2 - 22;
+    kurtosis /= (d2 - 6) * (d2 - 8);
+    return 12.0 * kurtosis;
 }
