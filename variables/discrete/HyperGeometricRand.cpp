@@ -69,3 +69,31 @@ double HyperGeometricRand::Var() const
 
 }
 
+double HyperGeometricRand::Mode() const
+{
+    double mode = (n + 1) * (K + 1);
+    return std::floor(mode / (N + 2));
+}
+
+double HyperGeometricRand::Skewness() const
+{
+    double skewness = N - 1;
+    skewness /= n * K * (N - K) * (N - n);
+    skewness = std::sqrt(skewness);
+    skewness *= (N - K - K);
+    skewness *= (N - n - n);
+    return skewness / (N - 2);
+}
+
+double HyperGeometricRand::ExcessKurtosis() const
+{
+    double numerator = N * (N + 1);
+    numerator -= 6 * K * (N - K);
+    numerator -= 6 * n * (N - n);
+    numerator *= N * N * (N - 1);
+    double aux = n * K * (N - K) * (N - n);
+    numerator += 6 * aux * (5 * N - 6);
+    double denominator = aux * (N - 2) * (N - 3);
+    return numerator / denominator;
+}
+

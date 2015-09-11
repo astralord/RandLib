@@ -22,6 +22,9 @@ public:
 
     void pdf(const QVector<double> &x, QVector<double> &y) const;
 
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
+
     double likelihood(const QVector<double> &sample) const;
     double loglikelihood(const QVector<double> &sample) const;
 };

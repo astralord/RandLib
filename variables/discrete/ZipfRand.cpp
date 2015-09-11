@@ -51,3 +51,47 @@ double ZipfRand::Mode() const
 {
     return 1.0;
 }
+
+double ZipfRand::Skewness() const
+{
+    double harmonic0 = 1.0 / invHarmonicNumber;
+    double harmonic1 = RandMath::harmonicNumber(s - 1, N);
+    double harmonic2 = RandMath::harmonicNumber(s - 2, N);
+    double harmonic3 = RandMath::harmonicNumber(s - 3, N);
+
+    double first = harmonic3 * harmonic0 * harmonic0;
+    double harmonic2prod0 = harmonic2 * harmonic0;
+    double second = -3 * harmonic2 * harmonic2prod0;
+    double harmonic1Sq = harmonic1 * harmonic1;
+    double third = harmonic1 * harmonic1Sq;
+    third += third;
+
+    double numerator = first + second + third;
+    double denominator = harmonic2prod0 - harmonic1Sq;
+    denominator *= std::sqrt(denominator);
+
+    return numerator / denominator;
+}
+
+double ZipfRand::ExcessKurtosis() const
+{
+    double harmonic0 = 1.0 / invHarmonicNumber;
+    double harmonic1 = RandMath::harmonicNumber(s - 1, N);
+    double harmonic2 = RandMath::harmonicNumber(s - 2, N);
+    double harmonic3 = RandMath::harmonicNumber(s - 3, N);
+    double harmonic4 = RandMath::harmonicNumber(s - 4, N);
+
+    double harmonic2prod0 = harmonic2 * harmonic0;
+    double harmonic0Sq = harmonic0 * harmonic0;
+    double harmonic1Sq = harmonic1 * harmonic1;
+
+    double denominator = harmonic2prod0 - harmonic1Sq;
+    denominator *= denominator;
+
+    double numerator = harmonic0Sq * harmonic0 * harmonic4;
+    numerator -= 4 * harmonic0Sq * harmonic1 * harmonic3;
+    numerator += 6 * harmonic2prod0 * harmonic1Sq;
+    numerator -= 3 * harmonic1Sq * harmonic1Sq;
+
+    return numerator / denominator - 3;
+}

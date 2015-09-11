@@ -113,14 +113,20 @@ public:
      * @return E[((X - mu) / sigma) ^ 3]
      * where mu is central moment and sigma is standard deviation
      */
-    virtual double Skewness() const { return 0; }
+    virtual double Skewness() const = 0;
 
     /**
      * @brief ExcessKurtosis
-     * @return mu_4 / sigma ^ 4 - 3
+     * @return E[((X - mu) / sigma) ^ 4]  - 3
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
-    virtual double ExcessKurtosis() const { return 0; }
+    virtual double ExcessKurtosis() const = 0;
+
+    /**
+     * @brief Kurtosis
+     * @return unbiased kurtosis = mu_4 / sigma ^ 4
+     */
+    virtual double Kurtosis() const { return ExcessKurtosis() + 3.0; }
 };
 
 #endif // RANDOMVARIABLE_H
