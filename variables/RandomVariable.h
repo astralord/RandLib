@@ -91,7 +91,7 @@ public:
      * @return such x that F(x) = p
      */
     virtual double quantile(double p) const { // = 0
-        return 1.0;
+        return p;
     }
 
     /**

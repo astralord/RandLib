@@ -11,7 +11,7 @@
  */
 class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRand
 {
-    double mu, c_2; /// c_2 = 0.5 * c
+    double mu, c;
     double sqrtc_2pi; /// sqrtc_2pi = sqrt(0.5 * c / pi)
     NormalRand X;
 
@@ -22,7 +22,7 @@ public:
     void setLocation(double location);
     void setScale(double scale);
     inline double getLocation() const { return mu; }
-    inline double getScale() const { return c_2 + c_2; }
+    inline double getScale() const { return c; }
 
     double f(double x) const override;
     double F(double x) const override;

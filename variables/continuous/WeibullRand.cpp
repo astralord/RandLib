@@ -12,9 +12,9 @@ std::string WeibullRand::name()
 
 void WeibullRand::setParameters(double scale, double shape)
 {
-    l = std::max(scale, MIN_POSITIVE);
+    lambda = std::max(scale, MIN_POSITIVE);
     k = std::max(shape, MIN_POSITIVE);
-    lInv = 1.0 / l;
+    lambdaInv = 1.0 / lambda;
     kInv = 1.0 / k;
 }
 
@@ -22,26 +22,26 @@ double WeibullRand::f(double x) const
 {
     if (x <= 0)
         return 0;
-    double xAdj = x * lInv;
+    double xAdj = x * lambdaInv;
     double xAdjPow = std::pow(xAdj, k - 1);
-    return k * lInv * xAdjPow * std::exp(-xAdj * xAdjPow);
+    return k * lambdaInv * xAdjPow * std::exp(-xAdj * xAdjPow);
 }
 
 double WeibullRand::F(double x) const
 {
     if (x <= 0)
         return 0;
-    return 1 - std::exp(-std::pow(x * lInv, k));
+    return 1 - std::exp(-std::pow(x * lambdaInv, k));
 }
 
 double WeibullRand::variate() const
 {
-    return l * std::pow(ExponentialRand::standardVariate(), kInv);
+    return lambda * std::pow(ExponentialRand::standardVariate(), kInv);
 }
 
 double WeibullRand::E() const
 {
-    return l * std::tgamma(1 + kInv);
+    return lambda * std::tgamma(1 + kInv);
 }
 
 double WeibullRand::Var() const
@@ -49,19 +49,19 @@ double WeibullRand::Var() const
     double res = std::tgamma(1 + kInv);
     res *= res;
     res += std::tgamma(1 + kInv + kInv);
-    return l * l * res;
+    return lambda * lambda * res;
 }
 
 double WeibullRand::Median() const
 {
-    return l * std::pow(M_LN2, kInv);
+    return lambda * std::pow(M_LN2, kInv);
 }
 
 double WeibullRand::Mode() const
 {
     if (k < 1)
         return INFINITY;
-    return l * std::pow(1 - kInv, kInv);
+    return lambda * std::pow(1 - kInv, kInv);
 }
 
 double WeibullRand::Skewness() const
@@ -83,7 +83,7 @@ double WeibullRand::ExcessKurtosis() const
     double var = Var();
     double sigma = std::sqrt(var);
     double skewness = Skewness();
-    double numerator = l * l;
+    double numerator = lambda * lambda;
     numerator *= numerator;
     numerator *= std::tgamma(1 + 4.0 * kInv);
     numerator -= 4 * skewness * var * sigma * mu;

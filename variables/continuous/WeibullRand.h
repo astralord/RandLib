@@ -9,15 +9,15 @@
  */
 class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousRand
 {
-    double l, k;
-    double lInv; /// 1.0 / l
+    double lambda, k;
+    double lambdaInv, kInv;
 
 public:
     WeibullRand(double scale = 1, double shape = 1);
     virtual std::string name() override;
 
     void setParameters(double scale, double shape);
-    inline double getScale() const { return l; }
+    inline double getScale() const { return lambda; }
     inline double getShape() const { return k; }
 
     double f(double x) const override;
