@@ -112,7 +112,7 @@ double GeometricRand::quantile(double F) const
 
 double GeometricRand::Median() const
 {
-    return std::ceil(-M_LN2 / std::log(q)) - 1;
+    return std::floor(-M_LN2 / std::log(q));
 }
 
 double GeometricRand::Mode() const
