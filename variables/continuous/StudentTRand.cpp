@@ -67,5 +67,26 @@ double StudentTRand::Var() const
     if (v > 2)
         return v / (v - 2);
     return (v > 1) ? INFINITY : NAN;
+}
 
+double StudentTRand::Median() const
+{
+    return 0.0;
+}
+
+double StudentTRand::Mode() const
+{
+    return 0.0;
+}
+
+double StudentTRand::Skewness() const
+{
+    return (v > 3) ? 0.0 : NAN;
+}
+
+double StudentTRand::ExcessKurtosis() const
+{
+    if (v > 4)
+        return 6 / (v - 4);
+    return (v > 2) ? INFINITY : NAN;
 }
