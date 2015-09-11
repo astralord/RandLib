@@ -37,20 +37,8 @@ public:
     inline double getBeta() const { return beta; }
     inline double getSigma() const { return sigma; }
     inline double getMu() const { return mu; }
-
-    double f(double x) const override;
-    double F(double x) const override;
-    double variate() const override;
-    void sample(QVector<double> &outputData);
-
-    double E() const override { return (alpha > 1) ? mu : NAN; }
-    double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
-
+    
 private:
-    /// variate
-    double variateForCommonAlpha() const;
-    double variateForAlphaEqualOne() const;
-
     /// pdf
     double pdfForCommonAlpha(double x) const;
     double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
@@ -59,11 +47,30 @@ private:
     double pdfForAlphaEqualOne(double x) const;
     double integrandAuxForAlphaEqualOne(double theta, double xAdj) const;
     double integrandForAlphaEqualOne(double theta, double xAdj) const;
-
+public:    
+    double f(double x) const override;
+    
+private:
     /// cdf
     // isn't written yet!
     double cdfForCommonAlpha(double x) const { return x; }
     double cdfForAlphaEqualOne(double x) const { return x; }
+public:
+    double F(double x) const override;
+    
+private:
+    /// variate
+    double variateForCommonAlpha() const;
+    double variateForAlphaEqualOne() const;
+public:
+    double variate() const override;
+    void sample(QVector<double> &outputData);
+
+    double E() const override { return (alpha > 1) ? mu : NAN; }
+    double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
+    
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 
