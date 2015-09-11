@@ -30,6 +30,10 @@ public:
 
     double E() const override { return mu; }
     double Var() const override { return mu * mu * mu / l; }
+    
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 };
 
 
