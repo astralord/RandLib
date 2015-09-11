@@ -13,14 +13,16 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
 
 private:
     double variateForAlphaEqualOne() const;
     double variateForCommonAlpha() const;
-
 public:
+    double variate() const override;
+    
     void sample(QVector<double> &outputData);
+    
+    double ExcessKurtosis() const override;
 };
 
 #endif // GEOMETRICSTABLERAND_H
