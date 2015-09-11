@@ -57,3 +57,24 @@ std::complex<double> BinomialRand::CF(double t) const
 {
     return std::pow(B.CF(t), n);
 }
+
+double BinomialRand::Median() const
+{
+    return std::round(n * p);
+}
+
+double BinomialRand::Mode() const
+{
+    double mode = (n + 1) * p - 1;
+    return std::round(mode);
+}
+
+double BinomialRand::Skewness() const
+{
+    return (1 - p - p) / std::sqrt(n * p * (1 - p));
+}
+
+double BinomialRand::ExcessKurtosis() const
+{
+    return (1 - 6 * p * (1 - p)) / (n * p * (1 - p));
+}
