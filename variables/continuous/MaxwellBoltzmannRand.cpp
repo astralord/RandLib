@@ -50,3 +50,26 @@ double MaxwellBoltzmannRand::Var() const
 {
     return a * a * (3 - 8.0 * M_1_PI);
 }
+
+double MaxwellBoltzmannRand::Mode() const
+{
+    return M_SQRT2 * a;
+}
+
+double MaxwellBoltzmannRand::Skewness() const
+{
+    double skewness = 3 * M_PI - 8;
+    skewness = 2.0 / skewness;
+    skewness *= std::sqrt(skewness);
+    return (16 - 5 * M_PI) * skewness;
+}
+
+double MaxwellBoltzmannRand::ExcessKurtosis() const
+{
+    double numerator = 40 - 3 * M_PI;
+    numerator *= M_PI;
+    numerator -= 96;
+    double denominator = 3 * M_PI - 8;
+    denominator *= denominator;
+    return 4 * numerator / denominator;
+}
