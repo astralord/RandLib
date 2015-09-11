@@ -2,6 +2,7 @@
 
 TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit)
 {
+    //TODO: add sanity check and merge setters!
     setLowerLimit(lowerLimit);
     setMode(mode);
     setUpperLimit(upperLimit);
@@ -72,7 +73,42 @@ double TriangularRand::variate() const
     return b - std::sqrt((1 - u) * coefGenerator2);
 }
 
+double TriangularRand::E() const
+{
+    return (a + b + c) / 3.0;
+}
+
 double TriangularRand::Var() const
 {
-    return (a * (a - b) + b * (b - c) + c * (c - a)) / 18;
+    return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
+}
+
+double TriangularRand::Median() const
+{
+    if (c + c > a + b)
+        return a + std::sqrt(0.5 * (b - a) * (c - a));
+    return b - std::sqrt(0.5 * (b - a) * (b - c));
+}
+
+double TriangularRand::Mode() const
+{
+    return c;
+}
+
+double TriangularRand::Skewness() const
+{
+    double numerator = M_SQRT2;
+    numerator *= (a + b - c - c);
+    numerator *= (a + a - b - c);
+    numerator *= (a - b - b + c);
+    double denominator = a * (a - b);
+    denominator += b * (b - c);
+    denominator += c * (c - a);
+    denominator *= std::sqrt(denominator);
+    return 0.2 * numerator / denominator;
+}
+
+double TriangularRand::ExcessKurtosis() const
+{
+    return -0.6;
 }
