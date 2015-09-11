@@ -31,6 +31,9 @@ public:
 public:
     double E() const override;
     double Var() const override;
+    
+    double Median() const override;
+    double Mode() const override;
 };
 
 #endif // NAKAGAMIRAND_H
