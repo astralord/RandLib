@@ -24,18 +24,6 @@ double GeometricStableRand::F(double x) const
     return x;
 }
 
-double GeometricStableRand::variate() const
-{
-    if (alpha == 2 && mu == 0 && beta == 0)
-        return LaplaceRand::variate(0, sigma);
-    double W = ExponentialRand::standardVariate();
-    double Y = StableRand::variate();
-    if (alphaInv == 1)
-        return W * (Y + M_2_PI * beta * sigma * std::log(sigma * W));
-    double W_adj = std::pow(W, alphaInv);
-    return W_adj * Y + mu * (W - W_adj);
-}
-
 double GeometricStableRand::variateForAlphaEqualOne() const
 {
     double U = UniformRand::variate(-M_PI_2, M_PI_2);
@@ -67,6 +55,18 @@ double GeometricStableRand::variateForCommonAlpha() const
     return X * sigma + mu * W;
 }
 
+double GeometricStableRand::variate() const
+{
+    if (alpha == 2 && mu == 0 && beta == 0)
+        return LaplaceRand::variate(0, sigma);
+    double W = ExponentialRand::standardVariate();
+    double Y = StableRand::variate();
+    if (alphaInv == 1)
+        return W * (Y + M_2_PI * beta * sigma * std::log(sigma * W));
+    double W_adj = std::pow(W, alphaInv);
+    return W_adj * Y + mu * (W - W_adj);
+}
+
 void GeometricStableRand::sample(QVector<double> &outputData)
 {
     if (alpha == 2 && mu == 0 && beta == 0) {
@@ -88,3 +88,7 @@ void GeometricStableRand::sample(QVector<double> &outputData)
     }
 }
 
+double GeometricStableRand::ExcessKurtosis()
+{
+    return (alpha == 2) ? 3.0 : NAN;
+}
