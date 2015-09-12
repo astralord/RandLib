@@ -75,7 +75,16 @@ long double RandMath::lowerIncGamma(double a, double x)
 
 long double RandMath::upperIncGamma(double a, double x)
 {
-    return std::tgamma(a) - lowerIncGamma(a, x);
+    double sum = 0;
+    double term = 1;
+    int n = 1;
+    while (std::fabs(term) > MIN_POSITIVE)
+    {
+        sum = sum + term;
+        term *= (a - n) / x;
+        ++n;
+    }
+    return std::pow(x, a - 1) * std::exp(-x) * sum;
 }
 
 double RandMath::betaFun(double a, double b)
