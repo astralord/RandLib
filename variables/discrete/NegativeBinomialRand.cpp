@@ -34,7 +34,7 @@ double NegativeBinomialRand<double>::P(int k) const
 template <>
 double NegativeBinomialRand<int>::P(int k) const
 {
-    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k) / RandMath::factorial(k) * std::pow(p, k);
+    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k - 1) / RandMath::factorial(k) * std::pow(p, k);
 }
 
 template< typename T >
