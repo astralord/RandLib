@@ -134,7 +134,7 @@ public:
      * @brief Kurtosis
      * @return unbiased kurtosis = mu_4 / sigma ^ 4
      */
-    virtual double Kurtosis() const { return ExcessKurtosis() + 3.0; }
+    virtual double Kurtosis() const;
 };
 
 #endif // RANDOMVARIABLE_H

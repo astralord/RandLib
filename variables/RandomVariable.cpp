@@ -49,9 +49,7 @@ double RandomVariable::Skewness() const
         return skew * skew * skew;
     }, mu);
 
-    double sigma = std::sqrt(var);
-
-    return sum / (var * sigma);
+    return sum / (var * std::sqrt(var));
 }
 
 double RandomVariable::ExcessKurtosis() const
@@ -72,4 +70,9 @@ double RandomVariable::ExcessKurtosis() const
     }, mu);
 
     return sum / (var * var) - 3;
+}
+
+double RandomVariable::Kurtosis() const
+{
+    return ExcessKurtosis() + 3.0;
 }
