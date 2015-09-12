@@ -9,7 +9,7 @@
 /**
  * @brief The GeometricRand class
  */
-class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand
 {
     double p, q;
 

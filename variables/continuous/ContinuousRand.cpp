@@ -10,38 +10,54 @@ void ContinuousRand::pdf(const QVector<double> &x, QVector<double> &y) const
 double ContinuousRand::Skewness() const
 {
     /// WARNING: attempt to calculate skewness by numerical method
-    /// (use for those distributions which have no explicit formula)
+    /// use for distributions w/o explicit formula
+    /// works good for unimodal and wide distributions
+
     double mu = E();
+    if (std::isnan(mu) || std::isinf(mu))
+        return NAN;
+
     double var = Var();
+    if (std::isnan(var) || std::isinf(var))
+        return NAN;
+
     double sigma = std::sqrt(var);
-    double sigma3 = 3.0 * sigma;
-    static constexpr double epsilon = 1e-10;
+
     /// get such low boundary 'x' that |integrand(x)| < epsilon
+    static constexpr double epsilon = 1e-10;
+    static constexpr int maxIter = 1000;
+    int iter = 0;
     double lowBoundary = mu;
     double integrand = 0;
     do {
-       lowBoundary -= sigma3;
+       lowBoundary -= var;
        double aux = (lowBoundary - mu) / sigma;
        integrand = aux * aux * aux;
        integrand *= f(lowBoundary);
-    } while (-integrand > epsilon);
+    } while (-integrand > epsilon && ++iter < maxIter);
 
+    if (iter == maxIter) /// can't take integral, integrand decreases too slow
+        return NAN;
 
     /// get such upper boundary 'x' that |integrand(x)| < epsilon
     double upperBoundary = mu;
+    iter = 0;
     do {
-       upperBoundary += sigma3;
+       upperBoundary += var;
        double aux = (upperBoundary - mu) / sigma;
        integrand = aux * aux * aux;
        integrand *= f(upperBoundary);
-    } while (integrand > epsilon);
+    } while (integrand > epsilon && ++iter < maxIter);
+
+    if (iter == maxIter) /// can't take integral, integrand decreases too slow
+        return NAN;
 
     double integral = RandMath::integral([this, mu] (double x)
     {
         double aux = x - mu;
         return aux * aux * aux * f(x);
     },
-    lowBoundary, upperBoundary);
+    lowBoundary, upperBoundary, epsilon);
 
     return integral / (sigma * var);
 }
@@ -49,32 +65,46 @@ double ContinuousRand::Skewness() const
 double ContinuousRand::ExcessKurtosis() const
 {
     /// WARNING: attempt to calculate kurtosis by numerical method
-    /// (use for those distributions which have no explicit formula)
+    /// use for distributions w/o explicit formula
+    /// works good for unimodal and wide distributions
     double mu = E();
+    if (std::isnan(mu) || std::isinf(mu))
+        return NAN;
+
     double var = Var();
-    double var3 = 3.0 * var;
-    static constexpr double epsilon = 1e-10;
+    if (std::isnan(var) || std::isinf(var))
+        return NAN;
+
     /// get such low boundary 'x' that |integrand(x)| < epsilon
+    static constexpr double epsilon = 1e-10;
     double lowBoundary = mu;
+    static constexpr int maxIter = 1000;
+    int iter = 0;
     double integrand = 0;
     do {
-       lowBoundary -= var3;
+       lowBoundary -= var;
        integrand = lowBoundary - mu;
        integrand *= integrand / var;
        integrand *= integrand;
        integrand *= f(lowBoundary);
-    } while (integrand > epsilon);
+    } while (integrand > epsilon && ++iter < maxIter);
 
+    if (iter == maxIter) /// can't take integral, integrand decreases too slow
+        return NAN;
 
     /// get such upper boundary 'x' that |integrand(x)| < epsilon
     double upperBoundary = mu;
+    iter = 0;
     do {
-       upperBoundary += var3;
+       upperBoundary += var;
        integrand = upperBoundary - mu;
        integrand *= integrand / var;
        integrand *= integrand;
        integrand *= f(upperBoundary);
-    } while (integrand > epsilon);
+    } while (integrand > epsilon && ++iter < maxIter);
+
+    if (iter == maxIter) /// can't take integral, integrand decreases too slow
+        return NAN;
 
     double integral = RandMath::integral([this, mu] (double x)
     {
@@ -82,7 +112,7 @@ double ContinuousRand::ExcessKurtosis() const
         aux *= aux;
         return aux * aux * f(x);
     },
-    lowBoundary, upperBoundary);
+    lowBoundary, upperBoundary, epsilon);
 
     return integral / (var * var) - 3;
 }

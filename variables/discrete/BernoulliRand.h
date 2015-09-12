@@ -7,7 +7,7 @@
 /**
  * @brief The BernoulliRand class
  */
-class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand
 {
     double p, q;
     unsigned long long generatorEdge; /// such value that probability of (BasicRandGenerator's variate > generatorEdge) is equal p

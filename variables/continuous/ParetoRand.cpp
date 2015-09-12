@@ -12,9 +12,9 @@ std::string ParetoRand::name()
 
 void ParetoRand::setParameters(double shape, double scale)
 {
-    xm = std::max(scale, MIN_POSITIVE);
     alpha = std::max(shape, MIN_POSITIVE);
     alphaInv = 1.0 / alpha;
+    xm = std::max(scale, MIN_POSITIVE);
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 

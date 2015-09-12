@@ -7,7 +7,7 @@
 /**
  * @brief The HyperGeometricRand class
  */
-class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteRand
 {
     int N, K, n;
     double pdfDenominator; /// C(N, n)

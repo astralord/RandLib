@@ -7,7 +7,7 @@
 /**
  * @brief The BinomialRand class
  */
-class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand
 {
     int n;
     double p;

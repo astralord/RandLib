@@ -7,7 +7,7 @@
 /**
  * @brief The RademacherRand class
  */
-class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteRand
 {
 public:
     RademacherRand();

@@ -7,7 +7,7 @@
 /**
  * @brief The UniformDiscreteRand class
  */
-class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand
 {
     int n, a, b;
 

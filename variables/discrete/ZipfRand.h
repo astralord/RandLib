@@ -7,7 +7,7 @@
 /**
  * @brief The ZipfRand class
  */
-class ZipfRand : public DiscreteRand<int>
+class ZipfRand : public DiscreteRand
 {
     double s;
     size_t N;

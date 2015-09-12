@@ -8,7 +8,7 @@
 /**
  * @brief The PoissonRand class
  */
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand
 {
     double lambda;
     double expLambda; /// exp(-l)

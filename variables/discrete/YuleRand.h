@@ -9,7 +9,7 @@
 /**
  * @brief The YuleRand class
  */
-class RANDLIBSHARED_EXPORT YuleRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT YuleRand : public DiscreteRand
 {
     double ro;
     double gamma1pRo;

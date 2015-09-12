@@ -6,7 +6,6 @@
 /**
  *@brief The DiscreteRand class
  */
-template< typename T >
 class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable
 {
 public:
@@ -19,12 +18,15 @@ public:
      * @param x
      * @return
      */
-    virtual double P(T x) const = 0;
+    virtual double P(int x) const = 0;
 
-    void pmf(const QVector<T> &x, QVector<double> &y) const;
+    void pmf(const QVector<int> &x, QVector<double> &y) const;
 
-    double likelihood(const QVector<T> &sample) const;
-    double loglikelihood(const QVector<T> &sample) const;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
+
+    double likelihood(const QVector<int> &sample) const;
+    double loglikelihood(const QVector<int> &sample) const;
 };
 
 #endif // DISCRETERAND_H

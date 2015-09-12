@@ -7,7 +7,7 @@
 #include "../continuous/GammaRand.h"
 
 template < typename T >
-class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteRand<int>
+class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteRand
 {
     double p;
     T r;
