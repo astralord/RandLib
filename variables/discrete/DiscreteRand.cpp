@@ -8,40 +8,42 @@ void DiscreteRand::pmf(const QVector<int> &x, QVector<double> &y) const
         y[i] = P(x[i]);
 }
 
-double DiscreteRand::Skewness() const
+double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
-    /// Calculate skewness using Monte-Carlo method
-    /// use only for distributions w/o explicit formula
-    static constexpr int size = 1e7;
-    long double skewness = 0.0;
-    double mu = E();
-    double var = Var();
-    double sigma = std::sqrt(var);
-    for (int i = 0; i != size; ++i)
-    {
-        double sample = variate() - mu;
-        skewness += sample * sample * sample;
-    }
-    skewness /= (sigma * var);
-    return skewness / size;
-}
+    static constexpr double epsilon = 1e-12;
+    static constexpr int maxIter = 1000;
+    int iter = 0;
+    long double sum = 0.0L;
+    double addon = 0;
+    double x = std::floor(startPoint);
+    if (RandMath::areEqual(x, startPoint, epsilon))
+        --x;
 
-double DiscreteRand::ExcessKurtosis() const
-{
-    /// Calculate kurtosis using Monte-Carlo method
-    /// use only for distributions w/o explicit formula
-    static constexpr int size = 1e7;
-    long double skewness = 0.0;
-    double mu = E();
-    double var = Var();
-    for (int i = 0; i != size; ++i)
-    {
-        double sample = variate() - mu;
-        sample *= sample;
-        skewness += sample * sample;
-    }
-    skewness /= (var * var);
-    return skewness / size - 3;
+    do {
+        addon = funPtr(x);
+        addon *= P(x);
+        sum += addon;
+        --x;
+    } while (std::fabs(addon) > epsilon && ++iter < maxIter);
+
+    if (iter == maxIter) /// can't take sum, addon decreases too slow
+        return INFINITY;
+
+    iter = 0;
+    x = std::ceil(startPoint);
+    if (RandMath::areEqual(x, startPoint, epsilon))
+        ++x;
+    do {
+        addon = funPtr(x);
+        addon *= P(x);
+        sum += addon;
+        ++x;
+    } while (std::fabs(addon) > epsilon && ++iter < maxIter);
+
+    if (iter == maxIter) /// can't take sum, addon decreases too slow
+        return INFINITY;
+
+    return sum;
 }
 
 double DiscreteRand::likelihood(const QVector<int> &sample) const

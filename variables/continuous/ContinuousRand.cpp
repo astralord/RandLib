@@ -7,114 +7,45 @@ void ContinuousRand::pdf(const QVector<double> &x, QVector<double> &y) const
         y[i] = f(x[i]);
 }
 
-double ContinuousRand::Skewness() const
+double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
-    /// WARNING: attempt to calculate skewness by numerical method
+    /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
     /// works good for unimodal and wide distributions
-
-    double mu = E();
-    if (std::isnan(mu) || std::isinf(mu))
-        return NAN;
-
-    double var = Var();
-    if (std::isnan(var) || std::isinf(var))
-        return NAN;
-
-    double sigma = std::sqrt(var);
 
     /// get such low boundary 'x' that |integrand(x)| < epsilon
     static constexpr double epsilon = 1e-10;
     static constexpr int maxIter = 1000;
     int iter = 0;
-    double lowBoundary = mu;
+    double lowBoundary = startPoint;
     double integrand = 0;
-    do {
-       lowBoundary -= var;
-       double aux = (lowBoundary - mu) / sigma;
-       integrand = aux * aux * aux;
-       integrand *= f(lowBoundary);
-    } while (-integrand > epsilon && ++iter < maxIter);
-
-    if (iter == maxIter) /// can't take integral, integrand decreases too slow
-        return NAN;
-
-    /// get such upper boundary 'x' that |integrand(x)| < epsilon
-    double upperBoundary = mu;
-    iter = 0;
-    do {
-       upperBoundary += var;
-       double aux = (upperBoundary - mu) / sigma;
-       integrand = aux * aux * aux;
-       integrand *= f(upperBoundary);
-    } while (integrand > epsilon && ++iter < maxIter);
-
-    if (iter == maxIter) /// can't take integral, integrand decreases too slow
-        return NAN;
-
-    double integral = RandMath::integral([this, mu] (double x)
-    {
-        double aux = x - mu;
-        return aux * aux * aux * f(x);
-    },
-    lowBoundary, upperBoundary, epsilon);
-
-    return integral / (sigma * var);
-}
-
-double ContinuousRand::ExcessKurtosis() const
-{
-    /// WARNING: attempt to calculate kurtosis by numerical method
-    /// use for distributions w/o explicit formula
-    /// works good for unimodal and wide distributions
-    double mu = E();
-    if (std::isnan(mu) || std::isinf(mu))
-        return NAN;
-
+    /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
+    /// therefore function Variance() should stay pure and noone should calculate it by this function
     double var = Var();
-    if (std::isnan(var) || std::isinf(var))
-        return NAN;
-
-    /// get such low boundary 'x' that |integrand(x)| < epsilon
-    static constexpr double epsilon = 1e-10;
-    double lowBoundary = mu;
-    static constexpr int maxIter = 1000;
-    int iter = 0;
-    double integrand = 0;
     do {
        lowBoundary -= var;
-       integrand = lowBoundary - mu;
-       integrand *= integrand / var;
-       integrand *= integrand;
-       integrand *= f(lowBoundary);
-    } while (integrand > epsilon && ++iter < maxIter);
+       integrand = funPtr(lowBoundary) * f(lowBoundary);
+    } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
         return NAN;
 
     /// get such upper boundary 'x' that |integrand(x)| < epsilon
-    double upperBoundary = mu;
+    double upperBoundary = startPoint;
     iter = 0;
     do {
        upperBoundary += var;
-       integrand = upperBoundary - mu;
-       integrand *= integrand / var;
-       integrand *= integrand;
-       integrand *= f(upperBoundary);
-    } while (integrand > epsilon && ++iter < maxIter);
+       integrand = funPtr(upperBoundary) * f(upperBoundary);
+    } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
         return NAN;
 
-    double integral = RandMath::integral([this, mu] (double x)
+    return RandMath::integral([this, funPtr] (double x)
     {
-        double aux = x - mu;
-        aux *= aux;
-        return aux * aux * f(x);
+        return funPtr(x) * f(x);
     },
     lowBoundary, upperBoundary, epsilon);
-
-    return integral / (var * var) - 3;
 }
 
 double ContinuousRand::likelihood(const QVector<double> &sample) const

@@ -95,6 +95,14 @@ public:
     }
 
     /**
+     * @brief ExpectedValue
+     * @param funPtr function which expected value should be returned
+     * @param startPoint argument in which vicinity value of funPtr definitely wouldn't be zero
+     * @return E[funPtr(x)]
+     */
+    virtual double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const = 0;
+
+    /**
      * @brief Median
      * @return such x that F(x) = 0.5
      */
@@ -113,14 +121,14 @@ public:
      * @return E[((X - mu) / sigma) ^ 3]
      * where mu is central moment and sigma is standard deviation
      */
-    virtual double Skewness() const = 0;
+    virtual double Skewness() const;
 
     /**
      * @brief ExcessKurtosis
      * @return E[((X - mu) / sigma) ^ 4]  - 3
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
-    virtual double ExcessKurtosis() const = 0;
+    virtual double ExcessKurtosis() const;
 
     /**
      * @brief Kurtosis

@@ -102,7 +102,8 @@ double NegativeBinomialRand<T>::ExcessKurtosis() const
 {
     double kurtosis = (1 - p);
     kurtosis *= kurtosis;
-    kurtosis += 6 * p;
+    kurtosis /= p;
+    kurtosis += 6;
     return kurtosis / r;
 }
 

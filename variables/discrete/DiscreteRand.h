@@ -22,8 +22,7 @@ public:
 
     void pmf(const QVector<int> &x, QVector<double> &y) const;
 
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
     double likelihood(const QVector<int> &sample) const;
     double loglikelihood(const QVector<int> &sample) const;
