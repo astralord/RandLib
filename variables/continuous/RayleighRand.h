@@ -10,7 +10,7 @@
 class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
 {
     double sigma;
-    double sigmaSqInv_2; // 2 * sigma^2
+    double sigmaSqInv; // 1.0 / sigma^2
 
 public:
     explicit RayleighRand(double scale = 1);

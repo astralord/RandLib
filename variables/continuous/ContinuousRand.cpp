@@ -36,14 +36,14 @@ double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPt
     static constexpr double epsilon = 1e-10;
     static constexpr int maxIter = 1000;
     int iter = 0;
-    double lowBoundary = startPoint;
+    double lowerBoundary = startPoint;
     double integrand = 0;
     /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
     /// therefore function Variance() should stay pure and noone should calculate it by this function
     double var = Var();
     do {
-       lowBoundary -= var;
-       integrand = funPtr(lowBoundary) * f(lowBoundary);
+       lowerBoundary -= var;
+       integrand = funPtr(lowerBoundary) * f(lowerBoundary);
     } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
@@ -64,12 +64,49 @@ double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPt
     {
         return funPtr(x) * f(x);
     },
-    lowBoundary, upperBoundary, epsilon);
+    lowerBoundary, upperBoundary, epsilon);
 }
 
 double ContinuousRand::Median() const
 {
     return Quantile(0.5);
+}
+
+double ContinuousRand::Mode() const
+{
+    /// use only for unimodal distributions!
+
+    double mu = E(); /// good starting point
+    if (std::isnan(mu) || std::isinf(mu))
+        mu = Median(); /// this shouldn't be nan or inf
+    double step = 10 * Var();
+    if (std::isnan(step) || std::isinf(step))
+        step = 100; // dirty hack
+
+    /// localization
+    double a = mu - step;
+    double b = mu + step;
+    double fa = f(a), fb = f(b), fmu = f(mu);
+    while (fa > fmu)
+    {
+       b = mu; fb = fmu;
+       mu = a; fmu = fa;
+       a -= step; fa = f(a);
+    }
+    while (fb > fmu)
+    {
+       a = mu; fa = fmu;
+       mu = b; fmu = fb;
+       b += step; fb = f(b);
+    }
+
+    double root = 0;
+    RandMath::findMin([this] (double x)
+    {
+        return -f(x);
+    }, a, b, root);
+
+    return root;
 }
 
 double ContinuousRand::likelihood(const QVector<double> &sample) const

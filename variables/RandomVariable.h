@@ -111,7 +111,7 @@ public:
      * @brief Mode
      * @return the most probable value
      */
-    virtual double Mode() const { return 0; }
+    virtual double Mode() const = 0;
 
     /**
      * @brief Skewness

@@ -176,13 +176,21 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double &ro
     static constexpr int maxIter = 1e5;
     int iter = 0;
     double newRoot = root;
-    double step = epsilon;
+    double step = epsilon + 1;
+    double eps = epsilon;
     do {
         root = newRoot;
         double fun0 = funPtr(root);
-        double fun1 = funPtr(root + epsilon);
-        step = fun0 * epsilon / (fun1 - fun0);
-        newRoot = root - step;
+        double fun1 = funPtr(root + eps);
+        if (areEqual(fun1, fun0))
+            eps *= 10; /// degeneracy
+        else
+        {
+            if (epsilon < eps)
+                eps *= 0.1;
+            step = fun0 * eps / (fun1 - fun0);
+            newRoot = root - step;
+        }
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// no convergence
@@ -287,6 +295,121 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
 
     root = (std::fabs(fs) < std::fabs(fb)) ? s : b;
     return true;
+}
+
+bool RandMath::findMin(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
+{
+    if (a > b)
+        SWAP(a, b);
+    /// golden ratio procedure
+    static constexpr double K = 0.5 * (M_SQRT5 - 1);
+    double I0 = b - a, I1 = K * I0;
+    double xb = a + I1, xa = b - I1;
+    double fa = funPtr(xa), fb = funPtr(xb);
+    int iter = 0;
+    while (++iter < 1e5)
+    {
+        I1 *= K;
+        if (fa >= fb)
+        {
+            a = xa; xa = xb; xb = a + I1;
+            fa = fb; fb = funPtr(xb);
+        }
+        else
+        {
+            b = xb; xb = xa; xa = b - I1;
+            fb = fa; fa = funPtr(xa);
+        }
+        if (I1 < epsilon)
+        {
+            if (fa < fb)
+                root = xa;
+            else
+                root = xb;
+            return true;
+        }
+    }
+    return true;
+
+    /// NOT WORKING BRENT
+    /*static constexpr double K = 0.5 * (3 - M_SQRT5);
+    double x = 0.5 * (a + b), w = x, v = x;
+    double fx = funPtr(x), fw = fx, fv = fx;
+    double stepCurrent = b - a, stepPrev = stepCurrent;
+    double u = a - 1, fu = fx;
+
+
+    while (std::fabs(a - b) > epsilon)
+    {
+        double g = stepPrev;
+        stepPrev = stepCurrent;
+
+        if (!areEqual(fx, fw) && !areEqual(fx, fv) && !areEqual(fv, fw))
+        {
+            /// Quadratic approximation
+            double diff1 = x - w, diff2 = x - v;
+            double fdiff2 = fx - fv, fdiff1 = fx - fw;
+            double numerator = diff1 * diff1 * fdiff2;
+            numerator -= diff2 * diff2 * fdiff1;
+            double denominator = diff1 * fdiff2 - diff2 * fdiff1;
+            u = x - 0.5 * numerator / denominator;
+        }
+        if (a + epsilon <= u && u <= b - epsilon && std::fabs(u - x) < 0.5 * g)
+            stepCurrent = std::fabs(u - x); /// accept u
+        else
+        {
+            if (x < 0.5 * (b - a))
+            {
+                u = x + K * (b - x); /// gold ratio [x, b]
+                stepCurrent = b - x;
+            }
+            else
+            {
+                u = x - K * (x - a); /// gold ratio [a, x]
+                stepCurrent = x - a;
+            }
+        }
+
+        if (std::fabs(u - x) < epsilon)
+        {
+            double sign = u - x < 0 ? -1 : 1;
+            u = x + sign * epsilon;
+        }
+
+        fu = funPtr(u);
+        if (fu <= fx)
+        {
+            if (u >= x)
+                a = x;
+            else
+                b = x;
+            v = w; fv = fw;
+            w = x; fw = fx;
+            x = u; fx = fu;
+        }
+        else
+        {
+            if (u >= x)
+                b = u;
+            else
+                a = u;
+            if (fu <= fw || w == x)
+            {
+                v = w; fv = fw;
+                w = u; fw = fu;
+            }
+            else if (fu <= fv || v == x || v == w)
+            {
+                v = u; fv = fu;
+            }
+        }
+    }
+
+    if (fu < fx)
+        root = u;
+    else
+        root = x;
+    return true;*/
 }
 
 double RandMath::linearInterpolation(double a, double b, double fa, double fb, double x)

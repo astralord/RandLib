@@ -245,12 +245,25 @@ public:
      * @param funPtr
      * @param a lower boundary
      * @param b upper boundary
-     * @param root such var as funPtr(var) = 0
+     * @param root such x that funPtr(x) = 0
      * @param epsilon tolerance
      * @return true if success, false otherwise
      */
     static bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double & root,
                          double epsilon = 1e-10);
+
+    /**
+     * @brief findMin
+     * Combined Brent's method
+     * @param funPtr
+     * @param a lower boundary
+     * @param b upper boundary
+     * @param root such x that funPtr(x) is min
+     * @param epsilon tolerance
+     * @return
+     */
+    static bool findMin(const std::function<double (double)> &funPtr, double a, double b, double & root,
+                        double epsilon = 1e-10);
 
     /**
      * @brief linearInterpolation

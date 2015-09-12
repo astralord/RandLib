@@ -61,6 +61,6 @@ double NakagamiRand::Median() const
 
 double NakagamiRand::Mode() const
 {
-    double mode = (2 * m - 1) * w / m;
-    return std::sqrt(mode + mode);
+    double mode = 0.5 * w / m;
+    return std::sqrt(w - mode);
 }
