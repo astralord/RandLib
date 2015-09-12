@@ -37,7 +37,7 @@ std::complex<double> RademacherRand::CF(double t) const
     return std::cos(t);
 }
 
-double RademacherRand::quantile(double p) const
+double RademacherRand::Quantile(double p) const
 {
     if (p == 0)
         return -INFINITY;

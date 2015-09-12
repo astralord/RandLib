@@ -67,7 +67,7 @@ double UniformRand::Var() const
     return (b - a) * (b - a) / 12;
 }
 
-double UniformRand::quantile(double p) const
+double UniformRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;

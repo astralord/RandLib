@@ -66,11 +66,12 @@ double BetaRand::F(double x) const
         return 0;
     if (x >= 1)
         return 1;
-    return RandMath::integral([this] (double t)
+    double y =  RandMath::integral([this] (double t)
     {
-        return f(t);
+        return BetaRand::f(t);
     },
     0, x);
+    return y;
 }
 
 double BetaRand::variate() const
@@ -169,17 +170,18 @@ double BetaRand::Var() const
     return alpha * beta / denominator;
 }
 
-double BetaRand::quantile(double p) const
+double BetaRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    double root = 0;
-    RandMath::findRoot([this, p] (double x)
+    double root = p;
+    if (RandMath::findRoot([this, p] (double x)
     {
-        return F(x) - p;
+        return BetaRand::F(x) - p;
     },
-    0, 1, root);
-    return root;
+    0, 1, root))
+        return root;
+    return NAN;
 }
 
 double BetaRand::Mode() const

@@ -28,7 +28,7 @@ public:
 
     void setMean(double mean);
     void setSigma(double rootVar);
-    void setVar(double var) { setSigma(std::sqrt(std::max(var, MIN_POSITIVE))); }
+    void setVar(double var);
     double getMean() const { return mu; }
     double getSigma() const { return sigma; }
     double getVar() const { return sigma * sigma; }
@@ -43,7 +43,7 @@ public:
     double E() const { return mu; }
     double Var() const { return sigma * sigma; }
 
-    double quantile(double p) const override;
+    double Quantile(double p) const override;
 
     double Median() const override;
     double Mode() const override;

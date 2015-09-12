@@ -47,7 +47,7 @@ double LogisticRand::Var() const
     return sPi * sPi / 3;
 }
 
-double LogisticRand::quantile(double p) const
+double LogisticRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;

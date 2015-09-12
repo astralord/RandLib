@@ -99,7 +99,7 @@ double GeometricRand::variateByTable() const
     return x;
 }
 
-double GeometricRand::quantile(double F) const
+double GeometricRand::Quantile(double F) const
 {
     if (F < 0 || F > 1)
         return NAN;

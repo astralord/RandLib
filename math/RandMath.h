@@ -7,6 +7,9 @@
 
 #include "randlib_global.h"
 
+#include <QDebug>
+#include <QVector>
+
 #ifndef INFINITY
 #include <limits>
 static double INFINITY = std::numeric_limits<double>::infinity();
@@ -226,6 +229,15 @@ public:
     static long double integral(const std::function<double (double)> &funPtr, double a, double b,
                                 double epsilon = 1e-10, int maxRecursionDepth = 10);
 
+    /**
+     * @brief findRoot
+     * Newton's root-finding procedure
+     * @param funPtr
+     * @param root starting point
+     * @param epsilon
+     * @return
+     */
+    static bool findRoot(const std::function<double (double)> &funPtr, double & root, double epsilon = 1e-10);
 
     /**
      * @brief findRoot

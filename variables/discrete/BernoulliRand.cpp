@@ -42,7 +42,7 @@ std::complex<double> BernoulliRand::CF(double t) const
     return std::complex<double>(q + p * std::cos(t), std::sin(t));
 }
 
-double BernoulliRand::quantile(double p) const
+double BernoulliRand::Quantile(double p) const
 {
     if (p == 0)
         return -INFINITY;

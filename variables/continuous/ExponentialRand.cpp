@@ -90,7 +90,7 @@ std::complex<double> ExponentialRand::CF(double t) const
     return std::complex<double>(rate2 / denominator, lambda * t / denominator);
 }
 
-double ExponentialRand::quantile(double p) const
+double ExponentialRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;

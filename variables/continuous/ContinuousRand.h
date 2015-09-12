@@ -22,7 +22,10 @@ public:
 
     void pdf(const QVector<double> &x, QVector<double> &y) const;
 
+    double Quantile(double p) const override;
+
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
+    double Median() const override;
 
     double likelihood(const QVector<double> &sample) const;
     double loglikelihood(const QVector<double> &sample) const;

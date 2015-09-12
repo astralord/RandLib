@@ -102,7 +102,7 @@ double ParetoRand::Var() const
     return (alpha > 1) ? INFINITY : NAN;
 }
 
-double ParetoRand::quantile(double p) const
+double ParetoRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;

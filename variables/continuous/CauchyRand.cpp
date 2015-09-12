@@ -70,7 +70,7 @@ double CauchyRand::Var() const
     return INFINITY; 
 }
     
-double CauchyRand::quantile(double p) const
+double CauchyRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
          return NAN;

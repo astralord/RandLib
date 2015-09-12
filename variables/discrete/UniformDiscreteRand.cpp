@@ -49,7 +49,7 @@ double UniformDiscreteRand::Var() const
     return (n * n - 1) / 12;
 }
 
-double UniformDiscreteRand::quantile(double p) const
+double UniformDiscreteRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;

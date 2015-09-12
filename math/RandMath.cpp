@@ -67,7 +67,7 @@ long double RandMath::lowerIncGamma(double a, double x)
     while (std::fabs(term) > MIN_POSITIVE)
     {
         sum = sum + term;
-        term *= (x / (a + n));
+        term *= x / (a + n);
         ++n;
     }
     return std::pow(x, a) * std::exp(-x) * sum;
@@ -159,8 +159,33 @@ long double RandMath::integral(const std::function<double (double)> &funPtr,
     return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
 
+bool RandMath::findRoot(const std::function<double (double)> &funPtr, double &root, double epsilon)
+{
+    /// Sanity check
+    epsilon = std::max(epsilon, MIN_POSITIVE);
+
+    static constexpr int maxIter = 1e5;
+    int iter = 0;
+    double newRoot = root;
+    double step = epsilon;
+    do {
+        root = newRoot;
+        double fun0 = funPtr(root);
+        double fun1 = funPtr(root + epsilon);
+        step = fun0 * epsilon / (fun1 - fun0);
+        newRoot = root - step;
+    } while (std::fabs(step) > epsilon && ++iter < maxIter);
+
+    if (iter == maxIter) /// no convergence
+        return false;
+    return true;
+}
+
 bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
 {
+    /// Sanity check
+    epsilon = std::max(epsilon, MIN_POSITIVE);
+
     double fa = funPtr(a);
     if (fa == 0)
     {
@@ -185,8 +210,7 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
     double s = b, fs = 1, d = 0;
     while (std::fabs(b - a) > epsilon)
     {
-        if (areEqual(fc, fa) > MIN_POSITIVE &&
-            areEqual(fb, fc) > MIN_POSITIVE)
+        if (!areEqual(fc, fa) && !areEqual(fb, fc))
         {
             /// inverse quadratic interpolation
             double numerator = a * fb * fc;

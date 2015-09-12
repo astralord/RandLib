@@ -7,9 +7,6 @@
 #include "math/RandMath.h"
 #include "randlib_global.h"
 
-#include <QDebug>
-#include <QVector>
-
 /**
  * @brief The RandomVariable class
  */
@@ -90,7 +87,7 @@ public:
      * @param p
      * @return such x that F(x) = p
      */
-    virtual double quantile(double p) const { // = 0
+    virtual double Quantile(double p) const { // = 0
         return p;
     }
 
@@ -106,8 +103,8 @@ public:
      * @brief Median
      * @return such x that F(x) = 0.5
      */
-    virtual double Median() const {
-        return quantile(0.5);
+    virtual double Median() const { // = 0
+        return 1.0;
     }
 
     /**

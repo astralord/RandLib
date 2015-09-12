@@ -45,7 +45,7 @@ public:
     double E() const override;
     double Var() const override;
     
-    double quantile(double p) const override;
+    double Quantile(double p) const override;
 
     double Mode() const override;
     double Skewness() const override;

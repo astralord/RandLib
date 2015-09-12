@@ -28,7 +28,7 @@ public:
     double E() const override;
     double Var() const override;
 
-    double quantile(double p);
+    double Quantile(double p);
 
     double Median() const override;
     double Mode() const override;

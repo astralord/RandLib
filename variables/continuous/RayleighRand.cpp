@@ -47,7 +47,7 @@ double RayleighRand::Var() const
     return (1 - M_PI_4) * sigmaSqInv_2;
 }
 
-double RayleighRand::quantile(double p) const
+double RayleighRand::Quantile(double p) const
 {
     if (p <= 0 || p >= 1)
         return NAN;

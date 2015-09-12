@@ -45,6 +45,11 @@ void NormalRand::setSigma(double rootVar)
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
 }
 
+void NormalRand::setVar(double var)
+{
+    setSigma(std::sqrt(std::max(var, MIN_POSITIVE)));
+}
+
 double NormalRand::f(double x) const
 {
     double y = x - mu;
@@ -116,10 +121,10 @@ double NormalRand::standardVariate()
     return 0; /// fail due to some error
 }
 
-double NormalRand::quantile(double p) const
+double NormalRand::Quantile(double p) const
 {
     if (p < 0.5)
-        return -quantile(1 - p);
+        return -Quantile(1 - p);
     if (p < 0 || p > 1)
         return NAN;
     if (p == 0)

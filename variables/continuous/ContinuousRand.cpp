@@ -7,6 +7,25 @@ void ContinuousRand::pdf(const QVector<double> &x, QVector<double> &y) const
         y[i] = f(x[i]);
 }
 
+double ContinuousRand::Quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return -INFINITY;
+
+    double root = E(); /// good starting point
+    if (std::isnan(root) || std::isinf(root))
+        root = 0.0;
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        return F(x) - p;
+    }, root))
+        return root;
+    /// if we can't find quantile, then probably p == 1
+    return INFINITY;
+}
+
 double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     /// attempt to calculate expected value by numerical method
@@ -46,6 +65,11 @@ double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPt
         return funPtr(x) * f(x);
     },
     lowBoundary, upperBoundary, epsilon);
+}
+
+double ContinuousRand::Median() const
+{
+    return Quantile(0.5);
 }
 
 double ContinuousRand::likelihood(const QVector<double> &sample) const

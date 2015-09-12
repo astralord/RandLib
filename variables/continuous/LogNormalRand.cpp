@@ -48,9 +48,9 @@ double LogNormalRand::Var() const
     return (expVar - 1) * expMu * expMu * expVar;
 }
 
-double LogNormalRand::quantile(double p)
+double LogNormalRand::Quantile(double p)
 {
-    return std::exp(X.quantile(p));
+    return std::exp(X.Quantile(p));
 }
 
 double LogNormalRand::Median() const

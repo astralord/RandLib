@@ -61,6 +61,7 @@ double BetaPrimeRand::Var() const
 double BetaPrimeRand::Median() const
 {
     double betaMedian = BetaRand::Median();
+    qDebug() << betaMedian;
     return betaMedian / (1.0 - betaMedian);
 }
 
