@@ -107,7 +107,7 @@ double GeometricRand::Quantile(double F) const
         return -INFINITY;
     if (F == 1)
         return INFINITY;
-    return std::log(1 + F) / std::log(1 - p);
+    return std::log1p(F) / std::log(1 - p);
 }
 
 double GeometricRand::Median() const

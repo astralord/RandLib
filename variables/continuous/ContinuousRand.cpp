@@ -95,7 +95,7 @@ double ContinuousRand::Mode() const
     }
     while (fb > fmu)
     {
-       a = mu; fa = fmu;
+       a = mu;
        mu = b; fmu = fb;
        b += step; fb = f(b);
     }
