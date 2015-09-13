@@ -73,7 +73,7 @@ private:
     /**
      * @brief maxFactorialTableValue maximum value for input parameter to use table methods
      */
-    static constexpr unsigned maxFactorialTableValue = 255;
+    static constexpr int maxFactorialTableValue = 255;
 
     /**
      * @brief factorialTable (n * 10)! for n from 0 to 25
@@ -114,7 +114,7 @@ private:
      * @param n non-negative integer number
      * @return
      */
-    static long double factorialForSmallValue(size_t n);
+    static long double factorialForSmallValue(int n);
 
 public:
     /**
@@ -124,7 +124,7 @@ public:
      * @param n non-negative integer number
      * @return n!
      */
-    static long double factorial(size_t n);
+    static long double factorial(int n);
 
     /**
      * @brief doubleFactorial
@@ -132,7 +132,7 @@ public:
      * @param n
      * @return
      */
-    static long double doubleFactorial(size_t n);
+    static long double doubleFactorial(int n);
 
     /**
      * @brief binomialCoef
@@ -141,7 +141,7 @@ public:
      * @param k
      * @return C(n,k) = n! / (k! * (n - k)!)
      */
-    static long double binomialCoef(size_t n, size_t k);
+    static long double binomialCoef(int n, int k);
 
     /**
      * @brief lowerIncGamma
@@ -283,6 +283,15 @@ public:
      * @return sum_{i=1}^{number} i^{-exponent}
      */
     static double harmonicNumber(double exponent, size_t number);
+
+
+    /**
+     * @brief modifiedBessel
+     * @param x
+     * @param n
+     * @return I_n(x)
+     */
+    static double modifiedBesselFirstKind(double x, int n);
 };
 
 #endif // RANDMATH_H

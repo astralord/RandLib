@@ -41,6 +41,7 @@
 #include "continuous/StudentTRand.h"
 #include "continuous/UniformRand.h"
 #include "continuous/TriangularRand.h"
+#include "continuous/VonMisesRand.h"
 #include "continuous/WaldRand.h"
 #include "continuous/WeibullRand.h"
 

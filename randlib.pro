@@ -50,7 +50,8 @@ SOURCES += \
     variables/discrete/NegativeBinomialRand.cpp \
     variables/discrete/HyperGeometricRand.cpp \
     variables/discrete/ZipfRand.cpp \
-    variables/discrete/YuleRand.cpp
+    variables/discrete/YuleRand.cpp \
+    variables/continuous/VonMisesRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -97,7 +98,8 @@ HEADERS +=\
     variables/discrete/NegativeBinomialRand.h \
     variables/discrete/HyperGeometricRand.h \
     variables/discrete/ZipfRand.h \
-    variables/discrete/YuleRand.h
+    variables/discrete/YuleRand.h \
+    variables/continuous/VonMisesRand.h
 
 unix {
     target.path = /usr/lib

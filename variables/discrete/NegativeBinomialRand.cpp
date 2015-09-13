@@ -52,8 +52,7 @@ double NegativeBinomialRand<double>::variate() const
 template<>
 double NegativeBinomialRand<int>::variate() const
 {
-    // TODO: find optimal boundary
-    if (r < 20)
+    if (r < 10)
         return variateThroughGeometric();
     return variateThroughGammaPoisson();
 }

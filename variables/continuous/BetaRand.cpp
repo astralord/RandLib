@@ -66,12 +66,11 @@ double BetaRand::F(double x) const
         return 0;
     if (x >= 1)
         return 1;
-    double y =  RandMath::integral([this] (double t)
+    return RandMath::integral([this] (double t)
     {
         return BetaRand::f(t);
     },
     0, x);
-    return y;
 }
 
 double BetaRand::variate() const

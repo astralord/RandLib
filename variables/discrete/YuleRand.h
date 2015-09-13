@@ -22,10 +22,10 @@ public:
 
     double P(int k) const override;
     double F(double x) const override;
+
     double variate() const override;
     static double variate(double shape);
 
-public:
     double E() const override;
     double Var() const override;
 

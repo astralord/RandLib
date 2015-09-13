@@ -13,7 +13,7 @@ bool RandMath::areEqual(double a, double b, double eps)
     return false;
 }
 
-long double RandMath::factorialForSmallValue(size_t n)
+long double RandMath::factorialForSmallValue(int n)
 {
     int residue = n % 10;
     if (residue <= 5)
@@ -34,12 +34,12 @@ long double RandMath::factorialForSmallValue(size_t n)
     return factorialTable[nNext / 10] / denominator;
 }
 
-long double RandMath::factorial(size_t n)
+long double RandMath::factorial(int n)
 {
     return (n > maxFactorialTableValue) ? std::tgamma(static_cast<double>(n + 1)) : factorialForSmallValue(n);
 }
 
-long double RandMath::doubleFactorial(size_t n)
+long double RandMath::doubleFactorial(int n)
 {
     long double n_fact = factorial(n);
     if (n & 1) {
@@ -49,7 +49,7 @@ long double RandMath::doubleFactorial(size_t n)
     return (1 << n) * n_fact;
 }
 
-long double RandMath::binomialCoef(size_t n, size_t k)
+long double RandMath::binomialCoef(int n, int k)
 {
     if (k > n)
         return 0;
@@ -431,6 +431,50 @@ double RandMath::harmonicNumber(double exponent, size_t number)
     for (size_t i = 1; i != number; ++i)
         res += std::pow(i + 1, -exponent);
     return res;
+}
+
+double RandMath::modifiedBesselFirstKind(double x, int n)
+{
+    if (n < 0)
+        n = -n;
+    if (x < 0)
+        return 0;
+
+    /// x << n
+    if (x < n)
+        return std::pow(0.5 * x, n) / factorial(n);
+
+    /// small x
+    if (x < 5)
+    {
+        double halfX = 0.5 * x;
+        double halfXSq = halfX * halfX;
+        double addon = 1.0;
+        double sum = addon;
+        double i = 1.0;
+        while (std::fabs(addon) > MIN_POSITIVE) {
+            addon *= halfXSq;
+            addon /= i * i;
+            ++i;
+            sum += addon;
+        };
+        return sum * std::pow(halfX, n) / RandMath::factorial(n);
+    }
+
+    /// large x
+    double addon = 1.0;
+    double sum = addon;
+    double denominator = 0.125 * x;
+    double n2Sq = 4.0 * n * n;
+    double i = 1.0, j = i;
+    while (std::fabs(addon) > MIN_POSITIVE) {
+        double numerator = j * j - n2Sq;
+        addon *= numerator * denominator / i;
+        sum += addon;
+        ++i;
+        j += 2;
+    };
+    return std::exp(x) / std::sqrt(2.0 * M_PI * x) * sum;
 }
 
 

@@ -52,12 +52,6 @@ double LaplaceRand::variate(double location, double scale)
     return location + (((signed)RandGenerator::variate() > 0) ? e : -e);
 }
 
-void LaplaceRand::sample(QVector<double> &outputData)
-{
-    for (double &var : outputData)
-        var = LaplaceRand::variate(mu, b);
-}
-
 std::complex<double> LaplaceRand::CF(double t) const
 {
     double bt = b * t;
