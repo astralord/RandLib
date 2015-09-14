@@ -31,10 +31,10 @@ BetaRand randomVariable(6, 7);
 int size = 100;
 std::vector<double> x(size), y(size);
 double sizem1Inv = 1.0 / (size - 1);
-for (int i = 0; i < size; ++i)
+for (int i = 0; i != size; ++i)
     x[i] = i * sizem1Inv;
 randomVariable.cdf(x, y);
-for (int i = 0; i < size; ++i)
+for (int i = 0; i != size; ++i)
     std::cout << "P(X < " << x[i] << ") = " << y[i];
 ```
 
