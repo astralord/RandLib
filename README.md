@@ -33,3 +33,34 @@ randomVariable.cdf(data);
 for (const auto& i : data)
   std::cout << i << " ";
 ```
+
+List of implemented distributions:
+
+Continuous:
+* Beta
+* Beta Prime
+* Cauchy
+* Chi-squared
+* Erlang
+* Exponential
+* F
+* Gamma
+* Geometric Stable
+* Laplace
+* Levy
+* Log-normal
+* Logistic
+* Maxwell-Boltzmann
+* Nakagami
+* Normal (Gauss)
+* Pareto
+* Rayleigh
+* Stable
+* Student's t
+* Triangular
+* Uniform
+* von Mises
+* Wald (Inverse Gaussian)
+* Weibull
+
+Discrete:
