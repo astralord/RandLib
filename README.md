@@ -8,11 +8,13 @@ NormalRand randomVariable(0, 1);
 std::vector<double> data(10000);
 randomVariable.sample(data);
 ```
-* Calculate moments:
+* Calculate moments and other properties:
 ```c++
 LaplaceRand randomVariable(2, 3);
 std::cout << " Mean = " << randomVariable.E()
           << " Variance = " << randomVariable.Var()
+          << " Median = " << randomVariable.Median()
+          << " Mode = " << randomVariable.Mode()
           << " Skewness = " << randomVariable.Skewness()
           << " Ex. kurtosis = " << randomVariable.ExcessKurtosis();
 ```
