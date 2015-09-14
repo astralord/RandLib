@@ -21,5 +21,5 @@ std::cout << " Mean = " << randomVariable.E()
 GeometricRand geometricRandomVariable(4);
 std::cout << "Probability to get 5 for Geometric(4) is " << geometricRandomVariable.P(5);
 ExponentialRand expRandomVariable(4);
-std::cout << "Probability to get 5 for Exponential(4) is " << expRandomVariable.f(5);
+std::cout << "Probability density function at point 5 for Exponential(4) is " << expRandomVariable.f(5);
 ```
