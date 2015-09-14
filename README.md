@@ -11,19 +11,19 @@ randomVariable.sample(data);
 * Calculate moments and other properties:
 ```c++
 LaplaceRand randomVariable(2, 3);
-std::cout << " Mean = " << randomVariable.E()
-          << " Variance = " << randomVariable.Var()
+std::cout << " Mean = " << randomVariable.Mean()
+          << " Variance = " << randomVariable.Variance()
           << " Median = " << randomVariable.Median()
           << " Mode = " << randomVariable.Mode()
           << " Skewness = " << randomVariable.Skewness()
           << " Ex. kurtosis = " << randomVariable.ExcessKurtosis();
 ```
-* Calculate probabilities for discrete distributions and density functions for continuous:
+* Calculate probabilities for discrete distributions and probability density functions for continuous:
 ```c++
 GeometricRand geometricRandomVariable(4);
 std::cout << "Probability to get 5 for Geometric(4) is " << geometricRandomVariable.P(5);
 ExponentialRand expRandomVariable(4);
-std::cout << "Probability density function at point 5 for Exponential(4) is " << expRandomVariable.f(5);
+std::cout << "Density function at point 5 for Exponential(4) is " << expRandomVariable.f(5);
 ```
 * Get cumulative density function for random variables with sophisticated distribution:
 ```c++
