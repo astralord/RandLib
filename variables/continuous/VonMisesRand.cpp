@@ -55,8 +55,12 @@ double VonMisesRand::E() const
 
 double VonMisesRand::Var() const
 {
-    //CIRCULAR!
-    return 1.0 - RandMath::modifiedBesselFirstKind(k, 1) * I0kInv;
+    double m2 = RandMath::integral([this] (double t)
+    {
+        return t * t * VonMisesRand::f(t);
+    },
+    mu - M_PI, mu + M_PI);
+    return m2 - mu * mu;
 }
 
 double VonMisesRand::Median() const
