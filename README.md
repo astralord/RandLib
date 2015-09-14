@@ -52,7 +52,7 @@ Continuous:
 * Logistic
 * Maxwell-Boltzmann
 * Nakagami
-* Normal (Gauss)
+* Normal
 * Pareto
 * Rayleigh
 * Stable
@@ -64,3 +64,13 @@ Continuous:
 * Weibull
 
 Discrete:
+* Bernoulli
+* Binomial
+* Geometric
+* Hypergeometric
+* Negative binomial
+* Poisson
+* Rademacher
+* Uniform
+* Yule
+* Zipf
