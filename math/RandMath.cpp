@@ -440,10 +440,6 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
     if (x < 0)
         return 0;
 
-    /// x << n
-    if (x < n)
-        return std::pow(0.5 * x, n) / factorial(n);
-
     /// small x
     if (x < 5)
     {
