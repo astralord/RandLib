@@ -27,8 +27,8 @@ public:
     double variate() const override;
     static double variate(double location, double scale);
 
-    double E() const override { return mu; }
-    double Var() const override { return 2 * b * b; }
+    double Mean() const override { return mu; }
+    double Variance() const override { return 2 * b * b; }
 
     double Median() const override;
     double Mode() const override;

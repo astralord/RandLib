@@ -35,11 +35,11 @@ void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> >
 
 double RandomVariable::Skewness() const
 {
-    double mu = E();
+    double mu = Mean();
     if (std::isnan(mu) || std::isinf(mu))
         return NAN;
 
-    double var = Var();
+    double var = Variance();
     if (std::isnan(var) || std::isinf(var))
         return NAN;
 
@@ -54,11 +54,11 @@ double RandomVariable::Skewness() const
 
 double RandomVariable::ExcessKurtosis() const
 {
-    double mu = E();
+    double mu = Mean();
     if (std::isnan(mu) || std::isinf(mu))
         return NAN;
 
-    double var = Var();
+    double var = Variance();
     if (std::isnan(var) || std::isinf(var))
         return NAN;
 

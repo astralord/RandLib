@@ -48,12 +48,12 @@ double VonMisesRand::variate() const
     return 0.0;
 }
 
-double VonMisesRand::E() const
+double VonMisesRand::Mean() const
 {
     return mu;
 }
 
-double VonMisesRand::Var() const
+double VonMisesRand::Variance() const
 {
     double m2 = RandMath::integral([this] (double t)
     {

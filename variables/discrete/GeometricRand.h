@@ -37,8 +37,8 @@ private:
     double variateByTable() const;
 
 public:
-    double E() const override { return q / p; }
-    double Var() const override { return q / (p * p); }
+    double Mean() const override { return q / p; }
+    double Variance() const override { return q / (p * p); }
 
     double Quantile(double F) const override;
 

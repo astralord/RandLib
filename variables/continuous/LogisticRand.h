@@ -21,8 +21,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const { return mu; }
-    double Var() const;
+    double Mean() const { return mu; }
+    double Variance() const;
 
     double Quantile(double p) const override;
 

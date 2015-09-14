@@ -24,8 +24,8 @@ public:
     double variate() const override;
     static double variate(double p);
 
-    double E() const override { return p; }
-    double Var() const override { return p * (1 - p); }
+    double Mean() const override { return p; }
+    double Variance() const override { return p * (1 - p); }
 
     std::complex<double> CF(double t) const override;
     double Quantile(double p) const override;

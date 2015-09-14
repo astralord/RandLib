@@ -28,8 +28,8 @@ public:
     static double variate(double location, double scale);
     static double standardVariate();
 
-    double E() const override;
-    double Var() const override;
+    double Mean() const override;
+    double Variance() const override;
 
     double Quantile(double p) const override;
 

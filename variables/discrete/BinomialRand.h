@@ -28,8 +28,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return n * p; }
-    double Var() const override { return n * p * (1 - p); }
+    double Mean() const override { return n * p; }
+    double Variance() const override { return n * p * (1 - p); }
 
     std::complex<double> CF(double t) const override;
     

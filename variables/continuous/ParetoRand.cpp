@@ -86,12 +86,12 @@ void ParetoRand::sample(QVector<double> &outputData)
     }
 }
 
-double ParetoRand::E() const
+double ParetoRand::Mean() const
 {
     return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY;
 }
 
-double ParetoRand::Var() const
+double ParetoRand::Variance() const
 {
     if (alpha > 2)
     {

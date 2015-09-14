@@ -28,8 +28,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return INFINITY; }
-    double Var() const override { return INFINITY; }
+    double Mean() const override { return INFINITY; }
+    double Variance() const override { return INFINITY; }
     
     double Mode() const override;
     double Skewness() const override;

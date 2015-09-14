@@ -155,12 +155,12 @@ void BetaRand::setVariateConstants()
     }
 }
 
-double BetaRand::E() const
+double BetaRand::Mean() const
 {
     return X.getShape() / (X.getShape() + Y.getShape());
 }
 
-double BetaRand::Var() const
+double BetaRand::Variance() const
 {
     double alpha = X.getShape();
     double beta = Y.getShape();

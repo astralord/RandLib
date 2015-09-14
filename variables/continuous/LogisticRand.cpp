@@ -41,7 +41,7 @@ double LogisticRand::variate() const
     return mu + s * std::log(1.0 / UniformRand::standardVariate() - 1);
 }
 
-double LogisticRand::Var() const
+double LogisticRand::Variance() const
 {
     double sPi = s * M_PI;
     return sPi * sPi / 3;

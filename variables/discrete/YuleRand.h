@@ -26,8 +26,8 @@ public:
     double variate() const override;
     static double variate(double shape);
 
-    double E() const override;
-    double Var() const override;
+    double Mean() const override;
+    double Variance() const override;
 
     double Mode() const override;
     double Skewness() const override;

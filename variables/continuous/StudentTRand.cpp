@@ -57,12 +57,12 @@ void StudentTRand::sample(QVector<double> &outputData)
     }
 }
 
-double StudentTRand::E() const
+double StudentTRand::Mean() const
 {
     return (v > 1) ? 0 : NAN;
 }
 
-double StudentTRand::Var() const
+double StudentTRand::Variance() const
 {
     if (v > 2)
         return v / (v - 2);

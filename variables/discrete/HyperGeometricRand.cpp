@@ -55,12 +55,12 @@ double HyperGeometricRand::variate() const
     return sum;
 }
 
-double HyperGeometricRand::E() const
+double HyperGeometricRand::Mean() const
 {
     return static_cast<double>(n * K) / N;
 }
 
-double HyperGeometricRand::Var() const
+double HyperGeometricRand::Variance() const
 {
     double numerator = n * K * (N - K) * (N  - n);
     double denominator = N * N * (N - 1);

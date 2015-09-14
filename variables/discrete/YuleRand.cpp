@@ -40,12 +40,12 @@ double YuleRand::variate(double shape)
     return GeometricRand::variate(prob) + 1;
 }
 
-double YuleRand::E() const
+double YuleRand::Mean() const
 {
     return (ro <= 1) ? INFINITY : ro / (ro - 1);
 }
 
-double YuleRand::Var() const
+double YuleRand::Variance() const
 {
     if (ro <= 2)
         return INFINITY;

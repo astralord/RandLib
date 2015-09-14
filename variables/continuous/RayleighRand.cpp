@@ -37,12 +37,12 @@ double RayleighRand::variate() const
     return sigma * std::sqrt(rv + rv);
 }
 
-double RayleighRand::E() const
+double RayleighRand::Mean() const
 {
     return sigma * M_SQRTPI * M_SQRT1_2;
 }
 
-double RayleighRand::Var() const
+double RayleighRand::Variance() const
 {
     return sigma * sigma * (2.0 - M_PI_2);
 }

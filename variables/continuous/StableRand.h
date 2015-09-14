@@ -66,8 +66,8 @@ public:
     double variate() const override;
     void sample(QVector<double> &outputData);
 
-    double E() const override { return (alpha > 1) ? mu : NAN; }
-    double Var() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
+    double Mean() const override { return (alpha > 1) ? mu : NAN; }
+    double Variance() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
     
     double Skewness() const override;
     double ExcessKurtosis() const override;

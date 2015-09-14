@@ -60,12 +60,12 @@ double CauchyRand::standardVariate()
     return x / y;
 }
 
-double CauchyRand::E() const
+double CauchyRand::Mean() const
 { 
     return NAN;
 }
 
-double CauchyRand::Var() const
+double CauchyRand::Variance() const
 {
     return INFINITY; 
 }

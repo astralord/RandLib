@@ -14,7 +14,7 @@ double ContinuousRand::Quantile(double p) const
     if (p == 0)
         return -INFINITY;
 
-    double root = E(); /// good starting point
+    double root = Mean(); /// good starting point
     if (std::isnan(root) || std::isinf(root))
         root = 0.0;
     if (RandMath::findRoot([this, p] (double x)
@@ -40,7 +40,7 @@ double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPt
     double integrand = 0;
     /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
     /// therefore function Variance() should stay pure and noone should calculate it by this function
-    double var = Var();
+    double var = Variance();
     do {
        lowerBoundary -= var;
        integrand = funPtr(lowerBoundary) * f(lowerBoundary);
@@ -76,10 +76,10 @@ double ContinuousRand::Mode() const
 {
     /// use only for unimodal distributions!
 
-    double mu = E(); /// good starting point
+    double mu = Mean(); /// good starting point
     if (std::isnan(mu) || std::isinf(mu))
         mu = Median(); /// this shouldn't be nan or inf
-    double step = 10 * Var();
+    double step = 10 * Variance();
     if (std::isnan(step) || std::isinf(step))
         step = 100; // dirty hack
 

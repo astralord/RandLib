@@ -37,8 +37,8 @@ private:
 public:
     void sample(QVector<double> &outputData);
 
-    double E() const override;
-    double Var() const override;
+    double Mean() const override;
+    double Variance() const override;
 
     double Quantile(double p) const override;
 

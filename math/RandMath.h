@@ -282,8 +282,7 @@ public:
      * @param number
      * @return sum_{i=1}^{number} i^{-exponent}
      */
-    static double harmonicNumber(double exponent, size_t number);
-
+    static double harmonicNumber(double exponent, int number);
 
     /**
      * @brief modifiedBessel

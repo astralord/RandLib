@@ -73,15 +73,15 @@ double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::E() const
+double NegativeBinomialRand<T>::Mean() const
 {
     return p * r / (1 - p);
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::Var() const
+double NegativeBinomialRand<T>::Variance() const
 {
-    return E() / (1 - p);
+    return Mean() / (1 - p);
 }
 
 template< typename T >

@@ -57,13 +57,13 @@ public:
      * @brief M
      * @return Mathematical expectation
      */
-    virtual double E() const = 0;
+    virtual double Mean() const = 0;
 
     /**
      * @brief Var
      * @return Variance
      */
-    virtual double Var() const = 0;
+    virtual double Variance() const = 0;
 
     /**
      * @brief CF

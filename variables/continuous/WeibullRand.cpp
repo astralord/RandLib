@@ -39,12 +39,12 @@ double WeibullRand::variate() const
     return lambda * std::pow(ExponentialRand::standardVariate(), kInv);
 }
 
-double WeibullRand::E() const
+double WeibullRand::Mean() const
 {
     return lambda * std::tgamma(1 + kInv);
 }
 
-double WeibullRand::Var() const
+double WeibullRand::Variance() const
 {
     double res = std::tgamma(1 + kInv);
     res *= res;
@@ -66,8 +66,8 @@ double WeibullRand::Mode() const
 
 double WeibullRand::Skewness() const
 {
-    double mu = E();
-    double var = Var();
+    double mu = Mean();
+    double var = Variance();
     double sigma = std::sqrt(var);
     double numerator = std::tgamma(1 + 3.0 * kInv);
     numerator *= lambda * lambda * lambda;
@@ -79,8 +79,8 @@ double WeibullRand::Skewness() const
 
 double WeibullRand::ExcessKurtosis() const
 {
-    double mu = E();
-    double var = Var();
+    double mu = Mean();
+    double var = Variance();
     double sigma = std::sqrt(var);
     double skewness = Skewness();
     double numerator = lambda * lambda;

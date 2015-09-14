@@ -41,12 +41,12 @@ void BetaPrimeRand::sample(QVector<double> &outputData)
         var = var / (1.0 - var);
 }
 
-double BetaPrimeRand::E() const
+double BetaPrimeRand::Mean() const
 {
     return (Y.getShape() > 1) ? X.getShape() / (Y.getShape() - 1) : INFINITY;
 }
 
-double BetaPrimeRand::Var() const
+double BetaPrimeRand::Variance() const
 {
     double alpha = X.getShape();
     double beta = Y.getShape();

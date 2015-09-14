@@ -18,15 +18,15 @@ public:
 
     void setLocation(double location);
     void setScale(double scale);
-    inline double getLocation() const { return X.E(); }
+    inline double getLocation() const { return X.Mean(); }
     inline double getScale() const { return X.getSigma(); }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override;
-    double Var() const override;
+    double Mean() const override;
+    double Variance() const override;
 
     double Quantile(double p);
 

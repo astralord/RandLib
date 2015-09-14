@@ -77,12 +77,12 @@ void FisherSnedecorRand::sample(QVector<double> &outputData)
         var = d2_d1 * var;
 }
 
-double FisherSnedecorRand::E() const
+double FisherSnedecorRand::Mean() const
 {
     return (d2 > 2) ? d2 / (d2 - 2) : INFINITY /*or NAN*/;
 }
 
-double FisherSnedecorRand::Var() const
+double FisherSnedecorRand::Variance() const
 {
     if (d2 <= 4)
         return INFINITY; /*or NAN*/

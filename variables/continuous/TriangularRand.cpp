@@ -73,12 +73,12 @@ double TriangularRand::variate() const
     return b - std::sqrt((1 - u) * coefGenerator2);
 }
 
-double TriangularRand::E() const
+double TriangularRand::Mean() const
 {
     return (a + b + c) / 3.0;
 }
 
-double TriangularRand::Var() const
+double TriangularRand::Variance() const
 {
     return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }

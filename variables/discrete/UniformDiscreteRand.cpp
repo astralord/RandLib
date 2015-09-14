@@ -39,12 +39,12 @@ double UniformDiscreteRand::variate() const
     return a + RandGenerator::variate() % n;
 }
 
-double UniformDiscreteRand::E() const
+double UniformDiscreteRand::Mean() const
 {
     return .5 * (b + a);
 }
 
-double UniformDiscreteRand::Var() const
+double UniformDiscreteRand::Variance() const
 {
     return (n * n - 1) / 12;
 }

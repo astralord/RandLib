@@ -17,8 +17,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override { return 0; }
-    double Var() const override { return 1; }
+    double Mean() const override { return 0; }
+    double Variance() const override { return 1; }
 
     std::complex<double> CF(double t) const override;
 

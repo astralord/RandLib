@@ -26,8 +26,8 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double E() const override;
-    double Var() const override;
+    double Mean() const override;
+    double Variance() const override;
     
     double Mode() const override;
     double Skewness() const override;

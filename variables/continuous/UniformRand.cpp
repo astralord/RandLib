@@ -57,12 +57,12 @@ double UniformRand::standardVariate()
     return x - 1.0;
 }
 
-double UniformRand::E() const
+double UniformRand::Mean() const
 {
     return .5 * (b + a);
 }
 
-double UniformRand::Var() const
+double UniformRand::Variance() const
 {
     return (b - a) * (b - a) / 12;
 }

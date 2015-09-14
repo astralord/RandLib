@@ -40,8 +40,8 @@ public:
     static double variate(double mean, double rootVar);
     static double standardVariate();
 
-    double E() const { return mu; }
-    double Var() const { return sigma * sigma; }
+    double Mean() const { return mu; }
+    double Variance() const { return sigma * sigma; }
 
     double Quantile(double p) const override;
 

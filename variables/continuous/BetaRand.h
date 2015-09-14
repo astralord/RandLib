@@ -42,8 +42,8 @@ private:
     void setVariateConstants();
 
 public:
-    double E() const override;
-    double Var() const override;
+    double Mean() const override;
+    double Variance() const override;
     
     double Quantile(double p) const override;
 

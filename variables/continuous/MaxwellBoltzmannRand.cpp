@@ -41,12 +41,12 @@ double MaxwellBoltzmannRand::variate() const
     return a * std::sqrt(C.variate());
 }
 
-double MaxwellBoltzmannRand::E() const
+double MaxwellBoltzmannRand::Mean() const
 {
     return 2 * M_1_SQRTPI * M_SQRT2 * a;
 }
 
-double MaxwellBoltzmannRand::Var() const
+double MaxwellBoltzmannRand::Variance() const
 {
     return a * a * (3 - 8.0 * M_1_PI);
 }
