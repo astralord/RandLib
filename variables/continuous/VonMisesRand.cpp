@@ -39,7 +39,7 @@ double VonMisesRand::F(double x) const
     {
         return VonMisesRand::f(t);
     },
-    0, x);
+    mu - M_PI, x);
 }
 
 double VonMisesRand::variate() const

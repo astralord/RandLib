@@ -11,7 +11,7 @@ void DiscreteRand::pmf(const QVector<int> &x, QVector<double> &y) const
 double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     static constexpr double epsilon = 1e-12;
-    static constexpr int maxIter = 1000;
+    static constexpr int maxIter = 1e4;
     int iter = 0;
     long double sum = 0.0L;
     double addon = 0;
@@ -49,15 +49,15 @@ double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr,
 double DiscreteRand::likelihood(const QVector<int> &sample) const
 {
     double res = 1.0;
-    for (int i = 0; i != sample.size(); ++i)
-        res *= std::log(P(sample[i]));
+    for (const int & var : sample )
+        res *= P(var);
     return res;
 }
 
 double DiscreteRand::loglikelihood(const QVector<int> &sample) const
 {
     double res = 0.0;
-    for (int i = 0; i != sample.size(); ++i)
-        res += std::log(P(sample[i]));
+    for (const int & var : sample )
+        res += std::log(P(var));
     return res;
 }

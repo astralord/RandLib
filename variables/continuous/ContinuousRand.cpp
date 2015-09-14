@@ -112,15 +112,15 @@ double ContinuousRand::Mode() const
 double ContinuousRand::likelihood(const QVector<double> &sample) const
 {
     double res = 1.0;
-    for (int i = 0; i != sample.size(); ++i)
-        res *= f(sample[i]);
+    for (const double & var : sample )
+        res *= f(var);
     return res;
 }
 
 double ContinuousRand::loglikelihood(const QVector<double> &sample) const
 {
     double res = 0.0;
-    for (int i = 0; i != sample.size(); ++i)
-        res += std::log(f(sample[i]));
+    for (const double & var : sample )
+        res += std::log(f(var));
     return res;
 }

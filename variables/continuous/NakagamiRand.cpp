@@ -31,7 +31,6 @@ double NakagamiRand::f(double x) const
 
 double NakagamiRand::F(double x) const
 {
-    /// WARNING: not accurate result, maybe due to lower incomplete gamma function implementation
     if (x <= 0)
         return 0;
     return RandMath::lowerIncGamma(m, sigma * x * x) * gammaMInv;
@@ -52,11 +51,6 @@ double NakagamiRand::Variance() const
     double res = std::tgamma(m + 0.5) * gammaMInv;
     res *= res;
     return w * (1 - res / m);
-}
-
-double NakagamiRand::Median() const
-{
-    return std::sqrt(w);
 }
 
 double NakagamiRand::Mode() const
