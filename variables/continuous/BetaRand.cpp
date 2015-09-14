@@ -53,7 +53,7 @@ double BetaRand::f(double x) const
     if (x < 0 || x > 1)
         return 0;
     double alpha = X.getShape(), beta = Y.getShape();
-    if (std::fabs(alpha - beta) < MIN_POSITIVE)
+    if (RandMath::areEqual(alpha, beta))
         return pdfCoef * std::pow(x - x * x, alpha - 1);
     double rv = std::pow(x, alpha - 1);
     rv *= std::pow(1 - x, beta - 1);
