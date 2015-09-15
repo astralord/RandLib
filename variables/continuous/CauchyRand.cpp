@@ -18,7 +18,9 @@ void CauchyRand::setLocation(double location)
 
 void CauchyRand::setScale(double scale)
 {
-    gamma = std::max(scale, MIN_POSITIVE);
+    gamma = scale;
+    if (gamma <= 0)
+        gamma = MIN_POSITIVE;
     gammaInv = 1.0 / gamma;
 }
 
