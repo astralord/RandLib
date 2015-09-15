@@ -24,6 +24,11 @@ double ContinuousRand::Quantile(double p) const
     return INFINITY;
 }
 
+double ContinuousRand::Hazard(double x) const
+{
+    return f(x) / (1.0 - F(x));
+}
+
 double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     /// attempt to calculate expected value by numerical method
