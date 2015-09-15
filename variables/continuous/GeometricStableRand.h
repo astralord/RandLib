@@ -22,6 +22,8 @@ public:
     
     void sample(QVector<double> &outputData);
     
+    std::complex<double> CF(double t) const override;
+    
     double ExcessKurtosis() const override;
 };
 
