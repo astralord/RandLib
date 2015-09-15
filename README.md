@@ -51,6 +51,8 @@ Continuous:
 * F
 * Gamma
 * Geometric Stable
+* Holtsmark
+* Landau
 * Laplace
 * Levy
 * Log-normal
