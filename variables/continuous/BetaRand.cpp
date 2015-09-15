@@ -75,6 +75,7 @@ double BetaRand::F(double x) const
 
 double BetaRand::variate() const
 {
+    //TODO: if alpha == beta == 0.5 - return sin(U)^2 where U in [-pi, pi] (look arcsine article)
     double alpha = X.getShape(), beta = Y.getShape();
     if (!RandMath::areEqual(alpha, beta) || alpha < 1)
         return variateForDifferentParameters();

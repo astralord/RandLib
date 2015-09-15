@@ -18,7 +18,7 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
     /// Sanity check
     if (b < a)
         SWAP(a, b);
-    if (b - a < MIN_POSITIVE)
+    if (RandMath::areEqual(b, a))
         b = a + MIN_POSITIVE;
 
     c = 1.0 / (b - a);

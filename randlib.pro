@@ -51,7 +51,8 @@ SOURCES += \
     variables/discrete/HyperGeometricRand.cpp \
     variables/discrete/ZipfRand.cpp \
     variables/discrete/YuleRand.cpp \
-    variables/continuous/VonMisesRand.cpp
+    variables/continuous/VonMisesRand.cpp \
+    variables/continuous/ArcsineRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -99,7 +100,8 @@ HEADERS +=\
     variables/discrete/HyperGeometricRand.h \
     variables/discrete/ZipfRand.h \
     variables/discrete/YuleRand.h \
-    variables/continuous/VonMisesRand.h
+    variables/continuous/VonMisesRand.h \
+    variables/continuous/ArcsineRand.h
 
 unix {
     target.path = /usr/lib
