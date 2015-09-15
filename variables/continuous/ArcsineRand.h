@@ -16,7 +16,7 @@ public:
     void setShape(double shape);
     double getMin() { return a; }
     double getMax() { return b; }
-    double getShape() { return BetaRand::getBeta(); }
+    double getShape() { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
