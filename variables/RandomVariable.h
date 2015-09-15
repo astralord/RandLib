@@ -54,17 +54,26 @@ public:
     void cdf(const QVector<double> &x, QVector<double> &y);
 
     /**
-     * @brief M
+     * @brief Mean
      * @return Mathematical expectation
      */
     virtual double Mean() const = 0;
 
     /**
-     * @brief Var
-     * @return Variance
+     * @brief Variance
+     * @return Variance of random variable
      */
     virtual double Variance() const = 0;
-
+    
+    /**
+     * @brief quantile
+     * @param p
+     * @return such x that F(x) = p
+     */
+    virtual double Quantile(double p) const { // = 0
+        return p;
+    }
+    
     /**
      * @brief CF
      * @param x
@@ -83,14 +92,19 @@ public:
     void cf(const QVector<double> &t, QVector<std::complex<double>> &y);
 
     /**
-     * @brief quantile
-     * @param p
-     * @return such x that F(x) = p
+     * @brief Hazard
+     * return hazard function: pdf / (1 - cdf)
+     * @param x input parameter
      */
-    virtual double Quantile(double p) const { // = 0
-        return p;
-    }
-
+    double Hazard(double x) const;
+    
+    /**
+     * @brief hcf
+     * @param x input vector
+     * @param y output vector: y = Hazard(x)
+     */
+    void hcf(const QVector<double> &x, QVector<double> &y);
+    
     /**
      * @brief ExpectedValue
      * @param funPtr function which expected value should be returned
