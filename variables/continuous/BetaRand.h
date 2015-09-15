@@ -34,7 +34,7 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    void sample(QVector<double> &outputData);
+    void sample(QVector<double> &outputData) const override;
 
 private:
     double variateForSmallEqualParameters() const;

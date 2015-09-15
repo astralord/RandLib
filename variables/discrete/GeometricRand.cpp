@@ -71,7 +71,7 @@ double GeometricRand::variate(double probability)
     return x;
 }
 
-void GeometricRand::sample(QVector<double> &outputData)
+void GeometricRand::sample(QVector<double> &outputData) const
 {
     if (p < 0.2) {
         for (double &var : outputData)

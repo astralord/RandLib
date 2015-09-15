@@ -67,7 +67,7 @@ double GeometricStableRand::variate() const
     return W_adj * Y + mu * (W - W_adj);
 }
 
-void GeometricStableRand::sample(QVector<double> &outputData)
+void GeometricStableRand::sample(QVector<double> &outputData) const
 {
     if (alpha == 2 && mu == 0 && beta == 0) {
         for (double &var : outputData)

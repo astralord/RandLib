@@ -32,7 +32,7 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    void sample(QVector<double> &outputData);
+    void sample(QVector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

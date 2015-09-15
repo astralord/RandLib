@@ -44,7 +44,7 @@ double StudentTRand::variate() const
     return NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
 }
 
-void StudentTRand::sample(QVector<double> &outputData)
+void StudentTRand::sample(QVector<double> &outputData) const
 {
     //v = inf -> normal
     if (v == 1) {

@@ -46,7 +46,7 @@ private:
 public:
     double variate() const override;
 
-    void sample(QVector<double> &outputData);
+    void sample(QVector<double> &outputData) const override;
 
     double Mean() const override { return k * theta; }
     double Variance() const override { return k * theta * theta; }

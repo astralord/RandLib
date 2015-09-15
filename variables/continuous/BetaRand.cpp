@@ -96,7 +96,7 @@ double BetaRand::variate() const
     return variateForLargeEqualParameters();
 }
 
-void BetaRand::sample(QVector<double> &outputData)
+void BetaRand::sample(QVector<double> &outputData) const
 {
     if (!RandMath::areEqual(alpha, beta) || alpha < 1) {
         for (double &var : outputData)

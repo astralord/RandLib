@@ -32,7 +32,7 @@ double BetaPrimeRand::variate() const
     return x / (1.0 - x);
 }
 
-void BetaPrimeRand::sample(QVector<double> &outputData)
+void BetaPrimeRand::sample(QVector<double> &outputData) const
 {
     BetaRand::sample(outputData);
     for (double &var : outputData)

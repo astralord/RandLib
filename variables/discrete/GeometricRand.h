@@ -30,7 +30,7 @@ public:
     double variate() const override;
     static double variate(double probability);
 
-    void sample(QVector<double> &outputData);
+    void sample(QVector<double> &outputData) const override;
 
 private:
     double variateByExponential() const;

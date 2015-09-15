@@ -59,7 +59,7 @@ double ArcsineRand::variate() const
     return a + bma * BetaRand::variate();
 }
 
-void ArcsineRand::sample(QVector<double> &outputData)
+void ArcsineRand::sample(QVector<double> &outputData) const
 {
     BetaRand::sample(outputData);
     for (double & var : outputData)

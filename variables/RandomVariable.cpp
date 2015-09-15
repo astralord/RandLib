@@ -13,20 +13,20 @@ std::string RandomVariable::toStringWithPrecision(const double a_value, const in
     return out.str();
 }
 
-void RandomVariable::sample(QVector<double> &outputData)
+void RandomVariable::sample(QVector<double> &outputData) const
 {
     for (double &var : outputData)
         var = variate();
 }
 
-void RandomVariable::cdf(const QVector<double> &x, QVector<double> &y)
+void RandomVariable::cdf(const QVector<double> &x, QVector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 
-void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> > &y)
+void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)

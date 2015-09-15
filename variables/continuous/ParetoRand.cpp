@@ -79,7 +79,7 @@ double ParetoRand::variateForCommonAlpha(double shape)
     return std::exp(ExponentialRand::variate(shape));
 }
 
-void ParetoRand::sample(QVector<double> &outputData)
+void ParetoRand::sample(QVector<double> &outputData) const
 {
     if (alpha == 1) {
         for (double &var : outputData)

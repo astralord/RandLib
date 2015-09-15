@@ -20,7 +20,7 @@ private:
 public:
     double variate() const override;
     
-    void sample(QVector<double> &outputData);
+    void sample(QVector<double> &outputData) const override;
     
     std::complex<double> CF(double t) const override;
     

@@ -79,7 +79,7 @@ double GammaRand::variate() const
     return theta * variateForLargeShape();
 }
 
-void GammaRand::sample(QVector<double> &outputData)
+void GammaRand::sample(QVector<double> &outputData) const
 {
     if (k < 5) {
         double k_round = std::round(k);

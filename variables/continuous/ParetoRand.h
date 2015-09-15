@@ -35,7 +35,7 @@ private:
     static double variateForCommonAlpha(double shape);
 
 public:
-    void sample(QVector<double> &outputData);
+    void sample(QVector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

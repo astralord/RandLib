@@ -282,7 +282,7 @@ double StableRand::variate() const
     return variateForCommonAlpha();
 }
 
-void StableRand::sample(QVector<double> &outputData)
+void StableRand::sample(QVector<double> &outputData) const
 {
     /// Check all 'good' cases
     if (alpha == 2) {
