@@ -11,8 +11,6 @@ double ContinuousRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0)
-        return -INFINITY;
 
     double root = Mean(); /// good starting point
     if (std::isnan(root) || std::isinf(root))
