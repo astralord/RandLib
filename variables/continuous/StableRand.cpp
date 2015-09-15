@@ -310,6 +310,20 @@ void StableRand::sample(QVector<double> &outputData)
     }
 }
 
+std::complex<double> psi(double t) const
+{
+    double x = (alpha == 1) ? -beta * M_2_PI * log(std::fabs(t)) : -zeta;
+    if (t > 0)
+        x = -x;
+    double re = -std::pow(std::fabs(sigma * t), alpha);
+    return std::complex<double>(re, re * x + mu * t);
+}
+
+std::complex<double> CF(double t) const
+{
+    return std::exp(-psi(t));
+}
+
 double StableRand::Skewness() const
 {
     return (alpha == 2) ? 0 : NAN;
