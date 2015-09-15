@@ -18,7 +18,7 @@ public:
     double getMax() { return b; }
     double getShape() { return beta; }
 
-private:
+protected:
     /// prohibit to use beta's getters and setters
     using BetaRand::setParameters;
     using BetaRand::setAlpha;
