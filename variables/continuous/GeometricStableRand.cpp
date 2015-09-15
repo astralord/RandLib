@@ -88,6 +88,11 @@ void GeometricStableRand::sample(QVector<double> &outputData)
     }
 }
 
+std::complex<double> GeometricStableRand::CF(double t) const
+{
+    return 1.0 / (1.0 + psi(t));
+}
+
 double GeometricStableRand::ExcessKurtosis() const
 {
     return (alpha == 2) ? 3.0 : NAN;
