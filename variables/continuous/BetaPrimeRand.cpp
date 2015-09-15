@@ -14,8 +14,6 @@ double BetaPrimeRand::f(double x) const
 {
     if (x <= 0)
         return 0;
-    double alpha = X.getShape();
-    double beta = Y.getShape();
     double rv = std::pow(x, alpha - 1);
     rv *= std::pow(1 + x, -alpha - beta);
     return pdfCoef * rv;
@@ -43,13 +41,11 @@ void BetaPrimeRand::sample(QVector<double> &outputData)
 
 double BetaPrimeRand::Mean() const
 {
-    return (Y.getShape() > 1) ? X.getShape() / (Y.getShape() - 1) : INFINITY;
+    return (beta > 1) ? alpha / (beta - 1) : INFINITY;
 }
 
 double BetaPrimeRand::Variance() const
 {
-    double alpha = X.getShape();
-    double beta = Y.getShape();
     if (beta <= 2)
         return INFINITY;
     double betaAdj = beta - 1;
@@ -67,13 +63,11 @@ double BetaPrimeRand::Median() const
 
 double BetaPrimeRand::Mode() const
 {
-    return (X.getShape() < 1) ? 0 : (X.getShape() - 1) / (Y.getShape() + 1);
+    return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
 }
 
 double BetaPrimeRand::Skewness() const
 {
-    double alpha = X.getShape();
-    double beta = Y.getShape();
     if (beta <= 3)
         return INFINITY;
     double aux = alpha + beta - 1;
@@ -86,8 +80,6 @@ double BetaPrimeRand::Skewness() const
 
 double BetaPrimeRand::ExcessKurtosis() const
 {
-    double alpha = X.getShape();
-    double beta = Y.getShape();
     if (beta <= 4)
         return INFINITY;
     double betam1 = beta - 1;
