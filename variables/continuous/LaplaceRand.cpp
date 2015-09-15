@@ -18,7 +18,9 @@ void LaplaceRand::setLocation(double location)
 
 void LaplaceRand::setScale(double scale)
 {
-    b = std::max(scale, MIN_POSITIVE);
+    b = scale;
+    if (b <= 0)
+        b = MIN_POSITIVE;
     bInv = 1.0 / b;
 }
 
