@@ -12,7 +12,9 @@ std::string PoissonRand::name()
 
 void PoissonRand::setRate(double rate)
 {
-    lambda = std::max(rate, MIN_POSITIVE);
+    lambda = rate;
+    if (lambda <= 0)
+        lambda = MIN_POSITIVE;
     expLambda = std::exp(-lambda);
 }
 
