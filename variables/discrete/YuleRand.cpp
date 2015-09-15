@@ -12,7 +12,9 @@ std::string YuleRand::name()
 
 void YuleRand::setShape(double shape)
 {
-    ro = std::max(shape, MIN_POSITIVE);
+    ro = shape;
+    if (ro <= 0)
+        ro = MIN_POSITIVE;
     gamma1pRo = std::tgamma(ro + 1);
 }
 
