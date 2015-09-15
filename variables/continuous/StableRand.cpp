@@ -18,7 +18,8 @@ std::string StableRand::name()
 void StableRand::setParameters(double exponent, double skewness, double scale, double location)
 {
     alpha = std::min(exponent, 2.0);
-    alpha = std::max(alpha, MIN_POSITIVE);
+    if (alpha <= 0)
+        alpha = MIN_POSITIVE;
     alphaInv = 1.0 / alpha;
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
@@ -26,7 +27,9 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
 
-    sigma = std::max(scale, MIN_POSITIVE);
+    sigma = scale;
+    if (sigma <= 0)
+        sigma = MIN_POSITIVE;
     mu = location;
 
     /// Should be cautious, known distributions in priority
@@ -37,9 +40,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     else if (RandMath::areEqual(alpha, 0.5))
         alpha = 0.5;
 
-    if (std::fabs(beta) < MIN_POSITIVE)
-        beta = 0;
-    else if (RandMath::areEqual(beta, 1))
+    if (RandMath::areEqual(beta, 1))
         beta = 1;
     else if (RandMath::areEqual(beta, -1))
         beta = -1;
