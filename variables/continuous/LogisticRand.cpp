@@ -19,6 +19,8 @@ void LogisticRand::setLocation(double location)
 void LogisticRand::setScale(double scale)
 {
     s = scale;
+    if (s <= 0)
+        s = MIN_POSITIVE;
 }
 
 double LogisticRand::f(double x) const
