@@ -13,7 +13,9 @@ std::string MaxwellBoltzmannRand::name()
 
 void MaxwellBoltzmannRand::setScale(double scale)
 {
-    a = std::max(scale, MIN_POSITIVE);
+    a = scale;
+    if (a <= 0)
+        a = MIN_POSITIVE;
 }
 
 double MaxwellBoltzmannRand::f(double x) const
