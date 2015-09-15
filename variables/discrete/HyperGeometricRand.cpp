@@ -14,7 +14,7 @@ std::string HyperGeometricRand::name()
 
 void HyperGeometricRand::setParameters(int totalSize, int drawsNum, int successesNum)
 {
-    N = totalSize;
+    N = std::max(totalSize, 1.0);
     n = std::min(N, drawsNum);
     K = std::min(N, successesNum);
 
