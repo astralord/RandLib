@@ -93,10 +93,10 @@ public:
 
     /**
      * @brief Hazard
-     * return hazard function: pdf / (1 - cdf)
+     * return hazard function: pdf (or pmf) / (1 - cdf)
      * @param x input parameter
      */
-    double Hazard(double x) const;
+    double Hazard(double x) const = 0;
     
     /**
      * @brief ExpectedValue
