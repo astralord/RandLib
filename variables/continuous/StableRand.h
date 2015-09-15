@@ -66,6 +66,11 @@ public:
     double variate() const override;
     void sample(QVector<double> &outputData);
 
+private:
+    std::complex<double> psi(double t) const;
+public:
+    std::complex<double> CF(double t) const override;
+
     double Mean() const override { return (alpha > 1) ? mu : NAN; }
     double Variance() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
     
