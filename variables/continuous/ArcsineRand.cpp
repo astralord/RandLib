@@ -79,9 +79,16 @@ double ArcsineRand::Variance() const
     return (b - a) * (b - a) * BetaRand::Variance();
 }
 
-double ArcsineRand::Median() const
+double ArcsineRand::Quantile(double p) const
 {
-    return a + (b - a) * BetaRand::Median();
+    if (p < 0 || p > 1)
+        return NAN;
+    if (RandMath::areEqual(beta, 0.5))
+    {
+        double x = std::sin(0.5 * M_PI * p);
+        return a + (b - a) * x * x;
+    }
+    return a + (b - a) * BetaRand::Quantile(p);
 }
 
 double ArcsineRand::Mode() const
