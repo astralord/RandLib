@@ -18,7 +18,9 @@ void LevyRand::setLocation(double location)
 
 void LevyRand::setScale(double scale)
 {
-    c = scale > 0.0 ? scale : 0.0;
+    c = scale;
+    if (c <= 0)
+        c = MIN_POSITIVE;
     sqrtc_2pi = std::sqrt(c);
     X.setSigma(1.0 / sqrtc_2pi); /// X ~ N(0, c ^ -0.5)
     sqrtc_2pi *= M_1_SQRT2PI;
