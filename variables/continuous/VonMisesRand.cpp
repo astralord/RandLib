@@ -18,7 +18,9 @@ void VonMisesRand::setLocation(double location)
 
 void VonMisesRand::setConcentration(double concentration)
 {
-    k = std::max(concentration, 0.0);
+    k = concentration;
+    if (k <= 0)
+        k = MIN_POSITIVE;
     I0kInv = 1.0 / RandMath::modifiedBesselFirstKind(k, 0);
 }
 
