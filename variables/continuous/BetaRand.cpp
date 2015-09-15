@@ -12,10 +12,14 @@ std::string BetaRand::name()
 
 void BetaRand::setParameters(double shape1, double shape2)
 {
-    alpha = std::max(shape1, MIN_POSITIVE);
+    alpha = shape1;
+    if (alpha <= 0)
+        alpha = MIN_POSITIVE;
     X.setParameters(alpha, 1);
 
-    beta = std::max(shape2, MIN_POSITIVE);
+    beta = shape2;
+    if (beta <= 0)
+        beta = MIN_POSITIVE;
     Y.setParameters(beta, 1);
 
     if (alpha + beta > 30)
@@ -34,7 +38,9 @@ void BetaRand::setParameters(double shape1, double shape2)
 
 void BetaRand::setAlpha(double shape1)
 {
-    alpha = std::max(shape1, MIN_POSITIVE);
+    alpha = shape1;
+    if (alpha <= 0)
+        alpha = MIN_POSITIVE;
     X.setParameters(alpha, 1);
     pdfCoef = std::tgamma(alpha + Y.getShape()) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     setVariateConstants();
@@ -42,7 +48,9 @@ void BetaRand::setAlpha(double shape1)
 
 void BetaRand::setBeta(double shape2)
 {
-    beta = std::max(shape2, MIN_POSITIVE);
+    beta = shape2;
+    if (beta <= 0)
+        beta = MIN_POSITIVE;
     Y.setParameters(beta, 1);
     pdfCoef = std::tgamma(X.getShape() + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     setVariateConstants();
