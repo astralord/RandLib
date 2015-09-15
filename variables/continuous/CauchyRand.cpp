@@ -70,6 +70,12 @@ double CauchyRand::Variance() const
     return INFINITY; 
 }
     
+std::complex<double> CauchyRand::CF(double t) const
+{
+    std::complex<double> x(-gamma * std::fabs(t), x0 * t);
+    return std::exp(x);
+}
+
 double CauchyRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
