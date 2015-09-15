@@ -6,6 +6,7 @@
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
     double a, b;
+    double bma; /// b - a
     double pdfCoef; /// sin(pi * beta) / pi
 
 public:
@@ -31,12 +32,15 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    void sample(QVector<double> &outputData);
+
     double Mean() const override;
     double Variance() const override;
+
+    double Quantile(double p) const;
     
+    double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
 };
 
 #endif // ARCSINERAND_H

@@ -19,6 +19,7 @@
 
 /// CONTINUOUS
 #include "continuous/ContinuousRand.h"
+#include "continuous/ArcsineRand.h"
 #include "continuous/BetaPrimeRand.h"
 #include "continuous/BetaRand.h"
 #include "continuous/CauchyRand.h"

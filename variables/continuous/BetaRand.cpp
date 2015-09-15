@@ -60,6 +60,10 @@ double BetaRand::f(double x) const
 {
     if (x < 0 || x > 1)
         return 0;
+    if (alpha < 1.0 && x == 0)
+        return 0.0;
+    if (beta < 1.0 && x == 1)
+        return 0.0;
     if (RandMath::areEqual(alpha, beta))
         return pdfCoef * std::pow(x - x * x, alpha - 1);
     double rv = std::pow(x, alpha - 1);
@@ -176,18 +180,29 @@ double BetaRand::Quantile(double p) const
     if (p < 0 || p > 1)
         return NAN;
     double root = p;
+    double minValue = (alpha < 1) ? 1e-10 : 0.0;
+    double maxValue = (beta < 1) ? 1.0 - 1e-10 : 1.0;
     if (RandMath::findRoot([this, p] (double x)
     {
         return BetaRand::F(x) - p;
     },
-    0, 1, root))
+    minValue, maxValue, root))
         return root;
     return NAN;
 }
 
+double BetaRand::Median() const
+{
+    if (RandMath::areEqual(alpha, beta))
+        return 0.5;
+    return Quantile(0.5);
+}
+
 double BetaRand::Mode() const
 {
-    return (alpha - 1) / (alpha + beta - 2);
+    if (alpha > 1 && beta > 1)
+        return (alpha - 1) / (alpha + beta - 2);
+    return (signed)RandGenerator::variate() < 0 ? 0 : 1;
 }
 
 double BetaRand::Skewness() const

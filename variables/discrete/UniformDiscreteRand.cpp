@@ -17,7 +17,7 @@ void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
     b = maxValue;
 
     if (b < a)
-        SWAP(a, b);
+        SWAP_INTEGER(a, b);
 
     n = b - a + 1;
 }

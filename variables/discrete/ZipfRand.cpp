@@ -1,6 +1,6 @@
 #include "ZipfRand.h"
 
-ZipfRand::ZipfRand(double exponent, size_t number)
+ZipfRand::ZipfRand(double exponent, int number)
 {
     setParameters(exponent, number);
 }
@@ -11,7 +11,7 @@ std::string ZipfRand::name()
                    + toStringWithPrecision(getNumber()) + ")";
 }
 
-void ZipfRand::setParameters(double exponent, size_t number)
+void ZipfRand::setParameters(double exponent, int number)
 {
     s = std::max(exponent, 1.0);
     N = number < 1 ? 1 : number;

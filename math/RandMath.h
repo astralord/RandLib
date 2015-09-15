@@ -20,7 +20,8 @@ static double INFINITY = std::numeric_limits<double>::infinity();
 static double NAN = std::numeric_limits<double>::quiet_NaN();
 #endif
 
-#define SWAP(a, b) (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
+#define SWAP_INTEGER(a, b) (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
+#define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
 
 #ifndef QMATH_H
 constexpr double M_E         = 2.71828182845904523536;

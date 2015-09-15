@@ -10,7 +10,7 @@ ArcsineRand::ArcsineRand(double minValue = 0, double maxValue = 1, double shape 
 std::string ArcsineRand::name()
 {
     return "Arcsine(" + toStringWithPrecision(getMin()) + ", "
-                      + toStringWithPrecision(getMax()) + ", ";
+                      + toStringWithPrecision(getMax()) + ", "
                       + toStringWithPrecision(getShape()) + ")";
 }
 
@@ -24,6 +24,8 @@ void ArcsineRand::setSupport(double minValue, double maxValue)
 
     if (RandMath::areEqual(b, a))
         b = a + MIN_POSITIVE;
+
+    bma = b - a;
 }
 
 void ArcsineRand::setShape(double shape)
@@ -34,19 +36,7 @@ void ArcsineRand::setShape(double shape)
 
 double ArcsineRand::f(double x) const
 {
-    if (x < a || x > b)
-        return 0;
-    if (x == a || x == b)
-        return INFINITY;
-    if (RandMath::areEqual(beta, 0.5))
-    {
-        double y = (x - a) * (x - b);
-        y = std::sqrt(y);
-        return M_1_PI / y;
-    }
-    double y = std::pow(x, beta);
-    y *= std::pow(1.0 - x, 1.0 - beta);
-    return pdfCoef / y;
+    return BetaRand::f((x - a) / bma) / bma;
 }
 
 double ArcsineRand::F(double x) const
@@ -61,22 +51,29 @@ double ArcsineRand::F(double x) const
         y = std::sqrt(y);
         return M_2_PI * std::asin(y);
     }
-    return BetaRand::F((x - a) / (b - a));
+    return BetaRand::F((x - a) / bma);
 }
 
 double ArcsineRand::variate() const
 {
-    return a + (b - a) * BetaRand::variate();
+    return a + bma * BetaRand::variate();
+}
+
+void ArcsineRand::sample(QVector<double> &outputData)
+{
+    BetaRand::sample(outputData);
+    for (double & var : outputData)
+        var = a + bma * var;
 }
 
 double ArcsineRand::Mean() const
 {
-    return a + (b - a) * BetaRand::Mean();
+    return a + bma * BetaRand::Mean();
 }
 
 double ArcsineRand::Variance() const
 {
-    return (b - a) * (b - a) * BetaRand::Variance();
+    return bma * bma* BetaRand::Variance();
 }
 
 double ArcsineRand::Quantile(double p) const
@@ -86,24 +83,19 @@ double ArcsineRand::Quantile(double p) const
     if (RandMath::areEqual(beta, 0.5))
     {
         double x = std::sin(0.5 * M_PI * p);
-        return a + (b - a) * x * x;
+        return a + bma * x * x;
     }
-    return a + (b - a) * BetaRand::Quantile(p);
+    return a + bma * BetaRand::Quantile(p);
+}
+
+double ArcsineRand::Median() const
+{
+    return a + bma * BetaRand::Median();
 }
 
 double ArcsineRand::Mode() const
 {
     /// x \in {a, b}
-    return RandGenerator::variate() < 0 ? a : b;
-}
-
-double ArcsineRand::Skewness() const
-{
-    return BetaRand::Skewness();
-}
-
-double ArcsineRand::ExcessKurtosis() const
-{
-    return BetaRand::ExcessKurtosis();
+    return (signed)RandGenerator::variate() < 0 ? a : b;
 }
 

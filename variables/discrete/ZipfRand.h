@@ -10,15 +10,15 @@
 class ZipfRand : public DiscreteRand
 {
     double s;
-    size_t N;
+    int N;
 
     double invHarmonicNumber; /// 1 / harmonic_number
 
 public:
-    ZipfRand(double exponent, size_t number);
+    ZipfRand(double exponent, int number);
     virtual std::string name() override;
 
-    void setParameters(double exponent, size_t number);
+    void setParameters(double exponent, int number);
     inline double getExponent() { return s; }
     inline size_t getNumber() { return N; }
 

@@ -70,18 +70,16 @@ double GeometricStableRand::variate() const
 void GeometricStableRand::sample(QVector<double> &outputData)
 {
     if (alpha == 2 && mu == 0 && beta == 0) {
-        for (double &var : outputData) {
+        for (double &var : outputData)
             var = LaplaceRand::variate(0, sigma);
-        }
     }
     else if (alphaInv == 1) {
-        for (double &var : outputData) {
+        for (double &var : outputData)
             var = variateForAlphaEqualOne();
     }
     else {
-        for (double &var : outputData) {
+        for (double &var : outputData)
             var = variateForCommonAlpha();
-        }
     }
 }
 

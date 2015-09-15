@@ -26,6 +26,7 @@ private:
 
 public:
     GammaRand(double shape = 1, double scale = 1);
+    virtual ~GammaRand() {}
     virtual std::string name() override;
 
     void setParameters(double shape, double scale);

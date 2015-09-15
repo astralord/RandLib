@@ -311,7 +311,7 @@ void StableRand::sample(QVector<double> &outputData)
     }
 }
 
-std::complex<double> psi(double t) const
+std::complex<double> StableRand::psi(double t) const
 {
     double x = (alpha == 1) ? -beta * M_2_PI * log(std::fabs(t)) : -zeta;
     if (t > 0)
@@ -320,7 +320,7 @@ std::complex<double> psi(double t) const
     return std::complex<double>(re, re * x + mu * t);
 }
 
-std::complex<double> CF(double t) const
+std::complex<double> StableRand::CF(double t) const
 {
     return std::exp(-psi(t));
 }

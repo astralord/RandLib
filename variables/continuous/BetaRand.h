@@ -21,6 +21,7 @@ protected:
 
 public:
     BetaRand(double shape1 = 1, double shape2 = 1);
+    virtual ~BetaRand() {}
     virtual std::string name() override;
 
     void setParameters(double shape1, double shape2);
@@ -48,6 +49,7 @@ public:
     
     double Quantile(double p) const override;
 
+    double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;

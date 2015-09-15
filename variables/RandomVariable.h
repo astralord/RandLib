@@ -96,7 +96,7 @@ public:
      * return hazard function: pdf (or pmf) / (1 - cdf)
      * @param x input parameter
      */
-    double Hazard(double x) const = 0;
+    virtual double Hazard(double x) const = 0;
     
     /**
      * @brief ExpectedValue

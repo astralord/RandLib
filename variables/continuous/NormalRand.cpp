@@ -126,8 +126,7 @@ double NormalRand::standardVariate()
 std::complex<double> NormalRand::CF(double t) const
 {
     double sigmaT = sigma * t;
-    std::complex<double> x = (0.5 * sigmaT * sigmaT, mu * t);
-    return std::exp(x);
+    return std::exp(std::complex<double>(0.5 * sigmaT * sigmaT, mu * t));
 }
 
 double NormalRand::Quantile(double p) const
