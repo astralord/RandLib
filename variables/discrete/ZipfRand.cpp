@@ -52,6 +52,19 @@ double ZipfRand::Mode() const
     return 1.0;
 }
 
+std::complex<double> ZipfRand::CF(double t) const
+{
+    std::complex<double> sum(0.0, 0.0);
+    for (int i = 1; i <= N; ++i)
+    {
+        std::complex<double> numerator(0, i * t);
+        numerator = std::exp(numerator);
+        double denominator = std::pow(i, s);
+        sum += numerator / denominator;
+    }
+    return invHarmonicNumber * sum;
+}
+
 double ZipfRand::Skewness() const
 {
     double harmonic0 = 1.0 / invHarmonicNumber;
