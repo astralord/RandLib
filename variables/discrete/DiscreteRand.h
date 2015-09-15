@@ -21,6 +21,8 @@ public:
     virtual double P(int x) const = 0;
 
     void pmf(const QVector<int> &x, QVector<double> &y) const;
+    
+    double Hazard(double x) const override;
 
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
