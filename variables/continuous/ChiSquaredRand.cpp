@@ -10,8 +10,7 @@ std::string ChiSquaredRand::name()
     return "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
 }
 
-void ChiSquaredRand::setDegree(size_t degree)
+void ChiSquaredRand::setDegree(int degree)
 {
-    double shape = (degree < 1) ? 0.5 : 0.5 * degree;
-    GammaRand::setParameters(shape, 2);
+    GammaRand::setParameters((degree < 1) ? 0.5 : 0.5 * degree, 2);
 }
