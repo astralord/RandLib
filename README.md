@@ -41,6 +41,7 @@ for (int i = 0; i != size; ++i)
 List of implemented distributions:
 
 Continuous:
+* Arcsine
 * Beta
 * Beta Prime
 * Cauchy
