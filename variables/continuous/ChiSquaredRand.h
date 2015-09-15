@@ -16,8 +16,8 @@ public:
     void setDegree(int degree);
     inline int getDegree() const { return static_cast<int>(k + k); }
     
-private:
-    /// prohibit gamma's public getters and setters
+protected:
+    /// prohibit to use gamma's public getters and setters
     using GammaRand::setParameters;
     using GammaRand::getShape;
     using GammaRand::getScale;
