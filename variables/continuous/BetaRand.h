@@ -12,6 +12,7 @@ class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 {
 
 protected:
+    double alpha, beta; /// hashed parameters
     GammaRand X, Y;
     NormalRand N; // TODO: we need to storage N OR (X AND Y)
     static constexpr double edgeForGenerators = 8.0;
