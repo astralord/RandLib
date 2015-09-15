@@ -11,7 +11,7 @@ std::string ArcsineRand::name()
 {
     return "Arcsine(" + toStringWithPrecision(getMin()) + ", "
                       + toStringWithPrecision(getMax()) + ", ";
-    + toStringWithPrecision(getAlpha()) + ")";
+                      + toStringWithPrecision(getShape()) + ")";
 }
 
 void ArcsineRand::setSupport(double minValue, double maxValue)
@@ -29,8 +29,7 @@ void ArcsineRand::setSupport(double minValue, double maxValue)
 void ArcsineRand::setShape(double shape)
 {
     BetaRand::setParameters(1.0 - shape, shape);
-    alpha = BetaRand::getBeta();
-    pdfCoef = std::sin(M_PI * alpha) * M_1_PI;
+    pdfCoef = std::sin(M_PI * beta) * M_1_PI;
 }
 
 double ArcsineRand::f(double x) const
@@ -39,54 +38,65 @@ double ArcsineRand::f(double x) const
         return 0;
     if (x == a || x == b)
         return INFINITY;
-    if (RandMath::areEqual(shape, 0.5))
+    if (RandMath::areEqual(beta, 0.5))
     {
         double y = (x - a) * (x - b);
         y = std::sqrt(y);
         return M_1_PI / y;
     }
-    double y = std::pow(x, alpha);
-    y *= std::pow(1 - x, 1.0 - alpha);
+    double y = std::pow(x, beta);
+    y *= std::pow(1.0 - x, 1.0 - beta);
     return pdfCoef / y;
 }
 
 double ArcsineRand::F(double x) const
 {
-    if (x <= 0)
+    if (x <= a)
         return 0;
-    if (x >= 1)
+    if (x >= b)
         return 1;
-    return M_2_PI * std::asin(std::sqrt(x));
+    if (RandMath::areEqual(beta, 0.5))
+    {
+        double y = (x - a) / (b - a);
+        y = std::sqrt(y);
+        return M_2_PI * std::asin(y);
+    }
+    return BetaRand::F((x - a) / (b - a));
+}
+
+double ArcsineRand::variate() const
+{
+    return a + (b - a) * BetaRand::variate();
 }
 
 double ArcsineRand::Mean() const
 {
-    return 0.5;
+    return a + (b - a) * BetaRand::Mean();
 }
 
 double ArcsineRand::Variance() const
 {
-
+    return (b - a) * (b - a) * BetaRand::Variance();
 }
 
 double ArcsineRand::Median() const
 {
-    return 0.5;
+    return a + (b - a) * BetaRand::Median();
 }
 
 double ArcsineRand::Mode() const
 {
-    /// x \in {0, 1}
-    return RandGenerator::variate() < 0 ? 0 : 1;
+    /// x \in {a, b}
+    return RandGenerator::variate() < 0 ? a : b;
 }
 
 double ArcsineRand::Skewness() const
 {
-    return 0.0;
+    return BetaRand::Skewness();
 }
 
 double ArcsineRand::ExcessKurtosis() const
 {
-    return -1.5;
+    return BetaRand::ExcessKurtosis();
 }
 
