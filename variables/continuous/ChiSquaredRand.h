@@ -13,8 +13,14 @@ public:
     explicit ChiSquaredRand(int degree = 1);
     virtual std::string name() override;
 
-    void setDegree(size_t degree);
-    inline size_t getDegree() const { return static_cast<size_t>(k + k); }
+    void setDegree(int degree);
+    inline int getDegree() const { return static_cast<int>(k + k); }
+    
+private:
+    /// prohibit gamma's public getters and setters
+    using GammaRand::setParameters;
+    using GammaRand::getShape;
+    using GammaRand::getScale;
 };
 
 #endif // CHISQUAREDRAND_H
