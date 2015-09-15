@@ -52,6 +52,7 @@ Continuous:
 * Gamma
 * Geometric Stable
 * Holtsmark
+* Hyperbolic secant
 * Landau
 * Laplace
 * Levy
