@@ -99,13 +99,6 @@ public:
     double Hazard(double x) const;
     
     /**
-     * @brief hcf
-     * @param x input vector
-     * @param y output vector: y = Hazard(x)
-     */
-    void hcf(const QVector<double> &x, QVector<double> &y);
-    
-    /**
      * @brief ExpectedValue
      * @param funPtr function which expected value should be returned
      * @param startPoint argument in which vicinity value of funPtr definitely wouldn't be zero
