@@ -66,7 +66,7 @@ public:
     double variate() const override;
     void sample(QVector<double> &outputData);
 
-private:
+protected:
     std::complex<double> psi(double t) const;
 public:
     std::complex<double> CF(double t) const override;
