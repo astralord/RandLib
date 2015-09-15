@@ -41,13 +41,15 @@ void NormalRand::setMean(double mean)
 
 void NormalRand::setSigma(double rootVar)
 {
-    sigma = std::max(rootVar, MIN_POSITIVE);
+    sigma = rootVar;
+    if (sigma <= 0)
+        sigma = MIN_POSITIVE;
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
 }
 
 void NormalRand::setVar(double var)
 {
-    setSigma(std::sqrt(std::max(var, MIN_POSITIVE)));
+    setSigma(std::sqrt(std::max(var, 0.0)));
 }
 
 double NormalRand::f(double x) const
