@@ -4,51 +4,15 @@
 #include <cmath>
 #include <functional>
 #include <complex>
+#include "Constants.h"
 
 #include "randlib_global.h"
 
 #include <QDebug>
 #include <QVector>
 
-#ifndef INFINITY
-#include <limits>
-static double INFINITY = std::numeric_limits<double>::infinity();
-#endif
-
-#ifndef NAN
-#include <limits>
-static double NAN = std::numeric_limits<double>::quiet_NaN();
-#endif
-
 #define SWAP_INTEGER(a, b) (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
 #define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
-
-#ifndef QMATH_H
-constexpr double M_E         = 2.71828182845904523536;
-constexpr double M_LOG2E     = 1.44269504088896340760;
-constexpr double M_LOG10E    = 0.43429448190325182765;
-constexpr double M_LN2       = 0.69314718055994530942;
-constexpr double M_LN10      = 2.30258509299404568402;
-constexpr double M_PI        = 3.14159265358979323846;
-constexpr double M_PI_2      = 1.57079632679489661923;
-constexpr double M_PI_4      = 0.78539816339744830962;
-constexpr double M_1_PI      = 0.31830988618379067154;
-constexpr double M_2_PI      = 0.63661977236758134308;
-constexpr double M_2_SQRTPI  = 1.12837916709551257390;
-constexpr double M_SQRT2     = 1.41421356237309504880;
-constexpr double M_SQRT1_2   = 0.70710678118654752440;
-#endif
-
-constexpr double M_SQRT3     = 1.73205080756887729353;
-constexpr double M_SQRT5     = 2.23606797749978969640;
-constexpr double M_SQRTPI    = 1.77245385090551602730;
-constexpr double M_SQRT2PI   = 2.50662827463100050242;
-constexpr double M_1_SQRTPI  = 0.56418958354775628695;
-constexpr double M_1_SQRT2PI = 0.39894228040143267794;
-constexpr double M_1_E       = 0.36787944117144232160;
-constexpr double M_LNPI      = 1.14472988585494001741;
-constexpr double M_EULER     = 0.57721566490153286061;
-constexpr double M_APERY     = 1.20205690315959428539;
 
 constexpr double MIN_POSITIVE = 1e-21;
 

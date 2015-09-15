@@ -101,7 +101,8 @@ HEADERS +=\
     variables/discrete/ZipfRand.h \
     variables/discrete/YuleRand.h \
     variables/continuous/VonMisesRand.h \
-    variables/continuous/ArcsineRand.h
+    variables/continuous/ArcsineRand.h \
+    math/Constants.h
 
 unix {
     target.path = /usr/lib
