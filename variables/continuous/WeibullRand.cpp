@@ -12,9 +12,14 @@ std::string WeibullRand::name()
 
 void WeibullRand::setParameters(double scale, double shape)
 {
-    lambda = std::max(scale, MIN_POSITIVE);
-    k = std::max(shape, MIN_POSITIVE);
+    lambda = scale;
+    if (lambda <= 0)
+        lambda = MIN_POSITIVE;
     lambdaInv = 1.0 / lambda;
+    
+    k = shape;
+    if (k <= 0)
+        k = MIN_POSITIVE;
     kInv = 1.0 / k;
 }
 
