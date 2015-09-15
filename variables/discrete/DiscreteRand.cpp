@@ -8,6 +8,11 @@ void DiscreteRand::pmf(const QVector<int> &x, QVector<double> &y) const
         y[i] = P(x[i]);
 }
 
+double DiscreteRand::Hazard(double x) const
+{
+    return P(x) / (1.0 - F(x));
+}
+
 double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     static constexpr double epsilon = 1e-12;
