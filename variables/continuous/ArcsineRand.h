@@ -18,6 +18,15 @@ public:
     double getMax() { return b; }
     double getShape() { return beta; }
 
+private:
+    /// prohibit to use beta's getters and setters
+    using BetaRand::setParameters;
+    using BetaRand::setAlpha;
+    using BetaRand::setBeta;
+    using BetaRand::getAlpha;
+    using BetaRand::getBeta;
+    
+public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
