@@ -36,7 +36,9 @@ bool ExponentialRand::setupTables()
 
 void ExponentialRand::setRate(double rate)
 {
-    lambda = std::max(rate, MIN_POSITIVE);
+    lambda = rate;
+    if (lambda <= 0)
+        lambda = MIN_POSITIVE;
     beta = 1.0 / lambda;
 }
 
