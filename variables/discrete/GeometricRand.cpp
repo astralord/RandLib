@@ -12,7 +12,9 @@ std::string GeometricRand::name()
 
 void GeometricRand::setProbability(double probability)
 {
-    p = std::min(std::max(probability, MIN_POSITIVE), 1.0);
+    p = std::min(probability, 1.0);
+    if (p <= 0)
+        p = MIN_POSITIVE;
     q = 1.0 - p;
 
     /// we use two different generators for two different cases
