@@ -24,9 +24,14 @@ void GammaRand::setConstantsForGenerator()
 
 void GammaRand::setParameters(double shape, double scale)
 {
-    k = std::max(shape, MIN_POSITIVE);
+    k = shape;
+    if (k <= 0)
+        k = MIN_POSITIVE;
     kInv = 1.0 / k;
-    theta = std::max(scale, MIN_POSITIVE);
+    
+    theta = scale;
+    if (theta <= 0)
+        theta = MIN_POSITIVE;
     thetaInv = 1.0 / theta;
    
     double k_round = std::round(k);
