@@ -85,6 +85,15 @@ double NegativeBinomialRand<T>::Variance() const
 }
 
 template< typename T >
+std::complex<double> NegativeBinomialRand<T>::CF(double t) const
+{
+    double numerator = 1 - p;
+    std::complex denominator(0, t);
+    denominator = 1 - p * std::exp(denominator);
+    return std::pow(numerator / denominator, r);
+}
+
+template< typename T >
 double NegativeBinomialRand<T>::Mode() const
 {
     return (r > 1) ? std::floor((r - 1) * p / (1 - p)) : 0;
