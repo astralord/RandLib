@@ -38,6 +38,7 @@
 #include "continuous/MaxwellBoltzmannRand.h"
 #include "continuous/ParetoRand.h"
 #include "continuous/RayleighRand.h"
+#include "continuous/SechRand.h"
 #include "continuous/StableRand.h"
 #include "continuous/StudentTRand.h"
 #include "continuous/UniformRand.h"

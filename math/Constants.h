@@ -105,5 +105,9 @@ constexpr double M_EULER     = 0.57721566490153286061;
 constexpr double M_APERY     = 1.20205690315959428539;
 #endif
 
+#ifndef M_CATALAN
+constexpr double M_CATALAN   = 0.915965594177219015;
+#endif
+
 
 #endif // CONSTANTS_H

@@ -39,7 +39,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    inline double Entropy() const;
+    double Entropy() const;
 };
 
 #endif // CAUCHYRAND_H
