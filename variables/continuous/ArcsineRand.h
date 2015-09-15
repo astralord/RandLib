@@ -6,7 +6,6 @@
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
     double a, b;
-    double alpha; /// hashed value of shape
     double pdfCoef; /// sin(pi * shape) / pi
 
 public:
