@@ -12,7 +12,9 @@ std::string RayleighRand::name()
 
 void RayleighRand::setScale(double scale)
 {
-    sigma = std::max(scale, MIN_POSITIVE);
+    sigma = scale;
+    if (sigma <= 0)
+        sigma = MIN_POSITIVE;
     sigmaSqInv = 1.0 / (sigma * sigma);
 }
 
