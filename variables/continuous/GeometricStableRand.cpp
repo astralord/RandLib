@@ -59,12 +59,9 @@ double GeometricStableRand::variate() const
 {
     if (alpha == 2 && mu == 0 && beta == 0)
         return LaplaceRand::variate(0, sigma);
-    double W = ExponentialRand::standardVariate();
-    double Y = StableRand::variate();
-    if (alphaInv == 1)
-        return W * (Y + M_2_PI * beta * sigma * std::log(sigma * W));
-    double W_adj = std::pow(W, alphaInv);
-    return W_adj * Y + mu * (W - W_adj);
+    if (alpha == 1)
+        return variateForAlphaEqualOne();
+    return variateForCommonAlpha();
 }
 
 void GeometricStableRand::sample(QVector<double> &outputData) const
