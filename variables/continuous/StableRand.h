@@ -53,9 +53,8 @@ public:
     
 private:
     /// cdf
-    // isn't written yet!
-    double cdfForCommonAlpha(double x) const { return x; }
-    double cdfForAlphaEqualOne(double x) const { return x; }
+    double cdfForCommonAlpha(double x) const;
+    double cdfForAlphaEqualOne(double x) const;
 public:
     double F(double x) const override;
     
