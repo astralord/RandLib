@@ -28,8 +28,11 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double Mean() const override { return INFINITY; }
-    double Variance() const override { return INFINITY; }
+    double Mean() const override;
+    double Variance() const override;
+    
+    std::complex<double> CF(double t) const override;
+    double Quantile(double p) const override;
     
     double Mode() const override;
     double Skewness() const override;
