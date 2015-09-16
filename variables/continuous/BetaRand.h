@@ -76,6 +76,10 @@ public:
     void setParameters(double fixatingIndex, double frequency);
     inline double getFrequency() { return p; }
     inline double getFixatingIndex() { return F; }
+
+protected:
+    using BetaRand::setAlpha;
+    using BetaRand::setBeta;
 };
 
 #endif // BETARAND_H
