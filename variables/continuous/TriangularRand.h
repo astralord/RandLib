@@ -17,7 +17,7 @@ class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousRand
 
 public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setLowerLimit(double lowerLimit);
     void setMode(double mode);

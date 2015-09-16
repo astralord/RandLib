@@ -11,10 +11,10 @@ class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 {
 public:
     explicit ChiSquaredRand(int degree = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setDegree(int degree);
-    inline int getDegree() const { return static_cast<int>(k + k); }
+    inline int getDegree() const;
     
 protected:
     /// prohibit to use gamma's public getters and setters

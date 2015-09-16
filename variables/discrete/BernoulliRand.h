@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand
 
 public:
     explicit BernoulliRand(double probability = 0.5);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setProbability(double probability);
     inline double getProbability() const { return p; }

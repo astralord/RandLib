@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteRand
     double pdfDenominator; /// C(N, n)
 public:
     HyperGeometricRand(int totalSize, int drawsNum, int successesNum);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(int totalSize, int drawsNum, int successesNum);
     inline int getTotalSize() { return N; }

@@ -12,7 +12,7 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousRand
     double I0kInv; /// 1.0 / I_0(k)
 public:
     VonMisesRand(double location, double concentration);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setLocation(double location);
     void setConcentration(double concentration);

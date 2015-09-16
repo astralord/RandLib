@@ -8,7 +8,7 @@ class RANDLIBSHARED_EXPORT SechRand : public ContinuousRand
 {
 public:
     SechRand();
-    virtual std::string name() override;
+    std::string name() override;
 
     double f(double x) const override;
     double F(double x) const override;

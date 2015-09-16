@@ -16,7 +16,7 @@ double BetaPrimeRand::f(double x) const
         return 0;
     double rv = std::pow(x, alpha - 1);
     rv *= std::pow(1 + x, -alpha - beta);
-    return pdfCoef * rv;
+    return BetaRand::getInverseBetaFunction() * rv;
 }
 
 double BetaPrimeRand::F(double x) const
@@ -57,7 +57,6 @@ double BetaPrimeRand::Variance() const
 double BetaPrimeRand::Median() const
 {
     double betaMedian = BetaRand::Median();
-    qDebug() << betaMedian;
     return betaMedian / (1.0 - betaMedian);
 }
 

@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousRand
 
 public:
     NakagamiRand(double shape = 0.5, double spread = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(double shape, double spread);
     inline double getShape() const { return m; }

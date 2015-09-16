@@ -24,14 +24,14 @@ class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 
 public:
     NormalRand(double mean = 0, double var = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setMean(double mean);
     void setSigma(double rootVar);
     void setVar(double var);
-    double getMean() const { return mu; }
-    double getSigma() const { return sigma; }
-    double getVar() const { return sigma * sigma; }
+    inline double getMean() const { return mu; }
+    inline double getSigma() const { return sigma; }
+    inline double getVar() const { return sigma * sigma; }
 
     double f(double x) const override;
     double F(double x) const override;

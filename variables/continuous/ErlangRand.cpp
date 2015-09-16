@@ -14,3 +14,13 @@ void ErlangRand::setParameters(int shape, double rate)
 {
     GammaRand::setParameters(std::max(shape, 1), 1.0 / rate);
 }
+
+int ErlangRand::getShape() const
+{
+    return static_cast<int>(GammaRand::getShape());
+}
+
+double ErlangRand::getRate() const
+{
+    return 1.0 / GammaRand::getScale();
+}

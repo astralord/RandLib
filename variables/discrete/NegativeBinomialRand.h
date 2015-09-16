@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteRand
 
 public:
     NegativeBinomialRand(T number, double probability);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(T number, double probability);
     inline double getProbability() const { return p; }

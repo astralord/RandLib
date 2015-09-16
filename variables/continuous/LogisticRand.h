@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousRand
 
 public:
     LogisticRand(double location = 0, double scale = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setLocation(double location);
     void setScale(double scale);

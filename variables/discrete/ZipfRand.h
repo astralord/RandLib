@@ -16,7 +16,7 @@ class ZipfRand : public DiscreteRand
 
 public:
     ZipfRand(double exponent, int number);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(double exponent, int number);
     inline double getExponent() { return s; }

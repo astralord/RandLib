@@ -60,10 +60,6 @@ double BetaRand::f(double x) const
 {
     if (x < 0 || x > 1)
         return 0;
-    if (alpha < 1.0 && x == 0)
-        return 0.0;
-    if (beta < 1.0 && x == 1)
-        return 0.0;
     if (RandMath::areEqual(alpha, beta))
         return pdfCoef * std::pow(x - x * x, alpha - 1);
     double rv = std::pow(x, alpha - 1);
@@ -79,41 +75,19 @@ double BetaRand::F(double x) const
         return 1;
     return RandMath::integral([this] (double t)
     {
-        return BetaRand::f(t);
+        double y = BetaRand::f(t);
+        if (alpha < 1 &&)
+        if (std::isnan(y) || std::isinf(y)) /// kind of hack
+            return 0.0;
+        return y;
     },
     0, x);
 }
 
-double BetaRand::variate() const
+double BetaRand::variateArcsine() const
 {
-    //TODO: if alpha == beta == 0.5 - return sin(U)^2 where U in [-pi, pi] (look arcsine article)
-    if (!RandMath::areEqual(alpha, beta) || alpha < 1)
-        return variateForDifferentParameters();
-    if (alpha == 1)
-        return UniformRand::standardVariate();
-    if (alpha <= edgeForGenerators)
-        return variateForSmallEqualParameters();
-    return variateForLargeEqualParameters();
-}
-
-void BetaRand::sample(QVector<double> &outputData) const
-{
-    if (!RandMath::areEqual(alpha, beta) || alpha < 1) {
-        for (double &var : outputData)
-            var = variateForDifferentParameters();
-    }
-    else if (alpha == 1) {
-        for (double &var : outputData)
-            var = UniformRand::standardVariate();
-    }
-    else if (alpha <= edgeForGenerators) {
-        for (double &var : outputData)
-            var = variateForSmallEqualParameters();
-    }
-    else {
-        for (double &var : outputData)
-            var = variateForLargeEqualParameters();
-    }
+    double x = std::sin(UniformRand::variate(-M_PI, M_PI));
+    return x * x;
 }
 
 double BetaRand::variateForSmallEqualParameters() const
@@ -163,6 +137,43 @@ void BetaRand::setVariateConstants()
     }
 }
 
+double BetaRand::variate() const
+{
+    if (RandMath::areEqual(alpha, beta) && alpha == 0.5)
+        return variateArcsine();
+    if (!RandMath::areEqual(alpha, beta) || alpha < 1)
+        return variateForDifferentParameters();
+    if (alpha == 1)
+        return UniformRand::standardVariate();
+    if (alpha <= edgeForGenerators)
+        return variateForSmallEqualParameters();
+    return variateForLargeEqualParameters();
+}
+
+void BetaRand::sample(QVector<double> &outputData) const
+{
+    if (RandMath::areEqual(alpha, beta) && alpha == 0.5) {
+        for (double &var : outputData)
+            var = variateArcsine();
+    }
+    else if (!RandMath::areEqual(alpha, beta) || alpha < 1) {
+        for (double &var : outputData)
+            var = variateForDifferentParameters();
+    }
+    else if (alpha == 1) {
+        for (double &var : outputData)
+            var = UniformRand::standardVariate();
+    }
+    else if (alpha <= edgeForGenerators) {
+        for (double &var : outputData)
+            var = variateForSmallEqualParameters();
+    }
+    else {
+        for (double &var : outputData)
+            var = variateForLargeEqualParameters();
+    }
+}
+
 double BetaRand::Mean() const
 {
     return alpha / (alpha + beta);
@@ -180,13 +191,11 @@ double BetaRand::Quantile(double p) const
     if (p < 0 || p > 1)
         return NAN;
     double root = p;
-    double minValue = (alpha < 1) ? 1e-10 : 0.0;
-    double maxValue = (beta < 1) ? 1.0 - 1e-10 : 1.0;
     if (RandMath::findRoot([this, p] (double x)
     {
         return BetaRand::F(x) - p;
     },
-    minValue, maxValue, root))
+    0, 1, root))
         return root;
     return NAN;
 }
@@ -200,8 +209,14 @@ double BetaRand::Median() const
 
 double BetaRand::Mode() const
 {
-    if (alpha > 1 && beta > 1)
-        return (alpha - 1) / (alpha + beta - 2);
+    if (alpha > 1)
+    {
+        if (beta > 1)
+            return (alpha - 1) / (alpha + beta - 2);
+        return 1.0;
+    }
+    if (beta > 1)
+        return 0.0;
     return (signed)RandGenerator::variate() < 0 ? 0 : 1;
 }
 
@@ -224,4 +239,33 @@ double BetaRand::ExcessKurtosis() const
     --kurtosis;
     kurtosis /= (sum + 3);
     return 6 * kurtosis;
+}
+
+
+BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
+{
+    setParameters(fixatingIndex, frequency);
+}
+
+std::string BaldingNicholsRand::name()
+{
+    return "Balding-Nichols(" + toStringWithPrecision(getFixatingIndex()) + ", " + toStringWithPrecision(getFrequency()) + ")";
+}
+
+void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
+{
+    F = fixatingIndex;
+    if (F <= 0)
+        F = MIN_POSITIVE;
+    if (F >= 1)
+        F = 1.0 - MIN_POSITIVE;
+
+    p = frequency;
+    if (p <= 0)
+        p = MIN_POSITIVE;
+    if (p >= 1)
+        p = 1.0 - MIN_POSITIVE;
+
+    double frac = (1.0 - F) / F;
+    BetaRand::setParameters(frac * p, frac * (1 - p));
 }

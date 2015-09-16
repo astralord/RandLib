@@ -7,16 +7,17 @@ class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
     double a, b;
     double bma; /// b - a
+    double pdfCoef; /// sin(pi * beta) / pi
 
 public:
-    ArcsineRand(double minValue, double maxValue, double shape);
-    virtual std::string name() override;
+    ArcsineRand(double minValue = 0, double maxValue = 1, double shape = 0.5);
+    std::string name() override;
 
     void setSupport(double minValue, double maxValue);
     void setShape(double shape);
-    double getMin() { return a; }
-    double getMax() { return b; }
-    double getShape() { return beta; }
+    inline double getMin() const { return a; }
+    inline double getMax() const { return b; }
+    inline double getShape() const { return beta; }
 
 protected:
     /// prohibit to use beta's getters and setters

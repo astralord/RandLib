@@ -20,6 +20,12 @@ public:
      */
     virtual double P(int x) const = 0;
 
+    /**
+     * @brief pmf
+     * fill vector y by P(x)
+     * @param x
+     * @param y
+     */
     void pmf(const QVector<int> &x, QVector<double> &y) const;
     
     double Hazard(double x) const override;

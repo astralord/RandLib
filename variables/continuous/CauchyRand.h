@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
 
 public:
     CauchyRand(double location = 0, double scale = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setLocation(double location);
     void setScale(double scale);

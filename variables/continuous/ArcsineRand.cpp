@@ -1,7 +1,7 @@
 #include "ArcsineRand.h"
 #include "../BasicRandGenerator.h"
 
-ArcsineRand::ArcsineRand(double minValue = 0, double maxValue = 1, double shape = 0.5)
+ArcsineRand::ArcsineRand(double minValue, double maxValue, double shape)
 {
     setSupport(minValue, maxValue);
     setShape(shape);

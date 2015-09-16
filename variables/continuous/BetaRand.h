@@ -24,7 +24,7 @@ private:
 public:
     BetaRand(double shape1 = 1, double shape2 = 1);
     virtual ~BetaRand() {}
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(double shape1, double shape2);
     void setAlpha(double shape1);
@@ -39,9 +39,10 @@ public:
     void sample(QVector<double> &outputData) const override;
 
 private:
-    double variateForSmallEqualParameters() const;
-    double variateForLargeEqualParameters() const;
-    double variateForDifferentParameters() const;
+    double variateArcsine() const;                  /// alpha = beta = 0.5
+    double variateForSmallEqualParameters() const;  /// alpha = beta, 1 < alpha < edgeForGenerators
+    double variateForLargeEqualParameters() const;  /// alpha = beta, alpha > edgeForGenerators
+    double variateForDifferentParameters() const;   /// otherwise
 
     void setVariateConstants();
 
@@ -61,6 +62,20 @@ public:
      * @return 1 / B(alpha, beta)
      */
     inline double getInverseBetaFunction() const { return pdfCoef; }
+};
+
+
+
+class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand
+{
+    double p, F;
+public:
+    BaldingNicholsRand(double fixatingIndex, double frequency);
+    std::string name() override;
+
+    void setParameters(double fixatingIndex, double frequency);
+    inline double getFrequency() { return p; }
+    inline double getFixatingIndex() { return F; }
 };
 
 #endif // BETARAND_H

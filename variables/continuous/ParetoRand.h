@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
 
 public:
     ParetoRand(double shape, double scale);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(double shape, double scale);
     void setShape(double shape);

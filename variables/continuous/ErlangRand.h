@@ -14,11 +14,11 @@ class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
 {
 public:
     ErlangRand(int shape = 1, double rate = 1);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setParameters(int shape, double rate);
-    inline int getShape() const { return static_cast<int>(GammaRand::getShape()); }
-    inline double getRate() const { return 1.0 / GammaRand::getScale(); }
+    inline int getShape() const;
+    inline double getRate() const;
     
 protected:
     /// prohibit to use gamma's public getters and setters

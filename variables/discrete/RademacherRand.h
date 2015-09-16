@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteRand
 {
 public:
     RademacherRand();
-    virtual std::string name() override;
+    std::string name() override;
 
     double P(int k) const override;
     double F(double x) const override;

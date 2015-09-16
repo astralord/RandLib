@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT YuleRand : public DiscreteRand
     double gamma1pRo;
 public:
     explicit YuleRand(double shape);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setShape(double shape);
     inline double getShape() { return ro; }

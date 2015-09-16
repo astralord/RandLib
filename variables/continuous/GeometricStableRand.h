@@ -9,7 +9,7 @@ class RANDLIBSHARED_EXPORT GeometricStableRand : public StableRand
 {
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
-    virtual std::string name() override;
+    std::string name() override;
 
     double f(double x) const override;
     double F(double x) const override;

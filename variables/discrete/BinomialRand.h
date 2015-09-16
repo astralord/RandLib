@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand
 
 public:
     BinomialRand(int number, double probability);
-    virtual std::string name() override;
+    std::string name() override;
 
     void setNumber(int number);
     inline double getNumber() const { return n; }
