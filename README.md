@@ -71,6 +71,7 @@ Continuous:
 * von Mises
 * Wald (Inverse Gaussian)
 * Weibull
+* Wigner Semicircle
 
 Discrete:
 * Bernoulli
