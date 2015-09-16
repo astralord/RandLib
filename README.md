@@ -42,6 +42,7 @@ List of implemented distributions:
 
 Continuous:
 * Arcsine
+* Balding-Nichols
 * Beta
 * Beta Prime
 * Cauchy
