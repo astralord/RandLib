@@ -56,6 +56,30 @@ double LevyRand::variate() const
     return mu + rv;
 }
 
+double LevyRand::Mean() const
+{
+    return INFINITY;
+}
+
+double LevyRand::Variance() const
+{
+    return INFINITY;
+}
+
+std::complex<double> LevyRand::CF(double t) const
+{
+    std::complex<double> y(0.0, -2 * i * c * t);
+    y = -std::sqrt(y);
+    y += std::complex<double>(0.0, i * mu * t);
+    return std::exp(y);
+}
+
+double LevyRand::Quantile(double p) const
+{
+    double x = X.Quantile(0.5 * p);
+    return mu + x * x;
+}
+
 double LevyRand::Mode() const
 {
     return c / 3.0 + mu;
