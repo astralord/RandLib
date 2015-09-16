@@ -220,6 +220,52 @@ double StableRand::f(double x) const
     return pdfForCommonAlpha(x);
 }
 
+double StableRand::cdfForCommonAlpha(double x) const
+{
+    x = (x - mu) / sigma; /// Standardize
+    
+    if (std::fabs(x) < 0.1) /// if we are close to 0 then we do interpolation avoiding dangerous variates
+    {
+        double y0 = 0.5 - M_1_PI * xi; /// f(0)
+        if (std::fabs(x) < MIN_POSITIVE)
+            return y0;
+        double b = (x > 0) ? 0.11 : -0.11;
+        double y1 = cdfForCommonAlpha(mu + sigma * b);
+        return RandMath::linearInterpolation(0, b, y0, y1, x);
+    }
+    
+    double xiAdj = xi; /// +- xi
+    if (x > 0)
+    {
+        if (alpha < 1 && beta == -1)
+            return 1.0;
+    }
+    else
+    {
+        if (alpha < 1 && beta == 1)
+            return 0.0;
+        x = -x;
+        xiAdj = -xi;
+    }
+    
+    double xAdj = std::pow(x, alpha_alpham1);
+    double y = RandMath::integral([this, xAdj] (double theta)
+    {
+        return std::exp(integrandAuxForAlphaEqualOne(theta, xAdj));
+    },
+    -xiAdj, M_PI_2);
+    
+    /// ONLY FOR POSITIVE X!
+    if (alpha > 1)
+        return 1.0 - y * M_1_PI;
+    return 0.5 - (y + xiAdj) * M_1_PI;
+}
+    
+double StableRand::cdfForAlphaEqualOne(double x) const
+{
+    return x;
+}
+
 double StableRand::F(double x) const
 {
     /// Check all 'good' cases
