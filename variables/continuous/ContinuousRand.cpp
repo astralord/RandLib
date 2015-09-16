@@ -2,8 +2,8 @@
 
 void ContinuousRand::pdf(const QVector<double> &x, QVector<double> &y) const
 {
-    size_t size = std::min(x.size(), y.size());
-    for (size_t i = 0; i != size; ++i)
+    int size = std::min(x.size(), y.size());
+    for (int i = 0; i != size; ++i)
         y[i] = f(x[i]);
 }
 
