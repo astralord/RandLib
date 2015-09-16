@@ -68,9 +68,9 @@ double LevyRand::Variance() const
 
 std::complex<double> LevyRand::CF(double t) const
 {
-    std::complex<double> y(0.0, -2 * i * c * t);
+    std::complex<double> y(0.0, -2 * c * t);
     y = -std::sqrt(y);
-    y += std::complex<double>(0.0, i * mu * t);
+    y += std::complex<double>(0.0, mu * t);
     return std::exp(y);
 }
 

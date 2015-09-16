@@ -5,7 +5,7 @@
 
 class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousRand
 {
-    double R, RSq
+    double R, RSq;
     BetaRand X; /// for generator
     
 public:
