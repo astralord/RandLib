@@ -1,9 +1,7 @@
 #ifndef LAPLACERAND_H
 #define LAPLACERAND_H
 
-#include "ContinuousRand.h"
 #include "ExponentialRand.h"
-#include "../BasicRandGenerator.h"
 
 /**
  * @brief The LaplaceRand class
@@ -27,8 +25,8 @@ public:
     double variate() const override;
     static double variate(double location, double scale);
 
-    double Mean() const override { return mu; }
-    double Variance() const override { return 2 * b * b; }
+    double Mean() const override;
+    double Variance() const override;
 
     double Median() const override;
     double Mode() const override;

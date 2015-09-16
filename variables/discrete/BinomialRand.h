@@ -1,7 +1,6 @@
 #ifndef BINOMIALRAND_H
 #define BINOMIALRAND_H
 
-#include "DiscreteRand.h"
 #include "BernoulliRand.h"
 
 /**

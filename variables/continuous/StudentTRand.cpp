@@ -1,4 +1,6 @@
 #include "StudentTRand.h"
+#include "NormalRand.h"
+#include "CauchyRand.h"
 
 StudentTRand::StudentTRand(int degree)
 {

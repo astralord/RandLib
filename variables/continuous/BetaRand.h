@@ -1,7 +1,6 @@
 #ifndef BETARAND_H
 #define BETARAND_H
 
-#include "ContinuousRand.h"
 #include "GammaRand.h"
 #include "NormalRand.h"
 

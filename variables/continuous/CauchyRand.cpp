@@ -1,4 +1,5 @@
 ﻿#include "CauchyRand.h"
+#include "UniformRand.h"
 
 CauchyRand::CauchyRand(double location, double scale)
 {

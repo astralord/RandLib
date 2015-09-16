@@ -1,4 +1,6 @@
 #include "ExponentialRand.h"
+#include "UniformRand.h"
+#include "../BasicRandGenerator.h"
 
 double ExponentialRand::stairWidth[257] = {0};
 double ExponentialRand::stairHeight[256] = {0};

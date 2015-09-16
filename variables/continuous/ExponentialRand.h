@@ -2,8 +2,6 @@
 #define EXPONENTIALRAND_H
 
 #include "ContinuousRand.h"
-#include "UniformRand.h"
-#include "../BasicRandGenerator.h"
 
 /**
  * @brief The ExponentialRand class

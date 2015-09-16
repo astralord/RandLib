@@ -2,8 +2,6 @@
 #define GEOMETRICSTABLERAND_H
 
 #include "StableRand.h"
-#include "ExponentialRand.h"
-#include "LaplaceRand.h"
 
 class RANDLIBSHARED_EXPORT GeometricStableRand : public StableRand
 {

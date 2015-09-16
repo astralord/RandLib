@@ -1,7 +1,6 @@
 #ifndef FISHERSNEDECORRAND_H
 #define FISHERSNEDECORRAND_H
 
-#include "ContinuousRand.h"
 #include "BetaPrimeRand.h"
 
 /**

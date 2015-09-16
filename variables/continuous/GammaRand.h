@@ -1,7 +1,6 @@
 #ifndef GAMMARAND_H
 #define GAMMARAND_H
 
-#include "ContinuousRand.h"
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 #include "NormalRand.h"

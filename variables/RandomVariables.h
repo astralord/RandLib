@@ -29,6 +29,7 @@
 #include "continuous/FisherSnedecorRand.h"
 #include "continuous/GammaRand.h"
 #include "continuous/GeometricStableRand.h"
+#include "continuous/GumbelRand.h"
 #include "continuous/LaplaceRand.h"
 #include "continuous/LevyRand.h"
 #include "continuous/LogisticRand.h"

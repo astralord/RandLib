@@ -2,7 +2,6 @@
 #define WEIBULLRAND_H
 
 #include "ContinuousRand.h"
-#include "ExponentialRand.h"
 
 /**
  * @brief The WeibullRand class

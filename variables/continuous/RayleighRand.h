@@ -1,7 +1,6 @@
 #ifndef RAYLEIGHRAND_H
 #define RAYLEIGHRAND_H
 
-#include "ContinuousRand.h"
 #include "ExponentialRand.h"
 
 /**

@@ -1,7 +1,6 @@
 #ifndef MAXWELLBOLTZMANNRAND_H
 #define MAXWELLBOLTZMANNRAND_H
 
-#include "ContinuousRand.h"
 #include "ChiSquaredRand.h"
 
 /**

@@ -1,7 +1,6 @@
 #ifndef LEVYRAND_H
 #define LEVYRAND_H
 
-#include "ContinuousRand.h"
 #include "NormalRand.h"
 
 /**

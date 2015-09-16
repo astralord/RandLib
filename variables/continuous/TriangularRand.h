@@ -2,7 +2,6 @@
 #define TRIANGULARRAND_H
 
 #include "ContinuousRand.h"
-#include "UniformRand.h"
 
 /**
  * @brief The TriangularRand class

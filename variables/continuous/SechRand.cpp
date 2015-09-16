@@ -1,4 +1,5 @@
 #include "SechRand.h"
+#include "CauchyRand.h"
 
 SechRand::SechRand()
 {

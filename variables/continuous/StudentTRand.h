@@ -1,10 +1,7 @@
 #ifndef STUDENTTRAND_H
 #define STUDENTTRAND_H
 
-#include "ContinuousRand.h"
 #include "ChiSquaredRand.h"
-#include "NormalRand.h"
-#include "CauchyRand.h"
 
 /**
  * @brief The StudentTRand class

@@ -2,8 +2,6 @@
 #define WALDRAND_H
 
 #include "ContinuousRand.h"
-#include "NormalRand.h"
-#include "UniformRand.h"
 
 /**
  * @brief The WaldRand class

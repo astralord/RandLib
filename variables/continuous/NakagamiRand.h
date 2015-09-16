@@ -1,7 +1,6 @@
 #ifndef NAKAGAMIRAND_H
 #define NAKAGAMIRAND_H
 
-#include "ContinuousRand.h"
 #include "GammaRand.h"
 
 /**

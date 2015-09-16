@@ -1,4 +1,6 @@
 #include "WaldRand.h"
+#include "NormalRand.h"
+#include "UniformRand.h"
 
 WaldRand::WaldRand(double mean, double shape)
 {

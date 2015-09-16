@@ -1,4 +1,5 @@
 #include "TriangularRand.h"
+#include "UniformRand.h"
 
 TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit)
 {

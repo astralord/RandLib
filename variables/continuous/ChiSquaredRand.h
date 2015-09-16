@@ -1,7 +1,6 @@
 #ifndef CHISQUAREDRAND_H
 #define CHISQUAREDRAND_H
 
-#include "ContinuousRand.h"
 #include "GammaRand.h"
 
 /**

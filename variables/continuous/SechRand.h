@@ -2,7 +2,6 @@
 #define SECHRAND_H
 
 #include "ContinuousRand.h"
-#include "CauchyRand.h"
 
 class RANDLIBSHARED_EXPORT SechRand : public ContinuousRand
 {

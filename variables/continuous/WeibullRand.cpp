@@ -1,4 +1,5 @@
 #include "WeibullRand.h"
+#include "ExponentialRand.h"
 
 WeibullRand::WeibullRand(double scale, double shape)
 {

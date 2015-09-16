@@ -1,9 +1,7 @@
 #ifndef PARETORAND_H
 #define PARETORAND_H
 
-#include "ContinuousRand.h"
 #include "ExponentialRand.h"
-
 
 /**
  * @brief The ParetoRand class

@@ -2,7 +2,6 @@
 #define CAUCHYRAND_H
 
 #include "ContinuousRand.h"
-#include "UniformRand.h"
 
 /**
  * @brief The CauchyRand class

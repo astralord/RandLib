@@ -1,4 +1,5 @@
 #include "LaplaceRand.h"
+#include "../BasicRandGenerator.h"
 
 LaplaceRand::LaplaceRand(double location, double scale)
 {
@@ -52,6 +53,16 @@ double LaplaceRand::variate(double location, double scale)
 {
     double e = scale * ExponentialRand::standardVariate();
     return location + (((signed)RandGenerator::variate() > 0) ? e : -e);
+}
+
+double LaplaceRand::Mean() const
+{
+    return mu;
+}
+
+double LaplaceRand::Variance() const
+{
+    return 2 * b * b;
 }
 
 std::complex<double> LaplaceRand::CF(double t) const

@@ -2,9 +2,6 @@
 #define NORMALRAND_H
 
 #include "ContinuousRand.h"
-#include "UniformRand.h"
-#include "ExponentialRand.h"
-#include "../BasicRandGenerator.h"
 
 /**
  * @brief The NormalRand class

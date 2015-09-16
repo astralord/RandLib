@@ -1,4 +1,5 @@
 #include "ParetoRand.h"
+#include "UniformRand.h"
 
 ParetoRand::ParetoRand(double shape, double scale)
 {
