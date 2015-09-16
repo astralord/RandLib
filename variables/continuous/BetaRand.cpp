@@ -76,7 +76,6 @@ double BetaRand::F(double x) const
     return RandMath::integral([this] (double t)
     {
         double y = BetaRand::f(t);
-        if (alpha < 1 &&)
         if (std::isnan(y) || std::isinf(y)) /// kind of hack
             return 0.0;
         return y;
