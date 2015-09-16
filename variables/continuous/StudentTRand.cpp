@@ -16,7 +16,7 @@ void StudentTRand::setDegree(int degree)
     Y.setDegree(v);
 
     pdfCoef = std::tgamma(.5 * (v + 1));
-    pdfCoef /= (std::sqrt(v * M_PI) * std::tgamma(.5 * v));
+    pdfCoef /= (std::sqrt(v * M_PI) / Y.getInverseGammaFunction());
 }
 
 double StudentTRand::f(double x) const
