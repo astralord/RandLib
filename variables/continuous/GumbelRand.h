@@ -28,6 +28,8 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    double Entropy() const;
 };
 
 #endif // GUMBELRAND_H

@@ -82,3 +82,8 @@ double GumbelRand::ExcessKurtosis() const
 {
     return 2.4;
 }
+
+double GumbelRand::Entropy() const
+{
+    return std::log(beta) + M_EULER + 1.0;
+}
