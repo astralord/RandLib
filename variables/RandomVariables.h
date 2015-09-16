@@ -46,6 +46,7 @@
 #include "continuous/VonMisesRand.h"
 #include "continuous/WaldRand.h"
 #include "continuous/WeibullRand.h"
+#include "continuous/WignerSemicircleRand.h"
 
 
 #endif // RANDOMGENERATORS_H
