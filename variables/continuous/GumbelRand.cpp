@@ -61,6 +61,17 @@ double GumbelRand::Variance() const
     return v * v / 6;
 }
 
+double GumbelRand::Quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return -INFINITY;
+    if (p == 1)
+        return INFINITY;
+    return mu - beta * std::log(-std::log(p));
+}
+
 double GumbelRand::Median() const
 {
     static constexpr double LN_M_LN2 = std::log(M_LN2);
