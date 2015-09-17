@@ -78,9 +78,11 @@ Discrete:
 * Binomial
 * Geometric
 * Hypergeometric
+* Logarithmic
 * Negative binomial
 * Poisson
 * Rademacher
 * Uniform
 * Yule
+* Zeta
 * Zipf
