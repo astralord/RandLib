@@ -13,6 +13,8 @@ class RANDLIBSHARED_EXPORT YuleRand : public DiscreteRand
 {
     double ro;
     double gamma1pRo;
+    
+    ParetoRand X;
 public:
     explicit YuleRand(double shape);
     std::string name() override;
