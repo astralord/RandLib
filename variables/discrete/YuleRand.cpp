@@ -1,6 +1,7 @@
 #include "YuleRand.h"
 
-YuleRand::YuleRand(double shape)
+YuleRand::YuleRand(double shape) :
+X(shape, 1.0)
 {
     setShape(shape);
 }
@@ -16,6 +17,7 @@ void YuleRand::setShape(double shape)
     if (ro <= 0)
         ro = MIN_POSITIVE;
     gamma1pRo = std::tgamma(ro + 1);
+    X.setShape(ro);
 }
 
 double YuleRand::P(int k) const
@@ -33,13 +35,21 @@ double YuleRand::F(double x) const
 
 double YuleRand::variate() const
 {
-    return YuleRand::variate(ro);
+    double prob = 1.0 / X.variate();
+    return GeometricRand::variate(prob) + 1;
 }
 
 double YuleRand::variate(double shape)
 {
     double prob = 1.0 / ParetoRand::variate(shape, 1.0);
     return GeometricRand::variate(prob) + 1;
+}
+
+void YuleRand::sample(QVector<double> &outputData) const
+{
+    X.sample(outputData);
+    for (double & var : outputData)
+        var = GeometricRand::variate(1.0 / var) + 1;
 }
 
 double YuleRand::Mean() const
