@@ -256,6 +256,21 @@ public:
      * @return I_n(x)
      */
     static double modifiedBesselFirstKind(double x, int n);
+
+
+    /**
+     * @brief BernoulliNumber
+     * @param n
+     * @return Bernoulli number, calculated by Akiyama–Tanigawa algorithm
+     */
+    static double BernoulliNumber(int n);
+
+    /**
+     * @brief zetaRiemann
+     * @param n
+     * @return Riemann zeta function of integer n
+     */
+    static double zetaRiemann(int n);
 };
 
 #endif // RANDMATH_H

@@ -37,8 +37,8 @@ public:
     static double variate(double mean, double rootVar);
     static double standardVariate();
 
-    double Mean() const { return mu; }
-    double Variance() const { return sigma * sigma; }
+    double Mean() const;
+    double Variance() const;
 
     std::complex<double> CF(double t) const override;
     double Quantile(double p) const override;
@@ -47,6 +47,8 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    double Moment(int n) const;
 
     bool fitToData(const QVector<double> &sample);
 };

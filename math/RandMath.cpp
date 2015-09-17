@@ -473,4 +473,43 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
     return std::exp(x) / std::sqrt(2.0 * M_PI * x) * sum;
 }
 
+double RandMath::BernoulliNumber(int n)
+{
+    std::vector<double> A(n);
+    for (int i = 0; i < n; ++i)
+    {
+        A[i] = 1.0 / (i + 1);
+        for (int j = i; j > 1; --j)
+        {
+            A[j - 1] -= A[j];
+            A[j - 1] *= j;
+        }
+    }
+    return A[0];
+}
+
+double RandMath::zetaRiemann(int n)
+{
+    if (n < 0)
+    {
+        if ((-n) & 1)
+            return -BernoulliNumber(n + 1) / (n + 1);
+        return 0;
+    }
+
+    if (n & 1)
+    {
+        if (n == 1)
+            return INFINITY;
+        //TODO:
+        return 0;
+    }
+
+    double numerator = BernoulliNumber(n);
+    numerator *= std::pow(2.0 * M_PI, n);
+    double denominator = 2.0 * RandMath::factorial(n);
+    double frac = numerator / denominator;
+    return ((n >> 1) & 1) ? frac : -frac;
+}
+
 

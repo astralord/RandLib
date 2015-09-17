@@ -43,7 +43,9 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    inline double Entropy() const;
+    double Moment(int n) const;
+
+    double Entropy() const;
 
     bool fitToData(const QVector<double> &sample);
 };

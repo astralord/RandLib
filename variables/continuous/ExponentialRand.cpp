@@ -125,6 +125,15 @@ double ExponentialRand::ExcessKurtosis() const
     return 6.0;
 }
 
+double ExponentialRand::Moment(int n) const
+{
+    if (n < 0)
+        return 0;
+    if (n == 0)
+        return 1;
+    return RandMath::factorial(n) / std::pow(lambda, n);
+}
+
 double ExponentialRand::Entropy() const
 {
     return 1 - std::log(lambda);

@@ -55,7 +55,9 @@ SOURCES += \
     variables/continuous/ArcsineRand.cpp \
     variables/continuous/SechRand.cpp \
     variables/continuous/WignerSemicircleRand.cpp \
-    variables/continuous/GumbelRand.cpp
+    variables/continuous/GumbelRand.cpp \
+    variables/discrete/LogarithmicRand.cpp \
+    variables/discrete/ZetaRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -108,7 +110,9 @@ HEADERS +=\
     math/Constants.h \
     variables/continuous/SechRand.h \
     variables/continuous/WignerSemicircleRand.h \
-    variables/continuous/GumbelRand.h
+    variables/continuous/GumbelRand.h \
+    variables/discrete/LogarithmicRand.h \
+    variables/discrete/ZetaRand.h
 
 unix {
     target.path = /usr/lib

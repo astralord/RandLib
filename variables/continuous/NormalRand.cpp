@@ -125,6 +125,16 @@ double NormalRand::standardVariate()
     return 0; /// fail due to some error
 }
 
+double NormalRand::Mean() const
+{
+    return mu;
+}
+
+double NormalRand::Variance() const
+{
+    return sigma * sigma;
+}
+
 std::complex<double> NormalRand::CF(double t) const
 {
     double sigmaT = sigma * t;
@@ -168,6 +178,15 @@ double NormalRand::Skewness() const
 double NormalRand::ExcessKurtosis() const
 {
     return 0.0;
+}
+
+double NormalRand::Moment(int n) const
+{
+    if (n < 0)
+        return 0;
+    if (n == 0)
+        return 1;
+    return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1): 0;
 }
 
 bool NormalRand::fitToData(const QVector<double> &sample)
