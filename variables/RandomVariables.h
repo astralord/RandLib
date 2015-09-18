@@ -11,10 +11,12 @@
 #include "discrete/GeometricRand.h"
 #include "discrete/HyperGeometricRand.h"
 #include "discrete/NegativeBinomialRand.h"
+#include "discrete/LogarithmicRand.h"
 #include "discrete/PoissonRand.h"
 #include "discrete/RademacherRand.h"
 #include "discrete/UniformDiscreteRand.h"
 #include "discrete/YuleRand.h"
+#include "discrete/ZetaRand.h"
 #include "discrete/ZipfRand.h"
 
 /// CONTINUOUS
