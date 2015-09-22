@@ -18,7 +18,8 @@ void BinomialRand::setNumber(int number)
 
 void BinomialRand::setProbability(double probability)
 {
-    p = std::min(std::max(probability, MIN_POSITIVE), 1.0);
+    p = std::min(probability, 1.0);
+    p = std::max(p, 0.0);
     B.setProbability(p);
 }
 

@@ -14,7 +14,7 @@ void WignerSemicircleRand::setRadius(double radius)
 {
     R = radius;
     if (R <= 0)
-        R = MIN_POSITIVE;
+        R = 1.0;
     RSq = R * R;
     X.setParameters(1.5, 1.5);
 }

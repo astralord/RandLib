@@ -14,7 +14,7 @@ void RayleighRand::setScale(double scale)
 {
     sigma = scale;
     if (sigma <= 0)
-        sigma = MIN_POSITIVE;
+        sigma = 1.0;
     sigmaSqInv = 1.0 / (sigma * sigma);
 }
 

@@ -23,7 +23,7 @@ void ArcsineRand::setSupport(double minValue, double maxValue)
         SWAP(a, b);
 
     if (RandMath::areEqual(b, a))
-        b = a + MIN_POSITIVE;
+        b = a + 1.0;
 
     bma = b - a;
 }

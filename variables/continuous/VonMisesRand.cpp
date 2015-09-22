@@ -20,7 +20,7 @@ void VonMisesRand::setConcentration(double concentration)
 {
     k = concentration;
     if (k <= 0)
-        k = MIN_POSITIVE;
+        k = 1.0;
     I0kInv = 1.0 / RandMath::modifiedBesselFirstKind(k, 0);
 }
 

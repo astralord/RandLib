@@ -20,7 +20,7 @@ void GumbelRand::setScale(double scale)
 {
     beta = scale;
     if (beta <= 0)
-        beta = MIN_POSITIVE;
+        beta = 1.0;
     betaInv = 1.0 / beta;
 }
 

@@ -18,7 +18,9 @@ void NegativeBinomialRand<T>::setParameters(T number, double probability)
 {
     r = std::max(number, static_cast<T>(1.0));
 
-    p = std::min(std::max(probability, MIN_POSITIVE), 1.0);
+    p = std::max(probability, 0.0);
+    if (p >= 1.0)
+        p = 0.5;
     G.setProbability(1 - p);
 
     pdfCoef = std::pow(1 - p, r) / std::tgamma(r);

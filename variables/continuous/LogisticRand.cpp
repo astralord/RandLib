@@ -20,7 +20,7 @@ void LogisticRand::setScale(double scale)
 {
     s = scale;
     if (s <= 0)
-        s = MIN_POSITIVE;
+        s = 1.0;
 }
 
 double LogisticRand::f(double x) const

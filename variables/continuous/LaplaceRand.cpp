@@ -21,7 +21,7 @@ void LaplaceRand::setScale(double scale)
 {
     b = scale;
     if (b <= 0)
-        b = MIN_POSITIVE;
+        b = 1.0;
     bInv = 1.0 / b;
 }
 

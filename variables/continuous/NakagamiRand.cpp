@@ -15,7 +15,7 @@ void NakagamiRand::setParameters(double shape, double spread)
     m = std::max(shape, 0.5);
     w = spread;
     if (w <= 0)
-        w = MIN_POSITIVE;
+        w = 1.0;
 
     sigma = m / w;
     gammaMInv = 1.0 / std::tgamma(m);

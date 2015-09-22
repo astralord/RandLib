@@ -26,12 +26,12 @@ void GammaRand::setParameters(double shape, double scale)
 {
     k = shape;
     if (k <= 0)
-        k = MIN_POSITIVE;
+        k = 1.0;
     kInv = 1.0 / k;
     
     theta = scale;
     if (theta <= 0)
-        theta = MIN_POSITIVE;
+        theta = 1.0;
     thetaInv = 1.0 / theta;
    
     double k_round = std::round(k);

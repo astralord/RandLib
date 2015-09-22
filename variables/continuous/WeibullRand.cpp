@@ -15,12 +15,12 @@ void WeibullRand::setParameters(double scale, double shape)
 {
     lambda = scale;
     if (lambda <= 0)
-        lambda = MIN_POSITIVE;
+        lambda = 1.0;
     lambdaInv = 1.0 / lambda;
     
     k = shape;
     if (k <= 0)
-        k = MIN_POSITIVE;
+        k = 1.0;
     kInv = 1.0 / k;
 }
 

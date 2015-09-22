@@ -16,11 +16,11 @@ void WaldRand::setParameters(double mean, double shape)
 {
     mu = mean;
     if (mu <= 0)
-        mu = MIN_POSITIVE;
+        mu = 1.0;
         
     l = shape;
     if (l <= 0)
-        l = MIN_POSITIVE;
+        l = 1.0;
     pdfCoef = std::sqrt(.5 * l * M_1_PI);
     cdfCoef = std::exp(2 * l / mu);
 }

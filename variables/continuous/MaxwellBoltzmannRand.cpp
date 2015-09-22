@@ -15,7 +15,7 @@ void MaxwellBoltzmannRand::setScale(double scale)
 {
     a = scale;
     if (a <= 0)
-        a = MIN_POSITIVE;
+        a = 1.0;
 }
 
 double MaxwellBoltzmannRand::f(double x) const

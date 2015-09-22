@@ -21,7 +21,7 @@ void CauchyRand::setScale(double scale)
 {
     gamma = scale;
     if (gamma <= 0)
-        gamma = MIN_POSITIVE;
+        gamma = 1.0;
     gammaInv = 1.0 / gamma;
 }
 

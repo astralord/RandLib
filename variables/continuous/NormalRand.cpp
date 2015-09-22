@@ -45,7 +45,7 @@ void NormalRand::setSigma(double rootVar)
 {
     sigma = rootVar;
     if (sigma <= 0)
-        sigma = MIN_POSITIVE;
+        sigma = 1.0;
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
 }
 

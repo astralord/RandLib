@@ -19,7 +19,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
 {
     alpha = std::min(exponent, 2.0);
     if (alpha <= 0)
-        alpha = MIN_POSITIVE;
+        alpha = 2.0;
     alphaInv = 1.0 / alpha;
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
@@ -29,7 +29,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
 
     sigma = scale;
     if (sigma <= 0)
-        sigma = MIN_POSITIVE;
+        sigma = 1.0;
     mu = location;
 
     /// Should be cautious, known distributions in priority

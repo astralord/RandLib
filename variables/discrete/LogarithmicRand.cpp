@@ -13,9 +13,8 @@ std::string LogarithmicRand::name()
 
 void LogarithmicRand::setProbability(double probability)
 {
-    p = std::min(probability, 1.0 - 1e-14);
-    if (p <= 0)
-        p = MIN_POSITIVE;
+    if (p <= 0 || p >= 1)
+        p = 0.5;
     q = 1.0 - p;
     logQInv = 1.0 / std::log(1.0 - p);
 }

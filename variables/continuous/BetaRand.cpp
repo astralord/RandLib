@@ -14,12 +14,12 @@ void BetaRand::setParameters(double shape1, double shape2)
 {
     alpha = shape1;
     if (alpha <= 0)
-        alpha = MIN_POSITIVE;
+        alpha = 1.0;
     X.setParameters(alpha, 1);
 
     beta = shape2;
     if (beta <= 0)
-        beta = MIN_POSITIVE;
+        beta = 1.0;
     Y.setParameters(beta, 1);
 
     if (alpha + beta > 30)
@@ -40,7 +40,7 @@ void BetaRand::setAlpha(double shape1)
 {
     alpha = shape1;
     if (alpha <= 0)
-        alpha = MIN_POSITIVE;
+        alpha = 1.0;
     X.setParameters(alpha, 1);
     pdfCoef = std::tgamma(alpha + Y.getShape()) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     setVariateConstants();
@@ -50,7 +50,7 @@ void BetaRand::setBeta(double shape2)
 {
     beta = shape2;
     if (beta <= 0)
-        beta = MIN_POSITIVE;
+        beta = 1.0;
     Y.setParameters(beta, 1);
     pdfCoef = std::tgamma(X.getShape() + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     setVariateConstants();
@@ -254,16 +254,12 @@ std::string BaldingNicholsRand::name()
 void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
 {
     F = fixatingIndex;
-    if (F <= 0)
-        F = MIN_POSITIVE;
-    if (F >= 1)
-        F = 1.0 - MIN_POSITIVE;
+    if (F <= 0 || F >= 1)
+        F = 0.5;
 
     p = frequency;
-    if (p <= 0)
-        p = MIN_POSITIVE;
-    if (p >= 1)
-        p = 1.0 - MIN_POSITIVE;
+    if (p <= 0 || p >= 1)
+        p = 0.5;
 
     double frac = (1.0 - F) / F;
     BetaRand::setParameters(frac * p, frac * (1 - p));

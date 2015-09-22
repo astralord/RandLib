@@ -14,7 +14,7 @@ void GeometricRand::setProbability(double probability)
 {
     p = std::min(probability, 1.0);
     if (p <= 0)
-        p = MIN_POSITIVE;
+        p = 0.5;
     q = 1.0 - p;
 
     /// we use two different generators for two different cases

@@ -40,7 +40,7 @@ void ExponentialRand::setRate(double rate)
 {
     lambda = rate;
     if (lambda <= 0)
-        lambda = MIN_POSITIVE;
+        lambda = 1.0;
     beta = 1.0 / lambda;
 }
 

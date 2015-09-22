@@ -19,7 +19,7 @@ void UniformRand::setBoundaries(double minValue, double maxValue)
     if (b < a)
         SWAP(a, b);
     if (RandMath::areEqual(b, a))
-        b = a + MIN_POSITIVE;
+        b = a + 1.0;
 
     c = 1.0 / (b - a);
 }

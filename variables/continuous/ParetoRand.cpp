@@ -15,12 +15,12 @@ void ParetoRand::setParameters(double shape, double scale)
 {
     alpha = shape;
     if (alpha <= 0)
-        alpha = MIN_POSITIVE;
+        alpha = 1.0;
     alphaInv = 1.0 / alpha;
     
     xm = scale;
     if (xm <= 0)
-        xm = MIN_POSITIVE;
+        xm = 1.0;
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
@@ -28,7 +28,7 @@ void ParetoRand::setShape(double shape)
 {
     alpha = shape;
     if (alpha <= 0)
-        alpha = MIN_POSITIVE;
+        alpha = 1.0;
     alphaInv = 1.0 / alpha;
     pdfCoef = alpha * std::pow(xm, alpha);
 }
@@ -37,7 +37,7 @@ void ParetoRand::setScale(double scale)
 {
     xm = scale;
     if (xm <= 0)
-        xm = MIN_POSITIVE;
+        xm = 1.0;
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
