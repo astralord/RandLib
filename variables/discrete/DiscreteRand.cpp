@@ -17,19 +17,26 @@ double DiscreteRand::Quantile(double probability) const
     double mean = Mean();
     int down = static_cast<int>(std::floor(mean)), up = down + 1;
     double fu = F(up), fd = F(down);
+    int iter = 0;
+    static constexpr int maxIter = 1e4;
     /// go up
     while (fu < probability)
     {
         fd = fu;
         fu = F(++up);
+        if (++iter > maxIter)
+            return NAN;
     }
     down = up - 1;
 
+    iter = 0;
     /// go down
     while (fd > probability)
     {
         fu = fd;
         fd = F(--down);
+        if (++iter > maxIter)
+            return NAN;
     }
     up = down + 1;
 
@@ -58,7 +65,9 @@ double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr,
         addon *= P(x);
         sum += addon;
         --x;
-    } while (std::fabs(addon) > epsilon && ++iter < maxIter);
+        if (++iter > maxIter) /// can't take sum, addon decreases too slow
+            return INFINITY;
+    } while (std::fabs(addon) > epsilon);
 
     if (iter == maxIter) /// can't take sum, addon decreases too slow
         return INFINITY;
@@ -72,10 +81,9 @@ double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr,
         addon *= P(x);
         sum += addon;
         ++x;
-    } while (std::fabs(addon) > epsilon && ++iter < maxIter);
-
-    if (iter == maxIter) /// can't take sum, addon decreases too slow
-        return INFINITY;
+        if (++iter > maxIter) /// can't take sum, addon decreases too slow
+            return INFINITY;
+    } while (std::fabs(addon) > epsilon);
 
     return sum;
 }

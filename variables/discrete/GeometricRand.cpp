@@ -48,6 +48,24 @@ double GeometricRand::F(double x) const
     return (x < 0) ? 0 : 1 - std::pow(q, std::floor(x) + 1);
 }
 
+double GeometricRand::variateByExponential() const
+{
+    return std::floor(W.variate());
+}
+
+double GeometricRand::variateByTable() const
+{
+    double U = UniformRand::standardVariate();
+    /// handle tail by recursion
+    if (U > table[tableSize - 1])
+        return tableSize + variateByTable();
+    /// handle the main body
+    int x = 0;
+    while (U > table[x])
+        ++x;
+    return x;
+}
+
 double GeometricRand::variate() const
 {
     if (p < 0.2)
@@ -57,7 +75,8 @@ double GeometricRand::variate() const
 
 double GeometricRand::variate(double probability)
 {
-    if (probability < 0.2)
+    /// here we use 0.1 instead of 0.2 because log(1-p) wasn't hashed
+    if (probability < 0.1)
         return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
 
     double U = UniformRand::standardVariate();
@@ -83,24 +102,6 @@ void GeometricRand::sample(QVector<double> &outputData) const
     }
 }
 
-double GeometricRand::variateByExponential() const
-{
-    return std::floor(W.variate());
-}
-
-double GeometricRand::variateByTable() const
-{
-    double U = UniformRand::standardVariate();
-    /// handle tail by recursion
-    if (U > table[tableSize - 1])
-        return tableSize + variateByTable();
-    /// handle the main body
-    int x = 0;
-    while (U > table[x])
-        ++x;
-    return x;
-}
-
 double GeometricRand::Mean() const
 {
     return q / p;
@@ -109,6 +110,15 @@ double GeometricRand::Mean() const
 double GeometricRand::Variance() const
 {
     return q / (p * p);
+}
+
+std::complex<double> GeometricRand::CF(double t) const
+{
+    std::complex<double> y(0, t);
+    y = std::exp(y);
+    y *= p;
+    y = 1.0 - y;
+    return (1.0 - p) / y;
 }
 
 double GeometricRand::Median() const

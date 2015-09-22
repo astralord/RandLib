@@ -67,6 +67,14 @@ double UniformRand::Variance() const
     return (b - a) * (b - a) / 12;
 }
 
+std::complex<double> UniformRand::CF(double t) const
+{
+    std::complex<double> x(0, -t * a), y(0, -t * b);
+    std::complex<double> numerator = std::exp(x) - std::exp(y);
+    std::complex<double> denominator(0, t * (b - a));
+    return numerator / denominator;
+}
+
 double UniformRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
