@@ -98,20 +98,14 @@ double RandMath::betaFun(double a, double b)
     }
 
     if (a > b)
-    {
-        double res = std::tgamma(a);
-        res /= std::tgamma(sum);
-        return res * std::tgamma(b);
-    }
-    else
-    {
-        double gammaB = std::tgamma(b);
-        double res = gammaB / std::tgamma(sum);
-        return (a == b) ? res * gammaB : res * std::tgamma(a);
-    }
+        SWAP(a, b);
+
+    double gammaB = std::tgamma(b);
+    double res = gammaB / std::tgamma(sum);
+    return (a == b) ? res * gammaB : res * std::tgamma(a);
 }
 
-long double RandMath::regularizedBetaFun(double x, double a, double b)
+double RandMath::regularizedBetaFun(double x, double a, double b)
 {
     double upperBoundary = std::min(1.0, std::max(0.0, x));
     if (a != b)
@@ -129,8 +123,10 @@ long double RandMath::regularizedBetaFun(double x, double a, double b)
     0, upperBoundary);
 }
 
-long double RandMath::incompleteBetaFun(double x, double a, double b)
+double RandMath::incompleteBetaFun(double x, double a, double b)
 {
+    // TODO: it doesn't work with a or b == 0!!!
+    // look here for effective implementation: http://www.ams.org/journals/mcom/1967-21-100/S0025-5718-1967-0221730-X/S0025-5718-1967-0221730-X.pdf
     return regularizedBetaFun(x, a, b) / betaFun(a, b);
 }
 

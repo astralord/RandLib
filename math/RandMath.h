@@ -142,7 +142,7 @@ public:
      * @param b
      * @return
      */
-    static long double regularizedBetaFun(double x, double a, double b);
+    static double regularizedBetaFun(double x, double a, double b);
 
     /**
      * @brief incompleteBetaFun
@@ -151,7 +151,7 @@ public:
      * @param b
      * @return
      */
-    static long double incompleteBetaFun(double x, double a, double b);
+    static double incompleteBetaFun(double x, double a, double b);
 
     /**
      * @brief gammaHalf
