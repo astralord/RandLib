@@ -257,7 +257,6 @@ public:
      */
     static double modifiedBesselFirstKind(double x, int n);
 
-
     /**
      * @brief BernoulliNumber
      * @param n
