@@ -22,8 +22,6 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    double Quantile(double p) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;

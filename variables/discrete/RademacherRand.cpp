@@ -37,17 +37,6 @@ std::complex<double> RademacherRand::CF(double t) const
     return std::cos(t);
 }
 
-double RademacherRand::Quantile(double p) const
-{
-    if (p == 0)
-        return -INFINITY;
-    if (p == 0.5)
-        return -1;
-    if (p == 1)
-        return 1;
-    return NAN;
-}
-
 double RademacherRand::Median() const
 {
     return 0.0;

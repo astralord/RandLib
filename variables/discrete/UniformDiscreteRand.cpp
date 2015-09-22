@@ -31,6 +31,10 @@ double UniformDiscreteRand::P(int k) const
 
 double UniformDiscreteRand::F(double x) const
 {
+    if (x < a)
+        return 0.0;
+    if (x > b)
+        return 1.0;
     return (std::floor(x) - a + 1) / n;
 }
 
@@ -47,19 +51,6 @@ double UniformDiscreteRand::Mean() const
 double UniformDiscreteRand::Variance() const
 {
     return (n * n - 1) / 12;
-}
-
-double UniformDiscreteRand::Quantile(double p) const
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    if (p == 0)
-        return -INFINITY;
-    double x = p * n + a - 1;
-    double xFloor = std::floor(x);
-    if (RandMath::areEqual(x, xFloor))
-        return xFloor;
-    return NAN;
 }
 
 double UniformDiscreteRand::Median() const

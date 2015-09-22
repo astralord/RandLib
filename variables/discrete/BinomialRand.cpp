@@ -33,15 +33,8 @@ double BinomialRand::F(double x) const
 {
     if (x < 0)
         return 0;
+    // TODO: find max for k such that F(x) == 1, or there can occure numerical error
     int k = std::floor(x);
-    /// for small k we can use sum of probabilities
-    if (k < 30) {
-        double sum = 0;
-        for (int i = 0; i != k; ++i)
-            sum += P(i);
-        return sum;
-    }
-    /// for large - cdf formula
     return RandMath::incompleteBetaFun(1 - p, n - k, 1 + k);
 }
 

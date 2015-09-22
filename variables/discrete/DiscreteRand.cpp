@@ -8,6 +8,35 @@ void DiscreteRand::pmf(const QVector<int> &x, QVector<double> &y) const
         y[i] = P(x[i]);
 }
 
+double DiscreteRand::Quantile(double probability) const
+{
+    if (probability < 0 || probability > 1)
+        return NAN;
+    if (probability == 0.0)
+        return -INFINITY;
+    double mean = Mean();
+    int down = static_cast<int>(std::floor(mean)), up = down + 1;
+    double fu = F(up), fd = F(down);
+    /// go up
+    while (fu < probability)
+    {
+        fd = fu;
+        fu = F(++up);
+    }
+    down = up - 1;
+
+    /// go down
+    while (fd > probability)
+    {
+        fu = fd;
+        fd = F(--down);
+    }
+    up = down + 1;
+
+    /// if lower quantile is not equal probability, we return upper quantile
+    return (fd < probability) ? up : down;
+}
+
 double DiscreteRand::Hazard(double x) const
 {
     return P(x) / (1.0 - F(x));

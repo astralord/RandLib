@@ -33,6 +33,11 @@ void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> >
         y[i] = CF(t[i]);
 }
 
+double RandomVariable::Median() const
+{
+    return Quantile(0.5);
+}
+
 double RandomVariable::Skewness() const
 {
     double mu = Mean();

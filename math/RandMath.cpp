@@ -114,9 +114,17 @@ double RandMath::betaFun(double a, double b)
 long double RandMath::regularizedBetaFun(double x, double a, double b)
 {
     double upperBoundary = std::min(1.0, std::max(0.0, x));
+    if (a != b)
+    {
+        return integral([a, b] (double t)
+        {
+            return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
+        },
+        0, upperBoundary);
+    }
     return integral([a, b] (double t)
     {
-        return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
+        return std::pow(t - t * t, a - 1);
     },
     0, upperBoundary);
 }

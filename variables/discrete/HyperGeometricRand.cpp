@@ -32,7 +32,7 @@ double HyperGeometricRand::F(double x) const
 {
     int k = static_cast<int>(std::floor(x));
     double sum = 0;
-    for (int i = 0; i < k; ++i)
+    for (int i = 0; i <= k; ++i)
         sum += P(i);
     return sum;
 }

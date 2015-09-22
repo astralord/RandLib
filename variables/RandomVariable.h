@@ -70,9 +70,7 @@ public:
      * @param p
      * @return such x that F(x) = p
      */
-    virtual double Quantile(double p) const { // = 0
-        return p;
-    }
+    virtual double Quantile(double p) const = 0;
     
     /**
      * @brief CF
@@ -110,9 +108,7 @@ public:
      * @brief Median
      * @return such x that F(x) = 0.5
      */
-    virtual double Median() const { // = 0
-        return 1.0;
-    }
+    virtual double Median() const;
 
     /**
      * @brief Mode

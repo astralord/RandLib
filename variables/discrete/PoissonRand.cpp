@@ -25,7 +25,7 @@ double PoissonRand::P(int k) const
 
 double PoissonRand::F(double x) const
 {
-    if (x <= 0)
+    if (x < 0)
         return 0;
     int k = std::floor(x);
     return RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);

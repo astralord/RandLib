@@ -27,7 +27,9 @@ public:
      * @param y
      */
     void pmf(const QVector<int> &x, QVector<double> &y) const;
-    
+
+    double Quantile(double probability) const override;
+
     double Hazard(double x) const override;
 
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;

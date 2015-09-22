@@ -101,15 +101,14 @@ double GeometricRand::variateByTable() const
     return x;
 }
 
-double GeometricRand::Quantile(double F) const
+double GeometricRand::Mean() const
 {
-    if (F < 0 || F > 1)
-        return NAN;
-    if (F == 0)
-        return -INFINITY;
-    if (F == 1)
-        return INFINITY;
-    return std::log1p(F) / std::log(1 - p);
+    return q / p;
+}
+
+double GeometricRand::Variance() const
+{
+    return q / (p * p);
 }
 
 double GeometricRand::Median() const
