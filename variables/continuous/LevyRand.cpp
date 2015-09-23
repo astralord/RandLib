@@ -43,7 +43,8 @@ double LevyRand::F(double x) const
     if (x <= mu)
         return 0;
     double y = x - mu;
-    y = 0.5 * c / y;
+    y += y;
+    y = c / y;
     y = std::sqrt(y);
     return std::erfc(y);
 }
@@ -76,7 +77,7 @@ std::complex<double> LevyRand::CF(double t) const
 
 double LevyRand::Quantile(double p) const
 {
-    double x = X.Quantile(0.5 * p);
+    double x = 1.0 / X.Quantile(0.5 * p);
     return mu + x * x;
 }
 

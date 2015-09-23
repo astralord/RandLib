@@ -48,7 +48,7 @@ double CantorRand::F(double x) const
 
 double CantorRand::variate() const
 {
-    // TODO: implement it using uniform (or at least binomial) variate, not bernoulli
+    // TODO: implement it using uniform variate, not bernoulli
     double sum = 0.0;
     double addon, prod = 1.0;
     do {
@@ -67,6 +67,24 @@ double CantorRand::Mean() const
 double CantorRand::Variance() const
 {
     return 0.125;
+}
+
+double CantorRand::Quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0.0)
+        return -INFINITY;
+    if (p == 1.0)
+        return INFINITY;
+
+    double root = 0.5;
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        return F(x) - p;
+    }, 0.0, 1.0, root))
+        return root;
+    return NAN;
 }
 
 std::complex<double> CantorRand::CF(double t) const
