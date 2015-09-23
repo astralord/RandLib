@@ -107,27 +107,36 @@ double RandMath::betaFun(double a, double b)
 
 double RandMath::regularizedBetaFun(double x, double a, double b)
 {
-    double upperBoundary = std::min(1.0, std::max(0.0, x));
+    if (x < 0.0 || x > 1.0)
+        return NAN;
+    if (x == 1.0)
+        return 1.0;
+    if (x == 0.0)
+        return 0.0;
+    return incompleteBetaFun(x, a, b) / betaFun(a, b);
+}
+
+double RandMath::incompleteBetaFun(double x, double a, double b)
+{
+    if (x < 0.0 || x > 1.0)
+        return NAN;
+    if (x == 0.0)
+        return 0.0;
+    if (x == 1.0)
+        return betaFun(a, b);
     if (a != b)
     {
         return integral([a, b] (double t)
         {
             return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
         },
-        0, upperBoundary);
+        0, x);
     }
     return integral([a, b] (double t)
     {
         return std::pow(t - t * t, a - 1);
     },
-    0, upperBoundary);
-}
-
-double RandMath::incompleteBetaFun(double x, double a, double b)
-{
-    // TODO: it doesn't work with a or b == 0!!!
-    // look here for effective implementation: http://www.ams.org/journals/mcom/1967-21-100/S0025-5718-1967-0221730-X/S0025-5718-1967-0221730-X.pdf
-    return regularizedBetaFun(x, a, b) / betaFun(a, b);
+    0, x);
 }
 
 long double RandMath::gammaHalf(unsigned k)

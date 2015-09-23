@@ -73,14 +73,7 @@ double BetaRand::F(double x) const
         return 0;
     if (x >= 1)
         return 1;
-    return RandMath::integral([this] (double t)
-    {
-        double y = BetaRand::f(t);
-        if (std::isnan(y) || std::isinf(y)) /// kind of hack
-            return 0.0;
-        return y;
-    },
-    0, x);
+    return pdfCoef * RandMath::incompleteBetaFun(x, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const

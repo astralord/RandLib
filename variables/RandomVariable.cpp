@@ -23,10 +23,7 @@ void RandomVariable::cdf(const QVector<double> &x, QVector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
-    {
-        qDebug() << "X:" << x[i];
         y[i] = F(x[i]);
-    }
 }
 
 void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const

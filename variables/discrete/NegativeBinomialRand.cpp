@@ -44,7 +44,7 @@ double NegativeBinomialRand<T>::F(double x) const
 {
     if (x < 0.0)
         return 0.0;
-    return 1.0 - RandMath::incompleteBetaFun(p, std::floor(x) + 1, r);
+    return 1.0 - RandMath::regularizedBetaFun(p, std::floor(x) + 1, r);
 }
 
 template<>
