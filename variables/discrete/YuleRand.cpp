@@ -41,7 +41,7 @@ double YuleRand::variate() const
 
 double YuleRand::variate(double shape)
 {
-    double prob = 1.0 / ParetoRand::variate(shape, 1.0);
+    double prob = 1.0 / ParetoRand::standardVariate(shape);
     return GeometricRand::variate(prob) + 1;
 }
 

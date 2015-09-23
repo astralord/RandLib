@@ -77,10 +77,7 @@ public:
      * @param x
      * @return Characteristic function (inverse Fourier transform of probability function)
      */
-    virtual std::complex<double> CF(double t) const // = 0
-    {
-        return std::complex<double>(t);
-    }
+    virtual std::complex<double> CF(double t) const; // = 0
 
     /**
      * @brief cf

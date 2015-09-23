@@ -7,7 +7,7 @@
 /**
  * @brief The ZipfRand class
  */
-class ZipfRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteRand
 {
     double s;
     int N;

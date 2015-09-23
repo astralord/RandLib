@@ -19,13 +19,11 @@ public:
     void setParameters(double shape, double scale);
     void setShape(double shape);
     void setScale(double scale);
-    inline double getShape() const { return xm; }
-    inline double getScale() const { return alpha; }
+    inline double getShape() const { return alpha; }
+    inline double getScale() const { return xm; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
-    static double variate(double shape, double scale);
 
 private:
     static double variateForAlphaOne();
@@ -33,6 +31,10 @@ private:
     static double variateForCommonAlpha(double shape);
 
 public:
+    static double standardVariate(double shape);
+    static double variate(double shape, double scale);
+    double variate() const override;
+
     void sample(QVector<double> &outputData) const override;
 
     double Mean() const override;

@@ -51,20 +51,6 @@ double ParetoRand::F(double x) const
     return (x > xm) ? 1 - std::pow(xm / x, alpha) : 0;
 }
 
-double ParetoRand::variate() const
-{
-    return ParetoRand::variate(xm, alpha);
-}
-
-double ParetoRand::variate(double shape, double scale)
-{
-    if (shape == 1)
-        return scale * variateForAlphaOne();
-    if (shape == 2)
-        return scale * variateForAlphaTwo();
-    return scale * variateForCommonAlpha(shape);
-}
-
 double ParetoRand::variateForAlphaOne()
 {
     return 1.0 / UniformRand::standardVariate();
@@ -78,6 +64,25 @@ double ParetoRand::variateForAlphaTwo()
 double ParetoRand::variateForCommonAlpha(double shape)
 {
     return std::exp(ExponentialRand::variate(shape));
+}
+
+double ParetoRand::standardVariate(double shape)
+{
+    if (shape == 1)
+        return variateForAlphaOne();
+    if (shape == 2)
+        return variateForAlphaTwo();
+    return variateForCommonAlpha(shape);
+}
+
+double ParetoRand::variate(double shape, double scale)
+{
+    return scale * standardVariate(shape);
+}
+
+double ParetoRand::variate() const
+{
+    return xm * standardVariate(alpha);
 }
 
 void ParetoRand::sample(QVector<double> &outputData) const

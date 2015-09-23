@@ -501,28 +501,10 @@ double RandMath::BernoulliNumber(int n)
     return A[0];
 }
 
-double RandMath::zetaRiemann(int n)
+double RandMath::zetaRiemann(double s)
 {
-    if (n < 0)
-    {
-        if ((-n) & 1)
-            return -BernoulliNumber(n + 1) / (n + 1);
-        return 0;
-    }
-
-    if (n & 1)
-    {
-        if (n == 1)
-            return INFINITY;
-        //TODO:
-        return 0;
-    }
-
-    double numerator = BernoulliNumber(n);
-    numerator *= std::pow(2.0 * M_PI, n);
-    double denominator = 2.0 * RandMath::factorial(n);
-    double frac = numerator / denominator;
-    return ((n >> 1) & 1) ? frac : -frac;
+    // TODO:
+    return s;
 }
 
 

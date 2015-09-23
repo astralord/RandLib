@@ -266,10 +266,10 @@ public:
 
     /**
      * @brief zetaRiemann
-     * @param n
-     * @return Riemann zeta function of integer n
+     * @param s
+     * @return Riemann zeta function
      */
-    static double zetaRiemann(int n);
+    static double zetaRiemann(double s);
 };
 
 #endif // RANDMATH_H

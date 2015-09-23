@@ -40,6 +40,8 @@ double LogisticRand::F(double x) const
 
 double LogisticRand::variate() const
 {
+    /// there can be used rejection method from Laplace or Cauchy (Luc Devroye, p. 471)
+    /// or ziggurat
     return mu + s * std::log(1.0 / UniformRand::standardVariate() - 1);
 }
 

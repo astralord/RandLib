@@ -26,6 +26,12 @@ void RandomVariable::cdf(const QVector<double> &x, QVector<double> &y) const
         y[i] = F(x[i]);
 }
 
+std::complex<double> RandomVariable::CF(double t) const
+{
+    // TODO:
+    return std::complex<double>(t);
+}
+
 void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
