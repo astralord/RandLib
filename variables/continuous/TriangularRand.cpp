@@ -3,10 +3,7 @@
 
 TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit)
 {
-    //TODO: add sanity check and merge setters!
-    setLowerLimit(lowerLimit);
-    setMode(mode);
-    setUpperLimit(upperLimit);
+    setParameters(lowerLimit, mode, upperLimit);
 }
 
 std::string TriangularRand::name()
@@ -17,29 +14,25 @@ std::string TriangularRand::name()
             + toStringWithPrecision(getUpperLimit()) + ")";
 }
 
+void TriangularRand::setParameters(double lowerLimit, double mode, double upperLimit)
+{
+    a = lowerLimit;
+    if (mode > a)
+        c = mode;
+    else
+        c = a + 1.0;
+    if (upperLimit > c)
+        b = upperLimit;
+    else
+        b = c + 1.0;
+    setConstantsForGenerator();
+}
+
 void TriangularRand::setConstantsForGenerator()
 {
     constForGenerator = (c - a) / (b - a);
     coefGenerator1 = (b - a) * (c - a);
     coefGenerator2 = (b - a) * (b - c);
-}
-
-void TriangularRand::setLowerLimit(double lowerLimit)
-{
-    a = lowerLimit;
-    setConstantsForGenerator();
-}
-
-void TriangularRand::setMode(double mode)
-{
-    c = mode;
-    setConstantsForGenerator();
-}
-
-void TriangularRand::setUpperLimit(double upperLimit)
-{
-    b = upperLimit;
-    setConstantsForGenerator();
 }
 
 double TriangularRand::f(double x) const

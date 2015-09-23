@@ -34,7 +34,6 @@ double BinomialRand::F(double x) const
 {
     if (x < 0)
         return 0;
-    // TODO: find max for k such that F(x) == 1, or there can occure numerical error
     int k = std::floor(x);
     return RandMath::regularizedBetaFun(1 - p, n - k, 1 + k);
 }

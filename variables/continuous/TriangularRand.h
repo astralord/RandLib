@@ -18,9 +18,7 @@ public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);
     std::string name() override;
 
-    void setLowerLimit(double lowerLimit);
-    void setMode(double mode);
-    void setUpperLimit(double upperLimit);
+    void setParameters(double lowerLimit, double mode, double upperLimit);
     inline double getLowerLimit() { return a; }
     inline double getMode() { return c; }
     inline double getUpperLimit() { return b; }

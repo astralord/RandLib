@@ -86,3 +86,6 @@ Discrete:
 * Yule
 * Zeta
 * Zipf
+
+Singular:
+* Cantor
