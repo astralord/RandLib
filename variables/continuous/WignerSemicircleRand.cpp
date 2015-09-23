@@ -32,7 +32,7 @@ double WignerSemicircleRand::f(double x) const
 
 double WignerSemicircleRand::F(double x) const
 {
-    if (x <= R)
+    if (x <= -R)
         return 0.0;
     if (x >= R)
         return 1.0;

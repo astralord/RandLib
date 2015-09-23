@@ -154,12 +154,20 @@ double NormalRand::Quantile(double p) const
         return -INFINITY;
     if (p == 1.0)
         return INFINITY;
-    double t = -std::log(p);
+    long double t = -std::log(p);
     t = std::sqrt(t + t);
-    static constexpr double c[] = {2.653962002601684482, 1.561533700212080345, 0.061146735765196993};
-    static constexpr double d[] = {1.904875182836498708, 0.454055536444233510, 0.009547745327068945};
-    double numerator = (c[2] * t + c[1]) * t + c[0];
-    double denominator = ((d[2] * t + d[1]) * t + d[0]) * t + 1.0;
+    static constexpr long double c[] = {2.653962002601684482, 1.561533700212080345, 0.061146735765196993};
+    static constexpr long double d[] = {1.904875182836498708, 0.454055536444233510, 0.009547745327068945};
+    long double numerator = c[2] * t;
+    numerator += c[1];
+    numerator *= t;
+    numerator += c[0];
+    long double denominator = d[2] * t;
+    denominator += d[1];
+    denominator *= t;
+    denominator += d[0];
+    denominator *= t;
+    denominator += 1.0;
     return mu + sigma * (t - numerator / denominator);
 }
 
@@ -189,7 +197,7 @@ double NormalRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1): 0;
+    return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
 bool NormalRand::fitToData(const QVector<double> &sample)

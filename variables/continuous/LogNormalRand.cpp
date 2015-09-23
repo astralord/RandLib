@@ -48,7 +48,7 @@ double LogNormalRand::Variance() const
     return (expVar - 1) * expMu * expMu * expVar;
 }
 
-double LogNormalRand::Quantile(double p)
+double LogNormalRand::Quantile(double p) const
 {
     return std::exp(X.Quantile(p));
 }
