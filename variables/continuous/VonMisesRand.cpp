@@ -1,4 +1,5 @@
 #include "VonMisesRand.h"
+#include "UniformRand.h"
 
 VonMisesRand::VonMisesRand(double location, double concentration)
 {
@@ -22,6 +23,10 @@ void VonMisesRand::setConcentration(double concentration)
     if (k <= 0)
         k = 1.0;
     I0kInv = 1.0 / RandMath::modifiedBesselFirstKind(k, 0);
+    if (k > 1.3)
+        s = 1.0 / std::sqrt(k);
+    else
+        s = M_PI * std::exp(-k);
 }
 
 double VonMisesRand::f(double x) const
@@ -46,8 +51,17 @@ double VonMisesRand::F(double x) const
 
 double VonMisesRand::variate() const
 {
-    //TODO:
-    return 0.0;
+    /// Generating von Mises variates by the ratio-of-uniforms method
+    /// Lucio Barabesi. Dipartimento di Metodi Quantitativi, Universiteta di Siena
+    int iter = 0;
+    do {
+        double U = UniformRand::standardVariate(), V = UniformRand::variate(-1, 1);
+        double theta = s * V / U;
+        if ((std::fabs(theta) <= M_PI) &&
+           ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
+            return mu + theta;
+    } while (++iter < 1e9);
+    return NAN; /// fail
 }
 
 double VonMisesRand::Mean() const

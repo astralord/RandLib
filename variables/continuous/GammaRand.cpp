@@ -147,7 +147,7 @@ double GammaRand::variateForSmallShape() const
                 return rv;
         }
     } while (++iter < 1e9); /// one billion should be enough
-    return 0; /// shouldn't end up here
+    return NAN; /// shouldn't end up here
 }
 
 double GammaRand::variateForMediumShape() const
@@ -195,7 +195,7 @@ double GammaRand::variateForLargeShape() const
                 return rv;
         }
     } while (++iter < 1e9); /// one billion should be enough
-    return 0; /// shouldn't end up here
+    return NAN; /// shouldn't end up here
 }
 
 std::complex<double> GammaRand::CF(double t) const

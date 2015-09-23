@@ -91,7 +91,7 @@ double BetaRand::variateForSmallEqualParameters() const
         if (u2 <= std::pow(4 * u1 * (1 - u1), alpha - 1))
             return u1;
     } while (++iter <= 1e9); /// one billion should be enough
-    return 0; /// fail
+    return NAN; /// fail
 }
 
 double BetaRand::variateForLargeEqualParameters() const
@@ -105,7 +105,7 @@ double BetaRand::variateForLargeEqualParameters() const
         if (u < N.f(n) / (variateCoef * f(n)))
             return n;
     } while (++iter <= 1e9); /// one billion should be enough
-    return 0; /// fail
+    return NAN; /// fail
 }
 
 double BetaRand::variateForDifferentParameters() const

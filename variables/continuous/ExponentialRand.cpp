@@ -84,7 +84,7 @@ double ExponentialRand::standardVariate()
         /// rejection - go back
 
     } while (++iter <= 1e9); /// one billion should be enough to be sure there is a bug
-    return 0; /// fail due to some error
+    return NAN; /// fail due to some error
 }
 
 std::complex<double> ExponentialRand::CF(double t) const

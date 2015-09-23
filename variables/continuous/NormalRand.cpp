@@ -122,7 +122,7 @@ double NormalRand::standardVariate()
             return ((signed)B > 0) ? x : -x;
 
     } while (++iter <= 1e9); /// one billion should be enough
-    return 0; /// fail due to some error
+    return NAN; /// fail due to some error
 }
 
 double NormalRand::Mean() const

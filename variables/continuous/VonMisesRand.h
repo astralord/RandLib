@@ -10,6 +10,8 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousRand
 {
     double mu, k;
     double I0kInv; /// 1.0 / I_0(k)
+    double s; /// generator coefficient
+
 public:
     VonMisesRand(double location, double concentration);
     std::string name() override;
