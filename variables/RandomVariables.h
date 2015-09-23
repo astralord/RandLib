@@ -51,5 +51,8 @@
 #include "continuous/WeibullRand.h"
 #include "continuous/WignerSemicircleRand.h"
 
+/// SINGULAR
+#include "singular/SingularRand.h"
+#include "singular/CantorRand.h"
 
 #endif // RANDOMGENERATORS_H

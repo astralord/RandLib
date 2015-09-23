@@ -57,7 +57,9 @@ SOURCES += \
     variables/continuous/WignerSemicircleRand.cpp \
     variables/continuous/GumbelRand.cpp \
     variables/discrete/LogarithmicRand.cpp \
-    variables/discrete/ZetaRand.cpp
+    variables/discrete/ZetaRand.cpp \
+    variables/singular/SingularRand.cpp \
+    variables/singular/CantorRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -112,7 +114,9 @@ HEADERS +=\
     variables/continuous/WignerSemicircleRand.h \
     variables/continuous/GumbelRand.h \
     variables/discrete/LogarithmicRand.h \
-    variables/discrete/ZetaRand.h
+    variables/discrete/ZetaRand.h \
+    variables/singular/SingularRand.h \
+    variables/singular/CantorRand.h
 
 unix {
     target.path = /usr/lib
