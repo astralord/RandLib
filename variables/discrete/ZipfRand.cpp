@@ -1,4 +1,5 @@
 #include "ZipfRand.h"
+#include "../continuous/ParetoRand.h"
 
 ZipfRand::ZipfRand(double exponent, int number)
 {
@@ -17,21 +18,30 @@ void ZipfRand::setParameters(double exponent, int number)
     N = number < 1 ? 1 : number;
 
     invHarmonicNumber = RandMath::harmonicNumber(s, N);
+    b = std::pow(2.0, s - 1.0);
 }
 
 double ZipfRand::P(int k) const
 {
+    if (k < 1 || k > N)
+        return 0.0;
     return std::pow(k, -s) * invHarmonicNumber;
 }
 
 double ZipfRand::F(double x) const
 {
-    return RandMath::harmonicNumber(s, std::floor(x)) * invHarmonicNumber;
+    if (x < 1.0)
+        return 0.0;
+    if (x >= N)
+        return 1.0;
+    int k = static_cast<int>(std::floor(x));
+    return RandMath::harmonicNumber(s, k) * invHarmonicNumber;
 }
 
 double ZipfRand::variate() const
 {
-    return 1.0;
+    //TODO - maybe rejection from zeta
+    return -1.0;
 }
 
 double ZipfRand::Mean() const

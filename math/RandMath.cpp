@@ -498,8 +498,15 @@ double RandMath::BernoulliNumber(int n)
 
 double RandMath::zetaRiemann(double s)
 {
-    // TODO:
-    return s;
+    if (s == 1)
+        return INFINITY;
+    // TODO!! http://numbers.computation.free.fr/Constants/Miscellaneous/zetaevaluations.pdf
+    if (s < 1)
+        return NAN;
+    int N = 100;
+    double y = harmonicNumber(s, N);
+    double NS = std::pow(N, -s);
+    return y + N * NS / (s - 1) + 0.5 * NS;
 }
 
 
