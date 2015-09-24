@@ -54,6 +54,12 @@ double BetaPrimeRand::Variance() const
     return numerator / denominator;
 }
 
+double BetaPrimeRand::Quantile(double p) const
+{
+    double x = BetaRand::Quantile(p);
+    return x / (1.0 - x);
+}
+
 double BetaPrimeRand::Median() const
 {
     double betaMedian = BetaRand::Median();

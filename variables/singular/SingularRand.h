@@ -12,8 +12,6 @@ public:
     SingularRand();
     virtual ~SingularRand() {}
 
-    double Quantile(double p) const override;
-
 protected:
     double Hazard(double) const override;
     double ExpectedValue(const std::function<double (double)> &, double) const override;

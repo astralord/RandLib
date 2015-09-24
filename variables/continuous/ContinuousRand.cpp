@@ -18,6 +18,10 @@ double ContinuousRand::Quantile(double p) const
     if (RandMath::findRoot([this, p] (double x)
     {
         return F(x) - p;
+    },
+    [this] (double x)
+    {
+        return f(x);
     }, root))
         return root;
     /// if we can't find quantile, then probably p == 1

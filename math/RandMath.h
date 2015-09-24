@@ -202,7 +202,7 @@ public:
      * @param epsilon
      * @return
      */
-    static bool findRoot(const std::function<double (double)> &funPtr, double & root, double epsilon = 1e-10);
+    static bool findRoot(const std::function<double (double)> &funPtr, const std::function<double (double)> &derPtr, double & root, double epsilon = 1e-10);
 
     /**
      * @brief findRoot

@@ -181,29 +181,24 @@ long double RandMath::integral(const std::function<double (double)> &funPtr,
     return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
 
-bool RandMath::findRoot(const std::function<double (double)> &funPtr, double &root, double epsilon)
+bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std::function<double (double)> &derPtr, double &root, double epsilon)
 {
     /// Sanity check
     epsilon = std::max(epsilon, MIN_POSITIVE);
-
     static constexpr int maxIter = 1e5;
     int iter = 0;
-    double newRoot = root;
     double step = epsilon + 1;
-    double eps = epsilon;
+    double grad = derPtr(root);
     do {
-        root = newRoot;
-        double fun0 = funPtr(root);
-        double fun1 = funPtr(root + eps);
-        if (areEqual(fun1, fun0))
-            eps *= 10; /// degeneracy
-        else
-        {
-            if (epsilon < eps)
-                eps *= 0.1;
-            step = fun0 * eps / (fun1 - fun0);
-            newRoot = root - step;
-        }
+        double fun = funPtr(root);
+        double alpha = 1.0;
+        double oldRoot = root;
+        step = fun / grad;
+        do {
+            root = oldRoot - alpha * step;
+            grad = derPtr(root);
+            alpha *= 0.5;
+        } while (grad == 0 && alpha > epsilon);
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// no convergence
