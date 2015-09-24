@@ -10,7 +10,7 @@
  */
 class RANDLIBSHARED_EXPORT WaldRand : public ContinuousRand
 {
-    double mu, l;
+    double mu, lambda;
 
     double pdfCoef; /// sqrt(l / (2 * pi))
     double cdfCoef; /// exp(2 * l / mu)
@@ -20,14 +20,16 @@ public:
 
     void setParameters(double mean, double shape);
     inline double getMean() const { return mu; }
-    inline double getShape() const { return l; }
+    inline double getShape() const { return lambda; }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
 
     double Mean() const override { return mu; }
-    double Variance() const override { return mu * mu * mu / l; }
+    double Variance() const override { return mu * mu * mu / lambda; }
+
+    std::complex<double> CF(double t) const override;
     
     double Mode() const override;
     double Skewness() const override;

@@ -77,6 +77,23 @@ double TriangularRand::Variance() const
     return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }
 
+std::complex<double> TriangularRand::CF(double t) const
+{
+    std::complex<double> x(0, a * t);
+    std::complex<double> y(0, c * t);
+    std::complex<double> z(0, b * t);
+    x = (b - c) * std::exp(x);
+    y = (b - a) * std::exp(y);
+    z = (c - a) * std::exp(z);
+    std::complex<double> numerator = x - y + z;
+    double denominator = (b - a);
+    denominator *= (c - a);
+    denominator *= (b - c);
+    denominator *= t * t;
+    std::complex<double> frac = -numerator / denominator;
+    return frac + frac;
+}
+
 double TriangularRand::Median() const
 {
     if (c + c > a + b)
