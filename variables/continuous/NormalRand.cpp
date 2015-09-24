@@ -156,8 +156,8 @@ double NormalRand::Quantile(double p) const
         return INFINITY;
     long double t = -std::log(p);
     t = std::sqrt(t + t);
-    static constexpr long double c[] = {2.653962002601684482, 1.561533700212080345, 0.061146735765196993};
-    static constexpr long double d[] = {1.904875182836498708, 0.454055536444233510, 0.009547745327068945};
+    static constexpr long double c[] = {2.653962002601684482l, 1.561533700212080345l, 0.061146735765196993l};
+    static constexpr long double d[] = {1.904875182836498708l, 0.454055536444233510l, 0.009547745327068945l};
     long double numerator = c[2] * t;
     numerator += c[1];
     numerator *= t;
@@ -168,7 +168,8 @@ double NormalRand::Quantile(double p) const
     denominator += d[0];
     denominator *= t;
     denominator += 1.0;
-    return mu + sigma * (t - numerator / denominator);
+    long double y = t - numerator / denominator;
+    return mu + sigma * y;
 }
 
 double NormalRand::Median() const

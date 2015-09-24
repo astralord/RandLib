@@ -8,7 +8,7 @@ LogarithmicRand::LogarithmicRand(double probability)
 
 std::string LogarithmicRand::name()
 {
-    return "LogarithmicRand(" + toStringWithPrecision(getProbability()) + ")";
+    return "Logarithmic(" + toStringWithPrecision(getProbability()) + ")";
 }
 
 void LogarithmicRand::setProbability(double probability)

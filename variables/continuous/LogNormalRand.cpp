@@ -50,7 +50,15 @@ double LogNormalRand::Variance() const
 
 double LogNormalRand::Quantile(double p) const
 {
-    return std::exp(X.Quantile(p));
+    double y = std::exp(X.Quantile(p));
+    /// we try to be more accurate here due to scanty approximation of normal quantile
+    double root = y;
+    double var = Variance();
+    if (RandMath::findRoot([this, p] (double x) {
+        return F(x) - p;
+    }, y - var, y + var, root))
+        return root;
+    return y;
 }
 
 double LogNormalRand::Median() const
