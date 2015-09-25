@@ -40,7 +40,7 @@ double ZipfRand::F(double x) const
 
 double ZipfRand::variate() const
 {
-    //TODO - maybe rejection from zeta
+    // TODO!
     return -1.0;
 }
 

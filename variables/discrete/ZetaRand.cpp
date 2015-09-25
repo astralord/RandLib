@@ -1,5 +1,6 @@
 #include "ZetaRand.h"
 #include "../continuous/UniformRand.h"
+#include "../continuous/ParetoRand.h"
 
 ZetaRand::ZetaRand(double exponent)
 {
@@ -39,13 +40,11 @@ double ZetaRand::F(double x) const
 double ZetaRand::variate() const
 {
     /// Luc Devroye, p. 551
+    /// rejection sampling from rounded down Pareto distribution
     int iter = 0;
     double sm1 = s - 1.0;
     do {
-        /// faster than calling Pareto
-        double U = UniformRand::standardVariate();
-        double X = std::pow(U, -1.0 / sm1);
-        X = std::floor(X);
+        double X = std::floor(ParetoRand::standardVariate(sm1));
         double T = std::pow(1.0 + 1.0 / X, sm1);
         double V = UniformRand::standardVariate();
         /// there was typo in the book - '<=' instead of '>'

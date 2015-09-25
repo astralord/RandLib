@@ -63,8 +63,6 @@ double ParetoRand::variateForAlphaTwo()
 
 double ParetoRand::variateForCommonAlpha(double shape)
 {
-    // TODO: decide which is faster
-    //return std::pow(UniformRand::standardVariate(), -1.0 / shape);
     return std::exp(ExponentialRand::variate(shape));
 }
 
