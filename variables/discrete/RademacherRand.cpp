@@ -1,4 +1,5 @@
 #include "RademacherRand.h"
+#include "BernoulliRand.h"
 
 RademacherRand::RademacherRand()
 {
@@ -27,9 +28,9 @@ double RademacherRand::F(double x) const
 
 double RademacherRand::variate() const
 {
-    if ((signed)RandGenerator::variate() < 0)
-        return -1;
-    return 1;
+    double x = BernoulliRand::standardVariate();
+    x += x;
+    return --x;
 }
 
 std::complex<double> RademacherRand::CF(double t) const

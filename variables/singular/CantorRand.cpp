@@ -1,4 +1,5 @@
 #include "CantorRand.h"
+#include "../discrete/BernoulliRand.h"
 #include "../continuous/UniformRand.h"
 
 CantorRand::CantorRand()
@@ -48,12 +49,11 @@ double CantorRand::F(double x) const
 
 double CantorRand::variate() const
 {
-    // TODO: implement it using uniform variate, not bernoulli
     double sum = 0.0;
     double addon, prod = 1.0;
     do {
         prod /= 3.0;
-        addon = prod * B.variate();
+        addon = prod * B.standardVariate();
         sum += addon;
     } while (prod > generatorPrecision);
     return sum + sum;
