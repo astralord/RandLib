@@ -22,17 +22,17 @@ unsigned long long BasicRandGenerator<Generator>::rand_JLKISS64()
 
     unsigned long long t;
 
-     X = 1490024343005336237ULL * X + 123456789;
-     Y ^= Y << 21;
-     Y ^= Y >> 17;
-     Y ^= Y << 30;
-     t = 4294584393ULL * Z1 + C1;
-     C1 = t >> 32;
-     Z1 = t;
-     t = 4246477509ULL * Z2 + C2;
-     C2 = t >> 32;
-     Z2 = t;
-     return X + Y + Z1 + ((unsigned long long)Z2 << 32);
+    X = 1490024343005336237ULL * X + 123456789;
+    Y ^= Y << 21;
+    Y ^= Y >> 17;
+    Y ^= Y << 30;
+    t = 4294584393ULL * Z1 + C1;
+    C1 = t >> 32;
+    Z1 = t;
+    t = 4246477509ULL * Z2 + C2;
+    C2 = t >> 32;
+    Z2 = t;
+    return X + Y + Z1 + ((unsigned long long)Z2 << 32);
 }
 
 template < char Generator >
@@ -55,6 +55,19 @@ unsigned long BasicRandGenerator<Generator>::rand_JKISS32()
     X += 1411392427;
 
     return X + Y + W;
+}
+
+template < char Generator >
+unsigned char BasicRandGenerator<Generator>::maxDecimals()
+{
+    char num = 0;
+    unsigned long long maxRand = maxValue();
+    while (maxRand != 0)
+    {
+        ++num;
+        maxRand >>= 1;
+    }
+    return num;
 }
 
 template class BasicRandGenerator<JLKISS64>;

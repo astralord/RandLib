@@ -27,6 +27,7 @@ public:
     static unsigned long rand_JKISS32();
 
     static constexpr unsigned long long maxValue() { return 18446744073709551615ULL; }
+    static unsigned char maxDecimals();
 };
 
 #ifdef JKISS32RAND

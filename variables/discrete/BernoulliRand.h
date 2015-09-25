@@ -23,6 +23,7 @@ public:
     double F(double x) const override;
     double variate() const override;
     static double variate(double p);
+    static double standardVariate();
 
     double Mean() const override { return p; }
     double Variance() const override { return p * (1 - p); }

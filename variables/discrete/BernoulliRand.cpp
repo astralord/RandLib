@@ -29,12 +29,35 @@ double BernoulliRand::F(double x) const
 
 double BernoulliRand::variate() const
 {
+    if (p == 0.5)
+        return standardVariate();
     return (RandGenerator::variate() < generatorEdge) ? 0 : 1;
 }
 
 double BernoulliRand::variate(double p)
 {
+    if (p == 0.5)
+        return standardVariate();
     return (RandGenerator::variate() < (1.0 - p) * RandGenerator::maxValue()) ? 0 : 1;
+}
+
+double BernoulliRand::standardVariate()
+{
+    static const char maxDecimals = RandGenerator::maxDecimals();
+    static char decimals = 1;
+    static unsigned long long X = 0;
+    if (decimals == 1)
+    {
+        /// refresh
+        decimals = maxDecimals;
+        X = RandGenerator::variate();
+    }
+    else
+    {
+        --decimals;
+        X >>= 1;
+    }
+    return X & 1;
 }
 
 std::complex<double> BernoulliRand::CF(double t) const
