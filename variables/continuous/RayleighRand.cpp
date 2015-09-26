@@ -51,8 +51,10 @@ double RayleighRand::Variance() const
 
 double RayleighRand::Quantile(double p) const
 {
-    if (p <= 0 || p >= 1)
+    if (p < 0.0 || p > 1.0)
         return NAN;
+    if (p == 1.0)
+        return INFINITY;
     return sigma * std::sqrt(-2 * std::log(1 - p));
 }
 

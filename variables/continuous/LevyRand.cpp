@@ -77,6 +77,8 @@ std::complex<double> LevyRand::CF(double t) const
 
 double LevyRand::Quantile(double p) const
 {
+    if (p == 0.0)
+        return mu;
     double x = 1.0 / X.Quantile(0.5 * p);
     return mu + x * x;
 }

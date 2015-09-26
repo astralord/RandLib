@@ -19,7 +19,7 @@ std::string ExponentialRand::name()
 bool ExponentialRand::setupTables()
 {
     /// Set up ziggurat tables
-    double constexpr A = 3.9496598225815571993e-3; /// area under rectangle
+    static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
     stairHeight[0] = std::exp(-x1);
@@ -98,8 +98,6 @@ double ExponentialRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0)
-        return -INFINITY;
     if (p == 1)
         return INFINITY;
     return -beta * std::log(1.0 - p);

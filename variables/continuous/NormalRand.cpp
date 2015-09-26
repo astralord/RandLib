@@ -19,7 +19,7 @@ std::string NormalRand::name()
 
 bool NormalRand::setupTables()
 {
-    constexpr double A = 4.92867323399e-3; /// area under rectangle
+    static constexpr long double A = 4.92867323399e-3l; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
     stairHeight[0] = std::exp(-.5 * x1 * x1);
