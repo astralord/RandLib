@@ -2,7 +2,6 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/NormalRand.h"
 #include "../continuous/ExponentialRand.h"
-#include "GeometricRand.h"
 
 BinomialRand::BinomialRand(int number, double probability)
 {
@@ -19,10 +18,15 @@ void BinomialRand::setGeneratorConstants()
     double minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
     if (npFloor <= generatorEdge)
+    {
+        G.setProbability(minpq);
         return;
+    }
     nqFloor = n - npFloor;
     pFloor = npFloor / n;
     pRes = minpq - pFloor;
+    if (pRes > 0)
+        G.setProbability(pRes / (1.0 - pFloor));
     double qFloor = 1.0 - pFloor;
 
     /// set deltas
@@ -64,7 +68,10 @@ void BinomialRand::setGeneratorConstants()
     a4 = std::exp(-delta2 * coefa4) / coefa4;
     a4 += a3;
 
-    PnpInv = 1.0 / PFloor(npFloor);
+    logPFloor = std::log(pFloor);
+    logQFloor = (pFloor == qFloor) ? logPFloor : std::log(qFloor);
+
+    logPnpInv = logProbFloor(npFloor);
 }
 
 void BinomialRand::setParameters(int number, double probability)
@@ -77,11 +84,12 @@ void BinomialRand::setParameters(int number, double probability)
     setGeneratorConstants();
 }
 
-double BinomialRand::PFloor(int k) const
+double BinomialRand::logProbFloor(int k) const
 {
-    if (k == n - k)
-        return RandMath::binomialCoef(n, k) * std::pow(pFloor * (1.0 - pFloor), k);
-    return RandMath::binomialCoef(n, k) * std::pow(pFloor, k) * std::pow(1.0 - pFloor, n - k); // TODO: storage two logs and don't calculate pow
+    double y = std::log(RandMath::binomialCoef(n, k));
+    y += k * logPFloor;
+    y += (n - k) * logQFloor;
+    return y;
 }
 
 double BinomialRand::P(int k) const
@@ -103,6 +111,9 @@ double BinomialRand::F(double x) const
 
 double BinomialRand::variateRejection() const
 {
+    /// a rejection algorithm by Devroye and Naderlsamanl (1980)
+    /// p.533. Non-Uniform Random Variate Generation. Luc Devroye
+    /// it can be used only when n * p is integer and p < 0.5
     bool reject = true;
     int X = 0, iter = 0;
     double Y, V;
@@ -152,37 +163,41 @@ double BinomialRand::variateRejection() const
         }
 
         X += npFloor;
-        if (!reject && X >= 0 && X <= n && V <= std::log(PFloor(X) * PnpInv))
+        if (!reject && X >= 0 && X <= n && V <= logProbFloor(X) - logPnpInv)
             return X;
 
     } while (++iter < 1e9);
     return NAN;
 }
 
-double BinomialRand::variateWaiting(int number, double probability) const
+double BinomialRand::variateWaiting(int number) const
 {
+    /// waiting algorithm, using
+    /// sum of geometrically distributed variables
     int X = -1;
     double sum = 0;
-    int iter = 0;
     do {
-        sum += GeometricRand::variate(probability) + 1.0; // TODO: hash this one
+        sum += G.variate() + 1.0;
         ++X;
-    } while (sum <= number && ++iter < 1e9);
+    } while (sum <= number);
     return X;
 }
 
 double BinomialRand::variate() const
 {
+    /// for small (n * p) we can use simple waiting algorithm
     if (npFloor <= generatorEdge)
     {
         if (p <= 0.5)
-            return variateWaiting(n, p);
-        return n - variateWaiting(n, q);
+            return variateWaiting(n);
+        return n - variateWaiting(n);
     }
 
+    /// if X ~ Bin(n, p') and Y ~ Bin(n - Y, (p - p') / (1 - p'))
+    /// then Z = X + Y ~ Bin(n, p)
     int Y = variateRejection();
     if (pRes > 0)
-        Y += variateWaiting(n - Y, pRes / (1.0 - pFloor));
+        Y += variateWaiting(n - Y);
     return (p > 0.5) ? n - Y : Y;
 }
 

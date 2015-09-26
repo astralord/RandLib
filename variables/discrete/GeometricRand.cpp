@@ -19,8 +19,8 @@ void GeometricRand::setProbability(double probability)
 
     /// we use two different generators for two different cases
     /// if p < 0.2 then the tail is too heavy
-    /// (probability to be in main body is less then 0.977482)
-    /// thus we always use low bound of variate exponential distribution
+    /// (probability to be in main body is less than 0.977482)
+    /// thus we return highest integer less than variate from exponential distribution
     /// otherwise we choose table method
     if (p < 0.2)
     {

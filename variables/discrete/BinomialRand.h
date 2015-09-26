@@ -2,6 +2,7 @@
 #define BINOMIALRAND_H
 
 #include "DiscreteRand.h"
+#include "GeometricRand.h"
 
 /**
  * @brief The BinomialRand class
@@ -18,11 +19,14 @@ class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand
     double coefa3, coefa4;
 
     double pFloor; /// [n * min(p, q)] / n
+    double logPFloor, logQFloor; /// log(pFloor) and log(1 - pFloor)
     double pRes; /// min(p, q) - pFloor
     double npFloor, nqFloor; /// [n * p] and [n * q] if p < 0.5, otherwise - vice versa
-    double PnpInv; /// 1.0 / P(npFloor)
+    double logPnpInv; /// log(P(npFloor))
 
     static constexpr double generatorEdge = 7.0;
+
+    GeometricRand G;
 
 public:
     BinomialRand(int number, double probability);
@@ -38,11 +42,11 @@ public:
 
 private:
     /**
-     * @brief PFloor
+     * @brief logProbFloor
      * @param k
-     * @return probability to get k if p = pFloor
+     * @return logarithm of probability to get k if p = pFloor
      */
-    double PFloor(int k) const;
+    double logProbFloor(int k) const;
 
 public:
     double P(int k) const override;
@@ -50,7 +54,7 @@ public:
 
 private:
     double variateRejection() const;
-    double variateWaiting(int number, double probability) const;
+    double variateWaiting(int number) const;
 
 public:
     double variate() const override;
