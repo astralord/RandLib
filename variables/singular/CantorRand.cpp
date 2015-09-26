@@ -49,8 +49,8 @@ double CantorRand::F(double x) const
 
 double CantorRand::variate() const
 {
-    double sum = 0.0;
-    double addon, prod = 1.0;
+    long double sum = 0.0;
+    long double addon, prod = 1.0;
     do {
         prod /= 3.0;
         addon = prod * B.standardVariate();

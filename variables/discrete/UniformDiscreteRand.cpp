@@ -8,7 +8,7 @@ UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
 
 std::string UniformDiscreteRand::name()
 {
-    return "Uniform(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
+    return "Uniform Discrete(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
 }
 
 void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)

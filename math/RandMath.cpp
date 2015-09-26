@@ -55,7 +55,11 @@ long double RandMath::binomialCoef(int n, int k)
         return 0;
     long double n_fact = factorial(n);
     long double k_fact = factorial(k);
-    long double n_k_fact = factorial(n - k);
+    long double n_k_fact;
+    if (k == n - k)
+        n_k_fact = k_fact;
+    else
+        n_k_fact = factorial(n - k);
     return n_fact / (k_fact * n_k_fact);
 }
 
