@@ -59,7 +59,8 @@ SOURCES += \
     variables/discrete/LogarithmicRand.cpp \
     variables/discrete/ZetaRand.cpp \
     variables/singular/SingularRand.cpp \
-    variables/singular/CantorRand.cpp
+    variables/singular/CantorRand.cpp \
+    variables/continuous/RaabGreenRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -116,7 +117,8 @@ HEADERS +=\
     variables/discrete/LogarithmicRand.h \
     variables/discrete/ZetaRand.h \
     variables/singular/SingularRand.h \
-    variables/singular/CantorRand.h
+    variables/singular/CantorRand.h \
+    variables/continuous/RaabGreenRand.h
 
 unix {
     target.path = /usr/lib
