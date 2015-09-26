@@ -89,6 +89,8 @@ double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
     double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
     double u = M_2_PI * thetaAdj;
     u *= std::exp(thetaAdj * std::sin(theta) / beta);
+    if (std::isinf(u))
+        return 0.0;
     return u * xAdj;
 }
 
@@ -113,6 +115,8 @@ double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double 
     y = std::pow(y, alpha_alpham1);
     y *= std::cos(thetaAdj - theta);
     y /= cosTheta;
+    if (std::isinf(y))
+        return 0.0;
     return integrandCoef * xAdj * y;
 }
 
@@ -126,7 +130,8 @@ double StableRand::pdfForCommonAlpha(double x) const
 {
     x = (x - mu) / sigma; /// Standardize
 
-    if (std::fabs(x) < 0.01) /// if we are close to 0 then we do interpolation avoiding dangerous variates
+    // TODO: elaborate dangerous values - alpha close to 1 and zero
+    if (std::fabs(x) < 0.05) /// if we are close to 0 then we do interpolation avoiding dangerous variates
     {
         double numerator = std::tgamma(1 + alphaInv);
         numerator *= std::cos(xi);
@@ -134,7 +139,7 @@ double StableRand::pdfForCommonAlpha(double x) const
         double y0 =  M_1_PI * numerator / denominator; /// f(0)
         if (std::fabs(x) < MIN_POSITIVE)
             return y0;
-        double b = (x > 0) ? 0.011 : -0.011;
+        double b = (x > 0) ? 0.051 : -0.051;
         double y1 = pdfForCommonAlpha(mu + sigma * b);
         return RandMath::linearInterpolation(0, b, y0, y1, x); // TODO: find a way to do better interpolation than linear
     }
@@ -180,25 +185,21 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     double xAdj = std::exp(-M_PI * x * pdfCoef);
 
     /// find peak of integrand
-    double theta0 = 0;
-    if (beta > 0) {
-        RandMath::findRoot([this, xAdj] (double theta)
-        {
-            return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
-        },
-        -M_PI_2, almostPI_2, theta0);
-    }
-    else {
-        RandMath::findRoot([this, xAdj] (double theta)
-        {
-            return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
-        },
-        -almostPI_2, M_PI_2, theta0);
-    }
+    double minEdge = (beta > 0) ? -M_PI_2 : -almostPI_2;
+    double maxEdge = (beta > 0) ? almostPI_2 : M_PI_2;
+    // TODO: investigate, do we need find a root here?
+    double theta0 = 0.5 * (minEdge + maxEdge);
 
+    RandMath::findRoot([this, xAdj] (double theta)
+    {
+        return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
+    },
+    minEdge, maxEdge, theta0);
+
+    // TODO: doesn't work for bad alpha
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
-    double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0);
-    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
+    double int1 = RandMath::integral(integrandPtr, minEdge, theta0);
+    double int2 = RandMath::integral(integrandPtr, theta0, maxEdge);
 
     return std::fabs(pdfCoef) * (int1 + int2) / sigma;
 }
@@ -267,7 +268,17 @@ double StableRand::cdfForCommonAlpha(double x) const
     
 double StableRand::cdfForAlphaEqualOne(double x) const
 {
-    return x;
+    x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
+
+    double xAdj = std::exp(-M_PI * x * pdfCoef);
+
+    double y = RandMath::integral([this, xAdj] (double theta)
+    {
+        return std::exp(-integrandAuxForAlphaEqualOne(theta, xAdj));
+    },
+    -M_PI_2, M_PI_2);
+
+    return M_1_PI * y;
 }
 
 double StableRand::F(double x) const
@@ -363,10 +374,10 @@ void StableRand::sample(QVector<double> &outputData) const
 
 std::complex<double> StableRand::psi(double t) const
 {
-    double x = (alpha == 1) ? -beta * M_2_PI * log(std::fabs(t)) : -zeta;
+    double x = (alpha == 1) ? beta * M_2_PI * log(std::fabs(t)) : zeta;
     if (t > 0)
         x = -x;
-    double re = -std::pow(std::fabs(sigma * t), alpha);
+    double re = std::pow(std::fabs(sigma * t), alpha);
     return std::complex<double>(re, re * x + mu * t);
 }
 

@@ -27,6 +27,7 @@ protected:
     double pdfCoef;
     double zeta, xi, integrandCoef;
 
+    // TODO: find an appropriate value
     static constexpr double almostPI_2 = 1.555; /// ~ 0.99 * (pi / 2)
 
 public:
