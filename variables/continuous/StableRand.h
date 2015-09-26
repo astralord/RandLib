@@ -27,6 +27,8 @@ protected:
     double pdfCoef;
     double zeta, xi, integrandCoef;
 
+    static constexpr double almostPI_2 = 1.555; /// ~ 0.99 * (pi / 2)
+
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableRand() {}
@@ -71,9 +73,9 @@ protected:
 public:
     std::complex<double> CF(double t) const override;
 
-    double Mean() const override { return (alpha > 1) ? mu : NAN; }
-    double Variance() const override { return (alpha == 2) ? 2 * sigma * sigma : INFINITY; }
-    
+    double Mean() const override;
+    double Variance() const override;
+
     double Skewness() const override;
     double ExcessKurtosis() const override;
 };
