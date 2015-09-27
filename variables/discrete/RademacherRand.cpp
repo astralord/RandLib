@@ -28,9 +28,7 @@ double RademacherRand::F(double x) const
 
 double RademacherRand::variate() const
 {
-    double x = BernoulliRand::standardVariate();
-    x += x;
-    return --x;
+    return BernoulliRand::standardVariate() ? 1.0 : -1.0;
 }
 
 std::complex<double> RademacherRand::CF(double t) const

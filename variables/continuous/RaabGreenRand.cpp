@@ -82,3 +82,8 @@ double RaabGreenRand::Mode() const
     return 0.0;
 }
 
+double RaabGreenRand::Skewness() const
+{
+    return 0.0;
+}
+

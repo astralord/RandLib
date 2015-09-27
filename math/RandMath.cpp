@@ -193,21 +193,22 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std:
     int iter = 0;
     double step = epsilon + 1;
     double grad = derPtr(root);
+    double fun = funPtr(root);
     do {
-        double fun = funPtr(root);
         double alpha = 1.0;
         double oldRoot = root;
         step = fun / grad;
         do {
             root = oldRoot - alpha * step;
             grad = derPtr(root);
+            fun = funPtr(root);
+            if (std::fabs(fun) < epsilon)
+                return true;
             alpha *= 0.5;
         } while (grad == 0 && alpha > epsilon);
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
-    if (iter == maxIter) /// no convergence
-        return false;
-    return true;
+    return (iter == maxIter) ? false : true;
 }
 
 bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
