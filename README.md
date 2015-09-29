@@ -41,56 +41,59 @@ for (int i = 0; i != size; ++i)
 List of implemented distributions:
 
 Continuous:
-* Arcsine
-* Balding-Nichols
-* Beta
-* Beta Prime
-* Cauchy
-* Chi-squared
-* Erlang
-* Exponential
-* F
-* Gamma
-* Geometric Stable
-* Holtsmark
-* Hyperbolic secant
-* Landau
-* Laplace
-* Levy
-* Log-normal
-* Logistic
-* Maxwell-Boltzmann
-* Nakagami
-* Normal
-* Pareto
-* Rayleigh
-* Stable
-* Student's t
-* Triangular
-* Uniform
-* von Mises
-* Wald (Inverse Gaussian)
-* Weibull
-* Wigner Semicircle
+
+|    Title     |     F(x)     |     f(x)     |   variate    |   CF(t)    |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+|    Arcsine   | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Beta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Beta Prime     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Cauchy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Chi-squared     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Erlang     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Exponential     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     F    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Gamma     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Geometric Stable     | :x: | :x: | :white_check_mark: |:white_check_mark:|
+|     Gumbel     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Laplace     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Levy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Log-normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Logistic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Maxwell-Boltzmann     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Nakagami     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Pareto     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Raised cosine     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Rayleigh     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Stable     | :heavy_exclamation_mark: | :heavy_exclamation_mark: | :white_check_mark: |:white_check_mark:|
+|     Student's t     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Triangular     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     von Mises     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Wald (Inverse Gaussian)     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Weibull     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     von Wigner Semicircle     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 
 Discrete:
-* Bernoulli
-* Binomial
-* Geometric
-* Hypergeometric
-* Logarithmic
-* Negative binomial
-* Poisson
-* Rademacher
-* Uniform
-* Yule
-* Zeta
-* Zipf
+
+|    Title     |     F(x)     |     P(X = x)     |   variate    |   CF(t)    |
+| ------------ | ------------ | ------------ | ------------ | ------------ |
+|     Bernoulli     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Geometric    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Hypergeometric     | :white_check_mark: | :white_check_mark: | :heavy_exclamation_mark: |:x:|
+|     Logarithmic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Negative binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Poisson     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Rademacher     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Yule     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Zeta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Zipf     | :white_check_mark: | :white_check_mark: | :x: |:x:|
 
 Singular:
-* Cantor
 
-|    Title     |     F(x)     |     f(x)     |
-| ------------ | ------------ | ------------ |
-|    Arcsine   | Content Cell | Content Cell |
-|     Beta     | Content Cell | Content Cell |
+|    Title     |     F(x)     |  variate    |   CF(t)    |
+| ------------ | ------------ | ------------ | ------------ |
+|     Cantor     | :white_check_mark: | :white_check_mark: | :white_check_mark: |
