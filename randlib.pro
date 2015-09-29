@@ -60,7 +60,7 @@ SOURCES += \
     variables/discrete/ZetaRand.cpp \
     variables/singular/SingularRand.cpp \
     variables/singular/CantorRand.cpp \
-    variables/continuous/RaabGreenRand.cpp
+    variables/continuous/RaisedCosineRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -118,7 +118,7 @@ HEADERS +=\
     variables/discrete/ZetaRand.h \
     variables/singular/SingularRand.h \
     variables/singular/CantorRand.h \
-    variables/continuous/RaabGreenRand.h
+    variables/continuous/RaisedCosineRand.h
 
 unix {
     target.path = /usr/lib
