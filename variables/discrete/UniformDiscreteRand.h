@@ -10,6 +10,7 @@
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand
 {
     int n, a, b;
+    double nInv; /// 1.0 / n
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
@@ -30,6 +31,8 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    std::complex<double> CF(double t) const override;
 
     inline double Entropy() { return std::log(n); }
 };
