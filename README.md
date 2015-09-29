@@ -89,3 +89,8 @@ Discrete:
 
 Singular:
 * Cantor
+
+|    Title     |     F(x)     |     f(x)     |
+| ------------ | ------------ | ------------ |
+|    Arcsine   | Content Cell | Content Cell |
+|     Beta     | Content Cell | Content Cell |
