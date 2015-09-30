@@ -28,6 +28,8 @@ public:
     double Mean() const override;
     double Variance() const override;
 
+    std::complex<double> CF(double t) const override;
+
     double Median() const override;
     double Mode() const override;
 };

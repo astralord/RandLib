@@ -79,6 +79,15 @@ double VonMisesRand::Variance() const
     return m2 - mu * mu;
 }
 
+std::complex<double> VonMisesRand::CF(double t) const
+{
+    // TODO: verify this one
+    int n = std::fabs(std::floor(t));
+    std::complex<double> y(0.0, n * mu);
+    y = std::exp(y);
+    return I0kInv * y * RandMath::modifiedBesselFirstKind(k, n);
+}
+
 double VonMisesRand::Median() const
 {
     return mu;
