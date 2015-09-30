@@ -66,11 +66,11 @@ Continuous:
 |     Raised cosine     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Rayleigh     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     Stable     | :heavy_exclamation_mark: | :heavy_exclamation_mark: | :white_check_mark: |:white_check_mark:|
+|     Stable     | :warning: | :warning: | :white_check_mark: |:white_check_mark:|
 |     Student's t     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Triangular     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     von Mises     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     von Mises     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:warning:|
 |     Wald (Inverse Gaussian)     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Weibull     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     von Wigner Semicircle     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
@@ -82,7 +82,7 @@ Discrete:
 |     Bernoulli     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Geometric    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     Hypergeometric     | :white_check_mark: | :white_check_mark: | :heavy_exclamation_mark: |:x:|
+|     Hypergeometric     | :white_check_mark: | :white_check_mark: | :warning: |:x:|
 |     Logarithmic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Negative binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Poisson     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
