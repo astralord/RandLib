@@ -58,14 +58,14 @@ Continuous:
 |     Laplace     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Levy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Log-normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Logistic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Logistic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Maxwell-Boltzmann     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Nakagami     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Pareto     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Raised cosine     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Rayleigh     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Stable     | :heavy_exclamation_mark: | :heavy_exclamation_mark: | :white_check_mark: |:white_check_mark:|
 |     Student's t     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Triangular     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
