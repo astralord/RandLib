@@ -101,10 +101,9 @@ double RaisedCosineRand::Variance() const
 
 std::complex<double> RaisedCosineRand::CF(double t) const
 {
-    static constexpr double piSq = M_PI * M_PI;
     double st = s * t;
-    double numerator = piSq * std::sin(st);
-    double denominator = st * (piSq - st * st);
+    double numerator = M_PI_SQ * std::sin(st);
+    double denominator = st * (M_PI_SQ - st * st);
     std::complex<double> y(0.0, mu * t);
     y = std::exp(y);
     return numerator / denominator * y;
@@ -127,10 +126,8 @@ double RaisedCosineRand::Skewness() const
 
 double RaisedCosineRand::ExcessKurtosis() const
 {
-    static constexpr double piSq = M_PI * M_PI;
-    static constexpr double piSqSq = piSq * piSq;
-    static constexpr double numerator = 1.2 * (90.0 - piSqSq);
-    static constexpr double denominator = (piSq - 6.0);
+    static constexpr double numerator = 1.2 * (90.0 - M_PI_SQ * M_PI_SQ);
+    static constexpr double denominator = M_PI_SQ - 6.0;
     static constexpr double y = numerator / (denominator * denominator);
     return y;
 }

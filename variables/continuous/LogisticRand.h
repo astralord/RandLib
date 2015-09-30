@@ -24,6 +24,7 @@ public:
     double Mean() const { return mu; }
     double Variance() const;
 
+    std::complex<double> CF(double t) const override;
     double Quantile(double p) const override;
 
     double Median() const override;

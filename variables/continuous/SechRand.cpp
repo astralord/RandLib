@@ -38,6 +38,13 @@ double SechRand::Variance() const
     return 1.0;
 }
 
+std::complex<double> SechRand::CF(double t) const
+{
+    if (std::fabs(t) > M_PI_2)
+        return 0.0;
+    return 1.0 / std::cosh(t);
+}
+
 double SechRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
