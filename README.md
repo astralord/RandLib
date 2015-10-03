@@ -10,7 +10,7 @@ randomVariable.sample(data);
 ```
 * Calculate moments and other properties:
 ```c++
-LaplaceRand randomVariable(2, 3);
+LogNormalRand randomVariable(2, 3);
 std::cout << " Mean = " << randomVariable.Mean()
           << " Variance = " << randomVariable.Variance()
           << " Median = " << randomVariable.Median()
@@ -20,10 +20,10 @@ std::cout << " Mean = " << randomVariable.Mean()
 ```
 * Calculate probabilities for discrete distributions and probability density functions for continuous:
 ```c++
-GeometricRand geometricRandomVariable(4);
-std::cout << "Probability to get 5 for Geometric(4) is " << geometricRandomVariable.P(5);
-ExponentialRand expRandomVariable(4);
-std::cout << "Density function at point 5 for Exponential(4) is " << expRandomVariable.f(5);
+GeometricRand X(4);
+std::cout << "Probability to get 5 for Geometric(4) is " << X.P(5);
+ExponentialRand Y(4);
+std::cout << "Density function at point 5 for Exponential(4) is " << Y.f(5);
 ```
 * Get cumulative density function for random variables with sophisticated distribution:
 ```c++
@@ -36,6 +36,13 @@ for (int i = 0; i != size; ++i)
 randomVariable.cdf(x, y);
 for (int i = 0; i != size; ++i)
     std::cout << "P(X < " << x[i] << ") = " << y[i];
+```
+* Find values of characteristic function:
+```c++
+StableRand X(1.5, 0.5, 1.0, 0.0);
+GeometricStableRand Y(1.5, 0.5, 1.0, 0.0);
+std::cout << "Stable CF at point 1 - " << X.CF(1.0);
+std::cout << "Geometric Stable CF at point 1 - " << Y.CF(1.0);
 ```
 
 List of implemented distributions:
