@@ -47,15 +47,17 @@ public:
 
     void sample(QVector<double> &outputData) const override;
 
-    double Mean() const override { return k * theta; }
-    double Variance() const override { return k * theta * theta; }
+    double Mean() const override;
+    double Variance() const override;
 
     std::complex<double> CF(double t) const override;
 
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
-    
+
+    bool fitToData(const QVector<double> &sample);
+
     /**
      * @brief getInverseGammaFunction
      * @return 1.0 / Gamma(k)

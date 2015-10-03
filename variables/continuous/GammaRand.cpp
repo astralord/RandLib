@@ -109,6 +109,16 @@ void GammaRand::sample(QVector<double> &outputData) const
         var = theta * variateForLargeShape();
 }
 
+double GammaRand::Mean() const
+{
+    return k * theta;
+}
+
+double GammaRand::Variance() const
+{
+    return k * theta * theta;
+}
+
 double GammaRand::variateForIntegerShape() const
 {
     double rv = 0;
@@ -216,4 +226,44 @@ double GammaRand::Skewness() const
 double GammaRand::ExcessKurtosis() const
 {
     return 6.0 * kInv;
+}
+
+bool GammaRand::fitToData(const QVector<double> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
+    /// Calculate average
+    long double average = 0.0L;
+    long double logAverage = 0.0L;
+    for (double var : sample) {
+        if (var <= 0)
+            return false;
+        average += var;
+        logAverage += std::log(var);
+    }
+    average /= N;
+    logAverage /= N;
+
+    /// Calculate initial guess for shape
+    double s = std::log(average) - logAverage;
+    double sm3 = s - 3.0, spm12 = 12.0 * s;
+    double shape = sm3 * sm3 + spm12 + spm12;
+    shape = std::sqrt(shape);
+    shape -= sm3;
+    shape /= spm12;
+
+    if (!RandMath::findRoot([s] (double x)
+    {
+        return std::log(x) - RandMath::digamma(x) - s;
+    },
+    [] (double x)
+    {
+        return 1.0 / x - RandMath::trigamma(x);
+    }, shape))
+        return false;
+
+    setParameters(shape, average / shape);
+    return true;
 }

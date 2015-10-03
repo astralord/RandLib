@@ -203,23 +203,24 @@ double NormalRand::Moment(int n) const
 
 bool NormalRand::fitToData(const QVector<double> &sample)
 {
-    if (sample.size() == 0)
+    int N = sample.size();
+    if (N == 0)
         return false;
 
     /// Calculate mu
-    double average = 0.0;
+    long double average = 0.0L;
     for (double var : sample) {
         average += var;
     }
-    average /= sample.size();
+    average /= N;
 
     /// Calculate sigma
-    double deviation = 0.0;
+    long double deviation = 0.0L;
     for (double var : sample) {
         double currDev = (var - average);
         deviation += currDev * currDev;
     }
-    deviation /= std::max(sample.size() - 1, 1);
+    deviation /= std::max(N - 1, 1);
 
     setMean(average);
     setSigma(std::sqrt(deviation));

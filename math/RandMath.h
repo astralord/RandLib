@@ -109,6 +109,20 @@ public:
     static long double binomialCoef(int n, int k);
 
     /**
+     * @brief digamma
+     * @param x
+     * @return psi(x) = d(ln(Gamma(x)))/dx = d(Gamma(x))/Gamma(x)
+     */
+    static double digamma(double x);
+
+    /**
+     * @brief trigamma
+     * @param x
+     * @return psi'(x) = d(psi(x))/dx
+     */
+    static double trigamma(double x);
+
+    /**
      * @brief lowerIncGamma
      * Calculate lower incomplete gamma function
      * @param a

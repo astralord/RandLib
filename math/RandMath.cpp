@@ -63,6 +63,67 @@ long double RandMath::binomialCoef(int n, int k)
     return n_fact / (k_fact * n_k_fact);
 }
 
+double RandMath::digamma(double x)
+{
+    if (x < 0.0)
+        return digamma(1.0 - x) + M_PI / std::tan(M_PI * (1.0 - x));
+    double dgam = 0.0;
+    if (x > 1000.0)
+        return std::log(x) - 0.5 / x;
+    while (x > 2.0)
+    {
+        // TODO: make it faster
+        --x;
+        dgam += 1.0 / x;
+    }
+    double y = x - 1.0;
+    dgam += y / x - M_EULER;
+    // TODO: mininize error by bigger n
+    static constexpr int n = 6;
+    static constexpr double c[] = {0.64493313, -0.20203181,
+                                   0.08209433, -0.03591665,
+                                   0.01485925, -0.00472050};
+    double r = std::pow(y, n + 1);
+    dgam += 0.5 * r;
+    for (int i = 0; i != n; ++i)
+        dgam += c[i] * (std::pow(y, i + 1) - r);
+
+    if (x < 0.0) /// for x < 0 use Digamma(1-x) = Digamma(x) + pi/tan(pi*x);
+        dgam -= M_PI / std::tan(M_PI * x) + 1.0 / x;
+    return dgam;
+}
+
+double RandMath::trigamma(double x)
+{
+    if (x < 0.0)
+    {
+        double z = M_PI / std::sin(M_PI * (1.0 - x));
+        return z - digamma(1.0 - x);
+    }
+    double tgam = 0.0;
+    if (x > 1000.0)
+    {
+        return (x + 0.5) / (x * x);
+    }
+    while (x > 2.0)
+    {
+        --x;
+        tgam -= 1.0 / (x * x);
+    }
+    double y = x - 1.0;
+    tgam += 1.0 / (x * x);
+    // TODO: mininize error by bigger n and don't use same constants twice
+    static constexpr int n = 6;
+    static constexpr double c[] = {0.64493313, -0.20203181,
+                                   0.08209433, -0.03591665,
+                                   0.01485925, -0.00472050};
+    double r = (n + 1) * std::pow(y, n);
+    tgam += 0.5 * r;
+    for (int i = 0; i != n; ++i)
+        tgam += c[i] * ((i + 1) * std::pow(y, i) - r);
+    return tgam;
+}
+
 long double RandMath::lowerIncGamma(double a, double x)
 {
     double sum = 0;

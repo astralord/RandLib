@@ -89,25 +89,26 @@ double LogNormalRand::ExcessKurtosis() const
 
 bool LogNormalRand::fitToData(const QVector<double> &sample)
 {
-    if (sample.size() == 0)
+    int N = sample.size();
+    if (N == 0)
         return false;
 
     /// Calculate location
-    double average = 0.0;
+    long double average = 0.0L;
     for (double var : sample) {
         if (var <= 0)
             return false;
         average += std::log(var);
     }
-    average /= sample.size();
+    average /= N;
 
     /// Calculate scale
-    double deviation = 0.0;
+    long double deviation = 0.0L;
     for (double var : sample) {
         double currDev = (std::log(var) - average);
         deviation += currDev * currDev;
     }
-    deviation /= std::max(sample.size() - 1, 1);
+    deviation /= std::max(N - 1, 1);
 
     setLocation(average);
     setScale(std::sqrt(deviation));
