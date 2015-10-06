@@ -1,6 +1,7 @@
 #include "WienerProcess.h"
 
-WienerProcess::WienerProcess(double mean, double variance)
+WienerProcess::WienerProcess(double deltaT, double mean, double variance) :
+    StochasticProcess(deltaT)
 {
     setMean(mean);
     setVar(variance);
@@ -9,25 +10,37 @@ WienerProcess::WienerProcess(double mean, double variance)
 void WienerProcess::setMean(double mean)
 {
     mu = mean;
+    muT = mu * dt;
 }
 
 void WienerProcess::setVar(double variance)
 {
-    var = std::sqrt(std::max(variance, MIN_POSITIVE));
+    var = variance;
+    if (var <= 0)
+        var = 1.0;
+    sigma = std::sqrt(var);
+    sigmaT = std::sqrt(var * dt);
 }
 
-bool WienerProcess::generate(const QVector<double> &time, QVector<double> &output)
+void WienerProcess::setSigma(double volatility)
 {
-    int size = std::min(time.size(), output.size());
-    if (size <= 0)
-        return false;
-    output[0] = 0;
-    for (int i = 1; i < size; ++i)
-    {
-        double deltaT = time[i] - time[i - 1];
-        output[i] = NormalRand::variate(output[i - 1] + mu * deltaT, std::sqrt(var * deltaT));
-    }
-    return true;
+    sigma = volatility;
+    if (sigma <= 0)
+        sigma = 1.0;
+    var = sigma * sigma;
+    sigmaT = sigma * std::sqrt(dt);
+}
+
+double WienerProcess::next() const
+{
+    lastValue += NormalRand::variate(muT, sigmaT);
+    return lastValue;
+}
+
+double WienerProcess::next(double deltaT) const
+{
+    lastValue += NormalRand::variate(mu * deltaT, std::sqrt(var * deltaT));
+    return lastValue;
 }
 
 void WienerProcess::Mean(const QVector<double> &time, QVector<double> &output) const

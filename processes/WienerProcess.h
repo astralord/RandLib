@@ -9,19 +9,25 @@
  */
 class RANDLIBSHARED_EXPORT WienerProcess : public StochasticProcess
 {
-    double mu, var;
+    double mu, var, sigma;
+    double muT, sigmaT;
+
+    mutable double lastValue;
 public:
-    WienerProcess(double mean = 0, double variance = 1);
+    WienerProcess(double deltaT = 1.0, double mean = 0, double variance = 1);
     void setMean(double mean);
     void setVar(double variance);
+    void setSigma(double volatility);
 
     inline double getMean() { return mu; }
     inline double getVar() { return var; }
+    inline double getSigma() { return sigma; }
 
-    bool generate(const QVector<double> &time, QVector<double> &output);
+    double next() const;
+    double next(double deltaT) const;
 
-    virtual void Mean(const QVector<double> &time, QVector<double> &output) const;
-    virtual void Variance(const QVector<double> &time, QVector<double> &output) const;
+    void Mean(const QVector<double> &time, QVector<double> &output) const;
+    void Variance(const QVector<double> &time, QVector<double> &output) const;
 };
 
 #endif // WIENERPROCESS_H

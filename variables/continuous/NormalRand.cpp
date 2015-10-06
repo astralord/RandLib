@@ -84,6 +84,7 @@ double NormalRand::variate(double mean, double rootVar)
 
 double NormalRand::standardVariate()
 {
+    /// Ziggurat algorithm by George Marsaglia using 256 strips
     int iter = 0;
     do {
         unsigned long B = RandGenerator::variate();
