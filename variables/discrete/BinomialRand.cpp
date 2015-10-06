@@ -115,8 +115,8 @@ double BinomialRand::variateRejection() const
     /// p.533. Non-Uniform Random Variate Generation. Luc Devroye
     /// it can be used only when n * p is integer and p < 0.5
     bool reject = true;
-    int X = 0, iter = 0;
-    double Y, V;
+    int iter = 0;
+    double X, Y, V;
     do {
         double U = UniformRand::variate(0, a4);
         if (U <= a1)
@@ -127,7 +127,7 @@ double BinomialRand::variateRejection() const
             if (!reject)
             {
                 double W = ExponentialRand::standardVariate();
-                X = static_cast<int>(std::floor(Y));
+                X = std::floor(Y);
                 V = -W - 0.5 * N * N + c;
             }
         }
@@ -139,7 +139,7 @@ double BinomialRand::variateRejection() const
             if (!reject)
             {
                 double W = ExponentialRand::standardVariate();
-                X = static_cast<int>(std::floor(-Y));
+                X = std::floor(-Y);
                 V = -W - 0.5 * N * N;
             }
         }
@@ -148,7 +148,7 @@ double BinomialRand::variateRejection() const
             double W1 = ExponentialRand::standardVariate();
             double W2 = ExponentialRand::standardVariate();
             Y = delta1 + W1 / coefa3;
-            X = static_cast<int>(std::floor(Y));
+            X = std::floor(Y);
             V = -W2 - coefa3 * Y + delta1 / nqFloor;
             reject = false;
         }
@@ -157,7 +157,7 @@ double BinomialRand::variateRejection() const
             double W1 = ExponentialRand::standardVariate();
             double W2 = ExponentialRand::standardVariate();
             Y = delta2 + W1 / coefa4;
-            X = static_cast<int>(std::floor(-Y));
+            X = std::floor(-Y);
             V = -W2 - coefa4 * Y;
             reject = false;
         }
@@ -174,7 +174,7 @@ double BinomialRand::variateWaiting(int number) const
 {
     /// waiting algorithm, using
     /// sum of geometrically distributed variables
-    int X = -1;
+    double X = -1;
     double sum = 0;
     do {
         sum += G.variate() + 1.0;

@@ -13,15 +13,15 @@ public:
     StochasticProcess();
 
     /**
-     * @brief M
+     * @brief Mean
      * @return Mathematical expectation
      */
-    virtual void E(const QVector<double> &time, QVector<double> &output) const = 0;
+    virtual void Mean(const QVector<double> &time, QVector<double> &output) const = 0;
     /**
-     * @brief Var
-     * @return Variance
+     * @brief Variance
+     * @return Variance = E[X(t)^2] - E[X(t)]^2
      */
-    virtual void Var(const QVector<double> &time, QVector<double> &output) const = 0;
+    virtual void Variance(const QVector<double> &time, QVector<double> &output) const = 0;
 };
 
 #endif // STOCHASTICPROCESS_H

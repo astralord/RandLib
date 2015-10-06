@@ -17,8 +17,8 @@ public:
 
     bool generate(const QVector<double> &time, QVector<double> &output);
 
-    virtual void E(const QVector<double> &time, QVector<double> &output) const;
-    virtual void Var(const QVector<double> &time, QVector<double> &output) const;
+    virtual void Mean(const QVector<double> &time, QVector<double> &output) const;
+    virtual void Variance(const QVector<double> &time, QVector<double> &output) const;
 };
 
 #endif // GEOMETRICBROWNIANMOTION_H

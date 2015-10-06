@@ -31,14 +31,14 @@ bool GeometricBrownianMotion::generate(const QVector<double> &time, QVector<doub
     return true;
 }
 
-void GeometricBrownianMotion::E(const QVector<double> &time, QVector<double> &output) const
+void GeometricBrownianMotion::Mean(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)
         output[i] = S0 * std::exp(mu * time[i]);
 }
 
-void GeometricBrownianMotion::Var(const QVector<double> &time, QVector<double> &output) const
+void GeometricBrownianMotion::Variance(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)

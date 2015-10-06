@@ -30,14 +30,14 @@ bool WienerProcess::generate(const QVector<double> &time, QVector<double> &outpu
     return true;
 }
 
-void WienerProcess::E(const QVector<double> &time, QVector<double> &output) const
+void WienerProcess::Mean(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)
         output[i] = mu * time[i];
 }
 
-void WienerProcess::Var(const QVector<double> &time, QVector<double> &output) const
+void WienerProcess::Variance(const QVector<double> &time, QVector<double> &output) const
 {
     int size = std::min(time.size(), output.size());
     for (int i = 0; i < size; ++i)
