@@ -25,8 +25,8 @@ public:
     static double variate(double p);
     static double standardVariate();
 
-    double Mean() const override { return p; }
-    double Variance() const override { return p * (1 - p); }
+    double Mean() const override;
+    double Variance() const override;
 
     std::complex<double> CF(double t) const override;
 

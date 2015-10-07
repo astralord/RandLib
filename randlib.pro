@@ -61,7 +61,8 @@ SOURCES += \
     variables/singular/SingularRand.cpp \
     variables/singular/CantorRand.cpp \
     variables/continuous/RaisedCosineRand.cpp \
-    processes/UhlenbeckOrnsteinProcess.cpp
+    processes/UhlenbeckOrnsteinProcess.cpp \
+    variables/discrete/SkellamRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -120,7 +121,8 @@ HEADERS +=\
     variables/singular/SingularRand.h \
     variables/singular/CantorRand.h \
     variables/continuous/RaisedCosineRand.h \
-    processes/UhlenbeckOrnsteinProcess.h
+    processes/UhlenbeckOrnsteinProcess.h \
+    variables/discrete/SkellamRand.h
 
 unix {
     target.path = /usr/lib

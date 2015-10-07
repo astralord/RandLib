@@ -14,6 +14,7 @@
 #include "discrete/LogarithmicRand.h"
 #include "discrete/PoissonRand.h"
 #include "discrete/RademacherRand.h"
+#include "discrete/SkellamRand.h"
 #include "discrete/UniformDiscreteRand.h"
 #include "discrete/YuleRand.h"
 #include "discrete/ZetaRand.h"

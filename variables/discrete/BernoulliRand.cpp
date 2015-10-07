@@ -60,6 +60,16 @@ double BernoulliRand::standardVariate()
     return X & 1;
 }
 
+double BernoulliRand::Mean() const
+{
+    return p;
+}
+
+double BernoulliRand::Variance() const
+{
+    return p * (1 - p);
+}
+
 std::complex<double> BernoulliRand::CF(double t) const
 {
     return std::complex<double>(q + p * std::cos(t), std::sin(t));
