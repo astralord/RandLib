@@ -69,7 +69,7 @@ double ExponentialRand::standardVariate()
     /// Ziggurat algorithm
     int iter = 0;
     do {
-        unsigned long stairId = RandGenerator::variate() & 255;
+        int stairId = RandGenerator::variate() & 255;
         double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
 
         if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept

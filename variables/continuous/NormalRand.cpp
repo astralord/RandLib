@@ -87,8 +87,8 @@ double NormalRand::standardVariate()
     /// Ziggurat algorithm by George Marsaglia using 256 strips
     int iter = 0;
     do {
-        unsigned long B = RandGenerator::variate();
-        unsigned long stairId = B & 255;
+        unsigned long long B = RandGenerator::variate();
+        int stairId = B & 255;
         double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
 
         if (x < stairWidth[stairId + 1])

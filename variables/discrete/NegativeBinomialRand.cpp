@@ -56,7 +56,7 @@ double NegativeBinomialRand<double>::variate() const
 template<>
 double NegativeBinomialRand<int>::variate() const
 {
-    if (r < 10)
+    if (r < 10) /// also consider p!
         return variateThroughGeometric();
     return variateThroughGammaPoisson();
 }

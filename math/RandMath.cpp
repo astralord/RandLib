@@ -543,8 +543,11 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
         sum += addon;
         ++i;
         j += 2;
-    };
-    return std::exp(x) / std::sqrt(2.0 * M_PI * x) * sum;
+    }
+    double y = M_PI * x;
+    y = std::sqrt(y + y);
+    y = std::exp(x) / y;
+    return y * sum;
 }
 
 double RandMath::BernoulliNumber(int n)

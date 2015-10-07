@@ -4,7 +4,7 @@
 #include "StochasticProcess.h"
 #include "WienerProcess.h"
 
-class GeometricBrownianMotion : public StochasticProcess
+class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess
 {
     double mu, sigma, S0;
     WienerProcess W;
@@ -15,6 +15,7 @@ public:
     void setParameters(double drift, double volatility, double initialValue);
     inline double getDrift() { return mu; }
     inline double getVolatility() { return sigma; }
+    inline double getInitialValue() { return S0; }
 
     double next() const;
     double next(double deltaT) const;
