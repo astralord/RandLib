@@ -10,7 +10,8 @@
 class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand
 {
     double p, q;
-    unsigned long long generatorEdge; /// such value that probability of (BasicRandGenerator's variate > generatorEdge) is equal p
+
+    static double U;
 
 public:
     explicit BernoulliRand(double probability = 0.5);
@@ -36,7 +37,6 @@ public:
     double ExcessKurtosis() const override;
 
     inline double Entropy();
-
 };
 
 #endif // BERNOULLIRAND_H

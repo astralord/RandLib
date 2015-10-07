@@ -1,4 +1,7 @@
 #include "BernoulliRand.h"
+#include "../continuous/UniformRand.h"
+
+double BernoulliRand::U = UniformRand::standardVariate();
 
 BernoulliRand::BernoulliRand(double probability)
 {
@@ -14,7 +17,6 @@ void BernoulliRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
     q = 1.0 - p;
-    generatorEdge = q * RandGenerator::maxValue();
 }
 
 double BernoulliRand::P(int k) const
@@ -29,16 +31,27 @@ double BernoulliRand::F(double x) const
 
 double BernoulliRand::variate() const
 {
-    if (p == 0.5)
-        return standardVariate();
-    return (RandGenerator::variate() < generatorEdge) ? 0 : 1;
+    if (U > q)
+    {
+        U -= q;
+        U /= p;
+        return 1.0;
+    }
+    U /= q;
+    return 0.0;
 }
 
 double BernoulliRand::variate(double p)
 {
-    if (p == 0.5)
-        return standardVariate();
-    return (RandGenerator::variate() < (1.0 - p) * RandGenerator::maxValue()) ? 0 : 1;
+    double q = 1.0 - p;
+    if (U > q)
+    {
+        U -= q;
+        U /= p;
+        return 1.0;
+    }
+    U /= q;
+    return 0.0;
 }
 
 double BernoulliRand::standardVariate()
