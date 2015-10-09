@@ -1,5 +1,5 @@
 #include "LaplaceRand.h"
-#include "../BasicRandGenerator.h"
+#include "../discrete/BernoulliRand.h"
 
 LaplaceRand::LaplaceRand(double location, double scale)
 {
@@ -52,7 +52,7 @@ double LaplaceRand::variate() const
 double LaplaceRand::variate(double location, double scale)
 {
     double e = scale * ExponentialRand::standardVariate();
-    return location + (((signed)RandGenerator::variate() > 0) ? e : -e);
+    return location + (BernoulliRand::standardVariate() ? -e : e);
 }
 
 double LaplaceRand::Mean() const
@@ -99,7 +99,7 @@ bool LaplaceRand::fitToData(const QVector<double> &sample)
 
     /// Calculate median
     /// we use root-finding algorithm for median search
-    /// but note, that it is better to use median-for-median algorithm
+    /// but note, that it can be better to use median-for-median algorithm
     double median = 0.0;
     double min = sample[0], max = min;
     for (double var : sample) {

@@ -56,8 +56,8 @@ double BernoulliRand::variate(double p)
 
 double BernoulliRand::standardVariate()
 {
-    static const char maxDecimals = RandGenerator::maxDecimals();
-    static char decimals = 1;
+    static const size_t maxDecimals = RandGenerator::maxDecimals();
+    static size_t decimals = 1;
     static unsigned long long X = 0;
     if (decimals == 1)
     {

@@ -1,4 +1,5 @@
 #include "BetaRand.h"
+#include "../discrete/BernoulliRand.h"
 
 BetaRand::BetaRand(double shape1, double shape2)
 {
@@ -209,7 +210,7 @@ double BetaRand::Mode() const
     }
     if (beta > 1)
         return 0.0;
-    return (signed)RandGenerator::variate() < 0 ? 0 : 1;
+    return BernoulliRand::standardVariate();
 }
 
 double BetaRand::Skewness() const

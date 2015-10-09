@@ -58,9 +58,9 @@ unsigned long BasicRandGenerator<Generator>::rand_JKISS32()
 }
 
 template < char Generator >
-unsigned char BasicRandGenerator<Generator>::maxDecimals()
+size_t BasicRandGenerator<Generator>::maxDecimals()
 {
-    char num = 0;
+    size_t num = 0;
     unsigned long long maxRand = maxValue();
     while (maxRand != 0)
     {

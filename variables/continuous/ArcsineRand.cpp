@@ -1,5 +1,5 @@
 #include "ArcsineRand.h"
-#include "../BasicRandGenerator.h"
+#include "../discrete/BernoulliRand.h"
 
 ArcsineRand::ArcsineRand(double minValue, double maxValue, double shape)
 {
@@ -96,6 +96,6 @@ double ArcsineRand::Median() const
 double ArcsineRand::Mode() const
 {
     /// x \in {a, b}
-    return (signed)RandGenerator::variate() < 0 ? a : b;
+    return BernoulliRand::standardVariate() ? a : b;
 }
 

@@ -74,8 +74,8 @@ double GumbelRand::Quantile(double p) const
 
 double GumbelRand::Median() const
 {
-    static constexpr double LN_M_LN2 = std::log(M_LN2);
-    return mu - beta * LN_M_LN2;
+    static constexpr double M_LN_LN2 = std::log(M_LN2);
+    return mu - beta * M_LN_LN2;
 }
 
 double GumbelRand::Mode() const
@@ -85,7 +85,7 @@ double GumbelRand::Mode() const
 
 double GumbelRand::Skewness() const
 {
-    static constexpr double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI * M_PI * M_PI);
+    static constexpr double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI_SQ * M_PI);
     return skew;
 }
 

@@ -16,11 +16,14 @@ void PoissonRand::setRate(double rate)
     if (lambda <= 0)
         lambda = 1.0;
     expLambda = std::exp(-lambda);
+    logLambda = std::log(lambda);
 }
 
 double PoissonRand::P(int k) const
 {
-    return (k >= 0) ? expLambda * std::pow(lambda, k) / RandMath::factorial(k) : 0;
+    if (k < 0)
+        return 0;
+    return (k < 20) ? expLambda * std::pow(lambda, k) / RandMath::factorial(k) : std::exp(k * logLambda - lambda - std::lgamma(k + 1));
 }
 
 double PoissonRand::F(double x) const

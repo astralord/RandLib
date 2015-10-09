@@ -11,7 +11,8 @@
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand
 {
     double lambda;
-    double expLambda; /// exp(-l)
+    double expLambda; /// exp(-lambda)
+    double logLambda; /// ln(lambda)
 public:
     explicit PoissonRand(double rate);
     std::string name() override;
