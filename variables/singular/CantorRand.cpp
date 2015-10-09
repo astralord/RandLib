@@ -50,11 +50,10 @@ double CantorRand::F(double x) const
 double CantorRand::variate() const
 {
     long double sum = 0.0;
-    long double addon, prod = 1.0;
+    long double prod = 1.0;
     do {
         prod /= 3.0;
-        addon = prod * B.standardVariate();
-        sum += addon;
+        sum += prod * B.standardVariate();
     } while (prod > generatorPrecision);
     return sum + sum;
 }

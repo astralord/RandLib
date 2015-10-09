@@ -34,9 +34,9 @@ long double RandMath::factorialForSmallValue(int n)
     return factorialTable[nNext / 10] / denominator;
 }
 
-long double RandMath::factorial(int n)
+long double RandMath::factorial(double n)
 {
-    return (n > maxFactorialTableValue) ? std::tgamma(static_cast<double>(n + 1)) : factorialForSmallValue(n);
+    return (n > maxFactorialTableValue) ? std::tgamma(n + 1) : factorialForSmallValue(n);
 }
 
 long double RandMath::doubleFactorial(int n)
@@ -538,7 +538,7 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
         return sum * std::pow(halfX, n) / RandMath::factorial(n);
     }
 
-    /// large x - divergent sequence!!
+    // large x - divergent sequence!!
     double addon = 1.0;
     double sum = addon;
     double denominator = 0.125 / x;

@@ -89,7 +89,7 @@ public:
      * @param n non-negative integer number
      * @return n!
      */
-    static long double factorial(int n);
+    static long double factorial(double n);
 
     /**
      * @brief doubleFactorial
