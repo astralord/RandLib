@@ -29,6 +29,7 @@
 #include "continuous/ErlangRand.h"
 #include "continuous/ExponentialRand.h"
 #include "continuous/FisherSnedecorRand.h"
+#include "continuous/FrechetRand.h"
 #include "continuous/GammaRand.h"
 #include "continuous/GeometricStableRand.h"
 #include "continuous/GumbelRand.h"

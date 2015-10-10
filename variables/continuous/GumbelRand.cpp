@@ -1,4 +1,5 @@
 #include "GumbelRand.h"
+#include "ExponentialRand.h"
 
 GumbelRand::GumbelRand(double location, double scale)
 {

@@ -58,6 +58,20 @@ double WeibullRand::Variance() const
     return lambda * lambda * res;
 }
 
+double WeibullRand::Quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return -INFINITY;
+    if (p == 1)
+        return INFINITY;
+
+    double x = -std::log(1.0 - p);
+    x = std::pow(x, kInv);
+    return lambda * x;
+}
+
 double WeibullRand::Median() const
 {
     return lambda * std::pow(M_LN2, kInv);
@@ -98,4 +112,9 @@ double WeibullRand::ExcessKurtosis() const
     numerator -= mu2 * mu2;
     double kurtosis = numerator / (var * var);
     return kurtosis - 3;
+}
+
+double WeibullRand::Entropy() const
+{
+    return M_EULER * (1.0 - kInv) + std::log(lambda * kInv) + 1.0;
 }

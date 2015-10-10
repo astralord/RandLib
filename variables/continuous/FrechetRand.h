@@ -1,25 +1,25 @@
-#ifndef GUMBELRAND_H
-#define GUMBELRAND_H
+#ifndef FRECHETRAND_H
+#define FRECHETRAND_H
 
 #include "ContinuousRand.h"
 
-class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousRand
 {
-    double mu, beta;
-    double betaInv;
+    double alpha, s, m;
+    double alphaInv; /// 1.0 / alpha
+
 public:
-    GumbelRand(double location, double scale);
+    FrechetRand(double shape, double scale, double location);
     std::string name() override;
 
-    void setLocation(double location);
-    void setScale(double scale);
-    inline double getLocation() const { return mu; }
-    inline double getScale() const { return beta; }
+    void setParameters(double shape, double scale, double location);
+    inline double getShape() const { return alpha; }
+    inline double getScale() const { return s; }
+    inline double getLocation() const { return m; }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
-    static double variate(double location, double scale);
 
     double Mean() const override;
     double Variance() const override;
@@ -34,4 +34,4 @@ public:
     double Entropy() const;
 };
 
-#endif // GUMBELRAND_H
+#endif // FRECHETRAND_H

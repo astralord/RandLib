@@ -25,11 +25,15 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-    
+
+    double Quantile(double p) const override;
+
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    double Entropy() const;
 };
 
 #endif // WEIBULLRAND_H
