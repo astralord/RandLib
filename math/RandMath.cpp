@@ -34,9 +34,9 @@ long double RandMath::factorialForSmallValue(int n)
     return factorialTable[nNext / 10] / denominator;
 }
 
-long double RandMath::factorial(int n)
+long double RandMath::factorial(double n)
 {
-    return (n > maxFactorialTableValue) ? std::tgamma(static_cast<double>(n + 1)) : factorialForSmallValue(n);
+    return (n > maxFactorialTableValue) ? std::tgamma(n + 1) : factorialForSmallValue(n);
 }
 
 long double RandMath::doubleFactorial(int n)
@@ -511,35 +511,45 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
 {
     if (n < 0)
         n = -n;
-    if (x < 0)
-        return 0;
 
     /// small x
-    if (x < 5)
+    if (x < 10)
     {
+        if (x < 0)
+            return 0;
+        if (x == 0)
+        {
+            if (n == 0)
+                return 1.0;
+            return 0.0;
+        }
+
         double halfX = 0.5 * x;
         double halfXSq = halfX * halfX;
         double addon = 1.0;
-        double sum = addon;
+        double sum = 1.0;
         double i = 1.0;
         while (std::fabs(addon) > MIN_POSITIVE) {
             addon *= halfXSq;
-            addon /= i * i;
+            addon /= i * (i + n);
             ++i;
             sum += addon;
-        };
+        }
         return sum * std::pow(halfX, n) / RandMath::factorial(n);
     }
 
-    /// large x
+    // large x - divergent sequence!!
     double addon = 1.0;
     double sum = addon;
-    double denominator = 0.125 * x;
+    double denominator = 0.125 / x;
     double n2Sq = 4.0 * n * n;
-    double i = 1.0, j = i;
+    double i = 1.0, j = 1.0;
     while (std::fabs(addon) > MIN_POSITIVE) {
         double numerator = j * j - n2Sq;
-        addon *= numerator * denominator / i;
+        double frac = numerator * denominator / i;
+        if (frac > 1)
+            break;
+        addon *= frac;
         sum += addon;
         ++i;
         j += 2;

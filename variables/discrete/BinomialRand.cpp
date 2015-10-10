@@ -105,7 +105,7 @@ double BinomialRand::F(double x) const
 {
     if (x < 0)
         return 0;
-    int k = std::floor(x);
+    double k = std::floor(x);
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
 
