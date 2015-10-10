@@ -59,6 +59,7 @@ Continuous:
 |     Erlang     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Exponential     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     F    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Frechet    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Gamma     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Geometric Stable     | :x: | :x: | :white_check_mark: |:white_check_mark:|
 |     Gumbel     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
@@ -94,6 +95,7 @@ Discrete:
 |     Negative binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Poisson     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Rademacher     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Skellam    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Yule     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Zeta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
