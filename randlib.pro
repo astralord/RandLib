@@ -62,7 +62,7 @@ SOURCES += \
     variables/singular/CantorRand.cpp \
     variables/continuous/RaisedCosineRand.cpp \
     processes/UhlenbeckOrnsteinProcess.cpp \
-    variables/continuous/FrechetRand.cpp
+    variables/continuous/FrechetRand.cpp \
     variables/discrete/SkellamRand.cpp
 
 HEADERS +=\
@@ -123,7 +123,7 @@ HEADERS +=\
     variables/singular/CantorRand.h \
     variables/continuous/RaisedCosineRand.h \
     processes/UhlenbeckOrnsteinProcess.h \
-    variables/continuous/FrechetRand.h
+    variables/continuous/FrechetRand.h \
     variables/discrete/SkellamRand.h
 
 unix {
