@@ -75,7 +75,6 @@ std::complex<double> SkellamRand::CF(double t) const
 
 double SkellamRand::Mode() const
 {
-    // maybe it is always Mean
     double y = Mean();
     double py = P(y);
     while (P(y - 1) > py) {

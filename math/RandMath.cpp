@@ -546,7 +546,10 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
     double i = 1.0, j = 1.0;
     while (std::fabs(addon) > MIN_POSITIVE) {
         double numerator = j * j - n2Sq;
-        addon *= numerator * denominator / i;
+        double frac = numerator * denominator / i;
+        if (frac > 1)
+            break;
+        addon *= frac;
         sum += addon;
         ++i;
         j += 2;
