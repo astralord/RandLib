@@ -86,3 +86,21 @@ double PoissonRand::ExcessKurtosis() const
 {
     return 1.0 / lambda;
 }
+
+bool PoissonRand::fitToData(const QVector<int> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
+    /// Calculate mu
+    long double sum = 0.0L;
+    for (int var : sample) {
+        if (var < 0)
+            return false;
+        sum += var;
+    }
+
+    setRate(sum / N);
+    return true;
+}

@@ -34,6 +34,8 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    bool fitToData(const QVector<double> &sample);
 };
 
 #endif // POISSONRAND_H
