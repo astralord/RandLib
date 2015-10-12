@@ -20,6 +20,7 @@ void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
         SWAP_INTEGER(a, b);
 
     n = b - a + 1;
+    nInv = 1.0 / n;
 }
 
 double UniformDiscreteRand::P(int k) const
@@ -71,8 +72,8 @@ double UniformDiscreteRand::Skewness() const
 
 double UniformDiscreteRand::ExcessKurtosis() const
 {
-    double n2 = n * n;
-    return -1.2 * (n2 + 1) / (n2 - 1);
+    double nSq = n * n;
+    return -1.2 * (nSq + 1) / (nSq - 1);
 }
 
 std::complex<double> UniformDiscreteRand::CF(double t) const

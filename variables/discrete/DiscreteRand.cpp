@@ -33,7 +33,6 @@ double DiscreteRand::Quantile(double probability) const
     /// go down
     while (fd > probability)
     {
-        fu = fd;
         fd = F(--down);
         if (++iter > maxIter)
             return NAN;

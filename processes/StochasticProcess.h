@@ -13,7 +13,7 @@ protected:
     double dt;
 
 public:
-    StochasticProcess(double deltaT = 1.0);
+    explicit StochasticProcess(double deltaT = 1.0);
 
     /**
      * @brief next

@@ -1,7 +1,8 @@
 #include "WienerProcess.h"
 
 WienerProcess::WienerProcess(double deltaT, double mean, double variance) :
-    StochasticProcess(deltaT)
+    StochasticProcess(deltaT),
+    lastValue(0.0)
 {
     setMean(mean);
     setVar(variance);

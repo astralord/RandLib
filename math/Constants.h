@@ -5,12 +5,12 @@
 
 #ifndef INFINITY
 #include <limits>
-static long double INFINITY = std::numeric_limits<long double>::infinity();
+long double INFINITY = std::numeric_limits<long double>::infinity();
 #endif
 
 #ifndef NAN
 #include <limits>
-static long double NAN = std::numeric_limits<long double>::quiet_NaN();
+long double NAN = std::numeric_limits<long double>::quiet_NaN();
 #endif
 
 #ifndef M_E

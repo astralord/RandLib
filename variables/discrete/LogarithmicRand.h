@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteRand
     double p, q;
     double logQInv; /// 1 / log(q)
 public:
-    LogarithmicRand(double probability);
+    explicit LogarithmicRand(double probability);
     std::string name() override;
 
     void setProbability(double probability);
