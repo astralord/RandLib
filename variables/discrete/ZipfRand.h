@@ -13,7 +13,10 @@ class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteRand
     int N;
 
     double invHarmonicNumber; /// 1 / harmonic_number
-    double b; /// hashed value for generator
+
+    static constexpr int tableSize = 16;
+    int hashedVarNum;
+    double table[tableSize];
 
 public:
     ZipfRand(double exponent, int number);

@@ -1,5 +1,5 @@
 #include "ZipfRand.h"
-#include "../continuous/ParetoRand.h"
+#include "../continuous/UniformRand.h"
 
 ZipfRand::ZipfRand(double exponent, int number)
 {
@@ -14,11 +14,24 @@ std::string ZipfRand::name()
 
 void ZipfRand::setParameters(double exponent, int number)
 {
-    s = std::max(exponent, 1.0);
+    s = exponent;
+    if (s <= 1.0)
+        s = 2.0;
     N = number < 1 ? 1 : number;
 
-    invHarmonicNumber = RandMath::harmonicNumber(s, N);
-    b = std::pow(2.0, s - 1.0);
+    invHarmonicNumber = 1.0 / RandMath::harmonicNumber(s, N);
+
+    // WARNING: we calculate pow here and in invHarmonic number
+    hashedVarNum = N > tableSize ? tableSize : N;
+    table[0] = 1.0;
+    for (int i = 1; i < hashedVarNum - 1; ++i)
+        table[i] = table[i - 1] + std::pow(i + 1, -s);
+    if (hashedVarNum == N)
+        table[hashedVarNum - 1] = 1.0 / invHarmonicNumber;
+    else
+        table[hashedVarNum - 1] = table[hashedVarNum - 2] + std::pow(hashedVarNum, -s);
+    for (int i = 0; i < hashedVarNum; ++i)
+        table[i] *= invHarmonicNumber;
 }
 
 double ZipfRand::P(int k) const
@@ -34,14 +47,30 @@ double ZipfRand::F(double x) const
         return 0.0;
     if (x >= N)
         return 1.0;
-    int k = static_cast<int>(std::floor(x));
-    return RandMath::harmonicNumber(s, k) * invHarmonicNumber;
+    return RandMath::harmonicNumber(s, std::floor(x)) * invHarmonicNumber;
 }
 
 double ZipfRand::variate() const
 {
-    // TODO!
-    return -1.0;
+    double U = UniformRand::standardVariate();
+    int k = 1;
+
+    /// if we didn't manage to hash values for such U
+    if (U > table[hashedVarNum - 1])
+    {
+        k = hashedVarNum;
+        double sum = table[hashedVarNum - 1];
+        do {
+            ++k;
+            sum += std::pow(k, -s) * invHarmonicNumber;
+        } while (sum < U);
+    }
+    else
+    {
+        while (k <= hashedVarNum && table[k - 1] < U)
+            ++k;
+    }
+    return k;
 }
 
 double ZipfRand::Mean() const

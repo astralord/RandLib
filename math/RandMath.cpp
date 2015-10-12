@@ -499,11 +499,11 @@ double RandMath::linearInterpolation(double a, double b, double fa, double fb, d
 
 double RandMath::harmonicNumber(double exponent, int number)
 {
-    if (exponent < 1 || number < 1)
+    if (number < 1)
         return 0;
     double res = 1.0;
-    for (int i = 1; i != number; ++i)
-        res += std::pow(i + 1, -exponent);
+    for (int i = 2; i <= number; ++i)
+        res += std::pow(i, -exponent);
     return res;
 }
 
