@@ -11,7 +11,6 @@
 #include <QDebug>
 #include <QVector>
 
-#define SWAP_INTEGER(a, b) (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
 #define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
 
 constexpr double MIN_POSITIVE = 1e-21;
