@@ -63,7 +63,8 @@ SOURCES += \
     variables/continuous/RaisedCosineRand.cpp \
     processes/UhlenbeckOrnsteinProcess.cpp \
     variables/continuous/FrechetRand.cpp \
-    variables/discrete/SkellamRand.cpp
+    variables/discrete/SkellamRand.cpp \
+    variables/continuous/PlanckRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -124,7 +125,8 @@ HEADERS +=\
     variables/continuous/RaisedCosineRand.h \
     processes/UhlenbeckOrnsteinProcess.h \
     variables/continuous/FrechetRand.h \
-    variables/discrete/SkellamRand.h
+    variables/discrete/SkellamRand.h \
+    variables/continuous/PlanckRand.h
 
 unix {
     target.path = /usr/lib

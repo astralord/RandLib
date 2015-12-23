@@ -9,7 +9,7 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteRand
     double zetaSInv; /// 1.0 / zeta(s)
     double b;
 public:
-    explicit ZetaRand(double exponent);
+    explicit ZetaRand(double exponent = 1.0);
     std::string name() override;
 
     void setExponent(double exponent);
@@ -23,6 +23,8 @@ public:
     double Variance() const override;
 
     double Mode() const override;
+
+    inline double getZetaSInv() { return zetaSInv; }
 };
 
 #endif // ZETARAND_H

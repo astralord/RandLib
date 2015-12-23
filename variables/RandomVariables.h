@@ -42,6 +42,7 @@
 #include "continuous/NormalRand.h"
 #include "continuous/MaxwellBoltzmannRand.h"
 #include "continuous/ParetoRand.h"
+#include "continuous/PlanckRand.h"
 #include "continuous/RaisedCosineRand.h"
 #include "continuous/RayleighRand.h"
 #include "continuous/SechRand.h"

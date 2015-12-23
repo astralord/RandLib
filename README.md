@@ -71,6 +71,7 @@ Continuous:
 |     Nakagami     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Pareto     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Planck     | :x: | :white_check_mark: | :white_check_mark: |:x:|
 |     Raised cosine     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Rayleigh     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
@@ -99,7 +100,7 @@ Discrete:
 |     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Yule     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Zeta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Zipf     | :white_check_mark: | :white_check_mark: | :x: |:x:|
+|     Zipf     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 
 Singular:
 

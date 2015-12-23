@@ -5,8 +5,6 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 
-#include <functional>
-
 /**
  * @brief The GammaRand class
  */
