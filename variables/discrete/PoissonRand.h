@@ -11,7 +11,7 @@
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand
 {
     double lambda;
-    double expLambda; /// exp(-lambda)
+    double expmLambda; /// exp(-lambda)
     double logLambda; /// ln(lambda)
 public:
     explicit PoissonRand(double rate = 1.0);

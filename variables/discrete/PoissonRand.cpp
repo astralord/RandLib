@@ -15,7 +15,7 @@ void PoissonRand::setRate(double rate)
     lambda = rate;
     if (lambda <= 0)
         lambda = 1.0;
-    expLambda = std::exp(-lambda);
+    expmLambda = std::exp(-lambda);
     logLambda = std::log(lambda);
 }
 
@@ -23,7 +23,7 @@ double PoissonRand::P(int k) const
 {
     if (k < 0)
         return 0;
-    return (k < 20) ? expLambda * std::pow(lambda, k) / RandMath::factorial(k) : std::exp(k * logLambda - lambda - std::lgamma(k + 1));
+    return (k < 20) ? expmLambda * std::pow(lambda, k) / RandMath::factorial(k) : std::exp(k * logLambda - lambda - std::lgamma(k + 1));
 }
 
 double PoissonRand::F(double x) const
@@ -38,7 +38,7 @@ double PoissonRand::variate() const
 {
     int y = 0;
     double u = UniformRand::standardVariate();
-    double p = expLambda, s = p;
+    double p = expmLambda, s = p;
     while (s < u) {
         ++y;
         p *= lambda / y;

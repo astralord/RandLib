@@ -6,10 +6,14 @@
 #include "PoissonRand.h"
 #include "../continuous/GammaRand.h"
 
+
 template < typename T >
+/**
+ * @brief The NegativeBinomialRand class
+ */
 class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteRand
 {
-    double p;
+    double p, q;
     T r;
 
     double pdfCoef;

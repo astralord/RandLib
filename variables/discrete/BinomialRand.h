@@ -59,8 +59,8 @@ private:
 public:
     double variate() const override;
 
-    double Mean() const override { return n * p; }
-    double Variance() const override { return n * p * (1 - p); }
+    double Mean() const override;
+    double Variance() const override;
 
     std::complex<double> CF(double t) const override;
     

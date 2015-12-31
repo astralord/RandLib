@@ -18,8 +18,9 @@ void ZetaRand::setExponent(double exponent)
     /// sanity check
     if (s <= 1.0)
         s = 2.0; /// default value
+    sm1 = s - 1.0;
     zetaSInv = 1.0 / RandMath::zetaRiemann(s);
-    b = std::pow(2.0, s - 1.0);
+    b = 1.0 - std::pow(2.0, -sm1);
 }
 
 double ZetaRand::P(int k) const
@@ -42,13 +43,12 @@ double ZetaRand::variate() const
     /// Luc Devroye, p. 551
     /// rejection sampling from rounded down Pareto distribution
     int iter = 0;
-    double sm1 = s - 1.0;
     do {
         double X = std::floor(ParetoRand::standardVariate(sm1));
         double T = std::pow(1.0 + 1.0 / X, sm1);
         double V = UniformRand::standardVariate();
         /// there was typo in the book - '<=' instead of '>'
-        if (V * X * (T - 1) * b <= T * (b - 1))
+        if (V * X * (T - 1) <= b * T )
             return X;
     } while (++iter < 1e9);
     return NAN; /// doesn't work
@@ -58,7 +58,7 @@ double ZetaRand::Mean() const
 {
     if (s <= 2)
         return INFINITY;
-    return zetaSInv * RandMath::zetaRiemann(s - 1);
+    return zetaSInv * RandMath::zetaRiemann(sm1);
 }
 
 double ZetaRand::Variance() const

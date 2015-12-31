@@ -18,13 +18,16 @@ void NegativeBinomialRand<T>::setParameters(T number, double probability)
 {
     r = std::max(number, static_cast<T>(1.0));
 
-    p = std::max(probability, 0.0);
-    if (p >= 1.0)
+    p = probability;
+    if (p >= 1.0 || p < 0.0)
         p = 0.5;
-    G.setProbability(1 - p);
+    q = 1.0 - p;
 
-    pdfCoef = std::pow(1 - p, r) / std::tgamma(r);
-    Y.setParameters(r, p / (1 - p));
+    /// use Y OR G (depends on p and r)
+    G.setProbability(q);
+
+    pdfCoef = std::pow(q, r) / std::tgamma(r);
+    Y.setParameters(r, p / q);
 }
 
 template <>
@@ -56,7 +59,7 @@ double NegativeBinomialRand<double>::variate() const
 template<>
 double NegativeBinomialRand<int>::variate() const
 {
-    if (r < 10) /// also consider p!
+    if (r < 10) /// also consider p and do sample function!
         return variateThroughGeometric();
     return variateThroughGammaPoisson();
 }
@@ -79,28 +82,27 @@ double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 template< typename T >
 double NegativeBinomialRand<T>::Mean() const
 {
-    return p * r / (1 - p);
+    return p * r / q;
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::Variance() const
 {
-    return Mean() / (1 - p);
+    return p * r / (q * q);
 }
 
 template< typename T >
 std::complex<double> NegativeBinomialRand<T>::CF(double t) const
 {
-    double numerator = 1 - p;
     std::complex<double> denominator(0, t);
     denominator = 1.0 - p * std::exp(denominator);
-    return std::pow(numerator / denominator, r);
+    return std::pow(q / denominator, r);
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::Mode() const
 {
-    return (r > 1) ? std::floor((r - 1) * p / (1 - p)) : 0;
+    return (r > 1) ? std::floor((r - 1) * p / q) : 0;
 }
 
 template< typename T >
@@ -112,8 +114,7 @@ double NegativeBinomialRand<T>::Skewness() const
 template< typename T >
 double NegativeBinomialRand<T>::ExcessKurtosis() const
 {
-    double kurtosis = (1 - p);
-    kurtosis *= kurtosis;
+    double kurtosis = q * q;
     kurtosis /= p;
     kurtosis += 6;
     return kurtosis / r;

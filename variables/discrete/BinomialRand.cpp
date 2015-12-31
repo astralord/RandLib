@@ -201,6 +201,16 @@ double BinomialRand::variate() const
     return (p > 0.5) ? n - Y : Y;
 }
 
+double BinomialRand::Mean() const
+{
+    return n * p;
+}
+
+double BinomialRand::Variance() const
+{
+    return n * p * q;
+}
+
 std::complex<double> BinomialRand::CF(double t) const
 {
     std::complex<double> y(q + p * std::cos(t), std::sin(t));

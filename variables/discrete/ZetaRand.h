@@ -5,7 +5,7 @@
 
 class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteRand
 {
-    double s;
+    double s, sm1;
     double zetaSInv; /// 1.0 / zeta(s)
     double b;
 public:
@@ -24,7 +24,7 @@ public:
 
     double Mode() const override;
 
-    inline double getZetaSInv() { return zetaSInv; }
+    inline double getInverseZetaFunction() { return zetaSInv; }
 };
 
 #endif // ZETARAND_H

@@ -22,7 +22,7 @@ void PlanckRand::setParameters(double shape, double scale)
     Z.setExponent(a + 1);
     G.setParameters(a + 1, 1.0);
 
-    pdfCoef = Z.getZetaSInv();
+    pdfCoef = Z.getInverseZetaFunction();
     pdfCoef *= std::pow(b, a + 1);
     pdfCoef /= std::tgamma(a + 1);
 }
