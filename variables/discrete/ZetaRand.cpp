@@ -75,3 +75,24 @@ double ZetaRand::Mode() const
     return 1.0;
 }
 
+double ZetaRand::Skewness() const
+{
+    if (s <= 4)
+        return INFINITY;
+
+    double z1 = RandMath::zetaRiemann(sm1), z1Sq = z1 * z1;
+    double z2 = RandMath::zetaRiemann(s - 2);
+    double z3 = RandMath::zetaRiemann(s - 3);
+    double z = 1.0 / zetaSInv, zSq = z * z;
+
+    double numerator = zSq * z3;
+    numerator -= 3 * z2 * z1 * z;
+    numerator += 2 * z1 * z1Sq;
+
+    double denominator = z * z2 - z1Sq;
+    denominator = std::pow(denominator, 1.5);
+    denominator *= zSq;
+
+    return numerator / denominator;
+}
+

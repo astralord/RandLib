@@ -5,6 +5,10 @@
 
 /**
  * @brief The IrwinHallRand class
+ *
+ * f(x|n) = 0.5 / (n - 1)! * sum_{k=0}^n (-1)^k * C(n,k) * (x - k) ^ (n - 1) * sgn(x - k)
+ *
+ * The sum of a number of independent random variables, each having a uniform distribution on [0, 1]
  */
 class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousRand
 {

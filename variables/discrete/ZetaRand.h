@@ -3,6 +3,11 @@
 
 #include "DiscreteRand.h"
 
+/**
+ * @brief The ZetaRand class
+ *
+ * P(X = k | n) = 1 / (k^s * zeta(s))
+ */
 class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteRand
 {
     double s, sm1;
@@ -23,6 +28,7 @@ public:
     double Variance() const override;
 
     double Mode() const override;
+    double Skewness() const override;
 
     inline double getInverseZetaFunction() { return zetaSInv; }
 };
