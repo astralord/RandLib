@@ -34,6 +34,7 @@
 #include "continuous/GammaRand.h"
 #include "continuous/GeometricStableRand.h"
 #include "continuous/GumbelRand.h"
+#include "continuous/IrwinHallRand.h"
 #include "continuous/LaplaceRand.h"
 #include "continuous/LevyRand.h"
 #include "continuous/LogisticRand.h"

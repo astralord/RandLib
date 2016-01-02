@@ -12,6 +12,7 @@
 #include <QVector>
 
 #define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
+#define SIGN(x) (((x) > 0) ? 1 : (((x) < 0) ? -1 : 0))
 
 constexpr double MIN_POSITIVE = 1e-21;
 

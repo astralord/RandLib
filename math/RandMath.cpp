@@ -6,9 +6,9 @@ bool RandMath::areEqual(double a, double b, double eps)
 {
     if (a == b)
         return true;
-    a = std::fabs(a);
-    b = std::fabs(b);
-    if (std::fabs(b - a) < eps * std::max(a, b))
+    double fa = std::fabs(a);
+    double fb = std::fabs(b);
+    if (std::fabs(b - a) < eps * std::max(fa, fb))
         return true;
     return false;
 }
@@ -36,6 +36,8 @@ long double RandMath::factorialForSmallValue(int n)
 
 long double RandMath::factorial(double n)
 {
+    if (n < 0)
+        return 0.0;
     return (n > maxFactorialTableValue) ? std::tgamma(n + 1) : factorialForSmallValue(n);
 }
 
