@@ -12,6 +12,7 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public DiscreteRand
     double p, q;
 
     static double U;
+    unsigned long long boundary;
 
 public:
     explicit BernoulliRand(double probability = 0.5);

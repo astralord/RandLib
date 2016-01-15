@@ -42,13 +42,13 @@ double PoissonRand::F(double x) const
 double PoissonRand::variate() const
 {
     double U = UniformRand::standardVariate();
-    int y = floorLambda;
+    int k = floorLambda;
     double s = FFloorLambda, p = PFloorLambda;
     if (s < U)
     {
         do {
-            ++y;
-            p *= lambda / y;
+            ++k;
+            p *= lambda / k;
             s += p;
         } while (s < U);
     }
@@ -56,23 +56,23 @@ double PoissonRand::variate() const
     {
         s -= p;
         while (s > U) {
-            p /= lambda / y;
-            --y;
+            p /= lambda / k;
+            --k;
             s -= p;
         }
     }
-    return y;
+    return k;
 }
 
 double PoissonRand::variate(double rate)
 {
-    int y = -1;
+    int k = -1;
     double s = 0;
     do {
         s += ExponentialRand::standardVariate();
-        ++y;
+        ++k;
     } while (s < rate);
-    return y;
+    return k;
 }
 
 std::complex<double> PoissonRand::CF(double t) const

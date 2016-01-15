@@ -5,6 +5,10 @@
 
 /**
  * @brief The CauchyRand class
+ *
+ * f(x|x0, gamma) =
+ *
+ * X ~ Cauchy(x0, gamma)
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
 {

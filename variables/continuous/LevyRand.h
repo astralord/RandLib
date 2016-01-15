@@ -5,6 +5,9 @@
 
 /**
  * @brief The LevyRand class
+ *
+ * f(x|mu, c) =
+ *
  * X ~ Levy(mu, c)
  * X ~ Stable(0.5, 1, mu, c)
  */

@@ -4,7 +4,13 @@
 #include "BetaRand.h"
 
 /**
- * @brief The BetaRand class
+ * @brief The BetaPrimeRand class
+ *
+ * f(x|alpha, beta) =
+ *
+ * X ~ Beta-Prime(alpha, beta)
+ * If Y ~ Beta(alpha, beta), then X = Y / (1 - Y)
+ * If Y ~ Gamma(alpha), Z ~ Gamma(beta), then X = Y / (Z - Y)
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
 {

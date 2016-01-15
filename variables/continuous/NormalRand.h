@@ -5,6 +5,10 @@
 
 /**
  * @brief The NormalRand class
+ *
+ * f(x|mu, sigma) = 1 / (\sqrt(2 pi) sigma) * exp(-(x - mu)^2 / (2 sigma^2))
+ *
+ * Normal distribution: X ~ N(mu, sigma)
  */
 class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
 {

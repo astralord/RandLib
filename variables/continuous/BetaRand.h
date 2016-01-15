@@ -6,6 +6,9 @@
 
 /**
  * @brief The BetaRand class
+ *
+ *
+ * X ~ Beta(alpha, beta)
  */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
 {

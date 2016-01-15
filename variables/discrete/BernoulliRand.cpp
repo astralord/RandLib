@@ -17,6 +17,8 @@ void BernoulliRand::setProbability(double probability)
 {
     p = std::min(std::max(probability, 0.0), 1.0);
     q = 1.0 - p;
+
+    boundary = q * RandGenerator::maxValue();
 }
 
 double BernoulliRand::P(int k) const
@@ -31,27 +33,12 @@ double BernoulliRand::F(double x) const
 
 double BernoulliRand::variate() const
 {
-    if (U > q)
-    {
-        U -= q;
-        U /= p;
-        return 1.0;
-    }
-    U /= q;
-    return 0.0;
+    return RandGenerator::variate() > boundary;
 }
 
 double BernoulliRand::variate(double p)
 {
-    double q = 1.0 - p;
-    if (U > q)
-    {
-        U -= q;
-        U /= p;
-        return 1.0;
-    }
-    U /= q;
-    return 0.0;
+    return UniformRand::standardVariate() > 1.0 - p;
 }
 
 double BernoulliRand::standardVariate()

@@ -5,6 +5,9 @@
 
 /**
  * @brief The FisherSnedecorRand class
+ *
+ *
+ * X ~ F(d1, d2)
  */
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
 {
