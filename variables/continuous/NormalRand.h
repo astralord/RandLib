@@ -29,7 +29,7 @@ public:
 
     void setMean(double mean);
     void setSigma(double rootVar);
-    void setVar(double var);
+    void setVariance(double var);
     inline double getMean() const { return mu; }
     inline double getSigma() const { return sigma; }
     inline double getVar() const { return sigma * sigma; }
@@ -54,6 +54,7 @@ public:
 
     double Moment(int n) const;
 
+    bool fitToDataMLE(const QVector<double> &sample);
     bool fitToData(const QVector<double> &sample);
 };
 

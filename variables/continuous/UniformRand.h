@@ -44,6 +44,7 @@ public:
 
     inline double Entropy() const;
 
+    bool fitToDataMLE(const QVector<double> &sample);
     bool fitToData(const QVector<double> &sample);
 };
 

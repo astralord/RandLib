@@ -9,7 +9,7 @@ const bool NormalRand::dummy = NormalRand::setupTables();
 NormalRand::NormalRand(double mean, double var)
 {
     setMean(mean);
-    setVar(var);
+    setVariance(var);
 }
 
 std::string NormalRand::name()
@@ -49,7 +49,7 @@ void NormalRand::setSigma(double rootVar)
     sigmaSqrt2Inv = M_SQRT1_2 / sigma;
 }
 
-void NormalRand::setVar(double var)
+void NormalRand::setVariance(double var)
 {
     setSigma(std::sqrt(std::max(var, 0.0)));
 }
@@ -202,6 +202,32 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
+bool NormalRand::fitToDataMLE(const QVector<double> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
+    /// Calculate mu
+    long double average = 0.0L;
+    for (double var : sample) {
+        average += var;
+    }
+    average /= N;
+
+    /// Calculate sigma
+    long double deviation = 0.0L;
+    for (double var : sample) {
+        double currDev = (var - average);
+        deviation += currDev * currDev;
+    }
+    deviation /= N;
+
+    setMean(average);
+    setVariance(deviation);
+    return true;
+}
+
 bool NormalRand::fitToData(const QVector<double> &sample)
 {
     int N = sample.size();
@@ -224,6 +250,6 @@ bool NormalRand::fitToData(const QVector<double> &sample)
     deviation /= std::max(N - 1, 1);
 
     setMean(average);
-    setSigma(std::sqrt(deviation));
+    setVariance(deviation);
     return true;
 }

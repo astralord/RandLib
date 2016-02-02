@@ -126,7 +126,7 @@ void BetaRand::setVariateConstants()
         variateCoef *= pdfCoef; /// /= Beta(alpha, alpha)
 
         N.setMean(0.5);
-        N.setVar(0.25 * t);
+        N.setVariance(0.25 * t);
     }
 }
 
