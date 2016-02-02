@@ -7,6 +7,8 @@
 
 /**
  * @brief The PoissonRand class
+ *
+ * P(X = k) = l^k * e^(-l) / k!
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand
 {

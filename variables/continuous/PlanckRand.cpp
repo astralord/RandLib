@@ -31,7 +31,7 @@ double PlanckRand::f(double x) const
 {
     if (x <= 0)
         return 0;
-    return pdfCoef * std::pow(x, a) / (std::exp(b * x) - 1);
+    return pdfCoef * std::pow(x, a) / std::expm1(b * x);
 }
 
 double PlanckRand::F(double x) const

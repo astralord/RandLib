@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousRand
     double pdfCoef, cdfCoef;
     int n;
 public:
-    IrwinHallRand(int number);
+    explicit IrwinHallRand(int number);
     std::string name() override;
 
     void setNumber(int number);
