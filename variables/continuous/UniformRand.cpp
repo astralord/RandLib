@@ -110,20 +110,6 @@ double UniformRand::Entropy() const
     return (b == a) ? -INFINITY : std::log(b - a);
 }
 
-bool UniformRand::fitToDataMLE(const QVector<double> &sample)
-{
-    if (sample.size() == 0)
-        return false;
-    double maxVar = sample.at(0), minVar = maxVar;
-    for (double var : sample) {
-        maxVar = std::max(var, maxVar);
-        minVar = std::min(var, minVar);
-    }
-
-    setBoundaries(minVar, maxVar);
-    return true;
-}
-
 bool UniformRand::fitToData(const QVector<double> &sample)
 {
     int n = sample.size();

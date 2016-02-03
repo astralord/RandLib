@@ -67,7 +67,7 @@ double BernoulliRand::Mean() const
 
 double BernoulliRand::Variance() const
 {
-    return p * (1 - p);
+    return p * q;
 }
 
 std::complex<double> BernoulliRand::CF(double t) const
@@ -99,4 +99,21 @@ double BernoulliRand::ExcessKurtosis() const
 double BernoulliRand::Entropy()
 {
     return -(p * std::log(p) + q * std::log(q));
+}
+
+bool BernoulliRand::fitToData(const QVector<int> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
+    long double sum = 0.0L;
+    for (int var : sample) {
+        if (var != 0 || var != 1)
+            return false;
+        sum += var;
+    }
+
+    setProbability(sum / N);
+    return true;
 }

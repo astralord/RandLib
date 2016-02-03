@@ -68,6 +68,8 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    bool fitPToData(const QVector<int> &sample);
 };
 
 

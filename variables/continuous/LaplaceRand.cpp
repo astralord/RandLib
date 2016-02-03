@@ -91,26 +91,30 @@ double LaplaceRand::ExcessKurtosis() const
 {
     return 3.0;
 }
-    
-bool LaplaceRand::fitToData(const QVector<double> &sample)
+
+
+bool LaplaceRand::fitLocationToData(const QVector<double> &sample)
 {
-    if (sample.size() == 0)
+    int N = sample.size();
+    if (N == 0)
         return false;
 
     /// Calculate median
     /// we use root-finding algorithm for median search
     /// but note, that it can be better to use median-for-median algorithm
     double median = 0.0;
-    double min = sample[0], max = min;
+    double minVar = sample[0], maxVar = minVar;
     for (double var : sample) {
-        min = std::min(var, min);
-        max = std::max(var, max);
+        minVar = std::min(var, minVar);
+        maxVar = std::max(var, maxVar);
+        median += var;
     }
+    median /= N;
 
     if (!RandMath::findRoot([sample] (double med)
     {
         /// sum of sign(x) - derivative of sum of abs(x)
-        double x = 0;
+        double x = 0.0;
         for (double var : sample) {
             if (var > med)
                 ++x;
@@ -119,20 +123,34 @@ bool LaplaceRand::fitToData(const QVector<double> &sample)
         }
         return x;
     },
-    min, max, median
+    minVar, maxVar, median
     ))
         return false;
 
+    setLocation(median);
+    return true;
+}
 
-    /// Calculate scale
+bool LaplaceRand::fitScaleToData(const QVector<double> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
     double deviation = 0.0;
     for (double var : sample) {
-        deviation += std::fabs(var - median);
+        deviation += std::fabs(var - mu);
     }
-    deviation /= sample.size();
+    deviation /= N;
 
-    setLocation(median);
     setScale(deviation);
     return true;
+}
+    
+bool LaplaceRand::fitToData(const QVector<double> &sample)
+{
+    if (fitLocationToData(sample))
+        return fitScaleToData(sample);
+    return false;
 }
 

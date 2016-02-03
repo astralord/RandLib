@@ -38,6 +38,8 @@ public:
     double ExcessKurtosis() const override;
 
     inline double Entropy();
+
+    bool fitToData(const QVector<int> &sample);
 };
 
 #endif // BERNOULLIRAND_H

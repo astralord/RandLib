@@ -35,6 +35,8 @@ public:
     
     std::complex<double> CF(double t) const override;
 
+    bool fitLocationToData(const QVector<double> &sample);
+    bool fitScaleToData(const QVector<double> &sample);
     bool fitToData(const QVector<double> &sample);
 };
 

@@ -202,54 +202,41 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-bool NormalRand::fitToDataMLE(const QVector<double> &sample)
+bool NormalRand::fitMeanToData(const QVector<double> &sample)
 {
     int N = sample.size();
     if (N == 0)
         return false;
 
-    /// Calculate mu
-    long double average = 0.0L;
+    long double sum = 0.0L;
     for (double var : sample) {
-        average += var;
+        sum += var;
     }
-    average /= N;
 
-    /// Calculate sigma
+    setMean(sum / N);
+    return true;
+}
+
+bool NormalRand::fitVarianceToData(const QVector<double> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
     long double deviation = 0.0L;
     for (double var : sample) {
-        double currDev = (var - average);
+        double currDev = (var - mu);
         deviation += currDev * currDev;
     }
-    deviation /= N;
+    deviation /= std::max(N - 1, 1);
 
-    setMean(average);
     setVariance(deviation);
     return true;
 }
 
 bool NormalRand::fitToData(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
-        return false;
-
-    /// Calculate mu
-    long double average = 0.0L;
-    for (double var : sample) {
-        average += var;
-    }
-    average /= N;
-
-    /// Calculate sigma
-    long double deviation = 0.0L;
-    for (double var : sample) {
-        double currDev = (var - average);
-        deviation += currDev * currDev;
-    }
-    deviation /= std::max(N - 1, 1);
-
-    setMean(average);
-    setVariance(deviation);
-    return true;
+    if (fitMeanToData(sample))
+        return fitVarianceToData(sample);
+    return false;
 }

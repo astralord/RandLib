@@ -25,9 +25,9 @@ void BinomialRand::setGeneratorConstants()
     nqFloor = n - npFloor;
     pFloor = npFloor / n;
     pRes = minpq - pFloor;
-    if (pRes > 0)
-        G.setProbability(pRes / (1.0 - pFloor));
     double qFloor = 1.0 - pFloor;
+    if (pRes > 0)
+        G.setProbability(pRes / qFloor);
 
     /// set deltas
     double npq = npFloor * qFloor;
@@ -237,4 +237,21 @@ double BinomialRand::ExcessKurtosis() const
     double y = 1.0 / (p * q);
     y -= 6.0;
     return y / n;
+}
+
+bool BinomialRand::fitPToData(const QVector<int> &sample)
+{
+    int N = sample.size();
+    if (N == 0)
+        return false;
+
+    long double sum = 0.0L;
+    for (int var : sample) {
+        if (var < 0)
+            return false;
+        sum += var;
+    }
+
+    setParameters(n, sum / (N * n));
+    return true;
 }

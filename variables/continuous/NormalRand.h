@@ -54,7 +54,8 @@ public:
 
     double Moment(int n) const;
 
-    bool fitToDataMLE(const QVector<double> &sample);
+    bool fitMeanToData(const QVector<double> &sample);
+    bool fitVarianceToData(const QVector<double> &sample);
     bool fitToData(const QVector<double> &sample);
 };
 
