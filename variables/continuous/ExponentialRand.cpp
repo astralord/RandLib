@@ -139,20 +139,19 @@ double ExponentialRand::Moment(int n) const
 
 bool ExponentialRand::fitToData(const QVector<double> &sample)
 {
-    if (sample.size() == 0)
+    double N = sample.size();
+    if (N == 0)
         return false;
 
-    /// Calculate rate
-    double average = 0.0;
+    double sum = 0.0;
     for (double var : sample) {
         if (var < 0)
             return false;
-        average += var;
+        sum += var;
     }
-    average /= sample.size();
-    if (average <= 0)
+    if (sum <= 0)
         return false;
 
-    setRate(1.0 / average);
+    setRate(N / sum);
     return true;
 }
