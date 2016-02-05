@@ -53,7 +53,7 @@ double WeibullRand::Mean() const
 double WeibullRand::Variance() const
 {
     double res = std::tgamma(1 + kInv);
-    res *= res;
+    res *= -res;
     res += std::tgamma(1 + kInv + kInv);
     return lambda * lambda * res;
 }

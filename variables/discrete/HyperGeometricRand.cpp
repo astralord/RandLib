@@ -22,9 +22,7 @@ void HyperGeometricRand::setParameters(int totalSize, int drawsNum, int successe
     K = std::max(successesNum, 1);
     K = std::min(N, K);
 
-    realK = static_cast<double>(K);
-
-    p0 = realK / N;
+    p0 = static_cast<double>(K) / N;
     pdfDenominator = 1.0 / RandMath::binomialCoef(N, n);
 }
 
@@ -50,13 +48,12 @@ double HyperGeometricRand::F(double x) const
 
 double HyperGeometricRand::variate() const
 {
-    int sum = 0;
-    double p = p0;
+    double p = p0, sum = 0;
     for (int i = 1; i <= n; ++i)
     {
-        if (BernoulliRand::variate(p) && ++sum == K)
+        if (BernoulliRand::variate(p) && ++sum >= K)
             return sum;
-        p = (realK - sum) / (N - i);
+        p = (K - sum) / (N - i);
     }
     return sum;
 }
