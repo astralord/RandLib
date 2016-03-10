@@ -204,8 +204,8 @@ double NormalRand::Moment(int n) const
 
 bool NormalRand::fitMean_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N <= 0)
+    int n = sample.size();
+    if (n <= 0)
         return false;
 
     long double sum = 0.0L;
@@ -213,14 +213,14 @@ bool NormalRand::fitMean_MLE(const QVector<double> &sample)
         sum += var;
     }
 
-    setMean(sum / N);
+    setMean(sum / n);
     return true;
 }
 
 bool NormalRand::fitVariance_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N <= 0)
+    int n = sample.size();
+    if (n <= 0)
         return false;
 
     long double deviation = 0.0L;
@@ -228,7 +228,7 @@ bool NormalRand::fitVariance_MLE(const QVector<double> &sample)
         double diff = (var - mu);
         deviation += diff * diff;
     }
-    deviation /= N;
+    deviation /= n;
 
     setVariance(deviation);
     return true;
