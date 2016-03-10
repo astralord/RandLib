@@ -92,11 +92,10 @@ double LaplaceRand::ExcessKurtosis() const
     return 3.0;
 }
 
-
-bool LaplaceRand::fitLocationToData(const QVector<double> &sample)
+bool LaplaceRand::fitLocation_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
+    int n = sample.size();
+    if (n == 0)
         return false;
 
     /// Calculate median
@@ -109,7 +108,7 @@ bool LaplaceRand::fitLocationToData(const QVector<double> &sample)
         maxVar = std::max(var, maxVar);
         median += var;
     }
-    median /= N;
+    median /= n;
 
     if (!RandMath::findRoot([sample] (double med)
     {
@@ -131,26 +130,24 @@ bool LaplaceRand::fitLocationToData(const QVector<double> &sample)
     return true;
 }
 
-bool LaplaceRand::fitScaleToData(const QVector<double> &sample)
+bool LaplaceRand::fitScale_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
+    int n = sample.size();
+    if (n == 0)
         return false;
 
     double deviation = 0.0;
     for (double var : sample) {
         deviation += std::fabs(var - mu);
     }
-    deviation /= N;
+    deviation /= n;
 
     setScale(deviation);
     return true;
 }
     
-bool LaplaceRand::fitToData(const QVector<double> &sample)
+bool LaplaceRand::fit_MLE(const QVector<double> &sample)
 {
-    if (fitLocationToData(sample))
-        return fitScaleToData(sample);
-    return false;
+    return fitLocation_MLE(sample) ? fitScale_MLE(sample) : false;
 }
 
