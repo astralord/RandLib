@@ -139,8 +139,8 @@ double ExponentialRand::Moment(int n) const
 
 bool ExponentialRand::fit_MLE(const QVector<double> &sample)
 {
-    double N = sample.size();
-    if (N <= 0)
+    double n = sample.size();
+    if (n <= 0)
         return false;
 
     long double sum = 0.0L;
@@ -152,6 +152,6 @@ bool ExponentialRand::fit_MLE(const QVector<double> &sample)
     if (sum <= 0)
         return false;
 
-    setRate(N / sum);
+    setRate(n / sum);
     return true;
 }
