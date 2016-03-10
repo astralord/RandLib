@@ -137,13 +137,13 @@ double ExponentialRand::Moment(int n) const
     return RandMath::factorial(n) / std::pow(lambda, n);
 }
 
-bool ExponentialRand::fitToData(const QVector<double> &sample)
+bool ExponentialRand::fit_MLE(const QVector<double> &sample)
 {
     double N = sample.size();
-    if (N == 0)
+    if (N <= 0)
         return false;
 
-    double sum = 0.0;
+    long double sum = 0.0L;
     for (double var : sample) {
         if (var < 0)
             return false;
