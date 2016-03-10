@@ -54,9 +54,9 @@ public:
 
     double Moment(int n) const;
 
-    bool fitMeanToData(const QVector<double> &sample);
-    bool fitVarianceToData(const QVector<double> &sample);
-    bool fitToData(const QVector<double> &sample);
+    bool fitMean_MLE(const QVector<double> &sample);
+    bool fitVariance_MLE(const QVector<double> &sample);
+    bool fit_MLE(const QVector<double> &sample);
 };
 
 #endif // NORMALRAND_H
