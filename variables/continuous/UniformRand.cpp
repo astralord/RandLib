@@ -110,6 +110,51 @@ double UniformRand::Entropy() const
     return (b == a) ? -INFINITY : std::log(b - a);
 }
 
+bool UniformRand::fitMax_MLE(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double maxVar = sample.at(0);
+    for (double var : sample) {
+        if (var < a)
+            return false;
+        maxVar = std::max(var, maxVar);
+    }
+    setBoundaries(a, maxVar);
+    return true;
+}
+
+bool UniformRand::fitMin_MLE(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double minVar = sample.at(0);
+    for (double var : sample) {
+        if (var > b)
+            return false;
+        minVar = std::min(var, minVar);
+    }
+    setBoundaries(minVar, b);
+    return true;
+}
+
+bool UniformRand::fit_MLE(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double maxVar = sample.at(0), minVar = maxVar;
+    for (double var : sample) {
+        maxVar = std::max(var, maxVar);
+        minVar = std::min(var, minVar);
+    }
+    setBoundaries(minVar, maxVar);
+    return true;
+}
+
+
 bool UniformRand::fitToData(const QVector<double> &sample)
 {
     int n = sample.size();
@@ -124,9 +169,9 @@ bool UniformRand::fitToData(const QVector<double> &sample)
     /// E[min] = b - n / (n + 1) * (b - a)
     /// E[max] = (b - a) * n / (n + 1) + a
 
-    double a = (minVar * n - maxVar) / (n - 1.0);
-    double b = (maxVar * (n + 1) - a) / n;
+    minVar = (minVar * n - maxVar) / (n - 1.0);
+    maxVar = (maxVar * (n + 1) - minVar) / n;
 
-    setBoundaries(a, b);
+    setBoundaries(minVar, maxVar);
     return true;
 }
