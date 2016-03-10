@@ -44,6 +44,10 @@ public:
 
     inline double Entropy() const;
 
+    bool fitMax_MLE(const QVector<double> &sample);
+    bool fitMin_MLE(const QVector<double> &sample);
+    bool fit_MLE(const QVector<double> &sample);
+    
     bool fitToData(const QVector<double> &sample);
 };
 
