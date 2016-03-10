@@ -47,7 +47,7 @@ public:
 
     double Moment(int n) const;
 
-    bool fitToData(const QVector<double> &sample);
+    bool fit_MLE(const QVector<double> &sample);
 };
 
 #endif // EXPONENTIALRAND_H
