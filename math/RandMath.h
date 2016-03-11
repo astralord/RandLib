@@ -33,6 +33,31 @@ public:
      */
     static bool areEqual(double a, double b, double eps = 1e-16);
 
+    /**
+     * @brief sampleMean
+     * @param sample
+     * @return arithmetic average
+     */
+    static double sampleMean(const QVector<double> &sample);
+    /**
+     * @brief sampleVariance
+     * @param sample
+     * @return second central moment
+     */
+    static double sampleVariance(const QVector<double> &sample);
+    /**
+     * @brief rawMoment
+     * @param sample
+     * @return k-th raw moment
+     */
+    static double rawMoment(const QVector<double> &sample, int k);
+    /**
+     * @brief centralMoment
+     * @param sample
+     * @return k-th central moment
+     */
+    static double centralMoment(const QVector<double> &sample, int k);
+    
 private:
 
     /**
