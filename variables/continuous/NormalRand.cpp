@@ -204,37 +204,52 @@ double NormalRand::Moment(int n) const
 
 bool NormalRand::fitMean_MLE(const QVector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-
-    long double sum = 0.0L;
-    for (double var : sample) {
-        sum += var;
-    }
-
-    setMean(sum / n);
+    setMean(sampleMean(sample));
     return true;
 }
 
 bool NormalRand::fitVariance_MLE(const QVector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-
-    long double deviation = 0.0L;
-    for (double var : sample) {
-        double diff = (var - mu);
-        deviation += diff * diff;
-    }
-    deviation /= n;
-
-    setVariance(deviation);
+    setVariance(sampleVariance(sample));
     return true;
 }
 
 bool NormalRand::fit_MLE(const QVector<double> &sample)
 {
     return fitMean_MLE(sample) ? fitVariance_MLE(sample) : false;
+}
+
+bool NormalRand::fitMean_MM(const QVector<double> &sample)
+{
+    return fitMean_MLE(sample);
+}
+
+bool NormalRand::fitVariance_MM(const QVector<double> &sample)
+{
+    return fitVariance_MLE(sample);
+}
+
+bool NormalRand::fit_MM(const QVector<double> &sample)
+{
+    return fit_MLE(sample);
+}
+
+bool NormalRand::fitMean_UMVU(const QVector<double> &sample)
+{
+    return fitMean_MLE(sample);
+}
+
+bool NormalRand::fitVariance_UMVU(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 1)
+        return false;
+    double s = sampleVariance(sample);
+    setVariance(n * s / (n - 1));
+    return true;
+}
+
+bool NormalRand::fit_UMVU(const QVector<double> &sample)
+{
+    return fitMean_MLE(sample) ? fitVariance_UMVU(sample) : false;
 }
