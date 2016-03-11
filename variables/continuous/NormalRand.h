@@ -54,9 +54,20 @@ public:
 
     double Moment(int n) const;
 
+    /// Maximum likelihood estimators
     bool fitMean_MLE(const QVector<double> &sample);
     bool fitVariance_MLE(const QVector<double> &sample);
     bool fit_MLE(const QVector<double> &sample);
+    
+    /// Method of moments
+    bool fitMean_MM(const QVector<double> &sample);
+    bool fitVariance_MM(const QVector<double> &sample);
+    bool fit_MM(const QVector<double> &sample);
+    
+    /// UMVU estimators
+    bool fitMean_UMVU(const QVector<double> &sample);
+    bool fitVariance_UMVU(const QVector<double> &sample);
+    bool fit_UMVU(const QVector<double> &sample);
 };
 
 #endif // NORMALRAND_H
