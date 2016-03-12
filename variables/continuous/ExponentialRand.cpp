@@ -137,21 +137,34 @@ double ExponentialRand::Moment(int n) const
     return RandMath::factorial(n) / std::pow(lambda, n);
 }
 
-bool ExponentialRand::fit_MLE(const QVector<double> &sample)
+bool ExponentialRand::checkValidity(const QVector<double> &sample)
 {
-    double n = sample.size();
-    if (n <= 0)
-        return false;
-
-    long double sum = 0.0L;
     for (double var : sample) {
         if (var < 0)
             return false;
-        sum += var;
     }
-    if (sum <= 0)
-        return false;
+    return true;
+}
 
-    setRate(n / sum);
+bool ExponentialRand::fit_MLE(const QVector<double> &sample)
+{
+    if (!checkValidity(sample))
+        return false;
+    setRate(1.0 / RandMath::sampleMean(sample));
+    return true;
+}
+
+bool ExponentialRand::fit_MM(const QVector<double> &sample)
+{
+    return fit_MLE(sample);
+}
+
+bool ExponentialRand::fit_MLE(const QVector<double> &sample)
+{   
+    int n = sample.size();
+    if (n <= 1 || !checkValidity(sample))
+        return false;
+    double mean = RandMath::sampleMean(sample);
+    setRate((n - 1) * mean / n);
     return true;
 }
