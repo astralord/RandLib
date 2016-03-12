@@ -204,13 +204,13 @@ double NormalRand::Moment(int n) const
 
 bool NormalRand::fitMean_MLE(const QVector<double> &sample)
 {
-    setMean(sampleMean(sample));
+    setMean(RandMath::sampleMean(sample));
     return true;
 }
 
 bool NormalRand::fitVariance_MLE(const QVector<double> &sample)
 {
-    setVariance(sampleVariance(sample));
+    setVariance(RandMath::sampleVariance(sample));
     return true;
 }
 
@@ -244,7 +244,7 @@ bool NormalRand::fitVariance_UMVU(const QVector<double> &sample)
     int n = sample.size();
     if (n <= 1)
         return false;
-    double s = sampleVariance(sample);
+    double s = RandMath::sampleVariance(sample);
     setVariance(n * s / (n - 1));
     return true;
 }
