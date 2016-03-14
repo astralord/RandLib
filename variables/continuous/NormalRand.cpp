@@ -244,7 +244,7 @@ bool NormalRand::fitVariance_UMVU(const QVector<double> &sample)
     int n = sample.size();
     if (n <= 1)
         return false;
-    double s = RandMath::sampleVariance(sample);
+    double s = RandMath::sampleVariance(sample, mu);
     setVariance(n * s / (n - 1));
     return true;
 }
