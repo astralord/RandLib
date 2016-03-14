@@ -42,8 +42,10 @@ public:
     /**
      * @brief sampleVariance
      * @param sample
+     * @param mean known (or sample) average
      * @return second central moment
      */
+    static double sampleVariance(const QVector<double> &sample, double mean);
     static double sampleVariance(const QVector<double> &sample);
     /**
      * @brief rawMoment
@@ -54,8 +56,10 @@ public:
     /**
      * @brief centralMoment
      * @param sample
+     * @param mean known (or sample) average
      * @return k-th central moment
      */
+    static double centralMoment(const QVector<double> &sample, int k, double mean);
     static double centralMoment(const QVector<double> &sample, int k);
     
 private:
