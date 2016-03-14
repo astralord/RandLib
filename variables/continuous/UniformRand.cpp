@@ -110,21 +110,6 @@ double UniformRand::Entropy() const
     return (b == a) ? -INFINITY : std::log(b - a);
 }
 
-bool UniformRand::fitMax_MLE(const QVector<double> &sample)
-{
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-    double maxVar = sample.at(0);
-    for (double var : sample) {
-        if (var < a)
-            return false;
-        maxVar = std::max(var, maxVar);
-    }
-    setBoundaries(a, maxVar);
-    return true;
-}
-
 bool UniformRand::fitMin_MLE(const QVector<double> &sample)
 {
     int n = sample.size();
@@ -140,6 +125,21 @@ bool UniformRand::fitMin_MLE(const QVector<double> &sample)
     return true;
 }
 
+bool UniformRand::fitMax_MLE(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double maxVar = sample.at(0);
+    for (double var : sample) {
+        if (var < a)
+            return false;
+        maxVar = std::max(var, maxVar);
+    }
+    setBoundaries(a, maxVar);
+    return true;
+}
+
 bool UniformRand::fit_MLE(const QVector<double> &sample)
 {
     int n = sample.size();
@@ -151,6 +151,29 @@ bool UniformRand::fit_MLE(const QVector<double> &sample)
         minVar = std::min(var, minVar);
     }
     setBoundaries(minVar, maxVar);
+    return true;
+}
+
+bool UniformRand::fitMin_MM(const QVector<double> &sample)
+{
+    double m = RandMath::sampleMean(sample);
+    setBoundaries(m + m - b, b);
+    return true;
+}
+
+bool UniformRand::fitMax_MM(const QVector<double> &sample)
+{
+    double m = RandMath::sampleMean(sample);
+    setBoundaries(a, m + m - a);
+    return true;
+}
+
+bool UniformRand::fit_MM(const QVector<double> &sample)
+{
+    double mean = RandMath::sampleMean(sample);
+    double var = RandMath::sampleVariance(sample, mean);
+    double min = mean - std::sqrt(3 * var);
+    setBoundaries(min, 2 * mean - min);
     return true;
 }
 
