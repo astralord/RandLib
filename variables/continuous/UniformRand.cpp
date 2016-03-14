@@ -172,8 +172,8 @@ bool UniformRand::fit_MM(const QVector<double> &sample)
 {
     double mean = RandMath::sampleMean(sample);
     double var = RandMath::sampleVariance(sample, mean);
-    double min = mean - std::sqrt(3 * var);
-    setBoundaries(min, 2 * mean - min);
+    double s = std::sqrt(3 * var);
+    setBoundaries(mean - s, mean + s);
     return true;
 }
 
