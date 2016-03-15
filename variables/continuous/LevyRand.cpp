@@ -97,3 +97,24 @@ double LevyRand::ExcessKurtosis() const
 {
     return NAN;
 }
+
+bool LevyRand::checkValidity(const QVector<double> &sample)
+{
+    for (double var : sample) {
+        if (var <= mu)
+            return false;
+    }
+    return true;
+}
+
+bool LevyRand::fitScale_MLE(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0 || !checkValidity(sample))
+        return false;
+    long double invSum = 0.0;
+    for (double var : sample)
+        invSum += 1.0 / (var - mu);
+    setScale(n / invSum);
+    return true;
+}
