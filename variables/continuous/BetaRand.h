@@ -32,8 +32,8 @@ public:
     void setParameters(double shape1, double shape2);
     void setAlpha(double shape1);
     void setBeta(double shape2);
-    inline double getAlpha() const { return X.getShape(); }
-    inline double getBeta() const { return Y.getShape(); }
+    inline double getAlpha() const { return alpha; }
+    inline double getBeta() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
