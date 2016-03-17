@@ -255,6 +255,6 @@ void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
     if (p <= 0 || p >= 1)
         p = 0.5;
 
-    double frac = (1.0 - F) / F;
-    BetaRand::setParameters(frac * p, frac * (1 - p));
+    double frac = (1.0 - F) / F, fracP = frac * p;
+    BetaRand::setParameters(fracP, frac - fracP);
 }
