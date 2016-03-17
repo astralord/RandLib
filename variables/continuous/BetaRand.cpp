@@ -43,7 +43,7 @@ void BetaRand::setAlpha(double shape1)
     if (alpha <= 0)
         alpha = 1.0;
     X.setParameters(alpha, 1);
-    pdfCoef = std::tgamma(alpha + Y.getShape()) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     setVariateConstants();
 }
 
@@ -53,7 +53,7 @@ void BetaRand::setBeta(double shape2)
     if (beta <= 0)
         beta = 1.0;
     Y.setParameters(beta, 1);
-    pdfCoef = std::tgamma(X.getShape() + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     setVariateConstants();
 }
 
