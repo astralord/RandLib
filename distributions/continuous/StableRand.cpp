@@ -1,5 +1,5 @@
 #include "StableRand.h"
-#include <QDebug>
+#include "LevyRand.h"
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
 {
@@ -65,8 +65,6 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     }
     else if (alpha == .5 && std::fabs(beta) == 1) /// +/- X ~ Levy(mu, sigma)
     {
-        L.setLocation(mu);
-        L.setScale(sigma);
     }
     else /// Common case: alpha != 1
     {
@@ -211,10 +209,10 @@ double StableRand::f(double x) const
         return N.f(x);
     if (alpha == 1 && beta == 0)
         return C.f(x);
-    if (alpha == .5 && beta == 1)
+    /*if (alpha == .5 && beta == 1)
         return L.f(x);
     if (alpha == .5 && beta == -1)
-        return L.f(-x);
+        return L.f(-x);*/
 
     /// Now check the others
     if (alpha == 1)
@@ -288,10 +286,10 @@ double StableRand::F(double x) const
         return N.F(x);
     if (alpha == 1 && beta == 0)
         return C.F(x);
-    if (alpha == .5 && beta == 1)
+    /*if (alpha == .5 && beta == 1)
         return L.F(x);
     if (alpha == .5 && beta == -1)
-        return 1.0 - L.f(-x);
+        return 1.0 - L.f(-x);*/
 
     /// Now check the others
     if (alpha == 1)
@@ -333,9 +331,9 @@ double StableRand::variate() const
     if (alpha == 1 && beta == 0)
         return C.variate();
     if (alpha == .5 && beta == 1)
-        return L.variate();
+        return LevyRand::variate(mu, sigma);
     if (alpha == .5 && beta == -1)
-        return -L.variate();
+        return -LevyRand::variate(mu, sigma);
 
     /// Now check the others
     if (alpha == 1)
@@ -356,11 +354,11 @@ void StableRand::sample(QVector<double> &outputData) const
     }
     else if (alpha == .5 && beta == 1) {
         for (double &var : outputData)
-            var = L.variate();
+            var = LevyRand::variate(mu, sigma);
     }
     else if (alpha == .5 && beta == -1) {
         for (double &var : outputData)
-            var = -L.variate();
+            var = -LevyRand::variate(mu, sigma);
     }
     else if (alpha == 1) {
         for (double &var : outputData)
@@ -388,7 +386,9 @@ std::complex<double> StableRand::CF(double t) const
 
 double StableRand::Mean() const
 {
-    return (alpha > 1) ? mu : NAN;
+    if (alpha > 1)
+        return mu;
+    return (alpha == 1.0) ? NAN : INFINITY;
 }
 
 double StableRand::Variance() const

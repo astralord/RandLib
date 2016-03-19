@@ -6,7 +6,6 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 #include "CauchyRand.h"
-#include "LevyRand.h"
 
 /**
  * @brief The StableRand class
@@ -19,7 +18,6 @@ protected:
     // TODO: shouldn't storage them all
     NormalRand N;
     CauchyRand C;
-    LevyRand L;
 
     double B, S, alphaInv; /// coefficients for alpha != 1
     double logSigma; /// coefficients for alpha == 1

@@ -24,6 +24,10 @@ public:
     explicit ExponentialRand(double rate = 1);
     std::string name() override;
 
+protected:
+    using GammaRand::setParameters;
+
+public:
     void setRate(double rate);
     inline double getRate() const { return thetaInv; }
 

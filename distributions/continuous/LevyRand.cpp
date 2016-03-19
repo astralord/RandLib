@@ -1,9 +1,9 @@
 #include "LevyRand.h"
+#include "NormalRand.h"
 
-LevyRand::LevyRand(double location, double scale)
+LevyRand::LevyRand(double location, double scale) : StableRand(0.5, 1)
 {
-    setLocation(location);
-    setScale(scale);
+    setParameters(location, scale);
 }
 
 std::string LevyRand::name()
@@ -11,19 +11,10 @@ std::string LevyRand::name()
     return "Levy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
-void LevyRand::setLocation(double location)
+void LevyRand::setParameters(double location, double scale)
 {
-    mu = location;
-}
-
-void LevyRand::setScale(double scale)
-{
-    c = scale;
-    if (c <= 0)
-        c = 1.0;
-    sqrtc_2pi = std::sqrt(c);
-    X.setSigma(1.0 / sqrtc_2pi); /// X ~ N(0, c ^ -0.5)
-    sqrtc_2pi *= M_1_SQRT2PI;
+    StableRand::setParameters(0.5, 1.0, scale, location);
+    pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
 }
 
 double LevyRand::f(double x) const
@@ -31,11 +22,11 @@ double LevyRand::f(double x) const
     if (x <= mu)
         return 0;
     double xInv = 1.0 / (x - mu);
-    double y = -0.5 * c * xInv;
+    double y = -0.5 * sigma * xInv;
     y = std::exp(y);
     y *= xInv;
     y *= std::sqrt(xInv);
-    return sqrtc_2pi * y;
+    return pdfCoef * y;
 }
 
 double LevyRand::F(double x) const
@@ -44,32 +35,33 @@ double LevyRand::F(double x) const
         return 0;
     double y = x - mu;
     y += y;
-    y = c / y;
+    y = sigma / y;
     y = std::sqrt(y);
     return std::erfc(y);
 }
 
 double LevyRand::variate() const
 {
-    double rv = X.variate();
+    double rv = NormalRand::standardVariate();
     rv *= rv;
-    rv = 1.0 / rv;
+    rv = sigma / rv;
     return mu + rv;
 }
 
-double LevyRand::Mean() const
+double LevyRand::variate(double location, double scale)
 {
-    return INFINITY;
+    return location + scale * standardVariate();
 }
 
-double LevyRand::Variance() const
+double LevyRand::standardVariate()
 {
-    return INFINITY;
+    double rv = NormalRand::standardVariate();
+    return 1.0 / (rv * rv);
 }
 
 std::complex<double> LevyRand::CF(double t) const
 {
-    std::complex<double> y(0.0, -2 * c * t);
+    std::complex<double> y(0.0, -2 * sigma * t);
     y = -std::sqrt(y);
     y += std::complex<double>(0.0, mu * t);
     return std::exp(y);
@@ -79,23 +71,13 @@ double LevyRand::Quantile(double p) const
 {
     if (p == 0.0)
         return mu;
-    double x = 1.0 / X.Quantile(0.5 * p);
+    double x = pdfCoef * M_SQRT2PI / NormalRand::standardQuantile(0.5 * p);
     return mu + x * x;
 }
 
 double LevyRand::Mode() const
 {
-    return c / 3.0 + mu;
-}
-
-double LevyRand::Skewness() const
-{
-    return NAN;
-}
-
-double LevyRand::ExcessKurtosis() const
-{
-    return NAN;
+    return sigma / 3.0 + mu;
 }
 
 bool LevyRand::checkValidity(const QVector<double> &sample)
@@ -109,12 +91,12 @@ bool LevyRand::checkValidity(const QVector<double> &sample)
 
 bool LevyRand::fitScale_MLE(const QVector<double> &sample)
 {
-    int n = sample.size();
+    double n = sample.size();
     if (n <= 0 || !checkValidity(sample))
         return false;
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);
-    setScale(n / invSum);
+    setParameters(mu, n / invSum);
     return true;
 }

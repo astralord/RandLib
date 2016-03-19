@@ -142,11 +142,11 @@ std::complex<double> NormalRand::CF(double t) const
     return std::exp(std::complex<double>(0.5 * sigmaT * sigmaT, mu * t));
 }
 
-double NormalRand::Quantile(double p) const
+double NormalRand::standardQuantile(double p)
 {
     /// Abramowitz and Stegun improved approximation
     if (p < 0.5)
-        return -Quantile(1.0 - p);
+        return -standardQuantile(1.0 - p);
     else
         p = 1.0 - p;
     if (p < 0.0 || p > 1.0)
@@ -169,8 +169,12 @@ double NormalRand::Quantile(double p) const
     denominator += d[0];
     denominator *= t;
     denominator += 1.0;
-    long double y = t - numerator / denominator;
-    return mu + sigma * y;
+    return t - numerator / denominator;
+}
+
+double NormalRand::Quantile(double p) const
+{
+    return mu + sigma * standardQuantile(p);
 }
 
 double NormalRand::Median() const
