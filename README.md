@@ -8,6 +8,7 @@ NormalRand randomVariable(0, 1);
 std::vector<double> data(1e6);
 randomVariable.sample(data);
 ```
+![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
 
 * Calculate moments and other properties:
 ```c++
@@ -19,7 +20,7 @@ std::cout << " Mean = " << randomVariable.Mean()
           << "\n Skewness = " << randomVariable.Skewness()
           << " and Ex. kurtosis = " << randomVariable.ExcessKurtosis();
 ```
-![alt tag](RandLib/images/lognormal11.png)
+![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/lognormal11.png)
 Mean = 4.48169 and Variance = 34.5126
 Median = 2.71828 and Mode 1
 Skewness = 6.18488 and Ex. Kurtosis = 110.936
