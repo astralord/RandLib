@@ -1,9 +1,7 @@
 #ifndef GAMMARAND_H
 #define GAMMARAND_H
 
-#include "UniformRand.h"
-#include "ExponentialRand.h"
-#include "NormalRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The GammaRand class
@@ -11,10 +9,10 @@
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
 protected:
-    double k, theta;
+    double k, theta, thetaInv;
     
 private:
-    double kInv, thetaInv; /// 1.0 / k and 1.0 / theta
+    double kInv; /// 1.0 / k
     double variateCoef; /// (e + k) / (k * e)
     double cdfCoef; /// 1.0 / gamma(k)
     double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
@@ -42,7 +40,6 @@ private:
     
 public:
     double variate() const override;
-
     void sample(QVector<double> &outputData) const override;
 
     double Mean() const override;
@@ -57,11 +54,11 @@ public:
     bool checkValidity(const QVector<double> &sample);
 
     bool fitScale_MLE(const QVector<double> &sample);
-    bool fit_MLE(const QVector<double> &sample);
+    virtual bool fit_MLE(const QVector<double> &sample);
     
     bool fitShape_MM(const QVector<double> &sample);
     bool fitScale_MM(const QVector<double> &sample);
-    bool fit_MM(const QVector<double> &sample);
+    virtual bool fit_MM(const QVector<double> &sample);
 
     /**
      * @brief getInverseGammaFunction
