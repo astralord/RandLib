@@ -2,7 +2,7 @@
 #define WIENERPROCESS_H
 
 #include "StochasticProcess.h"
-#include "../variables/continuous/NormalRand.h"
+#include "../distributions//continuous/NormalRand.h"
 
 /**
  * @brief The WienerProcess class

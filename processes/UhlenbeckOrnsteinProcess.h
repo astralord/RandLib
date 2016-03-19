@@ -3,7 +3,7 @@
 
 #include "StochasticProcess.h"
 #include "WienerProcess.h"
-#include "../variables/continuous/NormalRand.h"
+#include "../distributions//continuous/NormalRand.h"
 
 class RANDLIBSHARED_EXPORT UhlenbeckOrnsteinProcess : public StochasticProcess
 {

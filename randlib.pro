@@ -8,127 +8,127 @@ CONFIG += c++14
 DEFINES += RANDLIB_LIBRARY
 
 SOURCES += \
-    variables/RandomVariable.cpp \
-    variables/BasicRandGenerator.cpp \
-    variables/continuous/BetaRand.cpp \
-    variables/continuous/CauchyRand.cpp \
-    variables/continuous/ChiSquaredRand.cpp \
-    variables/continuous/ExponentialRand.cpp \
-    variables/continuous/FisherSnedecorRand.cpp \
-    variables/continuous/GammaRand.cpp \
-    variables/continuous/LaplaceRand.cpp \
-    variables/continuous/LevyRand.cpp \
-    variables/continuous/LogNormalRand.cpp \
-    variables/continuous/NormalRand.cpp \
-    variables/continuous/StableRand.cpp \
-    variables/continuous/StudentTRand.cpp \
-    variables/continuous/UniformRand.cpp \
-    variables/continuous/ParetoRand.cpp \
-    variables/continuous/ErlangRand.cpp \
-    variables/continuous/ContinuousRand.cpp \
-    variables/continuous/RayleighRand.cpp \
-    variables/continuous/TriangularRand.cpp \
-    variables/continuous/LogisticRand.cpp \
-    variables/discrete/DiscreteRand.cpp \
-    variables/discrete/UniformDiscreteRand.cpp \
-    variables/discrete/PoissonRand.cpp \
+    distributions/RandomVariable.cpp \
+    distributions/BasicRandGenerator.cpp \
+    distributions/continuous/BetaRand.cpp \
+    distributions/continuous/CauchyRand.cpp \
+    distributions/continuous/ChiSquaredRand.cpp \
+    distributions/continuous/ExponentialRand.cpp \
+    distributions/continuous/FisherSnedecorRand.cpp \
+    distributions/continuous/GammaRand.cpp \
+    distributions/continuous/LaplaceRand.cpp \
+    distributions/continuous/LevyRand.cpp \
+    distributions/continuous/LogNormalRand.cpp \
+    distributions/continuous/NormalRand.cpp \
+    distributions/continuous/StableRand.cpp \
+    distributions/continuous/StudentTRand.cpp \
+    distributions/continuous/UniformRand.cpp \
+    distributions/continuous/ParetoRand.cpp \
+    distributions/continuous/ErlangRand.cpp \
+    distributions/continuous/ContinuousRand.cpp \
+    distributions/continuous/RayleighRand.cpp \
+    distributions/continuous/TriangularRand.cpp \
+    distributions/continuous/LogisticRand.cpp \
+    distributions/discrete/DiscreteRand.cpp \
+    distributions/discrete/UniformDiscreteRand.cpp \
+    distributions/discrete/PoissonRand.cpp \
     processes/StochasticProcess.cpp \
     processes/WienerProcess.cpp \
-    variables/continuous/NakagamiRand.cpp \
-    variables/continuous/WaldRand.cpp \
+    distributions/continuous/NakagamiRand.cpp \
+    distributions/continuous/WaldRand.cpp \
     processes/GeometricBrownianMotion.cpp \
-    variables/continuous/WeibullRand.cpp \
-    variables/discrete/RademacherRand.cpp \
+    distributions/continuous/WeibullRand.cpp \
+    distributions/discrete/RademacherRand.cpp \
     math/RandMath.cpp \
     math/Matrix.cpp \
-    variables/discrete/BernoulliRand.cpp \
-    variables/discrete/GeometricRand.cpp \
-    variables/discrete/BinomialRand.cpp \
-    variables/continuous/GeometricStableRand.cpp \
-    variables/continuous/MaxwellBoltzmannRand.cpp \
-    variables/continuous/BetaPrimeRand.cpp \
-    variables/discrete/NegativeBinomialRand.cpp \
-    variables/discrete/HyperGeometricRand.cpp \
-    variables/discrete/ZipfRand.cpp \
-    variables/discrete/YuleRand.cpp \
-    variables/continuous/VonMisesRand.cpp \
-    variables/continuous/ArcsineRand.cpp \
-    variables/continuous/SechRand.cpp \
-    variables/continuous/WignerSemicircleRand.cpp \
-    variables/continuous/GumbelRand.cpp \
-    variables/discrete/LogarithmicRand.cpp \
-    variables/discrete/ZetaRand.cpp \
-    variables/singular/SingularRand.cpp \
-    variables/singular/CantorRand.cpp \
-    variables/continuous/RaisedCosineRand.cpp \
+    distributions/discrete/BernoulliRand.cpp \
+    distributions/discrete/GeometricRand.cpp \
+    distributions/discrete/BinomialRand.cpp \
+    distributions/continuous/GeometricStableRand.cpp \
+    distributions/continuous/MaxwellBoltzmannRand.cpp \
+    distributions/continuous/BetaPrimeRand.cpp \
+    distributions/discrete/NegativeBinomialRand.cpp \
+    distributions/discrete/HyperGeometricRand.cpp \
+    distributions/discrete/ZipfRand.cpp \
+    distributions/discrete/YuleRand.cpp \
+    distributions/continuous/VonMisesRand.cpp \
+    distributions/continuous/ArcsineRand.cpp \
+    distributions/continuous/SechRand.cpp \
+    distributions/continuous/WignerSemicircleRand.cpp \
+    distributions/continuous/GumbelRand.cpp \
+    distributions/discrete/LogarithmicRand.cpp \
+    distributions/discrete/ZetaRand.cpp \
+    distributions/singular/SingularRand.cpp \
+    distributions/singular/CantorRand.cpp \
+    distributions/continuous/RaisedCosineRand.cpp \
     processes/UhlenbeckOrnsteinProcess.cpp \
-    variables/continuous/FrechetRand.cpp \
-    variables/discrete/SkellamRand.cpp \
-    variables/continuous/PlanckRand.cpp \
-    variables/continuous/IrwinHallRand.cpp
+    distributions/continuous/FrechetRand.cpp \
+    distributions/discrete/SkellamRand.cpp \
+    distributions/continuous/PlanckRand.cpp \
+    distributions/continuous/IrwinHallRand.cpp
 
 HEADERS +=\
     randlib_global.h \
-    variables/RandomVariables.h \
-    variables/RandomVariable.h \
-    variables/BasicRandGenerator.h \
-    variables/continuous/BetaRand.h \
-    variables/continuous/CauchyRand.h \
-    variables/continuous/ChiSquaredRand.h \
-    variables/continuous/ExponentialRand.h \
-    variables/continuous/FisherSnedecorRand.h \
-    variables/continuous/GammaRand.h \
-    variables/continuous/LaplaceRand.h \
-    variables/continuous/LevyRand.h \
-    variables/continuous/LogNormalRand.h \
-    variables/continuous/NormalRand.h \
-    variables/continuous/StableRand.h \
-    variables/continuous/StudentTRand.h \
-    variables/continuous/UniformRand.h \
-    variables/continuous/ParetoRand.h \
-    variables/continuous/ErlangRand.h \
-    variables/continuous/ContinuousRand.h \
-    variables/continuous/RayleighRand.h \
-    variables/continuous/TriangularRand.h \
-    variables/continuous/LogisticRand.h \
-    variables/discrete/DiscreteRand.h \
-    variables/discrete/UniformDiscreteRand.h \
-    variables/discrete/PoissonRand.h \
+    distributions/Randomdistributions.h \
+    distributions/RandomVariable.h \
+    distributions/BasicRandGenerator.h \
+    distributions/continuous/BetaRand.h \
+    distributions/continuous/CauchyRand.h \
+    distributions/continuous/ChiSquaredRand.h \
+    distributions/continuous/ExponentialRand.h \
+    distributions/continuous/FisherSnedecorRand.h \
+    distributions/continuous/GammaRand.h \
+    distributions/continuous/LaplaceRand.h \
+    distributions/continuous/LevyRand.h \
+    distributions/continuous/LogNormalRand.h \
+    distributions/continuous/NormalRand.h \
+    distributions/continuous/StableRand.h \
+    distributions/continuous/StudentTRand.h \
+    distributions/continuous/UniformRand.h \
+    distributions/continuous/ParetoRand.h \
+    distributions/continuous/ErlangRand.h \
+    distributions/continuous/ContinuousRand.h \
+    distributions/continuous/RayleighRand.h \
+    distributions/continuous/TriangularRand.h \
+    distributions/continuous/LogisticRand.h \
+    distributions/discrete/DiscreteRand.h \
+    distributions/discrete/UniformDiscreteRand.h \
+    distributions/discrete/PoissonRand.h \
     processes/StochasticProcess.h \
     processes/WienerProcess.h \
-    variables/continuous/NakagamiRand.h \
-    variables/continuous/WaldRand.h \
+    distributions/continuous/NakagamiRand.h \
+    distributions/continuous/WaldRand.h \
     processes/GeometricBrownianMotion.h \
-    variables/continuous/WeibullRand.h \
-    variables/discrete/RademacherRand.h \
+    distributions/continuous/WeibullRand.h \
+    distributions/discrete/RademacherRand.h \
     math/RandMath.h \
     math/Matrix.h \
-    variables/discrete/BernoulliRand.h \
-    variables/discrete/GeometricRand.h \
-    variables/discrete/BinomialRand.h \
-    variables/continuous/GeometricStableRand.h \
-    variables/continuous/MaxwellBoltzmannRand.h \
-    variables/continuous/BetaPrimeRand.h \
-    variables/discrete/NegativeBinomialRand.h \
-    variables/discrete/HyperGeometricRand.h \
-    variables/discrete/ZipfRand.h \
-    variables/discrete/YuleRand.h \
-    variables/continuous/VonMisesRand.h \
-    variables/continuous/ArcsineRand.h \
+    distributions/discrete/BernoulliRand.h \
+    distributions/discrete/GeometricRand.h \
+    distributions/discrete/BinomialRand.h \
+    distributions/continuous/GeometricStableRand.h \
+    distributions/continuous/MaxwellBoltzmannRand.h \
+    distributions/continuous/BetaPrimeRand.h \
+    distributions/discrete/NegativeBinomialRand.h \
+    distributions/discrete/HyperGeometricRand.h \
+    distributions/discrete/ZipfRand.h \
+    distributions/discrete/YuleRand.h \
+    distributions/continuous/VonMisesRand.h \
+    distributions/continuous/ArcsineRand.h \
     math/Constants.h \
-    variables/continuous/SechRand.h \
-    variables/continuous/WignerSemicircleRand.h \
-    variables/continuous/GumbelRand.h \
-    variables/discrete/LogarithmicRand.h \
-    variables/discrete/ZetaRand.h \
-    variables/singular/SingularRand.h \
-    variables/singular/CantorRand.h \
-    variables/continuous/RaisedCosineRand.h \
+    distributions/continuous/SechRand.h \
+    distributions/continuous/WignerSemicircleRand.h \
+    distributions/continuous/GumbelRand.h \
+    distributions/discrete/LogarithmicRand.h \
+    distributions/discrete/ZetaRand.h \
+    distributions/singular/SingularRand.h \
+    distributions/singular/CantorRand.h \
+    distributions/continuous/RaisedCosineRand.h \
     processes/UhlenbeckOrnsteinProcess.h \
-    variables/continuous/FrechetRand.h \
-    variables/discrete/SkellamRand.h \
-    variables/continuous/PlanckRand.h \
-    variables/continuous/IrwinHallRand.h
+    distributions/continuous/FrechetRand.h \
+    distributions/discrete/SkellamRand.h \
+    distributions/continuous/PlanckRand.h \
+    distributions/continuous/IrwinHallRand.h
 
 unix {
     target.path = /usr/lib
