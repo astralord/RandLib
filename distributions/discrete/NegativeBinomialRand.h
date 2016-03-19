@@ -2,7 +2,6 @@
 #define NEGATIVEBINOMIALRAND_H
 
 #include "DiscreteDistribution.h"
-#include "GeometricRand.h"
 #include "PoissonRand.h"
 #include "../continuous/GammaRand.h"
 
@@ -17,28 +16,28 @@
 template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution
 {
+protected:
     double p, q;
-    T r;
 
+protected:
+    T r;
+    GammaRand Y;
     double pdfCoef;
 
-    GeometricRand G;
-    GammaRand Y;
 
 public:
     NegativeBinomialRand(T number, double probability);
     std::string name() override;
 
-    void setParameters(T number, double probability);
+    virtual void setParameters(T number, double probability);
     inline double getProbability() const { return p; }
     inline T getNumber() const { return r; }
 
-    double P(int r) const override;
+    double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
 
-private:
-    double variateThroughGeometric() const;
+protected:
     double variateThroughGammaPoisson() const;
 
 public:
@@ -52,8 +51,43 @@ public:
     double ExcessKurtosis() const override;
 };
 
-typedef NegativeBinomialRand<int> PascaleRand;
-typedef NegativeBinomialRand<double> PolyaRand;
+
+typedef NegativeBinomialRand<int> NegativeBinomialIntRand;
+typedef NegativeBinomialRand<double> NegativeBinomialDoubleRand;
+
+
+/**
+ * @brief The PascalRand class
+ */
+class RANDLIBSHARED_EXPORT PascalRand : public NegativeBinomialIntRand {
+    static constexpr int tableSize = 16;
+    double table[tableSize];
+public:
+    PascalRand(int number, double probability);
+    std::string name() override;
+
+    void setParameters(int number, double probability) override;
+
+    double P(int k) const override;
+    double variate() const override;
+
+private:
+    double variateThroughGeometric() const;
+
+protected:
+    double variateGeometricByTable() const;
+    double variateGeometricThroughExponential() const;
+};
+
+/**
+ * @brief The PolyaRand class
+ */
+class RANDLIBSHARED_EXPORT PolyaRand : public NegativeBinomialDoubleRand {
+public:
+    PolyaRand(double number, double probability);
+    std::string name() override;
+    void setParameters(double number, double probability) override;
+};
 
 
 #endif // NEGATIVEBINOMIALRAND_H
