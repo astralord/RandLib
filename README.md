@@ -12,7 +12,7 @@ randomVariable.sample(data);
 
 * Calculate moments and other properties:
 ```c++
-LogNormalRand randomVariable(2, 3);
+LogNormalRand randomVariable(1, 1);
 std::cout << " Mean = " << randomVariable.Mean()
           << " and Variance = " << randomVariable.Variance()
           << "\n Median = " << randomVariable.Median()
@@ -21,11 +21,11 @@ std::cout << " Mean = " << randomVariable.Mean()
           << " and Ex. kurtosis = " << randomVariable.ExcessKurtosis();
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/lognormal11.png)
+```
 Mean = 4.48169 and Variance = 34.5126
-
 Median = 2.71828 and Mode = 1
-
 Skewness = 6.18488 and Ex. Kurtosis = 110.936
+```
 
 * Calculate probabilities for discrete distributions and probability density functions for continuous:
 ```c++
