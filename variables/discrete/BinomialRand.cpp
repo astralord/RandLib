@@ -104,7 +104,9 @@ double BinomialRand::P(int k) const
 double BinomialRand::F(double x) const
 {
     if (x < 0)
-        return 0;
+        return 0.0;
+    if (x > n)
+        return 1.0;
     double k = std::floor(x);
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
@@ -203,12 +205,12 @@ double BinomialRand::variate() const
 
 double BinomialRand::Mean() const
 {
-    return n * p;
+    return np;
 }
 
 double BinomialRand::Variance() const
 {
-    return n * p * q;
+    return np * q;
 }
 
 std::complex<double> BinomialRand::CF(double t) const
@@ -224,7 +226,7 @@ double BinomialRand::Median() const
 
 double BinomialRand::Mode() const
 {
-    return std::round(np + p - 1);
+    return std::round(np - q);
 }
 
 double BinomialRand::Skewness() const
@@ -239,19 +241,23 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
+bool BinomialRand::checkValidity(const QVector<double> &sample)
+{
+    for (int var : sample) {
+        if (var < 0 || var > n)
+            return false;
+    }
+    return true;
+}
+
 bool BinomialRand::fitProbability_MLE(const QVector<int> &sample)
 {
-    int N = sample.size();
-    if (N <= 0)
-        return false;
-
-    long double sum = 0.0L;
-    for (int var : sample) {
-        if (var < 0)
-            return false;
-        sum += var;
-    }
-
-    setParameters(n, sum / (N * n));
+    double average = RandMath::sampleMean(sample);
+    setParameters(n, average / n);
     return true;
+}
+
+bool BinomialRand::fitProbability_MM(const QVector<int> &sample)
+{
+    return fitProbability_MLE(sample);
 }

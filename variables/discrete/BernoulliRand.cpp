@@ -1,11 +1,8 @@
 #include "BernoulliRand.h"
-#include "../continuous/UniformRand.h"
 
-double BernoulliRand::U = UniformRand::standardVariate();
-
-BernoulliRand::BernoulliRand(double probability)
+BernoulliRand::BernoulliRand(double probability) : BinomialRand(1, probability)
 {
-    setProbability(probability);
+    boundary = q * RandGenerator::maxValue();
 }
 
 std::string BernoulliRand::name()
@@ -15,9 +12,7 @@ std::string BernoulliRand::name()
 
 void BernoulliRand::setProbability(double probability)
 {
-    p = std::min(std::max(probability, 0.0), 1.0);
-    q = 1.0 - p;
-
+    setParameters(1, probability);
     boundary = q * RandGenerator::maxValue();
 }
 
@@ -38,7 +33,7 @@ double BernoulliRand::variate() const
 
 double BernoulliRand::variate(double p)
 {
-    return UniformRand::standardVariate() > 1.0 - p;
+    return UniformRand::standardVariate() <= p;
 }
 
 double BernoulliRand::standardVariate()
@@ -60,60 +55,7 @@ double BernoulliRand::standardVariate()
     return X & 1;
 }
 
-double BernoulliRand::Mean() const
-{
-    return p;
-}
-
-double BernoulliRand::Variance() const
-{
-    return p * q;
-}
-
-std::complex<double> BernoulliRand::CF(double t) const
-{
-    return std::complex<double>(q + p * std::cos(t), std::sin(t));
-}
-
-double BernoulliRand::Median() const
-{
-    return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : 0.5);
-}
-
-double BernoulliRand::Mode() const
-{
-    /// if q == p -> this can be any of {0, 1}
-    return (p < 0.5) ? 0 : ((p > 0.5) ? 1 : variate());
-}
-
-double BernoulliRand::Skewness() const
-{
-    return (q - p) / std::sqrt(p * q);
-}
-
-double BernoulliRand::ExcessKurtosis() const
-{
-    return 1.0 / (p * q) - 6;
-}
-
 double BernoulliRand::Entropy()
 {
     return -(p * std::log(p) + q * std::log(q));
-}
-
-bool BernoulliRand::fitToData(const QVector<int> &sample)
-{
-    int N = sample.size();
-    if (N == 0)
-        return false;
-
-    long double sum = 0.0L;
-    for (int var : sample) {
-        if (var != 0 || var != 1)
-            return false;
-        sum += var;
-    }
-
-    setProbability(sum / N);
-    return true;
 }

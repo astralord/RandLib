@@ -39,6 +39,7 @@ public:
      * @return arithmetic average
      */
     static double sampleMean(const QVector<double> &sample);
+    static double sampleMean(const QVector<int> &sample);
     /**
      * @brief sampleVariance
      * @param sample

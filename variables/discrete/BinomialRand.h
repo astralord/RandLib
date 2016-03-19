@@ -9,8 +9,11 @@
  */
 class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand
 {
-    int n;
+protected:
     double p, q;
+
+private:
+    int n;
     double np;
 
     double delta1, delta2;
@@ -69,7 +72,10 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+    bool checkValidity(const QVector<double> &sample);
+
     bool fitProbability_MLE(const QVector<int> &sample);
+    bool fitProbability_MM(const QVector<int> &sample);
 };
 
 

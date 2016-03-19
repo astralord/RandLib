@@ -24,6 +24,17 @@ double RandMath::sampleMean(const QVector<double> &sample)
     return sum / n;
 }
 
+double RandMath::sampleMean(const QVector<int> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return 0.0;
+    long double sum = 0.0L;
+    for (double var : sample)
+        sum += var;
+    return sum / n;
+}
+
 double RandMath::sampleVariance(const QVector<double> &sample, double mean)
 {
     int n = sample.size();
