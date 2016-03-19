@@ -51,7 +51,7 @@ double DiscreteRand::Hazard(double x) const
 double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     static constexpr double epsilon = 1e-12;
-    static constexpr int maxIter = 1e4;
+    static constexpr int maxIter = 1e4; // why so small?
     int iter = 0;
     long double sum = 0.0L;
     double addon = 0;
@@ -68,6 +68,7 @@ double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr,
             return INFINITY;
     } while (std::fabs(addon) > epsilon);
 
+    //TODO: why we need next line?
     if (iter == maxIter) /// can't take sum, addon decreases too slow
         return INFINITY;
 

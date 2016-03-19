@@ -75,6 +75,16 @@ double PoissonRand::variate(double rate)
     return k;
 }
 
+double PoissonRand::Mean() const
+{
+    return lambda;
+}
+
+double PoissonRand::Variance() const
+{
+    return lambda;
+}
+
 std::complex<double> PoissonRand::CF(double t) const
 {
     std::complex<double> y(0.0, t);

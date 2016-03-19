@@ -248,11 +248,11 @@ bool GammaRand::fitToData(const QVector<double> &sample)
 
     /// Calculate initial guess for shape
     double s = std::log(average) - logAverage;
-    double sm3 = s - 3.0, spm12 = 12.0 * s;
-    double shape = sm3 * sm3 + spm12 + spm12;
+    double sm3 = s - 3.0, sp12 = 12.0 * s;
+    double shape = sm3 * sm3 + sp12 + sp12;
     shape = std::sqrt(shape);
     shape -= sm3;
-    shape /= spm12;
+    shape /= sp12;
 
     if (!RandMath::findRoot([s] (double x)
     {

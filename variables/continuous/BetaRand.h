@@ -67,7 +67,9 @@ public:
 };
 
 
-
+/**
+ * @brief The BaldingNicholsRand class
+ */
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand
 {
     double p, F;
