@@ -39,14 +39,12 @@ public:
      * @return sum of all elements in a sample
      */
     static double sum(const QVector<double> &sample);
-    static double sum(const QVector<int> &sample);
     /**
      * @brief sampleMean
      * @param sample
      * @return arithmetic average
      */
     static double sampleMean(const QVector<double> &sample);
-    static double sampleMean(const QVector<int> &sample);
     /**
      * @brief sampleVariance
      * @param sample

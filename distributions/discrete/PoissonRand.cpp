@@ -114,7 +114,7 @@ double PoissonRand::ExcessKurtosis() const
     return 1.0 / lambda;
 }
 
-bool PoissonRand::checkValidity(const QVector<int> &sample)
+bool PoissonRand::checkValidity(const QVector<double> &sample)
 {
     for (int var : sample) {
         if (var < 0)
@@ -123,7 +123,7 @@ bool PoissonRand::checkValidity(const QVector<int> &sample)
     return true;
 }
 
-bool PoissonRand::fit_MLE(const QVector<int> &sample)
+bool PoissonRand::fit_MLE(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;

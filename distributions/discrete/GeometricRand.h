@@ -4,6 +4,7 @@
 #include "DiscreteDistribution.h"
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
+#include "../continuous/BetaRand.h"
 #include <functional>
 
 /**
@@ -49,8 +50,11 @@ public:
 
     inline double Entropy() const;
     
-    bool fit_MLE(const QVector<int> &sample);
-    bool fit_MM(const QVector<int> &sample);
+    bool checkValidity(const QVector<double> &sample);
+
+    bool fit_MLE(const QVector<double> &sample);
+    bool fit_MM(const QVector<double> &sample);
+    bool fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

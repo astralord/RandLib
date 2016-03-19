@@ -241,7 +241,7 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
-bool BinomialRand::checkValidity(const QVector<int> &sample)
+bool BinomialRand::checkValidity(const QVector<double> &sample)
 {
     for (int var : sample) {
         if (var < 0 || var > n)
@@ -250,7 +250,7 @@ bool BinomialRand::checkValidity(const QVector<int> &sample)
     return true;
 }
 
-bool BinomialRand::fitProbability_MLE(const QVector<int> &sample)
+bool BinomialRand::fitProbability_MLE(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -258,19 +258,18 @@ bool BinomialRand::fitProbability_MLE(const QVector<int> &sample)
     return true;
 }
 
-bool BinomialRand::fitProbability_MM(const QVector<int> &sample)
+bool BinomialRand::fitProbability_MM(const QVector<double> &sample)
 {
     return fitProbability_MLE(sample);
 }
 
-bool BinomialRand::fitProbability_Bayes(const QVector<int> &sample, BetaRand &priorDistribution)
+bool BinomialRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution)
 {
     int N = sample.size();
-    if (N <= 0)
-        return false;
     double sum = RandMath::sum(sample);
     double alpha = priorDistribution.getAlpha();
     double beta = priorDistribution.getBeta();
-    priorDistribution.setParameters(sum + alpha, N * n + alpha + beta);
-    return priorDistribution.Mean();
+    priorDistribution.setParameters(sum + alpha, N * n - sum + beta);
+    setParameters(n, priorDistribution.Mean());
+    return true;
 }

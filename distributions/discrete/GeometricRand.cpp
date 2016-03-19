@@ -148,25 +148,34 @@ double GeometricRand::Entropy() const
     return (a + b) / (M_LN2 * p);
 }
 
-bool GeometricRand::fit_MLE(const QVector<int> &sample)
+bool GeometricRand::checkValidity(const QVector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-
-    long double average = 0.0L;
     for (int var : sample) {
         if (var < 0)
             return false;
-        average += var;
     }
-    average /= n;
-
-    setProbability(1.0 / (average + 1));
     return true;
 }
 
-bool GeometricRand::fit_MM(const QVector<int> &sample)
+bool GeometricRand::fit_MLE(const QVector<double> &sample)
+{
+    if (!checkValidity(sample))
+        return false;
+    setProbability(1.0 / (RandMath::sampleMean(sample) + 1));
+    return true;
+}
+
+bool GeometricRand::fit_MM(const QVector<double> &sample)
 {
     return fit_MLE(sample);
+}
+
+bool GeometricRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution)
+{
+    int N = sample.size();
+    double alpha = priorDistribution.getAlpha();
+    double beta = priorDistribution.getBeta();
+    priorDistribution.setParameters(alpha + N, beta + RandMath::sum(sample));
+    setProbability(priorDistribution.Mean());
+    return true;
 }
