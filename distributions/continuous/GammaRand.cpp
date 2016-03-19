@@ -228,21 +228,20 @@ double GammaRand::ExcessKurtosis() const
     return 6.0 * kInv;
 }
 
-bool GammaRand::fitScale_MLE(const QVector<double> &sample)
+bool GammaRand::checkValidity(const QVector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-
-    /// Calculate sum
-    long double sum = 0.0L;
     for (double var : sample) {
         if (var < 0)
             return false;
-        sum += var;
     }
-    
-    setParameters(k, sum / (n * k));
+    return true;
+}
+
+bool GammaRand::fitScale_MLE(const QVector<double> &sample)
+{
+    if (!checkValidity(sample))
+        return false;
+    setParameters(k, RandMath::sampleMean(sample) / k);
     return true;
 }
 
@@ -253,6 +252,7 @@ bool GammaRand::fit_MLE(const QVector<double> &sample)
         return false;
 
     /// Calculate averages
+    // TODO: use RandMath functions
     long double average = 0.0L;
     long double logAverage = 0.0L;
     for (double var : sample) {
@@ -288,19 +288,9 @@ bool GammaRand::fit_MLE(const QVector<double> &sample)
 
 bool GammaRand::fitShape_MM(const QVector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
+    if (!checkValidity(sample))
         return false;
-
-    /// Calculate first moment
-    long double sum = 0.0L;
-    for (double var : sample) {
-        if (var < 0)
-            return false;
-        sum += var;
-    }
-    
-    setParameters(sum / (n * theta), theta);
+    setParameters(RandMath::sampleMean(sample) / theta, theta);
     return true;
 }
 
@@ -311,22 +301,11 @@ bool GammaRand::fitScale_MM(const QVector<double> &sample)
 
 bool GammaRand::fit_MM(const QVector<double> &sample)
 {  
-    int n = sample.size();
-    if (n <= 0)
+    if (!checkValidity(sample))
         return false;
-
-    /// Calculate first moment
-    long double mu1 = 0.0L, mu2 = 0.0L;
-    for (double var : sample) {
-        if (var < 0)
-            return false;
-        mu1 += var;
-        mu2 += var * var;
-    }
-    mu1 /= n;
-    mu2 /= n;
-    double mu1Sq = mu1 * mu1;
-    double shape = mu1Sq / (mu2 - mu1Sq);
+    double mu1 = RandMath::sampleMean(sample);
+    double var = RandMath::sampleVariance(sample, mu1);
+    double shape = mu1 * mu1 / var;
     
     setParameters(shape, mu1 / shape);
     return true;
