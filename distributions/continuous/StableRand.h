@@ -4,8 +4,6 @@
 #include <functional>
 #include "UniformRand.h"
 #include "ExponentialRand.h"
-#include "NormalRand.h"
-#include "CauchyRand.h"
 
 /**
  * @brief The StableRand class
@@ -14,10 +12,6 @@ class RANDLIBSHARED_EXPORT StableRand : public ContinuousDistribution
 {
 protected:
     double alpha, beta, mu, sigma;
-
-    // TODO: shouldn't storage them all
-    NormalRand N;
-    CauchyRand C;
 
     double B, S, alphaInv; /// coefficients for alpha != 1
     double logSigma; /// coefficients for alpha == 1
@@ -34,14 +28,20 @@ public:
     std::string name() override;
 
     void setParameters(double exponent, double skewness, double scale, double location);
+    void setLocation(double location);
+    void setScale(double scale);
 
-    inline double getAlpha() const { return alpha; }
-    inline double getBeta() const { return beta; }
-    inline double getSigma() const { return sigma; }
-    inline double getMu() const { return mu; }
+    inline double getExponent() const { return alpha; }
+    inline double getSkewness() const { return beta; }
+    inline double getScale() const { return sigma; }
+    inline double getLocation() const { return mu; }
     
+protected:
+    /// Probability distribution functions
+    double pdfNormal(double x) const;
+    double pdfCauchy(double x) const;
+    double pdfLevy(double x) const;
 private:
-    /// pdf
     double pdfForCommonAlpha(double x) const;
     double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
     double integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const;
@@ -52,8 +52,12 @@ private:
 public:    
     double f(double x) const override;
     
+protected:
+    /// Cumulative distribution functions
+    double cdfNormal(double x) const;
+    double cdfCauchy(double x) const;
+    double cdfLevy(double x) const;
 private:
-    /// cdf
     double cdfForCommonAlpha(double x) const;
     double cdfForAlphaEqualOne(double x) const;
 public:

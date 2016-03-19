@@ -125,7 +125,7 @@ void BetaRand::setVariateConstants()
         variateCoef *= std::pow(0.25 - 0.75 * t, alpha - 1);
         variateCoef *= pdfCoef; /// /= Beta(alpha, alpha)
 
-        N.setMean(0.5);
+        N.setLocation(0.5);
         N.setVariance(0.25 * t);
     }
 }

@@ -10,10 +10,10 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
 std::string GeometricStableRand::name()
 {
     return "Geometric Stable("
-            + toStringWithPrecision(getAlpha()) + ", "
-            + toStringWithPrecision(getBeta()) + ", "
-            + toStringWithPrecision(getSigma()) + ", "
-            + toStringWithPrecision(getMu()) + ")";
+            + toStringWithPrecision(getExponent()) + ", "
+            + toStringWithPrecision(getSkewness()) + ", "
+            + toStringWithPrecision(getScale()) + ", "
+            + toStringWithPrecision(getLocation()) + ")";
 }
 
 double GeometricStableRand::f(double x) const

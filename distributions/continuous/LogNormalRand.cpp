@@ -13,13 +13,13 @@ std::string LogNormalRand::name()
 
 void LogNormalRand::setLocation(double location)
 {
-    X.setMean(location);
+    X.setLocation(location);
     expMu = std::exp(X.Mean());
 }
 
 void LogNormalRand::setScale(double scale)
 {
-    X.setSigma(scale);
+    X.setScale(scale);
     expVar = std::exp(X.Variance());
 }
 

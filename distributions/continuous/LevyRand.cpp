@@ -1,9 +1,8 @@
 #include "LevyRand.h"
 #include "NormalRand.h"
 
-LevyRand::LevyRand(double location, double scale) : StableRand(0.5, 1)
+LevyRand::LevyRand(double location, double scale) : StableRand(0.5, 1, scale, location)
 {
-    setParameters(location, scale);
 }
 
 std::string LevyRand::name()
@@ -11,33 +10,14 @@ std::string LevyRand::name()
     return "Levy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
-void LevyRand::setParameters(double location, double scale)
-{
-    StableRand::setParameters(0.5, 1.0, scale, location);
-    pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
-}
-
 double LevyRand::f(double x) const
 {
-    if (x <= mu)
-        return 0;
-    double xInv = 1.0 / (x - mu);
-    double y = -0.5 * sigma * xInv;
-    y = std::exp(y);
-    y *= xInv;
-    y *= std::sqrt(xInv);
-    return pdfCoef * y;
+    return StableRand::pdfLevy(x);
 }
 
 double LevyRand::F(double x) const
 {
-    if (x <= mu)
-        return 0;
-    double y = x - mu;
-    y += y;
-    y = sigma / y;
-    y = std::sqrt(y);
-    return std::erfc(y);
+    return StableRand::cdfLevy(x);
 }
 
 double LevyRand::variate() const
@@ -97,6 +77,6 @@ bool LevyRand::fitScale_MLE(const QVector<double> &sample)
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);
-    setParameters(mu, n / invSum);
+    setScale(n / invSum);
     return true;
 }

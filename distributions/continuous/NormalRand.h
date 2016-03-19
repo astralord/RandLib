@@ -1,7 +1,7 @@
 #ifndef NORMALRAND_H
 #define NORMALRAND_H
 
-#include "ContinuousDistribution.h"
+#include "StableRand.h"
 
 /**
  * @brief The NormalRand class
@@ -10,11 +10,8 @@
  *
  * Normal distribution: X ~ N(mu, sigma)
  */
-class RANDLIBSHARED_EXPORT NormalRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 {
-    double mu, sigma;
-    double sigmaSqrt2Inv; /// 1 / (sigma * sqrt(2))
-
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
     static double stairWidth[257], stairHeight[256];
@@ -27,12 +24,12 @@ public:
     NormalRand(double mean = 0, double var = 1);
     std::string name() override;
 
-    void setMean(double mean);
-    void setSigma(double rootVar);
+private:
+    using StableRand::setParameters;
+
+public:
     void setVariance(double var);
-    inline double getMean() const { return mu; }
-    inline double getSigma() const { return sigma; }
-    inline double getVar() const { return sigma * sigma; }
+    inline double getVar() const;
 
     double f(double x) const override;
     double F(double x) const override;

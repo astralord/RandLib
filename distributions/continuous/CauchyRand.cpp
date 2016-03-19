@@ -1,10 +1,8 @@
 ﻿#include "CauchyRand.h"
 #include "UniformRand.h"
 
-CauchyRand::CauchyRand(double location, double scale)
+CauchyRand::CauchyRand(double location, double scale) : StableRand(1, 0, scale, location)
 {
-    setLocation(location);
-    setScale(scale);
 }
 
 std::string CauchyRand::name()
@@ -12,40 +10,19 @@ std::string CauchyRand::name()
     return "Cauchy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
 
-void CauchyRand::setLocation(double location)
-{
-    x0 = location;
-}
-
-void CauchyRand::setScale(double scale)
-{
-    gamma = scale;
-    if (gamma <= 0)
-        gamma = 1.0;
-    gammaInv = 1.0 / gamma;
-}
-
 double CauchyRand::f(double x) const
 {
-    double y = x - x0;
-    y *= y;
-    y *= gammaInv;
-    y += gamma;
-    return M_1_PI / y;
+    return StableRand::pdfCauchy(x);
 }
 
 double CauchyRand::F(double x) const
 {
-    double y = x - x0;
-    y *= gammaInv;
-    y = std::atan(y);
-    y *= M_1_PI;
-    return y + .5;
+    return StableRand::cdfCauchy(x);
 }
 
 double CauchyRand::variate() const
 {
-    return x0 + gamma * standardVariate();
+    return mu + sigma * standardVariate();
 }
 
 double CauchyRand::variate(double location, double scale)
@@ -62,20 +39,10 @@ double CauchyRand::standardVariate()
     } while (x * x + y * y > 1.0 || y == 0.0);
     return x / y;
 }
-
-double CauchyRand::Mean() const
-{ 
-    return NAN;
-}
-
-double CauchyRand::Variance() const
-{
-    return INFINITY; 
-}
     
 std::complex<double> CauchyRand::CF(double t) const
 {
-    std::complex<double> x(-gamma * std::fabs(t), x0 * t);
+    std::complex<double> x(-sigma * std::fabs(t), mu * t);
     return std::exp(x);
 }
 
@@ -87,30 +54,20 @@ double CauchyRand::Quantile(double p) const
         return -INFINITY;
     if (p == 1)
         return INFINITY;
-    return x0 + gamma * std::tan(M_PI * (p - 0.5));
+    return mu + sigma * std::tan(M_PI * (p - 0.5));
 }
 
 double CauchyRand::Median() const
 {
-    return x0;
+    return mu;
 }
 
 double CauchyRand::Mode() const
 {
-    return x0;
+    return mu;
 }
 
-double CauchyRand::Skewness() const
-{
-    return NAN;
-}
-
-double CauchyRand::ExcessKurtosis() const
-{
-    return NAN;
-}
-    
 double CauchyRand::Entropy() const
 {
-     return std::log(4 * gamma * M_PI);
+    return std::log(4 * sigma * M_PI);
 }

@@ -19,7 +19,7 @@ public:
     void setLocation(double location);
     void setScale(double scale);
     inline double getLocation() const { return X.Mean(); }
-    inline double getScale() const { return X.getSigma(); }
+    inline double getScale() const { return X.getScale(); }
 
     double f(double x) const override;
     double F(double x) const override;

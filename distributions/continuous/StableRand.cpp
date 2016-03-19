@@ -1,5 +1,7 @@
 #include "StableRand.h"
 #include "LevyRand.h"
+#include "CauchyRand.h"
+#include "NormalRand.h"
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
 {
@@ -9,10 +11,10 @@ StableRand::StableRand(double exponent, double skewness, double scale, double lo
 std::string StableRand::name()
 {
     return "Stable("
-            + toStringWithPrecision(getAlpha()) + ", "
-            + toStringWithPrecision(getBeta()) + ", "
-            + toStringWithPrecision(getSigma()) + ", "
-            + toStringWithPrecision(getMu()) + ")";
+            + toStringWithPrecision(getExponent()) + ", "
+            + toStringWithPrecision(getSkewness()) + ", "
+            + toStringWithPrecision(getScale()) + ", "
+            + toStringWithPrecision(getLocation()) + ")";
 }
 
 void StableRand::setParameters(double exponent, double skewness, double scale, double location)
@@ -27,11 +29,6 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
 
-    sigma = scale;
-    if (sigma <= 0)
-        sigma = 1.0;
-    mu = location;
-
     /// Should be cautious, known distributions in priority
     if (RandMath::areEqual(alpha, 2))
         alpha = 2;
@@ -45,37 +42,74 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     else if (RandMath::areEqual(beta, -1))
         beta = -1;
 
-    if (alpha == 2) /// X ~ Normal(mu, 2sigma^2)
-    {
-        N.setMean(mu);
-        N.setSigma(sigma * M_SQRT2);
-    }
-    else if (alpha == 1)
-    {
-        if (beta == 0) /// X ~ Cauchy(mu, sigma)
-        {
-            C.setLocation(mu);
-            C.setScale(sigma);
-        }
-        else /// just alpha == 1
-        {
-            logSigma = std::log(sigma);
-            pdfCoef = 0.5 / beta;
-        }
-    }
-    else if (alpha == .5 && std::fabs(beta) == 1) /// +/- X ~ Levy(mu, sigma)
-    {
-    }
-    else /// Common case: alpha != 1
+    if (alpha == 1 && beta != 0)
+        pdfCoef = 0.5 / beta;
+    if (alpha != 1 && alpha != 2 &&
+        !(alpha == 0.5 && std::fabs(beta) == 1)) /// Common case: alpha != 1
     {
         B = beta * std::tan(M_PI_2 * alpha);
         zeta = -B;
         S = std::pow(1 + B * B, .5 * alphaInv);
         B = std::atan(B);
-        pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
         xi = alphaInv * B;
         integrandCoef = std::pow(std::cos(B), alpham1Inv);
     }
+
+    setScale(scale);
+    setLocation(location);
+}
+
+void StableRand::setLocation(double location)
+{
+    mu = location;
+}
+
+void StableRand::setScale(double scale)
+{
+    sigma = scale;
+    if (sigma <= 0)
+        sigma = 1.0;
+    if (alpha == 1)
+    {
+        if (beta != 0) /// not Cauchy
+            logSigma = std::log(sigma);
+    }
+    else if (alpha == 2) /// Normal
+        pdfCoef = M_SQRT1_2 / sigma;
+    else if (alpha == 0.5 && std::fabs(beta) == 1) /// +/- Levy
+        pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
+    else
+        pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
+}
+
+double StableRand::pdfNormal(double x) const
+{
+    double y = x - mu;
+    y *= pdfCoef;
+    y *= y;
+    y = std::exp(-y);
+    return M_1_SQRTPI * pdfCoef * y;
+}
+
+double StableRand::pdfCauchy(double x) const
+{
+    double y = x - mu;
+    y *= y;
+    y /= sigma;
+    y += sigma;
+    return M_1_PI / y;
+}
+
+double StableRand::pdfLevy(double x) const
+{
+    if (x <= mu)
+        return 0;
+    double xInv = 1.0 / (x - mu);
+    double y = -0.5 * sigma * xInv;
+    y = std::exp(y);
+    y *= xInv;
+    y *= std::sqrt(xInv);
+    return pdfCoef * y;
 }
 
 double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
@@ -206,18 +240,45 @@ double StableRand::f(double x) const
 {
     /// Check all 'good' cases
     if (alpha == 2)
-        return N.f(x);
+        return pdfNormal(x);
     if (alpha == 1 && beta == 0)
-        return C.f(x);
-    /*if (alpha == .5 && beta == 1)
-        return L.f(x);
+        return pdfCauchy(x);
+    if (alpha == .5 && beta == 1)
+        return pdfLevy(x);
     if (alpha == .5 && beta == -1)
-        return L.f(-x);*/
+        return pdfLevy(-x);
 
     /// Now check the others
-    if (alpha == 1)
-        return pdfForAlphaEqualOne(x);
-    return pdfForCommonAlpha(x);
+    return (alpha == 1) ? pdfForAlphaEqualOne(x) : pdfForCommonAlpha(x);
+}
+
+double StableRand::cdfNormal(double x) const
+{
+    double y = x - mu;
+    y *= pdfCoef;
+    y = std::erf(y);
+    ++y;
+    return 0.5 * y;
+}
+
+double StableRand::cdfCauchy(double x) const
+{
+    double y = x - mu;
+    y /= sigma;
+    y = std::atan(y);
+    y *= M_1_PI;
+    return y + 0.5;
+}
+
+double StableRand::cdfLevy(double x) const
+{
+    if (x <= mu)
+        return 0;
+    double y = x - mu;
+    y += y;
+    y = sigma / y;
+    y = std::sqrt(y);
+    return std::erfc(y);
 }
 
 double StableRand::cdfForCommonAlpha(double x) const
@@ -281,20 +342,18 @@ double StableRand::cdfForAlphaEqualOne(double x) const
 
 double StableRand::F(double x) const
 {
-    /// Check all 'good' cases
+    /// Check all 'good' cases    
     if (alpha == 2)
-        return N.F(x);
+        return cdfNormal(x);
     if (alpha == 1 && beta == 0)
-        return C.F(x);
-    /*if (alpha == .5 && beta == 1)
-        return L.F(x);
+        return cdfCauchy(x);
+    if (alpha == .5 && beta == 1)
+        return cdfLevy(x);
     if (alpha == .5 && beta == -1)
-        return 1.0 - L.f(-x);*/
+        return 1.0 - cdfLevy(-x);
 
     /// Now check the others
-    if (alpha == 1)
-        return cdfForAlphaEqualOne(x);
-    return cdfForCommonAlpha(x);
+    return (alpha == 1) ? cdfForAlphaEqualOne(x) : cdfForCommonAlpha(x);
 }
 
 double StableRand::variateForCommonAlpha() const
@@ -327,9 +386,9 @@ double StableRand::variate() const
 {
     /// Check all 'good' cases
     if (alpha == 2)
-        return N.variate();
+        return NormalRand::variate(mu, sigma);
     if (alpha == 1 && beta == 0)
-        return C.variate();
+        return CauchyRand::variate(mu, sigma);
     if (alpha == .5 && beta == 1)
         return LevyRand::variate(mu, sigma);
     if (alpha == .5 && beta == -1)
@@ -346,11 +405,11 @@ void StableRand::sample(QVector<double> &outputData) const
     /// Check all 'good' cases
     if (alpha == 2) {
         for (double &var : outputData)
-            var = N.variate();
+            var = NormalRand::variate(mu, sigma);
     }
     else if (alpha == 1 && beta == 0) {
         for (double &var : outputData)
-            var = C.variate();
+            var = CauchyRand::variate(mu, sigma);
     }
     else if (alpha == .5 && beta == 1) {
         for (double &var : outputData)
@@ -410,14 +469,14 @@ double StableRand::ExcessKurtosis() const
 std::string HoltsmarkRand::name()
 {
     return "Holtsmark("
-            + toStringWithPrecision(getSigma()) + ", "
-            + toStringWithPrecision(getMu()) + ")";
+            + toStringWithPrecision(getScale()) + ", "
+            + toStringWithPrecision(getLocation()) + ")";
 }
 
 
 std::string LandauRand::name()
 {
     return "Landau("
-            + toStringWithPrecision(getSigma()) + ", "
-            + toStringWithPrecision(getMu()) + ")";
+            + toStringWithPrecision(getScale()) + ", "
+            + toStringWithPrecision(getLocation()) + ")";
 }

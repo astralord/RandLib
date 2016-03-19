@@ -6,15 +6,14 @@ double NormalRand::stairWidth[257] = {0};
 double NormalRand::stairHeight[256] = {0};
 const bool NormalRand::dummy = NormalRand::setupTables();
 
-NormalRand::NormalRand(double mean, double var)
+NormalRand::NormalRand(double mean, double var) : StableRand(2.0, 0.0, 1.0, mean)
 {
-    setMean(mean);
     setVariance(var);
 }
 
 std::string NormalRand::name()
 {
-    return "Normal(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getVar()) + ")";
+    return "Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getVar()) + ")";
 }
 
 bool NormalRand::setupTables()
@@ -36,40 +35,26 @@ bool NormalRand::setupTables()
     return true;
 }
 
-void NormalRand::setMean(double mean)
-{
-    mu = mean;
-}
-
-void NormalRand::setSigma(double rootVar)
-{
-    sigma = rootVar;
-    if (sigma <= 0)
-        sigma = 1.0;
-    sigmaSqrt2Inv = M_SQRT1_2 / sigma;
-}
-
 void NormalRand::setVariance(double var)
 {
-    setSigma(std::sqrt(std::max(var, 0.0)));
+    if (var <= 0)
+        var = 1.0;
+    setScale(std::sqrt(var));
+}
+
+double NormalRand::getVar() const
+{
+    return sigma * sigma;
 }
 
 double NormalRand::f(double x) const
 {
-    double y = x - mu;
-    y *= sigmaSqrt2Inv;
-    y *= y;
-    y = std::exp(-y);
-    return M_1_SQRTPI * sigmaSqrt2Inv * y;
+    return StableRand::pdfNormal(x);
 }
 
 double NormalRand::F(double x) const
 {
-    double y = x - mu;
-    y *= sigmaSqrt2Inv;
-    y = std::erf(y);
-    ++y;
-    return .5 * y;
+    return StableRand::cdfNormal(x);
 }
 
 double NormalRand::variate() const
@@ -208,7 +193,7 @@ double NormalRand::Moment(int n) const
 
 bool NormalRand::fitMean_MLE(const QVector<double> &sample)
 {
-    setMean(RandMath::sampleMean(sample));
+    setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
