@@ -8,18 +8,21 @@ NormalRand randomVariable(0, 1);
 std::vector<double> data(1e6);
 randomVariable.sample(data);
 ```
-![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
 
 * Calculate moments and other properties:
 ```c++
 LogNormalRand randomVariable(2, 3);
 std::cout << " Mean = " << randomVariable.Mean()
-          << " Variance = " << randomVariable.Variance()
-          << " Median = " << randomVariable.Median()
-          << " Mode = " << randomVariable.Mode()
-          << " Skewness = " << randomVariable.Skewness()
-          << " Ex. kurtosis = " << randomVariable.ExcessKurtosis();
+          << " and Variance = " << randomVariable.Variance()
+          << "\n Median = " << randomVariable.Median()
+          << " and Mode = " << randomVariable.Mode()
+          << "\n Skewness = " << randomVariable.Skewness()
+          << " and Ex. kurtosis = " << randomVariable.ExcessKurtosis();
 ```
+![alt tag](RandLib/images/lognormal11.png)
+Mean = 4.48169 and Variance = 34.5126
+Median = 2.71828 and Mode 1
+Skewness = 6.18488 and Ex. Kurtosis = 110.936
 * Calculate probabilities for discrete distributions and probability density functions for continuous:
 ```c++
 GeometricRand X(4);
