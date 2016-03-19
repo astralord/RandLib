@@ -21,9 +21,7 @@ double BetaPrimeRand::f(double x) const
 
 double BetaPrimeRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-    return BetaRand::F(x / (1.0 + x));
+    return (x > 0) ? BetaRand::F(x / (1.0 + x)) : 0;
 }
 
 double BetaPrimeRand::variate() const

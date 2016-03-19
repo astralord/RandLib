@@ -114,10 +114,10 @@ double PoissonRand::ExcessKurtosis() const
     return 1.0 / lambda;
 }
 
-bool PoissonRand::fitToData(const QVector<int> &sample)
+bool PoissonRand::fit_MLE(const QVector<int> &sample)
 {
     int N = sample.size();
-    if (N == 0)
+    if (N <= 0)
         return false;
 
     /// Calculate mu

@@ -13,6 +13,73 @@ bool RandMath::areEqual(double a, double b, double eps)
     return false;
 }
 
+static double RandMath::sampleMean(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return 0.0;
+    long double sum = 0.0L;
+    for (double var : sample)
+        sum += var;
+    return sum / n;
+}
+
+static double RandMath::sampleVariance(const QVector<double> &sample, double mean)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return 0.0;
+    long double deviation = 0.0L;
+    for (double var : sample) {
+        double diff = (var - mean);
+        deviation += diff * diff;
+    }
+    return deviation / n;
+}
+
+static double RandMath::sampleVariance(const QVector<double> &sample)
+{
+    return sampleVariance(sample, sampleMean(sample));
+}
+
+static double RandMath::rawMoment(const QVector<double> &sample, int k)
+{
+    int n = sample.size();
+    if (n <= 0 || k < 0)
+        return 0.0;
+    switch(k) {
+        case 0:
+            return n;
+        case 1:
+            return sampleMean(sample);
+        default:
+        {
+            long double sum = 0.0L;
+            for (double var : sample)
+                sum += std::pow(var, k);
+            return sum / n;
+        }
+    }
+}
+
+static double RandMath::centralMoment(const QVector<double> &sample, int k, double mean)
+{
+    int n = sample.size();
+    if (n <= 0 || k <= 1)
+        return 0.0;
+    if (k == 2)
+        return sampleVariance(sample, mean);
+    long double sum = 0.0L;
+    for (double var : sample)
+        sum += std::pow(var - mean, k);
+    return sum / n;
+}
+
+static double RandMath::centralMoment(const QVector<double> &sample, int k)
+{
+    return centralMoment(sample, k, sampleMean(sample));
+}
+
 long double RandMath::factorialForSmallValue(int n)
 {
     int residue = n % 10;

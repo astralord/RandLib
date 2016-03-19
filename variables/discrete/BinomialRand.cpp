@@ -239,10 +239,10 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
-bool BinomialRand::fitPToData(const QVector<int> &sample)
+bool BinomialRand::fitProbability_MLE(const QVector<int> &sample)
 {
     int N = sample.size();
-    if (N == 0)
+    if (N <= 0)
         return false;
 
     long double sum = 0.0L;

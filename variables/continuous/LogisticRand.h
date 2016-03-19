@@ -31,6 +31,11 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+    
+    /// Method of moments
+    bool fitLocation_MM(const QVector<double> &sample);
+    bool fitScale_MM(const QVector<double> &sample);
+    bool fit_MM(const QVector<double> &sample);
 };
 
 #endif // LOGISTICRAND_H

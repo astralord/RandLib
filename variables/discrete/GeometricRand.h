@@ -48,6 +48,9 @@ public:
     double ExcessKurtosis() const override;
 
     inline double Entropy() const;
+    
+    bool fit_MLE(const QVector<int> &sample);
+    bool fit_MM(const QVector<int> &sample);
 };
 
 #endif // GEOMETRICRAND_H

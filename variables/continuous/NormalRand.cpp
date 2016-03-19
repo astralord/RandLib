@@ -202,41 +202,54 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-bool NormalRand::fitMeanToData(const QVector<double> &sample)
+bool NormalRand::fitMean_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
-        return false;
-
-    long double sum = 0.0L;
-    for (double var : sample) {
-        sum += var;
-    }
-
-    setMean(sum / N);
+    setMean(RandMath::sampleMean(sample));
     return true;
 }
 
-bool NormalRand::fitVarianceToData(const QVector<double> &sample)
+bool NormalRand::fitVariance_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
-        return false;
-
-    long double deviation = 0.0L;
-    for (double var : sample) {
-        double currDev = (var - mu);
-        deviation += currDev * currDev;
-    }
-    deviation /= std::max(N - 1, 1);
-
-    setVariance(deviation);
+    setVariance(RandMath::sampleVariance(sample));
     return true;
 }
 
-bool NormalRand::fitToData(const QVector<double> &sample)
+bool NormalRand::fit_MLE(const QVector<double> &sample)
 {
-    if (fitMeanToData(sample))
-        return fitVarianceToData(sample);
-    return false;
+    return fitMean_MLE(sample) ? fitVariance_MLE(sample) : false;
+}
+
+bool NormalRand::fitMean_MM(const QVector<double> &sample)
+{
+    return fitMean_MLE(sample);
+}
+
+bool NormalRand::fitVariance_MM(const QVector<double> &sample)
+{
+    return fitVariance_MLE(sample);
+}
+
+bool NormalRand::fit_MM(const QVector<double> &sample)
+{
+    return fit_MLE(sample);
+}
+
+bool NormalRand::fitMean_UMVU(const QVector<double> &sample)
+{
+    return fitMean_MLE(sample);
+}
+
+bool NormalRand::fitVariance_UMVU(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 1)
+        return false;
+    double s = RandMath::sampleVariance(sample, mu);
+    setVariance(n * s / (n - 1));
+    return true;
+}
+
+bool NormalRand::fit_UMVU(const QVector<double> &sample)
+{
+    return fitMean_MLE(sample) ? fitVariance_UMVU(sample) : false;
 }

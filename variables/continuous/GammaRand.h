@@ -54,7 +54,12 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool fitToData(const QVector<double> &sample);
+    bool fitScale_MLE(const QVector<double> &sample);
+    bool fit_MLE(const QVector<double> &sample);
+    
+    bool fitShape_MM(const QVector<double> &sample);
+    bool fitScale_MM(const QVector<double> &sample);
+    bool fit_MM(const QVector<double> &sample);
 
     /**
      * @brief getInverseGammaFunction

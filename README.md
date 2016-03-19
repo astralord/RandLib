@@ -82,7 +82,7 @@ Continuous:
 |     von Mises     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:warning:|
 |     Wald (Inverse Gaussian)     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Weibull     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     von Wigner Semicircle     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Wigner Semicircle     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 
 Discrete:
 

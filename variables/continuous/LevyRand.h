@@ -6,10 +6,10 @@
 /**
  * @brief The LevyRand class
  *
- * f(x|mu, c) =
+ * f(x|\mu, c) = \sqrt(c exp(c / (\mu - x)) / (2 \pi (x - \mu)^3)
  *
- * X ~ Levy(mu, c)
- * X ~ Stable(0.5, 1, mu, c)
+ * X ~ Levy(\mu, c)
+ * X ~ Stable(0.5, 1, \mu, c)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRand
 {
@@ -39,6 +39,12 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+    
+    /// Verify that all elements are bigger than \mu
+    bool checkValidity(const QVector<double> &sample);
+    
+    /// Maximum likelihood estimators
+    bool fitScale_MLE(const QVector<double> &sample);
 };
 
 #endif // LEVYRAND_H

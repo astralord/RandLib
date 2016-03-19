@@ -228,23 +228,41 @@ double GammaRand::ExcessKurtosis() const
     return 6.0 * kInv;
 }
 
-bool GammaRand::fitToData(const QVector<double> &sample)
+bool GammaRand::fitScale_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
+    int n = sample.size();
+    if (n <= 0)
         return false;
 
-    /// Calculate average
+    /// Calculate sum
+    long double sum = 0.0L;
+    for (double var : sample) {
+        if (var < 0)
+            return false;
+        sum += var;
+    }
+    
+    setParameters(k, sum / (n * k));
+    return true;
+}
+
+bool GammaRand::fit_MLE(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+
+    /// Calculate averages
     long double average = 0.0L;
     long double logAverage = 0.0L;
     for (double var : sample) {
-        if (var <= 0)
+        if (var < 0)
             return false;
         average += var;
         logAverage += std::log(var);
     }
-    average /= N;
-    logAverage /= N;
+    average /= n;
+    logAverage /= n;
 
     /// Calculate initial guess for shape
     double s = std::log(average) - logAverage;
@@ -265,5 +283,51 @@ bool GammaRand::fitToData(const QVector<double> &sample)
         return false;
 
     setParameters(shape, average / shape);
+    return true;
+}
+
+bool GammaRand::fitShape_MM(const QVector<double> &sample)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+
+    /// Calculate first moment
+    long double sum = 0.0L;
+    for (double var : sample) {
+        if (var < 0)
+            return false;
+        sum += var;
+    }
+    
+    setParameters(sum / (n * theta), theta);
+    return true;
+}
+
+bool GammaRand::fitScale_MM(const QVector<double> &sample)
+{
+    return fitScale_MLE(sample);
+}
+
+bool GammaRand::fit_MM(const QVector<double> &sample)
+{  
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+
+    /// Calculate first moment
+    long double mu1 = 0.0L, mu2 = 0.0L;
+    for (double var : sample) {
+        if (var < 0)
+            return false;
+        mu1 += var;
+        mu2 += var * var;
+    }
+    mu1 /= n;
+    mu2 /= n;
+    double mu1Sq = mu1 * mu1;
+    double shape = mu1Sq / (mu2 - mu1Sq);
+    
+    setParameters(shape, mu1 / shape);
     return true;
 }

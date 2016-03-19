@@ -41,7 +41,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool fitToData(const QVector<int> &sample);
+    bool fit_MLE(const QVector<int> &sample);
 };
 
 #endif // POISSONRAND_H
