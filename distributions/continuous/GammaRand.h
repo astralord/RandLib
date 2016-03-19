@@ -8,7 +8,7 @@
 /**
  * @brief The GammaRand class
  */
-class RANDLIBSHARED_EXPORT GammaRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
 protected:
     double k, theta;

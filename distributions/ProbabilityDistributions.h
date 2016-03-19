@@ -1,11 +1,11 @@
-#ifndef RANDOM_VARIABLES_H
-#define RANDOM_VARIABLES_H
+#ifndef PROBABILITY_DISTRIBUTIONS_H
+#define PROBABILITY_DISTRIBUTIONS_H
 
-#include "RandomVariable.h"
+#include "ProbabilityDistribution.h"
 #include "BasicRandGenerator.h"
 
 /// DISCRETE
-#include "discrete/DiscreteRand.h"
+#include "discrete/DiscreteDistribution.h"
 #include "discrete/BernoulliRand.h"
 #include "discrete/BinomialRand.h"
 #include "discrete/GeometricRand.h"
@@ -21,7 +21,7 @@
 #include "discrete/ZipfRand.h"
 
 /// CONTINUOUS
-#include "continuous/ContinuousRand.h"
+#include "continuous/ContinuousDistribution.h"
 #include "continuous/ArcsineRand.h"
 #include "continuous/BetaPrimeRand.h"
 #include "continuous/BetaRand.h"
@@ -57,7 +57,7 @@
 #include "continuous/WignerSemicircleRand.h"
 
 /// SINGULAR
-#include "singular/SingularRand.h"
+#include "singular/SingularDistribution.h"
 #include "singular/CantorRand.h"
 
 enum DISTRIBUTION {
@@ -114,4 +114,4 @@ enum DISTRIBUTION {
   CANTOR_RAND
 };
 
-#endif // RANDOM_VARIABLES_H
+#endif // PROBABILITY_DISTRIBUTIONS_H

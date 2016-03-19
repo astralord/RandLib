@@ -1,50 +1,50 @@
-#include "RandomVariable.h"
+#include "ProbabilityDistribution.h"
 #include <sstream>      // std::ostringstream
 #include <iomanip>      // std::setprecision
 
-RandomVariable::RandomVariable()
+ProbabilityDistribution::ProbabilityDistribution()
 {
 }
 
-std::string RandomVariable::toStringWithPrecision(const double a_value, const int n)
+std::string ProbabilityDistribution::toStringWithPrecision(const double a_value, const int n)
 {
     std::ostringstream out;
     out << std::setprecision(n) << a_value;
     return out.str();
 }
 
-void RandomVariable::sample(QVector<double> &outputData) const
+void ProbabilityDistribution::sample(QVector<double> &outputData) const
 {
     for (double &var : outputData)
         var = variate();
 }
 
-void RandomVariable::cdf(const QVector<double> &x, QVector<double> &y) const
+void ProbabilityDistribution::cdf(const QVector<double> &x, QVector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 
-std::complex<double> RandomVariable::CF(double t) const
+std::complex<double> ProbabilityDistribution::CF(double t) const
 {
     // TODO:
     return std::complex<double>(t);
 }
 
-void RandomVariable::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const
+void ProbabilityDistribution::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = CF(t[i]);
 }
 
-double RandomVariable::Median() const
+double ProbabilityDistribution::Median() const
 {
     return Quantile(0.5);
 }
 
-double RandomVariable::Skewness() const
+double ProbabilityDistribution::Skewness() const
 {
     double mu = Mean();
     if (std::isnan(mu) || std::isinf(mu))
@@ -63,7 +63,7 @@ double RandomVariable::Skewness() const
     return sum / (var * std::sqrt(var));
 }
 
-double RandomVariable::ExcessKurtosis() const
+double ProbabilityDistribution::ExcessKurtosis() const
 {
     double mu = Mean();
     if (std::isnan(mu) || std::isinf(mu))
@@ -83,7 +83,7 @@ double RandomVariable::ExcessKurtosis() const
     return sum / (var * var) - 3;
 }
 
-double RandomVariable::Kurtosis() const
+double ProbabilityDistribution::Kurtosis() const
 {
     return ExcessKurtosis() + 3.0;
 }

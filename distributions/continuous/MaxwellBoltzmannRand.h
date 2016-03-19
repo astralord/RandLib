@@ -6,7 +6,7 @@
 /**
  * @brief The MaxwellBoltzmannRand class
  */
-class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ContinuousDistribution
 {
     double a;
 

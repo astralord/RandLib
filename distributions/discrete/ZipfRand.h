@@ -1,13 +1,13 @@
 #ifndef ZIPFRAND_H
 #define ZIPFRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "../continuous/UniformRand.h"
 
 /**
  * @brief The ZipfRand class
  */
-class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
 {
     double s;
     int N;

@@ -1,14 +1,14 @@
 #ifndef ZETARAND_H
 #define ZETARAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 
 /**
  * @brief The ZetaRand class
  *
  * P(X = k | n) = 1 / (k^s * zeta(s))
  */
-class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 {
     double s, sm1;
     double zetaSInv; /// 1.0 / zeta(s)

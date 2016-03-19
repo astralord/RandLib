@@ -1,7 +1,7 @@
 #ifndef CAUCHYRAND_H
 #define CAUCHYRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The CauchyRand class
@@ -10,7 +10,7 @@
  *
  * X ~ Cauchy(x_0, \gamma)
  */
-class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousDistribution
 {
     double x0, gamma;
     double gammaInv; /// 1 / gamma

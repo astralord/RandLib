@@ -1,12 +1,12 @@
 #ifndef EXPONENTIALRAND_H
 #define EXPONENTIALRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The ExponentialRand class
  */
-class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT ExponentialRand : public ContinuousDistribution
 {
     double lambda, beta;
 

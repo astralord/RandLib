@@ -11,7 +11,7 @@
  *
  * X ~ Beta(\alpha, \beta)
  */
-class RANDLIBSHARED_EXPORT BetaRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
 {
 
 protected:

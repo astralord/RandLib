@@ -8,7 +8,7 @@ CONFIG += c++14
 DEFINES += RANDLIB_LIBRARY
 
 SOURCES += \
-    distributions/RandomVariable.cpp \
+    distributions/ProbabilityDistribution.cpp \
     distributions/BasicRandGenerator.cpp \
     distributions/continuous/BetaRand.cpp \
     distributions/continuous/CauchyRand.cpp \
@@ -25,11 +25,11 @@ SOURCES += \
     distributions/continuous/UniformRand.cpp \
     distributions/continuous/ParetoRand.cpp \
     distributions/continuous/ErlangRand.cpp \
-    distributions/continuous/ContinuousRand.cpp \
+    distributions/continuous/ContinuousDistribution.cpp \
     distributions/continuous/RayleighRand.cpp \
     distributions/continuous/TriangularRand.cpp \
     distributions/continuous/LogisticRand.cpp \
-    distributions/discrete/DiscreteRand.cpp \
+    distributions/discrete/DiscreteDistribution.cpp \
     distributions/discrete/UniformDiscreteRand.cpp \
     distributions/discrete/PoissonRand.cpp \
     processes/StochasticProcess.cpp \
@@ -58,7 +58,7 @@ SOURCES += \
     distributions/continuous/GumbelRand.cpp \
     distributions/discrete/LogarithmicRand.cpp \
     distributions/discrete/ZetaRand.cpp \
-    distributions/singular/SingularRand.cpp \
+    distributions/singular/SingularDistribution.cpp \
     distributions/singular/CantorRand.cpp \
     distributions/continuous/RaisedCosineRand.cpp \
     processes/UhlenbeckOrnsteinProcess.cpp \
@@ -69,8 +69,8 @@ SOURCES += \
 
 HEADERS +=\
     randlib_global.h \
-    distributions/Randomdistributions.h \
-    distributions/RandomVariable.h \
+    distributions/ProbabilityDistributions.h \
+    distributions/ProbabilityDistribution.h \
     distributions/BasicRandGenerator.h \
     distributions/continuous/BetaRand.h \
     distributions/continuous/CauchyRand.h \
@@ -87,11 +87,11 @@ HEADERS +=\
     distributions/continuous/UniformRand.h \
     distributions/continuous/ParetoRand.h \
     distributions/continuous/ErlangRand.h \
-    distributions/continuous/ContinuousRand.h \
+    distributions/continuous/ContinuousDistribution.h \
     distributions/continuous/RayleighRand.h \
     distributions/continuous/TriangularRand.h \
     distributions/continuous/LogisticRand.h \
-    distributions/discrete/DiscreteRand.h \
+    distributions/discrete/DiscreteDistribution.h \
     distributions/discrete/UniformDiscreteRand.h \
     distributions/discrete/PoissonRand.h \
     processes/StochasticProcess.h \
@@ -121,7 +121,7 @@ HEADERS +=\
     distributions/continuous/GumbelRand.h \
     distributions/discrete/LogarithmicRand.h \
     distributions/discrete/ZetaRand.h \
-    distributions/singular/SingularRand.h \
+    distributions/singular/SingularDistribution.h \
     distributions/singular/CantorRand.h \
     distributions/continuous/RaisedCosineRand.h \
     processes/UhlenbeckOrnsteinProcess.h \

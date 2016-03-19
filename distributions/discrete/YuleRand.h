@@ -1,7 +1,7 @@
 #ifndef YULERAND_H
 #define YULERAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "GeometricRand.h"
 #include "../continuous/ExponentialRand.h"
 #include "../continuous/ParetoRand.h"
@@ -9,7 +9,7 @@
 /**
  * @brief The YuleRand class
  */
-class RANDLIBSHARED_EXPORT YuleRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 {
     double ro;
     double gamma1pRo;

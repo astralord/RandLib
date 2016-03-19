@@ -1,12 +1,12 @@
 #ifndef RAISEDCOSINERAND_H
 #define RAISEDCOSINERAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The RaisedCosineRand class
  */
-class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 {
     double mu, s;
     double s_pi; /// M_1_PI * s

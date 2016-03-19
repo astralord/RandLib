@@ -1,5 +1,5 @@
-#ifndef RANDOMVARIABLE_H
-#define RANDOMVARIABLE_H
+#ifndef PROBABILITY_DISTRIBUTION_H
+#define PROBABILITY_DISTRIBUTION_H
 
 #include <cmath>
 #include <string>
@@ -8,9 +8,9 @@
 #include "randlib_global.h"
 
 /**
- * @brief The RandomVariable class
+ * @brief The ProbabilityDistribution class
  */
-class RANDLIBSHARED_EXPORT RandomVariable
+class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
 
 protected:
@@ -18,12 +18,12 @@ protected:
     std::string toStringWithPrecision(const double a_value, const int n = 6);
 
 public:
-    RandomVariable();
-    virtual ~RandomVariable() {}
+    ProbabilityDistribution();
+    virtual ~ProbabilityDistribution() {}
 
     /**
      * @brief name
-     * @return name of distribution, for instance "Normal(0, 1)"
+     * @return title of distribution, for instance "Normal(0, 1)"
      */
     virtual std::string name() = 0;
 
@@ -134,4 +134,4 @@ public:
     virtual double Kurtosis() const;
 };
 
-#endif // RANDOMVARIABLE_H
+#endif // PROBABILITY_DISTRIBUTION_H

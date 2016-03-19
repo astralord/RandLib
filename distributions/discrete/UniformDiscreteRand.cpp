@@ -73,8 +73,9 @@ double UniformDiscreteRand::Skewness() const
 
 double UniformDiscreteRand::ExcessKurtosis() const
 {
-    double nSq = n * n;
-    return -1.2 * (nSq + 1) / (nSq - 1);
+    double res = 2.0 / (n * n - 1);
+    ++res;
+    return -1.2 * res;
 }
 
 std::complex<double> UniformDiscreteRand::CF(double t) const

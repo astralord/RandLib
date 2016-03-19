@@ -1,13 +1,13 @@
-#ifndef UNIFORMDISCRETERAND_H
-#define UNIFORMDISCRETERAND_H
+#ifndef UNIFORM_DISCRETE_RAND_H
+#define UNIFORM_DISCRETE_RAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "../BasicRandGenerator.h"
 
 /**
  * @brief The UniformDiscreteRand class
  */
-class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
     int n, a, b;
     double nInv; /// 1.0 / n
@@ -37,4 +37,4 @@ public:
     inline double Entropy() { return std::log(n); }
 };
 
-#endif // UNIFORMDISCRETERAND_H
+#endif // UNIFORM_DISCRETE_RAND_H

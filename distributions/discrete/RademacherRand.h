@@ -1,13 +1,13 @@
 #ifndef RADEMACHERRAND_H
 #define RADEMACHERRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "../BasicRandGenerator.h"
 
 /**
  * @brief The RademacherRand class
  */
-class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteDistribution
 {
 public:
     RademacherRand();

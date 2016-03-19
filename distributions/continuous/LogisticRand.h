@@ -1,10 +1,10 @@
 #ifndef LOGISTICRAND_H
 #define LOGISTICRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 #include "UniformRand.h"
 
-class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {
     double mu, s;
 

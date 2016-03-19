@@ -1,7 +1,7 @@
 #ifndef POISSONRAND_H
 #define POISSONRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 
@@ -10,7 +10,7 @@
  *
  * P(X = k) = l^k * e^(-l) / k!
  */
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
     double lambda;
     double expmLambda; /// exp(-lambda)

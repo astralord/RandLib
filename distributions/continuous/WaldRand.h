@@ -1,14 +1,14 @@
 #ifndef WALDRAND_H
 #define WALDRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The WaldRand class
  * Wald (Inverse Gaussian) distribution
  * X ~ IG(mu, l)
  */
-class RANDLIBSHARED_EXPORT WaldRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT WaldRand : public ContinuousDistribution
 {
     double mu, lambda;
 

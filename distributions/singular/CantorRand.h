@@ -1,13 +1,13 @@
 #ifndef CANTORRAND_H
 #define CANTORRAND_H
 
-#include "SingularRand.h"
+#include "SingularDistribution.h"
 #include "../discrete/BernoulliRand.h"
 
 /**
  * @brief The CantorRand class
  */
-class RANDLIBSHARED_EXPORT CantorRand : public SingularRand
+class RANDLIBSHARED_EXPORT CantorRand : public SingularDistribution
 {
     BernoulliRand B; /// for generator
     double generatorPrecision;

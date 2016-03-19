@@ -11,7 +11,7 @@
  * X ~ Levy(\mu, c)
  * X ~ Stable(0.5, 1, \mu, c)
  */
-class RANDLIBSHARED_EXPORT LevyRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT LevyRand : public ContinuousDistribution
 {
     double mu, c;
     double sqrtc_2pi; /// sqrtc_2pi = sqrt(0.5 * c / pi)

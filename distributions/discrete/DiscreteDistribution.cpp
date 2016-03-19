@@ -1,6 +1,6 @@
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 
-void DiscreteRand::pmf(const QVector<int> &x, QVector<double> &y) const
+void DiscreteDistribution::pmf(const QVector<int> &x, QVector<double> &y) const
 {
     if (x.size() != y.size())
         return;
@@ -8,7 +8,7 @@ void DiscreteRand::pmf(const QVector<int> &x, QVector<double> &y) const
         y[i] = P(x[i]);
 }
 
-double DiscreteRand::Quantile(double probability) const
+double DiscreteDistribution::Quantile(double probability) const
 {
     if (probability < 0 || probability > 1)
         return NAN;
@@ -43,12 +43,12 @@ double DiscreteRand::Quantile(double probability) const
     return (fd < probability) ? up : down;
 }
 
-double DiscreteRand::Hazard(double x) const
+double DiscreteDistribution::Hazard(double x) const
 {
     return P(x) / (1.0 - F(x));
 }
 
-double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
+double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     static constexpr double epsilon = 1e-12;
     static constexpr int maxIter = 1e4; // why so small?
@@ -88,7 +88,7 @@ double DiscreteRand::ExpectedValue(const std::function<double (double)> &funPtr,
     return sum;
 }
 
-double DiscreteRand::likelihood(const QVector<int> &sample) const
+double DiscreteDistribution::likelihood(const QVector<int> &sample) const
 {
     double res = 1.0;
     for (const int & var : sample )
@@ -96,7 +96,7 @@ double DiscreteRand::likelihood(const QVector<int> &sample) const
     return res;
 }
 
-double DiscreteRand::loglikelihood(const QVector<int> &sample) const
+double DiscreteDistribution::loglikelihood(const QVector<int> &sample) const
 {
     double res = 0.0;
     for (const int & var : sample )

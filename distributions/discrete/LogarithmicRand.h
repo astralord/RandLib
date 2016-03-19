@@ -1,12 +1,12 @@
 #ifndef LOGARITHMICRAND_H
 #define LOGARITHMICRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 
 /**
  * @brief The LogarithmicRand class
  */
-class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
 {
     double p, q;
     double logQInv; /// 1 / log(q)

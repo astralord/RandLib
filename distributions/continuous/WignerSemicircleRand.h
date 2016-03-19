@@ -3,7 +3,7 @@
 
 #include "BetaRand.h"
 
-class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
 {
     double R, RSq;
     BetaRand X; /// for generator

@@ -9,7 +9,7 @@
  *
  * X ~ F(d1, d2)
  */
-class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 {
     int d1, d2;
     double pdfCoef;

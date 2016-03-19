@@ -1,13 +1,13 @@
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
-void ContinuousRand::pdf(const QVector<double> &x, QVector<double> &y) const
+void ContinuousDistribution::pdf(const QVector<double> &x, QVector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = f(x[i]);
 }
 
-double ContinuousRand::Quantile(double p) const
+double ContinuousDistribution::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
@@ -28,12 +28,12 @@ double ContinuousRand::Quantile(double p) const
     return INFINITY;
 }
 
-double ContinuousRand::Hazard(double x) const
+double ContinuousDistribution::Hazard(double x) const
 {
     return f(x) / (1.0 - F(x));
 }
 
-double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
+double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
@@ -74,12 +74,12 @@ double ContinuousRand::ExpectedValue(const std::function<double (double)> &funPt
     lowerBoundary, upperBoundary, epsilon);
 }
 
-double ContinuousRand::Median() const
+double ContinuousDistribution::Median() const
 {
     return Quantile(0.5);
 }
 
-double ContinuousRand::Mode() const
+double ContinuousDistribution::Mode() const
 {
     /// use only for unimodal distributions!
 
@@ -116,7 +116,7 @@ double ContinuousRand::Mode() const
     return root;
 }
 
-double ContinuousRand::likelihood(const QVector<double> &sample) const
+double ContinuousDistribution::likelihood(const QVector<double> &sample) const
 {
     double res = 1.0;
     for (const double & var : sample )
@@ -124,7 +124,7 @@ double ContinuousRand::likelihood(const QVector<double> &sample) const
     return res;
 }
 
-double ContinuousRand::loglikelihood(const QVector<double> &sample) const
+double ContinuousDistribution::loglikelihood(const QVector<double> &sample) const
 {
     double res = 0.0;
     for (const double & var : sample )

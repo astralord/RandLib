@@ -6,7 +6,7 @@
 /**
  * @brief The NakagamiRand class
  */
-class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
     double m, w;
     double sigma; /// w / m

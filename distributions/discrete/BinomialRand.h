@@ -1,13 +1,13 @@
 #ifndef BINOMIALRAND_H
 #define BINOMIALRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "GeometricRand.h"
 
 /**
  * @brief The BinomialRand class
  */
-class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteDistribution
 {
 protected:
     double p, q;

@@ -1,7 +1,7 @@
 #ifndef NORMALRAND_H
 #define NORMALRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The NormalRand class
@@ -10,7 +10,7 @@
  *
  * Normal distribution: X ~ N(mu, sigma)
  */
-class RANDLIBSHARED_EXPORT NormalRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT NormalRand : public ContinuousDistribution
 {
     double mu, sigma;
     double sigmaSqrt2Inv; /// 1 / (sigma * sqrt(2))

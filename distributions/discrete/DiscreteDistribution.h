@@ -1,16 +1,16 @@
-#ifndef DISCRETERAND_H
-#define DISCRETERAND_H
+#ifndef DISCRETE_DISTRIBUTION_H
+#define DISCRETE_DISTRIBUTION_H
 
-#include "../RandomVariable.h"
+#include "../ProbabilityDistribution.h"
 
 /**
- *@brief The DiscreteRand class
+ *@brief The DiscreteDistribution class
  */
-class RANDLIBSHARED_EXPORT DiscreteRand : public RandomVariable
+class RANDLIBSHARED_EXPORT DiscreteDistribution : public ProbabilityDistribution
 {
 public:
-    DiscreteRand() : RandomVariable() {}
-    virtual ~DiscreteRand() {}
+    DiscreteDistribution() : ProbabilityDistribution() {}
+    virtual ~DiscreteDistribution() {}
 
     /**
      * @brief P
@@ -38,4 +38,4 @@ public:
     double loglikelihood(const QVector<int> &sample) const;
 };
 
-#endif // DISCRETERAND_H
+#endif // DISCRETE_DISTRIBUTION_H

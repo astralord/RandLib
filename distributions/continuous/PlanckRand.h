@@ -4,7 +4,7 @@
 #include "GammaRand.h"
 #include "../discrete/ZetaRand.h"
 
-class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
 {
     double a, b;
     double pdfCoef;

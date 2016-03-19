@@ -6,7 +6,7 @@
 /**
  * @brief The LaplaceRand class
  */
-class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousDistribution
 {
     double mu, b;
     double bInv; /// 1 / b

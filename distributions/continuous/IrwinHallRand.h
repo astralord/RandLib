@@ -10,7 +10,7 @@
  *
  * The sum of a number of independent random variables, each having a uniform distribution on [0, 1]
  */
-class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
 {
     UniformRand U;
     double pdfCoef, cdfCoef;

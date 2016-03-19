@@ -1,9 +1,9 @@
 #ifndef SECHRAND_H
 #define SECHRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
-class RANDLIBSHARED_EXPORT SechRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
 {
 public:
     SechRand();

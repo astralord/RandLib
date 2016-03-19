@@ -1,16 +1,16 @@
-#ifndef CONTINUOUSRAND_H
-#define CONTINUOUSRAND_H
+#ifndef CONTINUOUS_DISTRIBUTION_H
+#define CONTINUOUS_DISTRIBUTION_H
 
-#include "../RandomVariable.h"
+#include "../ProbabilityDistribution.h"
 
 /**
- * @brief The ContinuousRand class
+ * @brief The ContinuousDistribution class
  */
-class RANDLIBSHARED_EXPORT ContinuousRand : public RandomVariable
+class RANDLIBSHARED_EXPORT ContinuousDistribution : public ProbabilityDistribution
 {
 public:
-    ContinuousRand() : RandomVariable() {}
-    virtual ~ContinuousRand() {}
+    ContinuousDistribution() : ProbabilityDistribution() {}
+    virtual ~ContinuousDistribution() {}
 
     /**
      * @brief f
@@ -39,4 +39,4 @@ public:
     double loglikelihood(const QVector<double> &sample) const;
 };
 
-#endif // CONTINUOUSRAND_H
+#endif // CONTINUOUS_DISTRIBUTION_H

@@ -6,7 +6,7 @@
 /**
  * @brief The RayleighRand class
  */
-class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT RayleighRand : public ContinuousDistribution
 {
     double sigma;
     double sigmaSqInv; // 1.0 / sigma^2

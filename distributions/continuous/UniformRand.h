@@ -1,7 +1,7 @@
 #ifndef UNIFORMRAND_H
 #define UNIFORMRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 #include "../BasicRandGenerator.h"
 
 /**
@@ -11,7 +11,7 @@
  *
  * Continuous uniform distribution: X ~ U(a, b)
  */
-class RANDLIBSHARED_EXPORT UniformRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT UniformRand : public ContinuousDistribution
 {
     double a, b;
     double c; /// 1 / (b - a)

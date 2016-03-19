@@ -1,13 +1,13 @@
 #ifndef SKELLAMRAND_H
 #define SKELLAMRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "PoissonRand.h"
 
 /**
  * @brief The SkellamRand class
  */
-class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 {
     double mu1, mu2;
     double pmfCoef1; /// exp(-(mu1 + mu2))

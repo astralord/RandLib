@@ -1,9 +1,9 @@
 #ifndef FRECHETRAND_H
 #define FRECHETRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
-class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 {
     double alpha, s, m;
     double alphaInv; /// 1.0 / alpha

@@ -1,13 +1,13 @@
 #ifndef HYPERGEOMETRICRAND_H
 #define HYPERGEOMETRICRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "BernoulliRand.h"
 
 /**
  * @brief The HyperGeometricRand class
  */
-class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 {
     int N, K, n;
     double pdfDenominator; /// C(N, n)

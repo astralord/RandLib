@@ -1,12 +1,12 @@
 #ifndef WEIBULLRAND_H
 #define WEIBULLRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The WeibullRand class
  */
-class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
 {
     double lambda, k;
     double lambdaInv, kInv;

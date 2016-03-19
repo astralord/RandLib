@@ -6,7 +6,7 @@
 /**
  * @brief The ParetoRand class
  */
-class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
     double xm, alpha;
     double alphaInv;

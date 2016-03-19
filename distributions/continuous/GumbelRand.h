@@ -1,9 +1,9 @@
 #ifndef GUMBELRAND_H
 #define GUMBELRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
-class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {
     double mu, beta;
     double betaInv;

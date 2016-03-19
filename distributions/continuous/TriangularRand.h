@@ -1,12 +1,12 @@
 #ifndef TRIANGULARRAND_H
 #define TRIANGULARRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The TriangularRand class
  */
-class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
 {
     double a, b, c;
     double constForGenerator; /// (c - a) / (b - a)

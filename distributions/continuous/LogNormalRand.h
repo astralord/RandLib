@@ -1,13 +1,13 @@
 #ifndef LOGNORMALRAND_H
 #define LOGNORMALRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 #include "NormalRand.h"
 
 /**
  * @brief The LogNormalRand class
  */
-class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 {
     double expMu, expVar;
     NormalRand X;

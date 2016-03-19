@@ -6,7 +6,7 @@
 /**
  * @brief The StudentTRand class
  */
-class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
     int v;
     ChiSquaredRand Y;

@@ -11,7 +11,7 @@
 /**
  * @brief The StableRand class
  */
-class RANDLIBSHARED_EXPORT StableRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT StableRand : public ContinuousDistribution
 {
 protected:
     double alpha, beta, mu, sigma;

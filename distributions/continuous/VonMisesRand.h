@@ -1,12 +1,12 @@
 #ifndef VONMISESRAND_H
 #define VONMISESRAND_H
 
-#include "ContinuousRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The VonMisesRand class
  */
-class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousRand
+class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
 {
     double mu, k;
     double I0kInv; /// 1.0 / I_0(k)

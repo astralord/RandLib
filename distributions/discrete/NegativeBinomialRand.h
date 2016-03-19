@@ -1,7 +1,7 @@
 #ifndef NEGATIVEBINOMIALRAND_H
 #define NEGATIVEBINOMIALRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "GeometricRand.h"
 #include "PoissonRand.h"
 #include "../continuous/GammaRand.h"
@@ -11,7 +11,7 @@ template < typename T >
 /**
  * @brief The NegativeBinomialRand class
  */
-class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution
 {
     double p, q;
     T r;

@@ -1,7 +1,7 @@
 #ifndef GEOMETRICRAND_H
 #define GEOMETRICRAND_H
 
-#include "DiscreteRand.h"
+#include "DiscreteDistribution.h"
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 #include <functional>
@@ -9,7 +9,7 @@
 /**
  * @brief The GeometricRand class
  */
-class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteRand
+class RANDLIBSHARED_EXPORT GeometricRand : public DiscreteDistribution
 {
     double p, q;
 
