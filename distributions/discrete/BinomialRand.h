@@ -72,7 +72,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const QVector<int> &sample);
 
     bool fitProbability_MLE(const QVector<int> &sample);
     bool fitProbability_MM(const QVector<int> &sample);

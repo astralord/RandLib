@@ -8,7 +8,7 @@
 /**
  * @brief The PoissonRand class
  *
- * P(X = k) = l^k * e^(-l) / k!
+ * P(X = k) = \lambda^k * e^(-\lambda) / k!
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
@@ -40,6 +40,8 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    bool checkValidity(const QVector<int> &sample);
 
     bool fit_MLE(const QVector<int> &sample);
 };

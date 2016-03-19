@@ -241,7 +241,7 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
-bool BinomialRand::checkValidity(const QVector<double> &sample)
+bool BinomialRand::checkValidity(const QVector<int> &sample)
 {
     for (int var : sample) {
         if (var < 0 || var > n)
@@ -252,8 +252,9 @@ bool BinomialRand::checkValidity(const QVector<double> &sample)
 
 bool BinomialRand::fitProbability_MLE(const QVector<int> &sample)
 {
-    double average = RandMath::sampleMean(sample);
-    setParameters(n, average / n);
+    if (!checkValidity(sample))
+        return false;
+    setParameters(n, RandMath::sampleMean(sample) / n);
     return true;
 }
 

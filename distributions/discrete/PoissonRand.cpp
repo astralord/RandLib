@@ -114,20 +114,19 @@ double PoissonRand::ExcessKurtosis() const
     return 1.0 / lambda;
 }
 
-bool PoissonRand::fit_MLE(const QVector<int> &sample)
+bool PoissonRand::checkValidity(const QVector<int> &sample)
 {
-    int N = sample.size();
-    if (N <= 0)
-        return false;
-
-    /// Calculate mu
-    long double sum = 0.0L;
     for (int var : sample) {
         if (var < 0)
             return false;
-        sum += var;
     }
+    return true;
+}
 
-    setRate(sum / N);
+bool PoissonRand::fit_MLE(const QVector<int> &sample)
+{
+    if (!checkValidity(sample))
+        return false;
+    setRate(RandMath::sampleMean(sample));
     return true;
 }
