@@ -6,7 +6,7 @@ double ExponentialRand::stairWidth[257] = {0};
 double ExponentialRand::stairHeight[256] = {0};
 bool ExponentialRand::dummy = ExponentialRand::setupTables();
 
-ExponentialRand::ExponentialRand(double rate)
+ExponentialRand::ExponentialRand(double rate) : GammaRand()
 {
     setRate(rate);
 }
@@ -38,25 +38,25 @@ bool ExponentialRand::setupTables()
 
 void ExponentialRand::setRate(double rate)
 {
-    lambda = rate;
-    if (lambda <= 0)
-        lambda = 1.0;
-    beta = 1.0 / lambda;
+    thetaInv = rate;
+    if (thetaInv <= 0)
+        thetaInv = 1.0;
+    setParameters(1, 1.0 / thetaInv);
 }
 
 double ExponentialRand::f(double x) const
 {
-    return (x > 0) ? lambda * std::exp(-lambda * x) : 0;
+    return (x > 0) ? thetaInv * std::exp(-thetaInv * x) : 0;
 }
 
 double ExponentialRand::F(double x) const
 {
-    return (x > 0) ? 1 - std::exp(-lambda * x) : 0;
+    return (x > 0) ? 1 - std::exp(-thetaInv * x) : 0;
 }
 
 double ExponentialRand::variate() const
 {
-    return beta * standardVariate();
+    return theta * standardVariate();
 }
 
 double ExponentialRand::variate(double rate)
@@ -89,9 +89,7 @@ double ExponentialRand::standardVariate()
 
 std::complex<double> ExponentialRand::CF(double t) const
 {
-    double rate2 = lambda * lambda;
-    double denominator = rate2 + t * t;
-    return std::complex<double>(rate2 / denominator, lambda * t / denominator);
+    return std::complex<double>(1.0, -theta * t);
 }
 
 double ExponentialRand::Quantile(double p) const
@@ -100,27 +98,12 @@ double ExponentialRand::Quantile(double p) const
         return NAN;
     if (p == 1)
         return INFINITY;
-    return -beta * std::log(1.0 - p);
+    return -theta * std::log(1.0 - p);
 }
 
 double ExponentialRand::Median() const
 {
-    return beta * M_LN2;
-}
-
-double ExponentialRand::Mode() const
-{
-    return 0.0;
-}
-
-double ExponentialRand::Skewness() const
-{
-    return 2.0;
-}
-
-double ExponentialRand::ExcessKurtosis() const
-{
-    return 6.0;
+    return theta * M_LN2;
 }
 
 double ExponentialRand::Entropy() const
@@ -134,16 +117,7 @@ double ExponentialRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return RandMath::factorial(n) / std::pow(lambda, n);
-}
-
-bool ExponentialRand::checkValidity(const QVector<double> &sample)
-{
-    for (double var : sample) {
-        if (var < 0)
-            return false;
-    }
-    return true;
+    return RandMath::factorial(n) / std::pow(thetaInv, n);
 }
 
 bool ExponentialRand::fit_MLE(const QVector<double> &sample)

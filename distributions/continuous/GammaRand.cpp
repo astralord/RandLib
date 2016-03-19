@@ -1,4 +1,7 @@
 #include "GammaRand.h"
+#include "UniformRand.h"
+#include "ExponentialRand.h"
+#include "NormalRand.h"
 
 GammaRand::GammaRand(double shape, double scale)
 {
@@ -61,62 +64,6 @@ double GammaRand::f(double x) const
 double GammaRand::F(double x) const
 {
     return (x < 0) ? 0 : cdfCoef * RandMath::lowerIncGamma(k, x * thetaInv);
-}
-
-double GammaRand::variate() const
-{
-    if (k < 5) {
-        double k_round = std::round(k);
-        if (RandMath::areEqual(k, k_round))
-            return theta * variateForIntegerShape();
-        if (RandMath::areEqual(k - 0.5, k_round))
-            return theta * variateForIntegerShape();
-        if (k <= 1)
-            return theta * variateForSmallShape();
-        if (k <= 3)
-            return theta * variateForMediumShape();
-    }
-    return theta * variateForLargeShape();
-}
-
-void GammaRand::sample(QVector<double> &outputData) const
-{
-    if (k < 5) {
-        double k_round = std::round(k);
-        if (RandMath::areEqual(k, k_round)) {
-            for (double &var : outputData)
-                var = theta * variateForIntegerShape();
-            return;
-        }
-        if (RandMath::areEqual(k - 0.5, k_round)) {
-            for (double &var : outputData)
-                var = theta * variateForHalfIntegerShape();
-            return;
-        }
-        if (k <= 1) {
-            for (double &var : outputData)
-                var = theta * variateForSmallShape();
-            return;
-        }
-        if (k <= 3) {
-            for (double &var : outputData)
-                var = theta * variateForMediumShape();
-            return;
-        }
-    }
-    
-    for (double &var : outputData)
-        var = theta * variateForLargeShape();
-}
-
-double GammaRand::Mean() const
-{
-    return k * theta;
-}
-
-double GammaRand::Variance() const
-{
-    return k * theta * theta;
 }
 
 double GammaRand::variateForIntegerShape() const
@@ -206,6 +153,61 @@ double GammaRand::variateForLargeShape() const
         }
     } while (++iter < 1e9); /// one billion should be enough
     return NAN; /// shouldn't end up here
+}
+double GammaRand::variate() const
+{
+    if (k < 5) {
+        double k_round = std::round(k);
+        if (RandMath::areEqual(k, k_round))
+            return theta * variateForIntegerShape();
+        if (RandMath::areEqual(k - 0.5, k_round))
+            return theta * variateForIntegerShape();
+        if (k <= 1)
+            return theta * variateForSmallShape();
+        if (k <= 3)
+            return theta * variateForMediumShape();
+    }
+    return theta * variateForLargeShape();
+}
+
+void GammaRand::sample(QVector<double> &outputData) const
+{
+    if (k < 5) {
+        double k_round = std::round(k);
+        if (RandMath::areEqual(k, k_round)) {
+            for (double &var : outputData)
+                var = theta * variateForIntegerShape();
+            return;
+        }
+        if (RandMath::areEqual(k - 0.5, k_round)) {
+            for (double &var : outputData)
+                var = theta * variateForHalfIntegerShape();
+            return;
+        }
+        if (k <= 1) {
+            for (double &var : outputData)
+                var = theta * variateForSmallShape();
+            return;
+        }
+        if (k <= 3) {
+            for (double &var : outputData)
+                var = theta * variateForMediumShape();
+            return;
+        }
+    }
+
+    for (double &var : outputData)
+        var = theta * variateForLargeShape();
+}
+
+double GammaRand::Mean() const
+{
+    return k * theta;
+}
+
+double GammaRand::Variance() const
+{
+    return k * theta * theta;
 }
 
 std::complex<double> GammaRand::CF(double t) const
