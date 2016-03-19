@@ -87,6 +87,16 @@ double ExponentialRand::standardVariate()
     return NAN; /// fail due to some error
 }
 
+double ExponentialRand::Mean() const
+{
+    return beta;
+}
+
+double ExponentialRand::Variance() const
+{
+    return beta * beta;
+}
+
 std::complex<double> ExponentialRand::CF(double t) const
 {
     double rate2 = lambda * lambda;

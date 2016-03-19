@@ -3,6 +3,7 @@
 
 #include "DiscreteDistribution.h"
 #include "GeometricRand.h"
+#include "../continuous/BetaRand.h"
 
 /**
  * @brief The BinomialRand class
@@ -76,6 +77,15 @@ public:
 
     bool fitProbability_MLE(const QVector<int> &sample);
     bool fitProbability_MM(const QVector<int> &sample);
+
+    /**
+     * @brief fitProbability_Bayes
+     * fit probability p with assumption p ~ Beta(\alpha, \beta)
+     * @param sample
+     * @param priorDistribution
+     * @return posterior distribution
+     */
+    bool fitProbability_Bayes(const QVector<int> &sample, BetaRand &priorDistribution);
 };
 
 

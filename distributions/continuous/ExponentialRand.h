@@ -32,8 +32,8 @@ public:
     static double variate(double lambda);
     static double standardVariate();
 
-    double Mean() const override { return beta; }
-    double Variance() const override { return beta * beta; }
+    double Mean() const override;
+    double Variance() const override;
 
     std::complex<double> CF(double t) const override;
     double Quantile(double p) const override;

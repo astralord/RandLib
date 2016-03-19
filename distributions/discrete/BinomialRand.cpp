@@ -262,3 +262,15 @@ bool BinomialRand::fitProbability_MM(const QVector<int> &sample)
 {
     return fitProbability_MLE(sample);
 }
+
+bool BinomialRand::fitProbability_Bayes(const QVector<int> &sample, BetaRand &priorDistribution)
+{
+    int N = sample.size();
+    if (N <= 0)
+        return false;
+    double sum = RandMath::sum(sample);
+    double alpha = priorDistribution.getAlpha();
+    double beta = priorDistribution.getBeta();
+    priorDistribution.setParameters(sum + alpha, N * n + alpha + beta);
+    return priorDistribution.Mean();
+}

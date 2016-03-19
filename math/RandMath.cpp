@@ -13,39 +13,43 @@ bool RandMath::areEqual(double a, double b, double eps)
     return false;
 }
 
-double RandMath::sampleMean(const QVector<double> &sample)
+double RandMath::sum(const QVector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return 0.0;
     long double sum = 0.0L;
     for (double var : sample)
         sum += var;
-    return sum / n;
+    return sum;
+}
+
+double RandMath::sum(const QVector<int> &sample)
+{
+    long double sum = 0.0L;
+    for (double var : sample)
+        sum += var;
+    return sum;
+}
+
+double RandMath::sampleMean(const QVector<double> &sample)
+{
+    int n = sample.size();
+    return (n > 0) ? sum(sample) / n : 0;
 }
 
 double RandMath::sampleMean(const QVector<int> &sample)
 {
     int n = sample.size();
-    if (n <= 0)
-        return 0.0;
-    long double sum = 0.0L;
-    for (double var : sample)
-        sum += var;
-    return sum / n;
+    return (n > 0) ? sum(sample) / n : 0;
 }
 
 double RandMath::sampleVariance(const QVector<double> &sample, double mean)
 {
     int n = sample.size();
-    if (n <= 0)
-        return 0.0;
     long double deviation = 0.0L;
     for (double var : sample) {
         double diff = (var - mean);
         deviation += diff * diff;
     }
-    return deviation / n;
+    return (n > 0) ? deviation / n : 0.0;
 }
 
 double RandMath::sampleVariance(const QVector<double> &sample)

@@ -34,6 +34,13 @@ public:
     static bool areEqual(double a, double b, double eps = 1e-16);
 
     /**
+     * @brief sum
+     * @param sample
+     * @return sum of all elements in a sample
+     */
+    static double sum(const QVector<double> &sample);
+    static double sum(const QVector<int> &sample);
+    /**
      * @brief sampleMean
      * @param sample
      * @return arithmetic average
