@@ -154,6 +154,7 @@ bool LaplaceRand::fit_MLE(const QVector<double> &sample)
 bool LaplaceRand::fitLocation_MM(const QVector<double> &sample)
 {
     setLocation(RandMath::sampleMean(sample));
+    return true;
 }
 
 bool LaplaceRand::fitScale_MM(const QVector<double> &sample)

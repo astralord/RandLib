@@ -159,7 +159,7 @@ bool ExponentialRand::fit_MM(const QVector<double> &sample)
     return fit_MLE(sample);
 }
 
-bool ExponentialRand::fit_MLE(const QVector<double> &sample)
+bool ExponentialRand::fit_UMVU(const QVector<double> &sample)
 {   
     int n = sample.size();
     if (n <= 1 || !checkValidity(sample))

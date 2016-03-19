@@ -13,7 +13,7 @@ bool RandMath::areEqual(double a, double b, double eps)
     return false;
 }
 
-static double RandMath::sampleMean(const QVector<double> &sample)
+double RandMath::sampleMean(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -24,7 +24,7 @@ static double RandMath::sampleMean(const QVector<double> &sample)
     return sum / n;
 }
 
-static double RandMath::sampleVariance(const QVector<double> &sample, double mean)
+double RandMath::sampleVariance(const QVector<double> &sample, double mean)
 {
     int n = sample.size();
     if (n <= 0)
@@ -37,12 +37,12 @@ static double RandMath::sampleVariance(const QVector<double> &sample, double mea
     return deviation / n;
 }
 
-static double RandMath::sampleVariance(const QVector<double> &sample)
+double RandMath::sampleVariance(const QVector<double> &sample)
 {
     return sampleVariance(sample, sampleMean(sample));
 }
 
-static double RandMath::rawMoment(const QVector<double> &sample, int k)
+double RandMath::rawMoment(const QVector<double> &sample, int k)
 {
     int n = sample.size();
     if (n <= 0 || k < 0)
@@ -62,7 +62,7 @@ static double RandMath::rawMoment(const QVector<double> &sample, int k)
     }
 }
 
-static double RandMath::centralMoment(const QVector<double> &sample, int k, double mean)
+double RandMath::centralMoment(const QVector<double> &sample, int k, double mean)
 {
     int n = sample.size();
     if (n <= 0 || k <= 1)
@@ -75,7 +75,7 @@ static double RandMath::centralMoment(const QVector<double> &sample, int k, doub
     return sum / n;
 }
 
-static double RandMath::centralMoment(const QVector<double> &sample, int k)
+double RandMath::centralMoment(const QVector<double> &sample, int k)
 {
     return centralMoment(sample, k, sampleMean(sample));
 }

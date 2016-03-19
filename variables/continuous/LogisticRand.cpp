@@ -93,20 +93,20 @@ double LogisticRand::ExcessKurtosis() const
 }
 
 /// Method of moments
-bool fitLocation_MM(const QVector<double> &sample)
+bool LogisticRand::fitLocation_MM(const QVector<double> &sample)
 {
     setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
-bool fitScale_MM(const QVector<double> &sample)
+bool LogisticRand::fitScale_MM(const QVector<double> &sample)
 {
     double var = RandMath::sampleVariance(sample, mu);
     setScale(std::sqrt(3 * var) / M_PI);
     return true;
 }
 
-bool fit_MM(const QVector<double> &sample)
+bool LogisticRand::fit_MM(const QVector<double> &sample)
 {
     return fitLocation_MM(sample) ? fitScale_MM(sample) : false;
 }

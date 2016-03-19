@@ -40,7 +40,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
     
-    /// Verify that all elements are bigger than \mu
+    /// Verify that all elements of sample can have this distribution
     bool checkValidity(const QVector<double> &sample);
     
     /// Maximum likelihood estimators

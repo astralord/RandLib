@@ -47,7 +47,11 @@ public:
 
     double Moment(int n) const;
 
+    bool checkValidity(const QVector<double> &sample);
+
+    bool fit_MM(const QVector<double> &sample);
     bool fit_MLE(const QVector<double> &sample);
+    bool fit_UMVU(const QVector<double> &sample);
 };
 
 #endif // EXPONENTIALRAND_H

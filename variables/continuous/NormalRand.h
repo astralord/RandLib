@@ -64,7 +64,7 @@ public:
     bool fitVariance_MM(const QVector<double> &sample);
     bool fit_MM(const QVector<double> &sample);
     
-    /// UMVU estimators
+    /// Uniformly minimum variance unbiased (UMVU) estimators
     bool fitMean_UMVU(const QVector<double> &sample);
     bool fitVariance_UMVU(const QVector<double> &sample);
     bool fit_UMVU(const QVector<double> &sample);
