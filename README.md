@@ -63,6 +63,7 @@ Continuous:
 |     Gamma     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Geometric Stable     | :x: | :x: | :white_check_mark: |:white_check_mark:|
 |     Gumbel     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Irwin-Hall     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Laplace     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Levy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Log-normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
