@@ -2,8 +2,7 @@
 #define STABLERAND_H
 
 #include <functional>
-#include "UniformRand.h"
-#include "ExponentialRand.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The StableRand class

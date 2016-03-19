@@ -94,6 +94,7 @@ double NegativeBinomialRand<T>::ExcessKurtosis() const
     return kurtosis / r;
 }
 
+
 template class NegativeBinomialRand<int>;
 template class NegativeBinomialRand<double>;
 
@@ -110,7 +111,7 @@ void PascalRand::setParameters(int number, double probability)
         /// thus we return highest integer less than variate from exponential distribution
         /// otherwise we choose table method
         if (p < 0.2) {
-            Y.setParameters(1, -1.0 / std::log(q));
+            table[0] = -std::log(q);
         }
         else
         {
@@ -181,7 +182,7 @@ double PascalRand::variateGeometricByTable() const
 
 double PascalRand::variateGeometricThroughExponential() const
 {
-    return std::floor(Y.variate());
+    return std::floor(ExponentialRand::standardVariate() * table[0]);
 }
 
 PolyaRand::PolyaRand(double number, double probability) : NegativeBinomialDoubleRand(number, probability)

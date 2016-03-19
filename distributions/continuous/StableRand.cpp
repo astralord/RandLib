@@ -2,6 +2,8 @@
 #include "LevyRand.h"
 #include "CauchyRand.h"
 #include "NormalRand.h"
+#include "UniformRand.h"
+#include "ExponentialRand.h"
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
 {

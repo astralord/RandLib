@@ -1,6 +1,7 @@
 #include "GeometricStableRand.h"
 #include "ExponentialRand.h"
 #include "LaplaceRand.h"
+#include "UniformRand.h"
 
 GeometricStableRand::GeometricStableRand(double exponent, double skewness, double scale, double location) :
     StableRand(exponent, skewness, scale, location)
