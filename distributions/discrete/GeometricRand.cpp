@@ -1,4 +1,5 @@
 #include "GeometricRand.h"
+#include "../continuous/UniformRand.h"
 
 GeometricRand::GeometricRand(double probability)
 {
@@ -12,8 +13,8 @@ std::string GeometricRand::name()
 
 void GeometricRand::setProbability(double probability)
 {
-    p = std::min(probability, 1.0);
-    if (p <= 0)
+    p = probability;
+    if (p < 0.0 || p > 1.0)
         p = 0.5;
     q = 1.0 - p;
 
@@ -68,9 +69,7 @@ double GeometricRand::variateByTable() const
 
 double GeometricRand::variate() const
 {
-    if (p < 0.2)
-        return variateByExponential();
-    return variateByTable();
+    return (p < 0.2) ? variateByExponential() : variateByTable();
 }
 
 double GeometricRand::variate(double probability)
@@ -172,10 +171,10 @@ bool GeometricRand::fit_MM(const QVector<double> &sample)
 
 bool GeometricRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution)
 {
-    int N = sample.size();
+    int n = sample.size();
     double alpha = priorDistribution.getAlpha();
     double beta = priorDistribution.getBeta();
-    priorDistribution.setParameters(alpha + N, beta + RandMath::sum(sample));
+    priorDistribution.setParameters(alpha + n, beta + RandMath::sum(sample));
     setProbability(priorDistribution.Mean());
     return true;
 }

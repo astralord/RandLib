@@ -2,7 +2,6 @@
 #define GEOMETRICRAND_H
 
 #include "DiscreteDistribution.h"
-#include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 #include "../continuous/BetaRand.h"
 #include <functional>

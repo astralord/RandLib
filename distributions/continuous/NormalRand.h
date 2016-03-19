@@ -29,7 +29,7 @@ private:
 
 public:
     void setVariance(double var);
-    inline double getVar() const;
+    double getVar() const;
 
     double f(double x) const override;
     double F(double x) const override;

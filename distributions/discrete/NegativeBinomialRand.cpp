@@ -16,30 +16,32 @@ std::string NegativeBinomialRand<T>::name()
 template< typename T >
 void NegativeBinomialRand<T>::setParameters(T number, double probability)
 {
-    r = std::max(number, static_cast<T>(1.0));
+    r = number;
+    if (r <= 0.0)
+        r = 1;
 
     p = probability;
-    if (p >= 1.0 || p < 0.0)
+    if (p > 1.0 || p < 0.0)
         p = 0.5;
     q = 1.0 - p;
 
     /// use Y OR G (depends on p and r)
-    G.setProbability(q);
+    G.setProbability(p);
 
-    pdfCoef = std::pow(q, r) / std::tgamma(r);
-    Y.setParameters(r, p / q);
+    pdfCoef = std::pow(p, r) / std::tgamma(r);
+    Y.setParameters(r, q / p);
 }
 
 template <>
 double NegativeBinomialRand<double>::P(int k) const
 {
-    return (k < 0) ? 0 : pdfCoef * std::tgamma(r + k) / RandMath::factorial(k) * std::pow(p, k);
+    return (k < 0) ? 0 : pdfCoef * std::tgamma(r + k) / RandMath::factorial(k) * std::pow(q, k);
 }
 
 template <>
 double NegativeBinomialRand<int>::P(int k) const
 {
-    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k - 1) / RandMath::factorial(k) * std::pow(p, k);
+    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k - 1) / RandMath::factorial(k) * std::pow(q, k);
 }
 
 template< typename T >
@@ -47,7 +49,7 @@ double NegativeBinomialRand<T>::F(double x) const
 {
     if (x < 0.0)
         return 0.0;
-    return 1.0 - RandMath::regularizedBetaFun(p, std::floor(x) + 1, r);
+    return 1.0 - RandMath::regularizedBetaFun(q, std::floor(x) + 1, r);
 }
 
 template<>
@@ -82,40 +84,40 @@ double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 template< typename T >
 double NegativeBinomialRand<T>::Mean() const
 {
-    return p * r / q;
+    return q * r / p;
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::Variance() const
 {
-    return p * r / (q * q);
+    return q * r / (p * p);
 }
 
 template< typename T >
 std::complex<double> NegativeBinomialRand<T>::CF(double t) const
 {
-    std::complex<double> denominator(0, t);
-    denominator = 1.0 - p * std::exp(denominator);
-    return std::pow(q / denominator, r);
+    std::complex<double> it(0, t);
+    std::complex<double> denominator = 1.0 - q * std::exp(it);
+    return std::pow(p / denominator, r);
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::Mode() const
 {
-    return (r > 1) ? std::floor((r - 1) * p / q) : 0;
+    return (r > 1) ? std::floor((r - 1) * q / p) : 0;
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::Skewness() const
 {
-    return (1 + p) / std::sqrt(p * r);
+    return (1 + q) / std::sqrt(q * r);
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::ExcessKurtosis() const
 {
-    double kurtosis = q * q;
-    kurtosis /= p;
+    double kurtosis = p * p;
+    kurtosis /= q;
     kurtosis += 6;
     return kurtosis / r;
 }

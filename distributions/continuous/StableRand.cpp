@@ -45,7 +45,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     if (alpha == 1 && beta != 0)
         pdfCoef = 0.5 / beta;
     if (alpha != 1 && alpha != 2 &&
-        !(alpha == 0.5 && std::fabs(beta) == 1)) /// Common case: alpha != 1
+        !(alpha == 0.5 && std::fabs(beta) == 1)) /// Common case
     {
         B = beta * std::tan(M_PI_2 * alpha);
         zeta = -B;
@@ -219,7 +219,6 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     /// find peak of integrand
     double minEdge = (beta > 0) ? -M_PI_2 : -almostPI_2;
     double maxEdge = (beta > 0) ? almostPI_2 : M_PI_2;
-    // TODO: investigate, do we need find a root here?
     double theta0 = 0.5 * (minEdge + maxEdge);
 
     RandMath::findRoot([this, xAdj] (double theta)
