@@ -5,9 +5,11 @@ With RandLib one can work with univariate distributions.
 * Fast sampling. For instance, generate ten thousand variates from standard normal distribution:
 ```c++
 NormalRand randomVariable(0, 1);
-std::vector<double> data(10000);
+std::vector<double> data(1e6);
 randomVariable.sample(data);
 ```
+![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
+
 * Calculate moments and other properties:
 ```c++
 LogNormalRand randomVariable(2, 3);
