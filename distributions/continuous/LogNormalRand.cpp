@@ -87,30 +87,52 @@ double LogNormalRand::ExcessKurtosis() const
     return res - 6;
 }
 
-bool LogNormalRand::fitToData(const QVector<double> &sample)
+bool LogNormalRand::checkValidity(const QVector<double> &sample)
+{
+    for (double var : sample) {
+        if (var <= 0)
+            return false;
+    }
+    return true;
+}
+
+bool LogNormalRand::fitLocation_MM(const QVector<double> &sample)
+{
+    double average = RandMath::sampleMean(sample);
+    double var = X.getVar();
+    setLocation(std::log(average) - 0.5 * var);
+}
+
+bool LogNormalRand::fitScale_MM(const QVector<double> &sample)
+{
+    double average = RandMath::sampleMean(sample);
+    double mu = X.getLocation();
+    double aux = std::log(average) - mu;
+    setScale(std::sqrt(aux + aux));
+}
+
+bool LogNormalRand::fit_MLE(const QVector<double> &sample)
 {
     int N = sample.size();
     if (N == 0)
         return false;
 
     /// Calculate location
-    long double average = 0.0L;
+    long double logMean = 0.0L;
     for (double var : sample) {
-        if (var <= 0)
-            return false;
-        average += std::log(var);
+        logMean += std::log(var);
     }
-    average /= N;
+    logMean /= N;
 
     /// Calculate scale
     long double deviation = 0.0L;
     for (double var : sample) {
-        double currDev = (std::log(var) - average);
+        double currDev = (std::log(var) - logMean);
         deviation += currDev * currDev;
     }
-    deviation /= std::max(N - 1, 1);
+    deviation /= N;
 
-    setLocation(average);
+    setLocation(logMean);
     setScale(std::sqrt(deviation));
     return true;
 }
