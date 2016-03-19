@@ -6,9 +6,9 @@
 /**
  * @brief The CauchyRand class
  *
- * f(x|x0, gamma) =
+ * f(x|x_0, \gamma) = \gamma / [\pi (\gamma^2 + (x - x_0)^2)]
  *
- * X ~ Cauchy(x0, gamma)
+ * X ~ Cauchy(x_0, \gamma)
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public ContinuousRand
 {
