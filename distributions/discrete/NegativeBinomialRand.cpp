@@ -13,7 +13,7 @@ std::string NegativeBinomialRand<T>::name()
 }
 
 template< typename T >
-void NegativeBinomialRand<T>::setParameters(T number, double probability)
+void NegativeBinomialRand<T>::setValidParameters(T number, double probability)
 {
     r = number;
     if (r <= 0.0)
@@ -23,14 +23,58 @@ void NegativeBinomialRand<T>::setParameters(T number, double probability)
     if (p > 1.0 || p < 0.0)
         p = 0.5;
     q = 1.0 - p;
-
-    pdfCoef = std::pow(p, r) / std::tgamma(r);
 }
 
-template < typename T >
-double NegativeBinomialRand<T>::P(int k) const
+template<>
+void NegativeBinomialRand<int>::setParameters(int number, double probability)
+{
+    setValidParameters(number, probability);
+    pdfCoef = std::pow(p, r) / RandMath::factorial(r - 1);
+
+    if (r < 10)
+    {
+        /// we use two different generators for two different cases
+        /// if p < 0.2 then the tail is too heavy
+        /// (probability to be in main body is less than 0.977482)
+        /// thus we return highest integer less than variate from exponential distribution
+        /// otherwise we choose table method
+        if (p < 0.2) {
+            table[0] = -std::log(q);
+        }
+        else
+        {
+            table[0] = p;
+            double prod = p;
+            for (int i = 1; i < tableSize; ++i)
+            {
+                prod *= q;
+                table[i] = table[i - 1] + prod;
+            }
+        }
+    }
+    else {
+        Y.setParameters(r, q / p);
+    }
+}
+
+template<>
+void NegativeBinomialRand<double>::setParameters(double number, double probability)
+{
+    setValidParameters(number, probability);
+    pdfCoef = std::pow(p, r) / std::tgamma(r);
+    Y.setParameters(r, q / p);
+}
+
+template<>
+double NegativeBinomialRand<double>::P(int k) const
 {
     return (k < 0) ? 0 : pdfCoef * std::tgamma(r + k) / RandMath::factorial(k) * std::pow(q, k);
+}
+
+template<>
+double NegativeBinomialRand<int>::P(int k) const
+{
+    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k - 1) / RandMath::factorial(k) * std::pow(q, k);
 }
 
 template< typename T >
@@ -42,15 +86,100 @@ double NegativeBinomialRand<T>::F(double x) const
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::variate() const
+double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
+{
+    return PoissonRand::variate(Y.variate());
+}
+
+template<>
+double NegativeBinomialRand<double>::variate() const
 {
     return variateThroughGammaPoisson();
 }
 
-template< typename T >
-double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
+template<>
+double NegativeBinomialRand<int>::variateGeometricByTable() const
 {
-    return PoissonRand::variate(Y.variate());
+    double U = UniformRand::standardVariate();
+    /// handle tail by recursion
+    if (U > table[tableSize - 1])
+        return tableSize + variateGeometricByTable();
+    /// handle the main body
+    int x = 0;
+    while (U > table[x])
+        ++x;
+    return x;
+}
+
+template<>
+double NegativeBinomialRand<int>::variateGeometricThroughExponential() const
+{
+    return std::floor(ExponentialRand::standardVariate() * table[0]);
+}
+
+template<>
+double NegativeBinomialRand<int>::variateThroughGeometric() const
+{
+    double res = 0;
+    if (p < 0.2)
+    {
+        for (int i = 0; i < r; ++i) {
+            res += variateGeometricThroughExponential();
+        }
+    }
+    else
+    {
+        for (int i = 0; i < r; ++i) {
+            res += variateGeometricByTable();
+        }
+    }
+    return res;
+}
+
+template<>
+double NegativeBinomialRand<int>::variate() const
+{
+    if (r < 10)
+        return variateThroughGeometric();
+    return variateThroughGammaPoisson();
+}
+
+template<>
+void NegativeBinomialRand<double>::sample(QVector<double> &outputData) const
+{
+    for (double &var : outputData)
+        var = variateThroughGammaPoisson();
+}
+
+template<>
+void NegativeBinomialRand<int>::sample(QVector<double> &outputData) const
+{
+    if (r < 10)
+    {
+        if (p < 0.2)
+        {
+            for (double &var : outputData)
+            {
+                var = 0;
+                for (int i = 0; i < r; ++i)
+                    var += variateGeometricThroughExponential();
+            }
+        }
+        else
+        {
+            for (double &var : outputData)
+            {
+                var = 0;
+                for (int i = 0; i < r; ++i)
+                    var += variateGeometricByTable();
+            }
+        }
+    }
+    else
+    {
+        for (double &var : outputData)
+            var = variateThroughGammaPoisson();
+    }
 }
 
 template< typename T >
@@ -97,106 +226,3 @@ double NegativeBinomialRand<T>::ExcessKurtosis() const
 
 template class NegativeBinomialRand<int>;
 template class NegativeBinomialRand<double>;
-
-
-void PascalRand::setParameters(int number, double probability)
-{
-    NegativeBinomialIntRand::setParameters(number, probability);
-
-    if (r < 10)
-    {
-        /// we use two different generators for two different cases
-        /// if p < 0.2 then the tail is too heavy
-        /// (probability to be in main body is less than 0.977482)
-        /// thus we return highest integer less than variate from exponential distribution
-        /// otherwise we choose table method
-        if (p < 0.2) {
-            table[0] = -std::log(q);
-        }
-        else
-        {
-            table[0] = p;
-            double prod = p;
-            for (int i = 1; i < tableSize; ++i)
-            {
-                prod *= q;
-                table[i] = table[i - 1] + prod;
-            }
-        }
-    }
-    else {
-        Y.setParameters(r, q / p);
-    }
-}
-
-double PascalRand::P(int k) const
-{
-    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k - 1) / RandMath::factorial(k) * std::pow(q, k);
-}
-
-PascalRand::PascalRand(int number, double probability) : NegativeBinomialIntRand(number, probability)
-{
-    setParameters(number, probability);
-}
-
-std::string PascalRand::name()
-{
-    return "Pascal(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
-}
-
-double PascalRand::variate() const
-{
-    if (r < 10) // TODO: add sample function!
-        return variateThroughGeometric();
-    return variateThroughGammaPoisson();
-}
-
-double PascalRand::variateThroughGeometric() const
-{
-    double res = 0;
-    if (p < 0.2)
-    {
-        for (int i = 0; i < r; ++i)
-            res += variateGeometricThroughExponential();
-    }
-    else
-    {
-        for (int i = 0; i < r; ++i)
-            res += variateGeometricByTable();
-    }
-    return res;
-}
-
-double PascalRand::variateGeometricByTable() const
-{
-    double U = UniformRand::standardVariate();
-    /// handle tail by recursion
-    if (U > table[tableSize - 1])
-        return tableSize + variateGeometricByTable();
-    /// handle the main body
-    int x = 0;
-    while (U > table[x])
-        ++x;
-    return x;
-}
-
-double PascalRand::variateGeometricThroughExponential() const
-{
-    return std::floor(ExponentialRand::standardVariate() * table[0]);
-}
-
-PolyaRand::PolyaRand(double number, double probability) : NegativeBinomialDoubleRand(number, probability)
-{
-    setParameters(number, probability);
-}
-
-std::string PolyaRand::name()
-{
-    return "Polya(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
-}
-
-void PolyaRand::setParameters(double number, double probability)
-{
-    NegativeBinomialDoubleRand::setParameters(number, probability);
-    Y.setParameters(r, q / p);
-}

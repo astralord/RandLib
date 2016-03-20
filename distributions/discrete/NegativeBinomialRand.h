@@ -19,25 +19,34 @@ class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution
 protected:
     double p, q;
 
-protected:
+private:
     T r;
     GammaRand Y;
     double pdfCoef;
-
+    static constexpr int tableSize = 16;
+    double table[tableSize];
 
 public:
     NegativeBinomialRand(T number, double probability);
     std::string name() override;
 
-    virtual void setParameters(T number, double probability);
+private:
+    void setValidParameters(T number, double probability);
+public:
+    void setParameters(T number, double probability);
     inline double getProbability() const { return p; }
     inline T getNumber() const { return r; }
 
     double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
+    void sample(QVector<double> &outputData) const override;
 
 protected:
+    double variateGeometricByTable() const;
+    double variateGeometricThroughExponential() const;
+private:
+    double variateThroughGeometric() const;
     double variateThroughGammaPoisson() const;
 
 public:
@@ -52,42 +61,7 @@ public:
 };
 
 
-typedef NegativeBinomialRand<int> NegativeBinomialIntRand;
-typedef NegativeBinomialRand<double> NegativeBinomialDoubleRand;
-
-
-/**
- * @brief The PascalRand class
- */
-class RANDLIBSHARED_EXPORT PascalRand : public NegativeBinomialIntRand {
-    static constexpr int tableSize = 16;
-    double table[tableSize];
-public:
-    PascalRand(int number, double probability);
-    std::string name() override;
-
-    void setParameters(int number, double probability) override;
-
-    double P(int k) const override;
-    double variate() const override;
-
-private:
-    double variateThroughGeometric() const;
-
-protected:
-    double variateGeometricByTable() const;
-    double variateGeometricThroughExponential() const;
-};
-
-/**
- * @brief The PolyaRand class
- */
-class RANDLIBSHARED_EXPORT PolyaRand : public NegativeBinomialDoubleRand {
-public:
-    PolyaRand(double number, double probability);
-    std::string name() override;
-    void setParameters(double number, double probability) override;
-};
-
+typedef NegativeBinomialRand<int> PascalRand;
+typedef NegativeBinomialRand<double> PolyaRand;
 
 #endif // NEGATIVEBINOMIALRAND_H
