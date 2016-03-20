@@ -1,10 +1,13 @@
 #ifndef MAXWELLBOLTZMANNRAND_H
 #define MAXWELLBOLTZMANNRAND_H
 
-#include "ChiSquaredRand.h"
+#include "GammaRand.h"
 
 /**
  * @brief The MaxwellBoltzmannRand class
+ * Maxwell-Boltzmann distribution
+ * X ~ MB(a)
+ *
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ContinuousDistribution
 {

@@ -26,8 +26,6 @@
 #include "continuous/BetaPrimeRand.h"
 #include "continuous/BetaRand.h"
 #include "continuous/CauchyRand.h"
-#include "continuous/ChiSquaredRand.h"
-#include "continuous/ErlangRand.h"
 #include "continuous/ExponentialRand.h"
 #include "continuous/FisherSnedecorRand.h"
 #include "continuous/FrechetRand.h"

@@ -307,3 +307,54 @@ bool GammaRand::fit_MM(const QVector<double> &sample)
     setParameters(shape, mu1 / shape);
     return true;
 }
+
+
+/// CHI-SQUARED
+
+ChiSquaredRand::ChiSquaredRand(int degree)
+{
+    setDegree(degree);
+}
+
+std::string ChiSquaredRand::name()
+{
+    return "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
+}
+
+void ChiSquaredRand::setDegree(int degree)
+{
+    GammaRand::setParameters((degree < 1) ? 0.5 : 0.5 * degree, 2);
+}
+
+int ChiSquaredRand::getDegree() const
+{
+    return static_cast<int>(k + k);
+}
+
+
+/// ERLANG
+
+ErlangRand::ErlangRand(int shape, double rate)
+{
+    setParameters(shape, rate);
+}
+
+std::string ErlangRand::name()
+{
+    return "Erlang(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
+}
+
+void ErlangRand::setParameters(int shape, double rate)
+{
+    GammaRand::setParameters(std::max(shape, 1), 1.0 / rate);
+}
+
+int ErlangRand::getShape() const
+{
+    return static_cast<int>(GammaRand::getShape());
+}
+
+double ErlangRand::getRate() const
+{
+    return 1.0 / GammaRand::getScale();
+}

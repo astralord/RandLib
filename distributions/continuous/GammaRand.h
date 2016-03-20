@@ -69,4 +69,55 @@ public:
     inline double getInverseGammaFunction() { return cdfCoef; }
 };
 
+
+/**
+ * @brief The ChiSquaredRand class
+ * Chi-squared distribution
+ * X ~ \chi^2(n)
+ *
+ * X ~ Gamma(0.5 * n, 2)
+ */
+class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
+{
+public:
+    explicit ChiSquaredRand(int degree = 1);
+    std::string name() override;
+
+    void setDegree(int degree);
+    inline int getDegree() const;
+
+protected:
+    /// prohibit to use gamma's public getters and setters
+    using GammaRand::setParameters;
+    using GammaRand::getShape;
+    using GammaRand::getScale;
+};
+
+
+/**
+ * @brief The ErlangRand class
+ * Erlang distibution
+ * X ~ Erlang(k, l)
+ *
+ * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(l)
+ * X ~ Gamma(k, 1/l)
+ */
+class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
+{
+public:
+    ErlangRand(int shape = 1, double rate = 1);
+    std::string name() override;
+
+    void setParameters(int shape, double rate);
+    inline int getShape() const;
+    inline double getRate() const;
+
+protected:
+    /// prohibit to use gamma's public getters and setters
+    using GammaRand::setParameters;
+    using GammaRand::getShape;
+    using GammaRand::getScale;
+};
+
+
 #endif // GAMMARAND_H

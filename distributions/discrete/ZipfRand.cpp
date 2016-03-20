@@ -17,16 +17,16 @@ void ZipfRand::setParameters(double exponent, int number)
     s = exponent;
     if (s <= 1.0)
         s = 2.0;
-    N = number < 1 ? 1 : number;
+    n = number < 1 ? 1 : number;
 
-    invHarmonicNumber = 1.0 / RandMath::harmonicNumber(s, N);
+    invHarmonicNumber = 1.0 / RandMath::harmonicNumber(s, n);
 
     // WARNING: we calculate pow here and in invHarmonic number
-    hashedVarNum = N > tableSize ? tableSize : N;
+    hashedVarNum = n > tableSize ? tableSize : n;
     table[0] = 1.0;
     for (int i = 1; i < hashedVarNum - 1; ++i)
         table[i] = table[i - 1] + std::pow(i + 1, -s);
-    if (hashedVarNum == N)
+    if (hashedVarNum == n)
         table[hashedVarNum - 1] = 1.0 / invHarmonicNumber;
     else
         table[hashedVarNum - 1] = table[hashedVarNum - 2] + std::pow(hashedVarNum, -s);
@@ -36,7 +36,7 @@ void ZipfRand::setParameters(double exponent, int number)
 
 double ZipfRand::P(int k) const
 {
-    if (k < 1 || k > N)
+    if (k < 1 || k > n)
         return 0.0;
     return std::pow(k, -s) * invHarmonicNumber;
 }
@@ -45,7 +45,7 @@ double ZipfRand::F(double x) const
 {
     if (x < 1.0)
         return 0.0;
-    if (x >= N)
+    if (x >= n)
         return 1.0;
     return RandMath::harmonicNumber(s, std::floor(x)) * invHarmonicNumber;
 }
@@ -75,14 +75,14 @@ double ZipfRand::variate() const
 
 double ZipfRand::Mean() const
 {
-    return RandMath::harmonicNumber(s - 1, N) * invHarmonicNumber;
+    return RandMath::harmonicNumber(s - 1, n) * invHarmonicNumber;
 }
 
 double ZipfRand::Variance() const
 {
-    double numerator = RandMath::harmonicNumber(s - 1, N);
+    double numerator = RandMath::harmonicNumber(s - 1, n);
     numerator *= numerator;
-    numerator = RandMath::harmonicNumber(s - 2, N) * RandMath::harmonicNumber(s, N) - numerator;
+    numerator = RandMath::harmonicNumber(s - 2, n) * RandMath::harmonicNumber(s, n) - numerator;
     return numerator * invHarmonicNumber * invHarmonicNumber;
 }
 
@@ -94,7 +94,7 @@ double ZipfRand::Mode() const
 std::complex<double> ZipfRand::CF(double t) const
 {
     std::complex<double> sum(0.0, 0.0);
-    for (int i = 1; i <= N; ++i)
+    for (int i = 1; i <= n; ++i)
     {
         std::complex<double> numerator(0, i * t);
         numerator = std::exp(numerator);
@@ -107,9 +107,9 @@ std::complex<double> ZipfRand::CF(double t) const
 double ZipfRand::Skewness() const
 {
     double harmonic0 = 1.0 / invHarmonicNumber;
-    double harmonic1 = RandMath::harmonicNumber(s - 1, N);
-    double harmonic2 = RandMath::harmonicNumber(s - 2, N);
-    double harmonic3 = RandMath::harmonicNumber(s - 3, N);
+    double harmonic1 = RandMath::harmonicNumber(s - 1, n);
+    double harmonic2 = RandMath::harmonicNumber(s - 2, n);
+    double harmonic3 = RandMath::harmonicNumber(s - 3, n);
 
     double first = harmonic3 * harmonic0 * harmonic0;
     double harmonic2prod0 = harmonic2 * harmonic0;
@@ -128,10 +128,10 @@ double ZipfRand::Skewness() const
 double ZipfRand::ExcessKurtosis() const
 {
     double harmonic0 = 1.0 / invHarmonicNumber;
-    double harmonic1 = RandMath::harmonicNumber(s - 1, N);
-    double harmonic2 = RandMath::harmonicNumber(s - 2, N);
-    double harmonic3 = RandMath::harmonicNumber(s - 3, N);
-    double harmonic4 = RandMath::harmonicNumber(s - 4, N);
+    double harmonic1 = RandMath::harmonicNumber(s - 1, n);
+    double harmonic2 = RandMath::harmonicNumber(s - 2, n);
+    double harmonic3 = RandMath::harmonicNumber(s - 3, n);
+    double harmonic4 = RandMath::harmonicNumber(s - 4, n);
 
     double harmonic2prod0 = harmonic2 * harmonic0;
     double harmonic0Sq = harmonic0 * harmonic0;

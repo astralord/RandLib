@@ -12,7 +12,6 @@ SOURCES += \
     distributions/BasicRandGenerator.cpp \
     distributions/continuous/BetaRand.cpp \
     distributions/continuous/CauchyRand.cpp \
-    distributions/continuous/ChiSquaredRand.cpp \
     distributions/continuous/ExponentialRand.cpp \
     distributions/continuous/FisherSnedecorRand.cpp \
     distributions/continuous/GammaRand.cpp \
@@ -24,7 +23,6 @@ SOURCES += \
     distributions/continuous/StudentTRand.cpp \
     distributions/continuous/UniformRand.cpp \
     distributions/continuous/ParetoRand.cpp \
-    distributions/continuous/ErlangRand.cpp \
     distributions/continuous/ContinuousDistribution.cpp \
     distributions/continuous/RayleighRand.cpp \
     distributions/continuous/TriangularRand.cpp \
@@ -74,7 +72,6 @@ HEADERS +=\
     distributions/BasicRandGenerator.h \
     distributions/continuous/BetaRand.h \
     distributions/continuous/CauchyRand.h \
-    distributions/continuous/ChiSquaredRand.h \
     distributions/continuous/ExponentialRand.h \
     distributions/continuous/FisherSnedecorRand.h \
     distributions/continuous/GammaRand.h \
@@ -86,7 +83,6 @@ HEADERS +=\
     distributions/continuous/StudentTRand.h \
     distributions/continuous/UniformRand.h \
     distributions/continuous/ParetoRand.h \
-    distributions/continuous/ErlangRand.h \
     distributions/continuous/ContinuousDistribution.h \
     distributions/continuous/RayleighRand.h \
     distributions/continuous/TriangularRand.h \

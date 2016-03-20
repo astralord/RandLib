@@ -3,6 +3,9 @@
 
 #include "ContinuousDistribution.h"
 
+/**
+ * @brief The SechRand class
+ */
 class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
 {
 public:

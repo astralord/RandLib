@@ -1,10 +1,12 @@
 #ifndef STUDENTTRAND_H
 #define STUDENTTRAND_H
 
-#include "ChiSquaredRand.h"
+#include "GammaRand.h"
 
 /**
  * @brief The StudentTRand class
+ * Student's t-distribution
+ * X ~ t(v)
  */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
