@@ -30,15 +30,11 @@ SOURCES += \
     distributions/discrete/DiscreteDistribution.cpp \
     distributions/discrete/UniformDiscreteRand.cpp \
     distributions/discrete/PoissonRand.cpp \
-    processes/StochasticProcess.cpp \
-    processes/WienerProcess.cpp \
     distributions/continuous/NakagamiRand.cpp \
     distributions/continuous/WaldRand.cpp \
-    processes/GeometricBrownianMotion.cpp \
     distributions/continuous/WeibullRand.cpp \
     distributions/discrete/RademacherRand.cpp \
     math/RandMath.cpp \
-    math/Matrix.cpp \
     distributions/discrete/BernoulliRand.cpp \
     distributions/discrete/GeometricRand.cpp \
     distributions/discrete/BinomialRand.cpp \
@@ -59,7 +55,6 @@ SOURCES += \
     distributions/singular/SingularDistribution.cpp \
     distributions/singular/CantorRand.cpp \
     distributions/continuous/RaisedCosineRand.cpp \
-    processes/UhlenbeckOrnsteinProcess.cpp \
     distributions/continuous/FrechetRand.cpp \
     distributions/discrete/SkellamRand.cpp \
     distributions/continuous/PlanckRand.cpp \
@@ -90,15 +85,11 @@ HEADERS +=\
     distributions/discrete/DiscreteDistribution.h \
     distributions/discrete/UniformDiscreteRand.h \
     distributions/discrete/PoissonRand.h \
-    processes/StochasticProcess.h \
-    processes/WienerProcess.h \
     distributions/continuous/NakagamiRand.h \
     distributions/continuous/WaldRand.h \
-    processes/GeometricBrownianMotion.h \
     distributions/continuous/WeibullRand.h \
     distributions/discrete/RademacherRand.h \
     math/RandMath.h \
-    math/Matrix.h \
     distributions/discrete/BernoulliRand.h \
     distributions/discrete/GeometricRand.h \
     distributions/discrete/BinomialRand.h \
@@ -120,7 +111,6 @@ HEADERS +=\
     distributions/singular/SingularDistribution.h \
     distributions/singular/CantorRand.h \
     distributions/continuous/RaisedCosineRand.h \
-    processes/UhlenbeckOrnsteinProcess.h \
     distributions/continuous/FrechetRand.h \
     distributions/discrete/SkellamRand.h \
     distributions/continuous/PlanckRand.h \
