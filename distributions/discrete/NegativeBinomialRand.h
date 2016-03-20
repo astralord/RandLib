@@ -8,10 +8,10 @@
 
 /**
  * @brief The NegativeBinomialRand class
+ * Negative binomial distribution
+ * X ~ NB(r, p)
  *
  * P(X = k) = binom(k + r - 1, k) p^r (1-p)^k
- *
- * X ~ NB(r, p)
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution

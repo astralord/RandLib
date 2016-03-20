@@ -6,6 +6,7 @@
 
 /**
  * @brief The HyperGeometricRand class
+ * Hyper-geometric distribution
  */
 class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 {

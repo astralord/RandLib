@@ -21,9 +21,7 @@ double RademacherRand::F(double x) const
 {
     if (x < -1)
         return 0;
-    if (x < 1)
-        return 0.5;
-    return 1;
+    return (x < 1) ? 0.5 : 1.0;
 }
 
 double RademacherRand::variate() const

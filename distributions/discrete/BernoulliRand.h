@@ -5,8 +5,12 @@
 
 /**
  * @brief The BernoulliRand class
- *
+ * Bernoulli distribution
  * X ~ Bernoulli(p)
+ *
+ * P(X = 0) = 1 - p
+ * P(X = 1) = p
+ *
  * X ~ Binomial(1, p)
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialRand

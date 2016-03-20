@@ -7,6 +7,8 @@
 
 /**
  * @brief The BinomialRand class
+ * Binomial distribution
+ * X ~ Bin(n, p)
  */
 class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteDistribution
 {

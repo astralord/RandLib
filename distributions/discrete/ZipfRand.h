@@ -6,11 +6,13 @@
 
 /**
  * @brief The ZipfRand class
+ * Zipf distribution
+ * X ~ Zipf(s, n)
  */
 class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
 {
     double s;
-    int N;
+    int n;
 
     double invHarmonicNumber; /// 1 / harmonic_number
 
@@ -24,7 +26,7 @@ public:
 
     void setParameters(double exponent, int number);
     inline double getExponent() { return s; }
-    inline size_t getNumber() { return N; }
+    inline size_t getNumber() { return n; }
 
     double P(int k) const override;
     double F(double x) const override;

@@ -5,8 +5,10 @@
 
 /**
  * @brief The ZetaRand class
+ * Zeta distribution
+ * X ~ Zeta(s)
  *
- * P(X = k | n) = 1 / (k^s * zeta(s))
+ * P(X = k) = 1 / (k^s * zeta(s))
  */
 class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 {

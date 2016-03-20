@@ -8,6 +8,8 @@
 
 /**
  * @brief The YuleRand class
+ * Yule distribution
+ * X ~ Yule(\ro)
  */
 class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 {

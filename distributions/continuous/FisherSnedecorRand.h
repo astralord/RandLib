@@ -5,9 +5,8 @@
 
 /**
  * @brief The FisherSnedecorRand class
- *
- *
- * X ~ F(d1, d2)
+ * F - distribution
+ * X ~ F(d_1, d_2)
  */
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 {
