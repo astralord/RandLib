@@ -195,22 +195,14 @@ double BetaRand::Quantile(double p) const
 
 double BetaRand::Median() const
 {
-    if (RandMath::areEqual(alpha, beta))
-        return 0.5;
-    return Quantile(0.5);
+    return (RandMath::areEqual(alpha, beta)) ? 0.5 : Quantile(0.5);
 }
 
 double BetaRand::Mode() const
 {
     if (alpha > 1)
-    {
-        if (beta > 1)
-            return (alpha - 1) / (alpha + beta - 2);
-        return 1.0;
-    }
-    if (beta > 1)
-        return 0.0;
-    return BernoulliRand::standardVariate();
+        return (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
+    return (beta > 1) ? 0.0 : BernoulliRand::standardVariate();
 }
 
 double BetaRand::Skewness() const

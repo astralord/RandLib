@@ -32,7 +32,7 @@ protected:
 
 public:
     void setRate(double rate);
-    inline double getRate() const { return thetaInv; }
+    inline double getRate() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;

@@ -11,13 +11,13 @@
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
 protected:
-    double k, theta, thetaInv;
-    
+    double alpha, theta, beta;
+    double alphaInv; /// 1.0 / alpha
+    double variateCoef; /// (e + alpha) / (alpha * e)
+    double cdfCoef; /// 1.0 / gamma(alpha)
+    double pdfCoef; /// 1.0 / (gamma(alpha) * theta ^ alpha)
+
 private:
-    double kInv; /// 1.0 / k
-    double variateCoef; /// (e + k) / (k * e)
-    double cdfCoef; /// 1.0 / gamma(k)
-    double pdfCoef; /// 1.0 / (gamma(k) * theta ^ k)
     double m, s, s_2, d, b, w, v, c; /// constants for sampling
     void setConstantsForGenerator();
 
@@ -27,7 +27,7 @@ public:
     std::string name() override;
 
     void setParameters(double shape, double scale);
-    inline double getShape() const { return k; }
+    inline double getShape() const { return alpha; }
     inline double getScale() const { return theta; }
 
     double f(double x) const override;

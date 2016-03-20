@@ -38,20 +38,20 @@ bool ExponentialRand::setupTables()
 
 void ExponentialRand::setRate(double rate)
 {
-    thetaInv = rate;
-    if (thetaInv <= 0)
-        thetaInv = 1.0;
-    setParameters(1, 1.0 / thetaInv);
+    beta = rate;
+    if (beta <= 0)
+        beta = 1.0;
+    setParameters(1, 1.0 / beta);
 }
 
 double ExponentialRand::f(double x) const
 {
-    return (x > 0) ? thetaInv * std::exp(-thetaInv * x) : 0;
+    return (x > 0) ? beta * std::exp(-beta * x) : 0;
 }
 
 double ExponentialRand::F(double x) const
 {
-    return (x > 0) ? 1 - std::exp(-thetaInv * x) : 0;
+    return (x > 0) ? 1 - std::exp(-beta * x) : 0;
 }
 
 double ExponentialRand::variate() const
@@ -117,7 +117,7 @@ double ExponentialRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return RandMath::factorial(n) / std::pow(thetaInv, n);
+    return RandMath::factorial(n) / std::pow(beta, n);
 }
 
 bool ExponentialRand::fit_MLE(const QVector<double> &sample)

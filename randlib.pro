@@ -58,7 +58,8 @@ SOURCES += \
     distributions/continuous/FrechetRand.cpp \
     distributions/discrete/SkellamRand.cpp \
     distributions/continuous/PlanckRand.cpp \
-    distributions/continuous/IrwinHallRand.cpp
+    distributions/continuous/IrwinHallRand.cpp \
+    distributions/continuous/InverseGammaRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -114,7 +115,8 @@ HEADERS +=\
     distributions/continuous/FrechetRand.h \
     distributions/discrete/SkellamRand.h \
     distributions/continuous/PlanckRand.h \
-    distributions/continuous/IrwinHallRand.h
+    distributions/continuous/IrwinHallRand.h \
+    distributions/continuous/InverseGammaRand.h
 
 unix {
     target.path = /usr/lib
