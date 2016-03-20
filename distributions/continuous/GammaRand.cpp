@@ -250,20 +250,15 @@ bool GammaRand::fitScale_MLE(const QVector<double> &sample)
 bool GammaRand::fit_MLE(const QVector<double> &sample)
 {
     int n = sample.size();
-    if (n <= 0)
+    if (n <= 0 || !checkValidity(sample))
         return false;
 
     /// Calculate averages
-    // TODO: use RandMath functions
-    long double average = 0.0L;
+    double average = RandMath::sampleMean(sample);
     long double logAverage = 0.0L;
     for (double var : sample) {
-        if (var < 0)
-            return false;
-        average += var;
         logAverage += std::log(var);
     }
-    average /= n;
     logAverage /= n;
 
     /// Calculate initial guess for shape

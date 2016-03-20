@@ -122,15 +122,12 @@ double ExponentialRand::Moment(int n) const
 
 bool ExponentialRand::fit_MLE(const QVector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
-    setRate(1.0 / RandMath::sampleMean(sample));
-    return true;
+    return fitScale_MLE(sample);
 }
 
 bool ExponentialRand::fit_MM(const QVector<double> &sample)
 {
-    return fit_MLE(sample);
+    return fitScale_MLE(sample);
 }
 
 bool ExponentialRand::fit_UMVU(const QVector<double> &sample)
