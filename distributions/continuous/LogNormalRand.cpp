@@ -115,26 +115,22 @@ bool LogNormalRand::fitScale_MM(const QVector<double> &sample)
 
 bool LogNormalRand::fit_MLE(const QVector<double> &sample)
 {
-    int N = sample.size();
-    if (N == 0)
+    int n = sample.size();
+    if (n == 0)
         return false;
 
-    /// Calculate location
     long double logMean = 0.0L;
+    long double logVariance = 0.0L;
     for (double var : sample) {
-        logMean += std::log(var);
+        double logVar = std::log(var);
+        logMean += logVar;
+        logVariance += logVar * logVar;
     }
-    logMean /= N;
-
-    /// Calculate scale
-    long double deviation = 0.0L;
-    for (double var : sample) {
-        double currDev = (std::log(var) - logMean);
-        deviation += currDev * currDev;
-    }
-    deviation /= N;
+    logMean /= n;
+    logVariance /= n;
+    logVariance -= logMean * logMean;
 
     setLocation(logMean);
-    setScale(std::sqrt(deviation));
+    setScale(std::sqrt(logVariance));
     return true;
 }
