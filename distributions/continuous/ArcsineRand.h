@@ -3,6 +3,9 @@
 
 #include "BetaRand.h"
 
+/**
+ * @brief The ArcsineRand class
+ */
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
     double a, b;

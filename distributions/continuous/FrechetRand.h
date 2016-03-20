@@ -3,6 +3,9 @@
 
 #include "ContinuousDistribution.h"
 
+/**
+ * @brief The FrechetRand class
+ */
 class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 {
     double alpha, s, m;

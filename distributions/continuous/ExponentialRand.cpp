@@ -108,7 +108,7 @@ double ExponentialRand::Median() const
 
 double ExponentialRand::Entropy() const
 {
-    return 1 - std::log(lambda);
+    return 1 - std::log(beta);
 }
 
 double ExponentialRand::Moment(int n) const

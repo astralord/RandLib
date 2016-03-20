@@ -3,6 +3,9 @@
 
 #include "ContinuousDistribution.h"
 
+/**
+ * @brief The GumbelRand class
+ */
 class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {
     double mu, beta;

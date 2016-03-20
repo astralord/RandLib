@@ -4,6 +4,9 @@
 #include "GammaRand.h"
 #include "../discrete/ZetaRand.h"
 
+/**
+ * @brief The PlanckRand class
+ */
 class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
 {
     double a, b;

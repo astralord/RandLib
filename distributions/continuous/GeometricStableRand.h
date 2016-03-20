@@ -3,6 +3,9 @@
 
 #include "StableRand.h"
 
+/**
+ * @brief The GeometricStableRand class
+ */
 class RANDLIBSHARED_EXPORT GeometricStableRand : public StableRand
 {
 public:

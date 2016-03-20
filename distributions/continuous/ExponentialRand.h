@@ -14,8 +14,6 @@
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
 {
-    double lambda, beta;
-
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
     static double stairWidth[257], stairHeight[256];
@@ -38,7 +36,7 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    static double variate(double lambda);
+    static double variate(double rate);
     static double standardVariate();
     std::complex<double> CF(double t) const override;
     double Quantile(double p) const override;

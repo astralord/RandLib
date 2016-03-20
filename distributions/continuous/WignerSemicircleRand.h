@@ -3,6 +3,9 @@
 
 #include "BetaRand.h"
 
+/**
+ * @brief The WignerSemicircleRand class
+ */
 class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
 {
     double R, RSq;
