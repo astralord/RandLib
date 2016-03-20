@@ -5,6 +5,8 @@
 
 /**
  * @brief The GammaRand class
+ * Gamma distribution
+ * X ~ \Gamma(k, \theta)
  */
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {

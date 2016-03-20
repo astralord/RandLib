@@ -5,10 +5,10 @@
 
 /**
  * @brief The NormalRand class
+ * Normal distribution
+ * X ~ N(mu, sigma)
  *
- * f(x|mu, sigma) = 1 / (\sqrt(2 pi) sigma) * exp(-(x - mu)^2 / (2 sigma^2))
- *
- * Normal distribution: X ~ N(mu, sigma)
+ * f(x|\mu, \sigma) = 1 / (\sqrt(2 \pi) \sigma) * exp(-(x - \mu)^2 / (2 \sigma^2))
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 {
@@ -17,7 +17,6 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableRand
     static double stairWidth[257], stairHeight[256];
     static constexpr double x1 = 3.6541528853610088;
     static const bool dummy;
-    /// Set up ziggurat tables
     static bool setupTables();
 
 public:

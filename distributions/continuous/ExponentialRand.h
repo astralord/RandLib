@@ -5,9 +5,12 @@
 
 /**
  * @brief The ExponentialRand class
- *
+ * Exponential distribution
  * X ~ Exp(\lambda)
- * X ~ Gamma(1, 1 / \lambda)
+ *
+ * f(x|\lambda) = \lambda \exp(-\lambda x)
+ *
+ * X ~ \Gamma(1, 1 / \lambda)
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
 {

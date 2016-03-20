@@ -6,10 +6,10 @@
 
 /**
  * @brief The UniformRand class
+ * Uniform dontinuous distribution
+ * X ~ U(a, b)
  *
  * f(x|a, b) = 1 / (b - a) for a < x < b
- *
- * Continuous uniform distribution: X ~ U(a, b)
  */
 class RANDLIBSHARED_EXPORT UniformRand : public ContinuousDistribution
 {

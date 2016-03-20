@@ -5,10 +5,11 @@
 
 /**
  * @brief The CauchyRand class
+ * Cauchy distribution
+ * X ~ Cauchy(\mu, \sigma)
  *
- * f(x|x_0, \gamma) = \gamma / [\pi (\gamma^2 + (x - x_0)^2)]
+ * f(x|\mu, \sigma) = \sigma / [\pi (\sigma^2 + (x - \mu)^2)]
  *
- * X ~ Cauchy(x_0, \gamma)
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public StableRand
 {

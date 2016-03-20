@@ -6,14 +6,14 @@
 /**
  * @brief The WaldRand class
  * Wald (Inverse Gaussian) distribution
- * X ~ IG(mu, l)
+ * X ~ IG(\mu, \lambda)
  */
 class RANDLIBSHARED_EXPORT WaldRand : public ContinuousDistribution
 {
     double mu, lambda;
 
-    double pdfCoef; /// sqrt(l / (2 * pi))
-    double cdfCoef; /// exp(2 * l / mu)
+    double pdfCoef; /// \sqrt(\lambda / (2 * \pi))
+    double cdfCoef; /// \exp(2 * \lambda / \mu)
 public:
     WaldRand(double mean = 1, double shape = 1);
     std::string name() override;
