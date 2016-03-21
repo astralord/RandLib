@@ -1,5 +1,6 @@
 #include "BetaRand.h"
 #include "../discrete/BernoulliRand.h"
+#include "UniformRand.h"
 
 BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValue)
 {

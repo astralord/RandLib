@@ -1,4 +1,6 @@
 #include "NegativeBinomialRand.h"
+#include "../continuous/UniformRand.h"
+#include "../continuous/ExponentialRand.h"
 
 template< typename T >
 NegativeBinomialRand<T>::NegativeBinomialRand(T number, double probability)

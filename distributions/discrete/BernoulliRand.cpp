@@ -1,4 +1,5 @@
 #include "BernoulliRand.h"
+#include "../continuous/UniformRand.h"
 #include "../BasicRandGenerator.h"
 
 BernoulliRand::BernoulliRand(double probability) : BinomialRand(1, probability)

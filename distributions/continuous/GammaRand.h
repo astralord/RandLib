@@ -56,12 +56,16 @@ public:
 
     bool checkValidity(const QVector<double> &sample);
 
+    /// Maximum-likelihood estimation
     bool fitScaleMLE(const QVector<double> &sample);
     bool fitShapeAndScaleMLE(const QVector<double> &sample);
     
+    /// Method of moments
     bool fitShapeMM(const QVector<double> &sample);
     bool fitScaleMM(const QVector<double> &sample);
     bool fitShapeAndScaleMM(const QVector<double> &sample);
+
+    bool fitRateBayes(const QVector<double> &sample, GammaRand &priorDistribution);
 
     /**
      * @brief getInverseGammaFunction

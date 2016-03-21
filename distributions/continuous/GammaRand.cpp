@@ -308,6 +308,20 @@ bool GammaRand::fitShapeAndScaleMM(const QVector<double> &sample)
     return true;
 }
 
+bool GammaRand::fitRateBayes(const QVector<double> &sample, GammaRand &priorDistribution)
+{
+    int n = sample.size();
+    if (n <= 0 || !checkValidity(sample))
+        return false;
+    double alpha0 = priorDistribution.getShape();
+    double beta0 = priorDistribution.getRate();
+    double newAlpha = alpha * n + alpha0;
+    double newBeta = RandMath::sum(sample) + beta0;
+    priorDistribution.setParameters(newAlpha, 1.0 / newBeta);
+    setParameters(alpha, 1.0 / priorDistribution.Mean());
+    return true;
+}
+
 
 /// CHI-SQUARED
 

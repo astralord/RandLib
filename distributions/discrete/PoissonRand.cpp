@@ -1,4 +1,6 @@
 #include "PoissonRand.h"
+#include "../continuous/UniformRand.h"
+#include "../continuous/ExponentialRand.h"
 
 PoissonRand::PoissonRand(double rate)
 {
@@ -128,5 +130,17 @@ bool PoissonRand::fitRateMLE(const QVector<double> &sample)
     if (!checkValidity(sample))
         return false;
     setRate(RandMath::sampleMean(sample));
+    return true;
+}
+
+bool PoissonRand::fitRateBayes(const QVector<double> &sample, GammaRand &priorDistribution)
+{
+    int n = sample.size();
+    if (n <= 0 || !checkValidity(sample))
+        return false;
+    double alpha = priorDistribution.getShape();
+    double beta = priorDistribution.getRate();
+    priorDistribution.setParameters(alpha + RandMath::sum(sample), 1.0 / (beta + n));
+    setRate(priorDistribution.Mean());
     return true;
 }

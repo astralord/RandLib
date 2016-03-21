@@ -2,8 +2,7 @@
 #define POISSONRAND_H
 
 #include "DiscreteDistribution.h"
-#include "../continuous/UniformRand.h"
-#include "../continuous/ExponentialRand.h"
+#include "../continuous/GammaRand.h"
 
 /**
  * @brief The PoissonRand class
@@ -44,6 +43,7 @@ public:
     bool checkValidity(const QVector<double> &sample);
 
     bool fitRateMLE(const QVector<double> &sample);
+    bool fitRateBayes(const QVector<double> &sample, GammaRand & priorDistribution);
 };
 
 #endif // POISSONRAND_H
