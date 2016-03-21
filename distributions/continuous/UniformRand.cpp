@@ -1,8 +1,9 @@
 #include "UniformRand.h"
+#include "../BasicRandGenerator.h"
 
 UniformRand::UniformRand(double minValue, double maxValue)
 {
-    setBoundaries(minValue, maxValue);
+    setSupport(minValue, maxValue);
 }
 
 std::string UniformRand::name()
@@ -10,37 +11,27 @@ std::string UniformRand::name()
     return "Uniform(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
 }
 
-void UniformRand::setBoundaries(double minValue, double maxValue)
+void UniformRand::setSupport(double minValue, double maxValue)
 {
-    a = minValue;
-    b = maxValue;
-
-    /// Sanity check
-    if (b < a)
-        SWAP(a, b);
-    if (a == b)
-        b = a + 1.0;
-
-    c = 1.0 / (b - a);
+    BetaRand::setSupport(minValue, maxValue);
+    bmaInv = 1.0 / (b - a);
 }
 
 double UniformRand::f(double x) const
 {
-    return (x >= a && x <= b) ? c : 0;
+    return (x >= a && x <= b) ? bmaInv : 0;
 }
 
 double UniformRand::F(double x) const
 {
     if (x < a)
         return 0;
-    if (x > b)
-        return 1;
-    return c * (x - a);
+    return (x > b) ? 1 : bmaInv * (x - a);
 }
 
 double UniformRand::variate() const
 {
-    return a + standardVariate() * (b - a);
+    return a + standardVariate() * bma;
 }
 
 double UniformRand::variate(double minValue, double maxValue)
@@ -64,14 +55,14 @@ double UniformRand::Mean() const
 
 double UniformRand::Variance() const
 {
-    return (b - a) * (b - a) / 12;
+    return bma * bma / 12;
 }
 
 std::complex<double> UniformRand::CF(double t) const
 {
     std::complex<double> x(0, -t * a), y(0, -t * b);
     std::complex<double> numerator = std::exp(x) - std::exp(y);
-    std::complex<double> denominator(0, t * (b - a));
+    std::complex<double> denominator(0, t * bma);
     return numerator / denominator;
 }
 
@@ -81,7 +72,7 @@ double UniformRand::Quantile(double p) const
         return NAN;
     if (p == 0)
         return -INFINITY;
-    return a + (b - a) * p;
+    return a + bma * p;
 }
 
 double UniformRand::Median() const
@@ -107,7 +98,7 @@ double UniformRand::ExcessKurtosis() const
 
 double UniformRand::Entropy() const
 {
-    return (b == a) ? -INFINITY : std::log(b - a);
+    return (b == a) ? -INFINITY : std::log(bma);
 }
 
 bool UniformRand::fitMin_MLE(const QVector<double> &sample)
@@ -121,7 +112,7 @@ bool UniformRand::fitMin_MLE(const QVector<double> &sample)
             return false;
         minVar = std::min(var, minVar);
     }
-    setBoundaries(minVar, b);
+    setSupport(minVar, b);
     return true;
 }
 
@@ -136,7 +127,7 @@ bool UniformRand::fitMax_MLE(const QVector<double> &sample)
             return false;
         maxVar = std::max(var, maxVar);
     }
-    setBoundaries(a, maxVar);
+    setSupport(a, maxVar);
     return true;
 }
 
@@ -150,21 +141,21 @@ bool UniformRand::fit_MLE(const QVector<double> &sample)
         maxVar = std::max(var, maxVar);
         minVar = std::min(var, minVar);
     }
-    setBoundaries(minVar, maxVar);
+    setSupport(minVar, maxVar);
     return true;
 }
 
 bool UniformRand::fitMin_MM(const QVector<double> &sample)
 {
     double m = RandMath::sampleMean(sample);
-    setBoundaries(m + m - b, b);
+    setSupport(m + m - b, b);
     return true;
 }
 
 bool UniformRand::fitMax_MM(const QVector<double> &sample)
 {
     double m = RandMath::sampleMean(sample);
-    setBoundaries(a, m + m - a);
+    setSupport(a, m + m - a);
     return true;
 }
 
@@ -173,7 +164,7 @@ bool UniformRand::fit_MM(const QVector<double> &sample)
     double mean = RandMath::sampleMean(sample);
     double var = RandMath::sampleVariance(sample, mean);
     double s = std::sqrt(3 * var);
-    setBoundaries(mean - s, mean + s);
+    setSupport(mean - s, mean + s);
     return true;
 }
 
@@ -191,7 +182,7 @@ bool UniformRand::fitMin_UMVU(const QVector<double> &sample)
     
     /// E[min] = b - n / (n + 1) * (b - a)
     minVar = (minVar * (n + 1) - b) / n;
-    setBoundaries(minVar, b);
+    setSupport(minVar, b);
     return true;
 }
 
@@ -209,7 +200,7 @@ bool UniformRand::fitMax_UMVU(const QVector<double> &sample)
     
     /// E[max] = (b - a) * n / (n + 1) + a
     maxVar = (maxVar * (n + 1) - a) / n;
-    setBoundaries(a, maxVar);
+    setSupport(a, maxVar);
     return true;
 }
 
@@ -230,6 +221,6 @@ bool UniformRand::fit_UMVU(const QVector<double> &sample)
     minVar = (minVar * n - maxVar) / (n - 1);
     maxVar = (maxVar * (n + 1) - minVar) / n;
 
-    setBoundaries(minVar, maxVar);
+    setSupport(minVar, maxVar);
     return true;
 }

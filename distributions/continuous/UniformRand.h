@@ -1,8 +1,7 @@
 #ifndef UNIFORMRAND_H
 #define UNIFORMRAND_H
 
-#include "ContinuousDistribution.h"
-#include "../BasicRandGenerator.h"
+#include "BetaRand.h"
 
 /**
  * @brief The UniformRand class
@@ -10,17 +9,18 @@
  * X ~ U(a, b)
  *
  * f(x|a, b) = 1 / (b - a) for a < x < b
+ *
+ * X ~ Beta(1, 1)
  */
-class RANDLIBSHARED_EXPORT UniformRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT UniformRand : public BetaRand
 {
-    double a, b;
-    double c; /// 1 / (b - a)
+    double bmaInv; /// 1 / (b - a)
 
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
     std::string name() override;
 
-    void setBoundaries(double minValue, double maxValue);    
+    void setSupport(double minValue, double maxValue);
     inline double getMinValue() const { return a; }
     inline double getMaxValue() const { return b; }
 

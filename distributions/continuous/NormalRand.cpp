@@ -1,6 +1,7 @@
 #include "NormalRand.h"
 #include "UniformRand.h"
 #include "ExponentialRand.h"
+#include "../BasicRandGenerator.h"
 
 double NormalRand::stairWidth[257] = {0};
 double NormalRand::stairHeight[256] = {0};
