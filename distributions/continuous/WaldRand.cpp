@@ -62,9 +62,7 @@ double WaldRand::variate() const
     x = my - x;
     x *= .5 / lambda;
     ++x;
-    if (UniformRand::standardVariate() <= 1.0 / (1 + x))
-        return mu * x;
-    return mu / x;
+    return (UniformRand::standardVariate() <= 1.0 / (1 + x)) ? mu * x : mu / x;
 }
 
 std::complex<double> WaldRand::CF(double t) const
