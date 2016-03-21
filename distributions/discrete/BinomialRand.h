@@ -87,7 +87,7 @@ public:
      * @param priorDistribution
      * @return posterior distribution
      */
-    bool fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution);
+    bool fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution);
 };
 
 

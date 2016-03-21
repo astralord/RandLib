@@ -96,15 +96,15 @@ bool LogNormalRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fitLocation_MM(const QVector<double> &sample)
+bool LogNormalRand::fitLocationMM(const QVector<double> &sample)
 {
     double average = RandMath::sampleMean(sample);
-    double var = X.getVar();
+    double var = X.getVariance();
     setLocation(std::log(average) - 0.5 * var);
     return true;
 }
 
-bool LogNormalRand::fitScale_MM(const QVector<double> &sample)
+bool LogNormalRand::fitScaleMM(const QVector<double> &sample)
 {
     double average = RandMath::sampleMean(sample);
     double mu = X.getLocation();
@@ -113,7 +113,7 @@ bool LogNormalRand::fitScale_MM(const QVector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fit_MLE(const QVector<double> &sample)
+bool LogNormalRand::fitLocationAndScaleMLE(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n == 0)

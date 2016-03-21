@@ -29,6 +29,7 @@ public:
     void setParameters(double shape, double scale);
     inline double getShape() const { return alpha; }
     inline double getScale() const { return theta; }
+    inline double getRate() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -55,12 +56,12 @@ public:
 
     bool checkValidity(const QVector<double> &sample);
 
-    bool fitScale_MLE(const QVector<double> &sample);
-    virtual bool fit_MLE(const QVector<double> &sample);
+    bool fitScaleMLE(const QVector<double> &sample);
+    bool fitShapeAndScaleMLE(const QVector<double> &sample);
     
-    bool fitShape_MM(const QVector<double> &sample);
-    bool fitScale_MM(const QVector<double> &sample);
-    virtual bool fit_MM(const QVector<double> &sample);
+    bool fitShapeMM(const QVector<double> &sample);
+    bool fitScaleMM(const QVector<double> &sample);
+    bool fitShapeAndScaleMM(const QVector<double> &sample);
 
     /**
      * @brief getInverseGammaFunction

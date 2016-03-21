@@ -166,9 +166,10 @@ double ParetoRand::Entropy() const
     return std::log(xm * alphaInv) + alphaInv + 1;
 }
 
-bool ParetoRand::fitToData(const QVector<double> &sample)
+bool ParetoRand::fitShapeAndScaleMLE(const QVector<double> &sample)
 {
-    if (sample.size() == 0)
+    double n = sample.size();
+    if (n <= 0)
         return false;
 
     /// Calculate xm
@@ -181,11 +182,11 @@ bool ParetoRand::fitToData(const QVector<double> &sample)
     }
 
     /// Calculate alpha
-    double alpha = 0.0;
+    double logAverage = 0.0;
     for (double var : sample)
-        alpha += std::log(var / minVar);
-    alpha = sample.size() / alpha;
+        logAverage += std::log(var / minVar);
+    logAverage = n / logAverage;
 
-    setParameters(minVar, alpha);
+    setParameters(logAverage, minVar);
     return true;
 }

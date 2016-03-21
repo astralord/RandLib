@@ -37,10 +37,10 @@ public:
 
     bool checkValidity(const QVector<double> &sample);
 
-    bool fitLocation_MM(const QVector<double> &sample);
-    bool fitScale_MM(const QVector<double> &sample);
+    bool fitLocationMM(const QVector<double> &sample);
+    bool fitScaleMM(const QVector<double> &sample);
 
-    bool fit_MLE(const QVector<double> &sample);
+    bool fitLocationAndScaleMLE(const QVector<double> &sample);
 };
 
 #endif // LOGNORMALRAND_H

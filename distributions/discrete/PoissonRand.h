@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
     double lambda;
     double expmLambda; /// exp(-lambda)
     double logLambda; /// ln(lambda)
-    int floorLambda; /// floor(lambda) and
+    int floorLambda; /// floor(lambda)
     double FFloorLambda; /// P(X < floor(lambda))
     double PFloorLambda; /// P(X = floor(lambda))
 
@@ -43,7 +43,7 @@ public:
 
     bool checkValidity(const QVector<double> &sample);
 
-    bool fit_MLE(const QVector<double> &sample);
+    bool fitRateMLE(const QVector<double> &sample);
 };
 
 #endif // POISSONRAND_H

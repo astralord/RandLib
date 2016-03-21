@@ -39,9 +39,9 @@ public:
     
     bool checkValidity(const QVector<double> &sample);
 
-    bool fit_MLE(const QVector<double> &sample);
-    bool fit_MM(const QVector<double> &sample);
-    bool fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution);
+    bool fitProbabilityMLE(const QVector<double> &sample);
+    bool fitProbabilityMM(const QVector<double> &sample);
+    bool fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

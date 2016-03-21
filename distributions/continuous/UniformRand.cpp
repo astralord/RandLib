@@ -101,7 +101,7 @@ double UniformRand::Entropy() const
     return (b == a) ? -INFINITY : std::log(bma);
 }
 
-bool UniformRand::fitMin_MLE(const QVector<double> &sample)
+bool UniformRand::fitMinimumMLE(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -116,7 +116,7 @@ bool UniformRand::fitMin_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitMax_MLE(const QVector<double> &sample)
+bool UniformRand::fitMaximumMLE(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -131,7 +131,7 @@ bool UniformRand::fitMax_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool UniformRand::fit_MLE(const QVector<double> &sample)
+bool UniformRand::fitSupportMLE(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -145,21 +145,21 @@ bool UniformRand::fit_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitMin_MM(const QVector<double> &sample)
+bool UniformRand::fitMinimumMM(const QVector<double> &sample)
 {
     double m = RandMath::sampleMean(sample);
     setSupport(m + m - b, b);
     return true;
 }
 
-bool UniformRand::fitMax_MM(const QVector<double> &sample)
+bool UniformRand::fitMaximumMM(const QVector<double> &sample)
 {
     double m = RandMath::sampleMean(sample);
     setSupport(a, m + m - a);
     return true;
 }
 
-bool UniformRand::fit_MM(const QVector<double> &sample)
+bool UniformRand::fitSupportMM(const QVector<double> &sample)
 {
     double mean = RandMath::sampleMean(sample);
     double var = RandMath::sampleVariance(sample, mean);
@@ -168,7 +168,7 @@ bool UniformRand::fit_MM(const QVector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitMin_UMVU(const QVector<double> &sample)
+bool UniformRand::fitMinimumUMVU(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -186,7 +186,7 @@ bool UniformRand::fitMin_UMVU(const QVector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitMax_UMVU(const QVector<double> &sample)
+bool UniformRand::fitMaximumUMVU(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -204,7 +204,7 @@ bool UniformRand::fitMax_UMVU(const QVector<double> &sample)
     return true;
 }
 
-bool UniformRand::fit_UMVU(const QVector<double> &sample)
+bool UniformRand::fitSupportUMVU(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)

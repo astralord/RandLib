@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
     double pdfCoef;
 
 public:
-    ParetoRand(double shape, double scale);
+    ParetoRand(double shape = 1, double scale = 1);
     std::string name() override;
 
     void setParameters(double shape, double scale);
@@ -49,7 +49,7 @@ public:
 
     inline double Entropy() const;
 
-    bool fitToData(const QVector<double> &sample);
+    bool fitShapeAndScaleMLE(const QVector<double> &sample);
 };
 
 #endif // PARETORAND_H

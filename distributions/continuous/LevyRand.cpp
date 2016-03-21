@@ -69,7 +69,7 @@ bool LevyRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool LevyRand::fitScale_MLE(const QVector<double> &sample)
+bool LevyRand::fitScaleMLE(const QVector<double> &sample)
 {
     double n = sample.size();
     if (n <= 0 || !checkValidity(sample))

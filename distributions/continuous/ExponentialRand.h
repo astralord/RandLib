@@ -30,7 +30,6 @@ protected:
 
 public:
     void setRate(double rate);
-    inline double getRate() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -47,9 +46,9 @@ public:
 
     double Moment(int n) const;
 
-    bool fit_MM(const QVector<double> &sample) override;
-    bool fit_MLE(const QVector<double> &sample) override;
-    bool fit_UMVU(const QVector<double> &sample);
+    bool fitRateMM(const QVector<double> &sample);
+    bool fitRateMLE(const QVector<double> &sample);
+    bool fitRateUMVU(const QVector<double> &sample);
 };
 
 #endif // EXPONENTIALRAND_H

@@ -2,6 +2,7 @@
 #define NORMALRAND_H
 
 #include "StableRand.h"
+#include "InverseGammaRand.h"
 
 /**
  * @brief The NormalRand class
@@ -28,7 +29,8 @@ private:
 
 public:
     void setVariance(double var);
-    double getVar() const;
+    inline double getVariance() const { return sigma * sigma; }
+    inline double getPrecision() const { return 1.0 / (sigma * sigma); }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -52,19 +54,23 @@ public:
     double Moment(int n) const;
 
     /// Maximum likelihood estimators
-    bool fitMean_MLE(const QVector<double> &sample);
-    bool fitVariance_MLE(const QVector<double> &sample);
-    bool fit_MLE(const QVector<double> &sample);
-    
+    bool fitMeanMLE(const QVector<double> &sample);
+    bool fitVarianceMLE(const QVector<double> &sample);
+    bool fitMeanAndVarianceMLE(const QVector<double> &sample);
+
     /// Method of moments
-    bool fitMean_MM(const QVector<double> &sample);
-    bool fitVariance_MM(const QVector<double> &sample);
-    bool fit_MM(const QVector<double> &sample);
+    bool fitMeanMM(const QVector<double> &sample);
+    bool fitVarianceMM(const QVector<double> &sample);
+    bool fitMeanAndVarianceMM(const QVector<double> &sample);
     
     /// Uniformly minimum variance unbiased (UMVU) estimators
-    bool fitMean_UMVU(const QVector<double> &sample);
-    bool fitVariance_UMVU(const QVector<double> &sample);
-    bool fit_UMVU(const QVector<double> &sample);
+    bool fitMeanUMVU(const QVector<double> &sample);
+    bool fitVarianceUMVU(const QVector<double> &sample);
+    bool fitMeanAndVarianceUMVU(const QVector<double> &sample);
+
+    /// Bayesian estimation
+    bool fitMeanBayes(const QVector<double> &sample, NormalRand &priorDistribution);
+    bool fitVarianceBayes(const QVector<double> &sample, InverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

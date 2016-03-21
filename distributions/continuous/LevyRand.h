@@ -38,7 +38,7 @@ public:
     bool checkValidity(const QVector<double> &sample);
     
     /// Maximum likelihood estimators
-    bool fitScale_MLE(const QVector<double> &sample);
+    bool fitScaleMLE(const QVector<double> &sample);
 };
 
 #endif // LEVYRAND_H

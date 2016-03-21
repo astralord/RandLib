@@ -263,7 +263,7 @@ bool BinomialRand::fitProbability_MM(const QVector<double> &sample)
     return fitProbability_MLE(sample);
 }
 
-bool BinomialRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution)
+bool BinomialRand::fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution)
 {
     int N = sample.size();
     double sum = RandMath::sum(sample);

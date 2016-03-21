@@ -14,7 +14,7 @@ NormalRand::NormalRand(double mean, double var) : StableRand(2.0, 0.0, 1.0, mean
 
 std::string NormalRand::name()
 {
-    return "Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getVar()) + ")";
+    return "Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getVariance()) + ")";
 }
 
 bool NormalRand::setupTables()
@@ -41,11 +41,6 @@ void NormalRand::setVariance(double var)
     if (var <= 0)
         var = 1.0;
     setScale(std::sqrt(var));
-}
-
-double NormalRand::getVar() const
-{
-    return sigma * sigma;
 }
 
 double NormalRand::f(double x) const
@@ -192,44 +187,44 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-bool NormalRand::fitMean_MLE(const QVector<double> &sample)
+bool NormalRand::fitMeanMLE(const QVector<double> &sample)
 {
     setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
-bool NormalRand::fitVariance_MLE(const QVector<double> &sample)
+bool NormalRand::fitVarianceMLE(const QVector<double> &sample)
 {
     setVariance(RandMath::sampleVariance(sample));
     return true;
 }
 
-bool NormalRand::fit_MLE(const QVector<double> &sample)
+bool NormalRand::fitMeanAndVarianceMLE(const QVector<double> &sample)
 {
-    return fitMean_MLE(sample) ? fitVariance_MLE(sample) : false;
+    return fitMeanMLE(sample) ? fitVarianceMLE(sample) : false;
 }
 
-bool NormalRand::fitMean_MM(const QVector<double> &sample)
+bool NormalRand::fitMeanMM(const QVector<double> &sample)
 {
-    return fitMean_MLE(sample);
+    return fitMeanMLE(sample);
 }
 
-bool NormalRand::fitVariance_MM(const QVector<double> &sample)
+bool NormalRand::fitVarianceMM(const QVector<double> &sample)
 {
-    return fitVariance_MLE(sample);
+    return fitVarianceMLE(sample);
 }
 
-bool NormalRand::fit_MM(const QVector<double> &sample)
+bool NormalRand::fitMeanAndVarianceMM(const QVector<double> &sample)
 {
-    return fit_MLE(sample);
+    return fitMeanAndVarianceMLE(sample);
 }
 
-bool NormalRand::fitMean_UMVU(const QVector<double> &sample)
+bool NormalRand::fitMeanUMVU(const QVector<double> &sample)
 {
-    return fitMean_MLE(sample);
+    return fitMeanMLE(sample);
 }
 
-bool NormalRand::fitVariance_UMVU(const QVector<double> &sample)
+bool NormalRand::fitVarianceUMVU(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 1)
@@ -239,7 +234,37 @@ bool NormalRand::fitVariance_UMVU(const QVector<double> &sample)
     return true;
 }
 
-bool NormalRand::fit_UMVU(const QVector<double> &sample)
+bool NormalRand::fitMeanAndVarianceUMVU(const QVector<double> &sample)
 {
-    return fitMean_MLE(sample) ? fitVariance_UMVU(sample) : false;
+    return fitMeanMLE(sample) ? fitVarianceUMVU(sample) : false;
+}
+
+bool NormalRand::fitMeanBayes(const QVector<double> &sample, NormalRand &priorDistribution)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double mu0 = priorDistribution.getLocation();
+    double tau0 = priorDistribution.getPrecision();
+    double tau = getPrecision();
+    double numerator = RandMath::sum(sample) * tau + tau0 * mu0;
+    double denominator = n * tau + tau0;
+    priorDistribution.setLocation(numerator / denominator);
+    priorDistribution.setVariance(1.0 / denominator);
+    setLocation(priorDistribution.Mean());
+    return true;
+}
+
+bool NormalRand::fitVarianceBayes(const QVector<double> &sample, InverseGammaRand &priorDistribution)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double alpha = priorDistribution.getShape();
+    double beta = priorDistribution.getRate();
+    double newAlpha = alpha + 0.5 * n;
+    double newBeta = beta + 0.5 * n * RandMath::sampleVariance(sample, mu);
+    priorDistribution.setParameters(newAlpha, 1.0 / newBeta);
+    setVariance(priorDistribution.Mean());
+    return true;
 }

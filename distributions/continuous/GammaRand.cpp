@@ -239,7 +239,7 @@ bool GammaRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitScale_MLE(const QVector<double> &sample)
+bool GammaRand::fitScaleMLE(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -247,7 +247,7 @@ bool GammaRand::fitScale_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fit_MLE(const QVector<double> &sample)
+bool GammaRand::fitShapeAndScaleMLE(const QVector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
@@ -283,7 +283,7 @@ bool GammaRand::fit_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitShape_MM(const QVector<double> &sample)
+bool GammaRand::fitShapeMM(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -291,12 +291,12 @@ bool GammaRand::fitShape_MM(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitScale_MM(const QVector<double> &sample)
+bool GammaRand::fitScaleMM(const QVector<double> &sample)
 {
-    return fitScale_MLE(sample);
+    return fitScaleMLE(sample);
 }
 
-bool GammaRand::fit_MM(const QVector<double> &sample)
+bool GammaRand::fitShapeAndScaleMM(const QVector<double> &sample)
 {  
     if (!checkValidity(sample))
         return false;
