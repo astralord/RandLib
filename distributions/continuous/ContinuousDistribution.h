@@ -31,10 +31,13 @@ public:
     double Quantile(double p) const override;
     double Hazard(double x) const override;
 
-    double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
     double Median() const override;
     double Mode() const override;
 
+protected:
+    double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
+
+public:
     double likelihood(const QVector<double> &sample) const;
     double loglikelihood(const QVector<double> &sample) const;
 };

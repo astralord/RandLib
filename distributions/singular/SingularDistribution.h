@@ -12,11 +12,12 @@ public:
     SingularDistribution();
     virtual ~SingularDistribution() {}
 
-protected:
     double Hazard(double) const override;
+    double Mode() const override;
+
+protected:
     double ExpectedValue(const std::function<double (double)> &, double) const override;
 
-    double Mode() const override;
 };
 
 

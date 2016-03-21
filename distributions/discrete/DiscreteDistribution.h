@@ -32,6 +32,7 @@ public:
 
     double Hazard(double x) const override;
 
+protected:
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
     double likelihood(const QVector<int> &sample) const;

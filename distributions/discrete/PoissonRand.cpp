@@ -123,7 +123,7 @@ bool PoissonRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool PoissonRand::fit_MLE(const QVector<double> &sample)
+bool PoissonRand::fitRateMLE(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;

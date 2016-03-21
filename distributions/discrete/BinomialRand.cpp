@@ -250,7 +250,7 @@ bool BinomialRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool BinomialRand::fitProbability_MLE(const QVector<double> &sample)
+bool BinomialRand::fitProbabilityMLE(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -258,9 +258,9 @@ bool BinomialRand::fitProbability_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool BinomialRand::fitProbability_MM(const QVector<double> &sample)
+bool BinomialRand::fitProbabilityMM(const QVector<double> &sample)
 {
-    return fitProbability_MLE(sample);
+    return fitProbabilityMLE(sample);
 }
 
 bool BinomialRand::fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution)

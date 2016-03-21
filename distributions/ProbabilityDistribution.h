@@ -121,17 +121,19 @@ public:
     virtual double Skewness() const;
 
     /**
+     * @brief Kurtosis
+     * @return unbiased kurtosis = mu_4 / sigma ^ 4
+     */
+    virtual double Kurtosis() const;
+
+protected:
+    /**
      * @brief ExcessKurtosis
      * @return E[((X - mu) / sigma) ^ 4]  - 3
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
     virtual double ExcessKurtosis() const;
 
-    /**
-     * @brief Kurtosis
-     * @return unbiased kurtosis = mu_4 / sigma ^ 4
-     */
-    virtual double Kurtosis() const;
 };
 
 #endif // PROBABILITY_DISTRIBUTION_H

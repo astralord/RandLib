@@ -80,7 +80,7 @@ bool GeometricRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool GeometricRand::fit_MLE(const QVector<double> &sample)
+bool GeometricRand::fitProbabilityMLE(const QVector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -88,12 +88,12 @@ bool GeometricRand::fit_MLE(const QVector<double> &sample)
     return true;
 }
 
-bool GeometricRand::fit_MM(const QVector<double> &sample)
+bool GeometricRand::fitProbabilityMM(const QVector<double> &sample)
 {
-    return fit_MLE(sample);
+    return fitProbabilityMLE(sample);
 }
 
-bool GeometricRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand &priorDistribution)
+bool GeometricRand::fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution)
 {
     int n = sample.size();
     double alpha = priorDistribution.getAlpha();

@@ -77,8 +77,8 @@ public:
 
     bool checkValidity(const QVector<double> &sample);
 
-    bool fitProbability_MLE(const QVector<double> &sample);
-    bool fitProbability_MM(const QVector<double> &sample);
+    bool fitProbabilityMLE(const QVector<double> &sample);
+    bool fitProbabilityMM(const QVector<double> &sample);
 
     /**
      * @brief fitProbability_Bayes

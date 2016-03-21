@@ -7,7 +7,7 @@ InverseGammaRand::InverseGammaRand(double shape, double scale) : GammaRand()
 
 std::string InverseGammaRand::name()
 {
-    return "Inverse-Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Inverse-Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }
 
 double InverseGammaRand::f(double x) const

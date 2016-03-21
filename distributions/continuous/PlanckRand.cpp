@@ -36,8 +36,13 @@ double PlanckRand::f(double x) const
 
 double PlanckRand::F(double x) const
 {
-    //TODO:
-    return -x;
+    if (x <= 0)
+        return 0.0;
+    return RandMath::integral([this] (double t)
+    {
+        return f(t);
+    },
+    0, x);
 }
 
 double PlanckRand::variate() const
@@ -50,11 +55,11 @@ double PlanckRand::variate() const
 double PlanckRand::Mean() const
 {
     //TODO:
-    return -1.0;
+    return NAN;
 }
 
 double PlanckRand::Variance() const
 {
     //TODO:
-    return -1.0;
+    return NAN;
 }
