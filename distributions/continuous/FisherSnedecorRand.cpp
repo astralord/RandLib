@@ -15,7 +15,7 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     d1 = std::max(degree1, 1);
     d2 = std::max(degree2, 1);
 
-    B.setParameters(.5 * d1, .5 * d2);
+    B.setShapes(.5 * d1, .5 * d2);
 
     a = .5 * d1 - 1;
     d1_d2 = static_cast<double>(d1) / d2;

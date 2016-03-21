@@ -269,7 +269,7 @@ bool BinomialRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand 
     double sum = RandMath::sum(sample);
     double alpha = priorDistribution.getAlpha();
     double beta = priorDistribution.getBeta();
-    priorDistribution.setParameters(sum + alpha, N * n - sum + beta);
+    priorDistribution.setShapes(sum + alpha, N * n - sum + beta);
     setParameters(n, priorDistribution.Mean());
     return true;
 }

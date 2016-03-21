@@ -1,17 +1,21 @@
 #include "BetaRand.h"
 #include "../discrete/BernoulliRand.h"
 
-BetaRand::BetaRand(double shape1, double shape2)
+BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValue)
 {
-    setParameters(shape1, shape2);
+    setShapes(shape1, shape2);
+    setSupport(minValue, maxValue);
 }
 
 std::string BetaRand::name()
 {
-    return "Beta(" + toStringWithPrecision(getAlpha()) + ", " + toStringWithPrecision(getBeta()) + ")";
+    return "Beta(" + toStringWithPrecision(getAlpha()) + ", "
+                   + toStringWithPrecision(getBeta()) + ", "
+                   + toStringWithPrecision(getMin()) + ", "
+                   + toStringWithPrecision(getMax()) + ")";
 }
 
-void BetaRand::setParameters(double shape1, double shape2)
+void BetaRand::setShapes(double shape1, double shape2)
 {
     alpha = shape1;
     if (alpha <= 0)
@@ -28,13 +32,27 @@ void BetaRand::setParameters(double shape1, double shape2)
         /// we use log(Gamma(x)) in order to avoid too big numbers
         double logGammaX = std::log(X.getInverseGammaFunction());
         double logGammaY = std::log(Y.getInverseGammaFunction());
-        pdfCoef = std::lgamma(alpha + beta) + logGammaX + logGammaY;
-        pdfCoef = std::exp(pdfCoef);
+        cdfCoef = std::lgamma(alpha + beta) + logGammaX + logGammaY;
+        cdfCoef = std::exp(cdfCoef);
     }
     else {
-        pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+        cdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
     }
+    pdfCoef = cdfCoef / bma;
+
     setVariateConstants();
+}
+
+void BetaRand::setSupport(double minValue, double maxValue)
+{
+    a = minValue;
+    b = maxValue;
+
+    if (a >= b)
+        b = a + 1.0;
+
+    bma = b - a;
+    pdfCoef = cdfCoef / bma;
 }
 
 void BetaRand::setAlpha(double shape1)
@@ -43,7 +61,8 @@ void BetaRand::setAlpha(double shape1)
     if (alpha <= 0)
         alpha = 1.0;
     X.setParameters(alpha, 1);
-    pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    cdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    pdfCoef = cdfCoef / bma;
     setVariateConstants();
 }
 
@@ -53,14 +72,20 @@ void BetaRand::setBeta(double shape2)
     if (beta <= 0)
         beta = 1.0;
     Y.setParameters(beta, 1);
-    pdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    cdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
+    pdfCoef = cdfCoef / bma;
     setVariateConstants();
 }
 
 double BetaRand::f(double x) const
 {
-    if (x < 0 || x > 1)
+    if (x <= a || x >= b)
         return 0;
+
+    /// Standardize
+    x -= a;
+    x /= bma;
+
     if (RandMath::areEqual(alpha, beta))
         return pdfCoef * std::pow(x - x * x, alpha - 1);
     double rv = std::pow(x, alpha - 1);
@@ -70,11 +95,11 @@ double BetaRand::f(double x) const
 
 double BetaRand::F(double x) const
 {
-    if (x <= 0)
+    if (x <= a)
         return 0;
-    if (x >= 1)
+    if (x >= b)
         return 1;
-    return pdfCoef * RandMath::incompleteBetaFun(x, alpha, beta);
+    return cdfCoef * RandMath::incompleteBetaFun((x - a) / bma, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const
@@ -123,7 +148,7 @@ void BetaRand::setVariateConstants()
         double t = 1.0 / (alpha + alpha + 1);
         variateCoef = M_E * std::sqrt(0.5 * M_PI * M_E * t);
         variateCoef *= std::pow(0.25 - 0.75 * t, alpha - 1);
-        variateCoef *= pdfCoef; /// /= Beta(alpha, alpha)
+        variateCoef *= cdfCoef; /// /= Beta(alpha, alpha)
 
         N.setLocation(0.5);
         N.setVariance(0.25 * t);
@@ -132,15 +157,18 @@ void BetaRand::setVariateConstants()
 
 double BetaRand::variate() const
 {
+    double var;
     if (RandMath::areEqual(alpha, beta) && alpha == 0.5)
-        return variateArcsine();
-    if (!RandMath::areEqual(alpha, beta) || alpha < 1)
-        return variateForDifferentParameters();
-    if (alpha == 1)
-        return UniformRand::standardVariate();
-    if (alpha <= edgeForGenerators)
-        return variateForSmallEqualParameters();
-    return variateForLargeEqualParameters();
+        var = variateArcsine();
+    else if (!RandMath::areEqual(alpha, beta) || alpha < 1)
+        var =  variateForDifferentParameters();
+    else if (alpha == 1)
+        var = UniformRand::standardVariate();
+    else if (alpha <= edgeForGenerators)
+        var = variateForSmallEqualParameters();
+    else
+        var = variateForLargeEqualParameters();
+    return a + bma * var;
 }
 
 void BetaRand::sample(QVector<double> &outputData) const
@@ -165,18 +193,24 @@ void BetaRand::sample(QVector<double> &outputData) const
         for (double &var : outputData)
             var = variateForLargeEqualParameters();
     }
+
+    /// Shift and scale
+    for (double &var : outputData)
+        var = a + bma * var;
 }
 
 double BetaRand::Mean() const
 {
-    return alpha / (alpha + beta);
+    double mean = alpha / (alpha + beta);
+    return a + bma * mean;
 }
 
 double BetaRand::Variance() const
 {
-    double denominator = alpha + beta;
-    denominator *= denominator * (denominator + 1);
-    return alpha * beta / denominator;
+    double var = alpha + beta;
+    var *= var * (var + 1);
+    var = alpha * beta / var;
+    return bma * bma * var;
 }
 
 double BetaRand::Quantile(double p) const
@@ -188,7 +222,7 @@ double BetaRand::Quantile(double p) const
     {
         return BetaRand::F(x) - p;
     },
-    0, 1, root))
+    a, b, root))
         return root;
     return NAN;
 }
@@ -200,9 +234,12 @@ double BetaRand::Median() const
 
 double BetaRand::Mode() const
 {
+    double mode;
     if (alpha > 1)
-        return (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
-    return (beta > 1) ? 0.0 : BernoulliRand::standardVariate();
+        mode = (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
+    else
+        mode = (beta > 1) ? 0.0 : BernoulliRand::standardVariate();
+    return a + bma * mode;
 }
 
 double BetaRand::Skewness() const
@@ -229,7 +266,7 @@ double BetaRand::ExcessKurtosis() const
 
 BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
 {
-    setParameters(fixatingIndex, frequency);
+    setShapes(fixatingIndex, frequency);
 }
 
 std::string BaldingNicholsRand::name()
@@ -237,7 +274,7 @@ std::string BaldingNicholsRand::name()
     return "Balding-Nichols(" + toStringWithPrecision(getFixatingIndex()) + ", " + toStringWithPrecision(getFrequency()) + ")";
 }
 
-void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
+void BaldingNicholsRand::setShapes(double fixatingIndex, double frequency)
 {
     F = fixatingIndex;
     if (F <= 0 || F >= 1)
@@ -248,5 +285,5 @@ void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
         p = 0.5;
 
     double frac = (1.0 - F) / F, fracP = frac * p;
-    BetaRand::setParameters(fracP, frac - fracP);
+    BetaRand::setShapes(fracP, frac - fracP);
 }

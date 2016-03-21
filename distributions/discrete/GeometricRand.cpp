@@ -98,7 +98,7 @@ bool GeometricRand::fitProbability_Bayes(const QVector<double> &sample, BetaRand
     int n = sample.size();
     double alpha = priorDistribution.getAlpha();
     double beta = priorDistribution.getBeta();
-    priorDistribution.setParameters(alpha + n, beta + RandMath::sum(sample));
+    priorDistribution.setShapes(alpha + n, beta + RandMath::sum(sample));
     setProbability(priorDistribution.Mean());
     return true;
 }

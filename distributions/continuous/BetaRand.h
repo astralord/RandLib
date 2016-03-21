@@ -13,27 +13,30 @@
  */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
 {
-
 protected:
     double alpha, beta; /// hashed parameters
+    double a, b, bma;
 
 private:
     GammaRand X, Y;
     NormalRand N; // TODO: we need to storage N OR (X AND Y)
     static constexpr double edgeForGenerators = 8.0;
-    double pdfCoef;
+    double pdfCoef, cdfCoef;
     double variateCoef;
 
 public:
-    BetaRand(double shape1 = 1, double shape2 = 1);
+    BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
     virtual ~BetaRand() {}
     std::string name() override;
 
-    void setParameters(double shape1, double shape2);
+    void setShapes(double shape1, double shape2);
+    void setSupport(double minValue, double maxValue);
     void setAlpha(double shape1);
     void setBeta(double shape2);
     inline double getAlpha() const { return alpha; }
     inline double getBeta() const { return beta; }
+    inline double getMin() const { return a; }
+    inline double getMax() const { return b; }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -64,7 +67,7 @@ public:
      * @brief getInvBetaFunction
      * @return 1 / B(alpha, beta)
      */
-    inline double getInverseBetaFunction() const { return pdfCoef; }
+    inline double getInverseBetaFunction() const { return cdfCoef; }
 };
 
 
@@ -78,7 +81,7 @@ public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
     std::string name() override;
 
-    void setParameters(double fixatingIndex, double frequency);
+    void setShapes(double fixatingIndex, double frequency);
     inline double getFrequency() { return p; }
     inline double getFixatingIndex() { return F; }
 
