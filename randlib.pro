@@ -46,7 +46,6 @@ SOURCES += \
     distributions/discrete/ZipfRand.cpp \
     distributions/discrete/YuleRand.cpp \
     distributions/continuous/VonMisesRand.cpp \
-    distributions/continuous/ArcsineRand.cpp \
     distributions/continuous/SechRand.cpp \
     distributions/continuous/WignerSemicircleRand.cpp \
     distributions/continuous/GumbelRand.cpp \
@@ -102,7 +101,6 @@ HEADERS +=\
     distributions/discrete/ZipfRand.h \
     distributions/discrete/YuleRand.h \
     distributions/continuous/VonMisesRand.h \
-    distributions/continuous/ArcsineRand.h \
     math/Constants.h \
     distributions/continuous/SechRand.h \
     distributions/continuous/WignerSemicircleRand.h \

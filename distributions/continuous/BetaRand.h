@@ -72,6 +72,26 @@ public:
 
 
 /**
+ * @brief The ArcsineRand class
+ */
+class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
+{
+public:
+    ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1);
+    std::string name() override;
+
+    void setShape(double shape);
+    inline double getShape() const { return beta; }
+
+protected:
+    /// prohibit to use beta's getters and setters
+    using BetaRand::setShapes;
+    using BetaRand::setAlpha;
+    using BetaRand::setBeta;
+};
+
+
+/**
  * @brief The BaldingNicholsRand class
  */
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand

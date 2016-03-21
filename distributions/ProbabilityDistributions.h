@@ -22,7 +22,6 @@
 
 /// CONTINUOUS
 #include "continuous/ContinuousDistribution.h"
-#include "continuous/ArcsineRand.h"
 #include "continuous/BetaPrimeRand.h"
 #include "continuous/BetaRand.h"
 #include "continuous/CauchyRand.h"

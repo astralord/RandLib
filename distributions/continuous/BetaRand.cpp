@@ -99,6 +99,13 @@ double BetaRand::F(double x) const
         return 0;
     if (x >= b)
         return 1;
+
+    /// Standardize
+    x -= a;
+    x /= bma;
+
+    if (alpha == beta && beta == 0.5)
+        return M_2_PI * std::asin(std::sqrt(x));
     return cdfCoef * RandMath::incompleteBetaFun((x - a) / bma, alpha, beta);
 }
 
@@ -218,6 +225,11 @@ double BetaRand::Quantile(double p) const
     if (p < 0 || p > 1)
         return NAN;
     double root = p;
+    if (alpha == beta && beta == 0.5)
+    {
+        double x = std::sin(0.5 * M_PI * p);
+        return a + bma * x * x;
+    }
     if (RandMath::findRoot([this, p] (double x)
     {
         return BetaRand::F(x) - p;
@@ -261,6 +273,25 @@ double BetaRand::ExcessKurtosis() const
     --kurtosis;
     kurtosis /= (sum + 3);
     return 6 * kurtosis;
+}
+
+
+ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
+{
+    setShape(shape);
+    setSupport(minValue, maxValue);
+}
+
+std::string ArcsineRand::name()
+{
+    return "Arcsine(" + toStringWithPrecision(getMin()) + ", "
+                      + toStringWithPrecision(getMax()) + ", "
+                      + toStringWithPrecision(getShape()) + ")";
+}
+
+void ArcsineRand::setShape(double shape)
+{
+    BetaRand::setShapes(1.0 - shape, shape);
 }
 
 
