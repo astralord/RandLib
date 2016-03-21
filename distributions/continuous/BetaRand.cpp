@@ -305,7 +305,7 @@ std::string BaldingNicholsRand::name()
     return "Balding-Nichols(" + toStringWithPrecision(getFixatingIndex()) + ", " + toStringWithPrecision(getFrequency()) + ")";
 }
 
-void BaldingNicholsRand::setShapes(double fixatingIndex, double frequency)
+void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
 {
     F = fixatingIndex;
     if (F <= 0 || F >= 1)

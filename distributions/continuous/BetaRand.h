@@ -101,11 +101,12 @@ public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
     std::string name() override;
 
-    void setShapes(double fixatingIndex, double frequency);
+    void setParameters(double fixatingIndex, double frequency);
     inline double getFrequency() { return p; }
     inline double getFixatingIndex() { return F; }
 
-protected:
+private:
+    using BetaRand::setShapes;
     using BetaRand::setAlpha;
     using BetaRand::setBeta;
 };
