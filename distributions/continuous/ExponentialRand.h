@@ -6,11 +6,11 @@
 /**
  * @brief The ExponentialRand class
  * Exponential distribution
- * X ~ Exp(\lambda)
+ * X ~ Exp(\beta)
  *
- * f(x|\lambda) = \lambda \exp(-\lambda x)
+ * f(x|\beta) = \beta \exp(-\beta x)
  *
- * X ~ \Gamma(1, 1 / \lambda)
+ * X ~ \Gamma(1, 1 / \beta)
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
 {
