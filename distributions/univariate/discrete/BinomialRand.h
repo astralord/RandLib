@@ -64,6 +64,7 @@ private:
 
 public:
     double variate() const override;
+    static double variate(int n, double p);
 
     double Mean() const override;
     double Variance() const override;

@@ -7,6 +7,7 @@
 /// DISCRETE
 #include "univariate/discrete/DiscreteDistribution.h"
 #include "univariate/discrete/BernoulliRand.h"
+#include "univariate/discrete/BetaBinomialRand.h"
 #include "univariate/discrete/BinomialRand.h"
 #include "univariate/discrete/GeometricRand.h"
 #include "univariate/discrete/HyperGeometricRand.h"
@@ -64,6 +65,8 @@
 
 enum DISTRIBUTION {
     /// DISCRETE
+    BERNOULLI_RAND,
+    BETA_BINOMIAL_RAND,
     BINOMIAL_RAND,
     GEOMETRIC_RAND,
     HYPERGEOMETRIC_RAND,

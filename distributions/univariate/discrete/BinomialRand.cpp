@@ -2,6 +2,7 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/NormalRand.h"
 #include "../continuous/ExponentialRand.h"
+#include "BernoulliRand.h"
 
 BinomialRand::BinomialRand(int number, double probability)
 {
@@ -190,9 +191,8 @@ double BinomialRand::variate() const
     /// for small (n * p) we can use simple waiting algorithm
     if (npFloor <= generatorEdge)
     {
-        if (p <= 0.5)
-            return variateWaiting(n);
-        return n - variateWaiting(n);
+        double var = variateWaiting(n);
+        return (p <= 0.5) ? var : n - var;
     }
 
     /// if X ~ Bin(n, p') and Y ~ Bin(n - Y, (p - p') / (1 - p'))
@@ -201,6 +201,14 @@ double BinomialRand::variate() const
     if (pRes > 0)
         Y += variateWaiting(n - Y);
     return (p > 0.5) ? n - Y : Y;
+}
+
+double BinomialRand::variate(int n, double p)
+{
+    double var = 0;
+    for (int i = 0; i != n; ++i)
+        var += BernoulliRand::variate(p);
+    return var;
 }
 
 double BinomialRand::Mean() const
