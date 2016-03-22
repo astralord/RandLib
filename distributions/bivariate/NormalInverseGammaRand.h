@@ -12,7 +12,7 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityD
 {
     double mu, lambda;
     InverseGammaRand Y;
-    double pdfCoef;
+    double pdfCoef, cdfCoef;
 
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);
