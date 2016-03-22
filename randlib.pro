@@ -60,7 +60,8 @@ SOURCES += \
     distributions/univariate/continuous/IrwinHallRand.cpp \
     distributions/univariate/continuous/InverseGammaRand.cpp \
     distributions/univariate/UnivariateProbabilityDistribution.cpp \
-    distributions/bivariate/BivariateProbabilityDistribution.cpp
+    distributions/bivariate/BivariateProbabilityDistribution.cpp \
+    distributions/bivariate/NormalInverseGammaRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -118,7 +119,8 @@ HEADERS +=\
     distributions/univariate/continuous/IrwinHallRand.h \
     distributions/univariate/continuous/InverseGammaRand.h \
     distributions/univariate/UnivariateProbabilityDistribution.h \
-    distributions/bivariate/BivariateProbabilityDistribution.h
+    distributions/bivariate/BivariateProbabilityDistribution.h \
+    distributions/bivariate/NormalInverseGammaRand.h
 
 unix {
     target.path = /usr/lib

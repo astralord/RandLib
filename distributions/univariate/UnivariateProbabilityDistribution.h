@@ -3,10 +3,14 @@
 
 #include "../ProbabilityDistribution.h"
 
+/**
+ * @brief The UnivariateProbabilityDistribution class
+ */
 class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<double>
 {
 public:
     UnivariateProbabilityDistribution();
+    virtual ~UnivariateProbabilityDistribution() {}
 
     /**
      * @brief Variance

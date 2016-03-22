@@ -3,16 +3,18 @@
 
 #include "../ProbabilityDistribution.h"
 
+/**
+ * @brief The BivariateProbabilityDistribution class
+ */
 class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public ProbabilityDistribution<double2d>
 {
 public:
     BivariateProbabilityDistribution();
+    virtual ~BivariateProbabilityDistribution() {}
 
-    /**
-     * @brief Covariance
-     * @return Covariance of random variable
-     */
-    virtual double2d Covariance() const = 0;
+    virtual double f(double2d grid) const = 0;
+
+    // TODO: add virtual Matrix Covariance() const = 0;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H
