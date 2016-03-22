@@ -1,12 +1,12 @@
 #ifndef SingularDistribution_H
 #define SingularDistribution_H
 
-#include "../ProbabilityDistribution.h"
+#include "../UnivariateProbabilityDistribution.h"
 
 /**
  * @brief The SingularDistribution class
  */
-class RANDLIBSHARED_EXPORT SingularDistribution : public ProbabilityDistribution
+class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateProbabilityDistribution
 {
 public:
     SingularDistribution();
