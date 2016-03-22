@@ -1,15 +1,15 @@
 #ifndef DISCRETE_DISTRIBUTION_H
 #define DISCRETE_DISTRIBUTION_H
 
-#include "../ProbabilityDistribution.h"
+#include "../UnivariateProbabilityDistribution.h"
 
 /**
  *@brief The DiscreteDistribution class
  */
-class RANDLIBSHARED_EXPORT DiscreteDistribution : public ProbabilityDistribution
+class RANDLIBSHARED_EXPORT DiscreteDistribution : public UnivariateProbabilityDistribution
 {
 public:
-    DiscreteDistribution() : ProbabilityDistribution() {}
+    DiscreteDistribution() {}
     virtual ~DiscreteDistribution() {}
 
     /**

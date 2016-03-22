@@ -268,3 +268,26 @@ bool NormalRand::fitVarianceBayes(const QVector<double> &sample, InverseGammaRan
     setVariance(priorDistribution.Mean());
     return true;
 }
+
+bool NormalRand::fitMeanAndVarianceBayes(const QVector<double> &sample, NormalInverseGammaRand &priorDistribution)
+{
+    int n = sample.size();
+    if (n <= 0)
+        return false;
+    double alpha = priorDistribution.getShape();
+    double beta = priorDistribution.getRate();
+    double mu0 = priorDistribution.getLocation();
+    double lambda = priorDistribution.getPrecision();
+    double sum = RandMath::sum(sample), average = sum / n;
+    double newLambda = lambda + n;
+    double newMu0 = (lambda * mu0 + sum) / newLambda;
+    double newAlpha = alpha + 0.5 * n;
+    double variance = RandMath::sampleVariance(sample, average);
+    double aux = mu0 - average;
+    double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
+    priorDistribution.setParameters(newMu0, newLambda, newAlpha, newBeta);
+    double2d mean = priorDistribution.Mean();
+    setLocation(mean.x);
+    setVariance(mean.y);
+    return true;
+}

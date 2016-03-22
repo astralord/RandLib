@@ -2,88 +2,40 @@
 #include <sstream>      // std::ostringstream
 #include <iomanip>      // std::setprecision
 
-ProbabilityDistribution::ProbabilityDistribution()
+double2d & double2d::operator=(const double2d & other)
+{
+    x = other.x;
+    y = other.y;
+    return *this;
+}
+
+template < typename T >
+ProbabilityDistribution<T>::ProbabilityDistribution()
 {
 }
 
-std::string ProbabilityDistribution::toStringWithPrecision(const double a_value, const int n)
+template < typename T >
+std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_value, const int n)
 {
     std::ostringstream out;
     out << std::setprecision(n) << a_value;
     return out.str();
 }
 
-void ProbabilityDistribution::sample(QVector<double> &outputData) const
+template < typename T >
+void ProbabilityDistribution<T>::sample(QVector<T> &outputData) const
 {
-    for (double &var : outputData)
+    for (T &var : outputData)
         var = variate();
 }
 
-void ProbabilityDistribution::cdf(const QVector<double> &x, QVector<double> &y) const
+template < typename T >
+void ProbabilityDistribution<T>::cdf(const QVector<T> &x, QVector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 
-std::complex<double> ProbabilityDistribution::CF(double t) const
-{
-    // TODO:
-    return std::complex<double>(t);
-}
-
-void ProbabilityDistribution::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const
-{
-    int size = std::min(t.size(), y.size());
-    for (int i = 0; i != size; ++i)
-        y[i] = CF(t[i]);
-}
-
-double ProbabilityDistribution::Median() const
-{
-    return Quantile(0.5);
-}
-
-double ProbabilityDistribution::Skewness() const
-{
-    double mu = Mean();
-    if (std::isnan(mu) || std::isinf(mu))
-        return NAN;
-
-    double var = Variance();
-    if (std::isnan(var) || std::isinf(var))
-        return NAN;
-
-    double sum = ExpectedValue([this, mu] (double x)
-    {
-        double skew = x - mu;
-        return skew * skew * skew;
-    }, mu);
-
-    return sum / (var * std::sqrt(var));
-}
-
-double ProbabilityDistribution::ExcessKurtosis() const
-{
-    double mu = Mean();
-    if (std::isnan(mu) || std::isinf(mu))
-        return NAN;
-
-    double var = Variance();
-    if (std::isnan(var) || std::isinf(var))
-        return NAN;
-
-    double sum = ExpectedValue([this, mu] (double x)
-    {
-        double kurtosis = x - mu;
-        kurtosis *= kurtosis;
-        return kurtosis * kurtosis;
-    }, mu);
-
-    return sum / (var * var) - 3;
-}
-
-double ProbabilityDistribution::Kurtosis() const
-{
-    return ExcessKurtosis() + 3.0;
-}
+template class ProbabilityDistribution<double>;
+template class ProbabilityDistribution<double2d>;

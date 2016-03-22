@@ -3,6 +3,7 @@
 
 #include "StableRand.h"
 #include "InverseGammaRand.h"
+#include "../../bivariate/NormalInverseGammaRand.h"
 
 /**
  * @brief The NormalRand class
@@ -71,6 +72,7 @@ public:
     /// Bayesian estimation
     bool fitMeanBayes(const QVector<double> &sample, NormalRand &priorDistribution);
     bool fitVarianceBayes(const QVector<double> &sample, InverseGammaRand &priorDistribution);
+    bool fitMeanAndVarianceBayes(const QVector<double> &sample, NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

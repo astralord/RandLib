@@ -157,10 +157,10 @@ double GammaRand::variateForLargeShape() const
 double GammaRand::variate() const
 {
     if (alpha < 5) {
-        double k_round = std::round(alpha);
-        if (RandMath::areEqual(alpha, k_round))
+        double alphaRound = std::round(alpha);
+        if (RandMath::areEqual(alpha, alphaRound))
             return theta * variateForIntegerShape();
-        if (RandMath::areEqual(alpha - 0.5, k_round))
+        if (RandMath::areEqual(alpha - 0.5, alphaRound))
             return theta * variateForIntegerShape();
         if (alpha <= 1)
             return theta * variateForSmallShape();
@@ -173,13 +173,13 @@ double GammaRand::variate() const
 void GammaRand::sample(QVector<double> &outputData) const
 {
     if (alpha < 5) {
-        double k_round = std::round(alpha);
-        if (RandMath::areEqual(alpha, k_round)) {
+        double alphaRound = std::round(alpha);
+        if (RandMath::areEqual(alpha, alphaRound)) {
             for (double &var : outputData)
                 var = theta * variateForIntegerShape();
             return;
         }
-        if (RandMath::areEqual(alpha - 0.5, k_round)) {
+        if (RandMath::areEqual(alpha - 0.5, alphaRound)) {
             for (double &var : outputData)
                 var = theta * variateForHalfIntegerShape();
             return;

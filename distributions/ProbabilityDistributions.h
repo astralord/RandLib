@@ -2,61 +2,65 @@
 #define PROBABILITY_DISTRIBUTIONS_H
 
 #include "ProbabilityDistribution.h"
-#include "BasicRandGenerator.h"
+#include "univariate/BasicRandGenerator.h"
 
 /// DISCRETE
-#include "discrete/DiscreteDistribution.h"
-#include "discrete/BernoulliRand.h"
-#include "discrete/BinomialRand.h"
-#include "discrete/GeometricRand.h"
-#include "discrete/HyperGeometricRand.h"
-#include "discrete/NegativeBinomialRand.h"
-#include "discrete/LogarithmicRand.h"
-#include "discrete/PoissonRand.h"
-#include "discrete/RademacherRand.h"
-#include "discrete/SkellamRand.h"
-#include "discrete/UniformDiscreteRand.h"
-#include "discrete/YuleRand.h"
-#include "discrete/ZetaRand.h"
-#include "discrete/ZipfRand.h"
+#include "univariate/discrete/DiscreteDistribution.h"
+#include "univariate/discrete/BernoulliRand.h"
+#include "univariate/discrete/BinomialRand.h"
+#include "univariate/discrete/GeometricRand.h"
+#include "univariate/discrete/HyperGeometricRand.h"
+#include "univariate/discrete/NegativeBinomialRand.h"
+#include "univariate/discrete/LogarithmicRand.h"
+#include "univariate/discrete/PoissonRand.h"
+#include "univariate/discrete/RademacherRand.h"
+#include "univariate/discrete/SkellamRand.h"
+#include "univariate/discrete/UniformDiscreteRand.h"
+#include "univariate/discrete/YuleRand.h"
+#include "univariate/discrete/ZetaRand.h"
+#include "univariate/discrete/ZipfRand.h"
 
 /// CONTINUOUS
-#include "continuous/ContinuousDistribution.h"
-#include "continuous/BetaPrimeRand.h"
-#include "continuous/BetaRand.h"
-#include "continuous/CauchyRand.h"
-#include "continuous/ExponentialRand.h"
-#include "continuous/FisherSnedecorRand.h"
-#include "continuous/FrechetRand.h"
-#include "continuous/GammaRand.h"
-#include "continuous/GeometricStableRand.h"
-#include "continuous/GumbelRand.h"
-#include "continuous/InverseGammaRand.h"
-#include "continuous/IrwinHallRand.h"
-#include "continuous/LaplaceRand.h"
-#include "continuous/LevyRand.h"
-#include "continuous/LogisticRand.h"
-#include "continuous/LogNormalRand.h"
-#include "continuous/NakagamiRand.h"
-#include "continuous/NormalRand.h"
-#include "continuous/MaxwellBoltzmannRand.h"
-#include "continuous/ParetoRand.h"
-#include "continuous/PlanckRand.h"
-#include "continuous/RaisedCosineRand.h"
-#include "continuous/RayleighRand.h"
-#include "continuous/SechRand.h"
-#include "continuous/StableRand.h"
-#include "continuous/StudentTRand.h"
-#include "continuous/UniformRand.h"
-#include "continuous/TriangularRand.h"
-#include "continuous/VonMisesRand.h"
-#include "continuous/WaldRand.h"
-#include "continuous/WeibullRand.h"
-#include "continuous/WignerSemicircleRand.h"
+#include "univariate/continuous/ContinuousDistribution.h"
+#include "univariate/continuous/BetaPrimeRand.h"
+#include "univariate/continuous/BetaRand.h"
+#include "univariate/continuous/CauchyRand.h"
+#include "univariate/continuous/ExponentialRand.h"
+#include "univariate/continuous/FisherSnedecorRand.h"
+#include "univariate/continuous/FrechetRand.h"
+#include "univariate/continuous/GammaRand.h"
+#include "univariate/continuous/GeometricStableRand.h"
+#include "univariate/continuous/GumbelRand.h"
+#include "univariate/continuous/InverseGammaRand.h"
+#include "univariate/continuous/IrwinHallRand.h"
+#include "univariate/continuous/LaplaceRand.h"
+#include "univariate/continuous/LevyRand.h"
+#include "univariate/continuous/LogisticRand.h"
+#include "univariate/continuous/LogNormalRand.h"
+#include "univariate/continuous/NakagamiRand.h"
+#include "univariate/continuous/NormalRand.h"
+#include "univariate/continuous/MaxwellBoltzmannRand.h"
+#include "univariate/continuous/ParetoRand.h"
+#include "univariate/continuous/PlanckRand.h"
+#include "univariate/continuous/RaisedCosineRand.h"
+#include "univariate/continuous/RayleighRand.h"
+#include "univariate/continuous/SechRand.h"
+#include "univariate/continuous/StableRand.h"
+#include "univariate/continuous/StudentTRand.h"
+#include "univariate/continuous/UniformRand.h"
+#include "univariate/continuous/TriangularRand.h"
+#include "univariate/continuous/VonMisesRand.h"
+#include "univariate/continuous/WaldRand.h"
+#include "univariate/continuous/WeibullRand.h"
+#include "univariate/continuous/WignerSemicircleRand.h"
 
 /// SINGULAR
-#include "singular/SingularDistribution.h"
-#include "singular/CantorRand.h"
+#include "univariate/singular/SingularDistribution.h"
+#include "univariate/singular/CantorRand.h"
+
+/// BIVARIATE
+#include "bivariate/BivariateProbabilityDistribution.h"
+#include "bivariate/NormalInverseGammaRand.h"
 
 enum DISTRIBUTION {
     /// DISCRETE
@@ -110,7 +114,10 @@ enum DISTRIBUTION {
     WIGNER_SEMICIRCLE_RAND,
 
     /// SINGULAR
-    CANTOR_RAND
+    CANTOR_RAND,
+
+    ///BIVARIATE
+    NORMAL_INVERSE_GAMMA_RAND
 };
 
 #endif // PROBABILITY_DISTRIBUTIONS_H

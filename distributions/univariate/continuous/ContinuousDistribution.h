@@ -1,15 +1,15 @@
 #ifndef CONTINUOUS_DISTRIBUTION_H
 #define CONTINUOUS_DISTRIBUTION_H
 
-#include "../ProbabilityDistribution.h"
+#include "../UnivariateProbabilityDistribution.h"
 
 /**
  * @brief The ContinuousDistribution class
  */
-class RANDLIBSHARED_EXPORT ContinuousDistribution : public ProbabilityDistribution
+class RANDLIBSHARED_EXPORT ContinuousDistribution : public UnivariateProbabilityDistribution
 {
 public:
-    ContinuousDistribution() : ProbabilityDistribution() {}
+    ContinuousDistribution() {}
     virtual ~ContinuousDistribution() {}
 
     /**
