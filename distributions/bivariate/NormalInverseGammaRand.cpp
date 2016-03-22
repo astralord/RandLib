@@ -1,4 +1,5 @@
 #include "NormalInverseGammaRand.h"
+#include "../univariate/continuous/NormalRand.h"
 
 NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision, double shape, double rate)
 {

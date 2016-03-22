@@ -174,11 +174,16 @@ bool ParetoRand::fitShapeAndScaleMLE(const QVector<double> &sample)
 
     /// Calculate xm
     double minVar = sample.at(0);
+    if (minVar <= 0)
+        return false;
     for (double var : sample)
     {
-        minVar = std::min(minVar, var);
-        if (minVar <= 0)
-            return false;
+        if (minVar < var)
+        {
+            if (minVar <= 0)
+                return false;
+            minVar = var;
+        }
     }
 
     /// Calculate alpha

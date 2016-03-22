@@ -2,7 +2,6 @@
 #define NORMALINVERSEGAMMARAND_H
 
 #include "BivariateProbabilityDistribution.h"
-#include "../univariate/continuous/NormalRand.h"
 #include "../univariate/continuous/InverseGammaRand.h"
 
 /**
