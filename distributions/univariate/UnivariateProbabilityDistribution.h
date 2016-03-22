@@ -1,7 +1,7 @@
 #ifndef UNIVARIATEPROBABILITYDISTRIBUTION_H
 #define UNIVARIATEPROBABILITYDISTRIBUTION_H
 
-#include "ProbabilityDistribution.h"
+#include "../ProbabilityDistribution.h"
 
 class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<double>
 {
@@ -34,6 +34,13 @@ public:
      * @param y output vector: y = CF(x)
      */
     void cf(const QVector<double> &t, QVector<std::complex<double>> &y) const;
+
+    /**
+     * @brief Hazard
+     * return hazard function: pdf (or pmf) / (1 - cdf)
+     * @param x input parameter
+     */
+    virtual double Hazard(double x) const = 0;
 
     /**
      * @brief ExpectedValue

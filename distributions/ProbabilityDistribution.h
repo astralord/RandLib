@@ -68,14 +68,6 @@ public:
      * @return Mathematical expectation
      */
     virtual T Mean() const = 0;
-
-    /**
-     * @brief Hazard
-     * return hazard function: pdf (or pmf) / (1 - cdf)
-     * @param x input parameter
-     */
-    virtual double Hazard(T x) const = 0;
-
 };
 
 #endif // PROBABILITY_DISTRIBUTION_H
