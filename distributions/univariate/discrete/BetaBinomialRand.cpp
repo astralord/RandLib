@@ -32,8 +32,12 @@ double BetaBinomialRand::F(double x) const
         return 0.0;
     if (x >= n)
         return 1.0;
-    //TODO:
-    return NAN;
+    double sum = 0.0;
+    int i = 0;
+    do {
+        sum += P(i);
+    } while (++i <= x);
+    return sum;
 }
 
 double BetaBinomialRand::variate() const
