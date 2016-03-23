@@ -12,7 +12,7 @@ public:
     BivariateProbabilityDistribution();
     virtual ~BivariateProbabilityDistribution() {}
 
-    virtual double f(double2d grid) const = 0;
+    virtual double f(double2d point) const = 0;
 
     // TODO: add virtual Matrix Covariance() const = 0;
 };

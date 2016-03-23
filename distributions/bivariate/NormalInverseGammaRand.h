@@ -23,8 +23,8 @@ public:
     inline double getShape() { return Y.getShape(); }
     inline double getRate() { return Y.getRate(); }
 
-    double f(double2d grid) const;
-    double F(double2d grid) const;
+    double f(double2d point) const;
+    double F(double2d point) const;
     double2d variate() const;
 
     double2d Mean() const;

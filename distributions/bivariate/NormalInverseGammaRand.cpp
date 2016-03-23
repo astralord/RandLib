@@ -29,9 +29,9 @@ void NormalInverseGammaRand::setParameters(double location, double precision, do
     pdfCoef *= std::pow(beta, alpha) * cdfCoef;
 }
 
-double NormalInverseGammaRand::f(double2d grid) const
+double NormalInverseGammaRand::f(double2d point) const
 {
-    double x = grid.x, sigmaSq = grid.y;
+    double x = point.x, sigmaSq = point.y;
     if (sigmaSq <= 0)
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
@@ -48,9 +48,9 @@ double NormalInverseGammaRand::f(double2d grid) const
     return pdfCoef * y;
 }
 
-double NormalInverseGammaRand::F(double2d grid) const
+double NormalInverseGammaRand::F(double2d point) const
 {
-    double x = grid.x, sigmaSq = grid.y;
+    double x = point.x, sigmaSq = point.y;
     if (sigmaSq <= 0)
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
