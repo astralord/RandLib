@@ -1,7 +1,7 @@
 # RandLib
 Stochastic calculus
 
-With RandLib one can work with univariate distributions.
+With RandLib one can work with probability distributions.
 * Fast sampling. For instance, generate ten thousand variates from standard normal distribution:
 ```c++
 NormalRand randomVariable(0, 1);
