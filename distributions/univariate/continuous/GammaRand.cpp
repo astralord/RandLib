@@ -38,7 +38,7 @@ void GammaRand::setParameters(double shape, double scale)
     beta = 1.0 / theta;
    
     double alphaRound = std::round(alpha);
-    if (RandMath::areEqual(alpha, alphaRound)) {
+    if (RandMath::areClose(alpha, alphaRound)) {
         alpha = alphaRound;
         cdfCoef = 1.0 / RandMath::factorial(alpha - 1);
     }
@@ -158,9 +158,9 @@ double GammaRand::variate() const
 {
     if (alpha < 5) {
         double alphaRound = std::round(alpha);
-        if (RandMath::areEqual(alpha, alphaRound))
+        if (RandMath::areClose(alpha, alphaRound))
             return theta * variateForIntegerShape();
-        if (RandMath::areEqual(alpha - 0.5, alphaRound))
+        if (RandMath::areClose(alpha - 0.5, alphaRound))
             return theta * variateForIntegerShape();
         if (alpha <= 1)
             return theta * variateForSmallShape();
@@ -174,12 +174,12 @@ void GammaRand::sample(QVector<double> &outputData) const
 {
     if (alpha < 5) {
         double alphaRound = std::round(alpha);
-        if (RandMath::areEqual(alpha, alphaRound)) {
+        if (RandMath::areClose(alpha, alphaRound)) {
             for (double &var : outputData)
                 var = theta * variateForIntegerShape();
             return;
         }
-        if (RandMath::areEqual(alpha - 0.5, alphaRound)) {
+        if (RandMath::areClose(alpha - 0.5, alphaRound)) {
             for (double &var : outputData)
                 var = theta * variateForHalfIntegerShape();
             return;

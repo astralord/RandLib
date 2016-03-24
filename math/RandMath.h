@@ -11,9 +11,6 @@
 #include <QDebug>
 #include <QVector>
 
-#define SWAP(a, b) (((a) += (b)), ((b) -= (a)), ((a) += (b)), ((b) = -(b)))
-#define SIGN(x) (((x) > 0) ? 1 : (((x) < 0) ? -1 : 0))
-
 constexpr double MIN_POSITIVE = 1e-21;
 
 /**
@@ -25,13 +22,20 @@ public:
     RandMath() {}
 
     /**
-     * @brief areEqual
+     * @brief areClose
      * @param a
      * @param b
      * @param eps
      * @return |a - b| < eps * max(a, b)
      */
-    static bool areEqual(double a, double b, double eps = 1e-16);
+    static bool areClose(double a, double b, double eps = 1e-16);
+
+    /**
+     * @brief sign
+     * @param x
+     * @return sign of x
+     */
+    static bool sign(double x);
 
     /**
      * @brief sum

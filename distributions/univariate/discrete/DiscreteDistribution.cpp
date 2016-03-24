@@ -56,7 +56,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     long double sum = 0.0L;
     double addon = 0;
     double x = std::floor(startPoint);
-    if (RandMath::areEqual(x, startPoint, epsilon))
+    if (RandMath::areClose(x, startPoint, epsilon))
         --x;
 
     do {
@@ -74,7 +74,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
 
     iter = 0;
     x = std::ceil(startPoint);
-    if (RandMath::areEqual(x, startPoint, epsilon))
+    if (RandMath::areClose(x, startPoint, epsilon))
         ++x;
     do {
         addon = funPtr(x);

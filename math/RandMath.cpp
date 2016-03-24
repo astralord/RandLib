@@ -2,7 +2,7 @@
 
 constexpr long double RandMath::factorialTable[];
 
-bool RandMath::areEqual(double a, double b, double eps)
+bool RandMath::areClose(double a, double b, double eps)
 {
     if (a == b)
         return true;
@@ -11,6 +11,11 @@ bool RandMath::areEqual(double a, double b, double eps)
     if (std::fabs(b - a) < eps * std::max(fa, fb))
         return true;
     return false;
+}
+
+bool RandMath::sign(double x)
+{
+    return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
 
 double RandMath::sum(const QVector<double> &sample)
@@ -233,7 +238,7 @@ double RandMath::betaFun(double a, double b)
     }
 
     if (a > b)
-        SWAP(a, b);
+        std::swap(a, b);
 
     double gammaB = std::tgamma(b);
     double res = gammaB / std::tgamma(sum);
@@ -309,7 +314,7 @@ long double RandMath::integral(const std::function<double (double)> &funPtr,
                                double a, double b, double epsilon, int maxRecursionDepth)
 {
     if (a > b)
-        SWAP(a, b);
+        std::swap(a, b);
     double c = .5 * (a + b), h = (b - a) / 6.0;
     double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);
     double S = h * (fa + 4 * fc + fb);
@@ -363,15 +368,15 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
         return false; /// error - the root is not bracketed
     if (std::fabs(fa) < std::fabs(fb))
     {
-        SWAP(a, b);
-        SWAP(fa, fb);
+        std::swap(a, b);
+        std::swap(fa, fb);
     }
     double c = a, fc = fa;
     bool mflag = true;
     double s = b, fs = 1, d = 0;
     while (std::fabs(b - a) > epsilon)
     {
-        if (!areEqual(fc, fa) && !areEqual(fb, fc))
+        if (!areClose(fc, fa) && !areClose(fb, fc))
         {
             /// inverse quadratic interpolation
             double numerator = a * fb * fc;
@@ -432,8 +437,8 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
 
         if (std::fabs(fa) < std::fabs(fb))
         {
-            SWAP(a, b);
-            SWAP(fa, fb);
+            std::swap(a, b);
+            std::swap(fa, fb);
         }
     }
 
@@ -444,7 +449,7 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, 
 bool RandMath::findMin(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
 {
     if (a > b)
-        SWAP(a, b);
+        std::swap(a, b);
     /// golden ratio procedure
     static constexpr double K = 0.5 * (M_SQRT5 - 1);
     double I0 = b - a, I1 = K * I0;

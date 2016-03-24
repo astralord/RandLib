@@ -32,16 +32,16 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
     beta = std::max(beta, -1.0);
 
     /// Should be cautious, known distributions in priority
-    if (RandMath::areEqual(alpha, 2))
+    if (RandMath::areClose(alpha, 2))
         alpha = 2;
-    else if (RandMath::areEqual(alpha, 1))
+    else if (RandMath::areClose(alpha, 1))
         alpha = 1;
-    else if (RandMath::areEqual(alpha, 0.5))
+    else if (RandMath::areClose(alpha, 0.5))
         alpha = 0.5;
 
-    if (RandMath::areEqual(beta, 1))
+    if (RandMath::areClose(beta, 1))
         beta = 1;
-    else if (RandMath::areEqual(beta, -1))
+    else if (RandMath::areClose(beta, -1))
         beta = -1;
 
     if (alpha == 1 && beta != 0)

@@ -33,7 +33,7 @@ double IrwinHallRand::f(double x) const
         double y = x - i;
         double add = RandMath::binomialCoef(n, i);
         add *= std::pow(y, n - 1);
-        add *= SIGN(y);
+        add *= RandMath::sign(y);
         sum += (i % 2) ? -add : add;
     }
     return pdfCoef * sum;
@@ -52,7 +52,7 @@ double IrwinHallRand::F(double x) const
         double y = x - i;
         double add = RandMath::binomialCoef(n, i);
         add *= std::pow(y, n);
-        add *= SIGN(y);
+        add *= RandMath::sign(y);
         sum += (i % 2) ? -add : add;
     }
 

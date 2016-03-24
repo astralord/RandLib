@@ -87,7 +87,7 @@ double BetaRand::f(double x) const
     x -= a;
     x /= bma;
 
-    if (RandMath::areEqual(alpha, beta))
+    if (alpha == beta)
         return pdfCoef * std::pow(x - x * x, alpha - 1);
     double rv = std::pow(x, alpha - 1);
     rv *= std::pow(1 - x, beta - 1);
@@ -151,7 +151,7 @@ double BetaRand::variateForDifferentParameters() const
 void BetaRand::setVariateConstants()
 {
     /// We need to storage variate coefficient only if alpha = beta and large enough
-    if (alpha > edgeForGenerators && RandMath::areEqual(alpha, beta))
+    if (alpha > edgeForGenerators && RandMath::areClose(alpha, beta))
     {
         double t = 1.0 / (alpha + alpha + 1);
         variateCoef = M_E * std::sqrt(0.5 * M_PI * M_E * t);
@@ -166,9 +166,9 @@ void BetaRand::setVariateConstants()
 double BetaRand::variate() const
 {
     double var;
-    if (RandMath::areEqual(alpha, beta) && alpha == 0.5)
+    if (alpha == beta && alpha == 0.5)
         var = variateArcsine();
-    else if (!RandMath::areEqual(alpha, beta) || alpha < 1)
+    else if (!(alpha == beta) || alpha < 1)
         var =  variateForDifferentParameters();
     else if (alpha == 1)
         var = UniformRand::standardVariate();
@@ -181,11 +181,11 @@ double BetaRand::variate() const
 
 void BetaRand::sample(QVector<double> &outputData) const
 {
-    if (RandMath::areEqual(alpha, beta) && alpha == 0.5) {
+    if (alpha == beta && alpha == 0.5) {
         for (double &var : outputData)
             var = variateArcsine();
     }
-    else if (!RandMath::areEqual(alpha, beta) || alpha < 1) {
+    else if (!(alpha == beta) || alpha < 1) {
         for (double &var : outputData)
             var = variateForDifferentParameters();
     }
@@ -242,7 +242,7 @@ double BetaRand::Quantile(double p) const
 
 double BetaRand::Median() const
 {
-    return (RandMath::areEqual(alpha, beta)) ? 0.5 : Quantile(0.5);
+    return (alpha == beta) ? 0.5 : Quantile(0.5);
 }
 
 double BetaRand::Mode() const
