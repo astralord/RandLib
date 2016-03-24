@@ -58,6 +58,16 @@ public:
     static double sampleVariance(const QVector<double> &sample, double mean);
     static double sampleVariance(const QVector<double> &sample);
     /**
+     * @brief sampleSkewness
+     * @param sample
+     * @param mean
+     * @param stdev
+     * @return
+     */
+    static double sampleSkewness(const QVector<double> &sample, double mean, double stdev);
+    static double sampleSkewness(const QVector<double> &sample, double mean);
+    static double sampleSkewness(const QVector<double> &sample);
+    /**
      * @brief rawMoment
      * @param sample
      * @return k-th raw moment
@@ -71,6 +81,17 @@ public:
      */
     static double centralMoment(const QVector<double> &sample, int k, double mean);
     static double centralMoment(const QVector<double> &sample, int k);
+    /**
+     * @brief normalisedMoment
+     * @param sample
+     * @param k
+     * @param mean
+     * @param stdev
+     * @return
+     */
+    static double normalisedMoment(const QVector<double> &sample, int k, double mean, double stdev);
+    static double normalisedMoment(const QVector<double> &sample, int k, double mean);
+    static double normalisedMoment(const QVector<double> &sample, int k);
     
 private:
 
