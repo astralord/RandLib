@@ -27,6 +27,7 @@
 #include "univariate/continuous/BetaRand.h"
 #include "univariate/continuous/CauchyRand.h"
 #include "univariate/continuous/ExponentialRand.h"
+#include "univariate/continuous/ExponentialNormalRand.h"
 #include "univariate/continuous/FisherSnedecorRand.h"
 #include "univariate/continuous/FrechetRand.h"
 #include "univariate/continuous/GammaRand.h"
@@ -88,6 +89,7 @@ enum DISTRIBUTION {
     CHI_SQUARED_RAND,
     ERLANG_RAND,
     EXPONENTIAL_RAND,
+    EXPONENTIAL_NORMAL_RAND,
     F_RAND,
     FRECHET_RAND,
     GAMMA_RAND,
