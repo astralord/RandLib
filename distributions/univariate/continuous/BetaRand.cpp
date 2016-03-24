@@ -31,9 +31,9 @@ void BetaRand::setShapes(double shape1, double shape2)
     if (alpha + beta > 30)
     {
         /// we use log(Gamma(x)) in order to avoid too big numbers
-        double logGammaX = std::log(X.getInverseGammaFunction());
-        double logGammaY = std::log(Y.getInverseGammaFunction());
-        cdfCoef = std::lgamma(alpha + beta) + logGammaX + logGammaY;
+        double logGammaX = std::lgamma(alpha);
+        double logGammaY = std::lgamma(beta);
+        cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
         cdfCoef = std::exp(cdfCoef);
     }
     else {
