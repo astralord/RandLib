@@ -4,21 +4,21 @@ Stochastic calculus
 With RandLib one can work with probability distributions.
 * Fast sampling. For instance, generate ten thousand variates from standard normal distribution:
 ```c++
-NormalRand randomVariable(0, 1);
+NormalRand distribution(0, 1);
 std::vector<double> data(1e6);
-randomVariable.sample(data);
+distribution.sample(data);
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
 
 * Calculate moments and other properties:
 ```c++
-LogNormalRand randomVariable(1, 1);
-std::cout << " Mean = " << randomVariable.Mean()
-          << " and Variance = " << randomVariable.Variance()
-          << "\n Median = " << randomVariable.Median()
-          << " and Mode = " << randomVariable.Mode()
-          << "\n Skewness = " << randomVariable.Skewness()
-          << " and Ex. kurtosis = " << randomVariable.ExcessKurtosis();
+LogNormalRand distribution(1, 1);
+std::cout << " Mean = " << distribution.Mean()
+          << " and Variance = " << distribution.Variance()
+          << "\n Median = " << distribution.Median()
+          << " and Mode = " << distribution.Mode()
+          << "\n Skewness = " << distribution.Skewness()
+          << " and Ex. kurtosis = " << distribution.ExcessKurtosis();
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/lognormal11.png)
 ```
@@ -36,13 +36,13 @@ std::cout << "Density function at point 5 for Exponential(4) is " << Y.f(5);
 ```
 * Get cumulative density function for random variables with sophisticated distribution:
 ```c++
-BetaRand randomVariable(6, 7);
+BetaRand distribution(6, 7);
 int size = 100;
 std::vector<double> x(size), y(size);
 double sizem1Inv = 1.0 / (size - 1);
 for (int i = 0; i != size; ++i)
     x[i] = i * sizem1Inv;
-randomVariable.cdf(x, y);
+distribution.cdf(x, y);
 for (int i = 0; i != size; ++i)
     std::cout << "P(X < " << x[i] << ") = " << y[i];
 ```
@@ -67,6 +67,7 @@ Continuous:
 |     Chi-squared     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Erlang     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Exponential     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Exponential-Normal (EMG)     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     F    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Frechet    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Gamma     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
@@ -99,6 +100,7 @@ Discrete:
 |    Title     |     F(x)     |     P(X = x)     |   variate    |   CF(t)    |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 |     Bernoulli     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Beta-Binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Binomial     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Geometric    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Hypergeometric     | :white_check_mark: | :white_check_mark: | :warning: |:x:|
