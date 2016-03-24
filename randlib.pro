@@ -62,7 +62,8 @@ SOURCES += \
     distributions/univariate/UnivariateProbabilityDistribution.cpp \
     distributions/bivariate/BivariateProbabilityDistribution.cpp \
     distributions/bivariate/NormalInverseGammaRand.cpp \
-    distributions/univariate/discrete/BetaBinomialRand.cpp
+    distributions/univariate/discrete/BetaBinomialRand.cpp \
+    distributions/univariate/continuous/ExponentialNormalRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -122,7 +123,8 @@ HEADERS +=\
     distributions/univariate/UnivariateProbabilityDistribution.h \
     distributions/bivariate/BivariateProbabilityDistribution.h \
     distributions/bivariate/NormalInverseGammaRand.h \
-    distributions/univariate/discrete/BetaBinomialRand.h
+    distributions/univariate/discrete/BetaBinomialRand.h \
+    distributions/univariate/continuous/ExponentialNormalRand.h
 
 unix {
     target.path = /usr/lib

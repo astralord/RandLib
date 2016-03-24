@@ -27,6 +27,8 @@ public:
 
 private:
     using StableRand::setParameters;
+    using StableRand::getExponent;
+    using StableRand::getSkewness;
 
 public:
     void setVariance(double var);
