@@ -84,3 +84,22 @@ double2d NormalInverseGammaRand::Mean() const
     return mean;
 }
 
+bool NormalInverseGammaRand::Covariance(Matrix & matrix) const
+{
+    int n = matrix.height();
+    int m = matrix.width();
+    if (n != m || n != 2)
+        return false;
+    double alpha = Y.getShape();
+    double beta = Y.getRate();
+    if (alpha <= 0.5)
+        matrix(1, 1) = NAN;
+    else if (alpha <= 1)
+        matrix(1, 1) = INFINITY;
+    else
+        matrix(1, 1) = alpha * alpha * lambda / (beta * (alpha - 1));
+    matrix(1, 2) = matrix(2, 1) = 0;
+    matrix(2, 2) = Y.Variance();
+    return true;
+}
+

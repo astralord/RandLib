@@ -60,11 +60,12 @@ SOURCES += \
     distributions/univariate/continuous/IrwinHallRand.cpp \
     distributions/univariate/continuous/InverseGammaRand.cpp \
     distributions/univariate/UnivariateProbabilityDistribution.cpp \
-    distributions/bivariate/BivariateProbabilityDistribution.cpp \
-    distributions/bivariate/NormalInverseGammaRand.cpp \
+    distributions/multivariate/BivariateProbabilityDistribution.cpp \
+    distributions/multivariate/NormalInverseGammaRand.cpp \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
     distributions/univariate/continuous/ExponentialNormalRand.cpp \
-    math/Matrix.cpp
+    math/Matrix.cpp \
+    distributions/multivariate/MultivariateProbabilityDistribution.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -122,11 +123,12 @@ HEADERS +=\
     distributions/univariate/continuous/IrwinHallRand.h \
     distributions/univariate/continuous/InverseGammaRand.h \
     distributions/univariate/UnivariateProbabilityDistribution.h \
-    distributions/bivariate/BivariateProbabilityDistribution.h \
-    distributions/bivariate/NormalInverseGammaRand.h \
+    distributions/multivariate/BivariateProbabilityDistribution.h \
+    distributions/multivariate/NormalInverseGammaRand.h \
     distributions/univariate/discrete/BetaBinomialRand.h \
     distributions/univariate/continuous/ExponentialNormalRand.h \
-    math/Matrix.h
+    math/Matrix.h \
+    distributions/multivariate/MultivariateProbabilityDistribution.h
 
 unix {
     target.path = /usr/lib

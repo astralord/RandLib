@@ -28,6 +28,7 @@ public:
     double2d variate() const;
 
     double2d Mean() const;
+    bool Covariance(Matrix &matrix) const;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

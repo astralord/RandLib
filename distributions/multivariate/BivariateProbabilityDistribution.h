@@ -2,6 +2,7 @@
 #define BIVARIATEPROBABILITYDISTRIBUTION_H
 
 #include "../ProbabilityDistribution.h"
+#include "../../math/Matrix.h"
 
 /**
  * @brief The BivariateProbabilityDistribution class
@@ -14,7 +15,7 @@ public:
 
     virtual double f(double2d point) const = 0;
 
-    // TODO: add virtual Matrix Covariance() const = 0;
+    virtual bool Covariance(Matrix &matrix) const = 0;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H

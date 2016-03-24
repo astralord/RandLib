@@ -39,3 +39,4 @@ void ProbabilityDistribution<T>::cdf(const QVector<T> &x, QVector<double> &y) co
 
 template class ProbabilityDistribution<double>;
 template class ProbabilityDistribution<double2d>;
+template class ProbabilityDistribution< std::vector<double> >;
