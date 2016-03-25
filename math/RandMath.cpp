@@ -18,7 +18,7 @@ bool RandMath::sign(double x)
     return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
 
-double RandMath::sum(const QVector<double> &sample)
+double RandMath::sum(const std::vector<double> &sample)
 {
     long double sum = 0.0L;
     for (double var : sample)
@@ -26,13 +26,13 @@ double RandMath::sum(const QVector<double> &sample)
     return sum;
 }
 
-double RandMath::sampleMean(const QVector<double> &sample)
+double RandMath::sampleMean(const std::vector<double> &sample)
 {
     int n = sample.size();
     return (n > 0) ? sum(sample) / n : 0;
 }
 
-double RandMath::sampleVariance(const QVector<double> &sample, double mean)
+double RandMath::sampleVariance(const std::vector<double> &sample, double mean)
 {
     int n = sample.size();
     long double deviation = 0.0L;
@@ -43,27 +43,27 @@ double RandMath::sampleVariance(const QVector<double> &sample, double mean)
     return (n > 0) ? deviation / n : 0.0;
 }
 
-double RandMath::sampleVariance(const QVector<double> &sample)
+double RandMath::sampleVariance(const std::vector<double> &sample)
 {
     return sampleVariance(sample, sampleMean(sample));
 }
 
-double RandMath::sampleSkewness(const QVector<double> &sample, double mean, double stdev)
+double RandMath::sampleSkewness(const std::vector<double> &sample, double mean, double stdev)
 {
     return normalisedMoment(sample, 3, mean, stdev);
 }
 
-double RandMath::sampleSkewness(const QVector<double> &sample, double mean)
+double RandMath::sampleSkewness(const std::vector<double> &sample, double mean)
 {
     return normalisedMoment(sample, 3, mean);
 }
 
-double RandMath::sampleSkewness(const QVector<double> &sample)
+double RandMath::sampleSkewness(const std::vector<double> &sample)
 {
     return normalisedMoment(sample, 3);
 }
 
-double RandMath::rawMoment(const QVector<double> &sample, int k)
+double RandMath::rawMoment(const std::vector<double> &sample, int k)
 {
     int n = sample.size();
     if (n <= 0 || k < 0)
@@ -83,7 +83,7 @@ double RandMath::rawMoment(const QVector<double> &sample, int k)
     }
 }
 
-double RandMath::centralMoment(const QVector<double> &sample, int k, double mean)
+double RandMath::centralMoment(const std::vector<double> &sample, int k, double mean)
 {
     int n = sample.size();
     if (n <= 0 || k <= 1)
@@ -96,17 +96,17 @@ double RandMath::centralMoment(const QVector<double> &sample, int k, double mean
     return sum / n;
 }
 
-double RandMath::centralMoment(const QVector<double> &sample, int k)
+double RandMath::centralMoment(const std::vector<double> &sample, int k)
 {
     return (k == 1) ? 0.0 : centralMoment(sample, k, sampleMean(sample));
 }
 
-double RandMath::normalisedMoment(const QVector<double> &sample, int k, double mean, double stdev)
+double RandMath::normalisedMoment(const std::vector<double> &sample, int k, double mean, double stdev)
 {
     return (k == 2) ? 1.0 : centralMoment(sample, k, mean) / std::pow(stdev, k);
 }
 
-double RandMath::normalisedMoment(const QVector<double> &sample, int k, double mean)
+double RandMath::normalisedMoment(const std::vector<double> &sample, int k, double mean)
 {
     if (k == 2)
         return 1.0;
@@ -114,7 +114,7 @@ double RandMath::normalisedMoment(const QVector<double> &sample, int k, double m
     return centralMoment(sample, k, mean) / std::pow(variance, 0.5 * k);
 }
 
-double RandMath::normalisedMoment(const QVector<double> &sample, int k)
+double RandMath::normalisedMoment(const std::vector<double> &sample, int k)
 {
     if (k == 2)
         return 1.0;

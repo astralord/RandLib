@@ -1,9 +1,11 @@
 #include "ContinuousDistribution.h"
 
-void ContinuousDistribution::pdf(const QVector<double> &x, QVector<double> &y) const
+void ContinuousDistribution::pdf(const std::vector<double> &x, std::vector<double> &y) const
 {
-    int size = std::min(x.size(), y.size());
-    for (int i = 0; i != size; ++i)
+    size_t size = x.size();
+    if (size > y.size())
+        return;
+    for (size_t i = 0; i != size; ++i)
         y[i] = f(x[i]);
 }
 
@@ -116,7 +118,7 @@ double ContinuousDistribution::Mode() const
     return root;
 }
 
-double ContinuousDistribution::likelihood(const QVector<double> &sample) const
+double ContinuousDistribution::likelihood(const std::vector<double> &sample) const
 {
     double res = 1.0;
     for (const double & var : sample )
@@ -124,7 +126,7 @@ double ContinuousDistribution::likelihood(const QVector<double> &sample) const
     return res;
 }
 
-double ContinuousDistribution::loglikelihood(const QVector<double> &sample) const
+double ContinuousDistribution::loglikelihood(const std::vector<double> &sample) const
 {
     double res = 0.0;
     for (const double & var : sample )

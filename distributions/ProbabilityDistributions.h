@@ -61,8 +61,8 @@
 #include "univariate/singular/CantorRand.h"
 
 /// BIVARIATE
-#include "bivariate/BivariateProbabilityDistribution.h"
-#include "bivariate/NormalInverseGammaRand.h"
+#include "multivariate/BivariateProbabilityDistribution.h"
+#include "multivariate/NormalInverseGammaRand.h"
 
 enum DISTRIBUTION {
     /// DISCRETE

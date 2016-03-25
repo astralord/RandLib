@@ -187,44 +187,44 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-bool NormalRand::fitMeanMLE(const QVector<double> &sample)
+bool NormalRand::fitMeanMLE(const std::vector<double> &sample)
 {
     setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
-bool NormalRand::fitVarianceMLE(const QVector<double> &sample)
+bool NormalRand::fitVarianceMLE(const std::vector<double> &sample)
 {
     setVariance(RandMath::sampleVariance(sample));
     return true;
 }
 
-bool NormalRand::fitMeanAndVarianceMLE(const QVector<double> &sample)
+bool NormalRand::fitMeanAndVarianceMLE(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample) ? fitVarianceMLE(sample) : false;
 }
 
-bool NormalRand::fitMeanMM(const QVector<double> &sample)
+bool NormalRand::fitMeanMM(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample);
 }
 
-bool NormalRand::fitVarianceMM(const QVector<double> &sample)
+bool NormalRand::fitVarianceMM(const std::vector<double> &sample)
 {
     return fitVarianceMLE(sample);
 }
 
-bool NormalRand::fitMeanAndVarianceMM(const QVector<double> &sample)
+bool NormalRand::fitMeanAndVarianceMM(const std::vector<double> &sample)
 {
     return fitMeanAndVarianceMLE(sample);
 }
 
-bool NormalRand::fitMeanUMVU(const QVector<double> &sample)
+bool NormalRand::fitMeanUMVU(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample);
 }
 
-bool NormalRand::fitVarianceUMVU(const QVector<double> &sample)
+bool NormalRand::fitVarianceUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 1)
@@ -234,12 +234,12 @@ bool NormalRand::fitVarianceUMVU(const QVector<double> &sample)
     return true;
 }
 
-bool NormalRand::fitMeanAndVarianceUMVU(const QVector<double> &sample)
+bool NormalRand::fitMeanAndVarianceUMVU(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample) ? fitVarianceUMVU(sample) : false;
 }
 
-bool NormalRand::fitMeanBayes(const QVector<double> &sample, NormalRand &priorDistribution)
+bool NormalRand::fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0)
@@ -255,7 +255,7 @@ bool NormalRand::fitMeanBayes(const QVector<double> &sample, NormalRand &priorDi
     return true;
 }
 
-bool NormalRand::fitVarianceBayes(const QVector<double> &sample, InverseGammaRand &priorDistribution)
+bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0)
@@ -269,7 +269,7 @@ bool NormalRand::fitVarianceBayes(const QVector<double> &sample, InverseGammaRan
     return true;
 }
 
-bool NormalRand::fitMeanAndVarianceBayes(const QVector<double> &sample, NormalInverseGammaRand &priorDistribution)
+bool NormalRand::fitMeanAndVarianceBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0)

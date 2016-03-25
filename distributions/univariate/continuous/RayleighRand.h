@@ -32,6 +32,6 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool fitToData(const QVector<double> &sample);
+    bool fitToData(const std::vector<double> &sample);
 };
 #endif // RAYLEIGHRAND_H

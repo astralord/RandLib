@@ -249,7 +249,7 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
-bool BinomialRand::checkValidity(const QVector<double> &sample)
+bool BinomialRand::checkValidity(const std::vector<double> &sample)
 {
     for (int var : sample) {
         if (var < 0 || var > n)
@@ -258,7 +258,7 @@ bool BinomialRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool BinomialRand::fitProbabilityMLE(const QVector<double> &sample)
+bool BinomialRand::fitProbabilityMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -266,12 +266,12 @@ bool BinomialRand::fitProbabilityMLE(const QVector<double> &sample)
     return true;
 }
 
-bool BinomialRand::fitProbabilityMM(const QVector<double> &sample)
+bool BinomialRand::fitProbabilityMM(const std::vector<double> &sample)
 {
     return fitProbabilityMLE(sample);
 }
 
-bool BinomialRand::fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution)
+bool BinomialRand::fitProbabilityBayes(const std::vector<double> &sample, BetaRand &priorDistribution)
 {
     int N = sample.size();
     double sum = RandMath::sum(sample);

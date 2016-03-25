@@ -37,7 +37,7 @@ public:
      * @param x input vector
      * @param y output vector: y = CF(x)
      */
-    void cf(const QVector<double> &t, QVector<std::complex<double>> &y) const;
+    void cf(const std::vector<double> &t, std::vector<std::complex<double>> &y) const;
 
     /**
      * @brief Hazard

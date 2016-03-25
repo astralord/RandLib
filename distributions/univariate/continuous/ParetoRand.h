@@ -35,7 +35,7 @@ public:
     static double variate(double shape, double scale);
     double variate() const override;
 
-    void sample(QVector<double> &outputData) const override;
+    void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -49,7 +49,7 @@ public:
 
     inline double Entropy() const;
 
-    bool fitShapeAndScaleMLE(const QVector<double> &sample);
+    bool fitShapeAndScaleMLE(const std::vector<double> &sample);
 };
 
 #endif // PARETORAND_H

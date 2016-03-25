@@ -40,10 +40,10 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const std::vector<double> &sample);
 
-    bool fitRateMLE(const QVector<double> &sample);
-    bool fitRateBayes(const QVector<double> &sample, GammaRand & priorDistribution);
+    bool fitRateMLE(const std::vector<double> &sample);
+    bool fitRateBayes(const std::vector<double> &sample, GammaRand & priorDistribution);
 };
 
 #endif // POISSONRAND_H

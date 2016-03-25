@@ -23,17 +23,19 @@ std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_val
 }
 
 template < typename T >
-void ProbabilityDistribution<T>::sample(QVector<T> &outputData) const
+void ProbabilityDistribution<T>::sample(std::vector<T> &outputData) const
 {
     for (T &var : outputData)
         var = variate();
 }
 
 template < typename T >
-void ProbabilityDistribution<T>::cdf(const QVector<T> &x, QVector<double> &y) const
+void ProbabilityDistribution<T>::cdf(const std::vector<T> &x, std::vector<double> &y) const
 {
-    int size = std::min(x.size(), y.size());
-    for (int i = 0; i != size; ++i)
+    size_t size = x.size();
+    if (size > y.size())
+        return;
+    for (size_t i = 0; i != size; ++i)
         y[i] = F(x[i]);
 }
 

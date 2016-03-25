@@ -70,7 +70,7 @@ double FisherSnedecorRand::variate() const
     return d2_d1 * B.variate();
 }
 
-void FisherSnedecorRand::sample(QVector<double> &outputData) const
+void FisherSnedecorRand::sample(std::vector<double> &outputData) const
 {
     B.sample(outputData);
     for (double &var : outputData)

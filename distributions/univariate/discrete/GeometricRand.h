@@ -31,17 +31,17 @@ public:
     double variate() const override;
     static double variate(double probability);
 
-    void sample(QVector<double> &outputData) const override;
+    void sample(std::vector<double> &outputData) const override;
 
     double Median() const override;
 
     double Entropy() const;
     
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const std::vector<double> &sample);
 
-    bool fitProbabilityMLE(const QVector<double> &sample);
-    bool fitProbabilityMM(const QVector<double> &sample);
-    bool fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution);
+    bool fitProbabilityMLE(const std::vector<double> &sample);
+    bool fitProbabilityMM(const std::vector<double> &sample);
+    bool fitProbabilityBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

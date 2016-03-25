@@ -10,7 +10,7 @@ std::complex<double> UnivariateProbabilityDistribution::CF(double t) const
     return std::complex<double>(t);
 }
 
-void UnivariateProbabilityDistribution::cf(const QVector<double> &t, QVector<std::complex<double> > &y) const
+void UnivariateProbabilityDistribution::cf(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)

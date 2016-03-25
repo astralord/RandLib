@@ -35,12 +35,12 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const std::vector<double> &sample);
 
-    bool fitLocationMM(const QVector<double> &sample);
-    bool fitScaleMM(const QVector<double> &sample);
+    bool fitLocationMM(const std::vector<double> &sample);
+    bool fitScaleMM(const std::vector<double> &sample);
 
-    bool fitLocationAndScaleMLE(const QVector<double> &sample);
+    bool fitLocationAndScaleMLE(const std::vector<double> &sample);
 };
 
 #endif // LOGNORMALRAND_H

@@ -57,24 +57,24 @@ public:
     double Moment(int n) const;
 
     /// Maximum likelihood estimators
-    bool fitMeanMLE(const QVector<double> &sample);
-    bool fitVarianceMLE(const QVector<double> &sample);
-    bool fitMeanAndVarianceMLE(const QVector<double> &sample);
+    bool fitMeanMLE(const std::vector<double> &sample);
+    bool fitVarianceMLE(const std::vector<double> &sample);
+    bool fitMeanAndVarianceMLE(const std::vector<double> &sample);
 
     /// Method of moments
-    bool fitMeanMM(const QVector<double> &sample);
-    bool fitVarianceMM(const QVector<double> &sample);
-    bool fitMeanAndVarianceMM(const QVector<double> &sample);
+    bool fitMeanMM(const std::vector<double> &sample);
+    bool fitVarianceMM(const std::vector<double> &sample);
+    bool fitMeanAndVarianceMM(const std::vector<double> &sample);
     
     /// Uniformly minimum variance unbiased (UMVU) estimators
-    bool fitMeanUMVU(const QVector<double> &sample);
-    bool fitVarianceUMVU(const QVector<double> &sample);
-    bool fitMeanAndVarianceUMVU(const QVector<double> &sample);
+    bool fitMeanUMVU(const std::vector<double> &sample);
+    bool fitVarianceUMVU(const std::vector<double> &sample);
+    bool fitMeanAndVarianceUMVU(const std::vector<double> &sample);
 
     /// Bayesian estimation
-    bool fitMeanBayes(const QVector<double> &sample, NormalRand &priorDistribution);
-    bool fitVarianceBayes(const QVector<double> &sample, InverseGammaRand &priorDistribution);
-    bool fitMeanAndVarianceBayes(const QVector<double> &sample, NormalInverseGammaRand &priorDistribution);
+    bool fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
+    bool fitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution);
+    bool fitMeanAndVarianceBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

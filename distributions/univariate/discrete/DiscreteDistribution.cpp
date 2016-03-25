@@ -1,10 +1,11 @@
 #include "DiscreteDistribution.h"
 
-void DiscreteDistribution::pmf(const QVector<int> &x, QVector<double> &y) const
+void DiscreteDistribution::pmf(const std::vector<int> &x, std::vector<double> &y) const
 {
-    if (x.size() != y.size())
+    size_t size = x.size();
+    if (size > y.size())
         return;
-    for (int i = 0; i != x.size(); ++i)
+    for (size_t i = 0; i != size; ++i)
         y[i] = P(x[i]);
 }
 
@@ -88,7 +89,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     return sum;
 }
 
-double DiscreteDistribution::likelihood(const QVector<int> &sample) const
+double DiscreteDistribution::likelihood(const std::vector<int> &sample) const
 {
     double res = 1.0;
     for (const int & var : sample )
@@ -96,7 +97,7 @@ double DiscreteDistribution::likelihood(const QVector<int> &sample) const
     return res;
 }
 
-double DiscreteDistribution::loglikelihood(const QVector<int> &sample) const
+double DiscreteDistribution::loglikelihood(const std::vector<int> &sample) const
 {
     double res = 0.0;
     for (const int & var : sample )

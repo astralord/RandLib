@@ -45,7 +45,7 @@ double YuleRand::variate(double shape)
     return GeometricRand::variate(prob) + 1;
 }
 
-void YuleRand::sample(QVector<double> &outputData) const
+void YuleRand::sample(std::vector<double> &outputData) const
 {
     X.sample(outputData);
     for (double & var : outputData)

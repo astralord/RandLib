@@ -67,7 +67,7 @@ double GeometricStableRand::variate() const
     return variateForCommonAlpha();
 }
 
-void GeometricStableRand::sample(QVector<double> &outputData) const
+void GeometricStableRand::sample(std::vector<double> &outputData) const
 {
     if (alpha == 2 && mu == 0 && beta == 0) {
         for (double &var : outputData)

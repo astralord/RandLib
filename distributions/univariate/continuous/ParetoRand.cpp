@@ -85,7 +85,7 @@ double ParetoRand::variate() const
     return xm * standardVariate(alpha);
 }
 
-void ParetoRand::sample(QVector<double> &outputData) const
+void ParetoRand::sample(std::vector<double> &outputData) const
 {
     if (alpha == 1) {
         for (double &var : outputData)
@@ -166,7 +166,7 @@ double ParetoRand::Entropy() const
     return std::log(xm * alphaInv) + alphaInv + 1;
 }
 
-bool ParetoRand::fitShapeAndScaleMLE(const QVector<double> &sample)
+bool ParetoRand::fitShapeAndScaleMLE(const std::vector<double> &sample)
 {
     double n = sample.size();
     if (n <= 0)

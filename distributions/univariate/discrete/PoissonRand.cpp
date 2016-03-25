@@ -116,7 +116,7 @@ double PoissonRand::ExcessKurtosis() const
     return 1.0 / lambda;
 }
 
-bool PoissonRand::checkValidity(const QVector<double> &sample)
+bool PoissonRand::checkValidity(const std::vector<double> &sample)
 {
     for (int var : sample) {
         if (var < 0)
@@ -125,7 +125,7 @@ bool PoissonRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool PoissonRand::fitRateMLE(const QVector<double> &sample)
+bool PoissonRand::fitRateMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -133,7 +133,7 @@ bool PoissonRand::fitRateMLE(const QVector<double> &sample)
     return true;
 }
 
-bool PoissonRand::fitRateBayes(const QVector<double> &sample, GammaRand &priorDistribution)
+bool PoissonRand::fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))

@@ -43,7 +43,7 @@ private:
     
 public:
     double variate() const override;
-    void sample(QVector<double> &outputData) const override;
+    void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -54,18 +54,18 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const std::vector<double> &sample);
 
     /// Maximum-likelihood estimation
-    bool fitScaleMLE(const QVector<double> &sample);
-    bool fitShapeAndScaleMLE(const QVector<double> &sample);
+    bool fitScaleMLE(const std::vector<double> &sample);
+    bool fitShapeAndScaleMLE(const std::vector<double> &sample);
     
     /// Method of moments
-    bool fitShapeMM(const QVector<double> &sample);
-    bool fitScaleMM(const QVector<double> &sample);
-    bool fitShapeAndScaleMM(const QVector<double> &sample);
+    bool fitShapeMM(const std::vector<double> &sample);
+    bool fitScaleMM(const std::vector<double> &sample);
+    bool fitShapeAndScaleMM(const std::vector<double> &sample);
 
-    bool fitRateBayes(const QVector<double> &sample, GammaRand &priorDistribution);
+    bool fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution);
 
     /**
      * @brief getInverseGammaFunction

@@ -29,7 +29,7 @@ double InverseGammaRand::variate() const
     return 1.0 / GammaRand::variate();
 }
 
-void InverseGammaRand::sample(QVector<double> &outputData) const
+void InverseGammaRand::sample(std::vector<double> &outputData) const
 {
     GammaRand::sample(outputData);
     for (double &var : outputData)

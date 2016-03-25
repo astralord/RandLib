@@ -47,7 +47,7 @@ public:
      * @brief sample
      * @param outputData
      */
-    virtual void sample(QVector<T> &outputData) const;
+    virtual void sample(std::vector<T> &outputData) const;
 
     /**
      * @brief F
@@ -61,7 +61,7 @@ public:
      * @param x input vector
      * @param y output vector: y = P(X < x)
      */
-    void cdf(const QVector<T> &x, QVector<double> &y) const;
+    void cdf(const std::vector<T> &x, std::vector<double> &y) const;
 
     /**
      * @brief Mean

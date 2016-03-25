@@ -120,17 +120,17 @@ double ExponentialRand::Moment(int n) const
     return RandMath::factorial(n) / std::pow(beta, n);
 }
 
-bool ExponentialRand::fitRateMM(const QVector<double> &sample)
+bool ExponentialRand::fitRateMM(const std::vector<double> &sample)
 {
     return fitScaleMLE(sample);
 }
 
-bool ExponentialRand::fitRateMLE(const QVector<double> &sample)
+bool ExponentialRand::fitRateMLE(const std::vector<double> &sample)
 {
     return fitScaleMLE(sample);
 }
 
-bool ExponentialRand::fitRateUMVU(const QVector<double> &sample)
+bool ExponentialRand::fitRateUMVU(const std::vector<double> &sample)
 {   
     int n = sample.size();
     if (n <= 1 || !checkValidity(sample))

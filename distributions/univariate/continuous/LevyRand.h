@@ -37,10 +37,10 @@ public:
     double Mode() const override;
     
     /// Verify that all elements of sample can have this distribution
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const std::vector<double> &sample);
     
     /// Maximum likelihood estimators
-    bool fitScaleMLE(const QVector<double> &sample);
+    bool fitScaleMLE(const std::vector<double> &sample);
 };
 
 #endif // LEVYRAND_H

@@ -170,7 +170,7 @@ double GammaRand::variate() const
     return theta * variateForLargeShape();
 }
 
-void GammaRand::sample(QVector<double> &outputData) const
+void GammaRand::sample(std::vector<double> &outputData) const
 {
     if (alpha < 5) {
         double alphaRound = std::round(alpha);
@@ -230,7 +230,7 @@ double GammaRand::ExcessKurtosis() const
     return 6.0 * alphaInv;
 }
 
-bool GammaRand::checkValidity(const QVector<double> &sample)
+bool GammaRand::checkValidity(const std::vector<double> &sample)
 {
     for (double var : sample) {
         if (var < 0)
@@ -239,7 +239,7 @@ bool GammaRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitScaleMLE(const QVector<double> &sample)
+bool GammaRand::fitScaleMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -247,7 +247,7 @@ bool GammaRand::fitScaleMLE(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitShapeAndScaleMLE(const QVector<double> &sample)
+bool GammaRand::fitShapeAndScaleMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
@@ -283,7 +283,7 @@ bool GammaRand::fitShapeAndScaleMLE(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitShapeMM(const QVector<double> &sample)
+bool GammaRand::fitShapeMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -291,12 +291,12 @@ bool GammaRand::fitShapeMM(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitScaleMM(const QVector<double> &sample)
+bool GammaRand::fitScaleMM(const std::vector<double> &sample)
 {
     return fitScaleMLE(sample);
 }
 
-bool GammaRand::fitShapeAndScaleMM(const QVector<double> &sample)
+bool GammaRand::fitShapeAndScaleMM(const std::vector<double> &sample)
 {  
     if (!checkValidity(sample))
         return false;
@@ -308,7 +308,7 @@ bool GammaRand::fitShapeAndScaleMM(const QVector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitRateBayes(const QVector<double> &sample, GammaRand &priorDistribution)
+bool GammaRand::fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))

@@ -60,7 +60,7 @@ double LevyRand::Mode() const
     return sigma / 3.0 + mu;
 }
 
-bool LevyRand::checkValidity(const QVector<double> &sample)
+bool LevyRand::checkValidity(const std::vector<double> &sample)
 {
     for (double var : sample) {
         if (var <= mu)
@@ -69,7 +69,7 @@ bool LevyRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool LevyRand::fitScaleMLE(const QVector<double> &sample)
+bool LevyRand::fitScaleMLE(const std::vector<double> &sample)
 {
     double n = sample.size();
     if (n <= 0 || !checkValidity(sample))

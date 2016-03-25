@@ -68,7 +68,7 @@ private:
     double variateForAlphaEqualOne() const;
 public:
     double variate() const override;
-    void sample(QVector<double> &outputData) const override;
+    void sample(std::vector<double> &outputData) const override;
 
 protected:
     std::complex<double> psi(double t) const;

@@ -26,7 +26,7 @@ public:
      * @param x
      * @param y
      */
-    void pmf(const QVector<int> &x, QVector<double> &y) const;
+    void pmf(const std::vector<int> &x, std::vector<double> &y) const;
 
     double Quantile(double probability) const override;
 
@@ -35,8 +35,8 @@ public:
 protected:
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
-    double likelihood(const QVector<int> &sample) const;
-    double loglikelihood(const QVector<int> &sample) const;
+    double likelihood(const std::vector<int> &sample) const;
+    double loglikelihood(const std::vector<int> &sample) const;
 };
 
 #endif // DISCRETE_DISTRIBUTION_H

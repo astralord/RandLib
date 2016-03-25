@@ -40,7 +40,7 @@ public:
     double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
-    void sample(QVector<double> &outputData) const override;
+    void sample(std::vector<double> &outputData) const override;
 
 protected:
     double variateGeometricByTable() const;

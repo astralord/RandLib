@@ -78,7 +78,7 @@ double RayleighRand::ExcessKurtosis() const
     return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }
 
-bool RayleighRand::fitToData(const QVector<double> &sample)
+bool RayleighRand::fitToData(const std::vector<double> &sample)
 {
     if (sample.size() == 0)
         return false;

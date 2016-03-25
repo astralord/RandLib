@@ -47,7 +47,7 @@ double GeometricRand::variate(double probability)
     return x;
 }
 
-void GeometricRand::sample(QVector<double> &outputData) const
+void GeometricRand::sample(std::vector<double> &outputData) const
 {
     if (p < 0.2) {
         for (double &var : outputData)
@@ -71,7 +71,7 @@ double GeometricRand::Entropy() const
     return (a + b) / (M_LN2 * p);
 }
 
-bool GeometricRand::checkValidity(const QVector<double> &sample)
+bool GeometricRand::checkValidity(const std::vector<double> &sample)
 {
     for (int var : sample) {
         if (var < 0)
@@ -80,7 +80,7 @@ bool GeometricRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool GeometricRand::fitProbabilityMLE(const QVector<double> &sample)
+bool GeometricRand::fitProbabilityMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -88,12 +88,12 @@ bool GeometricRand::fitProbabilityMLE(const QVector<double> &sample)
     return true;
 }
 
-bool GeometricRand::fitProbabilityMM(const QVector<double> &sample)
+bool GeometricRand::fitProbabilityMM(const std::vector<double> &sample)
 {
     return fitProbabilityMLE(sample);
 }
 
-bool GeometricRand::fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution)
+bool GeometricRand::fitProbabilityBayes(const std::vector<double> &sample, BetaRand &priorDistribution)
 {
     int n = sample.size();
     if (!checkValidity(sample))

@@ -147,14 +147,14 @@ double NegativeBinomialRand<int>::variate() const
 }
 
 template<>
-void NegativeBinomialRand<double>::sample(QVector<double> &outputData) const
+void NegativeBinomialRand<double>::sample(std::vector<double> &outputData) const
 {
     for (double &var : outputData)
         var = variateThroughGammaPoisson();
 }
 
 template<>
-void NegativeBinomialRand<int>::sample(QVector<double> &outputData) const
+void NegativeBinomialRand<int>::sample(std::vector<double> &outputData) const
 {
     if (r < 10)
     {

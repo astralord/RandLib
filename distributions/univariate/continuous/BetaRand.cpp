@@ -179,7 +179,7 @@ double BetaRand::variate() const
     return a + bma * var;
 }
 
-void BetaRand::sample(QVector<double> &outputData) const
+void BetaRand::sample(std::vector<double> &outputData) const
 {
     if (alpha == beta && alpha == 0.5) {
         for (double &var : outputData)

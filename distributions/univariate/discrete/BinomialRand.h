@@ -76,10 +76,10 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const QVector<double> &sample);
+    bool checkValidity(const std::vector<double> &sample);
 
-    bool fitProbabilityMLE(const QVector<double> &sample);
-    bool fitProbabilityMM(const QVector<double> &sample);
+    bool fitProbabilityMLE(const std::vector<double> &sample);
+    bool fitProbabilityMM(const std::vector<double> &sample);
 
     /**
      * @brief fitProbability_Bayes
@@ -88,7 +88,7 @@ public:
      * @param priorDistribution
      * @return posterior distribution
      */
-    bool fitProbabilityBayes(const QVector<double> &sample, BetaRand &priorDistribution);
+    bool fitProbabilityBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
 };
 
 

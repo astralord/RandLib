@@ -36,14 +36,14 @@ public:
     std::complex<double> CF(double t) const override;
 
     /// Maximum likelihood estimation
-    bool fitLocationMLE(const QVector<double> &sample);
-    bool fitScaleMLE(const QVector<double> &sample);
-    bool fitLocationAndScaleMLE(const QVector<double> &sample);
+    bool fitLocationMLE(const std::vector<double> &sample);
+    bool fitScaleMLE(const std::vector<double> &sample);
+    bool fitLocationAndScaleMLE(const std::vector<double> &sample);
     
     /// Method of moments
-    bool fitLocationMM(const QVector<double> &sample);
-    bool fitScaleMM(const QVector<double> &sample);
-    bool fitLocationAndScaleMM(const QVector<double> &sample);
+    bool fitLocationMM(const std::vector<double> &sample);
+    bool fitScaleMM(const std::vector<double> &sample);
+    bool fitLocationAndScaleMM(const std::vector<double> &sample);
 };
 
 #endif // LAPLACERAND_H

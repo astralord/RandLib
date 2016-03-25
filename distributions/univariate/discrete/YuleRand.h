@@ -30,7 +30,7 @@ public:
     double variate() const override;
     static double variate(double shape);
     
-    void sample(QVector<double> &outputData) const override;
+    void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

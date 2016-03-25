@@ -26,7 +26,7 @@ public:
      * @param x
      * @param y
      */
-    void pdf(const QVector<double> &x, QVector<double> &y) const;
+    void pdf(const std::vector<double> &x, std::vector<double> &y) const;
 
     double Quantile(double p) const override;
     double Hazard(double x) const override;
@@ -38,8 +38,8 @@ protected:
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
 public:
-    double likelihood(const QVector<double> &sample) const;
-    double loglikelihood(const QVector<double> &sample) const;
+    double likelihood(const std::vector<double> &sample) const;
+    double loglikelihood(const std::vector<double> &sample) const;
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H

@@ -87,7 +87,7 @@ double LogNormalRand::ExcessKurtosis() const
     return res - 6;
 }
 
-bool LogNormalRand::checkValidity(const QVector<double> &sample)
+bool LogNormalRand::checkValidity(const std::vector<double> &sample)
 {
     for (double var : sample) {
         if (var <= 0)
@@ -96,7 +96,7 @@ bool LogNormalRand::checkValidity(const QVector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fitLocationMM(const QVector<double> &sample)
+bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
 {
     double average = RandMath::sampleMean(sample);
     double var = X.getVariance();
@@ -104,7 +104,7 @@ bool LogNormalRand::fitLocationMM(const QVector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fitScaleMM(const QVector<double> &sample)
+bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
 {
     double average = RandMath::sampleMean(sample);
     double mu = X.getLocation();
@@ -113,7 +113,7 @@ bool LogNormalRand::fitScaleMM(const QVector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fitLocationAndScaleMLE(const QVector<double> &sample)
+bool LogNormalRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n == 0)

@@ -92,7 +92,7 @@ double LaplaceRand::ExcessKurtosis() const
     return 3.0;
 }
 
-bool LaplaceRand::fitLocationMLE(const QVector<double> &sample)
+bool LaplaceRand::fitLocationMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -130,7 +130,7 @@ bool LaplaceRand::fitLocationMLE(const QVector<double> &sample)
     return true;
 }
 
-bool LaplaceRand::fitScaleMLE(const QVector<double> &sample)
+bool LaplaceRand::fitScaleMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -146,25 +146,25 @@ bool LaplaceRand::fitScaleMLE(const QVector<double> &sample)
     return true;
 }
     
-bool LaplaceRand::fitLocationAndScaleMLE(const QVector<double> &sample)
+bool LaplaceRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 {
     return fitLocationMLE(sample) ? fitScaleMLE(sample) : false;
 }
 
-bool LaplaceRand::fitLocationMM(const QVector<double> &sample)
+bool LaplaceRand::fitLocationMM(const std::vector<double> &sample)
 {
     setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
-bool LaplaceRand::fitScaleMM(const QVector<double> &sample)
+bool LaplaceRand::fitScaleMM(const std::vector<double> &sample)
 {
     double var = RandMath::sampleVariance(sample, mu);
     setScale(std::sqrt(0.5 * var));
     return true;
 }
 
-bool LaplaceRand::fitLocationAndScaleMM(const QVector<double> &sample)
+bool LaplaceRand::fitLocationAndScaleMM(const std::vector<double> &sample)
 {
     return fitLocationMM(sample) ? fitScaleMM(sample) : false;
 }
