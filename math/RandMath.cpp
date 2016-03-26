@@ -21,14 +21,15 @@ bool RandMath::sign(double x)
 double RandMath::sum(const std::vector<double> &sample)
 {
     long double sum = 0.0L;
-    for (double var : sample)
+    for (double var : sample) {
         sum += var;
+    }
     return sum;
 }
 
 double RandMath::sampleMean(const std::vector<double> &sample)
 {
-    int n = sample.size();
+    size_t n = sample.size();
     return (n > 0) ? sum(sample) / n : 0;
 }
 
@@ -68,19 +69,24 @@ double RandMath::rawMoment(const std::vector<double> &sample, int k)
     int n = sample.size();
     if (n <= 0 || k < 0)
         return 0.0;
+    long double sum = 0.0L;
     switch(k) {
         case 0:
             return n;
         case 1:
             return sampleMean(sample);
+        case 2:
+        {
+            for (double var : sample)
+                sum += var * var;
+        }
         default:
         {
-            long double sum = 0.0L;
             for (double var : sample)
                 sum += std::pow(var, k);
-            return sum / n;
         }
     }
+    return sum / n;
 }
 
 double RandMath::centralMoment(const std::vector<double> &sample, int k, double mean)

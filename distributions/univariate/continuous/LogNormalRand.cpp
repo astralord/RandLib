@@ -98,6 +98,8 @@ bool LogNormalRand::checkValidity(const std::vector<double> &sample)
 
 bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
 {
+    if (!checkValidity(sample))
+        return false;
     double average = RandMath::sampleMean(sample);
     double var = X.getVariance();
     setLocation(std::log(average) - 0.5 * var);
@@ -106,6 +108,8 @@ bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
 
 bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
 {
+    if (!checkValidity(sample))
+        return false;
     double average = RandMath::sampleMean(sample);
     double mu = X.getLocation();
     double aux = std::log(average) - mu;
@@ -113,10 +117,58 @@ bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
     return true;
 }
 
+bool LogNormalRand::fitLocationAndScaleMM(const std::vector<double> &sample)
+{
+    // Doesn't work on big samples (intended??)
+    if (!checkValidity(sample))
+        return false;
+    double average = RandMath::sampleMean(sample);
+    double secondMoment = RandMath::rawMoment(sample, 2);
+    double averageSq = average * average;
+    setLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
+    setScale(std::sqrt(std::log(secondMoment / averageSq)));
+    return true;
+}
+
+bool LogNormalRand::fitLocationMLE(const std::vector<double> &sample)
+{
+    size_t n = sample.size();
+    if (n == 0 || !checkValidity(sample))
+        return false;
+
+    long double logMean = 0.0L;
+    for (double var : sample) {
+        logMean += std::log(var);
+    }
+    logMean /= n;
+
+    setLocation(logMean);
+    return true;
+}
+
+bool LogNormalRand::fitScaleMLE(const std::vector<double> &sample)
+{
+    size_t n = sample.size();
+    if (n == 0 || !checkValidity(sample))
+        return false;
+
+    long double logVariance = 0.0L;
+    for (double var : sample) {
+        double logVar = std::log(var);
+        logVariance += logVar * logVar;
+    }
+    double mu = X.getLocation();
+    logVariance /= n;
+    logVariance -= mu * mu;
+
+    setScale(std::sqrt(logVariance));
+    return true;
+}
+
 bool LogNormalRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n == 0)
+    size_t n = sample.size();
+    if (n == 0 || !checkValidity(sample))
         return false;
 
     long double logMean = 0.0L;

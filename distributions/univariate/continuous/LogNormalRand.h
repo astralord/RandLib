@@ -37,9 +37,14 @@ public:
 
     bool checkValidity(const std::vector<double> &sample);
 
+    /// Method of moments
     bool fitLocationMM(const std::vector<double> &sample);
     bool fitScaleMM(const std::vector<double> &sample);
+    bool fitLocationAndScaleMM(const std::vector<double> &sample);
 
+    /// Maximum-likelihod estimation
+    bool fitLocationMLE(const std::vector<double> &sample);
+    bool fitScaleMLE(const std::vector<double> &sample);
     bool fitLocationAndScaleMLE(const std::vector<double> &sample);
 };
 
