@@ -64,11 +64,11 @@ std::cout << "Bayesian estimator: " << X.name() << "\n";
 std::cout << "(Posterior distribution: " << prior.name() << ")\n";
 
 /// UMVU
-rv.fitMeanAndVarianceUMVU(data);
+X.fitMeanAndVarianceUMVU(data);
 std::cout << "UMVU estimator: " << X.name() << "\n";
 
 /// Maximum-likelihood
-rv.fitMeanAndVarianceMLE(data);
+X.fitMeanAndVarianceMLE(data);
 std::cout << "Maximum-likelihood estimator: " << X.name() << "\n";
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
