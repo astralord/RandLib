@@ -18,13 +18,13 @@ std::cout << " Mean = " << distribution.Mean()
           << "\n Median = " << distribution.Median()
           << " and Mode = " << distribution.Mode()
           << "\n Skewness = " << distribution.Skewness()
-          << " and Ex. kurtosis = " << distribution.ExcessKurtosis();
+          << " and Excess kurtosis = " << distribution.ExcessKurtosis();
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/lognormal11.png)
 ```
 Mean = 4.48169 and Variance = 34.5126
 Median = 2.71828 and Mode = 1
-Skewness = 6.18488 and Ex. Kurtosis = 110.936
+Skewness = 6.18488 and Excess Kurtosis = 110.936
 ```
 
 * Calculate probabilities for discrete distributions and probability density functions for continuous:
