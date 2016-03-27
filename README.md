@@ -78,7 +78,7 @@ std::cout << "UMVU estimator: " << X.name() << "\n";
 rv.fitMeanAndVarianceMLE(data);
 std::cout << "Maximum-likelihood estimator: " << X.name() << "\n";
 ```
-
+![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
 ```
 True distribution: Normal(0, 1)
 Sample: -0.328154  0.709122  -0.607214  1.11472  -1.23726  -0.123584  0.59374  -1.20573  -0.397376  -1.63173
