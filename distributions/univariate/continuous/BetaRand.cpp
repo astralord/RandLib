@@ -251,7 +251,7 @@ double BetaRand::Mode() const
     if (alpha > 1)
         mode = (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
     else
-        mode = (beta > 1) ? 0.0 : BernoulliRand::standardVariate();
+        mode = (beta > 1) ? 0.0 : BernoulliRand::standardVariate(); // WRONG!
     return a + bma * mode;
 }
 

@@ -13,7 +13,7 @@ bool RandMath::areClose(double a, double b, double eps)
     return false;
 }
 
-bool RandMath::sign(double x)
+int RandMath::sign(double x)
 {
     return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
@@ -258,7 +258,8 @@ long double RandMath::lowerIncGamma(double a, double x)
 
 long double RandMath::upperIncGamma(double a, double x)
 {
-    double sum = 0;
+    return std::tgamma(a) - lowerIncGamma(a, x);
+    /*double sum = 0;
     double term = 1;
     int n = 1;
     while (std::fabs(term) > MIN_POSITIVE)
@@ -267,7 +268,7 @@ long double RandMath::upperIncGamma(double a, double x)
         term *= (a - n) / x;
         ++n;
     }
-    return std::pow(x, a - 1) * std::exp(-x) * sum;
+    return std::pow(x, a - 1) * std::exp(-x) * sum;*/
 }
 
 double RandMath::betaFun(double a, double b)

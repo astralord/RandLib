@@ -63,3 +63,8 @@ double PlanckRand::Variance() const
     //TODO:
     return NAN;
 }
+
+double PlanckRand::Mode() const
+{
+    return a / b;
+}

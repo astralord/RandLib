@@ -34,7 +34,7 @@ public:
      * @param x
      * @return sign of x
      */
-    static bool sign(double x);
+    static int sign(double x);
 
     /**
      * @brief sum
