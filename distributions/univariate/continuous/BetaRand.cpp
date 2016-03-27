@@ -107,7 +107,7 @@ double BetaRand::F(double x) const
 
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(x));
-    return cdfCoef * RandMath::incompleteBetaFun((x - a) / bma, alpha, beta);
+    return cdfCoef * RandMath::incompleteBetaFun(x, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const
