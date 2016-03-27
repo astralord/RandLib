@@ -53,6 +53,40 @@ GeometricStableRand Y(1.5, 0.5, 1.0, 0.0);
 std::cout << "Stable CF at point 1 - " << X.CF(1.0);
 std::cout << "Geometric Stable CF at point 1 - " << Y.CF(1.0);
 ```
+* Fitting parameters:
+```c++
+NormalRand X(0, 1);
+std::vector<double> data(10);
+X.sample(data);
+std::cout << "True distribution: " << X.name() << "\n";
+std::cout << "Sample: ";
+for (double var : data)
+    std::cout << var << "  ";
+std::cout << "\n";
+
+/// Bayesian
+NormalInverseGammaRand prior(0, 1, 1, 1);
+X.fitMeanAndVarianceBayes(data, prior);
+std::cout << "Bayesian estimator: " << X.name() << "\n";
+std::cout << "(Posterior distribution: " << prior.name() << ")\n";
+
+/// UMVU
+rv.fitMeanAndVarianceUMVU(data);
+std::cout << "UMVU estimator: " << X.name() << "\n";
+
+/// Maximum-likelihood
+rv.fitMeanAndVarianceMLE(data);
+std::cout << "Maximum-likelihood estimator: " << X.name() << "\n";
+```
+
+```
+True distribution: Normal(0, 1)
+Sample: -0.328154  0.709122  -0.607214  1.11472  -1.23726  -0.123584  0.59374  -1.20573  -0.397376  -1.63173
+Bayesian estimator: Normal(-0.283042, 0.951348)
+(Posterior distribution: Normal-Inverse-Gamma(-0.283042, 11, 6, 4.75674))
+UMVU estimator: Normal(-0.311347, 0.82504)
+Maximum-likelihood estimator: Normal(-0.311347, 0.742536)
+```
 
 List of implemented distributions:
 
