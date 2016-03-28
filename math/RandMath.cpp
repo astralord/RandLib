@@ -76,15 +76,12 @@ double RandMath::rawMoment(const std::vector<double> &sample, int k)
         case 1:
             return sampleMean(sample);
         case 2:
-        {
             for (double var : sample)
                 sum += var * var;
-        }
+            break;
         default:
-        {
             for (double var : sample)
                 sum += std::pow(var, k);
-        }
     }
     return sum / n;
 }
