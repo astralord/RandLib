@@ -26,26 +26,6 @@ Mean = 4.48169 and Variance = 34.5126
 Median = 2.71828 and Mode = 1
 Skewness = 6.18488 and Excess Kurtosis = 110.936
 ```
-
-* Calculate cumulative density function for random variables with sophisticated distribution:
-```c++
-BetaRand distribution(6, 7);
-int size = 100;
-std::vector<double> x(size), y(size);
-double sizem1Inv = 1.0 / (size - 1);
-for (int i = 0; i != size; ++i)
-    x[i] = i * sizem1Inv;
-distribution.cdf(x, y);
-for (int i = 0; i != size; ++i)
-    std::cout << "P(X < " << x[i] << ") = " << y[i];
-```
-* Find values of characteristic function:
-```c++
-StableRand X(1.5, 0.5, 1.0, 0.0);
-GeometricStableRand Y(1.5, 0.5, 1.0, 0.0);
-std::cout << "Stable CF at point 1 - " << X.CF(1.0);
-std::cout << "Geometric Stable CF at point 1 - " << Y.CF(1.0);
-```
 * Fitting parameters:
 ```c++
 NormalRand X(0, 1);
@@ -88,8 +68,8 @@ Continuous:
 |    Title     |     F(x)     |     f(x)     |   variate    |   CF(t)    |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 |    Arcsine   | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Beta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Beta Prime     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Beta     | :warning: | :white_check_mark: | :white_check_mark: |:x:|
+|     Beta Prime     | :warning: | :white_check_mark: | :white_check_mark: |:x:|
 |     Cauchy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Chi-squared     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Erlang     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
