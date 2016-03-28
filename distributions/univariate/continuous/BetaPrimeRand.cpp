@@ -60,8 +60,7 @@ double BetaPrimeRand::Quantile(double p) const
 
 double BetaPrimeRand::Median() const
 {
-    double betaMedian = BetaRand::Median();
-    return betaMedian / (1.0 - betaMedian);
+    return (alpha == beta) ? 1.0 : Quantile(0.5);
 }
 
 double BetaPrimeRand::Mode() const

@@ -307,6 +307,7 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
         return betaFun(a, b);
     if (a != b)
     {
+        // TODO: doesn't work if a or b < 1
         return integral([a, b] (double t)
         {
             return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
