@@ -35,7 +35,10 @@ double LogNormalRand::F(double x) const
 
 double LogNormalRand::variate() const
 {
-    return std::exp(X.variate());
+    double var = X.variate();
+    if (std::fabs(var) > 5 * X.getScale())
+        qDebug() << var << std::exp(var);
+    return std::exp(var);
 }
 
 double LogNormalRand::Mean() const

@@ -80,13 +80,13 @@ double NormalRand::standardVariate()
             static double z = -1;
             double y;
 
-            if (z >= 0) /// we don't have to generate another exponential variable as we already have one
+            if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
-                y = ExponentialRand::standardVariate();
-                z = y - 0.5 * z * z;
+                x = ExponentialRand::variate(x1);
+                z -= 0.5 * x * x;
             }
 
-            if (z < 0) /// if previous generation wasn't successful
+            if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
                     x = ExponentialRand::variate(x1);
