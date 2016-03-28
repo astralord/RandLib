@@ -2,7 +2,7 @@
 Stochastic calculus
 
 With RandLib one can work with probability distributions.
-* Fast sampling. For instance, generate ten thousand variates from standard normal distribution:
+* Fast sampling. For instance, generate million variates from standard normal distribution:
 ```c++
 NormalRand distribution(0, 1);
 std::vector<double> data(1e6);
