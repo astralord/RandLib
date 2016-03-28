@@ -2,7 +2,7 @@
 Stochastic calculus
 
 With RandLib one can work with probability distributions.
-* Fast sampling. For instance, generate ten thousand variates from standard normal distribution:
+* Fast sampling. For instance, generate million variates from standard normal distribution:
 ```c++
 NormalRand distribution(0, 1);
 std::vector<double> data(1e6);
@@ -27,14 +27,7 @@ Median = 2.71828 and Mode = 1
 Skewness = 6.18488 and Excess Kurtosis = 110.936
 ```
 
-* Calculate probabilities for discrete distributions and probability density functions for continuous:
-```c++
-GeometricRand X(4);
-std::cout << "Probability to get 5 for Geometric(4) is " << X.P(5);
-ExponentialRand Y(4);
-std::cout << "Density function at point 5 for Exponential(4) is " << Y.f(5);
-```
-* Get cumulative density function for random variables with sophisticated distribution:
+* Calculate cumulative density function for random variables with sophisticated distribution:
 ```c++
 BetaRand distribution(6, 7);
 int size = 100;
@@ -71,11 +64,11 @@ std::cout << "Bayesian estimator: " << X.name() << "\n";
 std::cout << "(Posterior distribution: " << prior.name() << ")\n";
 
 /// UMVU
-rv.fitMeanAndVarianceUMVU(data);
+X.fitMeanAndVarianceUMVU(data);
 std::cout << "UMVU estimator: " << X.name() << "\n";
 
 /// Maximum-likelihood
-rv.fitMeanAndVarianceMLE(data);
+X.fitMeanAndVarianceMLE(data);
 std::cout << "Maximum-likelihood estimator: " << X.name() << "\n";
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
