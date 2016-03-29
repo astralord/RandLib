@@ -299,15 +299,26 @@ double RandMath::regularizedBetaFun(double x, double a, double b)
 
 double RandMath::incompleteBetaFun(double x, double a, double b)
 {
-    if (x < 0.0 || x > 1.0)
+    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
         return NAN;
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)
         return betaFun(a, b);
+    if (a < 1)
+    {
+        double y = incompleteBetaFun(x, a + 1, b) * (a + b);
+        y += std::pow(x, a) * std::pow(1 - x, b);
+        return y / a;
+    }
+    if (b < 1)
+    {
+        double y = incompleteBetaFun(x, a, b + 1) * (a + b);
+        y -= std::pow(x, a) * std::pow(1 - x, b);
+        return y / b;
+    }
     if (a != b)
     {
-        // TODO: doesn't work if a or b < 1
         return integral([a, b] (double t)
         {
             return std::pow(t, a - 1) * std::pow(1 - t, b - 1);

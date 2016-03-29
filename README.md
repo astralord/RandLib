@@ -68,8 +68,8 @@ Continuous:
 |    Title     |     F(x)     |     f(x)     |   variate    |   CF(t)    |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 |    Arcsine   | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Beta     | :warning: | :white_check_mark: | :white_check_mark: |:x:|
-|     Beta Prime     | :warning: | :white_check_mark: | :white_check_mark: |:x:|
+|     Beta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
+|     Beta Prime     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Cauchy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Chi-squared     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Erlang     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
