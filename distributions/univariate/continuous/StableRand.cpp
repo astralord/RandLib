@@ -55,7 +55,7 @@ void StableRand::setParameters(double exponent, double skewness, double scale, d
         S = std::pow(1 + B * B, .5 * alphaInv);
         B = std::atan(B);
         xi = alphaInv * B;
-        integrandCoef = std::pow(std::cos(B), alpham1Inv);
+        integrandCoef = alpham1Inv * std::log(std::cos(B));
     }
 
     setScale(scale);
@@ -145,84 +145,6 @@ double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
     return u;
 }
 
-double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
-{
-    double thetaAdj = alpha * (theta + xiAdj);
-    double sinThetaAdj = std::sin(thetaAdj);
-    /// if theta ~ 0
-    if (std::fabs(sinThetaAdj) < MIN_POSITIVE)
-        return 0.0;
-    double cosTheta = std::cos(theta);
-    double y = cosTheta / sinThetaAdj;
-    /// if theta ~ pi / 2
-    if (std::fabs(y) < MIN_POSITIVE)
-        return 0.0;
-    y = std::pow(y, alpha_alpham1);
-    y *= std::cos(thetaAdj - theta);
-    y /= cosTheta;
-    if (std::isinf(y))
-        return 0.0;
-    return integrandCoef * xAdj * y;
-}
-
-double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const
-{
-    double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
-    return u * std::exp(-u);
-}
-
-double StableRand::pdfForCommonAlpha(double x) const
-{
-    x = (x - mu) / sigma; /// Standardize
-
-    // TODO: elaborate dangerous values - alpha close to 1 and zero
-    if (std::fabs(x) < 0.05) /// if we are close to 0 then we do interpolation avoiding dangerous variates
-    {
-        double numerator = std::tgamma(1 + alphaInv);
-        numerator *= std::cos(xi);
-        double denominator = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
-        double y0 =  M_1_PI * numerator / denominator; /// f(0)
-        if (std::fabs(x) < MIN_POSITIVE)
-            return y0;
-        double b = (x > 0) ? 0.051 : -0.051;
-        double y1 = pdfForCommonAlpha(mu + sigma * b);
-        return RandMath::linearInterpolation(0, b, y0, y1, x); // TODO: find a way to do better interpolation than linear
-    }
-
-    double xiAdj = xi; /// +- xi
-    if (x > 0)
-    {
-        if (alpha < 1 && beta == -1)
-            return 0;
-    }
-    else
-    {
-        if (alpha < 1 && beta == 1)
-            return 0;
-        x = -x;
-        xiAdj = -xi;
-    }
-
-    double xAdj = std::pow(x, alpha_alpham1);
-
-    /// find the peak of the integrand
-    double theta0 = M_PI_4 - .5 * xiAdj;
-    if (-xiAdj < almostPI_2)
-    {
-        RandMath::findRoot([this, xAdj, xiAdj] (double theta)
-        {
-            return integrandAuxForCommonAlpha(theta, xAdj, xiAdj) - 1.0;
-        },
-        -xiAdj, almostPI_2, theta0);
-    }
-
-    /// calculate two integrals
-    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
-    double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
-    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
-    return pdfCoef * (int1 + int2) / x;
-}
-
 double StableRand::pdfForAlphaEqualOne(double x) const
 {
     //qDebug() << "X:" << x;
@@ -236,7 +158,7 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     /// find precise value by searching of root
     RandMath::findRoot([this, xAdj] (double theta)
     {
-        return integrandAuxForAlphaEqualOne(theta, xAdj); // TODO: instead of lambda use std::function
+        return integrandAuxForAlphaEqualOne(theta, xAdj); // TODO: instead of lambda use std::function and investigate which is faster
     },
     // TODO: add derivative
     /*[this, xAdj] (double theta) /// derivative
@@ -274,6 +196,91 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     //qDebug() << "";
 
     return std::fabs(pdfCoef) * (int1 + int2) / sigma;
+}
+
+double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
+{
+    if (std::fabs(theta) >= M_PI_2)
+        return -1e6; // -INF
+    double thetaAdj = alpha * (theta + xiAdj);
+    double sinThetaAdj = std::sin(thetaAdj);
+    double cosTheta = std::cos(theta);
+    double y = std::cos(thetaAdj - theta) / cosTheta;
+    y = std::log(y);
+    y += alpha_alpham1 * std::log(cosTheta / sinThetaAdj);
+    if (std::isinf(y) || std::isnan(y))
+        return -1e6; // -INF
+    return integrandCoef + xAdj + y;
+}
+
+double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const
+{
+    double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
+    u = std::exp(u);
+    u *= std::exp(-u);
+    if (std::isinf(u) || std::isnan(u))
+        return 0.0;
+    return u;
+}
+
+double StableRand::pdfForCommonAlpha(double x) const
+{
+    //qDebug() << "X:" << x;
+    x = (x - mu) / sigma; /// Standardize
+
+    // TODO: elaborate dangerous values - alpha close to 1 and zero
+    if (std::fabs(x) < 0.05) /// if we are close to 0 then we do interpolation avoiding dangerous variates
+    {
+        double numerator = std::tgamma(1 + alphaInv);
+        numerator *= std::cos(xi);
+        double denominator = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
+        double y0 =  M_1_PI * numerator / denominator; /// f(0)
+        if (std::fabs(x) < MIN_POSITIVE)
+            return y0;
+        double b = (x > 0) ? 0.051 : -0.051;
+        double y1 = pdfForCommonAlpha(mu + sigma * b);
+        return RandMath::linearInterpolation(0, b, y0, y1, x); // TODO: find a way to do better interpolation than linear
+    }
+
+    double xiAdj = xi; /// +- xi
+    if (x > 0)
+    {
+        if (alpha < 1 && beta == -1)
+            return 0;
+    }
+    else
+    {
+        if (alpha < 1 && beta == 1)
+            return 0;
+        x = -x;
+        xiAdj = -xi;
+    }
+
+    double xAdj = alpha_alpham1 * std::log(x);
+
+    /// find the peak of the integrand
+    double theta0 = 0.5 * (M_PI_2 - xiAdj);
+    if (-xiAdj < M_PI_2)
+    {
+        RandMath::findRoot([this, xAdj, xiAdj] (double theta)
+        {
+            return integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
+        },
+        theta0);
+        // TODO: std::function instead of lambda if needed
+        // + make boundaries on searching root algorithm
+        // + add derivative function
+    }
+
+    /// calculate two integrals
+    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+    double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
+    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
+
+    //qDebug() << "Theta0" << theta0 << integrandAuxForCommonAlpha(theta0, xAdj, xiAdj);
+    //qDebug() << "Integrals:" << int1 << int2;
+    //qDebug() << "";
+    return pdfCoef * (int1 + int2) / x;
 }
 
 double StableRand::f(double x) const
@@ -341,19 +348,21 @@ double StableRand::cdfForCommonAlpha(double x) const
     {
         if (alpha < 1 && beta == -1)
             return 1.0;
-        xAdj = std::pow(x, alpha_alpham1);
+        xAdj = alpha_alpham1 * std::log(x);
     }
     else
     {
         if (alpha < 1 && beta == 1)
             return 0.0;
-        xAdj = std::pow(-x, alpha_alpham1);
+        xAdj = alpha_alpham1 * std::log(-x);
         xiAdj = -xi;
     }
 
     double y = RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
-        return std::exp(-integrandAuxForCommonAlpha(theta, xAdj, xiAdj));
+        double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
+        u = std::exp(u);
+        return std::exp(-u);
     },
     -xiAdj, M_PI_2);
 
@@ -369,11 +378,13 @@ double StableRand::cdfForAlphaEqualOne(double x) const
 {
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
-    double xAdj = std::exp(-M_PI * x * pdfCoef);
+    double xAdj = -M_PI * x * pdfCoef;
 
     double y = RandMath::integral([this, xAdj] (double theta)
     {
-        return std::exp(-integrandAuxForAlphaEqualOne(theta, xAdj));
+        double u = integrandAuxForAlphaEqualOne(theta, xAdj);
+        u = std::exp(u);
+        return std::exp(-u);
     },
     -M_PI_2, M_PI_2);
 
