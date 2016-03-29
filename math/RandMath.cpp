@@ -8,9 +8,7 @@ bool RandMath::areClose(double a, double b, double eps)
         return true;
     double fa = std::fabs(a);
     double fb = std::fabs(b);
-    if (std::fabs(b - a) < eps * std::max(fa, fb))
-        return true;
-    return false;
+    return (std::fabs(b - a) < eps * std::max(fa, fb));
 }
 
 int RandMath::sign(double x)
@@ -387,6 +385,14 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std:
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     return (iter == maxIter) ? false : true;
+}
+
+bool RandMath::findRoot(const std::function<double (double)> &funPtr, double &root, double epsilon)
+{
+    return findRoot(funPtr, [funPtr, epsilon] (double x)
+    {
+        return 0.5 * (funPtr(x + epsilon) - funPtr(x - epsilon)) / epsilon;
+    }, root, epsilon);
 }
 
 bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)

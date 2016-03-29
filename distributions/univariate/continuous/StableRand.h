@@ -41,13 +41,13 @@ protected:
     double pdfCauchy(double x) const;
     double pdfLevy(double x) const;
 private:
-    double pdfForCommonAlpha(double x) const;
     double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
     double integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const;
+    double pdfForCommonAlpha(double x) const;
 
-    double pdfForAlphaEqualOne(double x) const;
     double integrandAuxForAlphaEqualOne(double theta, double xAdj) const;
     double integrandForAlphaEqualOne(double theta, double xAdj) const;
+    double pdfForAlphaEqualOne(double x) const;
 public:    
     double f(double x) const override;
     

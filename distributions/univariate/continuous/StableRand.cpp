@@ -4,6 +4,7 @@
 #include "NormalRand.h"
 #include "UniformRand.h"
 #include "ExponentialRand.h"
+#include <QDebug>
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
 {
@@ -116,22 +117,32 @@ double StableRand::pdfLevy(double x) const
 
 double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
 {
+    if (std::fabs(theta) >= M_PI_2)
+        return -1e6; // -INF
+    if (theta == 0.0)
+        return xAdj;
     double cosTheta = std::cos(theta);
     /// if theta ~ +-pi / 2
     if (std::fabs(cosTheta) < MIN_POSITIVE)
-        return 0.0;
+        return -1.0; // -INF
     double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
-    double u = M_2_PI * thetaAdj;
-    u *= std::exp(thetaAdj * std::sin(theta) / beta);
+    double u = std::log(M_2_PI * thetaAdj);
+    u += thetaAdj * std::sin(theta) / beta;
     if (std::isinf(u))
-        return 0.0;
-    return u * xAdj;
+        return -1e6; // -INF
+    return u + xAdj;
 }
 
 double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
 {
+    if (std::fabs(theta) >= M_PI_2)
+        return 0.0;
     double u = integrandAuxForAlphaEqualOne(theta, xAdj);
-    return u * std::exp(-u);
+    u = std::exp(u);
+    u *= std::exp(-u);
+    if (std::isinf(u) || std::isnan(u))
+        return 0.0;
+    return u;
 }
 
 double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
@@ -214,25 +225,53 @@ double StableRand::pdfForCommonAlpha(double x) const
 
 double StableRand::pdfForAlphaEqualOne(double x) const
 {
+    //qDebug() << "X:" << x;
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
-    double xAdj = std::exp(-M_PI * x * pdfCoef);
+    double xAdj = -M_PI * x * pdfCoef;
 
     /// find peak of integrand
-    double minEdge = (beta > 0) ? -M_PI_2 : -almostPI_2;
-    double maxEdge = (beta > 0) ? almostPI_2 : M_PI_2;
-    double theta0 = 0.5 * (minEdge + maxEdge);
+    double theta0 = 0;
 
+    /// find precise value by searching of root
     RandMath::findRoot([this, xAdj] (double theta)
     {
-        return integrandAuxForAlphaEqualOne(theta, xAdj) - 1.0;
+        return integrandAuxForAlphaEqualOne(theta, xAdj); // TODO: instead of lambda use std::function
     },
-    minEdge, maxEdge, theta0);
+    // TODO: add derivative
+    /*[this, xAdj] (double theta) /// derivative
+    {
+        if (std::fabs(theta) >= M_PI_2)
+            return 0.0;
+        if (theta == 0.0)
+        {
+            double y = M_2_PI * beta;
+            return y + 1.0 / y;
+        }
+        double tanTheta = std::tan(theta);
+        double secTheta = 1.0 / std::cos(theta);
+        double y = M_PI_2 / beta + theta;
+        y = std::exp(y * tanTheta);
+        y *= secTheta;
+        double x = 2 * beta * theta + M_PI;
+        double z = x * secTheta;
+        y *= 4 * beta * (x * tanTheta + beta) + z * z;
+        y /= 2 * M_PI * beta;
+        return y * xAdj;
+    },*/
+    theta0);
 
-    // TODO: doesn't work for bad alpha
+    /// Sanity check
+    if (std::fabs(theta0) >= M_PI_2)
+        theta0 = 0.0;
+
+    //qDebug() << "Theta0" << theta0 << integrandAuxForAlphaEqualOne(theta0, xAdj);
+
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
-    double int1 = RandMath::integral(integrandPtr, minEdge, theta0);
-    double int2 = RandMath::integral(integrandPtr, theta0, maxEdge);
+    double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0);
+    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
+    //qDebug() << "Integrals:" << int1 << int2;
+    //qDebug() << "";
 
     return std::fabs(pdfCoef) * (int1 + int2) / sigma;
 }
@@ -374,11 +413,11 @@ double StableRand::variateForAlphaEqualOne() const
 {
     double U = UniformRand::variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::standardVariate();
-    double pi_2BetaU = M_PI_2 + beta * U;
+    double pi_2pBetaU = M_PI_2 + beta * U;
     double X = logSigma;
-    X -= std::log(M_PI_2 * W * std::cos(U) / pi_2BetaU);
+    X -= std::log(M_PI_2 * W * std::cos(U) / pi_2pBetaU);
     X *= beta;
-    X += pi_2BetaU * std::tan(U);
+    X += pi_2pBetaU * std::tan(U);
     X *= M_2_PI;
     return mu + sigma * X;
 }
@@ -396,9 +435,7 @@ double StableRand::variate() const
         return -LevyRand::variate(mu, sigma);
 
     /// Now check the others
-    if (alpha == 1)
-        return variateForAlphaEqualOne();
-    return variateForCommonAlpha();
+    return (alpha == 1) ? variateForAlphaEqualOne() : variateForCommonAlpha();
 }
 
 void StableRand::sample(std::vector<double> &outputData) const
