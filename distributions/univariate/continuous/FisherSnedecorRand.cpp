@@ -60,7 +60,7 @@ double FisherSnedecorRand::f(double x) const
     if (x <= 0)
         return 0.0;
     double y = a * std::log(x);
-    y += c * std::log(1 + d1_d2 * x);
+    y += c * std::log1p(d1_d2 * x);
     return std::exp(pdfCoef + y);
 }
 
@@ -89,7 +89,7 @@ double FisherSnedecorRand::Mean() const
 double FisherSnedecorRand::Variance() const
 {
     if (d2 <= 4)
-        return INFINITY; /*or NAN*/
+        return INFINITY;
     double numerator = 2 * d2 * d2 * (d1 + d2 - 2);
     double denominator = d2 - 2;
     denominator *= denominator;

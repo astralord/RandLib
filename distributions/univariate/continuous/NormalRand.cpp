@@ -78,7 +78,6 @@ double NormalRand::standardVariate()
         if (stairId == 0) /// handle the base layer
         {
             static double z = -1;
-            double y;
 
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
@@ -90,8 +89,7 @@ double NormalRand::standardVariate()
             {
                 do {
                     x = ExponentialRand::variate(x1);
-                    y = ExponentialRand::standardVariate();
-                    z = y - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
+                    z = ExponentialRand::standardVariate() - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
 
