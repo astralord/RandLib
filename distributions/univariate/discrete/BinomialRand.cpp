@@ -234,7 +234,7 @@ double BinomialRand::Median() const
 
 double BinomialRand::Mode() const
 {
-    return std::round(np - q);
+    return std::round(np + p);
 }
 
 double BinomialRand::Skewness() const

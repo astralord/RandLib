@@ -71,7 +71,7 @@ double BetaBinomialRand::Mode() const
     for (int i = 0; i <= n; ++i)
     {
         double value = P(i);
-        if (maxValue > value)
+        if (maxValue < value)
         {
             maxValue = value;
             index = i;
