@@ -87,7 +87,11 @@ double ContinuousDistribution::Mode() const
 
     double mu = Mean(); /// good starting point
     if (std::isnan(mu) || std::isinf(mu))
+    {
         mu = Median(); /// this shouldn't be nan or inf
+        if (std::isnan(mu) || std::isinf(mu)) /// if the error occured
+            mu = 0.0;
+    }
     double step = 10 * Variance();
     if (std::isnan(step) || std::isinf(step))
         step = 100; // dirty hack

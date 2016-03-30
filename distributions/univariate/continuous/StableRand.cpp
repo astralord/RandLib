@@ -117,7 +117,9 @@ double StableRand::pdfLevy(double x) const
 
 double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
 {
-    if (std::fabs(theta) >= M_PI_2)
+    if (theta >= M_PI_2)
+        return 1e6; // INF
+    if (theta <= -M_PI_2)
         return -1e6; // -INF
     if (theta == 0.0)
         return xAdj;
@@ -159,7 +161,7 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     RandMath::findRoot([this, xAdj] (double theta)
     {
         return integrandAuxForAlphaEqualOne(theta, xAdj); // TODO: instead of lambda use std::function and investigate which is faster
-    },
+    }, -M_PI_2, M_PI_2,
     // TODO: add derivative
     /*[this, xAdj] (double theta) /// derivative
     {
@@ -200,8 +202,10 @@ double StableRand::pdfForAlphaEqualOne(double x) const
 
 double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
 {
-    if (std::fabs(theta) >= M_PI_2)
-        return -1e6; // -INF
+    if (theta >= M_PI_2)
+        return alpha < 1 ? 1e6 : -1e6; // +/-INF
+    if (theta <= -M_PI_2 || theta <= -xiAdj)
+        return alpha < 1 ? -1e6 : +1e6; // +/-INF
     double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = std::sin(thetaAdj);
     double cosTheta = std::cos(theta);
@@ -209,7 +213,12 @@ double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double 
     y = std::log(y);
     y += alpha_alpham1 * std::log(cosTheta / sinThetaAdj);
     if (std::isinf(y) || std::isnan(y))
-        return -1e6; // -INF
+    {
+        /// we got numerical error, need to investigate to which extreme point we are closer
+        if (theta < 0.5 * (M_PI_2 - xiAdj))
+            return alpha < 1 ? -1e6 : +1e6; // +/-INF
+        return alpha < 1 ? 1e6 : -1e6; // +/-INF
+    }
     return integrandCoef + xAdj + y;
 }
 
@@ -266,7 +275,7 @@ double StableRand::pdfForCommonAlpha(double x) const
         {
             return integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
         },
-        theta0);
+        -xiAdj, M_PI_2, theta0);
         // TODO: std::function instead of lambda if needed
         // + make boundaries on searching root algorithm
         // + add derivative function
@@ -502,6 +511,16 @@ double StableRand::Mean() const
 double StableRand::Variance() const
 {
     return (alpha == 2) ? 2 * sigma * sigma : INFINITY;
+}
+
+double StableRand::Median() const
+{
+    return (beta == 0) ? mu : ContinuousDistribution::Median();
+}
+
+double StableRand::Mode() const
+{
+    return (beta == 0) ? mu : ContinuousDistribution::Mode();
 }
 
 double StableRand::Skewness() const
