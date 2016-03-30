@@ -22,8 +22,8 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = B.getInverseBetaFunction();
-    pdfCoef *= std::pow(d1_d2, a + 1);
+    pdfCoef = std::log(B.getInverseBetaFunction());
+    pdfCoef += (a + 1) * std::log(d1_d2);
 }
 
 void FisherSnedecorRand::setFirstDegree(int degree1)
@@ -37,8 +37,8 @@ void FisherSnedecorRand::setFirstDegree(int degree1)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = B.getInverseBetaFunction();
-    pdfCoef *= std::pow(d1_d2, a + 1);
+    pdfCoef = std::log(B.getInverseBetaFunction());
+    pdfCoef += (a + 1) * std::log(d1_d2);
 }
 
 void FisherSnedecorRand::setSecondDegree(int degree2)
@@ -51,13 +51,17 @@ void FisherSnedecorRand::setSecondDegree(int degree2)
     d2_d1 = 1.0 / d1_d2;
     c = -.5 * (d1 + d2);
 
-    pdfCoef = B.getInverseBetaFunction();
-    pdfCoef *= std::pow(d1_d2, a + 1);
+    pdfCoef = std::log(B.getInverseBetaFunction());
+    pdfCoef += (a + 1) * std::log(d1_d2);
 }
 
 double FisherSnedecorRand::f(double x) const
 {
-    return (x < 0) ? 0 : pdfCoef * std::pow(x, a) * std::pow(1 + d1_d2 * x, c);
+    if (x <= 0)
+        return 0.0;
+    double y = a * std::log(x);
+    y += c * std::log(1 + d1_d2 * x);
+    return std::exp(pdfCoef + y);
 }
 
 double FisherSnedecorRand::F(double x) const
@@ -79,7 +83,7 @@ void FisherSnedecorRand::sample(std::vector<double> &outputData) const
 
 double FisherSnedecorRand::Mean() const
 {
-    return (d2 > 2) ? d2 / (d2 - 2) : INFINITY /*or NAN*/;
+    return (d2 > 2) ? d2 / (d2 - 2) : INFINITY;
 }
 
 double FisherSnedecorRand::Variance() const
