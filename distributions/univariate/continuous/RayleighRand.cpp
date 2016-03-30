@@ -78,36 +78,48 @@ double RayleighRand::ExcessKurtosis() const
     return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }
 
-bool RayleighRand::fitToData(const std::vector<double> &sample)
+bool RayleighRand::checkValidity(const std::vector<double> &sample)
 {
-    if (sample.size() == 0)
-        return false;
-
-    /// Calculate sigma^2
-    double sigmaEst = 0.0;
-    int N = sample.size();
-    for (double var : sample)
-    {
+    for (double var : sample) {
         if (var < 0)
             return false;
-        sigmaEst += var * var;
     }
-    sigmaEst *= .5 / N;
+    return true;
+}
+
+bool RayleighRand::fitScaleMLE(const std::vector<double> &sample)
+{
+    if (!checkValidity(sample))
+        return false;
+    double sigmaSq = 0.5 * RandMath::rawMoment(sample, 2);
+    setScale(std::sqrt(sigmaSq));
+    return true;
+}
+
+bool RayleighRand::fitScaleUMVU(const std::vector<double> &sample)
+{
+    if (!checkValidity(sample))
+        return false;
+    size_t n = sample.size();
+    if (n == 0)
+        return false;
+
+    double sigmaSq = 0.5 * RandMath::rawMoment(sample, 2);
 
     /// Calculate unbiased sigma
-    sigmaEst = std::sqrt(sigmaEst);
+    double sigmaEst = std::sqrt(sigmaSq);
 
-    if (N > 30)
-        setScale((1 + 0.1252 / N) * sigmaEst); /// err < 1e-6
+    if (n > 30)
+        setScale((1 + 0.1252 / n) * sigmaEst); /// err < 1e-6
     else
     {
-        double coef = RandMath::factorial(N - 1);
-        coef *= N * coef;
-        coef *= M_1_SQRTPI * std::sqrt(static_cast<double>(N));
-        coef /= RandMath::factorial(N << 1);
-        int pow2N = 1 << N; /// < 2^31
-        coef *= pow2N;
-        coef *= pow2N;
+        double coef = RandMath::factorial(n - 1);
+        coef *= n * coef;
+        coef *= M_1_SQRTPI * std::sqrt(static_cast<double>(n));
+        coef /= RandMath::factorial(n << 1);
+        int pow2n = 1 << n; /// < 2^31
+        coef *= pow2n;
+        coef *= pow2n;
 
         setScale(coef * sigmaEst);
     }
