@@ -36,16 +36,9 @@ void GammaRand::setParameters(double shape, double scale)
     if (theta <= 0)
         theta = 1.0;
     beta = 1.0 / theta;
-   
-    double alphaRound = std::round(alpha);
-    if (RandMath::areClose(alpha, alphaRound)) {
-        alpha = alphaRound;
-        cdfCoef = 1.0 / RandMath::factorial(alpha - 1);
-    }
-    else {
-        cdfCoef = 1.0 / std::tgamma(alpha);
-    }
-    pdfCoef = cdfCoef * std::pow(beta, alpha);
+
+    cdfCoef = -std::lgamma(alpha);
+    pdfCoef = cdfCoef + alpha * std::log(beta);
     variateCoef = alphaInv + M_1_E;
 
     if (alpha > 3)
@@ -56,14 +49,18 @@ double GammaRand::f(double x) const
 {
     if (x < 0)
         return 0;
-    double y = std::pow(x, alpha - 1);
-    y *= std::exp(-x * beta);
-    return pdfCoef * y;
+    double y = (alpha - 1) * std::log(x);
+    y -= x * beta;
+    y += pdfCoef;
+    return std::exp(y);
 }
 
 double GammaRand::F(double x) const
 {
-    return (x < 0) ? 0 : cdfCoef * RandMath::lowerIncGamma(alpha, x * beta);
+    if (x < 0)
+        return 0;
+    double y = cdfCoef + RandMath::logLowerIncGamma(alpha, x * beta);
+    return std::exp(y);
 }
 
 double GammaRand::variateForIntegerShape() const

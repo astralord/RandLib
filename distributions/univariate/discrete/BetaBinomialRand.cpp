@@ -16,7 +16,7 @@ std::string BetaBinomialRand::name()
 void BetaBinomialRand::setParameters(int number, double shape1, double shape2)
 {
     n = std::max(number, 1);
-    B.setShapes(shape1, shape2);
+    B.setParameters(shape1, shape2);
 }
 
 double BetaBinomialRand::P(int k) const

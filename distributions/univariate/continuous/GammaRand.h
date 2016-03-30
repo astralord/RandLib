@@ -14,8 +14,8 @@ protected:
     double alpha, theta, beta;
     double alphaInv; /// 1.0 / alpha
     double variateCoef; /// (e + alpha) / (alpha * e)
-    double cdfCoef; /// 1.0 / gamma(alpha)
-    double pdfCoef; /// 1.0 / (gamma(alpha) * theta ^ alpha)
+    double cdfCoef; /// -lgamma(alpha)
+    double pdfCoef; ///  -lgamma(alpha) - alpha * log(theta)
 
 private:
     double m, s, s_2, d, b, w, v, c; /// constants for sampling
@@ -71,7 +71,7 @@ public:
      * @brief getInverseGammaFunction
      * @return 1.0 / Gamma(k)
      */
-    inline double getInverseGammaFunction() { return cdfCoef; }
+    inline double getLogGammaFunction() { return -cdfCoef; }
 };
 
 

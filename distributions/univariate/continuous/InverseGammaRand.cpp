@@ -14,14 +14,18 @@ double InverseGammaRand::f(double x) const
 {
     if (x <= 0)
         return 0.0;
-    double y = std::pow(x, -alpha - 1);
-    y *= std::exp(-beta / x);
-    return pdfCoef * y;
+    double y = -(alpha + 1) * std::log(x);
+    y -= beta / x;
+    y += pdfCoef;
+    return std::exp(y);
 }
 
 double InverseGammaRand::F(double x) const
 {
-    return (x > 0) ? cdfCoef * RandMath::upperIncGamma(alpha, beta / x) : 0.0;
+    if (x <= 0)
+        return 0.0;
+    double y = RandMath::logUpperIncGamma(alpha, beta / x);
+    return std::exp(cdfCoef + y);
 }
 
 double InverseGammaRand::variate() const

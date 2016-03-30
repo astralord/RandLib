@@ -13,6 +13,8 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
     int v;
     ChiSquaredRand Y;
     double pdfCoef;
+    double vp1Half; /// 0.5 * (v + 1)
+
 public:
     explicit StudentTRand(int degree);
     std::string name() override;

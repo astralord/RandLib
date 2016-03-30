@@ -100,7 +100,7 @@ bool GeometricRand::fitProbabilityBayes(const std::vector<double> &sample, BetaR
         return false;
     double alpha = priorDistribution.getAlpha();
     double beta = priorDistribution.getBeta();
-    priorDistribution.setShapes(alpha + n, beta + RandMath::sum(sample));
+    priorDistribution.setParameters(alpha + n, beta + RandMath::sum(sample));
     setProbability(priorDistribution.Mean());
     return true;
 }

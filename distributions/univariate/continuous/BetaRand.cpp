@@ -4,8 +4,7 @@
 
 BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValue)
 {
-    setShapes(shape1, shape2);
-    setSupport(minValue, maxValue);
+    setParameters(shape1, shape2, minValue, maxValue);
 }
 
 std::string BetaRand::name()
@@ -16,8 +15,16 @@ std::string BetaRand::name()
                    + toStringWithPrecision(getMax()) + ")";
 }
 
-void BetaRand::setShapes(double shape1, double shape2)
+void BetaRand::setParameters(double shape1, double shape2, double minValue, double maxValue)
 {
+    a = minValue;
+    b = maxValue;
+
+    if (a >= b)
+        b = a + 1.0;
+
+    bma = b - a;
+
     alpha = shape1;
     if (alpha <= 0)
         alpha = 1.0;
@@ -28,18 +35,12 @@ void BetaRand::setShapes(double shape1, double shape2)
         beta = 1.0;
     Y.setParameters(beta, 1);
 
-    if (alpha + beta > 30)
-    {
-        /// we use log(Gamma(x)) in order to avoid too big numbers
-        double logGammaX = std::lgamma(alpha);
-        double logGammaY = std::lgamma(beta);
-        cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
-        cdfCoef = std::exp(cdfCoef);
-    }
-    else {
-        cdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
-    }
-    pdfCoef = cdfCoef / bma;
+    /// we use log(Gamma(x)) in order to avoid too big numbers
+    double logGammaX = X.getLogGammaFunction();
+    double logGammaY = Y.getLogGammaFunction();
+    cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
+    pdfCoef = cdfCoef - std::log(bma);
+    cdfCoef = std::exp(cdfCoef);
 
     setVariateConstants();
 }
@@ -53,7 +54,7 @@ void BetaRand::setSupport(double minValue, double maxValue)
         b = a + 1.0;
 
     bma = b - a;
-    pdfCoef = cdfCoef / bma;
+    pdfCoef = std::log(cdfCoef / bma);
 }
 
 void BetaRand::setAlpha(double shape1)
@@ -62,8 +63,11 @@ void BetaRand::setAlpha(double shape1)
     if (alpha <= 0)
         alpha = 1.0;
     X.setParameters(alpha, 1);
-    cdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
-    pdfCoef = cdfCoef / bma;
+    double logGammaX = X.getLogGammaFunction();
+    double logGammaY = Y.getLogGammaFunction();
+    cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
+    pdfCoef = cdfCoef - std::log(bma);
+    cdfCoef = std::exp(cdfCoef);
     setVariateConstants();
 }
 
@@ -73,8 +77,11 @@ void BetaRand::setBeta(double shape2)
     if (beta <= 0)
         beta = 1.0;
     Y.setParameters(beta, 1);
-    cdfCoef = std::tgamma(alpha + beta) * X.getInverseGammaFunction() * Y.getInverseGammaFunction();
-    pdfCoef = cdfCoef / bma;
+    double logGammaX = X.getLogGammaFunction();
+    double logGammaY = Y.getLogGammaFunction();
+    cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
+    pdfCoef = cdfCoef - std::log(bma);
+    cdfCoef = std::exp(cdfCoef);
     setVariateConstants();
 }
 
@@ -87,11 +94,14 @@ double BetaRand::f(double x) const
     x -= a;
     x /= bma;
 
+    double y = 0.0;
     if (alpha == beta)
-        return pdfCoef * std::pow(x - x * x, alpha - 1);
-    double rv = std::pow(x, alpha - 1);
-    rv *= std::pow(1 - x, beta - 1);
-    return pdfCoef * rv;
+        y = (alpha - 1) * std::log(x - x * x);
+    else {
+        y = (alpha - 1) * std::log(x);
+        y += (beta - 1) * std::log(1 - x);
+    }
+    return std::exp(pdfCoef + y);
 }
 
 double BetaRand::F(double x) const
@@ -279,8 +289,7 @@ double BetaRand::ExcessKurtosis() const
 
 ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
 {
-    setShape(shape);
-    setSupport(minValue, maxValue);
+    BetaRand::setParameters(1.0 - shape, shape, minValue, maxValue);
 }
 
 std::string ArcsineRand::name()
@@ -292,13 +301,13 @@ std::string ArcsineRand::name()
 
 void ArcsineRand::setShape(double shape)
 {
-    BetaRand::setShapes(1.0 - shape, shape);
+    BetaRand::setParameters(1.0 - shape, shape, a, b);
 }
 
 
 BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
 {
-    setShapes(fixatingIndex, frequency);
+    setFixatingIndexAndFrequency(fixatingIndex, frequency);
 }
 
 std::string BaldingNicholsRand::name()
@@ -306,7 +315,7 @@ std::string BaldingNicholsRand::name()
     return "Balding-Nichols(" + toStringWithPrecision(getFixatingIndex()) + ", " + toStringWithPrecision(getFrequency()) + ")";
 }
 
-void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
+void BaldingNicholsRand::setFixatingIndexAndFrequency(double fixatingIndex, double frequency)
 {
     F = fixatingIndex;
     if (F <= 0 || F >= 1)
@@ -317,5 +326,5 @@ void BaldingNicholsRand::setParameters(double fixatingIndex, double frequency)
         p = 0.5;
 
     double frac = (1.0 - F) / F, fracP = frac * p;
-    BetaRand::setShapes(fracP, frac - fracP);
+    BetaRand::setParameters(fracP, frac - fracP);
 }

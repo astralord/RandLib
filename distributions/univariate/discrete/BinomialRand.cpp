@@ -277,7 +277,7 @@ bool BinomialRand::fitProbabilityBayes(const std::vector<double> &sample, BetaRa
     double sum = RandMath::sum(sample);
     double alpha = priorDistribution.getAlpha();
     double beta = priorDistribution.getBeta();
-    priorDistribution.setShapes(sum + alpha, N * n - sum + beta);
+    priorDistribution.setParameters(sum + alpha, N * n - sum + beta);
     setParameters(n, priorDistribution.Mean());
     return true;
 }

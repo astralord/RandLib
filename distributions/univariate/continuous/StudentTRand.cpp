@@ -17,15 +17,17 @@ void StudentTRand::setDegree(int degree)
     v = std::max(degree, 1);
     Y.setDegree(v);
 
-    pdfCoef = std::tgamma(.5 * (v + 1));
-    pdfCoef /= (std::sqrt(v * M_PI) / Y.getInverseGammaFunction());
+    vp1Half = 0.5 * (v + 1);
+    pdfCoef = std::lgamma(vp1Half);
+    pdfCoef -= 0.5 * std::log(M_PI * v);
+    pdfCoef -= Y.getLogGammaFunction();
 }
 
 double StudentTRand::f(double x) const
 {
     double y = 1 + x * x / v;
-    y = std::pow(y, -.5 * (v + 1));
-    return pdfCoef * y;
+    y = -vp1Half * std::log(y);
+    return std::exp(pdfCoef + y);
 }
 
 double StudentTRand::F(double x) const

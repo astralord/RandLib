@@ -29,7 +29,7 @@ public:
     virtual ~BetaRand() {}
     std::string name() override;
 
-    void setShapes(double shape1, double shape2);
+    void setParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
     void setSupport(double minValue, double maxValue);
     void setAlpha(double shape1);
     void setBeta(double shape2);
@@ -85,7 +85,7 @@ public:
 
 protected:
     /// prohibit to use beta's getters and setters
-    using BetaRand::setShapes;
+    using BetaRand::setParameters;
     using BetaRand::setAlpha;
     using BetaRand::setBeta;
 };
@@ -101,12 +101,12 @@ public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
     std::string name() override;
 
-    void setParameters(double fixatingIndex, double frequency);
+    void setFixatingIndexAndFrequency(double fixatingIndex, double frequency);
     inline double getFrequency() { return p; }
     inline double getFixatingIndex() { return F; }
 
 private:
-    using BetaRand::setShapes;
+    using BetaRand::setParameters;
     using BetaRand::setAlpha;
     using BetaRand::setBeta;
 };

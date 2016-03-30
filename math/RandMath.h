@@ -191,6 +191,15 @@ public:
     static long double lowerIncGamma(double a, double x);
 
     /**
+     * @brief logLowerIncGamma
+     * Calculate logarithm of lower incomplete gamma function
+     * @param a
+     * @param x
+     * @return
+     */
+    static long double logLowerIncGamma(double a, double x);
+
+    /**
      * @brief upperIncGamma
      * Calculate upper incomplete gamma function
      * @param a
@@ -198,6 +207,15 @@ public:
      * @return
      */
     static long double upperIncGamma(double a, double x);
+
+    /**
+     * @brief upperIncGamma
+     * Calculate logarithm of upper incomplete gamma function
+     * @param a
+     * @param x
+     * @return
+     */
+    static long double logUpperIncGamma(double a, double x);
 
     /**
      * @brief betaFun

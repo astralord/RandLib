@@ -241,6 +241,8 @@ double RandMath::trigamma(double x)
 
 long double RandMath::lowerIncGamma(double a, double x)
 {
+    if (x <= 0)
+        return 0.0;
     double sum = 0;
     double term = 1.0 / a;
     int n = 1;
@@ -251,6 +253,22 @@ long double RandMath::lowerIncGamma(double a, double x)
         ++n;
     }
     return std::pow(x, a) * std::exp(-x) * sum;
+}
+
+long double RandMath::logLowerIncGamma(double a, double x)
+{
+    if (x <= 0)
+        return 0.0;
+    double sum = 0;
+    double term = 1.0 / a;
+    int n = 1;
+    while (std::fabs(term) > MIN_POSITIVE)
+    {
+        sum = sum + term;
+        term *= x / (a + n);
+        ++n;
+    }
+    return a * std::log(x) - x + std::log(sum);
 }
 
 long double RandMath::upperIncGamma(double a, double x)
@@ -266,6 +284,11 @@ long double RandMath::upperIncGamma(double a, double x)
         ++n;
     }
     return std::pow(x, a - 1) * std::exp(-x) * sum;*/
+}
+
+long double RandMath::logUpperIncGamma(double a, double x)
+{
+    return std::log(upperIncGamma(a, x)); // TODO: improve
 }
 
 double RandMath::betaFun(double a, double b)
