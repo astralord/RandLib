@@ -119,7 +119,6 @@ bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
 
 bool LogNormalRand::fitLocationAndScaleMM(const std::vector<double> &sample)
 {
-    // Doesn't work on big samples (intended??)
     if (!checkValidity(sample))
         return false;
     double average = RandMath::sampleMean(sample);

@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
     double m, w;
     double sigma; /// w / m
-    double gammaMInv; /// 1.0 / gamma(m)
+    double logGammaM; /// 1.0 / gamma(m)
     double pdfCoef;
 
     GammaRand Y;
