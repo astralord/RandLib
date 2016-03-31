@@ -78,7 +78,7 @@ Continuous:
 |     F    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Frechet    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Gamma     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     Geometric Stable     | :x: | :x: | :white_check_mark: |:white_check_mark:|
+|     Geometric Stable     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Gumbel     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Irwin-Hall     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Laplace     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
@@ -93,7 +93,7 @@ Continuous:
 |     Raised cosine     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Rayleigh     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     Stable     | :warning: | :warning: | :white_check_mark: |:white_check_mark:|
+|     Stable     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Student's t     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Triangular     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
