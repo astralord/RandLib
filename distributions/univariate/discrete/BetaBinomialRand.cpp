@@ -1,5 +1,6 @@
 #include "BetaBinomialRand.h"
 #include "BinomialRand.h"
+#include <thread>
 
 BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
 {
@@ -46,6 +47,13 @@ double BetaBinomialRand::variate() const
     return BinomialRand::variate(n, p);
 }
 
+void BetaBinomialRand::sample(std::vector<double> &outputData) const
+{
+    B.sample(outputData);
+    for (double & var : outputData)
+        var = BinomialRand::variate(n, var);
+}
+
 double BetaBinomialRand::Mean() const
 {
     double alpha = B.getAlpha();
@@ -57,10 +65,10 @@ double BetaBinomialRand::Variance() const
 {
     double alpha = B.getAlpha();
     double beta = B.getBeta();
-    double numerator = n * alpha * beta * (alpha + beta + n);
-    double denominator = (alpha + beta);
-    denominator *= denominator;
-    denominator *= (alpha + beta + 1);
+    double alphaPBeta = alpha + beta;
+    double numerator = n * alpha * beta * (alphaPBeta + n);
+    double denominator = alphaPBeta * alphaPBeta;
+    denominator *= (alphaPBeta + 1);
     return numerator / denominator;
 }
 
