@@ -3,9 +3,9 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 
-GammaRand::GammaRand(double shape, double scale)
+GammaRand::GammaRand(double shape, double rate)
 {
-    setParameters(shape, scale);
+    setParameters(shape, rate);
 }
 
 std::string GammaRand::name()
@@ -25,17 +25,17 @@ void GammaRand::setConstantsForGenerator()
     c = b + std::log(s * d / b) - m - m - 3.7203285;
 }
 
-void GammaRand::setParameters(double shape, double scale)
+void GammaRand::setParameters(double shape, double rate)
 {
     alpha = shape;
     if (alpha <= 0)
         alpha = 1.0;
     alphaInv = 1.0 / alpha;
     
-    theta = scale;
-    if (theta <= 0)
-        theta = 1.0;
-    beta = 1.0 / theta;
+    beta = rate;
+    if (beta <= 0)
+        beta = 1.0;
+    theta = 1.0 / beta;
 
     cdfCoef = -std::lgamma(alpha);
     pdfCoef = cdfCoef + alpha * std::log(beta);
@@ -240,7 +240,7 @@ bool GammaRand::fitScaleMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(alpha, RandMath::sampleMean(sample) / alpha);
+    setParameters(alpha, alpha / RandMath::sampleMean(sample));
     return true;
 }
 
@@ -276,7 +276,7 @@ bool GammaRand::fitShapeAndScaleMLE(const std::vector<double> &sample)
     }, shape))
         return false;
 
-    setParameters(shape, average / shape);
+    setParameters(shape, shape / average);
     return true;
 }
 
@@ -284,7 +284,7 @@ bool GammaRand::fitShapeMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(RandMath::sampleMean(sample) / theta, theta);
+    setParameters(RandMath::sampleMean(sample) * beta, beta);
     return true;
 }
 
@@ -301,7 +301,7 @@ bool GammaRand::fitShapeAndScaleMM(const std::vector<double> &sample)
     double var = RandMath::sampleVariance(sample, mu1);
     double shape = mu1 * mu1 / var;
     
-    setParameters(shape, mu1 / shape);
+    setParameters(shape, shape / mu1);
     return true;
 }
 
@@ -314,8 +314,8 @@ bool GammaRand::fitRateBayes(const std::vector<double> &sample, GammaRand &prior
     double beta0 = priorDistribution.getRate();
     double newAlpha = alpha * n + alpha0;
     double newBeta = RandMath::sum(sample) + beta0;
-    priorDistribution.setParameters(newAlpha, 1.0 / newBeta);
-    setParameters(alpha, 1.0 / priorDistribution.Mean());
+    priorDistribution.setParameters(newAlpha, newBeta);
+    setParameters(alpha, priorDistribution.Mean());
     return true;
 }
 
@@ -334,7 +334,7 @@ std::string ChiSquaredRand::name()
 
 void ChiSquaredRand::setDegree(int degree)
 {
-    GammaRand::setParameters((degree < 1) ? 0.5 : 0.5 * degree, 2);
+    GammaRand::setParameters((degree < 1) ? 0.5 : 0.5 * degree, 0.5);
 }
 
 int ChiSquaredRand::getDegree() const
@@ -347,17 +347,12 @@ int ChiSquaredRand::getDegree() const
 
 ErlangRand::ErlangRand(int shape, double rate)
 {
-    setParameters(shape, rate);
+    GammaRand::setParameters(std::max(shape, 1), rate);
 }
 
 std::string ErlangRand::name()
 {
     return "Erlang(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
-}
-
-void ErlangRand::setParameters(int shape, double rate)
-{
-    GammaRand::setParameters(std::max(shape, 1), 1.0 / rate);
 }
 
 int ErlangRand::getShape() const

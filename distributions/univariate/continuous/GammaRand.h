@@ -22,11 +22,11 @@ private:
     void setConstantsForGenerator();
 
 public:
-    GammaRand(double shape = 1, double scale = 1);
+    GammaRand(double shape = 1, double rate = 1);
     virtual ~GammaRand() {}
     std::string name() override;
 
-    void setParameters(double shape, double scale);
+    void setParameters(double shape, double rate);
     inline double getShape() const { return alpha; }
     inline double getScale() const { return theta; }
     inline double getRate() const { return beta; }
@@ -113,7 +113,6 @@ public:
     ErlangRand(int shape = 1, double rate = 1);
     std::string name() override;
 
-    void setParameters(int shape, double rate);
     inline int getShape() const;
     inline double getRate() const;
 

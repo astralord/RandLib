@@ -17,9 +17,8 @@ void NakagamiRand::setParameters(double shape, double spread)
     if (w <= 0)
         w = 1.0;
 
-    Y.setParameters(m, w / m);
-
     sigma = m / w;
+    Y.setParameters(m, sigma);
     logGammaM = Y.getLogGammaFunction();
     pdfCoef = M_LN2 + m * std::log(m / w) - logGammaM;
 }

@@ -262,7 +262,7 @@ bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGamm
     double beta = priorDistribution.getRate();
     double newAlpha = alpha + 0.5 * n;
     double newBeta = beta + 0.5 * n * RandMath::sampleVariance(sample, mu);
-    priorDistribution.setParameters(newAlpha, 1.0 / newBeta);
+    priorDistribution.setParameters(newAlpha, newBeta);
     setVariance(priorDistribution.Mean());
     return true;
 }
