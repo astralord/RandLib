@@ -37,6 +37,9 @@ public:
 
     bool checkValidity(const std::vector<double> &sample);
 
+private:
+    double logAverage(const std::vector<double> &sample);
+
     /// Method of moments
     bool fitLocationMM(const std::vector<double> &sample);
     bool fitScaleMM(const std::vector<double> &sample);
@@ -46,6 +49,9 @@ public:
     bool fitLocationMLE(const std::vector<double> &sample);
     bool fitScaleMLE(const std::vector<double> &sample);
     bool fitLocationAndScaleMLE(const std::vector<double> &sample);
+
+    /// Bayesian estimation
+    bool fitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
 };
 
 #endif // LOGNORMALRAND_H

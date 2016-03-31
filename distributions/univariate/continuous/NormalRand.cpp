@@ -239,8 +239,8 @@ bool NormalRand::fitMeanAndVarianceUMVU(const std::vector<double> &sample)
 
 bool NormalRand::fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
 {
-    int n = sample.size();
-    if (n <= 0)
+    size_t n = sample.size();
+    if (n == 0)
         return false;
     double mu0 = priorDistribution.getLocation();
     double tau0 = priorDistribution.getPrecision();
@@ -255,8 +255,8 @@ bool NormalRand::fitMeanBayes(const std::vector<double> &sample, NormalRand &pri
 
 bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
 {
-    int n = sample.size();
-    if (n <= 0)
+    size_t n = sample.size();
+    if (n == 0)
         return false;
     double alpha = priorDistribution.getShape();
     double beta = priorDistribution.getRate();
@@ -269,8 +269,8 @@ bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGamm
 
 bool NormalRand::fitMeanAndVarianceBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
 {
-    int n = sample.size();
-    if (n <= 0)
+    size_t n = sample.size();
+    if (n == 0)
         return false;
     double alpha = priorDistribution.getShape();
     double beta = priorDistribution.getRate();

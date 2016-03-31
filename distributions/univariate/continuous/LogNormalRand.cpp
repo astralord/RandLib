@@ -96,6 +96,18 @@ bool LogNormalRand::checkValidity(const std::vector<double> &sample)
     return true;
 }
 
+double LogNormalRand::logAverage(const std::vector<double> &sample)
+{
+    size_t n = sample.size();
+    if (n == 0)
+         return 0.0;
+    long double logMean = 0.0L;
+    for (double var : sample) {
+        logMean += std::log(var);
+    }
+    return logMean / n;
+}
+
 bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
@@ -135,13 +147,7 @@ bool LogNormalRand::fitLocationMLE(const std::vector<double> &sample)
     if (n == 0 || !checkValidity(sample))
         return false;
 
-    long double logMean = 0.0L;
-    for (double var : sample) {
-        logMean += std::log(var);
-    }
-    logMean /= n;
-
-    setLocation(logMean);
+    setLocation(logAverage(sample));
     return true;
 }
 
@@ -183,5 +189,21 @@ bool LogNormalRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 
     setLocation(logMean);
     setScale(std::sqrt(logVariance));
+    return true;
+}
+
+bool LogNormalRand::fitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
+{
+    size_t n = sample.size();
+    if (n == 0)
+        return false;
+    double mu0 = priorDistribution.getLocation();
+    double tau0 = priorDistribution.getPrecision();
+    double tau = X.getPrecision();
+    double numerator = n * logAverage(sample) * tau + tau0 * mu0;
+    double denominator = n * tau + tau0;
+    priorDistribution.setLocation(numerator / denominator);
+    priorDistribution.setVariance(1.0 / denominator);
+    setLocation(priorDistribution.Mean());
     return true;
 }
