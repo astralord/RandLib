@@ -117,9 +117,9 @@ double StableRand::pdfLevy(double x) const
 double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
 {
     if (theta >= M_PI_2)
-        return 1e6; // INF
+        return (beta > 0) ? 1e6 : -1e6;
     if (theta <= -M_PI_2)
-        return -1e6; // -INF
+        return (beta > 0) ? -1e6 : 1e6;
     if (theta == 0.0)
         return xAdj;
     double cosTheta = std::cos(theta);
@@ -129,8 +129,12 @@ double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
     double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
     double u = std::log(M_2_PI * thetaAdj);
     u += thetaAdj * std::sin(theta) / beta;
-    if (std::isinf(u))
-        return -1e6; // -INF
+    if (std::isinf(u) || std::isnan(u))
+    {
+        if (theta < 0.0)
+            return (beta > 0) ? -1e6 : 1e6;
+        return (beta > 0) ? 1e6 : -1e6;
+    }
     return u + xAdj;
 }
 
@@ -364,7 +368,8 @@ double StableRand::cdfForAlphaEqualOne(double x) const
     },
     -M_PI_2, M_PI_2);
 
-    return M_1_PI * y;
+    y *= M_1_PI;
+    return (beta > 0) ? y : 1 - y;
 }
 
 double StableRand::F(double x) const
