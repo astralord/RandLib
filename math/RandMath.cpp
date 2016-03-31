@@ -35,13 +35,7 @@ double RandMath::sampleMean(const std::vector<double> &sample)
 
 double RandMath::sampleVariance(const std::vector<double> &sample, double mean)
 {
-    int n = sample.size();
-    long double deviation = 0.0L;
-    for (double var : sample) {
-        double diff = (var - mean);
-        deviation += diff * diff;
-    }
-    return (n > 0) ? deviation / n : 0.0;
+    return rawMoment(sample, 2) - mean * mean;
 }
 
 double RandMath::sampleVariance(const std::vector<double> &sample)

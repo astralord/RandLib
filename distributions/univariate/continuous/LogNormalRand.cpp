@@ -101,11 +101,24 @@ double LogNormalRand::logAverage(const std::vector<double> &sample)
     size_t n = sample.size();
     if (n == 0)
          return 0.0;
-    long double logMean = 0.0L;
+    long double logSum = 0.0L;
     for (double var : sample) {
-        logMean += std::log(var);
+        logSum += std::log(var);
     }
-    return logMean / n;
+    return logSum / n;
+}
+
+double LogNormalRand::logSecondMoment(const std::vector<double> &sample)
+{
+    size_t n = sample.size();
+    if (n == 0)
+         return 0.0;
+    long double logSum = 0.0L;
+    for (double var : sample) {
+        double logVar = std::log(var);
+        logSum += logVar * logVar;
+    }
+    return logSum / n;
 }
 
 bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
@@ -146,7 +159,6 @@ bool LogNormalRand::fitLocationMLE(const std::vector<double> &sample)
     size_t n = sample.size();
     if (n == 0 || !checkValidity(sample))
         return false;
-
     setLocation(logAverage(sample));
     return true;
 }
@@ -156,16 +168,8 @@ bool LogNormalRand::fitScaleMLE(const std::vector<double> &sample)
     size_t n = sample.size();
     if (n == 0 || !checkValidity(sample))
         return false;
-
-    long double logVariance = 0.0L;
-    for (double var : sample) {
-        double logVar = std::log(var);
-        logVariance += logVar * logVar;
-    }
     double mu = X.getLocation();
-    logVariance /= n;
-    logVariance -= mu * mu;
-
+    double logVariance = logSecondMoment(sample) - mu * mu;
     setScale(std::sqrt(logVariance));
     return true;
 }
@@ -205,5 +209,43 @@ bool LogNormalRand::fitLocationBayes(const std::vector<double> &sample, NormalRa
     priorDistribution.setLocation(numerator / denominator);
     priorDistribution.setVariance(1.0 / denominator);
     setLocation(priorDistribution.Mean());
+    return true;
+}
+
+bool LogNormalRand::fitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
+{
+    size_t n = sample.size();
+    if (n == 0)
+        return false;
+    double alpha = priorDistribution.getShape();
+    double beta = priorDistribution.getRate();
+    double newAlpha = alpha + 0.5 * n;
+    double mu = X.getLocation();
+    double newBeta = beta + 0.5 * n * (logSecondMoment(sample) - mu * mu);
+    priorDistribution.setParameters(newAlpha, 1.0 / newBeta);
+    setScale(std::sqrt(priorDistribution.Mean()));
+    return true;
+}
+
+bool LogNormalRand::fitLocationAndScaleBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+{
+    size_t n = sample.size();
+    if (n == 0)
+        return false;
+    double alpha = priorDistribution.getShape();
+    double beta = priorDistribution.getRate();
+    double mu0 = priorDistribution.getLocation();
+    double lambda = priorDistribution.getPrecision();
+    double average = logAverage(sample), sum = n * average;
+    double newLambda = lambda + n;
+    double newMu0 = (lambda * mu0 + sum) / newLambda;
+    double newAlpha = alpha + 0.5 * n;
+    double variance = logSecondMoment(sample) - average * average;
+    double aux = mu0 - average;
+    double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
+    priorDistribution.setParameters(newMu0, newLambda, newAlpha, newBeta);
+    double2d mean = priorDistribution.Mean();
+    setLocation(mean.x);
+    setScale(std::sqrt(mean.y));
     return true;
 }

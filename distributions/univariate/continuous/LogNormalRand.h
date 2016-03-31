@@ -35,10 +35,12 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const std::vector<double> &sample);
-
 private:
     double logAverage(const std::vector<double> &sample);
+    double logSecondMoment(const std::vector<double> &sample);
+
+public:
+    bool checkValidity(const std::vector<double> &sample);
 
     /// Method of moments
     bool fitLocationMM(const std::vector<double> &sample);
@@ -52,6 +54,8 @@ private:
 
     /// Bayesian estimation
     bool fitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
+    bool fitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution);
+    bool fitLocationAndScaleBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // LOGNORMALRAND_H
