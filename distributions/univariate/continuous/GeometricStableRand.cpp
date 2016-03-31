@@ -17,14 +17,37 @@ std::string GeometricStableRand::name()
             + toStringWithPrecision(getLocation()) + ")";
 }
 
+double GeometricStableRand::parameterTransform(double x, double z)
+{
+    double par = x - mu * z;
+    par /= std::pow(z, alphaInv);
+    return par + mu;
+}
+
 double GeometricStableRand::f(double x) const
 {
-    return x;
+    // TODO: find mode and separate integrals according to this peak
+    return RandMath::integral([this, x] (double z)
+    {
+        if (z == 0)
+            return 0.0;
+        double par = parameterTransform(x, z);
+        double coef = log(z) * alphaInv + z;
+        return std::exp(-coef) * StableRand::f(par);
+    },
+    0, 10); // ideal maximum border is infinity, but fortunately integrand decreases very fast
 }
 
 double GeometricStableRand::F(double x) const
 {
-    return x;
+    return RandMath::integral([this, x] (double z)
+    {
+        if (z == 0)
+            return 0.0;
+        double par = parameterTransform(x, z);
+        return std::exp(-z) * StableRand::F(par);
+    },
+    0, 10); // ideal maximum border is infinity, but fortunately integrand decreases very fast
 }
 
 double GeometricStableRand::variateForAlphaEqualOne() const

@@ -57,7 +57,7 @@ double GammaRand::f(double x) const
 
 double GammaRand::F(double x) const
 {
-    if (x < 0)
+    if (x <= 0)
         return 0;
     double y = cdfCoef + RandMath::logLowerIncGamma(alpha, x * beta);
     return std::exp(y);

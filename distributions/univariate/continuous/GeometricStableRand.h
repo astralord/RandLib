@@ -12,6 +12,10 @@ public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
     std::string name() override;
 
+private:
+    double parameterTransform(double x, double z);
+
+public:
     double f(double x) const override;
     double F(double x) const override;
 
