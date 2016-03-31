@@ -123,9 +123,6 @@ double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
     if (theta == 0.0)
         return xAdj;
     double cosTheta = std::cos(theta);
-    /// if theta ~ +-pi / 2
-    if (std::fabs(cosTheta) < MIN_POSITIVE)
-        return -1.0; // -INF
     double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
     double u = std::log(M_2_PI * thetaAdj);
     u += thetaAdj * std::sin(theta) / beta;
