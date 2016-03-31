@@ -27,7 +27,7 @@ public:
      * @param eps
      * @return |a - b| < eps * max(a, b)
      */
-    static bool areClose(double a, double b, double eps = 1e-16);
+    static bool areClose(double a, double b, double eps = 1e-6);
 
     /**
      * @brief sign
@@ -294,6 +294,16 @@ public:
      * @return
      */
     static bool findRoot(const std::function<double (double)> &funPtr, const std::function<double (double)> &derPtr, double & root, double epsilon = 1e-10);
+
+    /**
+     * @brief findRoot
+     * Quasi-Newton's root-finding procedure
+     * @param funPtr
+     * @param root starting point
+     * @param epsilon
+     * @return
+     */
+    static bool findRoot(const std::function<double (double)> &funPtr, double &root, double epsilon = 1e-10);
 
     /**
      * @brief findRoot

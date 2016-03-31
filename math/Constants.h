@@ -41,10 +41,6 @@ constexpr long double M_PI        = 3.14159265358979323846;
 constexpr long double M_PI_2      = 1.57079632679489661923;
 #endif
 
-#ifndef M_PI_4
-constexpr long double M_PI_4      = 0.78539816339744830962;
-#endif
-
 #ifndef M_1_PI
 constexpr long double M_1_PI      = 0.31830988618379067154;
 #endif

@@ -18,9 +18,6 @@ protected:
     double pdfCoef;
     double zeta, xi, integrandCoef;
 
-    // TODO: find an appropriate value
-    static constexpr double almostPI_2 = 1.555; /// ~ 0.99 * (pi / 2)
-
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableRand() {}
@@ -41,13 +38,13 @@ protected:
     double pdfCauchy(double x) const;
     double pdfLevy(double x) const;
 private:
-    double pdfForCommonAlpha(double x) const;
-    double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
-    double integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const;
-
-    double pdfForAlphaEqualOne(double x) const;
     double integrandAuxForAlphaEqualOne(double theta, double xAdj) const;
     double integrandForAlphaEqualOne(double theta, double xAdj) const;
+    double pdfForAlphaEqualOne(double x) const;
+
+    double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
+    double integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const;
+    double pdfForCommonAlpha(double x) const;
 public:    
     double f(double x) const override;
     
@@ -78,6 +75,8 @@ public:
     double Mean() const override;
     double Variance() const override;
 
+    double Median() const override;
+    double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 };
