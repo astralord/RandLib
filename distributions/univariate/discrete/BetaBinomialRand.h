@@ -3,6 +3,7 @@
 
 #include "DiscreteDistribution.h"
 #include "../continuous/BetaRand.h"
+#include <functional>
 
 /**
  * @brief The BetaBinomialRand class
@@ -24,6 +25,9 @@ public:
     double P(int k) const override;
     double F(double x) const override;
     double variate() const override;
+
+public:
+    void sample(std::vector<double> &outputData) const;
 
     double Mean() const override;
     double Variance() const override;
