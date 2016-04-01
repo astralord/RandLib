@@ -77,7 +77,7 @@ void StableRand::setScale(double scale)
             logSigma = std::log(sigma);
     }
     else if (alpha == 2) /// Normal
-        pdfCoef = M_SQRT1_2 / sigma;
+        pdfCoef = 0.5 / sigma;
     else if (alpha == 0.5 && std::fabs(beta) == 1) /// +/- Levy
         pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
     else
@@ -415,7 +415,7 @@ double StableRand::variate() const
 {
     /// Check all 'good' cases
     if (alpha == 2)
-        return NormalRand::variate(mu, sigma);
+        return NormalRand::variate(mu, M_SQRT2 * sigma);
     if (alpha == 1 && beta == 0)
         return CauchyRand::variate(mu, sigma);
     if (alpha == .5 && beta == 1)
@@ -432,7 +432,7 @@ void StableRand::sample(std::vector<double> &outputData) const
     /// Check all 'good' cases
     if (alpha == 2) {
         for (double &var : outputData)
-            var = NormalRand::variate(mu, sigma);
+            var = NormalRand::variate(mu, M_SQRT2 * sigma);
     }
     else if (alpha == 1 && beta == 0) {
         for (double &var : outputData)

@@ -126,7 +126,7 @@ bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
     if (!checkValidity(sample))
         return false;
     double average = RandMath::sampleMean(sample);
-    double var = X.getVariance();
+    double var = X.Variance();
     setLocation(std::log(average) - 0.5 * var);
     return true;
 }

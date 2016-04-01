@@ -14,7 +14,15 @@ NormalRand::NormalRand(double mean, double var) : StableRand(2.0, 0.0, 1.0, mean
 
 std::string NormalRand::name()
 {
-    return "Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getVariance()) + ")";
+    return "Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(Variance()) + ")";
+}
+
+void NormalRand::setScale(double scale)
+{
+    sigma0 = scale;
+    if (sigma0 <= 0.0)
+        sigma0 = 1.0;
+    StableRand::setScale(scale * M_SQRT1_2);
 }
 
 bool NormalRand::setupTables()
@@ -55,7 +63,7 @@ double NormalRand::F(double x) const
 
 double NormalRand::variate() const
 {
-    return mu + sigma * standardVariate();
+    return mu + sigma0 * standardVariate();
 }
 
 double NormalRand::variate(double mean, double rootVar)
@@ -112,13 +120,13 @@ double NormalRand::Mean() const
 
 double NormalRand::Variance() const
 {
-    return sigma * sigma;
+    return sigma0 * sigma0;
 }
 
 std::complex<double> NormalRand::CF(double t) const
 {
-    double sigmaT = sigma * t;
-    return std::exp(std::complex<double>(0.5 * sigmaT * sigmaT, mu * t));
+    double sigma0T = sigma0 * t;
+    return std::exp(std::complex<double>(0.5 * sigma0T * sigma0T, mu * t));
 }
 
 double NormalRand::standardQuantile(double p)
@@ -153,7 +161,7 @@ double NormalRand::standardQuantile(double p)
 
 double NormalRand::Quantile(double p) const
 {
-    return mu + sigma * standardQuantile(p);
+    return mu + sigma0 * standardQuantile(p);
 }
 
 double NormalRand::Median() const
@@ -182,7 +190,7 @@ double NormalRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
+    return (n & 1) ? std::pow(sigma0, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
 bool NormalRand::fitMeanMLE(const std::vector<double> &sample)

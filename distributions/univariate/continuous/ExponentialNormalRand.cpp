@@ -8,7 +8,7 @@ ExponentialNormalRand::ExponentialNormalRand(double location, double variance, d
 std::string ExponentialNormalRand::name()
 {
     return "Exponential-Normal(" + toStringWithPrecision(getLocation()) + ", "
-                                 + toStringWithPrecision(X.getVariance()) + ", "
+                                 + toStringWithPrecision(X.Variance()) + ", "
                                  + toStringWithPrecision(getRate()) + ")";
 }
 

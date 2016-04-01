@@ -14,6 +14,8 @@
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 {
+    double sigma0;
+
     //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
     static double stairWidth[257], stairHeight[256];
@@ -31,9 +33,10 @@ private:
     using StableRand::getSkewness;
 
 public:
+    void setScale(double scale);
     void setVariance(double var);
-    inline double getVariance() const { return sigma * sigma; }
-    inline double getPrecision() const { return 1.0 / (sigma * sigma); }
+    inline double getScale() const { return sigma0; }
+    inline double getPrecision() const { return 1.0 / Variance(); }
 
     double f(double x) const override;
     double F(double x) const override;
