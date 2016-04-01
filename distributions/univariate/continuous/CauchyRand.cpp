@@ -1,7 +1,8 @@
 ﻿#include "CauchyRand.h"
 #include "UniformRand.h"
 
-CauchyRand::CauchyRand(double location, double scale) : StableRand(1, 0, scale, location)
+CauchyRand::CauchyRand(double location, double scale)
+    : StableRand(1, 0, scale, location)
 {
 }
 
@@ -55,16 +56,6 @@ double CauchyRand::Quantile(double p) const
     if (p == 1)
         return INFINITY;
     return mu + sigma * std::tan(M_PI * (p - 0.5));
-}
-
-double CauchyRand::Median() const
-{
-    return mu;
-}
-
-double CauchyRand::Mode() const
-{
-    return mu;
 }
 
 double CauchyRand::Entropy() const

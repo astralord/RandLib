@@ -7,7 +7,8 @@ double NormalRand::stairWidth[257] = {0};
 double NormalRand::stairHeight[256] = {0};
 const bool NormalRand::dummy = NormalRand::setupTables();
 
-NormalRand::NormalRand(double mean, double var) : StableRand(2.0, 0.0, 1.0, mean)
+NormalRand::NormalRand(double mean, double var)
+    : StableRand(2.0, 0.0, 1.0, mean)
 {
     setVariance(var);
 }
@@ -113,16 +114,6 @@ double NormalRand::standardVariate()
     return NAN; /// fail due to some error
 }
 
-double NormalRand::Mean() const
-{
-    return mu;
-}
-
-double NormalRand::Variance() const
-{
-    return sigma0 * sigma0;
-}
-
 std::complex<double> NormalRand::CF(double t) const
 {
     double sigma0T = sigma0 * t;
@@ -162,26 +153,6 @@ double NormalRand::standardQuantile(double p)
 double NormalRand::Quantile(double p) const
 {
     return mu + sigma0 * standardQuantile(p);
-}
-
-double NormalRand::Median() const
-{
-    return mu;
-}
-
-double NormalRand::Mode() const
-{
-    return mu;
-}
-
-double NormalRand::Skewness() const
-{
-    return 0.0;
-}
-
-double NormalRand::ExcessKurtosis() const
-{
-    return 0.0;
 }
 
 double NormalRand::Moment(int n) const

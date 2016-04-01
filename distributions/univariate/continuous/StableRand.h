@@ -2,35 +2,26 @@
 #define STABLERAND_H
 
 #include <functional>
-#include "ContinuousDistribution.h"
+#include "LimitingDistribution.h"
 
 /**
  * @brief The StableRand class
  */
-class RANDLIBSHARED_EXPORT StableRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
-protected:
-    double alpha, beta, mu, sigma;
-
-    double B, S, alphaInv; /// coefficients for alpha != 1
-    double logSigma; /// coefficients for alpha == 1
     double alpham1Inv, alpha_alpham1; /// 1 / (alpha - 1) and alpha / (alpha - 1)
+    double xi, integrandCoef;
+
+protected:
     double pdfCoef;
-    double zeta, xi, integrandCoef;
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableRand() {}
     std::string name() override;
 
-    void setParameters(double exponent, double skewness, double scale, double location);
-    void setLocation(double location);
+    void setParameters(double exponent, double skewness, double scale = 1, double location = 0);
     void setScale(double scale);
-
-    inline double getExponent() const { return alpha; }
-    inline double getSkewness() const { return beta; }
-    inline double getScale() const { return sigma; }
-    inline double getLocation() const { return mu; }
     
 protected:
     /// Probability distribution functions
@@ -67,18 +58,11 @@ public:
     double variate() const override;
     void sample(std::vector<double> &outputData) const override;
 
-protected:
-    std::complex<double> psi(double t) const;
 public:
     std::complex<double> CF(double t) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-
-    double Median() const override;
-    double Mode() const override;
     double Skewness() const override;
-    double ExcessKurtosis() const override;
+    double ExcessKurtosis() const;
 };
 
 

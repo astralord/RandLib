@@ -65,7 +65,8 @@ SOURCES += \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
     distributions/univariate/continuous/ExponentialNormalRand.cpp \
     math/Matrix.cpp \
-    distributions/multivariate/MultivariateProbabilityDistribution.cpp
+    distributions/multivariate/MultivariateProbabilityDistribution.cpp \
+    distributions/univariate/continuous/LimitingDistribution.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -128,7 +129,8 @@ HEADERS +=\
     distributions/univariate/discrete/BetaBinomialRand.h \
     distributions/univariate/continuous/ExponentialNormalRand.h \
     math/Matrix.h \
-    distributions/multivariate/MultivariateProbabilityDistribution.h
+    distributions/multivariate/MultivariateProbabilityDistribution.h \
+    distributions/univariate/continuous/LimitingDistribution.h
 
 unix {
     target.path = /usr/lib

@@ -6,6 +6,7 @@
 #include "ExponentialRand.h"
 
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
+    : LimitingDistribution(exponent, skewness, scale, location)
 {
     setParameters(exponent, skewness, scale, location);
 }
@@ -21,66 +22,33 @@ std::string StableRand::name()
 
 void StableRand::setParameters(double exponent, double skewness, double scale, double location)
 {
-    alpha = std::min(exponent, 2.0);
-    if (alpha <= 0)
-        alpha = 2.0;
-    alphaInv = 1.0 / alpha;
+    LimitingDistribution::setParameters(exponent, skewness);
+    LimitingDistribution::setLocation(location);
+
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
 
-    beta = std::min(skewness, 1.0);
-    beta = std::max(beta, -1.0);
-
-    /// Should be cautious, known distributions in priority
-    if (RandMath::areClose(alpha, 2))
-        alpha = 2;
-    else if (RandMath::areClose(alpha, 1))
-        alpha = 1;
-    else if (RandMath::areClose(alpha, 0.5))
-        alpha = 0.5;
-
-    if (RandMath::areClose(beta, 1))
-        beta = 1;
-    else if (RandMath::areClose(beta, -1))
-        beta = -1;
-
-    if (alpha == 1 && beta != 0)
+    if (alpha == 1 && beta != 0) /// Case when alpha = 1 and not Cauchy
         pdfCoef = 0.5 / beta;
     if (alpha != 1 && alpha != 2 &&
         !(alpha == 0.5 && std::fabs(beta) == 1)) /// Common case
     {
-        B = beta * std::tan(M_PI_2 * alpha);
-        zeta = -B;
-        S = std::pow(1 + B * B, .5 * alphaInv);
-        B = std::atan(B);
         xi = alphaInv * B;
         integrandCoef = alpham1Inv * std::log(std::cos(B));
     }
 
     setScale(scale);
-    setLocation(location);
-}
-
-void StableRand::setLocation(double location)
-{
-    mu = location;
 }
 
 void StableRand::setScale(double scale)
 {
-    sigma = scale;
-    if (sigma <= 0)
-        sigma = 1.0;
-    if (alpha == 1)
-    {
-        if (beta != 0) /// not Cauchy
-            logSigma = std::log(sigma);
-    }
-    else if (alpha == 2) /// Normal
+    LimitingDistribution::setScale(scale);
+
+    if (alpha == 2) /// Normal
         pdfCoef = 0.5 / sigma;
     else if (alpha == 0.5 && std::fabs(beta) == 1) /// +/- Levy
         pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
-    else
+    else if (alpha != 1)
         pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
 }
 
@@ -456,40 +424,9 @@ void StableRand::sample(std::vector<double> &outputData) const
     }
 }
 
-std::complex<double> StableRand::psi(double t) const
-{
-    double x = (alpha == 1) ? beta * M_2_PI * log(std::fabs(t)) : zeta;
-    if (t > 0)
-        x = -x;
-    double re = std::pow(std::fabs(sigma * t), alpha);
-    return std::complex<double>(re, re * x + mu * t);
-}
-
 std::complex<double> StableRand::CF(double t) const
 {
     return std::exp(-psi(t));
-}
-
-double StableRand::Mean() const
-{
-    if (alpha > 1)
-        return mu;
-    return (alpha == 1.0) ? NAN : INFINITY;
-}
-
-double StableRand::Variance() const
-{
-    return (alpha == 2) ? 2 * sigma * sigma : INFINITY;
-}
-
-double StableRand::Median() const
-{
-    return (beta == 0) ? mu : ContinuousDistribution::Median();
-}
-
-double StableRand::Mode() const
-{
-    return (beta == 0) ? mu : ContinuousDistribution::Mode();
 }
 
 double StableRand::Skewness() const
@@ -501,7 +438,6 @@ double StableRand::ExcessKurtosis() const
 {
     return (alpha == 2) ? 0 : NAN;
 }
-
 
 std::string HoltsmarkRand::name()
 {

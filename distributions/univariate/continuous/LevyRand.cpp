@@ -1,7 +1,8 @@
 #include "LevyRand.h"
 #include "NormalRand.h"
 
-LevyRand::LevyRand(double location, double scale) : StableRand(0.5, 1, scale, location)
+LevyRand::LevyRand(double location, double scale)
+    : StableRand(0.5, 1, scale, location)
 {
 }
 

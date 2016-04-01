@@ -54,11 +54,11 @@ double LaplaceRand::F(double x) const
     if (x < mu) {
         y *= kInv;
         y = std::exp(y);
-        return 1.0 - cdfCoef * y;
+        return kSq * cdfCoef * y;
     }
     y *= -k;
     y = std::exp(y);
-    return kSq * cdfCoef * y;
+    return 1.0 - cdfCoef * y;
 }
 
 double LaplaceRand::variate() const

@@ -45,17 +45,9 @@ public:
     static double variate(double mean, double rootVar);
     static double standardVariate();
 
-    double Mean() const;
-    double Variance() const;
-
     std::complex<double> CF(double t) const override;
     static double standardQuantile(double p);
     double Quantile(double p) const override;
-
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
 
     double Moment(int n) const;
 
