@@ -61,9 +61,17 @@ UMVU estimator: Normal(-0.311347, 0.82504)
 Maximum-likelihood estimator: Normal(-0.311347, 0.742536)
 ```
 
-List of implemented distributions:
+List of available distributions:
 
-Continuous:
+:white_check_mark: - ok
+
+:warning: - numerically unstable and/or takes too much time
+
+:x: - not yet implemented
+
+
+
+Continuous distributions:
 
 |    Title     |     F(x)     |     f(x)     |   variate    |   CF(t)    |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
@@ -78,7 +86,7 @@ Continuous:
 |     F    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Frechet    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Gamma     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     Geometric Stable     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Geometric Stable     | :warning: | :warning: | :white_check_mark: |:white_check_mark:|
 |     Gumbel     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Irwin-Hall     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Laplace     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
@@ -93,7 +101,7 @@ Continuous:
 |     Raised cosine     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Rayleigh     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Sech (Hyperbolic secant)    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
-|     Stable     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Stable     | :warning: | :warning: | :white_check_mark: |:white_check_mark:|
 |     Student's t     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Triangular     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Uniform     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
@@ -102,7 +110,7 @@ Continuous:
 |     Weibull     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Wigner Semicircle     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 
-Discrete:
+Discrete distributions:
 
 |    Title     |     F(x)     |     P(X = x)     |   variate    |   CF(t)    |
 | ------------ | ------------ | ------------ | ------------ | ------------ |
@@ -121,7 +129,7 @@ Discrete:
 |     Zeta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Zipf     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 
-Singular:
+Singular distributions:
 
 |    Title     |     F(x)     |  variate    |   CF(t)    |
 | ------------ | ------------ | ------------ | ------------ |
