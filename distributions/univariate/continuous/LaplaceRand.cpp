@@ -1,15 +1,18 @@
 #include "LaplaceRand.h"
 #include "../discrete/BernoulliRand.h"
 
-LaplaceRand::LaplaceRand(double location, double scale)
+LaplaceRand::LaplaceRand(double location, double scale, double asymmetry)
 {
     setLocation(location);
     setScale(scale);
+    setAsymmetry(asymmetry);
 }
 
 std::string LaplaceRand::name()
 {
-    return "Laplace(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Laplace(" + toStringWithPrecision(getLocation()) + ", "
+                      + toStringWithPrecision(getScale()) + ", "
+                      + toStringWithPrecision(getAsymmetry()) + ")";
 }
 
 void LaplaceRand::setLocation(double location)
@@ -23,58 +26,79 @@ void LaplaceRand::setScale(double scale)
     if (b <= 0)
         b = 1.0;
     bInv = 1.0 / b;
+    pdfCoef = bInv / (k + kInv);
+}
+
+void LaplaceRand::setAsymmetry(double asymmetry)
+{
+    k = asymmetry;
+    if (k <= 0)
+        k = 1.0;
+    kInv = 1.0 / k;
+    kSq = k * k;
+    pdfCoef = bInv / (k + kInv);
+    cdfCoef = 1.0 / (1 + kSq);
 }
 
 double LaplaceRand::f(double x) const
 {
-    double y = -std::fabs(x - mu);
-    y *= bInv;
+    double y = bInv * (x - mu);
+    y *= (x < mu) ? kInv : -k;
     y = std::exp(y);
-    y *= bInv;
-    return .5 * y;
+    return pdfCoef * y;
 }
 
 double LaplaceRand::F(double x) const
 {
-    double y = x - mu;
-    y *= bInv;
-    if (x < mu)
-        return .5 * std::exp(y);
-    y = -.5 * std::exp(-y);
-    return y + 1;
+    double y = bInv * (x - mu);
+    if (x < mu) {
+        y *= kInv;
+        y = std::exp(y);
+        return 1.0 - cdfCoef * y;
+    }
+    y *= -k;
+    y = std::exp(y);
+    return kSq * cdfCoef * y;
 }
 
 double LaplaceRand::variate() const
 {
-    return LaplaceRand::variate(mu, b);
+    return LaplaceRand::variate(mu, b, k);
 }
 
-double LaplaceRand::variate(double location, double scale)
+double LaplaceRand::variate(double location, double scale, double asymmetry)
 {
-    double e = scale * ExponentialRand::standardVariate();
-    return location + (BernoulliRand::standardVariate() ? -e : e);
+    double x = ExponentialRand::standardVariate() / asymmetry;
+    double y = ExponentialRand::standardVariate() * asymmetry;;
+    return location + scale * (x - y);
 }
 
 double LaplaceRand::Mean() const
 {
-    return mu;
+    return mu + (1 - kSq) * b * kInv;
 }
 
 double LaplaceRand::Variance() const
 {
-    return 2 * b * b;
+    double y = b * b / kSq;
+    return (1.0 + kSq * kSq) * y;
 }
 
 std::complex<double> LaplaceRand::CF(double t) const
 {
     double bt = b * t;
-    double denominator = 1 + bt * bt;
-    return std::complex<double>(std::cos(t) / denominator, std::sin(t) / denominator);
+    double btSq = bt * bt;
+    double denominator = (1 + kSq * btSq) * (1 + btSq / kSq);
+    std::complex<double> y(std::cos(mu * t), std::sin(mu * t));
+    std::complex<double> x(1, -k * bt), z(1, bt * kInv);
+    return x * y * z / denominator;
 }
 
 double LaplaceRand::Median() const
 {
-    return mu;
+    double y = 0.5 * (1.0 / kSq + 1.0);
+    y = std::log(y);
+    return mu + b * k * y;
 }
 
 double LaplaceRand::Mode() const
@@ -84,16 +108,32 @@ double LaplaceRand::Mode() const
 
 double LaplaceRand::Skewness() const
 {
-    return 0.0;
+    double k4 = kSq * kSq;
+    double k6 = k4 * kSq;
+    double z = (k4 + 1);
+    z *= std::sqrt(z);
+    double y = 2 * (1 - k6);
+    return y / z;
 }
 
 double LaplaceRand::ExcessKurtosis() const
 {
-    return 3.0;
+    if (k == 1)
+        return 3.0;
+    return NAN; // TODO!!
+}
+
+double LaplaceRand::Entropy() const
+{
+    double y = 1 + kSq;
+    y *= kInv * b;
+    return log1p(y);
 }
 
 bool LaplaceRand::fitLocationMLE(const std::vector<double> &sample)
 {
+    if (k != 1)
+        return false;
     int n = sample.size();
     if (n <= 0)
         return false;
@@ -132,6 +172,8 @@ bool LaplaceRand::fitLocationMLE(const std::vector<double> &sample)
 
 bool LaplaceRand::fitScaleMLE(const std::vector<double> &sample)
 {
+    if (k != 1)
+        return false;
     int n = sample.size();
     if (n <= 0)
         return false;
@@ -153,12 +195,16 @@ bool LaplaceRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 
 bool LaplaceRand::fitLocationMM(const std::vector<double> &sample)
 {
+    if (k != 1)
+        return false;
     setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
 bool LaplaceRand::fitScaleMM(const std::vector<double> &sample)
 {
+    if (k != 1)
+        return false;
     double var = RandMath::sampleVariance(sample, mu);
     setScale(std::sqrt(0.5 * var));
     return true;

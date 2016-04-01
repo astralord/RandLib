@@ -21,6 +21,7 @@ public:
 
 private:
     double variateForAlphaEqualOne() const;
+    double variateForAlphaEqualTwo() const;
     double variateForCommonAlpha() const;
 public:
     double variate() const override;

@@ -8,32 +8,40 @@
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousDistribution
 {
-    double mu, b;
+    double mu, b, k;
     double bInv; /// 1 / b
+    double kInv, kSq; /// 1 / k and k * k
+    double pdfCoef; /// 1 / (b * (k + 1 / k))
+    double cdfCoef; /// 1 / (1 + k * k)
 
 public:
-    LaplaceRand(double location = 0, double scale = 1);
+    LaplaceRand(double location = 0, double scale = 1, double asymmetry = 1);
     std::string name() override;
 
     void setLocation(double location);
     void setScale(double scale);
+    void setAsymmetry(double asymmetry);
     inline double getLocation() const { return mu; }
     inline double getScale() const { return b; }
+    inline double getAsymmetry() const { return k; }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
-    static double variate(double location, double scale);
+
+    static double variate(double location, double scale, double asymmetry = 1.0);
 
     double Mean() const override;
     double Variance() const override;
+
+    std::complex<double> CF(double t) const override;
 
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
-    
-    std::complex<double> CF(double t) const override;
+
+    double Entropy() const;
 
     /// Maximum likelihood estimation
     bool fitLocationMLE(const std::vector<double> &sample);

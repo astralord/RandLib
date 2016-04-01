@@ -66,6 +66,13 @@ double GeometricStableRand::variateForAlphaEqualOne() const
     return X;
 }
 
+double GeometricStableRand::variateForAlphaEqualTwo() const
+{
+    double Z = ExponentialRand::standardVariate();
+    double X = NormalRand::standardVariate();
+    return mu * Z + std::sqrt(Z) * sigma * X;
+}
+
 double GeometricStableRand::variateForCommonAlpha() const
 {
     double U = UniformRand::variate(-M_PI_2, M_PI_2);
@@ -83,18 +90,26 @@ double GeometricStableRand::variateForCommonAlpha() const
 
 double GeometricStableRand::variate() const
 {
-    if (alpha == 2 && mu == 0 && beta == 0)
-        return LaplaceRand::variate(0, sigma);
-    if (alpha == 1)
-        return variateForAlphaEqualOne();
-    return variateForCommonAlpha();
+    if (alpha == 2)
+    {
+        if (mu == 0)
+            return LaplaceRand::variate(0, sigma);
+        return variateForAlphaEqualTwo();
+    }
+    return (alpha == 1) ? variateForAlphaEqualOne() : variateForCommonAlpha();
 }
 
 void GeometricStableRand::sample(std::vector<double> &outputData) const
 {
-    if (alpha == 2 && mu == 0 && beta == 0) {
-        for (double &var : outputData)
-            var = LaplaceRand::variate(0, sigma);
+    if (alpha == 2) {
+        if (mu == 0) {
+            for (double &var : outputData)
+                var = LaplaceRand::variate(0, sigma);
+        }
+        else {
+            for (double &var : outputData)
+                var = variateForAlphaEqualTwo();
+        }
     }
     else if (alpha == 1) {
         for (double &var : outputData)
