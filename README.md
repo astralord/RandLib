@@ -91,6 +91,7 @@ Continuous distributions:
 |     Irwin-Hall     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Laplace     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Levy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Log-Cauchy    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Log-normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Logistic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Maxwell-Boltzmann     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
