@@ -8,10 +8,10 @@
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousDistribution
 {
-    double mu, b, k;
-    double bInv; /// 1 / b
+    double mu, sigma, k;
+    double sigmaInv; /// 1 / sigma
     double kInv, kSq; /// 1 / k and k * k
-    double pdfCoef; /// 1 / (b * (k + 1 / k))
+    double pdfCoef; /// 1 / (sigma * (k + 1 / k))
     double cdfCoef; /// 1 / (1 + k * k)
 
 public:
@@ -22,14 +22,17 @@ public:
     void setScale(double scale);
     void setAsymmetry(double asymmetry);
     inline double getLocation() const { return mu; }
-    inline double getScale() const { return b; }
+    inline double getScale() const { return sigma; }
     inline double getAsymmetry() const { return k; }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
 
-    static double variate(double location, double scale, double asymmetry = 1.0);
+    static double variate(double location, double scale);
+    static double variate(double location, double scale, double asymmetry);
+
+    void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

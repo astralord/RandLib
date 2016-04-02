@@ -7,6 +7,7 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
     : LimitingDistribution(exponent, skewness, scale, location),
       Z(exponent, skewness)
 {
+    setParameters(exponent, skewness);
 }
 
 std::string GeometricStableRand::name()
@@ -18,10 +19,27 @@ std::string GeometricStableRand::name()
             + toStringWithPrecision(getLocation()) + ")";
 }
 
+void GeometricStableRand::setAsymmetry()
+{
+    /// Calculate value of asymmetry
+    if (mu == 0)
+        k = 1;
+    else {
+        double sigma2 = sigma + sigma;
+        k = mu * mu + sigma2 * sigma2;
+        k = std::sqrt(k);
+        k -= mu;
+        k /= sigma2;
+    }
+}
+
 void GeometricStableRand::setParameters(double exponent, double skewness)
 {
     LimitingDistribution::setParameters(exponent, skewness);
     Z.setParameters(alpha, beta);
+
+    if (alpha == 2)
+        setAsymmetry();
 }
 
 double GeometricStableRand::f(double x) const
@@ -33,7 +51,8 @@ double GeometricStableRand::f(double x) const
             return 0.0;
         double temp = sigma * std::pow(z, alphaInv);
         double par = (x - mu * z) / temp;
-        return std::exp(-z) / temp * Z.f(par);
+        double y = std::exp(-z) / temp * Z.f(par);
+        return y;
     },
     0, 10); // ideal maximum border is infinity, but fortunately integrand decreases very fast
 }
@@ -43,7 +62,7 @@ double GeometricStableRand::F(double x) const
     return RandMath::integral([this, x] (double z)
     {
         if (z == 0)
-            return 0.0;
+            return 1.0;
         double par = x - mu * z;
         par /= std::pow(z, alphaInv) * sigma;
         return std::exp(-z) * Z.F(par);
@@ -57,21 +76,14 @@ double GeometricStableRand::variateForAlphaEqualOne() const
     double W1 = ExponentialRand::standardVariate();
     double W2 = ExponentialRand::standardVariate();
     double pi_2BetaU = M_PI_2 + beta * U;
-    double X = 2 * logSigma;
-    X += std::log(W2 * pi_2BetaU / (M_PI_2 * W1 * std::cos(U)));
+    double X = logSigma;
+    X += std::log(sigma * W2 * pi_2BetaU / (M_PI_2 * W1 * std::cos(U)));
     X *= beta;
     X += pi_2BetaU * std::tan(U);
     X *= M_2_PI * sigma;
     X += mu;
     X *= W2;
     return X;
-}
-
-double GeometricStableRand::variateForAlphaEqualTwo() const
-{
-    double W = ExponentialRand::standardVariate();
-    double X = NormalRand::standardVariate();
-    return mu * W + std::sqrt(W) * sigma * X;
 }
 
 double GeometricStableRand::variateForCommonAlpha() const
@@ -92,11 +104,7 @@ double GeometricStableRand::variateForCommonAlpha() const
 double GeometricStableRand::variate() const
 {
     if (alpha == 2)
-    {
-        if (mu == 0)
-            return LaplaceRand::variate(0, sigma);
-        return variateForAlphaEqualTwo();
-    }
+        return (mu == 0) ? LaplaceRand::variate(0, sigma) : LaplaceRand::variate(0, sigma, k);
     return (alpha == 1) ? variateForAlphaEqualOne() : variateForCommonAlpha();
 }
 
@@ -109,7 +117,7 @@ void GeometricStableRand::sample(std::vector<double> &outputData) const
         }
         else {
             for (double &var : outputData)
-                var = variateForAlphaEqualTwo();
+                var = LaplaceRand::variate(0, sigma, k);
         }
     }
     else if (alpha == 1) {
@@ -130,7 +138,7 @@ std::complex<double> GeometricStableRand::CF(double t) const
 double GeometricStableRand::Skewness() const
 {
     if (alpha == 2) {
-        double kSq = 1.0; //TODO!
+        double kSq = k * k;
         double k4 = kSq * kSq;
         double k6 = k4 * kSq;
         double z = (k4 + 1);
@@ -143,5 +151,11 @@ double GeometricStableRand::Skewness() const
 
 double GeometricStableRand::ExcessKurtosis() const
 {
-    return (alpha == 2) ? 3.0 : NAN;
+    if (alpha == 2)
+    {
+        if (k == 1)
+            return 3.0;
+        return NAN; // TODO!
+    }
+    return NAN;
 }

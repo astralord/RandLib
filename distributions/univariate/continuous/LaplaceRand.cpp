@@ -22,11 +22,11 @@ void LaplaceRand::setLocation(double location)
 
 void LaplaceRand::setScale(double scale)
 {
-    b = scale;
-    if (b <= 0)
-        b = 1.0;
-    bInv = 1.0 / b;
-    pdfCoef = bInv / (k + kInv);
+    sigma = scale;
+    if (sigma <= 0)
+        sigma = 1.0;
+    sigmaInv = 1.0 / sigma;
+    pdfCoef = sigmaInv / (k + kInv);
 }
 
 void LaplaceRand::setAsymmetry(double asymmetry)
@@ -36,13 +36,13 @@ void LaplaceRand::setAsymmetry(double asymmetry)
         k = 1.0;
     kInv = 1.0 / k;
     kSq = k * k;
-    pdfCoef = bInv / (k + kInv);
+    pdfCoef = sigmaInv / (k + kInv);
     cdfCoef = 1.0 / (1 + kSq);
 }
 
 double LaplaceRand::f(double x) const
 {
-    double y = bInv * (x - mu);
+    double y = sigmaInv * (x - mu);
     y *= (x < mu) ? kInv : -k;
     y = std::exp(y);
     return pdfCoef * y;
@@ -50,7 +50,7 @@ double LaplaceRand::f(double x) const
 
 double LaplaceRand::F(double x) const
 {
-    double y = bInv * (x - mu);
+    double y = sigmaInv * (x - mu);
     if (x < mu) {
         y *= kInv;
         y = std::exp(y);
@@ -63,7 +63,14 @@ double LaplaceRand::F(double x) const
 
 double LaplaceRand::variate() const
 {
-    return LaplaceRand::variate(mu, b, k);
+    return (k == 1) ? LaplaceRand::variate(mu, sigma) : LaplaceRand::variate(mu, sigma, k);
+}
+
+double LaplaceRand::variate(double location, double scale)
+{
+    bool sign = BernoulliRand::standardVariate();
+    double W = scale * ExponentialRand::standardVariate();
+    return location + (sign ? W : -W);
 }
 
 double LaplaceRand::variate(double location, double scale, double asymmetry)
@@ -73,20 +80,32 @@ double LaplaceRand::variate(double location, double scale, double asymmetry)
     return location + scale * (x - y);
 }
 
+void LaplaceRand::sample(std::vector<double> &outputData) const
+{
+    if (k == 1) {
+        for (double & var : outputData)
+            var = LaplaceRand::variate(mu, sigma);
+    }
+    else {
+        for (double & var : outputData)
+            var = LaplaceRand::variate(mu, sigma, k);
+    }
+}
+
 double LaplaceRand::Mean() const
 {
-    return mu + (1 - kSq) * b * kInv;
+    return mu + (1 - kSq) * sigma * kInv;
 }
 
 double LaplaceRand::Variance() const
 {
-    double y = b * b / kSq;
+    double y = sigma * sigma / kSq;
     return (1.0 + kSq * kSq) * y;
 }
 
 std::complex<double> LaplaceRand::CF(double t) const
 {
-    double bt = b * t;
+    double bt = sigma * t;
     double btSq = bt * bt;
     double denominator = (1 + kSq * btSq) * (1 + btSq / kSq);
     std::complex<double> y(std::cos(mu * t), std::sin(mu * t));
@@ -98,7 +117,7 @@ double LaplaceRand::Median() const
 {
     double y = 0.5 * (1.0 / kSq + 1.0);
     y = std::log(y);
-    return mu + b * k * y;
+    return mu + sigma * k * y;
 }
 
 double LaplaceRand::Mode() const
@@ -126,7 +145,7 @@ double LaplaceRand::ExcessKurtosis() const
 double LaplaceRand::Entropy() const
 {
     double y = 1 + kSq;
-    y *= kInv * b;
+    y *= kInv * sigma;
     return log1p(y);
 }
 

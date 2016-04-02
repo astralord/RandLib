@@ -10,11 +10,15 @@
 class RANDLIBSHARED_EXPORT GeometricStableRand : public LimitingDistribution
 {
     StableRand Z;
+    double k; /// asymmetry coefficient for alpha = 2
 
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
     std::string name() override;
 
+private:
+    void setAsymmetry();
+public:
     void setParameters(double exponent, double skewness);
 
     double f(double x) const override;
@@ -22,7 +26,6 @@ public:
 
 private:
     double variateForAlphaEqualOne() const;
-    double variateForAlphaEqualTwo() const;
     double variateForCommonAlpha() const;
 public:
     double variate() const override;
