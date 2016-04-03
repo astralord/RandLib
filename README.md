@@ -65,7 +65,7 @@ List of available distributions:
 
 :white_check_mark: - ok
 
-:warning: - numerically unstable and/or takes too much time
+:warning: - numerically unstable and/or can take too much time in some cases
 
 :x: - not yet implemented
 
