@@ -34,9 +34,6 @@ public:
 
     double Quantile(double p) const override;
 
-    double Median() const override;
-    double Mode() const override;
-
     double Entropy() const;
 };
 

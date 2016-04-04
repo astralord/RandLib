@@ -2,38 +2,40 @@
 #define LAPLACERAND_H
 
 #include "ExponentialRand.h"
+#include "GeometricStableRand.h"
 
 /**
  * @brief The LaplaceRand class
  */
-class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
 {
-    double mu, b;
-    double bInv; /// 1 / b
+    double m;
 
 public:
-    LaplaceRand(double location = 0, double scale = 1);
+    LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
     std::string name() override;
 
-    void setLocation(double location);
-    void setScale(double scale);
-    inline double getLocation() const { return mu; }
-    inline double getScale() const { return b; }
+    void setShift(double shift);
+    void setAsymmetry(double asymmetry);
+    inline double getAsymmetry() const { return k; }
 
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+
     static double variate(double location, double scale);
+    static double variate(double location, double scale, double asymmetry);
+
+    void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
-    double Variance() const override;
+
+    std::complex<double> CF(double t) const override;
 
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
-    
-    std::complex<double> CF(double t) const override;
+
+    double Entropy() const;
 
     /// Maximum likelihood estimation
     bool fitLocationMLE(const std::vector<double> &sample);

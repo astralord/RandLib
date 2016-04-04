@@ -1,7 +1,8 @@
 #include "LevyRand.h"
 #include "NormalRand.h"
 
-LevyRand::LevyRand(double location, double scale) : StableRand(0.5, 1, scale, location)
+LevyRand::LevyRand(double location, double scale)
+    : StableRand(0.5, 1, scale, location)
 {
 }
 
@@ -53,11 +54,6 @@ double LevyRand::Quantile(double p) const
         return mu;
     double x = pdfCoef * M_SQRT2PI / NormalRand::standardQuantile(0.5 * p);
     return mu + x * x;
-}
-
-double LevyRand::Mode() const
-{
-    return sigma / 3.0 + mu;
 }
 
 bool LevyRand::checkValidity(const std::vector<double> &sample)

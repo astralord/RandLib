@@ -23,6 +23,7 @@
 
 /// CONTINUOUS
 #include "univariate/continuous/ContinuousDistribution.h"
+#include "univariate/continuous/LimitingDistribution.h"
 #include "univariate/continuous/BetaPrimeRand.h"
 #include "univariate/continuous/BetaRand.h"
 #include "univariate/continuous/CauchyRand.h"
