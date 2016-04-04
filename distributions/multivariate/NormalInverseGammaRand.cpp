@@ -29,9 +29,9 @@ void NormalInverseGammaRand::setParameters(double location, double precision, do
     pdfCoef *= std::pow(beta, alpha) * cdfCoef;
 }
 
-double NormalInverseGammaRand::f(double2d point) const
+double NormalInverseGammaRand::f(DoublePair point) const
 {
-    double x = point.x, sigmaSq = point.y;
+    double x = point.first, sigmaSq = point.second;
     if (sigmaSq <= 0)
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
@@ -48,9 +48,9 @@ double NormalInverseGammaRand::f(double2d point) const
     return pdfCoef * y;
 }
 
-double NormalInverseGammaRand::F(double2d point) const
+double NormalInverseGammaRand::F(DoublePair point) const
 {
-    double x = point.x, sigmaSq = point.y;
+    double x = point.first, sigmaSq = point.second;
     if (sigmaSq <= 0)
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
@@ -67,20 +67,20 @@ double NormalInverseGammaRand::F(double2d point) const
     return cdfCoef * y;
 }
 
-double2d NormalInverseGammaRand::variate() const
+DoublePair NormalInverseGammaRand::variate() const
 {
-    double2d var;
-    var.y = Y.variate();
-    double coef = std::sqrt(var.y) / lambda;
-    var.x = mu + coef * NormalRand::standardVariate();
+    DoublePair var;
+    var.second = Y.variate();
+    double coef = std::sqrt(var.second) / lambda;
+    var.first = mu + coef * NormalRand::standardVariate();
     return var;
 }
 
-double2d NormalInverseGammaRand::Mean() const
+DoublePair NormalInverseGammaRand::Mean() const
 {
-    double2d mean;
-    mean.x = mu;
-    mean.y = Y.Mean();
+    DoublePair mean;
+    mean.first = mu;
+    mean.second = Y.Mean();
     return mean;
 }
 

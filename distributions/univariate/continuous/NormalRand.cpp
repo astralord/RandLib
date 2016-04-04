@@ -284,8 +284,8 @@ bool NormalRand::fitMeanAndVarianceBayes(const std::vector<double> &sample, Norm
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
     priorDistribution.setParameters(newMu0, newLambda, newAlpha, newBeta);
-    double2d mean = priorDistribution.Mean();
-    setLocation(mean.x);
-    setVariance(mean.y);
+    DoublePair mean = priorDistribution.Mean();
+    setLocation(mean.first);
+    setVariance(mean.second);
     return true;
 }

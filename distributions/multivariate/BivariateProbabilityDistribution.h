@@ -7,13 +7,13 @@
 /**
  * @brief The BivariateProbabilityDistribution class
  */
-class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public ProbabilityDistribution<double2d>
+class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public ProbabilityDistribution<DoublePair>
 {
 public:
     BivariateProbabilityDistribution();
     virtual ~BivariateProbabilityDistribution() {}
 
-    virtual double f(double2d point) const = 0;
+    virtual double f(DoublePair point) const = 0;
 
     virtual bool Covariance(Matrix &matrix) const = 0;
 };

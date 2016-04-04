@@ -3,23 +3,16 @@
 
 #include <cmath>
 #include <string>
+#include <utility>
 
 #include "math/RandMath.h"
 #include "randlib_global.h"
 
-/**
- * @brief The double2d struct
- */
-struct double2d {
-    double x;
-    double y;
-    double2d & operator=(const double2d & other);
-};
+typedef std::pair <double, double> DoublePair;
 
 /**
  * @brief The ProbabilityDistribution class
  */
-
 template < typename T >
 class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {

@@ -2,13 +2,6 @@
 #include <sstream>      // std::ostringstream
 #include <iomanip>      // std::setprecision
 
-double2d & double2d::operator=(const double2d & other)
-{
-    x = other.x;
-    y = other.y;
-    return *this;
-}
-
 template < typename T >
 ProbabilityDistribution<T>::ProbabilityDistribution()
 {
@@ -40,5 +33,5 @@ void ProbabilityDistribution<T>::cdf(const std::vector<T> &x, std::vector<double
 }
 
 template class ProbabilityDistribution<double>;
-template class ProbabilityDistribution<double2d>;
+template class ProbabilityDistribution<DoublePair>;
 template class ProbabilityDistribution< std::vector<double> >;

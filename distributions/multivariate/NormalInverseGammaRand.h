@@ -23,11 +23,11 @@ public:
     inline double getShape() { return Y.getShape(); }
     inline double getRate() { return Y.getRate(); }
 
-    double f(double2d point) const;
-    double F(double2d point) const;
-    double2d variate() const;
+    double f(DoublePair point) const;
+    double F(DoublePair point) const;
+    DoublePair variate() const;
 
-    double2d Mean() const;
+    DoublePair Mean() const;
     bool Covariance(Matrix &matrix) const;
 };
 
