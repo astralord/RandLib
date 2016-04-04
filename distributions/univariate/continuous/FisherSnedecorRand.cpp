@@ -97,6 +97,11 @@ double FisherSnedecorRand::Variance() const
     return numerator / denominator;
 }
 
+double FisherSnedecorRand::Quantile(double p) const
+{
+    return B.Quantile(p * d2_d1);
+}
+
 double FisherSnedecorRand::Median() const
 {
     return d2_d1 * B.Median();
