@@ -2,6 +2,9 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 #include "../BasicRandGenerator.h"
+#include "GammaRand.h"
+#include "StudentTRand.h"
+
 
 double NormalRand::stairWidth[257] = {0};
 double NormalRand::stairHeight[256] = {0};
@@ -235,6 +238,29 @@ bool NormalRand::fitVarianceUMVU(const std::vector<double> &sample)
 bool NormalRand::fitMeanAndVarianceUMVU(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample) ? fitVarianceUMVU(sample) : false;
+}
+
+bool NormalRand::fitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
+{
+    size_t n = sample.size();
+    if (n < 2 || alpha <= 0 || alpha > 1)
+        return false;
+    if (!fitMeanAndVarianceUMVU(sample))
+        return false;
+    double p = 1.0 - 0.5 * alpha;
+
+    /// calculate confidence interval for mean
+    StudentTRand t(n - 1);
+    double interval = t.Quantile(p) * sigma / std::sqrt(n);
+    confidenceIntervalForMean.first = mu - interval;
+    confidenceIntervalForMean.second = mu + interval;
+
+    /// calculate confidence interval for variance
+    ChiSquaredRand chi(n - 1);
+    double numerator = (n - 1) * sigma * sigma;
+    confidenceIntervalForVariance.first = numerator / chi.Quantile(p);
+    confidenceIntervalForVariance.second = numerator / chi.Quantile(1.0 - p);
+    return true;
 }
 
 bool NormalRand::fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution)

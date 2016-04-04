@@ -70,6 +70,7 @@ public:
     bool fitMeanUMVU(const std::vector<double> &sample);
     bool fitVarianceUMVU(const std::vector<double> &sample);
     bool fitMeanAndVarianceUMVU(const std::vector<double> &sample);
+    bool fitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
 
     /// Bayesian estimation
     bool fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
