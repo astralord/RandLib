@@ -27,11 +27,8 @@ public:
     inline double getLocation() const { return mu; }
 
     double Mean() const override;
-    double Variance() const override;
 
-    double Median() const override;
-    double Mode() const override;
-
+    double Median() const;
 protected:
     std::complex<double> psi(double t) const;
 };

@@ -59,6 +59,10 @@ public:
     void sample(std::vector<double> &outputData) const override;
 
 public:
+    double Variance() const override;
+
+    double Mode() const override;
+
     std::complex<double> CF(double t) const override;
 
     double Skewness() const override;

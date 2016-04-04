@@ -25,8 +25,8 @@ void LimitingDistribution::setParameters(double exponent, double skewness)
     else if (RandMath::areClose(alpha, 0.5))
         alpha = 0.5;
 
-    if (alpha != 1 /*&& alpha != 2*/ ) /// Common case
-    {
+    if (alpha != 1 && alpha != 2) /// Common case
+    {   // TODO: don't do also for Levy
         B = beta * std::tan(M_PI_2 * alpha);
         zeta = -B;
         S = std::pow(1 + B * B, .5 * alphaInv);
@@ -55,26 +55,17 @@ double LimitingDistribution::Mean() const
     return (alpha == 1.0) ? NAN : INFINITY;
 }
 
-double LimitingDistribution::Variance() const
-{
-    return (alpha == 2) ? 2 * sigma * sigma : INFINITY;
-}
-
 double LimitingDistribution::Median() const
 {
     return (beta == 0) ? mu : ContinuousDistribution::Median();
 }
 
-double LimitingDistribution::Mode() const
-{
-    return (beta == 0) ? mu : ContinuousDistribution::Mode();
-}
-
 std::complex<double> LimitingDistribution::psi(double t) const
 {
-    double x = (alpha == 1) ? beta * M_2_PI * log(std::fabs(t)) : zeta;
+    double fabsT = std::fabs(t);
+    double x = (alpha == 1) ? beta * M_2_PI * log(fabsT) : zeta;
     if (t > 0)
         x = -x;
-    double re = std::pow(std::fabs(sigma * t), alpha);
+    double re = std::pow(sigma * fabsT, alpha);
     return std::complex<double>(re, re * x + mu * t);
 }

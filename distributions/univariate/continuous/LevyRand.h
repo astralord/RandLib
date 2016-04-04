@@ -34,8 +34,6 @@ public:
     std::complex<double> CF(double t) const override;
     double Quantile(double p) const override;
     
-    double Mode() const override;
-    
     /// Verify that all elements of sample can have this distribution
     bool checkValidity(const std::vector<double> &sample);
     

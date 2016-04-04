@@ -31,6 +31,10 @@ void GeometricStableRand::setAsymmetry()
         k -= mu;
         k /= sigma2;
     }
+    kInv = 1.0 / k;
+    kSq = k * k;
+    pdfCoef = 1.0 / (sigma * (k + kInv));
+    cdfCoef = 1.0 / (1 + kSq);
 }
 
 void GeometricStableRand::setParameters(double exponent, double skewness)
@@ -42,8 +46,46 @@ void GeometricStableRand::setParameters(double exponent, double skewness)
         setAsymmetry();
 }
 
+void GeometricStableRand::setLocation(double location)
+{
+    LimitingDistribution::setLocation(location);
+    if (alpha == 2)
+        setAsymmetry();
+}
+
+void GeometricStableRand::setScale(double scale)
+{
+    LimitingDistribution::setScale(scale);
+    pdfCoef = 1.0 / (sigma * (k + kInv));
+    if (alpha == 2)
+        setAsymmetry();
+}
+
+double GeometricStableRand::pdfLaplace(double x) const
+{
+    double y = x / sigma;
+    y *= (x < 0) ? kInv : -k;
+    y = std::exp(y);
+    return pdfCoef * y;
+}
+
+double GeometricStableRand::cdfLaplace(double x) const
+{
+    double y = x / sigma;
+    if (x < 0) {
+        y *= kInv;
+        y = std::exp(y);
+        return kSq * cdfCoef * y;
+    }
+    y *= -k;
+    y = std::exp(y);
+    return 1.0 - cdfCoef * y;
+}
+
 double GeometricStableRand::f(double x) const
 {
+    if (alpha == 2)
+        return pdfLaplace(x);
     // TODO: find mode and separate integrals according to this peak
     return RandMath::integral([this, x] (double z)
     {
@@ -59,6 +101,8 @@ double GeometricStableRand::f(double x) const
 
 double GeometricStableRand::F(double x) const
 {
+    if (alpha == 2)
+        return cdfLaplace(x);
     return RandMath::integral([this, x] (double z)
     {
         if (z == 0)
@@ -128,6 +172,33 @@ void GeometricStableRand::sample(std::vector<double> &outputData) const
         for (double &var : outputData)
             var = variateForCommonAlpha();
     }
+}
+
+double LaplaceRand::Variance() const
+{
+    double y = sigma * sigma / kSq;
+    return (1.0 + kSq * kSq) * y;
+}
+
+double GeometricStableRand::Variance() const
+{
+    if (alpha == 2) {
+        double y = sigma * sigma / kSq;
+        return (1.0 + kSq * kSq) * y;
+    }
+    return INFINITY;
+}
+
+double GeometricStableRand::Median() const
+{
+    double y = 0.5 * (1.0 / kSq + 1.0);
+    y = std::log(y);
+    return sigma * k * y;
+}
+
+double GeometricStableRand::Mode() const
+{
+    return (alpha == 2) ? 0.0 : ContinuousDistribution::Mode();
 }
 
 std::complex<double> GeometricStableRand::CF(double t) const

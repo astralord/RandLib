@@ -2,27 +2,21 @@
 #define LAPLACERAND_H
 
 #include "ExponentialRand.h"
+#include "GeometricStableRand.h"
 
 /**
  * @brief The LaplaceRand class
  */
-class RANDLIBSHARED_EXPORT LaplaceRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
 {
-    double mu, sigma, k;
-    double sigmaInv; /// 1 / sigma
-    double kInv, kSq; /// 1 / k and k * k
-    double pdfCoef; /// 1 / (sigma * (k + 1 / k))
-    double cdfCoef; /// 1 / (1 + k * k)
+    double m;
 
 public:
-    LaplaceRand(double location = 0, double scale = 1, double asymmetry = 1);
+    LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
     std::string name() override;
 
-    void setLocation(double location);
-    void setScale(double scale);
+    void setShift(double shift);
     void setAsymmetry(double asymmetry);
-    inline double getLocation() const { return mu; }
-    inline double getScale() const { return sigma; }
     inline double getAsymmetry() const { return k; }
 
     double f(double x) const override;
@@ -41,8 +35,6 @@ public:
 
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
 
     double Entropy() const;
 

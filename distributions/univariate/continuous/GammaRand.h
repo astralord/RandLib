@@ -65,10 +65,11 @@ public:
     bool fitScaleMM(const std::vector<double> &sample);
     bool fitShapeAndScaleMM(const std::vector<double> &sample);
 
+    /// Bayes estimation
     bool fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution);
 
     /**
-     * @brief getInverseGammaFunction
+     * @brief getLogGammaFunction
      * @return 1.0 / Gamma(k)
      */
     inline double getLogGammaFunction() { return -cdfCoef; }

@@ -424,9 +424,28 @@ void StableRand::sample(std::vector<double> &outputData) const
     }
 }
 
+double StableRand::Variance() const
+{
+    return (alpha == 2) ? 2 * sigma * sigma : INFINITY;
+}
+
 std::complex<double> StableRand::CF(double t) const
 {
     return std::exp(-psi(t));
+}
+
+double StableRand::Mode() const
+{
+    if (beta == 0 || alpha == 2)
+        return mu;
+    if (alpha == 0.5)
+    {
+        if (beta == 1)
+            return sigma / 3.0 + mu;
+        if (beta == -1)
+            return -sigma / 3.0 + mu;
+    }
+    return ContinuousDistribution::Mode();
 }
 
 double StableRand::Skewness() const

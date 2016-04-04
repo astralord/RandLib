@@ -56,11 +56,6 @@ double LevyRand::Quantile(double p) const
     return mu + x * x;
 }
 
-double LevyRand::Mode() const
-{
-    return sigma / 3.0 + mu;
-}
-
 bool LevyRand::checkValidity(const std::vector<double> &sample)
 {
     for (double var : sample) {
