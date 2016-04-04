@@ -70,7 +70,6 @@ SOURCES += \
 
 HEADERS +=\
     randlib_global.h \
-    distributions/ProbabilityDistributions.h \
     distributions/ProbabilityDistribution.h \
     distributions/univariate/BasicRandGenerator.h \
     distributions/univariate/continuous/BetaRand.h \
@@ -130,7 +129,8 @@ HEADERS +=\
     distributions/univariate/continuous/ExponentialNormalRand.h \
     math/Matrix.h \
     distributions/multivariate/MultivariateProbabilityDistribution.h \
-    distributions/univariate/continuous/LogCauchyRand.h
+    distributions/univariate/continuous/LogCauchyRand.h \
+    distributions/RandLib.h
 
 unix {
     target.path = /usr/lib
