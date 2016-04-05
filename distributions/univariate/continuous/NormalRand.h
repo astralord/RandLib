@@ -36,7 +36,7 @@ public:
     void setScale(double scale);
     void setVariance(double var);
     inline double getScale() const { return sigma0; }
-    inline double getPrecision() const { return 1.0 / Variance(); }
+    inline double getPrecision() const { return 1.0 / (sigma0 * sigma0); }
 
     double f(double x) const override;
     double F(double x) const override;
