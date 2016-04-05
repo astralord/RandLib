@@ -79,6 +79,7 @@ Continuous distributions:
 |     Beta     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Beta Prime     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Cauchy     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Chi    | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Chi-squared     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Erlang     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Exponential     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
