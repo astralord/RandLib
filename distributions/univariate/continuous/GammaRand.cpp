@@ -321,7 +321,6 @@ bool GammaRand::fitRateBayes(const std::vector<double> &sample, GammaRand &prior
 
 
 /// CHI-SQUARED
-
 ChiSquaredRand::ChiSquaredRand(int degree)
 {
     setDegree(degree);
@@ -337,14 +336,8 @@ void ChiSquaredRand::setDegree(int degree)
     GammaRand::setParameters((degree < 1) ? 0.5 : 0.5 * degree, 2);
 }
 
-int ChiSquaredRand::getDegree() const
-{
-    return static_cast<int>(alpha + alpha);
-}
-
 
 /// ERLANG
-
 ErlangRand::ErlangRand(int shape, double rate)
 {
     setParameters(shape, rate);

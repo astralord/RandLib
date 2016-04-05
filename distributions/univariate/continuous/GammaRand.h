@@ -90,7 +90,7 @@ public:
     std::string name() override;
 
     void setDegree(int degree);
-    inline int getDegree() const;
+    inline int getDegree() const { return static_cast<int>(alpha + alpha); }
 
 protected:
     /// prohibit to use gamma's public getters and setters

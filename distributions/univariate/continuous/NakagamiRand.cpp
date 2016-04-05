@@ -46,6 +46,13 @@ double NakagamiRand::variate() const
     return std::sqrt(Y.variate());
 }
 
+void NakagamiRand::sample(std::vector<double> &outputData) const
+{
+    Y.sample(outputData);
+    for (double & var : outputData)
+        var = std::sqrt(var);
+}
+
 double NakagamiRand::Mean() const
 {
     double y = std::lgamma(m + 0.5);

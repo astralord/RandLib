@@ -24,7 +24,6 @@ SOURCES += \
     distributions/univariate/continuous/UniformRand.cpp \
     distributions/univariate/continuous/ParetoRand.cpp \
     distributions/univariate/continuous/ContinuousDistribution.cpp \
-    distributions/univariate/continuous/RayleighRand.cpp \
     distributions/univariate/continuous/TriangularRand.cpp \
     distributions/univariate/continuous/LogisticRand.cpp \
     distributions/univariate/discrete/DiscreteDistribution.cpp \
@@ -39,7 +38,6 @@ SOURCES += \
     distributions/univariate/discrete/GeometricRand.cpp \
     distributions/univariate/discrete/BinomialRand.cpp \
     distributions/univariate/continuous/GeometricStableRand.cpp \
-    distributions/univariate/continuous/MaxwellBoltzmannRand.cpp \
     distributions/univariate/continuous/BetaPrimeRand.cpp \
     distributions/univariate/discrete/NegativeBinomialRand.cpp \
     distributions/univariate/discrete/HyperGeometricRand.cpp \
@@ -88,7 +86,6 @@ HEADERS +=\
     distributions/univariate/continuous/UniformRand.h \
     distributions/univariate/continuous/ParetoRand.h \
     distributions/univariate/continuous/ContinuousDistribution.h \
-    distributions/univariate/continuous/RayleighRand.h \
     distributions/univariate/continuous/TriangularRand.h \
     distributions/univariate/continuous/LogisticRand.h \
     distributions/univariate/discrete/DiscreteDistribution.h \
@@ -103,7 +100,6 @@ HEADERS +=\
     distributions/univariate/discrete/GeometricRand.h \
     distributions/univariate/discrete/BinomialRand.h \
     distributions/univariate/continuous/GeometricStableRand.h \
-    distributions/univariate/continuous/MaxwellBoltzmannRand.h \
     distributions/univariate/continuous/BetaPrimeRand.h \
     distributions/univariate/discrete/NegativeBinomialRand.h \
     distributions/univariate/discrete/HyperGeometricRand.h \
