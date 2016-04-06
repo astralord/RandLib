@@ -17,6 +17,7 @@ public:
            const double initial_value = 0.0);
     Matrix(const Matrix & other);
     Matrix & operator=(const Matrix & other);
+    ~Matrix() {}
 
     inline size_t height() const { return n; }
     inline size_t width() const { return m; }
@@ -24,8 +25,31 @@ public:
     double &operator()(const size_t i, const size_t j);
     double operator()(const size_t i, const size_t j) const;
 
-    // TODO:
-    // addition and multiplication
+    /// addition
+    friend const Matrix operator+(const Matrix& left, const Matrix& right) {
+        if (left.height() != right.height() || left.width() != right.width())
+            return left; // we should throw exception here
+        Matrix sum(left.height(), left.width());
+        for (size_t i = 0; i != left.data.size(); ++i)
+            sum.data[i] = left.data[i] + right.data[i];
+        return sum;
+    }
+
+    Matrix &operator+=(const Matrix& right);
+
+    /// multiplication
+    friend const Matrix operator*(const Matrix& left, const Matrix& right) {
+        if (left.width() != right.height())
+            return left; // we should throw exception here
+        Matrix product(left.height(), right.width());
+        for (size_t i = 0; i != product.height(); ++i) {
+            for (size_t j = 0; j != product.width(); ++j) {
+                for (size_t k = 0; k != left.width(); ++k)
+                    product(i, j) += left(i, k) * right(k, j);
+            }
+        }
+        return product;
+    }
 };
 
 #endif // MATRIX_H

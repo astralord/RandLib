@@ -25,10 +25,19 @@ Matrix & Matrix::operator=(const Matrix & other)
 
 double Matrix::operator()(const size_t i, const size_t j) const
 {
-    return data[i * n + j];
+    return data[i * m + j];
 }
 
 double & Matrix::operator()(const size_t i, const size_t j)
 {
-    return data[i * n + j];
+    return data[i * m + j];
+}
+
+Matrix &Matrix::operator+=(const Matrix &right)
+{
+    if (height() != right.height() || width() != right.width())
+        return *this; // we should throw exception here
+    for (size_t i = 0; i != data.size(); ++i)
+        data[i] += right.data[i];
+    return *this;
 }
