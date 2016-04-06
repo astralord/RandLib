@@ -17,28 +17,18 @@ void NakagamiRand::setParameters(double shape, double spread)
     if (w <= 0)
         w = 1.0;
 
-    Y.setParameters(m, w / m);
-
     sigma = m / w;
-    logGammaM = Y.getLogGammaFunction();
-    pdfCoef = M_LN2 + m * std::log(m / w) - logGammaM;
+    Y.setParameters(m, 1.0 / sigma);
 }
 
 double NakagamiRand::f(double x) const
 {
-    if (x <= 0)
-        return 0;
-    double y = (m + m - 1) * std::log(x);
-    y -= sigma * x * x;
-    return std::exp(pdfCoef + y);
+    return (x <= 0) ? 0.0 : 2 * x * Y.f(x * x);
 }
 
 double NakagamiRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-    double y = RandMath::logLowerIncGamma(m, sigma * x * x);
-    return std::exp(y - logGammaM);
+    return (x <= 0) ? 0.0 : Y.F(x * x);
 }
 
 double NakagamiRand::variate() const
@@ -56,15 +46,15 @@ void NakagamiRand::sample(std::vector<double> &outputData) const
 double NakagamiRand::Mean() const
 {
     double y = std::lgamma(m + 0.5);
-    y -= logGammaM;
-    y -= 0.5 * (pdfCoef - M_LN2 + logGammaM) / m;
+    y -= Y.getLogGammaFunction();
+    y -= 0.5 * std::log(sigma);
     return std::exp(y);
 }
 
 double NakagamiRand::Variance() const
 {
     double y = std::lgamma(m + 0.5);
-    y -= logGammaM;
+    y -= Y.getLogGammaFunction();
     y = std::exp(y + y);
     return w * (1 - y / m);
 }

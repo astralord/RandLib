@@ -72,7 +72,7 @@ public:
      * @brief getLogGammaFunction
      * @return 1.0 / Gamma(k)
      */
-    inline double getLogGammaFunction() { return -cdfCoef; }
+    inline double getLogGammaFunction() const { return -cdfCoef; }
 };
 
 
