@@ -140,7 +140,7 @@ bool PoissonRand::fitRateBayes(const std::vector<double> &sample, GammaRand &pri
         return false;
     double alpha = priorDistribution.getShape();
     double beta = priorDistribution.getRate();
-    priorDistribution.setParameters(alpha + RandMath::sum(sample), 1.0 / (beta + n));
+    priorDistribution.setParameters(alpha + RandMath::sum(sample), beta + n);
     setRate(priorDistribution.Mean());
     return true;
 }

@@ -55,7 +55,7 @@ void NegativeBinomialRand<int>::setParameters(int number, double probability)
         }
     }
     else {
-        Y.setParameters(r, q / p);
+        Y.setParameters(r, p / q);
     }
 }
 
@@ -64,7 +64,7 @@ void NegativeBinomialRand<double>::setParameters(double number, double probabili
 {
     setValidParameters(number, probability);
     pdfCoef = std::pow(p, r) / std::tgamma(r);
-    Y.setParameters(r, q / p);
+    Y.setParameters(r, p / q);
 }
 
 template<>

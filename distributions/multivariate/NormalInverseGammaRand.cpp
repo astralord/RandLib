@@ -20,7 +20,7 @@ void NormalInverseGammaRand::setParameters(double location, double precision, do
     lambda = precision;
     if (lambda <= 0)
         lambda = 1.0;
-    Y.setParameters(shape, 1.0 / rate);
+    Y.setParameters(shape, rate);
 
     pdfCoef = std::sqrt(0.5 * lambda / M_PI);
     double alpha = Y.getShape();

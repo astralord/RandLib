@@ -38,10 +38,7 @@ bool ExponentialRand::setupTables()
 
 void ExponentialRand::setRate(double rate)
 {
-    beta = rate;
-    if (beta <= 0)
-        beta = 1.0;
-    setParameters(1, 1.0 / beta);
+    setParameters(1, rate);
 }
 
 double ExponentialRand::f(double x) const

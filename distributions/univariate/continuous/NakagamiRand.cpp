@@ -18,7 +18,7 @@ void NakagamiRand::setParameters(double shape, double spread)
         w = 1.0;
 
     sigma = m / w;
-    Y.setParameters(m, 1.0 / sigma);
+    Y.setParameters(m, sigma);
 }
 
 double NakagamiRand::f(double x) const
