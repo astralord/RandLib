@@ -4,28 +4,33 @@
 #include "randlib_global.h"
 #include <vector>
 
+template <size_t n>
 class SquareMatrix;
 
 /**
  * @brief The Matrix class
  *
  */
+template <size_t n, size_t m>
 class RANDLIBSHARED_EXPORT Matrix {
 protected:
-    size_t n, m;
     std::vector<double> data;
 public:
-    Matrix(const size_t height, const size_t width,
-           const double initial_value = 0.0);
-    Matrix(const Matrix & other);
-    Matrix & operator=(const Matrix & other);
+    Matrix(double initialValue);
+    Matrix(const Matrix<n, m> & other);
+    Matrix<n, m> & operator=(const Matrix<n, m> & other);
     ~Matrix() {}
 
     inline size_t height() const { return n; }
     inline size_t width() const { return m; }
 
-    double &operator()(const size_t i, const size_t j);
-    double operator()(const size_t i, const size_t j) const;
+    double &operator()(const size_t i, const size_t j) {
+        return data[i * m + j];
+    }
+
+    double operator()(const size_t i, const size_t j) const {
+        return data[i * m + j];
+    }
 
     /// addition
     friend const Matrix operator+(const Matrix& left, const Matrix& right) {
@@ -37,7 +42,7 @@ public:
         return sum;
     }
 
-    Matrix &operator+=(const Matrix& right);
+    Matrix<n, m> &operator+=(const Matrix<n, m> &right);
 
     /// multiplication
     friend const Matrix operator*(const Matrix& left, const Matrix& right) {
@@ -54,7 +59,8 @@ public:
         return product;
     }
 
-    bool getSquare(SquareMatrix & squaredMatrix);
+    bool getSquare(SquareMatrix<n> & squaredMatrix);
+    void fill(double value);
     void clear();
 };
 
@@ -62,10 +68,11 @@ public:
 /**
  * @brief The SquareMatrix class
  */
-class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix{
+template <size_t n>
+class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix<n, n> {
 
 public:
-    SquareMatrix(const size_t height, const double initial_value = 0.0);
+    SquareMatrix(const double initial_value = 0.0);
     ~SquareMatrix() {}
 
     inline size_t size() { return n; }

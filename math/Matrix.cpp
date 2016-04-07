@@ -1,48 +1,35 @@
 #include "Matrix.h"
 
-Matrix::Matrix(const size_t height, const size_t width, const double initial_value) :
-    n(height),
-    m(width),
-    data(n * m, initial_value)
+template <size_t n, size_t m>
+Matrix<n, m>::Matrix(double initialValue) :
+    data(n * m, initialValue)
 {}
 
-Matrix::Matrix(const Matrix & other) :
-    n(other.n),
-    m(other.m),
+template <size_t n, size_t m>
+Matrix<n, m>::Matrix(const Matrix<n, m> & other) :
     data(other.data)
 {}
 
-Matrix & Matrix::operator=(const Matrix & other)
+template <size_t n, size_t m>
+Matrix<n, m> & Matrix<n, m>::operator=(const Matrix<n, m> & other)
 {
     if (this != & other)
     {
-        n = other.n;
-        m = other.m;
         data = other.data;
     }
     return *this;
 }
 
-double Matrix::operator()(const size_t i, const size_t j) const
+template <size_t n, size_t m>
+Matrix<n, m> &Matrix<n, m>::operator+=(const Matrix<n, m> &right)
 {
-    return data[i * m + j];
-}
-
-double & Matrix::operator()(const size_t i, const size_t j)
-{
-    return data[i * m + j];
-}
-
-Matrix &Matrix::operator+=(const Matrix &right)
-{
-    if (n != right.height() || m != right.width())
-        return *this; // we should throw exception here
     for (size_t i = 0; i != data.size(); ++i)
         data[i] += right.data[i];
     return *this;
 }
 
-bool Matrix::getSquare(SquareMatrix &squaredMatrix)
+template <size_t n, size_t m>
+bool Matrix<n, m>::getSquare(SquareMatrix<n> &squaredMatrix)
 {
     if (squaredMatrix.size() != n)
         return false;
@@ -57,25 +44,35 @@ bool Matrix::getSquare(SquareMatrix &squaredMatrix)
     return true;
 }
 
-void Matrix::clear()
+template <size_t n, size_t m>
+void Matrix<n, m>::fill(double value)
 {
-    std::fill(data.begin(), data.end(), 0);
+    std::fill(data.begin(), data.end(), value);
+}
+
+template <size_t n, size_t m>
+void Matrix<n, m>::clear()
+{
+    fill(0);
 }
 
 /// SQUARE MATRIX
-SquareMatrix::SquareMatrix(const size_t height, const double initial_value) :
-    Matrix(height, height, initial_value)
+template <size_t n>
+SquareMatrix<n>::SquareMatrix(const double initial_value) :
+    Matrix<n, n>(initial_value)
 {
 }
 
-void SquareMatrix::toIdentity()
+template <size_t n>
+void SquareMatrix<n>::toIdentity()
 {
-    clear();
+    this->clear();
     for (size_t i = 0; i != n; ++i)
         (*this)(i, i) = 1;
 }
 
-bool SquareMatrix::invert(SquareMatrix & invertedMatrix)
+template <size_t n>
+bool SquareMatrix<n>::invert(SquareMatrix & invertedMatrix)
 {
     if (invertedMatrix.size() != n)
         return false;

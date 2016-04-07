@@ -1,6 +1,7 @@
 #include "MultivariateProbabilityDistribution.h"
 
-MultivariateProbabilityDistribution::MultivariateProbabilityDistribution()
+template <size_t n>
+MultivariateProbabilityDistribution<n>::MultivariateProbabilityDistribution()
 {
 
 }
