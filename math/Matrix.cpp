@@ -3,13 +3,15 @@
 Matrix::Matrix(const size_t height, const size_t width, const double initial_value) :
     n(height),
     m(width),
-    data(n * m, initial_value)
+    data(n * m, initial_value),
+    isTransposed(false)
 {}
 
 Matrix::Matrix(const Matrix & other) :
     n(other.n),
     m(other.m),
-    data(other.data)
+    data(other.data),
+    isTransposed(false)
 {}
 
 Matrix & Matrix::operator=(const Matrix & other)
@@ -19,18 +21,19 @@ Matrix & Matrix::operator=(const Matrix & other)
         n = other.n;
         m = other.m;
         data = other.data;
+        isTransposed = other.isTransposed;
     }
     return *this;
 }
 
 double Matrix::operator()(const size_t i, const size_t j) const
 {
-    return data[i * m + j];
+    return (isTransposed) ? data[j * n + i] : data[i * m + j];
 }
 
 double & Matrix::operator()(const size_t i, const size_t j)
 {
-    return data[i * m + j];
+    return (isTransposed) ? data[j * n + i] : data[i * m + j];
 }
 
 Matrix &Matrix::operator+=(const Matrix &right)
@@ -42,7 +45,7 @@ Matrix &Matrix::operator+=(const Matrix &right)
     return *this;
 }
 
-bool Matrix::getSquare(SquareMatrix &squaredMatrix)
+bool Matrix::getSquare(SquareMatrix &squaredMatrix) const
 {
     if (squaredMatrix.size() != n)
         return false;
@@ -62,6 +65,28 @@ void Matrix::clear()
     std::fill(data.begin(), data.end(), 0);
 }
 
+void Matrix::transpose()
+{
+    std::swap(n, m);
+    isTransposed = !isTransposed;
+}
+
+
+/// VECTOR
+Vector::Vector(const size_t height, const double initial_value) :
+    Matrix(height, 1, initial_value)
+{
+}
+
+Vector &Vector::operator+=(const Vector &right)
+{
+    if (n != right.height())
+        return *this; // we should throw exception here
+    for (size_t i = 0; i != data.size(); ++i)
+        data[i] += right.data[i];
+    return *this;
+}
+
 /// SQUARE MATRIX
 SquareMatrix::SquareMatrix(const size_t height, const double initial_value) :
     Matrix(height, height, initial_value)
@@ -75,7 +100,7 @@ void SquareMatrix::toIdentity()
         (*this)(i, i) = 1;
 }
 
-bool SquareMatrix::invert(SquareMatrix & invertedMatrix)
+bool SquareMatrix::getInverse(SquareMatrix & invertedMatrix)
 {
     if (invertedMatrix.size() != n)
         return false;
@@ -147,3 +172,4 @@ bool SquareMatrix::invert(SquareMatrix & invertedMatrix)
 
     return true;
 }
+
