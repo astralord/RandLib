@@ -4,29 +4,34 @@
 #include "randlib_global.h"
 #include <vector>
 
+template <size_t n>
 class SquareMatrix;
 
 /**
  * @brief The Matrix class
  *
  */
+template <size_t n, size_t m>
 class RANDLIBSHARED_EXPORT Matrix {
 protected:
-    size_t n, m;
     std::vector<double> data;
     bool isTransposed;
 public:
-    Matrix(const size_t height, const size_t width,
-           const double initial_value = 0.0);
-    Matrix(const Matrix & other);
-    Matrix & operator=(const Matrix & other);
+    Matrix(double initialValue);
+    Matrix(const Matrix<n, m> & other);
+    Matrix<n, m> & operator=(const Matrix<n, m> & other);
     ~Matrix() {}
 
     inline size_t height() const { return n; }
     inline size_t width() const { return m; }
 
-    double &operator()(const size_t i, const size_t j);
-    double operator()(const size_t i, const size_t j) const;
+    double &operator()(const size_t i, const size_t j) {
+        return (isTransposed) ? data[j * n + i] : data[i * m + j];
+    }
+
+    double operator()(const size_t i, const size_t j) const {
+        return (isTransposed) ? data[j * n + i] : data[i * m + j];
+    }
 
     /// addition
     friend const Matrix operator+(const Matrix& left, const Matrix& right) {
@@ -38,7 +43,7 @@ public:
         return sum;
     }
 
-    Matrix &operator+=(const Matrix& right);
+    Matrix<n, m> &operator+=(const Matrix<n, m> &right);
 
     /// multiplication
     friend const Matrix operator*(const Matrix& left, const Matrix& right) {
@@ -55,67 +60,25 @@ public:
         return product;
     }
 
-    bool getSquare(SquareMatrix & squaredMatrix) const;
+    bool getSquare(SquareMatrix<n> & squaredMatrix) const;
+    void fill(double value);
     void clear();
     void transpose();
 };
 
-/**
- * @brief The Vector class
- */
-class RANDLIBSHARED_EXPORT Vector : public Matrix {
-public:
-    Vector(const size_t height, const double initial_value = 0.0);
-    ~Vector() {}
 
-    inline size_t size() const { return n; }
-
-    /// addition
-    friend const Vector operator+(const Vector& left, const Vector& right) {
-        if (left.size() != right.size())
-            return left; // we should throw exception here
-        Vector sum(left.size());
-        for (size_t i = 0; i != left.data.size(); ++i)
-            sum.data[i] = left.data[i] + right.data[i];
-        return sum;
-    }
-
-    Vector &operator+=(const Vector& right);
-
-    /// multiplication
-    friend const Vector operator*(const Matrix& left, const Vector& right) {
-        if (left.width() != right.height())
-            return right; // we should throw exception here
-        Vector product(left.height());
-        /// pretty straightforward
-        for (size_t i = 0; i != product.size(); ++i) {
-            for (size_t k = 0; k != left.width(); ++k)
-                product(i, 0) += left(i, k) * right(k, 0); // make an operator() with one parameter!
-        }
-        return product;
-    }
-
-    friend const Vector operator*(const Vector& left, const Matrix& right) {
-        if (left.width() != right.height())
-            return left; // we should throw exception here
-        Vector product(right.width());
-        product.transpose();
-        /// pretty straightforward
-        for (size_t i = 0; i != product.size(); ++i) {
-            for (size_t k = 0; k != left.width(); ++k)
-                product(0, i) += left(0, k) * right(k, i); // make an operator() with one parameter!
-        }
-        return product;
-    }
-};
+template <size_t n>
+using Vector = Matrix<n, 1>;
 
 
 /**
  * @brief The SquareMatrix class
  */
-class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix {
+template <size_t n>
+class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix<n, n> {
+
 public:
-    SquareMatrix(const size_t height, const double initial_value = 0.0);
+    SquareMatrix(const double initial_value = 0.0);
     ~SquareMatrix() {}
 
     inline size_t size() const { return n; }
@@ -123,7 +86,7 @@ public:
     void toIdentity();
 
     /// Gauss-Jordan method (not fast and non-optimized)
-    bool getInverse(SquareMatrix & invertedMatrix);
+    bool getInverse(SquareMatrix<n> & invertedMatrix) const;
 };
 
 #endif // MATRIX_H

@@ -5,22 +5,19 @@ EconometricsEngineer::EconometricsEngineer()
 
 }
 
-bool EconometricsEngineer::OLS(const Matrix &X, const Vector &Y, Vector &B)
+template <size_t n, size_t m>
+bool EconometricsEngineer::OLS(const Matrix<n, m> &X, const Vector<n> &Y, Vector<m> &B)
 {
-    /// Sanity checks
-    if (B.width() != X.height() || X.height() != Y.height())
-        return false;
-
-    SquareMatrix A(X.height());
+    SquareMatrix<n> A;
     X.getSquare(A);
-    SquareMatrix C(A.size());
+    SquareMatrix<n> C;
     A.getInverse(C);
 
     // AVOID COPYING JUST FOR TRANSPOSITION
-    Matrix Z = X;
+    Matrix<n, m> Z = X;
     Z.transpose();
 
-    Vector W = Z * Y;
+    Vector<m> W = Z * Y;
     B = C * W;
     return true;
 }

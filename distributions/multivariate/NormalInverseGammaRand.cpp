@@ -84,22 +84,18 @@ DoublePair NormalInverseGammaRand::Mean() const
     return mean;
 }
 
-bool NormalInverseGammaRand::Covariance(Matrix & matrix) const
+bool NormalInverseGammaRand::Covariance(SquareMatrix<2> &matrix) const
 {
-    int n = matrix.height();
-    int m = matrix.width();
-    if (n != m || n != 2)
-        return false;
     double alpha = Y.getShape();
     double beta = Y.getRate();
     if (alpha <= 0.5)
-        matrix(1, 1) = NAN;
+        matrix(0, 0) = NAN;
     else if (alpha <= 1)
-        matrix(1, 1) = INFINITY;
+        matrix(0, 0) = INFINITY;
     else
-        matrix(1, 1) = alpha * alpha * lambda / (beta * (alpha - 1));
-    matrix(1, 2) = matrix(2, 1) = 0;
-    matrix(2, 2) = Y.Variance();
+        matrix(0, 0) = alpha * alpha * lambda / (beta * (alpha - 1));
+    matrix(0, 1) = matrix(1, 0) = 0;
+    matrix(1, 1) = Y.Variance();
     return true;
 }
 

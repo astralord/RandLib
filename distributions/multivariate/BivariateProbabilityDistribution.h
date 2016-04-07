@@ -15,7 +15,7 @@ public:
 
     virtual double f(DoublePair point) const = 0;
 
-    virtual bool Covariance(Matrix &matrix) const = 0;
+    virtual bool Covariance(SquareMatrix<2> &matrix) const = 0;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H

@@ -23,7 +23,8 @@ public:
      * @param B
      * @return (X'X)^{-1} (X'Y)
      */
-    static bool OLS(const Matrix &X, const Vector &Y, Vector &B);
+    template <size_t n, size_t m>
+    static bool OLS(const Matrix<n, m> &X, const Vector<n> &Y, Vector<m> &B);
 };
 
 #endif // ECONOMETRICSENGINEER_H

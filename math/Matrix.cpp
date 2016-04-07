@@ -1,54 +1,39 @@
 #include "Matrix.h"
 
-Matrix::Matrix(const size_t height, const size_t width, const double initial_value) :
-    n(height),
-    m(width),
-    data(n * m, initial_value),
+template <size_t n, size_t m>
+Matrix<n, m>::Matrix(double initialValue) :
+    data(n * m, initialValue),
     isTransposed(false)
 {}
 
-Matrix::Matrix(const Matrix & other) :
-    n(other.n),
-    m(other.m),
+template <size_t n, size_t m>
+Matrix<n, m>::Matrix(const Matrix<n, m> & other) :
     data(other.data),
     isTransposed(false)
 {}
 
-Matrix & Matrix::operator=(const Matrix & other)
+template <size_t n, size_t m>
+Matrix<n, m> & Matrix<n, m>::operator=(const Matrix<n, m> & other)
 {
     if (this != & other)
     {
-        n = other.n;
-        m = other.m;
         data = other.data;
         isTransposed = other.isTransposed;
     }
     return *this;
 }
 
-double Matrix::operator()(const size_t i, const size_t j) const
+template <size_t n, size_t m>
+Matrix<n,m> &Matrix<n, m>::operator+=(const Matrix<n,m> &right)
 {
-    return (isTransposed) ? data[j * n + i] : data[i * m + j];
-}
-
-double & Matrix::operator()(const size_t i, const size_t j)
-{
-    return (isTransposed) ? data[j * n + i] : data[i * m + j];
-}
-
-Matrix &Matrix::operator+=(const Matrix &right)
-{
-    if (n != right.height() || m != right.width())
-        return *this; // we should throw exception here
     for (size_t i = 0; i != data.size(); ++i)
         data[i] += right.data[i];
     return *this;
 }
 
-bool Matrix::getSquare(SquareMatrix &squaredMatrix) const
+template <size_t n, size_t m>
+bool Matrix<n, m>::getSquare(SquareMatrix<n> &squaredMatrix) const
 {
-    if (squaredMatrix.size() != n)
-        return false;
     for (size_t i = 0; i != n; ++i) {
         for (size_t j = i; j != n; ++j) {
             squaredMatrix(i, j) = 0.0;
@@ -60,47 +45,44 @@ bool Matrix::getSquare(SquareMatrix &squaredMatrix) const
     return true;
 }
 
-void Matrix::clear()
+template <size_t n, size_t m>
+void Matrix<n, m>::fill(double value)
 {
-    std::fill(data.begin(), data.end(), 0);
+    std::fill(data.begin(), data.end(), value);
 }
 
-void Matrix::transpose()
+template <size_t n, size_t m>
+void Matrix<n, m>::clear()
 {
-    std::swap(n, m);
+    fill(0);
+}
+
+template <size_t n, size_t m>
+void Matrix<n, m>::transpose()
+{
+    size_t c = n;
+    n = m;
+    m = c;
     isTransposed = !isTransposed;
 }
 
-
-/// VECTOR
-Vector::Vector(const size_t height, const double initial_value) :
-    Matrix(height, 1, initial_value)
-{
-}
-
-Vector &Vector::operator+=(const Vector &right)
-{
-    if (n != right.height())
-        return *this; // we should throw exception here
-    for (size_t i = 0; i != data.size(); ++i)
-        data[i] += right.data[i];
-    return *this;
-}
-
 /// SQUARE MATRIX
-SquareMatrix::SquareMatrix(const size_t height, const double initial_value) :
-    Matrix(height, height, initial_value)
+template <size_t n>
+SquareMatrix<n>::SquareMatrix(const double initial_value) :
+    Matrix<n, n>(initial_value)
 {
 }
 
-void SquareMatrix::toIdentity()
+template <size_t n>
+void SquareMatrix<n>::toIdentity()
 {
-    clear();
+    this->clear();
     for (size_t i = 0; i != n; ++i)
         (*this)(i, i) = 1;
 }
 
-bool SquareMatrix::getInverse(SquareMatrix & invertedMatrix)
+template <size_t n>
+bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
 {
     if (invertedMatrix.size() != n)
         return false;
