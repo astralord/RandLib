@@ -4,12 +4,14 @@
 #include "randlib_global.h"
 #include <vector>
 
+class SquareMatrix;
+
 /**
  * @brief The Matrix class
  *
  */
-class RANDLIBSHARED_EXPORT Matrix
-{
+class RANDLIBSHARED_EXPORT Matrix {
+protected:
     size_t n, m;
     std::vector<double> data;
 public:
@@ -42,6 +44,7 @@ public:
         if (left.width() != right.height())
             return left; // we should throw exception here
         Matrix product(left.height(), right.width());
+        /// pretty straightforward
         for (size_t i = 0; i != product.height(); ++i) {
             for (size_t j = 0; j != product.width(); ++j) {
                 for (size_t k = 0; k != left.width(); ++k)
@@ -50,6 +53,27 @@ public:
         }
         return product;
     }
+
+    bool getSquare(SquareMatrix & squaredMatrix);
+    void clear();
+};
+
+
+/**
+ * @brief The SquareMatrix class
+ */
+class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix{
+
+public:
+    SquareMatrix(const size_t height, const double initial_value = 0.0);
+    ~SquareMatrix() {}
+
+    inline size_t size() { return n; }
+
+    void toIdentity();
+
+    /// Gauss-Jordan method (not fast and non-optimized)
+    bool invert(SquareMatrix & invertedMatrix);
 };
 
 #endif // MATRIX_H
