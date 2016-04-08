@@ -4,9 +4,6 @@
 #include "randlib_global.h"
 #include <vector>
 
-template <size_t n>
-class SquareMatrix;
-
 /**
  * @brief The Matrix class
  *
@@ -15,9 +12,8 @@ template <size_t n, size_t m>
 class RANDLIBSHARED_EXPORT Matrix {
 protected:
     std::vector<double> data;
-    bool isTransposed;
 public:
-    Matrix(double initialValue);
+    Matrix(const double initialValue = 0.0);
     Matrix(const Matrix<n, m> & other);
     Matrix<n, m> & operator=(const Matrix<n, m> & other);
     ~Matrix() {}
@@ -25,68 +21,43 @@ public:
     inline size_t height() const { return n; }
     inline size_t width() const { return m; }
 
-    double &operator()(const size_t i, const size_t j) {
-        return (isTransposed) ? data[j * n + i] : data[i * m + j];
-    }
-
-    double operator()(const size_t i, const size_t j) const {
-        return (isTransposed) ? data[j * n + i] : data[i * m + j];
-    }
-
-    /// addition
-    friend const Matrix operator+(const Matrix& left, const Matrix& right) {
-        if (left.height() != right.height() || left.width() != right.width())
-            return left; // we should throw exception here
-        Matrix sum(left.height(), left.width());
-        for (size_t i = 0; i != left.data.size(); ++i)
-            sum.data[i] = left.data[i] + right.data[i];
-        return sum;
-    }
+    double &operator()(const size_t i, const size_t j);
+    double operator()(const size_t i, const size_t j) const;
 
     Matrix<n, m> &operator+=(const Matrix<n, m> &right);
 
     /// multiplication
-    friend const Matrix operator*(const Matrix& left, const Matrix& right) {
-        if (left.width() != right.height())
-            return left; // we should throw exception here
-        Matrix product(left.height(), right.width());
+    template <size_t q>
+    friend const Matrix<n, q> operator*(const Matrix<n, m>& left, const Matrix<m, q>& right) {
+        Matrix<n, q> product;
         /// pretty straightforward
-        for (size_t i = 0; i != product.height(); ++i) {
-            for (size_t j = 0; j != product.width(); ++j) {
-                for (size_t k = 0; k != left.width(); ++k)
+        for (size_t i = 0; i != n; ++i) {
+            for (size_t j = 0; j != q; ++j) {
+                for (size_t k = 0; k != m; ++k)
                     product(i, j) += left(i, k) * right(k, j);
             }
         }
         return product;
     }
 
-    bool getSquare(SquareMatrix<n> & squaredMatrix) const;
+    bool getSquare(Matrix<n, n> & squaredMatrix) const;
     void fill(double value);
     void clear();
-    void transpose();
-};
 
+    bool getTransposed(Matrix<m, n> & transposedMatrix) const;
+
+    void toIdentity();
+    /// Gauss-Jordan method (not fast and non-optimized)
+    bool getInverse(Matrix<m, n> &invertedMatrix) const;
+};
 
 template <size_t n>
 using Vector = Matrix<n, 1>;
 
-
-/**
- * @brief The SquareMatrix class
- */
 template <size_t n>
-class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix<n, n> {
+using VectorT = Matrix<1, n>;
 
-public:
-    SquareMatrix(const double initial_value = 0.0);
-    ~SquareMatrix() {}
-
-    inline size_t size() const { return n; }
-
-    void toIdentity();
-
-    /// Gauss-Jordan method (not fast and non-optimized)
-    bool getInverse(SquareMatrix<n> & invertedMatrix) const;
-};
+template <size_t n>
+using SquareMatrix = Matrix<n, n>;
 
 #endif // MATRIX_H

@@ -2,14 +2,12 @@
 
 template <size_t n, size_t m>
 Matrix<n, m>::Matrix(double initialValue) :
-    data(n * m, initialValue),
-    isTransposed(false)
+    data(n * m, initialValue)
 {}
 
 template <size_t n, size_t m>
 Matrix<n, m>::Matrix(const Matrix<n, m> & other) :
-    data(other.data),
-    isTransposed(false)
+    data(other.data)
 {}
 
 template <size_t n, size_t m>
@@ -18,9 +16,20 @@ Matrix<n, m> & Matrix<n, m>::operator=(const Matrix<n, m> & other)
     if (this != & other)
     {
         data = other.data;
-        isTransposed = other.isTransposed;
     }
     return *this;
+}
+
+template <size_t n, size_t m>
+double &Matrix<n, m>::operator()(const size_t i, const size_t j)
+{
+    return data[i * m + j];
+}
+
+template <size_t n, size_t m>
+double Matrix<n, m>::operator()(const size_t i, const size_t j) const
+{
+    return data[i * m + j];
 }
 
 template <size_t n, size_t m>
@@ -32,7 +41,7 @@ Matrix<n,m> &Matrix<n, m>::operator+=(const Matrix<n,m> &right)
 }
 
 template <size_t n, size_t m>
-bool Matrix<n, m>::getSquare(SquareMatrix<n> &squaredMatrix) const
+bool Matrix<n, m>::getSquare(Matrix<n, n> &squaredMatrix) const
 {
     for (size_t i = 0; i != n; ++i) {
         for (size_t j = i; j != n; ++j) {
@@ -58,33 +67,28 @@ void Matrix<n, m>::clear()
 }
 
 template <size_t n, size_t m>
-void Matrix<n, m>::transpose()
+bool Matrix<n, m>::getTransposed(Matrix<m, n> &transposedMatrix) const
 {
-    size_t c = n;
-    n = m;
-    m = c;
-    isTransposed = !isTransposed;
+    for (size_t i = 0; i != n; ++i)
+        for (size_t j = 0; j != m; ++j)
+            transposedMatrix(j, i) = (*this)(i, j);
+    return true;
 }
 
-/// SQUARE MATRIX
-template <size_t n>
-SquareMatrix<n>::SquareMatrix(const double initial_value) :
-    Matrix<n, n>(initial_value)
+template <size_t n, size_t m>
+void Matrix<n, m>::toIdentity()
 {
-}
-
-template <size_t n>
-void SquareMatrix<n>::toIdentity()
-{
+    if (n != m) // should be part of squared
+        return;
     this->clear();
     for (size_t i = 0; i != n; ++i)
         (*this)(i, i) = 1;
 }
 
-template <size_t n>
-bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
+template <size_t n, size_t m>
+bool Matrix<n, m>::getInverse(Matrix<m, n> &invertedMatrix) const
 {
-    if (invertedMatrix.size() != n)
+    if (n != m) // should be part of squared
         return false;
 
     // SHOULD CHECK IF MATRIX IS SINGULAR
@@ -98,11 +102,14 @@ bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
     /// future inverted matrix should start from identity
     invertedMatrix.toIdentity();
 
+    /// create auxiliary matrix
+    Matrix<n, m> A = *this;
+
     size_t row = 0;
     while (row != n) {
         /// find first non-zero element
         size_t currentRow = row;
-        while ((*this)(currentRow, row) == 0 && currentRow < n)
+        while (A(currentRow, row) == 0 && currentRow < n)
             ++currentRow;
         if (currentRow == n)
             return false; /// matrix is singular
@@ -111,15 +118,15 @@ bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
         if (currentRow != row)
         {
             for (size_t i = row; i != n; ++i)
-                std::swap((*this)(row, i), (*this)(currentRow, i));
+                std::swap(A(row, i), A(currentRow, i));
         }
 
         /// divide first row on first element
-        double firstInv = 1.0 / (*this)(row, row);
-        (*this)(row, row) = 1.0;
+        double firstInv = 1.0 / A(row, row);
+        A(row, row) = 1.0;
         invertedMatrix(row, row) = firstInv;
         for (size_t i = row + 1; i != n; ++i) {
-            (*this)(row, i) *= firstInv;
+            A(row, i) *= firstInv;
         }
         for (size_t i = 0; i != row; ++i) {
             invertedMatrix(row, i) *= firstInv;
@@ -127,15 +134,15 @@ bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
 
         /// subtract first row from others
         for (size_t i = row + 1; i != n; ++i) {
-            double firstElement = (*this)(i, row);
+            double firstElement = A(i, row);
 
             for (size_t j = 0; j != n; ++j) {
                 invertedMatrix(i, j) -= firstElement * invertedMatrix(row, j);
             }
 
-            (*this)(i, row) = 0.0;
+            A(i, row) = 0.0;
             for (size_t j = row + 1; j != n; ++j) {
-                (*this)(i, j) -= firstElement * (*this)(row, j);
+                A(i, j) -= firstElement * A(row, j);
             }
         }
 
@@ -146,7 +153,7 @@ bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
     row = n - 2;
     do {
         for (size_t i = row + 1; i != n; ++i) {
-            double coef = (*this)(row, i);
+            double coef = A(row, i);
             for (size_t j = 0; j != n; ++j)
                 invertedMatrix(row, j) -= invertedMatrix(i, j) * coef;
         }
@@ -155,3 +162,33 @@ bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
     return true;
 }
 
+
+template class Matrix<1, 1>;
+template class Matrix<1, 2>;
+template class Matrix<1, 3>;
+template class Matrix<1, 4>;
+template class Matrix<1, 5>;
+
+template class Matrix<2, 1>;
+template class Matrix<2, 2>;
+template class Matrix<2, 3>;
+template class Matrix<2, 4>;
+template class Matrix<2, 5>;
+
+template class Matrix<3, 1>;
+template class Matrix<3, 2>;
+template class Matrix<3, 3>;
+template class Matrix<3, 4>;
+template class Matrix<3, 5>;
+
+template class Matrix<4, 1>;
+template class Matrix<4, 2>;
+template class Matrix<4, 3>;
+template class Matrix<4, 4>;
+template class Matrix<4, 5>;
+
+template class Matrix<5, 1>;
+template class Matrix<5, 2>;
+template class Matrix<5, 3>;
+template class Matrix<5, 4>;
+template class Matrix<5, 5>;

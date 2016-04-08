@@ -1,6 +1,6 @@
 QT       -= gui
 
-TARGET = randlib
+TARGET = RandLib
 TEMPLATE = lib
 
 CONFIG += c++14
@@ -65,8 +65,7 @@ SOURCES += \
     math/Matrix.cpp \
     distributions/multivariate/MultivariateProbabilityDistribution.cpp \
     distributions/univariate/continuous/LogCauchyRand.cpp \
-    distributions/univariate/continuous/LimitingDistribution.cpp \
-    EconometricsEngineer/EconometricsEngineer.cpp
+    distributions/univariate/continuous/LimitingDistribution.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -129,8 +128,7 @@ HEADERS +=\
     distributions/multivariate/MultivariateProbabilityDistribution.h \
     distributions/univariate/continuous/LogCauchyRand.h \
     distributions/RandLib.h \
-    distributions/univariate/continuous/LimitingDistribution.h \
-    EconometricsEngineer/EconometricsEngineer.h
+    distributions/univariate/continuous/LimitingDistribution.h
 
 unix {
     target.path = /usr/lib
