@@ -33,6 +33,18 @@ double Matrix<n, m>::operator()(const size_t i, const size_t j) const
 }
 
 template <size_t n, size_t m>
+double &Matrix<n, m>::operator()(const size_t i)
+{
+    return data[i];
+}
+
+template <size_t n, size_t m>
+double Matrix<n, m>::operator()(const size_t i) const
+{
+    return data[i];
+}
+
+template <size_t n, size_t m>
 Matrix<n,m> &Matrix<n, m>::operator+=(const Matrix<n,m> &right)
 {
     for (size_t i = 0; i != data.size(); ++i)
@@ -163,32 +175,35 @@ bool Matrix<n, m>::getInverse(Matrix<m, n> &invertedMatrix) const
 }
 
 
-template class Matrix<1, 1>;
-template class Matrix<1, 2>;
-template class Matrix<1, 3>;
-template class Matrix<1, 4>;
-template class Matrix<1, 5>;
+/// define Matrix(N, M + [1, 10])
+#define DEFINE_VECTOR_DECADE(N, M) \
+    template class Matrix<N, M + 1>; \
+    template class Matrix<N, M + 2>; \
+    template class Matrix<N, M + 3>; \
+    template class Matrix<N, M + 4>; \
+    template class Matrix<N, M + 5>; \
+    template class Matrix<N, M + 6>; \
+    template class Matrix<N, M + 7>; \
+    template class Matrix<N, M + 8>; \
+    template class Matrix<N, M + 9>; \
+    template class Matrix<N, M + 10>;
 
-template class Matrix<2, 1>;
-template class Matrix<2, 2>;
-template class Matrix<2, 3>;
-template class Matrix<2, 4>;
-template class Matrix<2, 5>;
+/// define Matrix(N + [1, 10], M + [1, 10])
+#define DEFINE_MATRIX_DECADE(N, M) \
+    DEFINE_VECTOR_DECADE(N + 1, M) \
+    DEFINE_VECTOR_DECADE(N + 2, M) \
+    DEFINE_VECTOR_DECADE(N + 3, M) \
+    DEFINE_VECTOR_DECADE(N + 4, M) \
+    DEFINE_VECTOR_DECADE(N + 5, M) \
+    DEFINE_VECTOR_DECADE(N + 6, M) \
+    DEFINE_VECTOR_DECADE(N + 7, M) \
+    DEFINE_VECTOR_DECADE(N + 8, M) \
+    DEFINE_VECTOR_DECADE(N + 9, M) \
+    DEFINE_VECTOR_DECADE(N + 10, M)
 
-template class Matrix<3, 1>;
-template class Matrix<3, 2>;
-template class Matrix<3, 3>;
-template class Matrix<3, 4>;
-template class Matrix<3, 5>;
+DEFINE_MATRIX_DECADE(0, 0)
+DEFINE_MATRIX_DECADE(0, 10)
+DEFINE_MATRIX_DECADE(10, 0)
+DEFINE_MATRIX_DECADE(10, 10)
 
-template class Matrix<4, 1>;
-template class Matrix<4, 2>;
-template class Matrix<4, 3>;
-template class Matrix<4, 4>;
-template class Matrix<4, 5>;
 
-template class Matrix<5, 1>;
-template class Matrix<5, 2>;
-template class Matrix<5, 3>;
-template class Matrix<5, 4>;
-template class Matrix<5, 5>;

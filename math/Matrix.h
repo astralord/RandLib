@@ -7,6 +7,7 @@
 /**
  * @brief The Matrix class
  *
+ * Allows to work with matrices (maximum size 10x10)
  */
 template <size_t n, size_t m>
 class RANDLIBSHARED_EXPORT Matrix {
@@ -23,6 +24,9 @@ public:
 
     double &operator()(const size_t i, const size_t j);
     double operator()(const size_t i, const size_t j) const;
+
+    double &operator()(const size_t i);
+    double operator()(const size_t i) const;
 
     Matrix<n, m> &operator+=(const Matrix<n, m> &right);
 

@@ -7,9 +7,9 @@
 /**
  * @brief The BetaRand class
  * Beta distribution
- * X ~ Beta(\alpha, \beta)
+ * X ~ Beta(alpha, beta)
  *
- * f(x|\alpha, \beta) = x^{\alpha-1} (1-x)^{\beta-1} / B(\alpha, \beta)
+ * f(x|alpha, beta) = x^{alpha-1} (1-x)^{beta-1} / B(alpha, beta)
  */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
 {
