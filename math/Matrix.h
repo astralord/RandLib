@@ -7,7 +7,7 @@
 /**
  * @brief The Matrix class
  *
- * Allows to work with matrices (maximum size 10x10)
+ * Allows to work with matrices (maximum size 20x20)
  */
 template <size_t n, size_t m>
 class RANDLIBSHARED_EXPORT Matrix {

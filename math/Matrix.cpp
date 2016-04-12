@@ -14,9 +14,7 @@ template <size_t n, size_t m>
 Matrix<n, m> & Matrix<n, m>::operator=(const Matrix<n, m> & other)
 {
     if (this != & other)
-    {
         data = other.data;
-    }
     return *this;
 }
 
