@@ -2,7 +2,7 @@
 #define MULTIVARIATEPROBABILITYDISTRIBUTION_H
 
 #include "../ProbabilityDistribution.h"
-#include "../../math/Matrix.h"
+#include "../../math/SquareMatrix.h"
 
 template <size_t n>
 class RANDLIBSHARED_EXPORT MultivariateProbabilityDistribution : public ProbabilityDistribution< std::vector<double> >

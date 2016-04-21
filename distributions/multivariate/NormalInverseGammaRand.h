@@ -28,7 +28,11 @@ public:
     DoublePair variate() const override;
 
     DoublePair Mean() const override;
-    bool Covariance(SquareMatrix<2> &matrix) const override;
+    void Covariance(SquareMatrix<2> &matrix) const override;
+    double Correlation() const override;
+
+    void getFirstMarginalDistribution(ProbabilityDistribution<double> &distribution) const;
+    void getSecondMarginalDistribution(ProbabilityDistribution<double> &distribution) const;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

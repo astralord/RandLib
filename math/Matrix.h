@@ -44,15 +44,11 @@ public:
         return product;
     }
 
-    bool getSquare(Matrix<n, n> & squaredMatrix) const;
+    void getSquare(Matrix<n, n> & squaredMatrix) const;
     void fill(double value);
     void clear();
 
     bool getTransposed(Matrix<m, n> & transposedMatrix) const;
-
-    void toIdentity();
-    /// Gauss-Jordan method (not fast and non-optimized)
-    bool getInverse(Matrix<m, n> &invertedMatrix) const;
 };
 
 template <size_t n>
@@ -60,8 +56,5 @@ using Vector = Matrix<n, 1>;
 
 template <size_t n>
 using VectorT = Matrix<1, n>;
-
-template <size_t n>
-using SquareMatrix = Matrix<n, n>;
 
 #endif // MATRIX_H

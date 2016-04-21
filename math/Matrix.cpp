@@ -51,7 +51,7 @@ Matrix<n,m> &Matrix<n, m>::operator+=(const Matrix<n,m> &right)
 }
 
 template <size_t n, size_t m>
-bool Matrix<n, m>::getSquare(Matrix<n, n> &squaredMatrix) const
+void Matrix<n, m>::getSquare(Matrix<n, n> &squaredMatrix) const
 {
     for (size_t i = 0; i != n; ++i) {
         for (size_t j = i; j != n; ++j) {
@@ -61,7 +61,6 @@ bool Matrix<n, m>::getSquare(Matrix<n, n> &squaredMatrix) const
             squaredMatrix(j, i) = squaredMatrix(i, j);
         }
     }
-    return true;
 }
 
 template <size_t n, size_t m>
@@ -84,94 +83,6 @@ bool Matrix<n, m>::getTransposed(Matrix<m, n> &transposedMatrix) const
             transposedMatrix(j, i) = (*this)(i, j);
     return true;
 }
-
-template <size_t n, size_t m>
-void Matrix<n, m>::toIdentity()
-{
-    if (n != m) // should be part of squared
-        return;
-    this->clear();
-    for (size_t i = 0; i != n; ++i)
-        (*this)(i, i) = 1;
-}
-
-template <size_t n, size_t m>
-bool Matrix<n, m>::getInverse(Matrix<m, n> &invertedMatrix) const
-{
-    if (n != m) // should be part of squared
-        return false;
-
-    // SHOULD CHECK IF MATRIX IS SINGULAR
-
-    if (n == 1)
-    {
-        invertedMatrix(0, 0) = 1.0 / (*this)(0, 0);
-        return true;
-    }
-
-    /// future inverted matrix should start from identity
-    invertedMatrix.toIdentity();
-
-    /// create auxiliary matrix
-    Matrix<n, m> A = *this;
-
-    size_t row = 0;
-    while (row != n) {
-        /// find first non-zero element
-        size_t currentRow = row;
-        while (A(currentRow, row) == 0 && currentRow < n)
-            ++currentRow;
-        if (currentRow == n)
-            return false; /// matrix is singular
-
-        /// swap rows if needed
-        if (currentRow != row)
-        {
-            for (size_t i = row; i != n; ++i)
-                std::swap(A(row, i), A(currentRow, i));
-        }
-
-        /// divide first row on first element
-        double firstInv = 1.0 / A(row, row);
-        A(row, row) = 1.0;
-        invertedMatrix(row, row) = firstInv;
-        for (size_t i = row + 1; i != n; ++i) {
-            A(row, i) *= firstInv;
-        }
-        for (size_t i = 0; i != row; ++i) {
-            invertedMatrix(row, i) *= firstInv;
-        }
-
-        /// subtract first row from others
-        for (size_t i = row + 1; i != n; ++i) {
-            double firstElement = A(i, row);
-
-            for (size_t j = 0; j != n; ++j) {
-                invertedMatrix(i, j) -= firstElement * invertedMatrix(row, j);
-            }
-
-            A(i, row) = 0.0;
-            for (size_t j = row + 1; j != n; ++j) {
-                A(i, j) -= firstElement * A(row, j);
-            }
-        }
-
-        ++row;
-    }
-
-    /// go back
-    row = n - 2;
-    do {
-        for (size_t i = row + 1; i != n; ++i) {
-            double coef = A(row, i);
-            for (size_t j = 0; j != n; ++j)
-                invertedMatrix(row, j) -= invertedMatrix(i, j) * coef;
-        }
-    } while ((row--) != 0);
-
-    return true;
-}
-
 
 /// define Matrix(N, M + [1, 10])
 #define DEFINE_VECTOR_DECADE(N, M) \
