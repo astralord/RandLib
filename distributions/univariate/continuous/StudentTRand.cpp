@@ -2,14 +2,20 @@
 #include "NormalRand.h"
 #include "CauchyRand.h"
 
-StudentTRand::StudentTRand(int degree)
+StudentTRand::StudentTRand(int degree, double location, double scale)
 {
     setDegree(degree);
+    setLocation(location);
+    setScale(scale);
 }
 
 std::string StudentTRand::name()
 {
-    return "Student's t(" + toStringWithPrecision(getDegree()) + ")";
+    if (mu == 0.0 && sigma == 1.0)
+        return "Student's t(" + toStringWithPrecision(getDegree()) + ")";
+    return "Student's t(" + toStringWithPrecision(getDegree()) + ", "
+                          + toStringWithPrecision(getLocation()) + ", "
+                          + toStringWithPrecision(getScale()) + ")";
 }
 
 void StudentTRand::setDegree(int degree)
@@ -23,15 +29,35 @@ void StudentTRand::setDegree(int degree)
     pdfCoef -= Y.getLogGammaFunction();
 }
 
+void StudentTRand::setLocation(double location)
+{
+    mu = location;
+}
+
+void StudentTRand::setScale(double scale)
+{
+    sigma = scale;
+    if (sigma <= 0)
+        sigma = 1.0;
+}
+
 double StudentTRand::f(double x) const
 {
+    ///adjust
+    x -= mu;
+    x /= sigma;
+
     double y = 1 + x * x / v;
     y = -vp1Half * std::log(y);
-    return std::exp(pdfCoef + y);
+    return std::exp(pdfCoef + y) / sigma;
 }
 
 double StudentTRand::F(double x) const
 {
+    ///adjust
+    x -= mu;
+    x /= sigma;
+
     if (v == 1)
         return 0.5 + std::atan(x) * M_1_PI;
     if (v == 2)
@@ -48,8 +74,8 @@ double StudentTRand::variate() const
 {
     //v = inf -> normal
     if (v == 1)
-        return CauchyRand::standardVariate();
-    return NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
+        return CauchyRand::variate(mu, sigma);
+    return mu + sigma * NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
 }
 
 void StudentTRand::sample(std::vector<double> &outputData) const
@@ -57,23 +83,23 @@ void StudentTRand::sample(std::vector<double> &outputData) const
     //v = inf -> normal
     if (v == 1) {
         for (double &var : outputData)
-            var = CauchyRand::standardVariate();
+            var = CauchyRand::variate(mu, sigma);
     }
     else {
         for (double &var : outputData)
-            var = NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
+            var = mu + sigma * NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
     }
 }
 
 double StudentTRand::Mean() const
 {
-    return (v > 1) ? 0 : NAN;
+    return (v > 1) ? mu : NAN;
 }
 
 double StudentTRand::Variance() const
 {
     if (v > 2)
-        return v / (v - 2);
+        return sigma * sigma * v / (v - 2);
     return (v > 1) ? INFINITY : NAN;
 }
 
@@ -88,27 +114,27 @@ double StudentTRand::Quantile(double p) const
 
     double temp = p - 0.5;
     if (v == 1)
-        return std::tan(M_PI * temp);
+        return (std::tan(M_PI * temp) - mu) / sigma;
     double alpha = 4 * p * (1.0 - p);
     if (v == 2)
-        return 2.0 * temp * std::sqrt(2.0 / alpha);
+        return (2.0 * temp * std::sqrt(2.0 / alpha) - mu) / sigma;
     if (v == 4)
     {
         double sqrtAlpha = std::sqrt(alpha);
         double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
-        return 2 * RandMath::sign(temp) * std::sqrt(q - 1);
+        return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
     }
     return ContinuousDistribution::Quantile(p);
 }
 
 double StudentTRand::Median() const
 {
-    return 0.0;
+    return mu;
 }
 
 double StudentTRand::Mode() const
 {
-    return 0.0;
+    return mu;
 }
 
 double StudentTRand::Skewness() const

@@ -11,16 +11,21 @@
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
     int v;
+    double mu, sigma;
     ChiSquaredRand Y;
     double pdfCoef;
     double vp1Half; /// 0.5 * (v + 1)
 
 public:
-    explicit StudentTRand(int degree);
+    explicit StudentTRand(int degree, double location = 0.0, double scale = 1.0);
     std::string name() override;
 
     void setDegree(int degree);
+    void setLocation(double location);
+    void setScale(double scale);
     inline int getDegree() const { return v; }
+    inline double getLocation() const { return mu; }
+    inline double getScale() const { return sigma; }
 
     double f(double x) const override;
     double F(double x) const override;

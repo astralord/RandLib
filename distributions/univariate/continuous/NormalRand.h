@@ -56,7 +56,7 @@ public:
     bool fitVarianceMLE(const std::vector<double> &sample);
     bool fitMeanAndVarianceMLE(const std::vector<double> &sample);
 
-    /// Method of moments
+    /// Method of moments (actually, the same as MLE)
     bool fitMeanMM(const std::vector<double> &sample);
     bool fitVarianceMM(const std::vector<double> &sample);
     bool fitMeanAndVarianceMM(const std::vector<double> &sample);

@@ -1,4 +1,5 @@
 #include "NormalInverseGammaRand.h"
+#include "../univariate/continuous/StudentTRand.h"
 #include "../univariate/continuous/NormalRand.h"
 
 NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision, double shape, double rate)
@@ -84,7 +85,7 @@ DoublePair NormalInverseGammaRand::Mean() const
     return mean;
 }
 
-bool NormalInverseGammaRand::Covariance(SquareMatrix<2> &matrix) const
+void NormalInverseGammaRand::Covariance(SquareMatrix<2> &matrix) const
 {
     double alpha = Y.getShape();
     double beta = Y.getRate();
@@ -96,6 +97,22 @@ bool NormalInverseGammaRand::Covariance(SquareMatrix<2> &matrix) const
         matrix(0, 0) = alpha * alpha * lambda / (beta * (alpha - 1));
     matrix(0, 1) = matrix(1, 0) = 0;
     matrix(1, 1) = Y.Variance();
-    return true;
+}
+
+double NormalInverseGammaRand::Correlation() const
+{
+    return 0.0;
+}
+
+void NormalInverseGammaRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
+{
+    double alpha = Y.getShape(), beta = Y.getRate();
+    StudentTRand X(2 * Y.getShape(), mu, std::sqrt(alpha * lambda / beta));
+    distribution = X;
+}
+
+void NormalInverseGammaRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
+{
+    distribution = Y;
 }
 
