@@ -2,6 +2,7 @@
 #define BIVARIATEPROBABILITYDISTRIBUTION_H
 
 #include "../ProbabilityDistribution.h"
+#include "../univariate/UnivariateProbabilityDistribution.h"
 #include "../../math/SquareMatrix.h"
 
 /**
@@ -19,8 +20,8 @@ public:
 
     virtual double Correlation() const = 0;
 
-    virtual void getFirstMarginalDistribution(ProbabilityDistribution<double> &distribution) const = 0;
-    virtual void getSecondMarginalDistribution(ProbabilityDistribution<double> &distribution) const = 0;
+    virtual void getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const = 0;
+    virtual void getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const = 0;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H

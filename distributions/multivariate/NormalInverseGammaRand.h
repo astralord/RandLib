@@ -31,8 +31,8 @@ public:
     void Covariance(SquareMatrix<2> &matrix) const override;
     double Correlation() const override;
 
-    void getFirstMarginalDistribution(ProbabilityDistribution<double> &distribution) const;
-    void getSecondMarginalDistribution(ProbabilityDistribution<double> &distribution) const;
+    void getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const;
+    void getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

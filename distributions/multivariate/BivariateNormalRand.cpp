@@ -52,7 +52,7 @@ void BivariateNormalRand::setScale(double scale1, double scale2, double correlat
     Y.setScale(sigma2);
 
     ro = correlation;
-    if (ro < 0 || ro > 1)
+    if (ro < 0 || ro >= 1) // we don't accept ro = 1 for now (because of pdf)
         ro = 0.0;
 
     sqrt1mroSq = std::sqrt(1.0 - ro * ro);
@@ -66,6 +66,10 @@ void BivariateNormalRand::setScale(SquareMatrix<2> rootCovariance)
 
 double BivariateNormalRand::f(DoublePair point) const
 {
+    if (ro == 0.0)
+        return X.f(point.first) * Y.f(point.second);
+    if (ro == 1.0)
+        return NAN; // TODO!!!
     double xAdj = (point.first - mu1) / sigma1, yAdj = (point.second - mu2) / sigma2;
     double z = xAdj * xAdj - 2 * ro * xAdj * yAdj + yAdj * yAdj;
     return pdfCoef * std::exp(-0.5 * z / (1 - ro * ro));
@@ -79,13 +83,11 @@ double BivariateNormalRand::F(DoublePair point) const
     }
     if (std::fabs(ro) == 1.0)
     {
-        double secondPoint = (point.second - mu2 + mu1) * sigma1 / sigma2;
-        if (ro == -1.0)
-            secondPoint = -secondPoint;
+        double secondPoint = ro * (point.second - mu2) * sigma1 / sigma2 + mu1;
         return X.F(std::min(point.first, secondPoint));
     }
-    // TODO:
-    return point.first;
+    // TODO!!
+    return NAN;
 }
 
 DoublePair BivariateNormalRand::variate() const
@@ -114,32 +116,12 @@ double BivariateNormalRand::Correlation() const
     return ro;
 }
 
-void BivariateNormalRand::getFirstConditionalDistribution(NormalRand &distribution, double y)
-{
-    double mean = y - mu2;
-    mean /= sigma2;
-    mean *= sigma1 * ro;
-    mean += mu1;
-    distribution.setLocation(mean);
-    distribution.setScale(sigma1 * sqrt1mroSq);
-}
-
-void BivariateNormalRand::getSecondConditionalDistribution(NormalRand &distribution, double x)
-{
-    double mean = x - mu1;
-    mean /= sigma1;
-    mean *= sigma2 * ro;
-    mean += mu2;
-    distribution.setLocation(mean);
-    distribution.setScale(sigma2 * sqrt1mroSq);
-}
-
-void BivariateNormalRand::getFirstMarginalDistribution(ProbabilityDistribution<double> &distribution) const
+void BivariateNormalRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
 {
     distribution = X;
 }
 
-void BivariateNormalRand::getSecondMarginalDistribution(ProbabilityDistribution<double> &distribution) const
+void BivariateNormalRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
 {
     distribution = Y;
 }
