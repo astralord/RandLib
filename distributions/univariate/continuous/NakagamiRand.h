@@ -26,7 +26,6 @@ public:
     double variate() const override;
     void sample(std::vector<double> &outputData) const override;
 
-public:
     double Mean() const override;
     double Variance() const override;
 
@@ -41,7 +40,7 @@ class RANDLIBSHARED_EXPORT ChiRand : public NakagamiRand
 {
 protected:
     double sigma;
-    double sigmaSqInv; // 1.0 / sigma^2
+    double sigmaSqInv; /// 1.0 / sigma^2
 
 public:
     explicit ChiRand(int degree, double scale = 1.0);

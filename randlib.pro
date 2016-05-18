@@ -67,7 +67,8 @@ SOURCES += \
     distributions/univariate/continuous/LogCauchyRand.cpp \
     distributions/univariate/continuous/LimitingDistribution.cpp \
     distributions/multivariate/BivariateNormalRand.cpp \
-    math/SquareMatrix.cpp
+    math/SquareMatrix.cpp \
+    distributions/univariate/continuous/NoncentralChiSquared.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -132,7 +133,8 @@ HEADERS +=\
     distributions/RandLib.h \
     distributions/univariate/continuous/LimitingDistribution.h \
     distributions/multivariate/BivariateNormalRand.h \
-    math/SquareMatrix.h
+    math/SquareMatrix.h \
+    distributions/univariate/continuous/NoncentralChiSquared.h
 
 unix {
     target.path = /usr/lib

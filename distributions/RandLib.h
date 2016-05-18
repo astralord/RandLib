@@ -42,6 +42,7 @@
 #include "univariate/continuous/LogisticRand.h"
 #include "univariate/continuous/LogNormalRand.h"
 #include "univariate/continuous/NakagamiRand.h"
+#include "univariate/continuous/NoncentralChiSquared.h"
 #include "univariate/continuous/NormalRand.h"
 #include "univariate/continuous/ParetoRand.h"
 #include "univariate/continuous/PlanckRand.h"
