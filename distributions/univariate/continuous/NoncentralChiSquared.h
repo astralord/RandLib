@@ -4,6 +4,7 @@
 #include "ContinuousDistribution.h"
 #include "GammaRand.h"
 #include "NormalRand.h"
+#include "../discrete/PoissonRand.h"
 
 /**
  * @brief The NoncentralChiSquared class
@@ -14,12 +15,13 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
     double sqrtLambda;
 
     ChiSquaredRand X;
+    PoissonRand Y;
 
 public:
-    explicit NoncentralChiSquared(int degree = 1, double noncentrality = 0);
+    explicit NoncentralChiSquared(double degree = 1, double noncentrality = 0);
     std::string name() override;
 
-    void setParameters(int degree, double noncentrality);
+    void setParameters(double degree, double noncentrality);
     inline double getDegree() const { return k; }
     inline double getNoncentrality() const { return lambda; }
 

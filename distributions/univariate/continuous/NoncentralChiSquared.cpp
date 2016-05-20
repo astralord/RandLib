@@ -1,6 +1,6 @@
 #include "NoncentralChiSquared.h"
 
-NoncentralChiSquared::NoncentralChiSquared(int degree, double noncentrality)
+NoncentralChiSquared::NoncentralChiSquared(double degree, double noncentrality)
 {
     setParameters(degree, noncentrality);
 }
@@ -11,19 +11,32 @@ std::string NoncentralChiSquared::name()
             + toStringWithPrecision(getNoncentrality()) + ")";
 }
 
-void NoncentralChiSquared::setParameters(int degree, double noncentrality)
+void NoncentralChiSquared::setParameters(double degree, double noncentrality)
 {
-    k = std::max(degree, 1);
-    X.setDegree(k - 1);
+    k = degree;
+    if (k <= 0)
+        k = 1;
 
     lambda = std::max(noncentrality, 0.0);
     sqrtLambda = std::sqrt(lambda);
+
+    if (RandMath::areClose(k, std::round(k))) {
+        X.setDegree(k - 1);
+    }
+    else {
+        X.setDegree(k);
+        Y.setRate(0.5 * lambda);
+    }
 }
 
 double NoncentralChiSquared::f(double x) const
 {
-    // TODO:
-    return x + NAN;
+    if (x < 0)
+        return 0.0;
+    double halfkm1 = 0.5 * k - 1;
+    double y = RandMath::modifiedBesselFirstKind(std::sqrt(lambda * x), halfkm1);
+    y *= std::pow(x / lambda, 0.5 * halfkm1);
+    return 0.5 * y * std::exp(-0.5 * (x + lambda));
 }
 
 double NoncentralChiSquared::F(double x) const

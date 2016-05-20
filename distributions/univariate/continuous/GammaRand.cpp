@@ -10,7 +10,7 @@ GammaRand::GammaRand(double shape, double rate)
 
 std::string GammaRand::name()
 {
-    return "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }
 
 void GammaRand::setConstantsForGenerator()

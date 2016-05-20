@@ -658,7 +658,7 @@ double RandMath::harmonicNumber(double exponent, int number)
     return res;
 }
 
-double RandMath::modifiedBesselFirstKind(double x, int n)
+double RandMath::modifiedBesselFirstKind(double x, double n)
 {
     if (n < 0)
         n = -n;
@@ -686,7 +686,10 @@ double RandMath::modifiedBesselFirstKind(double x, int n)
             ++i;
             sum += addon;
         }
-        return sum * std::pow(halfX, n) / RandMath::factorial(n);
+        double y = std::log(sum);
+        y += n * std::log(halfX);
+        y -= std::lgamma(n + 1);
+        return std::exp(y);
     }
 
     // large x - divergent sequence!!

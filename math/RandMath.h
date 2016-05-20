@@ -356,7 +356,7 @@ public:
      * @param n
      * @return I_n(x)
      */
-    static double modifiedBesselFirstKind(double x, int n);
+    static double modifiedBesselFirstKind(double x, double n);
 
     /**
      * @brief BernoulliNumber
