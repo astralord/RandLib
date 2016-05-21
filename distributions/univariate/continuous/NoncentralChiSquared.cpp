@@ -21,10 +21,10 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
     sqrtLambda = std::sqrt(lambda);
 
     if (RandMath::areClose(k, std::round(k))) {
-        X.setDegree(k - 1);
+        X.setParameters(0.5 * (k - 1), 0.5);
     }
     else {
-        X.setDegree(k);
+        X.setParameters(0.5 * k, 0.5);
         Y.setRate(0.5 * lambda);
     }
 }
@@ -45,18 +45,46 @@ double NoncentralChiSquared::F(double x) const
     return x + NAN;
 }
 
-double NoncentralChiSquared::variate() const
+double NoncentralChiSquared::variateForDegreeEqualOne() const
 {
     double y = sqrtLambda + NormalRand::standardVariate();
-    return y * y + X.variate();
+    return y * y;
+}
+
+double NoncentralChiSquared::variateForIntegerDegree() const
+{
+    return variateForDegreeEqualOne() + X.variate();
+}
+
+double NoncentralChiSquared::variateForRealDegree() const
+{
+    return X.variate() + 2 * GammaRand::standardVariate(Y.variate());
+}
+
+double NoncentralChiSquared::variate() const
+{
+    if (RandMath::areClose(std::round(k), k))
+        return (k == 1) ? variateForDegreeEqualOne() : variateForIntegerDegree();
+    return variateForRealDegree();
 }
 
 void NoncentralChiSquared::sample(std::vector<double> &outputData) const
 {
-    X.sample(outputData);
-    for (double & var : outputData) {
-        double y = sqrtLambda + NormalRand::standardVariate();
-        var += y * y;
+    if (RandMath::areClose(std::round(k), k))
+    {
+        if (k != 1)
+            X.sample(outputData);
+        else
+            std::fill(outputData.begin(), outputData.end(), 0.0);
+        for (double & var : outputData) {
+            var += variateForDegreeEqualOne();
+        }
+    }
+    else
+    {
+        X.sample(outputData);
+        for (double & var : outputData)
+            var += GammaRand::variate(Y.variate(), 0.5);
     }
 }
 

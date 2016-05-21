@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
     double k, lambda;
     double sqrtLambda;
 
-    ChiSquaredRand X;
+    GammaRand X;
     PoissonRand Y;
 
 public:
@@ -27,6 +27,13 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
+
+private:
+    double variateForDegreeEqualOne() const;
+    double variateForIntegerDegree() const;
+    double variateForRealDegree() const;
+
+public:
     double variate() const override;
     void sample(std::vector<double> &outputData) const override;
 

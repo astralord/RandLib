@@ -16,12 +16,14 @@ std::string GammaRand::name()
 void GammaRand::setConstantsForGenerator()
 {
     m = alpha - 1;
-    s_2 = std::sqrt(8.0 * alpha / 3) + alpha;
+    static constexpr double M_SQRT8_3 = 1.63299316185545206546;
+    double sqrtAlpha = std::sqrt(alpha);
+    s_2 = M_SQRT8_3 * sqrtAlpha + alpha;
     s = std::sqrt(s_2);
     d = M_SQRT2 * M_SQRT3 * s_2;
     b = d + m;
     w = s_2 / (m - 1);
-    v = (s_2 + s_2) / (m * std::sqrt(alpha));
+    v = (s_2 + s_2) / (m * sqrtAlpha);
     c = b + std::log(s * d / b) - m - m - 3.7203285;
 }
 
@@ -30,7 +32,6 @@ void GammaRand::setParameters(double shape, double rate)
     alpha = shape;
     if (alpha <= 0)
         alpha = 1.0;
-    alphaInv = 1.0 / alpha;
     
     beta = rate;
     if (beta <= 0)
@@ -39,7 +40,6 @@ void GammaRand::setParameters(double shape, double rate)
 
     cdfCoef = -std::lgamma(alpha);
     pdfCoef = cdfCoef + alpha * std::log(beta);
-    variateCoef = alphaInv + M_1_E;
 
     if (alpha > 3)
         setConstantsForGenerator();
@@ -63,55 +63,58 @@ double GammaRand::F(double x) const
     return std::exp(y);
 }
 
-double GammaRand::variateForIntegerShape() const
+double GammaRand::variateForIntegerShape(int shape)
 {
     double rv = 0;
-    for (int i = 0; i < alpha; ++i)
+    for (int i = 0; i < shape; ++i)
         rv += ExponentialRand::standardVariate();
     return rv;
 }
 
-double GammaRand::variateForHalfIntegerShape() const
+double GammaRand::variateForHalfIntegerShape(int shape)
 {
     double rv = 0;
-    for (int i = 0; i < alpha - 1; ++i)
+    for (int i = 0; i < shape; ++i)
         rv += ExponentialRand::standardVariate();
     double N = NormalRand::standardVariate();
     return rv + .5 * N * N;
 }
 
-double GammaRand::variateForSmallShape() const
+double GammaRand::variateForSmallShape(double shape)
 {
     double rv = 0;
     int iter = 0;
+    double shapeInv = 1.0 / shape;
+    double t = shapeInv + M_1_E;
     do {
         double U = UniformRand::standardVariate();
-        double p = alpha * variateCoef * U;
+        double p = shape * t * U;
         double W = ExponentialRand::standardVariate();
         if (p <= 1)
         {
-            rv = std::pow(p, alphaInv);
+            rv = std::pow(p, shapeInv);
             if (rv <= W)
                 return rv;
         }
         else
         {
-            rv = -std::log(variateCoef * (1 - U));
-            if ((1 - alpha) * std::log(rv) <= W)
+            rv = -std::log(t * (1 - U));
+            if ((1 - shape) * std::log(rv) <= W)
                 return rv;
         }
     } while (++iter < 1e9); /// one billion should be enough
     return NAN; /// shouldn't end up here
 }
 
-double GammaRand::variateForMediumShape() const
+double GammaRand::variateForMediumShape(double shape)
 {
     double W1, W2;
+    double shapem1 = shape - 1;
     do {
         W1 = ExponentialRand::standardVariate();
         W2 = ExponentialRand::standardVariate();
-    } while (W2 < (alpha - 1) * (W1 - std::log(W1) - 1));
-    return alpha * W1;
+    } while (W2 < shapem1 * (W1 - std::log(W1) - 1));
+    return shape * W1;
 }
 
 double GammaRand::variateForLargeShape() const
@@ -151,18 +154,61 @@ double GammaRand::variateForLargeShape() const
     } while (++iter < 1e9); /// one billion should be enough
     return NAN; /// shouldn't end up here
 }
+
+double GammaRand::variateForLargeShape(double shape)
+{
+    double d = shape - 1.0 / 3;
+    double c = std::sqrt(9 * d);
+    int iter = 0;
+    do {
+        double N;
+        do {
+            N = NormalRand::standardVariate();
+        } while (N <= -c);
+        double v = 1 + N / c;
+        v = v * v * v;
+        N *= N;
+        double U = UniformRand::standardVariate();
+        if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
+            return d * v;
+        }
+    } while (++iter < 1e9); /// one billion should be enough
+    return NAN; /// shouldn't end up here
+}
+
+double GammaRand::standardVariate(double shape)
+{
+    if (shape < 5) {
+        double shapeRound = std::round(shape);
+        if (RandMath::areClose(shape, shapeRound))
+            return variateForIntegerShape(shapeRound);
+        if (RandMath::areClose(shape - 0.5, shapeRound))
+            return variateForHalfIntegerShape(shapeRound);
+        if (shape <= 1)
+            return variateForSmallShape(shape);
+        if (shape <= 3)
+            return variateForMediumShape(shape);
+    }
+    return variateForLargeShape(shape);
+}
+
+double GammaRand::variate(double shape, double rate)
+{
+    return standardVariate(shape) / rate;
+}
+
 double GammaRand::variate() const
 {
     if (alpha < 5) {
         double alphaRound = std::round(alpha);
         if (RandMath::areClose(alpha, alphaRound))
-            return theta * variateForIntegerShape();
+            return theta * variateForIntegerShape(alphaRound);
         if (RandMath::areClose(alpha - 0.5, alphaRound))
-            return theta * variateForIntegerShape();
+            return theta * variateForHalfIntegerShape(alphaRound);
         if (alpha <= 1)
-            return theta * variateForSmallShape();
+            return theta * variateForSmallShape(alpha);
         if (alpha <= 3)
-            return theta * variateForMediumShape();
+            return theta * variateForMediumShape(alpha);
     }
     return theta * variateForLargeShape();
 }
@@ -173,22 +219,22 @@ void GammaRand::sample(std::vector<double> &outputData) const
         double alphaRound = std::round(alpha);
         if (RandMath::areClose(alpha, alphaRound)) {
             for (double &var : outputData)
-                var = theta * variateForIntegerShape();
+                var = theta * variateForIntegerShape(alphaRound);
             return;
         }
         if (RandMath::areClose(alpha - 0.5, alphaRound)) {
             for (double &var : outputData)
-                var = theta * variateForHalfIntegerShape();
+                var = theta * variateForHalfIntegerShape(alphaRound);
             return;
         }
         if (alpha <= 1) {
             for (double &var : outputData)
-                var = theta * variateForSmallShape();
+                var = theta * variateForSmallShape(alpha);
             return;
         }
         if (alpha <= 3) {
             for (double &var : outputData)
-                var = theta * variateForMediumShape();
+                var = theta * variateForMediumShape(alpha);
             return;
         }
     }
@@ -224,7 +270,7 @@ double GammaRand::Skewness() const
 
 double GammaRand::ExcessKurtosis() const
 {
-    return 6.0 * alphaInv;
+    return 6.0 / alpha;
 }
 
 bool GammaRand::checkValidity(const std::vector<double> &sample)

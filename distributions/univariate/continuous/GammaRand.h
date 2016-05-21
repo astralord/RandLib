@@ -12,8 +12,6 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
 protected:
     double alpha, theta, beta;
-    double alphaInv; /// 1.0 / alpha
-    double variateCoef; /// (e + alpha) / (alpha * e)
     double cdfCoef; /// -lgamma(alpha)
     double pdfCoef; ///  -lgamma(alpha) - alpha * log(theta)
 
@@ -35,14 +33,18 @@ public:
     double F(double x) const override;
     
 private:
-    double variateForIntegerShape() const;     /// Erlang distribution (use for k < 5)
-    double variateForHalfIntegerShape() const; /// GA algorithm for k = [n] + 0.5 and k < 5
-    double variateForSmallShape() const;       /// GS algorithm for small k < 1
-    double variateForMediumShape() const;      /// GP algorithm for 1 < k < 3
-    double variateForLargeShape() const;       /// GO algorithm for the most common case k > 3
+    static double variateForIntegerShape(int shape);     /// Erlang distribution (use for k < 5)
+    static double variateForHalfIntegerShape(int shape); /// GA algorithm for k = [n] + 0.5 and k < 5
+    static double variateForSmallShape(double shape);    /// GS algorithm for small k < 1
+    static double variateForMediumShape(double shape);   /// GP algorithm for 1 < k < 3
+    double variateForLargeShape() const;                 /// GO algorithm for the most common case k > 3
+    static double variateForLargeShape(double shape);
     
 public:
-    double variate() const override;
+    static double standardVariate(double shape);
+    static double variate(double shape, double rate);
+
+    double variate() const override; 
     void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
