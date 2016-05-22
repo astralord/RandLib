@@ -40,8 +40,15 @@ double NoncentralChiSquared::f(double x) const
 
 double NoncentralChiSquared::F(double x) const
 {
-    // TODO:
-    return x + NAN;
+    if (x <= 0)
+        return 0.0;
+    return RandMath::integral([this] (double t)
+    {
+        double y = f(t);
+        if (std::isnan(y) || std::isinf(y))
+            return 0.0;
+        return y;
+    }, 0, x);
 }
 
 double NoncentralChiSquared::variateForDegreeEqualOne() const

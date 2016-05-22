@@ -97,7 +97,7 @@ Continuous distributions:
 |     Logistic     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Maxwell-Boltzmann     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Nakagami     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
-|     Non-central chi-squared | :x: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
+|     Non-central chi-squared | :warning: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Normal     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:white_check_mark:|
 |     Pareto     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
 |     Planck     | :white_check_mark: | :white_check_mark: | :white_check_mark: |:x:|
