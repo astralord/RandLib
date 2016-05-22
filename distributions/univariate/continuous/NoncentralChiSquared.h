@@ -4,6 +4,7 @@
 #include "ContinuousDistribution.h"
 #include "GammaRand.h"
 #include "NormalRand.h"
+#include "../discrete/PoissonRand.h"
 
 /**
  * @brief The NoncentralChiSquared class
@@ -14,6 +15,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
     double sqrtLambda;
 
     GammaRand X;
+    PoissonRand Y;
 
 public:
     explicit NoncentralChiSquared(double degree = 1, double noncentrality = 0);

@@ -660,9 +660,6 @@ double RandMath::harmonicNumber(double exponent, int number)
 
 double RandMath::modifiedBesselFirstKind(double x, double n)
 {
-    if (n < 0)
-        n = -n;
-
     /// small x
     if (x < 10)
     {

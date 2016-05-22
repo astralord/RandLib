@@ -83,7 +83,7 @@ double ContinuousDistribution::Median() const
 
 double ContinuousDistribution::Mode() const
 {
-    /// use only for unimodal distributions!
+    // use only for unimodal distributions!
 
     double mu = Mean(); /// good starting point
     if (std::isnan(mu) || std::isinf(mu))

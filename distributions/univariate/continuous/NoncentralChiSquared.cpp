@@ -20,7 +20,12 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
     lambda = std::max(noncentrality, 0.0);
     sqrtLambda = std::sqrt(lambda);
 
-    X.setParameters(0.5 * (k - 1), 0.5);
+    if (k > 1)
+        X.setParameters(0.5 * (k - 1), 0.5);
+    else {
+        X.setParameters(0.5 * k, 0.5);
+        Y.setRate(0.5 * lambda);
+    }
 }
 
 double NoncentralChiSquared::f(double x) const
@@ -57,8 +62,16 @@ void NoncentralChiSquared::sample(std::vector<double> &outputData) const
         X.sample(outputData);
     else
         std::fill(outputData.begin(), outputData.end(), 0.0);
-    for (double & var : outputData)
-        var += variateForDegreeEqualOne();
+    if (k >= 1)
+    {
+        for (double & var : outputData)
+            var += variateForDegreeEqualOne();
+    }
+    else
+    {
+        for (double & var : outputData)
+            var += GammaRand::variate(Y.variate(), 0.5);
+    }
 }
 
 double NoncentralChiSquared::Mean() const
