@@ -22,9 +22,10 @@ void PlanckRand::setParameters(double shape, double scale)
     Z.setExponent(a + 1);
     G.setParameters(a + 1, 1.0);
 
-    pdfCoef = Z.getInverseZetaFunction();
-    pdfCoef *= std::pow(b, a + 1);
-    pdfCoef /= std::tgamma(a + 1);
+    pdfCoef = std::log(Z.getInverseZetaFunction());
+    pdfCoef += (a + 1) * std::log(b);
+    pdfCoef -= std::lgamma(a + 1);
+    pdfCoef = std::exp(pdfCoef);
 }
 
 double PlanckRand::f(double x) const
@@ -54,14 +55,34 @@ double PlanckRand::variate() const
 
 double PlanckRand::Mean() const
 {
-    //TODO:
-    return NAN;
+    double mode = a / b, x = mode;
+    do {
+        x += mode;
+    } while (f(x) > 1e-10);
+    return RandMath::integral([this] (double t)
+    {
+        return t * f(t);
+    },
+    0, x);
 }
 
 double PlanckRand::Variance() const
 {
-    //TODO:
-    return NAN;
+    double mode = a / b, x = mode;
+    do {
+        x += mode;
+    } while (f(x) > 1e-10);
+    double mean = RandMath::integral([this] (double t)
+    {
+        return t * f(t);
+    },
+    0, x);
+    double secondMoment = RandMath::integral([this] (double t)
+    {
+        return t * t * f(t);
+    },
+    0, x);
+    return secondMoment - mean * mean;
 }
 
 double PlanckRand::Mode() const
