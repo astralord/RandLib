@@ -383,6 +383,8 @@ long double RandMath::integral(const std::function<double (double)> &funPtr,
 {
     if (a > b)
         std::swap(a, b);
+    if (a == b)
+        return 0.0;
     double c = .5 * (a + b), h = (b - a) / 6.0;
     double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);
     double S = h * (fa + 4 * fc + fb);

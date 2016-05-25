@@ -43,7 +43,7 @@ void StudentTRand::setScale(double scale)
 
 double StudentTRand::f(double x) const
 {
-    ///adjust
+    /// adjustment
     x -= mu;
     x /= sigma;
 
@@ -54,20 +54,26 @@ double StudentTRand::f(double x) const
 
 double StudentTRand::F(double x) const
 {
-    ///adjust
-    x -= mu;
-    x /= sigma;
-
     if (v == 1)
-        return 0.5 + std::atan(x) * M_1_PI;
-    if (v == 2)
+        return 0.5 + std::atan((x - mu) / sigma) * M_1_PI;
+    if (v == 2) {
+        x -= mu;
+        x /= sigma;
         return 0.5 * (1.0 + x / std::sqrt(2 + x * x));
-    double absY = RandMath::integral([this] (double t)
+    }
+
+    if (x < mu) {
+        return 0.5 - RandMath::integral([this] (double t)
+        {
+            return f(t);
+        },
+        x, mu);
+    }
+    return 0.5 + RandMath::integral([this] (double t)
     {
         return f(t);
     },
-    0, std::fabs(x));
-    return (x > 0) ? 0.5 + absY : 0.5 - absY;
+    mu, x);
 }
 
 double StudentTRand::variate() const

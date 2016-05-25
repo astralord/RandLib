@@ -14,13 +14,12 @@ std::string LogCauchyRand::name()
 void LogCauchyRand::setLocation(double location)
 {
     X.setLocation(location);
-    expMu = std::exp(X.Mean());
+    expMu = std::exp(X.getLocation());
 }
 
 void LogCauchyRand::setScale(double scale)
 {
     X.setScale(scale);
-    expVar = std::exp(X.Variance());
 }
 
 double LogCauchyRand::f(double x) const
