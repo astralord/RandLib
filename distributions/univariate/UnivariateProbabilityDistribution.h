@@ -26,6 +26,13 @@ public:
     virtual double Quantile(double p) const = 0;
 
     /**
+     * @brief QuantileFunction
+     * @param p
+     * @return fills vector y with Quantile(p)
+     */
+    void QuantileFunction(const std::vector<double> &p, std::vector<double> &y);
+
+    /**
      * @brief CF
      * @param x
      * @return Characteristic function (inverse Fourier transform of probability function)
@@ -33,11 +40,11 @@ public:
     virtual std::complex<double> CF(double t) const; // = 0
 
     /**
-     * @brief cf
+     * @brief CharacteristicFunction
      * @param x input vector
      * @param y output vector: y = CF(x)
      */
-    void cf(const std::vector<double> &t, std::vector<std::complex<double>> &y) const;
+    void CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double>> &y) const;
 
     /**
      * @brief Hazard

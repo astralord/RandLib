@@ -42,12 +42,16 @@ double NoncentralChiSquared::F(double x) const
 {
     if (x <= 0)
         return 0.0;
+    if (k >= 2) {
+        return RandMath::integral([this] (double t)
+        {
+            return f(t);
+        }, 0, x);
+    }
+
     return RandMath::integral([this] (double t)
     {
-        double y = f(t);
-        if (std::isnan(y) || std::isinf(y))
-            return 0.0;
-        return y;
+        return f(t);
     }, 0, x);
 }
 

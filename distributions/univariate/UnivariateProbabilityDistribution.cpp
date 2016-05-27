@@ -4,13 +4,20 @@ UnivariateProbabilityDistribution::UnivariateProbabilityDistribution()
 {
 }
 
+void UnivariateProbabilityDistribution::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
+{
+    int size = std::min(p.size(), y.size());
+    for (int i = 0; i != size; ++i)
+        y[i] = Quantile(p[i]);
+}
+
 std::complex<double> UnivariateProbabilityDistribution::CF(double t) const
 {
     // TODO:
     return std::complex<double>(t);
 }
 
-void UnivariateProbabilityDistribution::cf(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
+void UnivariateProbabilityDistribution::CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)

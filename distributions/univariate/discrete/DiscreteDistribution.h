@@ -21,12 +21,12 @@ public:
     virtual double P(int x) const = 0;
 
     /**
-     * @brief pmf
+     * @brief ProbabilityMassFunction
      * fill vector y by P(x)
      * @param x
      * @param y
      */
-    void pmf(const std::vector<int> &x, std::vector<double> &y) const;
+    void ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const;
 
     double Quantile(double probability) const override;
 

@@ -23,7 +23,7 @@ void ProbabilityDistribution<T>::sample(std::vector<T> &outputData) const
 }
 
 template < typename T >
-void ProbabilityDistribution<T>::cdf(const std::vector<T> &x, std::vector<double> &y) const
+void ProbabilityDistribution<T>::CumulativeDistributionFunction(const std::vector<T> &x, std::vector<double> &y) const
 {
     size_t size = x.size();
     if (size > y.size())

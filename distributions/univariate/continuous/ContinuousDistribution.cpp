@@ -1,6 +1,6 @@
 #include "ContinuousDistribution.h"
 
-void ContinuousDistribution::pdf(const std::vector<double> &x, std::vector<double> &y) const
+void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const
 {
     size_t size = x.size();
     if (size > y.size())

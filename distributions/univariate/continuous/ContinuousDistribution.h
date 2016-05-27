@@ -21,12 +21,12 @@ public:
     virtual double f(double x) const = 0;
 
     /**
-     * @brief pdf
+     * @brief ProbabilityDensityFunction
      * fill vector y by f(x)
      * @param x
      * @param y
      */
-    void pdf(const std::vector<double> &x, std::vector<double> &y) const;
+    void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
     double Quantile(double p) const override;
     double Hazard(double x) const override;

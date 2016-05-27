@@ -1,6 +1,6 @@
 #include "DiscreteDistribution.h"
 
-void DiscreteDistribution::pmf(const std::vector<int> &x, std::vector<double> &y) const
+void DiscreteDistribution::ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const
 {
     size_t size = x.size();
     if (size > y.size())

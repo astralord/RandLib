@@ -50,11 +50,11 @@ public:
     virtual double F(T x) const = 0;
 
     /**
-     * @brief cdf
+     * @brief CumulativeDistributionFunction
      * @param x input vector
      * @param y output vector: y = P(X < x)
      */
-    void cdf(const std::vector<T> &x, std::vector<double> &y) const;
+    void CumulativeDistributionFunction(const std::vector<T> &x, std::vector<double> &y) const;
 
     /**
      * @brief Mean
