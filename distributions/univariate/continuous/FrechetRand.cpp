@@ -58,7 +58,7 @@ double FrechetRand::Mean() const
 {
     if (alpha <= 1.0)
         return INFINITY;
-    return m + std::tgamma(1.0 - alphaInv);
+    return m + s * std::tgamma(1.0 - alphaInv);
 }
 
 double FrechetRand::Variance() const
@@ -67,7 +67,7 @@ double FrechetRand::Variance() const
         return INFINITY;
     double var = std::tgamma(1.0 - alphaInv);
     var *= var;
-    var = std::tgamma(1.0 - alphaInv - alphaInv) - var;
+    var = std::tgamma(1.0 - 2 * alphaInv) - var;
     return s * s * var;
 }
 
@@ -75,11 +75,6 @@ double FrechetRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0)
-        return -INFINITY;
-    if (p == 1)
-        return INFINITY;
-
     double x = -std::log(p);
     x = s / std::pow(x, alphaInv);
     return x + m;

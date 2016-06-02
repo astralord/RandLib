@@ -121,10 +121,6 @@ double ParetoRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 1)
-        return INFINITY;
-    if (p == 0)
-        return -INFINITY;
     return xm / std::pow(1 - p, alphaInv);
 }
 

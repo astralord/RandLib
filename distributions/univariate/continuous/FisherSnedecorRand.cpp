@@ -99,7 +99,7 @@ double FisherSnedecorRand::Variance() const
 
 double FisherSnedecorRand::Quantile(double p) const
 {
-    return B.Quantile(p * d2_d1);
+    return d2_d1 * B.Quantile(p);
 }
 
 double FisherSnedecorRand::Median() const

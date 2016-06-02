@@ -70,8 +70,6 @@ double UniformRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0)
-        return -INFINITY;
     return a + bma * p;
 }
 

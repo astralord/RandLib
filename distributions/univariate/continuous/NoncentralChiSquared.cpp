@@ -49,10 +49,13 @@ double NoncentralChiSquared::F(double x) const
         }, 0, x);
     }
 
+    // TODO: improve
+    if (x <= MIN_POSITIVE)
+        return 0;
     return RandMath::integral([this] (double t)
     {
         return f(t);
-    }, 0, x);
+    }, MIN_POSITIVE, x);
 }
 
 double NoncentralChiSquared::variateForDegreeEqualOne() const
