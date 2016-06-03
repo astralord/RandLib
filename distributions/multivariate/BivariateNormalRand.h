@@ -7,7 +7,7 @@
 /**
  * @brief The BivariateNormalRand class
  */
-class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution
+class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<double, double>
 {
     double mu1, mu2;
     double sigma1, sigma2, ro;
@@ -39,8 +39,8 @@ public:
     void Covariance(SquareMatrix<2> &matrix) const override;
     double Correlation() const override;
 
-    void getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const;
-    void getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const;
+    void getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
+    void getSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
 };
 
 #endif // BIVARIATENORMALRAND_H

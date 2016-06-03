@@ -6,11 +6,18 @@
 /**
  * @brief The UnivariateProbabilityDistribution class
  */
-class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<double>
+template < typename T >
+class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<T>
 {
 public:
     UnivariateProbabilityDistribution();
     virtual ~UnivariateProbabilityDistribution() {}
+
+    /**
+     * @brief Mean
+     * @return Mathematical expectation
+     */
+    virtual double Mean() const = 0;
 
     /**
      * @brief Variance

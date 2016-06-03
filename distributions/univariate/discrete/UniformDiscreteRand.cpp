@@ -30,16 +30,16 @@ double UniformDiscreteRand::P(int k) const
     return nInv;
 }
 
-double UniformDiscreteRand::F(double x) const
+double UniformDiscreteRand::F(int k) const
 {
-    if (x < a)
+    if (k < a)
         return 0.0;
-    if (x > b)
+    if (k > b)
         return 1.0;
-    return (std::floor(x) - a + 1) * nInv;
+    return (k - a + 1) * nInv;
 }
 
-double UniformDiscreteRand::variate() const
+int UniformDiscreteRand::variate() const
 {
     double x = (RandGenerator::variate() % n);
     return a + x;

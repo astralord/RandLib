@@ -16,40 +16,43 @@ void YuleRand::setShape(double shape)
     ro = shape;
     if (ro <= 0)
         ro = 1.0;
-    gamma1pRo = std::tgamma(ro + 1);
+    lgamma1pRo = std::lgamma(ro + 1);
     X.setShape(ro);
 }
 
 double YuleRand::P(int k) const
 {
-    return (k < 1) ? 0 : ro * gamma1pRo * std::tgamma(k) / std::tgamma(k + ro + 1);
-}
-
-double YuleRand::F(double x) const
-{
-    if (x < 1)
+    if (k < 1)
         return 0;
-    double k = std::floor(x);
-    return 1 - k * gamma1pRo * std::tgamma(k) / std::tgamma(k + ro + 1);
+    double y = lgamma1pRo;
+    y += std::lgamma(k);
+    y -= std::lgamma(k + ro + 1);
+    y = std::exp(y);
+    return ro * y;
 }
 
-double YuleRand::variate() const
+double YuleRand::F(int k) const
+{
+    if (k < 1)
+        return 0;
+
+    double y = lgamma1pRo;
+    y += std::lgamma(k);
+    y -= std::lgamma(k + ro + 1);
+    y = std::exp(y);
+    return 1 - k * y;
+}
+
+int YuleRand::variate() const
 {
     double prob = 1.0 / X.variate();
     return GeometricRand::variate(prob) + 1;
 }
 
-double YuleRand::variate(double shape)
+int YuleRand::variate(double shape)
 {
     double prob = 1.0 / ParetoRand::standardVariate(shape);
     return GeometricRand::variate(prob) + 1;
-}
-
-void YuleRand::sample(std::vector<double> &outputData) const
-{
-    X.sample(outputData);
-    for (double & var : outputData)
-        var = GeometricRand::variate(1.0 / var) + 1;
 }
 
 double YuleRand::Mean() const

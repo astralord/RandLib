@@ -1,35 +1,41 @@
 #include "UnivariateProbabilityDistribution.h"
 
-UnivariateProbabilityDistribution::UnivariateProbabilityDistribution()
+template< typename T >
+UnivariateProbabilityDistribution<T>::UnivariateProbabilityDistribution()
 {
 }
 
-void UnivariateProbabilityDistribution::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
+template< typename T >
+void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
 {
     int size = std::min(p.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = Quantile(p[i]);
 }
 
-std::complex<double> UnivariateProbabilityDistribution::CF(double t) const
+template< typename T >
+std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
     // TODO:
     return std::complex<double>(t);
 }
 
-void UnivariateProbabilityDistribution::CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
+template< typename T >
+void UnivariateProbabilityDistribution<T>::CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)
         y[i] = CF(t[i]);
 }
 
-double UnivariateProbabilityDistribution::Median() const
+template< typename T >
+double UnivariateProbabilityDistribution<T>::Median() const
 {
     return Quantile(0.5);
 }
 
-double UnivariateProbabilityDistribution::Skewness() const
+template< typename T >
+double UnivariateProbabilityDistribution<T>::Skewness() const
 {
     double mu = Mean();
     if (std::isnan(mu) || std::isinf(mu))
@@ -48,7 +54,8 @@ double UnivariateProbabilityDistribution::Skewness() const
     return sum / (var * std::sqrt(var));
 }
 
-double UnivariateProbabilityDistribution::ExcessKurtosis() const
+template< typename T >
+double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
 {
     double mu = Mean();
     if (std::isnan(mu) || std::isinf(mu))
@@ -68,7 +75,11 @@ double UnivariateProbabilityDistribution::ExcessKurtosis() const
     return sum / (var * var) - 3;
 }
 
-double UnivariateProbabilityDistribution::Kurtosis() const
+template< typename T >
+double UnivariateProbabilityDistribution<T>::Kurtosis() const
 {
     return ExcessKurtosis() + 3.0;
 }
+
+template class UnivariateProbabilityDistribution<double>;
+template class UnivariateProbabilityDistribution<int>;

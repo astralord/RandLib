@@ -27,31 +27,24 @@ double BetaBinomialRand::P(int k) const
     return RandMath::binomialCoef(n, k) * RandMath::betaFun(k + B.getAlpha(), n - k + B.getBeta()) * B.getInverseBetaFunction();
 }
 
-double BetaBinomialRand::F(double x) const
+double BetaBinomialRand::F(int k) const
 {
-    if (x < 0)
+    if (k < 0)
         return 0.0;
-    if (x >= n)
+    if (k >= n)
         return 1.0;
     double sum = 0.0;
     int i = 0;
     do {
         sum += P(i);
-    } while (++i <= x);
+    } while (++i <= k);
     return sum;
 }
 
-double BetaBinomialRand::variate() const
+int BetaBinomialRand::variate() const
 {
     double p = B.variate();
     return BinomialRand::variate(n, p);
-}
-
-void BetaBinomialRand::sample(std::vector<double> &outputData) const
-{
-    B.sample(outputData);
-    for (double & var : outputData)
-        var = BinomialRand::variate(n, var);
 }
 
 double BetaBinomialRand::Mean() const

@@ -132,10 +132,6 @@ double NormalRand::standardQuantile(double p)
         p = 1.0 - p;
     if (p < 0.0 || p > 1.0)
         return NAN;
-    if (p == 0.0)
-        return -INFINITY;
-    if (p == 1.0)
-        return INFINITY;
     long double t = -std::log(p);
     t = std::sqrt(t + t);
     static constexpr long double c[] = {2.653962002601684482l, 1.561533700212080345l, 0.061146735765196993l};

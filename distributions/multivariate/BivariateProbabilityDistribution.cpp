@@ -1,7 +1,12 @@
 #include "BivariateProbabilityDistribution.h"
 
-BivariateProbabilityDistribution::BivariateProbabilityDistribution()
+template < typename T1, typename T2 >
+BivariateProbabilityDistribution<T1, T2>::BivariateProbabilityDistribution()
 {
 
 }
+
+template class BivariateProbabilityDistribution<double, double>;
+template class BivariateProbabilityDistribution<double, int>;
+template class BivariateProbabilityDistribution<int, int>;
 

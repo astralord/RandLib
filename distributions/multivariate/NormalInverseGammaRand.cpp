@@ -104,14 +104,14 @@ double NormalInverseGammaRand::Correlation() const
     return 0.0;
 }
 
-void NormalInverseGammaRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
+void NormalInverseGammaRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
     double alpha = Y.getShape(), beta = Y.getRate();
     StudentTRand X(2 * Y.getShape(), mu, std::sqrt(alpha * lambda / beta));
     distribution = X;
 }
 
-void NormalInverseGammaRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
+void NormalInverseGammaRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
     distribution = Y;
 }

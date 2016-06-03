@@ -25,13 +25,12 @@ double LogarithmicRand::P(int k) const
     return (k < 1) ? 0 : -logQInv * std::pow(p, k) / k;
 }
 
-double LogarithmicRand::F(double x) const
+double LogarithmicRand::F(int k) const
 {
-    double k = std::floor(x);
     return (k < 1) ? 0 : 1 + logQInv * RandMath::incompleteBetaFun(p, k + 1, 0);
 }
 
-double LogarithmicRand::variate() const
+int LogarithmicRand::variate() const
 {
     /// Kemp's second accelerated generator
     /// p. 548, "Non-Uniform Random Variate Generation" by Luc Devroye

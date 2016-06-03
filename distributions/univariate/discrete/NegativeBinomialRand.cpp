@@ -80,27 +80,27 @@ double NegativeBinomialRand<int>::P(int k) const
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::F(double x) const
+double NegativeBinomialRand<T>::F(int k) const
 {
-    if (x < 0.0)
+    if (k < 0.0)
         return 0.0;
-    return 1.0 - RandMath::regularizedBetaFun(q, std::floor(x) + 1, r);
+    return 1.0 - RandMath::regularizedBetaFun(q, k + 1, r);
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::variateThroughGammaPoisson() const
+int NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 {
     return PoissonRand::variate(Y.variate());
 }
 
 template<>
-double NegativeBinomialRand<double>::variate() const
+int NegativeBinomialRand<double>::variate() const
 {
     return variateThroughGammaPoisson();
 }
 
 template<>
-double NegativeBinomialRand<int>::variateGeometricByTable() const
+int NegativeBinomialRand<int>::variateGeometricByTable() const
 {
     double U = UniformRand::standardVariate();
     /// handle tail by recursion
@@ -114,13 +114,13 @@ double NegativeBinomialRand<int>::variateGeometricByTable() const
 }
 
 template<>
-double NegativeBinomialRand<int>::variateGeometricThroughExponential() const
+int NegativeBinomialRand<int>::variateGeometricThroughExponential() const
 {
     return std::floor(ExponentialRand::standardVariate() * table[0]);
 }
 
 template<>
-double NegativeBinomialRand<int>::variateThroughGeometric() const
+int NegativeBinomialRand<int>::variateThroughGeometric() const
 {
     double res = 0;
     if (p < 0.2)
@@ -139,7 +139,7 @@ double NegativeBinomialRand<int>::variateThroughGeometric() const
 }
 
 template<>
-double NegativeBinomialRand<int>::variate() const
+int NegativeBinomialRand<int>::variate() const
 {
     if (r < 10)
         return variateThroughGeometric();
@@ -147,20 +147,20 @@ double NegativeBinomialRand<int>::variate() const
 }
 
 template<>
-void NegativeBinomialRand<double>::sample(std::vector<double> &outputData) const
+void NegativeBinomialRand<double>::sample(std::vector<int> &outputData) const
 {
-    for (double &var : outputData)
+    for (int &var : outputData)
         var = variateThroughGammaPoisson();
 }
 
 template<>
-void NegativeBinomialRand<int>::sample(std::vector<double> &outputData) const
+void NegativeBinomialRand<int>::sample(std::vector<int> &outputData) const
 {
     if (r < 10)
     {
         if (p < 0.2)
         {
-            for (double &var : outputData)
+            for (int &var : outputData)
             {
                 var = 0;
                 for (int i = 0; i < r; ++i)
@@ -169,7 +169,7 @@ void NegativeBinomialRand<int>::sample(std::vector<double> &outputData) const
         }
         else
         {
-            for (double &var : outputData)
+            for (int &var : outputData)
             {
                 var = 0;
                 for (int i = 0; i < r; ++i)
@@ -179,7 +179,7 @@ void NegativeBinomialRand<int>::sample(std::vector<double> &outputData) const
     }
     else
     {
-        for (double &var : outputData)
+        for (int &var : outputData)
             var = variateThroughGammaPoisson();
     }
 }

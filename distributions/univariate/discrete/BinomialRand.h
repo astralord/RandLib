@@ -56,15 +56,15 @@ private:
 
 public:
     double P(int k) const override;
-    double F(double x) const override;
+    double F(int k) const override;
 
 private:
-    double variateRejection() const;
-    double variateWaiting(int number) const;
+    int variateRejection() const;
+    int variateWaiting(int number) const;
 
 public:
-    double variate() const override;
-    static double variate(int n, double p);
+    int variate() const override;
+    static int variate(int n, double p);
 
     double Mean() const override;
     double Variance() const override;

@@ -26,9 +26,9 @@ public:
     inline double getRate() const { return lambda; }
 
     double P(int k) const override;
-    double F(double x) const override;
-    double variate() const override;
-    static double variate(double rate);
+    double F(int k) const override;
+    int variate() const override;
+    static int variate(double rate);
 
     double Mean() const override;
     double Variance() const override;

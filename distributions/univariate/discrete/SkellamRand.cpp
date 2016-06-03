@@ -31,9 +31,8 @@ double SkellamRand::P(int k) const
     return y;
 }
 
-double SkellamRand::F(double x) const
+double SkellamRand::F(int k) const
 {
-    int k = static_cast<int>(std::floor(x));
     int i = std::max(0, -k);
     double sum = 0, summand = 0.0;
     do {
@@ -44,7 +43,7 @@ double SkellamRand::F(double x) const
     return sum;
 }
 
-double SkellamRand::variate() const
+int SkellamRand::variate() const
 {
     return X.variate() - Y.variate();
 }

@@ -38,18 +38,18 @@ public:
     inline T getNumber() const { return r; }
 
     double P(int k) const override;
-    double F(double x) const override;
-    double variate() const override;
-    void sample(std::vector<double> &outputData) const override;
-
+    double F(int k) const override;
 protected:
-    double variateGeometricByTable() const;
-    double variateGeometricThroughExponential() const;
+    int variateGeometricByTable() const;
+    int variateGeometricThroughExponential() const;
 private:
-    double variateThroughGeometric() const;
-    double variateThroughGammaPoisson() const;
+    int variateThroughGeometric() const;
+    int variateThroughGammaPoisson() const;
 
 public:
+    int variate() const override;
+    void sample(std::vector<int> &outputData) const override;
+
     double Mean() const override;
     double Variance() const override;
     

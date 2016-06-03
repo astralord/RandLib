@@ -23,22 +23,22 @@ double BernoulliRand::P(int k) const
     return (k == 0) ? q : ((k == 1) ? p : 0);
 }
 
-double BernoulliRand::F(double x) const
+double BernoulliRand::F(int k) const
 {
-    return (x < 0) ? 0 : ((x < 1) ? q : 1);
+    return (k < 0) ? 0 : ((k < 1) ? q : 1);
 }
 
-double BernoulliRand::variate() const
+int BernoulliRand::variate() const
 {
     return RandGenerator::variate() > boundary;
 }
 
-double BernoulliRand::variate(double p)
+int BernoulliRand::variate(double p)
 {
     return UniformRand::standardVariate() <= p;
 }
 
-double BernoulliRand::standardVariate()
+int BernoulliRand::standardVariate()
 {
     static const size_t maxDecimals = RandGenerator::maxDecimals();
     static size_t decimals = 1;

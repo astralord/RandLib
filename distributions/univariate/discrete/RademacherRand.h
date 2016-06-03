@@ -14,8 +14,8 @@ public:
     std::string name() override;
 
     double P(int k) const override;
-    double F(double x) const override;
-    double variate() const override;
+    double F(int k) const override;
+    int variate() const override;
 
     double Mean() const override { return 0; }
     double Variance() const override { return 1; }

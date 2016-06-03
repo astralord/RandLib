@@ -41,16 +41,16 @@ double ZipfRand::P(int k) const
     return std::pow(k, -s) * invHarmonicNumber;
 }
 
-double ZipfRand::F(double x) const
+double ZipfRand::F(int k) const
 {
-    if (x < 1.0)
+    if (k < 1.0)
         return 0.0;
-    if (x >= n)
+    if (k >= n)
         return 1.0;
-    return RandMath::harmonicNumber(s, std::floor(x)) * invHarmonicNumber;
+    return RandMath::harmonicNumber(s, k) * invHarmonicNumber;
 }
 
-double ZipfRand::variate() const
+int ZipfRand::variate() const
 {
     double U = UniformRand::standardVariate();
     int k = 1;

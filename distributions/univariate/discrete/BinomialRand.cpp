@@ -102,17 +102,16 @@ double BinomialRand::P(int k) const
     return RandMath::binomialCoef(n, k) * std::pow(p, k) * std::pow(q, n - k);
 }
 
-double BinomialRand::F(double x) const
+double BinomialRand::F(int k) const
 {
-    if (x < 0)
+    if (k < 0)
         return 0.0;
-    if (x > n)
+    if (k > n)
         return 1.0;
-    double k = std::floor(x);
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
 
-double BinomialRand::variateRejection() const
+int BinomialRand::variateRejection() const
 {
     /// a rejection algorithm by Devroye and Naderlsamanl (1980)
     /// p.533. Non-Uniform Random Variate Generation. Luc Devroye
@@ -170,15 +169,14 @@ double BinomialRand::variateRejection() const
             return X;
 
     } while (++iter < 1e9);
-    return NAN;
+    return -1;
 }
 
-double BinomialRand::variateWaiting(int number) const
+int BinomialRand::variateWaiting(int number) const
 {
     /// waiting algorithm, using
     /// sum of geometrically distributed variables
-    double X = -1;
-    double sum = 0;
+    int X = -1, sum = 0;
     do {
         sum += G.variate() + 1.0;
         ++X;
@@ -186,12 +184,12 @@ double BinomialRand::variateWaiting(int number) const
     return X;
 }
 
-double BinomialRand::variate() const
+int BinomialRand::variate() const
 {
     /// for small (n * p) we can use simple waiting algorithm
     if (npFloor <= generatorEdge)
     {
-        double var = variateWaiting(n);
+        int var = variateWaiting(n);
         return (p <= 0.5) ? var : n - var;
     }
 
@@ -203,9 +201,9 @@ double BinomialRand::variate() const
     return (p > 0.5) ? n - Y : Y;
 }
 
-double BinomialRand::variate(int n, double p)
+int BinomialRand::variate(int n, double p)
 {
-    double var = 0;
+    int var = 0;
     for (int i = 0; i != n; ++i)
         var += BernoulliRand::variate(p);
     return var;

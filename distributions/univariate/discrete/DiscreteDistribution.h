@@ -6,7 +6,7 @@
 /**
  *@brief The DiscreteDistribution class
  */
-class RANDLIBSHARED_EXPORT DiscreteDistribution : public UnivariateProbabilityDistribution
+class RANDLIBSHARED_EXPORT DiscreteDistribution : public UnivariateProbabilityDistribution<int>
 {
 public:
     DiscreteDistribution() {}

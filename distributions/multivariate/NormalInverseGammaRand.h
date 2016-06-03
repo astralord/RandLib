@@ -7,7 +7,7 @@
 /**
  * @brief The NormalInverseGammaRand class
  */
-class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution
+class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution<double, double>
 {
     double mu, lambda;
     InverseGammaRand Y;
@@ -31,8 +31,8 @@ public:
     void Covariance(SquareMatrix<2> &matrix) const override;
     double Correlation() const override;
 
-    void getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const;
-    void getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const;
+    void getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
+    void getSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

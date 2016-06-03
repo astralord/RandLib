@@ -9,6 +9,8 @@
 #include "randlib_global.h"
 
 typedef std::pair <double, double> DoublePair;
+typedef std::pair <int, int> IntPair;
+typedef std::pair <double, int> DoubleIntPair;
 
 /**
  * @brief The ProbabilityDistribution class
@@ -55,12 +57,6 @@ public:
      * @param y output vector: y = P(X < x)
      */
     void CumulativeDistributionFunction(const std::vector<T> &x, std::vector<double> &y) const;
-
-    /**
-     * @brief Mean
-     * @return Mathematical expectation
-     */
-    virtual T Mean() const = 0;
 };
 
 #endif // PROBABILITY_DISTRIBUTION_H

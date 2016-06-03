@@ -33,9 +33,8 @@ double HyperGeometricRand::P(int k) const
     return RandMath::binomialCoef(K, k) * RandMath::binomialCoef(N - K, n - k) * pdfDenominator;
 }
 
-double HyperGeometricRand::F(double x) const
+double HyperGeometricRand::F(int k) const
 {
-    double k = std::floor(x);
     if (k < 0 || n - k > N - K)
         return 0.0;
     if (k > n || k > K)
@@ -46,9 +45,10 @@ double HyperGeometricRand::F(double x) const
     return sum;
 }
 
-double HyperGeometricRand::variate() const
+int HyperGeometricRand::variate() const
 {
-    double p = p0, sum = 0;
+    double p = p0;
+    int sum = 0;
     for (int i = 1; i <= n; ++i)
     {
         if (BernoulliRand::variate(p) && ++sum >= K)

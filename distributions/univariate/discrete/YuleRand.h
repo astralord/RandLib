@@ -14,7 +14,7 @@
 class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 {
     double ro;
-    double gamma1pRo;
+    double lgamma1pRo;
     
     ParetoRand X;
 public:
@@ -25,12 +25,9 @@ public:
     inline double getShape() { return ro; }
 
     double P(int k) const override;
-    double F(double x) const override;
-
-    double variate() const override;
-    static double variate(double shape);
-    
-    void sample(std::vector<double> &outputData) const override;
+    double F(int k) const override;
+    int variate() const override;
+    static int variate(double shape);
 
     double Mean() const override;
     double Variance() const override;

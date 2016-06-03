@@ -27,11 +27,11 @@ public:
     void setProbability(double probability);
 
     double P(int k) const override;
-    double F(double x) const override;
-    double variate() const override;
-    static double variate(double probability);
+    double F(int k) const override;
+    int variate() const override;
+    static int variate(double probability);
 
-    void sample(std::vector<double> &outputData) const override;
+    void sample(std::vector<int> &outputData) const override;
 
     double Median() const override;
 

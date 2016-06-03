@@ -22,8 +22,8 @@ public:
     inline double getProbability() const { return p; }
 
     double P(int k) const override;
-    double F(double x) const override;
-    double variate() const override;
+    double F(int k) const override;
+    int variate() const override;
 
     double Mean() const override;
     double Variance() const override;

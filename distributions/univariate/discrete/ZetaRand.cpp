@@ -30,15 +30,14 @@ double ZetaRand::P(int k) const
     return zetaSInv / std::pow(k, s);
 }
 
-double ZetaRand::F(double x) const
+double ZetaRand::F(int k) const
 {
-    if (x < 1.0)
+    if (k < 1.0)
         return 0.0;
-    int k = static_cast<int>(std::floor(x));
     return zetaSInv * RandMath::harmonicNumber(s, k);
 }
 
-double ZetaRand::variate() const
+int ZetaRand::variate() const
 {
     /// Luc Devroye, p. 551
     /// rejection sampling from rounded down Pareto distribution
@@ -51,7 +50,7 @@ double ZetaRand::variate() const
         if (V * X * (T - 1) <= b * T )
             return X;
     } while (++iter < 1e9);
-    return NAN; /// doesn't work
+    return -1; /// doesn't work
 }
 
 double ZetaRand::Mean() const

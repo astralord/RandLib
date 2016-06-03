@@ -17,16 +17,16 @@ double RademacherRand::P(int k) const
     return 0;
 }
 
-double RademacherRand::F(double x) const
+double RademacherRand::F(int k) const
 {
-    if (x < -1)
+    if (k < -1)
         return 0;
-    return (x < 1) ? 0.5 : 1.0;
+    return (k < 1) ? 0.5 : 1.0;
 }
 
-double RademacherRand::variate() const
+int RademacherRand::variate() const
 {
-    return BernoulliRand::standardVariate() ? 1.0 : -1.0;
+    return BernoulliRand::standardVariate() ? 1 : -1;
 }
 
 std::complex<double> RademacherRand::CF(double t) const

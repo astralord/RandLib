@@ -20,17 +20,17 @@ double GeometricRand::P(int k) const
     return (k < 0) ? 0 : p * std::pow(q, k);
 }
 
-double GeometricRand::F(double x) const
+double GeometricRand::F(int k) const
 {
-    return (x < 0) ? 0 : 1 - std::pow(q, std::floor(x) + 1);
+    return (k < 0) ? 0 : 1 - std::pow(q, k + 1);
 }
 
-double GeometricRand::variate() const
+int GeometricRand::variate() const
 {
     return (p < 0.2) ? variateGeometricThroughExponential() : variateGeometricByTable();
 }
 
-double GeometricRand::variate(double probability)
+int GeometricRand::variate(double probability)
 {
     /// here we use 0.1 instead of 0.2 because log(1-p) wasn't hashed
     if (probability < 0.1)
@@ -47,14 +47,14 @@ double GeometricRand::variate(double probability)
     return x;
 }
 
-void GeometricRand::sample(std::vector<double> &outputData) const
+void GeometricRand::sample(std::vector<int> &outputData) const
 {
     if (p < 0.2) {
-        for (double &var : outputData)
+        for (int &var : outputData)
             var = variateGeometricThroughExponential();
     }
     else {
-        for (double &var : outputData)
+        for (int &var : outputData)
             var = variateGeometricByTable();
     }
 }

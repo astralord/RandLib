@@ -32,6 +32,15 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(const std::vecto
         y[i] = F(x[i]);
 }
 
+/// Univariate
 template class ProbabilityDistribution<double>;
+template class ProbabilityDistribution<int>;
+
+/// Bivariate
 template class ProbabilityDistribution<DoublePair>;
+template class ProbabilityDistribution<DoubleIntPair>;
+template class ProbabilityDistribution<IntPair>;
+
+/// Multivariate
 template class ProbabilityDistribution< std::vector<double> >;
+template class ProbabilityDistribution< std::vector<int> >;

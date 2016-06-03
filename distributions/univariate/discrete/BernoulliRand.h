@@ -28,10 +28,10 @@ public:
     void setProbability(double probability);
 
     double P(int k) const override;
-    double F(double x) const override;
-    double variate() const override;
-    static double variate(double p);
-    static double standardVariate();
+    double F(int k) const override;
+    int variate() const override;
+    static int variate(double p);
+    static int standardVariate();
 
     inline double Entropy();
 };

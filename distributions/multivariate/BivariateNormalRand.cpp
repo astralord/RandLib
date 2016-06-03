@@ -116,12 +116,12 @@ double BivariateNormalRand::Correlation() const
     return ro;
 }
 
-void BivariateNormalRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
+void BivariateNormalRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
     distribution = X;
 }
 
-void BivariateNormalRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution &distribution) const
+void BivariateNormalRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
     distribution = Y;
 }

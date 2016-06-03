@@ -6,7 +6,7 @@
 /**
  * @brief The ContinuousDistribution class
  */
-class RANDLIBSHARED_EXPORT ContinuousDistribution : public UnivariateProbabilityDistribution
+class RANDLIBSHARED_EXPORT ContinuousDistribution : public UnivariateProbabilityDistribution<double>
 {
 public:
     ContinuousDistribution() {}

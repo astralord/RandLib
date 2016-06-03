@@ -6,7 +6,7 @@
 /**
  * @brief The SingularDistribution class
  */
-class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateProbabilityDistribution
+class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateProbabilityDistribution<double>
 {
 public:
     SingularDistribution();

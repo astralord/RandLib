@@ -33,15 +33,14 @@ double PoissonRand::P(int k) const
     return (k < 20) ? expmLambda * std::pow(lambda, k) / RandMath::factorial(k) : std::exp(k * logLambda - lambda - std::lgamma(k + 1));
 }
 
-double PoissonRand::F(double x) const
+double PoissonRand::F(int k) const
 {
-    if (x < 0)
+    if (k < 0)
         return 0;
-    double k = std::floor(x);
     return RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);
 }
 
-double PoissonRand::variate() const
+int PoissonRand::variate() const
 {
     double U = UniformRand::standardVariate();
     int k = floorLambda;
@@ -66,7 +65,7 @@ double PoissonRand::variate() const
     return k;
 }
 
-double PoissonRand::variate(double rate)
+int PoissonRand::variate(double rate)
 {
     int k = -1;
     double s = 0;
