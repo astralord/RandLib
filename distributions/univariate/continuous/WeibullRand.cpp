@@ -62,10 +62,8 @@ double WeibullRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0)
-        return -INFINITY;
-    if (p == 1)
-        return INFINITY;
+    if (p == 0.0)
+        return 0.0;
 
     double x = -std::log(1.0 - p);
     x = std::pow(x, kInv);

@@ -93,8 +93,6 @@ double ExponentialRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 1)
-        return INFINITY;
     return -theta * std::log(1.0 - p);
 }
 

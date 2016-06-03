@@ -113,10 +113,6 @@ double StudentTRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
          return NAN;
-    if (p == 0)
-        return -INFINITY;
-    if (p == 1)
-        return INFINITY;
 
     double temp = p - 0.5;
     if (v == 1)

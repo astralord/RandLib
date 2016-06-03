@@ -51,10 +51,6 @@ double CauchyRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
          return NAN;
-    if (p == 0)
-        return -INFINITY;
-    if (p == 1)
-        return INFINITY;
     return mu + sigma * std::tan(M_PI * (p - 0.5));
 }
 

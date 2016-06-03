@@ -65,10 +65,6 @@ double LogisticRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0)
-        return -INFINITY;
-    if (p == 1)
-        return INFINITY;
     return mu - s * std::log(1.0 / p - 1);
 }
 

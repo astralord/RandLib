@@ -72,10 +72,6 @@ double CantorRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-    if (p == 0.0)
-        return -INFINITY;
-    if (p == 1.0)
-        return INFINITY;
 
     double root = 0.5;
     if (RandMath::findRoot([this, p] (double x)
