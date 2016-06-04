@@ -37,7 +37,9 @@ public:
 
     static double variate(double rate);
     static double standardVariate();
+
     std::complex<double> CF(double t) const override;
+
     double Quantile(double p) const override;
 
     double Median() const override;

@@ -11,7 +11,7 @@ LaplaceRand::LaplaceRand(double shift, double scale, double asymmetry)
 
 std::string LaplaceRand::name()
 {
-    return "Laplace(" + toStringWithPrecision(getLocation()) + ", "
+    return "Laplace(" + toStringWithPrecision(getShift()) + ", "
                       + toStringWithPrecision(getScale()) + ", "
             + toStringWithPrecision(getAsymmetry()) + ")";
 }

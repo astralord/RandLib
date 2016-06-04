@@ -81,11 +81,9 @@ double VonMisesRand::Variance() const
 
 std::complex<double> VonMisesRand::CF(double t) const
 {
-    // TODO: verify this one
-    int n = std::fabs(std::floor(t));
-    std::complex<double> y(0.0, n * mu);
+    std::complex<double> y(0.0, t * mu);
     y = std::exp(y);
-    return I0kInv * y * RandMath::modifiedBesselFirstKind(k, n);
+    return I0kInv * y * RandMath::modifiedBesselFirstKind(k, std::fabs(t));
 }
 
 double VonMisesRand::Median() const

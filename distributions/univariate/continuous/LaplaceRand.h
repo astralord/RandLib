@@ -17,6 +17,7 @@ public:
 
     void setShift(double shift);
     void setAsymmetry(double asymmetry);
+    inline double getShift() const { return m; }
     inline double getAsymmetry() const { return k; }
 
     double f(double x) const override;

@@ -86,7 +86,7 @@ double ExponentialRand::standardVariate()
 
 std::complex<double> ExponentialRand::CF(double t) const
 {
-    return std::complex<double>(1.0, -theta * t);
+    return 1.0 / std::complex<double>(1.0, -theta * t);
 }
 
 double ExponentialRand::Quantile(double p) const

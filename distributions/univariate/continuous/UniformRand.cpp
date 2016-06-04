@@ -60,8 +60,8 @@ double UniformRand::Variance() const
 
 std::complex<double> UniformRand::CF(double t) const
 {
-    std::complex<double> x(0, -t * a), y(0, -t * b);
-    std::complex<double> numerator = std::exp(x) - std::exp(y);
+    std::complex<double> x(0, t * a), y(0, t * b);
+    std::complex<double> numerator = std::exp(y) - std::exp(x);
     std::complex<double> denominator(0, t * bma);
     return numerator / denominator;
 }

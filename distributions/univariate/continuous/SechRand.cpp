@@ -40,8 +40,6 @@ double SechRand::Variance() const
 
 std::complex<double> SechRand::CF(double t) const
 {
-    if (std::fabs(t) > M_PI_2)
-        return 0.0;
     return 1.0 / std::cosh(t);
 }
 
