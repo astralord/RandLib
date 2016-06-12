@@ -86,7 +86,7 @@ double ZipfRand::Variance() const
     return numerator * invHarmonicNumber * invHarmonicNumber;
 }
 
-double ZipfRand::Mode() const
+int ZipfRand::Mode() const
 {
     return 1.0;
 }

@@ -68,9 +68,9 @@ double YuleRand::Variance() const
     return aux * aux / (ro - 2);
 }
 
-double YuleRand::Mode() const
+int YuleRand::Mode() const
 {
-    return 1.0;
+    return 1;
 }
 
 double YuleRand::Skewness() const

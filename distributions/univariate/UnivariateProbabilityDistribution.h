@@ -44,7 +44,7 @@ public:
      * @param x
      * @return Characteristic function (inverse Fourier transform of probability function)
      */
-    virtual std::complex<double> CF(double t) const; // = 0
+    virtual std::complex<double> CF(double t) const;
 
     /**
      * @brief CharacteristicFunction
@@ -78,7 +78,7 @@ public:
      * @brief Mode
      * @return the most probable value
      */
-    virtual double Mode() const = 0;
+    virtual T Mode() const = 0;
 
     /**
      * @brief Skewness

@@ -60,7 +60,7 @@ double UniformDiscreteRand::Median() const
     return .5 * (b + a);
 }
 
-double UniformDiscreteRand::Mode() const
+int UniformDiscreteRand::Mode() const
 {
     /// any from {a, ..., b}
     return variate();

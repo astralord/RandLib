@@ -100,7 +100,7 @@ double PoissonRand::Median() const
     return std::floor(lambda + 1.0 / 3 - 0.02 / lambda);
 }
 
-double PoissonRand::Mode() const
+int PoissonRand::Mode() const
 {
     return std::floor(lambda);
 }

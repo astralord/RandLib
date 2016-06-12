@@ -53,7 +53,8 @@ int HyperGeometricRand::variate() const
     {
         if (BernoulliRand::variate(p) && ++sum >= K)
             return sum;
-        p = (K - sum) / (N - i);
+        p = (K - sum);
+        p /= (N - i);
     }
     return sum;
 }
@@ -70,7 +71,7 @@ double HyperGeometricRand::Variance() const
     return numerator / denominator;
 }
 
-double HyperGeometricRand::Mode() const
+int HyperGeometricRand::Mode() const
 {
     double mode = (n + 1) * (K + 1);
     return std::floor(mode / (N + 2));

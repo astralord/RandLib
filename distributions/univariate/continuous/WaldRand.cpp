@@ -69,9 +69,8 @@ std::complex<double> WaldRand::CF(double t) const
 {
     double im = mu * mu;
     im *= t / lambda;
-    im += im;
-    std::complex<double> y(1, -im);
-    y = std::sqrt(y);
+    std::complex<double> y(1, -im - im);
+    y = 1.0 - std::sqrt(y);
     y *= lambda / mu;
     return std::exp(y);
 }

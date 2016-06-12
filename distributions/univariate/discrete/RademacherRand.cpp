@@ -39,7 +39,7 @@ double RademacherRand::Median() const
     return 0.0;
 }
 
-double RademacherRand::Mode() const
+int RademacherRand::Mode() const
 {
     /// any from {-1, 1}
     return variate();

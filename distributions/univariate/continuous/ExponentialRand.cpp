@@ -27,7 +27,7 @@ bool ExponentialRand::setupTables()
     /// implicit value for the top layer
     stairWidth[256] = 0;
 
-    for (unsigned i = 1; i <= 255; ++i)
+    for (size_t i = 1; i < 256; ++i)
     {
         /// such y_i that f(x_{i+1}) = y_i
         stairWidth[i] = -std::log(stairHeight[i - 1]);

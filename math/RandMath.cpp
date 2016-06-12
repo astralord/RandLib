@@ -314,7 +314,7 @@ double RandMath::regularizedBetaFun(double x, double a, double b)
 
 double RandMath::incompleteBetaFun(double x, double a, double b)
 {
-    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
+    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
         return NAN;
     if (x == 0.0)
         return 0.0;
@@ -328,6 +328,17 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
     }
     if (b < 1)
     {
+        if (b == 0) /// series expansion
+        {
+            double denom = a, numen = 1;
+            double sum = 1.0 / a, add = 1;
+            do {
+                numen *= x;
+                add = numen / (++denom);
+                sum += add;
+            } while (add > MIN_POSITIVE);
+            return std::pow(x, a) * sum;
+        }
         double y = incompleteBetaFun(x, a, b + 1) * (a + b);
         y -= std::pow(x, a) * std::pow(1 - x, b);
         return y / b;
@@ -347,11 +358,11 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
     0, x);
 }
 
-long double RandMath::gammaHalf(unsigned k)
+long double RandMath::gammaHalf(size_t k)
 {
     if (k & 1)
     {
-        unsigned n = (k - 1) >> 1;
+        size_t n = (k - 1) >> 1;
         long double res = factorial(k - 1);
         res /= (factorial(n) * (1 << (n << 1)));
         return res * M_SQRTPI;

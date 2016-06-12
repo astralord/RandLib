@@ -30,7 +30,7 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    double Mode() const override;
+    int Mode() const override;
 };
 
 #endif // LOGARITHMICRAND_H

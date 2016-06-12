@@ -205,7 +205,7 @@ std::complex<double> NegativeBinomialRand<T>::CF(double t) const
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::Mode() const
+int NegativeBinomialRand<T>::Mode() const
 {
     return (r > 1) ? std::floor((r - 1) * q / p) : 0;
 }

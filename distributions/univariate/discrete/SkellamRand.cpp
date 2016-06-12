@@ -72,19 +72,9 @@ std::complex<double> SkellamRand::CF(double t) const
     return pmfCoef1 * y;
 }
 
-double SkellamRand::Mode() const
+int SkellamRand::Mode() const
 {
-    double y = Mean();
-    double py = P(y);
-    while (P(y - 1) > py) {
-        --y;
-        py = P(y);
-    }
-    while (P(y + 1) > py) {
-        ++y;
-        py = P(y);
-    }
-    return y;
+    return Mean();
 }
 
 double SkellamRand::Skewness() const

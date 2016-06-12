@@ -65,7 +65,7 @@ double BetaBinomialRand::Variance() const
     return numerator / denominator;
 }
 
-double BetaBinomialRand::Mode() const
+int BetaBinomialRand::Mode() const
 {
     double maxValue = 0.0;
     int index = 0;

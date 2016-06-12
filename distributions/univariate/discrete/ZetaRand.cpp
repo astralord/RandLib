@@ -69,9 +69,9 @@ double ZetaRand::Variance() const
     return z - y * y;
 }
 
-double ZetaRand::Mode() const
+int ZetaRand::Mode() const
 {
-    return 1.0;
+    return 1;
 }
 
 double ZetaRand::Skewness() const

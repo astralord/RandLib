@@ -68,7 +68,7 @@ std::complex<double> LogarithmicRand::CF(double t) const
     return y * logQInv;
 }
 
-double LogarithmicRand::Mode() const
+int LogarithmicRand::Mode() const
 {
     return 1.0;
 }

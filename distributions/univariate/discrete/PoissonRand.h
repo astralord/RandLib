@@ -36,7 +36,7 @@ public:
     std::complex<double> CF(double t) const override;
 
     double Median() const override;
-    double Mode() const override;
+    int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 

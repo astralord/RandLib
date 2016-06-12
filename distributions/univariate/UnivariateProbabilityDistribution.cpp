@@ -16,8 +16,18 @@ void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<do
 template< typename T >
 std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
-    // TODO:
-    return std::complex<double>(t);
+    T mode = Mode();
+
+    double re = ExpectedValue([this, t] (double x)
+    {
+        return std::cos(t * x);
+    }, mode);
+    double im = ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    }, mode);
+
+    return std::complex<double>(re, im);
 }
 
 template< typename T >

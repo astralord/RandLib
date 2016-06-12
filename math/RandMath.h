@@ -250,7 +250,7 @@ public:
      * @param k
      * @return
      */
-    static long double gammaHalf(unsigned k);
+    static long double gammaHalf(size_t k);
 
 private:
 

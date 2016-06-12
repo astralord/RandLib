@@ -52,7 +52,8 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     double var = Variance();
     do {
        lowerBoundary -= var;
-       integrand = funPtr(lowerBoundary) * f(lowerBoundary);
+       double y = funPtr(lowerBoundary);
+       integrand = (y == 0) ? 0.0 : y * f(lowerBoundary);
     } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
@@ -63,7 +64,8 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     iter = 0;
     do {
        upperBoundary += var;
-       integrand = funPtr(upperBoundary) * f(upperBoundary);
+       double y = funPtr(upperBoundary);
+       integrand = (y == 0) ? 0.0 : y * f(upperBoundary);
     } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
@@ -71,7 +73,8 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
 
     return RandMath::integral([this, funPtr] (double x)
     {
-        return funPtr(x) * f(x);
+        double y = funPtr(x);
+        return (y == 0.0) ? 0.0 : y * f(x);
     },
     lowerBoundary, upperBoundary, epsilon);
 }

@@ -62,7 +62,8 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
 
     do {
         addon = funPtr(x);
-        addon *= P(x);
+        if (addon != 0.0)
+            addon *= P(x);
         sum += addon;
         --x;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow
@@ -75,6 +76,8 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         ++x;
     do {
         addon = funPtr(x);
+        if (addon != 0.0)
+            addon *= P(x);
         addon *= P(x);
         sum += addon;
         ++x;

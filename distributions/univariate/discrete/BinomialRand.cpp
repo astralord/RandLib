@@ -106,7 +106,7 @@ double BinomialRand::F(int k) const
 {
     if (k < 0)
         return 0.0;
-    if (k > n)
+    if (k >= n)
         return 1.0;
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
@@ -230,7 +230,7 @@ double BinomialRand::Median() const
     return std::round(np);
 }
 
-double BinomialRand::Mode() const
+int BinomialRand::Mode() const
 {
     return std::round(np + p);
 }
