@@ -5,7 +5,7 @@
 
 /**
  * @brief The UniformRand class
- * Uniform dontinuous distribution
+ * Uniform continuous distribution
  * X ~ U(a, b)
  *
  * f(x|a, b) = 1 / (b - a) for a < x < b

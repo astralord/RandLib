@@ -27,7 +27,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
     
-    static constexpr double Entropy() { return M_LN2; }
+    double Entropy();
 };
 
 #endif // RADEMACHERRAND_H

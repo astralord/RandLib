@@ -27,6 +27,7 @@
 #include "univariate/continuous/BetaPrimeRand.h"
 #include "univariate/continuous/BetaRand.h"
 #include "univariate/continuous/CauchyRand.h"
+#include "univariate/continuous/DegenerateRand.h"
 #include "univariate/continuous/ExponentialRand.h"
 #include "univariate/continuous/ExponentialNormalRand.h"
 #include "univariate/continuous/FisherSnedecorRand.h"

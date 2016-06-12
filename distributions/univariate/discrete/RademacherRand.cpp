@@ -54,3 +54,8 @@ double RademacherRand::ExcessKurtosis() const
 {
     return -2.0;
 }
+
+double RademacherRand::Entropy()
+{
+    return M_LN2;
+}
