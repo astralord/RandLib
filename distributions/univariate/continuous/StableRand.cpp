@@ -430,6 +430,8 @@ double StableRand::Variance() const
 
 std::complex<double> StableRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     return std::exp(-psi(t));
 }
 

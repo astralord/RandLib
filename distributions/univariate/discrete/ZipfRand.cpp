@@ -93,6 +93,8 @@ int ZipfRand::Mode() const
 
 std::complex<double> ZipfRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     std::complex<double> sum(0.0, 0.0);
     for (int i = 1; i <= n; ++i)
     {

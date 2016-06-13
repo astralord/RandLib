@@ -187,6 +187,8 @@ double GeometricStableRand::Variance() const
 
 std::complex<double> GeometricStableRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     return 1.0 / (1.0 + psi(t));
 }
 

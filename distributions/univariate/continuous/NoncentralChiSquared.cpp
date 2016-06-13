@@ -100,6 +100,8 @@ double NoncentralChiSquared::Variance() const
 
 std::complex<double> NoncentralChiSquared::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     std::complex<double> aux(1, -2 * t);
     std::complex<double> y(0, lambda * t);
     y = std::exp(y / aux);

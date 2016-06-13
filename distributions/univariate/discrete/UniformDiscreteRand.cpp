@@ -1,6 +1,5 @@
 #include "UniformDiscreteRand.h"
 
-
 UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
 {
     setBoundaries(minValue, maxValue);
@@ -80,12 +79,13 @@ double UniformDiscreteRand::ExcessKurtosis() const
 
 std::complex<double> UniformDiscreteRand::CF(double t) const
 {
-    std::complex<double> y(0.0, a * t);
-    y = std::exp(y);
-    std::complex<double> z(0.0, b * t + b);
-    z = std::exp(z);
-    y -= z;
-    z = std::complex<double>(0.0, t);
-    z = 1.0 - std::exp(z);
-    return nInv * y / z;
+    if (t == 0)
+        return std::complex<double>(1, 0);
+    double at = a * t;
+    double bp1t = (b + 1) * t;
+    double reNum = std::cos(at) - std::cos(bp1t);
+    double imNum = std::sin(at) - std::sin(bp1t);
+    std::complex<double> numen(reNum, imNum);
+    std::complex<double>denom(1 - std::cos(t), -std::sin(t));
+    return nInv * numen / denom;
 }

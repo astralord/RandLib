@@ -81,6 +81,8 @@ double VonMisesRand::Variance() const
 
 std::complex<double> VonMisesRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     std::complex<double> y(0.0, t * mu);
     y = std::exp(y);
     return I0kInv * y * RandMath::modifiedBesselFirstKind(k, std::fabs(t));

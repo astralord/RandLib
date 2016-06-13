@@ -42,6 +42,8 @@ double LevyRand::standardVariate()
 
 std::complex<double> LevyRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     std::complex<double> y(0.0, -2 * sigma * t);
     y = -std::sqrt(y);
     y += std::complex<double>(0.0, mu * t);

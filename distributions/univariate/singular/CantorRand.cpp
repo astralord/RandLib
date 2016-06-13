@@ -84,6 +84,8 @@ double CantorRand::Quantile(double p) const
 
 std::complex<double> CantorRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     double prod = 1.0;
     double mult;
     double aux = t;

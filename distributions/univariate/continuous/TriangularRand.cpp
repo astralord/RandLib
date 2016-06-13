@@ -79,6 +79,8 @@ double TriangularRand::Variance() const
 
 std::complex<double> TriangularRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     std::complex<double> x(0, a * t);
     std::complex<double> y(0, c * t);
     std::complex<double> z(0, b * t);

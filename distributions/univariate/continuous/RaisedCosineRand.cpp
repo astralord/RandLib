@@ -101,6 +101,8 @@ double RaisedCosineRand::Variance() const
 
 std::complex<double> RaisedCosineRand::CF(double t) const
 {
+    if (t == 0)
+        return std::complex<double>(1, 0);
     double st = s * t;
     double numerator = M_PI_SQ * std::sin(st);
     double denominator = st * (M_PI_SQ - st * st);
