@@ -45,16 +45,15 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     static constexpr double epsilon = 1e-10;
     static constexpr int maxIter = 1000;
     int iter = 0;
-    double lowerBoundary = startPoint;
-    double integrand = 0;
     /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
     /// therefore function Variance() should stay pure and noone should calculate it by this function
     double var = Variance();
+    if (std::isinf(var) || std::isnan(var))
+        var = 100; // dirty hack
+    double lowerBoundary = startPoint + var;
     do {
        lowerBoundary -= var;
-       double y = funPtr(lowerBoundary);
-       integrand = (y == 0) ? 0.0 : y * f(lowerBoundary);
-    } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
+    } while (f(lowerBoundary) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
         return NAN;
@@ -64,9 +63,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     iter = 0;
     do {
        upperBoundary += var;
-       double y = funPtr(upperBoundary);
-       integrand = (y == 0) ? 0.0 : y * f(upperBoundary);
-    } while (std::fabs(integrand) > epsilon && ++iter < maxIter);
+    } while (f(upperBoundary) > epsilon && ++iter < maxIter);
 
     if (iter == maxIter) /// can't take integral, integrand decreases too slow
         return NAN;
