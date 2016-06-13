@@ -49,13 +49,25 @@ double NoncentralChiSquared::F(double x) const
         }, 0, x);
     }
 
-    // TODO: improve
-    if (x <= MIN_POSITIVE)
-        return 0;
-    return RandMath::integral([this] (double t)
+    // TODO: find a min for bessel function
+    static constexpr double minBound = 0.01;
+    if (x < minBound) {
+        return RandMath::integral([this] (double t)
+        {
+            return f(t);
+        }, -MIN_POSITIVE, x);
+    }
+
+    // TODO: this value can be counted only once for fixed parameters
+    double y1 = RandMath::integral([this] (double t)
     {
         return f(t);
-    }, MIN_POSITIVE, x);
+    }, -MIN_POSITIVE, minBound);
+
+    return y1 + RandMath::integral([this] (double t)
+    {
+        return f(t);
+    }, minBound, x);
 }
 
 double NoncentralChiSquared::variateForDegreeEqualOne() const
