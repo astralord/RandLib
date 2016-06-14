@@ -69,7 +69,8 @@ SOURCES += \
     distributions/multivariate/BivariateNormalRand.cpp \
     math/SquareMatrix.cpp \
     distributions/univariate/continuous/NoncentralChiSquared.cpp \
-    distributions/univariate/continuous/DegenerateRand.cpp
+    distributions/univariate/continuous/DegenerateRand.cpp \
+    distributions/univariate/CompoundRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -136,7 +137,8 @@ HEADERS +=\
     distributions/multivariate/BivariateNormalRand.h \
     math/SquareMatrix.h \
     distributions/univariate/continuous/NoncentralChiSquared.h \
-    distributions/univariate/continuous/DegenerateRand.h
+    distributions/univariate/continuous/DegenerateRand.h \
+    distributions/univariate/CompoundRand.h
 
 unix {
     target.path = /usr/lib
