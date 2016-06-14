@@ -81,17 +81,16 @@ std::complex<double> TriangularRand::CF(double t) const
 {
     if (t == 0)
         return std::complex<double>(1, 0);
-    std::complex<double> x(0, a * t);
-    std::complex<double> y(0, c * t);
-    std::complex<double> z(0, b * t);
-    x = (b - c) * std::exp(x);
-    y = (b - a) * std::exp(y);
-    z = (c - a) * std::exp(z);
+    double bmc = b - c, bma = b - a, cma = c - a;
+    double at = a * t, bt = b * t, ct = c * t;
+    std::complex<double> x(bmc * std::cos(at), bmc * std::sin(at));
+    std::complex<double> y(bma * std::cos(ct), bma * std::sin(ct));
+    std::complex<double> z(cma * std::cos(bt), cma * std::sin(bt));
     std::complex<double> numerator = x - y + z;
-    double denominator = (b - a);
-    denominator *= (c - a);
-    denominator *= (b - c);
-    denominator *= t * t;
+    /// in order to avoid numerical errors
+    if (std::fabs(t) < 1e-10 && std::fabs(numerator.real()) < 1e-10)
+        return std::complex<double>(1, 0);
+    double denominator = bma * cma * bmc * t * t;
     std::complex<double> frac = -numerator / denominator;
     return frac + frac;
 }
