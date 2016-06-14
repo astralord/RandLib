@@ -1,37 +1,37 @@
-#include "CompoundRand.h"
+#include "CompoundDistribution.h"
 
 template < typename T1, typename T2 >
-CompoundRand<T1, T2>::CompoundRand(const UnivariateProbabilityDistribution<T1> &leftRV, const UnivariateProbabilityDistribution<T2> &rightRV)
+CompoundDistribution<T1, T2>::CompoundDistribution(const UnivariateProbabilityDistribution<T1> &leftRV, const UnivariateProbabilityDistribution<T2> &rightRV)
     : X(leftRV), Y(rightRV)
 {
 }
 
 template < typename T1, typename T2 >
-T1 CompoundRand<T1, T2>::variate() const
+T1 CompoundDistribution<T1, T2>::variate() const
 {
     return X.variate() + Y.variate();
 }
 
 template < typename T1, typename T2 >
-double CompoundRand<T1, T2>::Mean() const
+double CompoundDistribution<T1, T2>::Mean() const
 {
     return X.Mean() + Y.Mean();
 }
 
 template < typename T1, typename T2 >
-double CompoundRand<T1, T2>::Variance() const
+double CompoundDistribution<T1, T2>::Variance() const
 {
     return X.Variance() + Y.Variance();
 }
 
 template < typename T1, typename T2 >
-std::complex<double> CompoundRand<T1, T2>::CF(double t) const
+std::complex<double> CompoundDistribution<T1, T2>::CF(double t) const
 {
     return X.CF(t) * Y.CF(t);
 }
 
 template < typename T1, typename T2 >
-double CompoundRand<T1, T2>::Skewness() const
+double CompoundDistribution<T1, T2>::Skewness() const
 {
     double skewX = X.Skewness();
     double skewY = Y.Skewness();
@@ -43,7 +43,7 @@ double CompoundRand<T1, T2>::Skewness() const
 }
 
 template < typename T1, typename T2 >
-double CompoundRand<T1, T2>::ExcessKurtosis() const
+double CompoundDistribution<T1, T2>::ExcessKurtosis() const
 {
     double varXSq = X.Variance();
     varXSq *= varXSq;
