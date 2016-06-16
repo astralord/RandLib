@@ -20,6 +20,9 @@ class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
 public:
     explicit IrwinHallRand(int number);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return n; }
 
     void setNumber(int number);
     inline int getNumber();

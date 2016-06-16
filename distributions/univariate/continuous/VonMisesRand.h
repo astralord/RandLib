@@ -15,6 +15,9 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
 public:
     VonMisesRand(double location, double concentration);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    double MinValue() const override { return mu - M_PI; }
+    double MaxValue() const override { return mu + M_PI; }
 
     void setLocation(double location);
     void setConcentration(double concentration);

@@ -18,6 +18,9 @@ class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
 public:
     PlanckRand(double shape, double scale);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return INFINITY; }
 
     void setParameters(double shape, double scale);
     inline double getShape() const { return a; }

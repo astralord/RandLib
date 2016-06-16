@@ -15,6 +15,9 @@ class RANDLIBSHARED_EXPORT LogCauchyRand : public ContinuousDistribution
 public:
     LogCauchyRand(double location = 0, double scale = 1);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return INFINITY; }
 
     void setLocation(double location);
     void setScale(double scale);

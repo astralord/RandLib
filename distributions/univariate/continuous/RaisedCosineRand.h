@@ -13,6 +13,9 @@ class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 public:
     RaisedCosineRand(double location, double scale);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    double MinValue() const override { return mu - s; }
+    double MaxValue() const override { return mu + s; }
 
     void setLocation(double location);
     inline double getLocation() const { return mu; }

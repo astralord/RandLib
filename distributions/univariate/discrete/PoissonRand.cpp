@@ -35,9 +35,7 @@ double PoissonRand::P(int k) const
 
 double PoissonRand::F(int k) const
 {
-    if (k < 0)
-        return 0;
-    return RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);
+    return (k < 0) ? 0 : RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);
 }
 
 int PoissonRand::variate() const

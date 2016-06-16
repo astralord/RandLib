@@ -21,6 +21,9 @@ public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~GeometricStableRand() {}
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return (alpha < 1 && beta == 1) ? SEMIFINITE_T : INFINITE_T; }
+    double MinValue() const override { return (alpha < 1 && beta == 1) ? 0 : -INFINITY; }
+    double MaxValue() const override { return INFINITY; }
 
 private:
     void setAsymmetry();

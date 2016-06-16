@@ -23,6 +23,9 @@ public:
     GammaRand(double shape = 1, double rate = 1);
     virtual ~GammaRand() {}
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return INFINITY; }
 
     void setParameters(double shape, double rate);
     inline double getShape() const { return alpha; }

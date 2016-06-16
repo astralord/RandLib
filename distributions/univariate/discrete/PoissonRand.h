@@ -21,6 +21,9 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 public:
     explicit PoissonRand(double rate = 1.0);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return INFINITY; }
 
     void setRate(double rate);
     inline double getRate() const { return lambda; }

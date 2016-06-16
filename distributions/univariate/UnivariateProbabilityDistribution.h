@@ -3,6 +3,12 @@
 
 #include "../ProbabilityDistribution.h"
 
+enum SUPPORT_TYPE {
+    FINITE_T,
+    SEMIFINITE_T,
+    INFINITE_T
+};
+
 /**
  * @brief The UnivariateProbabilityDistribution class
  */
@@ -12,6 +18,24 @@ class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public Probabilit
 public:
     UnivariateProbabilityDistribution();
     virtual ~UnivariateProbabilityDistribution() {}
+
+    /**
+     * @brief supportType
+     * @return type of support
+     */
+    virtual SUPPORT_TYPE supportType() const = 0;
+
+    /**
+     * @brief MinValue
+     * @return minimum possible value that can be achieved by random variable
+     */
+    virtual double MinValue() const = 0;
+
+    /**
+     * @brief MaxValue
+     * @return maximum possible value that can be achieved by random variable
+     */
+    virtual double MaxValue() const = 0;
 
     /**
      * @brief Mean

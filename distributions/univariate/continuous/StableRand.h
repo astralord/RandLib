@@ -19,6 +19,9 @@ public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableRand() {}
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return (alpha < 1 && std::fabs(beta) == 1) ? SEMIFINITE_T : INFINITE_T; }
+    double MinValue() const override { return (alpha < 1 && beta == 1) ? mu : -INFINITY; }
+    double MaxValue() const override { return (alpha < 1 && beta == -1) ? mu : INFINITY; }
 
     void setParameters(double exponent, double skewness);
     void setScale(double scale);

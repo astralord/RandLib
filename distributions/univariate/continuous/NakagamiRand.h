@@ -16,6 +16,9 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 public:
     NakagamiRand(double shape = 0.5, double spread = 1);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return INFINITY; }
 
     void setParameters(double shape, double spread);
     inline double getShape() const { return m; }

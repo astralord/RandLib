@@ -20,6 +20,9 @@ class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 public:
     explicit YuleRand(double shape);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 1; }
+    double MaxValue() const override { return INFINITY; }
 
     void setShape(double shape);
     inline double getShape() { return ro; }

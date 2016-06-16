@@ -12,6 +12,9 @@ class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteDistribution
 public:
     RademacherRand();
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    double MinValue() const override { return -1; }
+    double MaxValue() const override { return 1; }
 
     double P(int k) const override;
     double F(int k) const override;

@@ -17,6 +17,9 @@ class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    double MinValue() const override { return 0; }
+    double MaxValue() const override { return INFINITY; }
 
     double f(double x) const override;
     double F(double x) const override;

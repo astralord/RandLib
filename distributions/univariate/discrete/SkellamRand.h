@@ -23,6 +23,9 @@ class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 public:
     SkellamRand(double mean1, double mean2);
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return INFINITE_T; }
+    double MinValue() const override { return -INFINITY; }
+    double MaxValue() const override { return INFINITY; }
 
     void setMeans(double mean1, double mean2);
     inline double getFirstMean() { return mu1; }

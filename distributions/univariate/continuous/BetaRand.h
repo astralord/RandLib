@@ -28,6 +28,9 @@ public:
     BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
     virtual ~BetaRand() {}
     std::string name() override;
+    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    double MinValue() const override { return a; }
+    double MaxValue() const override { return b; }
 
     void setParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
     void setSupport(double minValue, double maxValue);
