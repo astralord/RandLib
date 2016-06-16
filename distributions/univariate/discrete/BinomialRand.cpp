@@ -221,7 +221,7 @@ double BinomialRand::Variance() const
 
 std::complex<double> BinomialRand::CF(double t) const
 {
-    std::complex<double> y(q + p * std::cos(t), std::sin(t));
+    std::complex<double> y(q + p * std::cos(t), p * std::sin(t));
     return std::pow(y, n);
 }
 

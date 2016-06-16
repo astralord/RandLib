@@ -11,6 +11,7 @@
  *
  * If Y ~ Poisson(\mu_1) and Z ~ Poisson(\mu_2) then Y - Z ~ Skellam(\mu_1, \mu_2)
  */
+// TODO: define it as a compound distribution
 class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 {
     double mu1, mu2;

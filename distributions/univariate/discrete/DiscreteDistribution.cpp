@@ -13,8 +13,6 @@ double DiscreteDistribution::Quantile(double probability) const
 {
     if (probability < 0 || probability > 1)
         return NAN;
-    if (probability == 0.0)
-        return -INFINITY;
     double mean = Mean();
     int down = static_cast<int>(std::floor(mean)), up = down + 1;
     double fu = F(up), fd = F(down);
