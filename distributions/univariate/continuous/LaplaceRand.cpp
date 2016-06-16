@@ -9,7 +9,7 @@ LaplaceRand::LaplaceRand(double shift, double scale, double asymmetry)
     setAsymmetry(asymmetry);
 }
 
-std::string LaplaceRand::name()
+std::string LaplaceRand::name() const
 {
     return "Laplace(" + toStringWithPrecision(getShift()) + ", "
                       + toStringWithPrecision(getScale()) + ", "

@@ -7,7 +7,7 @@ RaisedCosineRand::RaisedCosineRand(double location, double scale)
     setScale(scale);
 }
 
-std::string RaisedCosineRand::name()
+std::string RaisedCosineRand::name() const
 {
     return "Raised cosine(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }
@@ -135,7 +135,7 @@ double RaisedCosineRand::ExcessKurtosis() const
 }
 
 
-std::string RaabGreenRand::name()
+std::string RaabGreenRand::name() const
 {
     return "Raab Green";
 }

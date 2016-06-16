@@ -9,7 +9,7 @@ BinomialRand::BinomialRand(int number, double probability)
     setParameters(number, probability);
 }
 
-std::string BinomialRand::name()
+std::string BinomialRand::name() const
 {
     return "Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
 }

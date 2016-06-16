@@ -6,7 +6,7 @@ LevyRand::LevyRand(double location, double scale)
 {
 }
 
-std::string LevyRand::name()
+std::string LevyRand::name() const
 {
     return "Levy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

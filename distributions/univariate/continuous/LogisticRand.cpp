@@ -6,7 +6,7 @@ LogisticRand::LogisticRand(double location, double scale)
     setScale(scale);
 }
 
-std::string LogisticRand::name()
+std::string LogisticRand::name() const
 {
     return "Logistic(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

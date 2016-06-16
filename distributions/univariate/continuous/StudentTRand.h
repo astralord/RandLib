@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 
 public:
     explicit StudentTRand(int degree, double location = 0.0, double scale = 1.0);
-    std::string name() override;
+    std::string name() const override;
 
     void setDegree(int degree);
     void setLocation(double location);

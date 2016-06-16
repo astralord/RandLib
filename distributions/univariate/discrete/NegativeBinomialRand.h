@@ -28,7 +28,7 @@ private:
 
 public:
     NegativeBinomialRand(T number, double probability);
-    std::string name() override;
+    std::string name() const override;
 
 private:
     void setValidParameters(T number, double probability);

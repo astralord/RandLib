@@ -7,6 +7,21 @@ CompoundDistribution<T1, T2>::CompoundDistribution(const UnivariateProbabilityDi
 }
 
 template < typename T1, typename T2 >
+std::string CompoundDistribution<T1, T2>::name() const
+{
+    return X.name() + Y.name();
+}
+
+template < typename T1, typename T2 >
+double CompoundDistribution<T1, T2>::F(T1 x) const
+{
+    return X.ExpectedValue([this, x](double t)
+    {
+        return Y.F(x - t);
+    }, Mean());
+}
+
+template < typename T1, typename T2 >
 T1 CompoundDistribution<T1, T2>::variate() const
 {
     return X.variate() + Y.variate();
@@ -58,6 +73,8 @@ double CompoundDistribution<T1, T2>::ExcessKurtosis() const
     return kurt / (denom * denom);
 }
 
+/*
 template class CompoundRand<double, double>;
 template class CompoundRand<double, int>;
 template class CompoundRand<int, int>;
+*/

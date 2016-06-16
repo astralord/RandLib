@@ -12,7 +12,7 @@ class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
     double betaInv;
 public:
     GumbelRand(double location, double scale);
-    std::string name() override;
+    std::string name() const override;
 
     void setLocation(double location);
     void setScale(double scale);

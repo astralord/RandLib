@@ -5,7 +5,7 @@ IrwinHallRand::IrwinHallRand(int number)
     setNumber(number);
 }
 
-std::string IrwinHallRand::name()
+std::string IrwinHallRand::name() const
 {
     return "Irwin-Hall(" + toStringWithPrecision(getNumber()) + ")";
 }
@@ -15,11 +15,6 @@ void IrwinHallRand::setNumber(int number)
     n = std::max(1, number);
     cdfCoef = 0.5 / RandMath::factorial(n);
     pdfCoef = n * cdfCoef;
-}
-
-int IrwinHallRand::getNumber()
-{
-    return n;
 }
 
 double IrwinHallRand::f(double x) const

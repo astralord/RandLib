@@ -7,7 +7,7 @@ CantorRand::CantorRand()
     setGeneratorPrecision(MIN_POSITIVE);
 }
 
-std::string CantorRand::name()
+std::string CantorRand::name() const
 {
     return "Cantor";
 }

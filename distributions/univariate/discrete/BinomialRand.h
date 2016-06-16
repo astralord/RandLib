@@ -36,7 +36,7 @@ private:
 
 public:
     BinomialRand(int number, double probability);
-    std::string name() override;
+    std::string name() const override;
 
 private:
     void setGeneratorConstants();

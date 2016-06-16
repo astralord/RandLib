@@ -16,12 +16,12 @@ class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
 
 public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(double lowerLimit, double mode, double upperLimit);
-    inline double getLowerLimit() { return a; }
-    inline double getMode() { return c; }
-    inline double getUpperLimit() { return b; }
+    inline double getLowerLimit() const { return a; }
+    inline double getMode() const { return c; }
+    inline double getUpperLimit() const { return b; }
 
     double f(double x) const override;
     double F(double x) const override;

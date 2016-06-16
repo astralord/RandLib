@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution
 
 public:
     BetaBinomialRand(int number, double shape1, double shape2);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(int number, double shape1, double shape2);
     inline int getNumber() const { return n; }

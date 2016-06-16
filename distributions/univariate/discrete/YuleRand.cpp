@@ -6,7 +6,7 @@ X(shape, 1.0)
     setShape(shape);
 }
 
-std::string YuleRand::name()
+std::string YuleRand::name() const
 {
     return "Yule(" + toStringWithPrecision(getShape()) + ")";
 }

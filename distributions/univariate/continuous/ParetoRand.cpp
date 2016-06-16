@@ -6,7 +6,7 @@ ParetoRand::ParetoRand(double shape, double scale)
     setParameters(shape, scale);
 }
 
-std::string ParetoRand::name()
+std::string ParetoRand::name() const
 {
     return "Pareto(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

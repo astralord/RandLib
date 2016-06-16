@@ -23,7 +23,7 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
 
 public:
     explicit ExponentialRand(double rate = 1);
-    std::string name() override;
+    std::string name() const override;
 
 protected:
     using GammaRand::setParameters;

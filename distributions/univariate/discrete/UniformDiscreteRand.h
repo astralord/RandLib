@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setBoundaries(int minValue, int maxValue);
     inline int getMinValue() const { return a; }

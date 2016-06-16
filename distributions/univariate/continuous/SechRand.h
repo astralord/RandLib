@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
 {
 public:
     SechRand();
-    std::string name() override;
+    std::string name() const override;
 
     double f(double x) const override;
     double F(double x) const override;

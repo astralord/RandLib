@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 
 public:
     FrechetRand(double shape, double scale, double location);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(double shape, double scale, double location);
     inline double getShape() const { return alpha; }

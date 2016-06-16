@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 
 public:
     explicit PoissonRand(double rate = 1.0);
-    std::string name() override;
+    std::string name() const override;
 
     void setRate(double rate);
     inline double getRate() const { return lambda; }

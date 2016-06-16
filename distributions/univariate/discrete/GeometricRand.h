@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand
 {
 public:
     explicit GeometricRand(double probability = 0.5);
-    std::string name() override;
+    std::string name() const override;
 
 protected:
     using NegativeBinomialRand::setParameters;

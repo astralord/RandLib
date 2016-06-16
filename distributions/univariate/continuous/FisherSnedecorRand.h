@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 
 public:
     FisherSnedecorRand(int degree1, int degree2);
-    std::string name() override;
+    std::string name() const override;
 
     void setDegrees(int degree1, int degree2);
     void setFirstDegree(int degree1);

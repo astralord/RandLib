@@ -5,7 +5,7 @@ BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
 {
 }
 
-std::string BetaPrimeRand::name()
+std::string BetaPrimeRand::name() const
 {
     return "Beta Prime(" + toStringWithPrecision(getAlpha()) + ", " + toStringWithPrecision(getBeta()) + ")";
 }

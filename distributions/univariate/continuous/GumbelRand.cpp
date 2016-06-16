@@ -7,7 +7,7 @@ GumbelRand::GumbelRand(double location, double scale)
     setScale(scale);
 }
 
-std::string GumbelRand::name()
+std::string GumbelRand::name() const
 {
     return "Gumbel(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

@@ -6,7 +6,7 @@ ZipfRand::ZipfRand(double exponent, int number)
     setParameters(exponent, number);
 }
 
-std::string ZipfRand::name()
+std::string ZipfRand::name() const
 {
     return "Zipf(" + toStringWithPrecision(getExponent()) + ", "
                    + toStringWithPrecision(getNumber()) + ")";

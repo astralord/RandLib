@@ -5,7 +5,7 @@ WignerSemicircleRand::WignerSemicircleRand(double radius)
     setRadius(radius);
 }
 
-std::string WignerSemicircleRand::name()
+std::string WignerSemicircleRand::name() const
 {
     return "Wigner Semicircle(" + toStringWithPrecision(getRadius()) + ")";
 }

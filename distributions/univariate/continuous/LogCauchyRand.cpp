@@ -6,7 +6,7 @@ LogCauchyRand::LogCauchyRand(double location, double scale)
     setScale(scale);
 }
 
-std::string LogCauchyRand::name()
+std::string LogCauchyRand::name() const
 {
     return "Log-Cauchy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

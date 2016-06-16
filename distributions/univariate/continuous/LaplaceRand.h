@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
 
 public:
     LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setShift(double shift);
     void setAsymmetry(double asymmetry);

@@ -19,10 +19,10 @@ class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
     ParetoRand X;
 public:
     explicit YuleRand(double shape);
-    std::string name() override;
+    std::string name() const override;
 
     void setShape(double shape);
-    inline double getShape() { return ro; }
+    inline double getShape() const { return ro; }
 
     double P(int k) const override;
     double F(int k) const override;

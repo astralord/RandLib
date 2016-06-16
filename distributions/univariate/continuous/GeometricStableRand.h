@@ -20,7 +20,7 @@ protected:
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~GeometricStableRand() {}
-    std::string name() override;
+    std::string name() const override;
 
 private:
     void setAsymmetry();

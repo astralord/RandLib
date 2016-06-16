@@ -22,11 +22,11 @@ class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 
 public:
     SkellamRand(double mean1, double mean2);
-    std::string name() override;
+    std::string name() const override;
 
     void setMeans(double mean1, double mean2);
-    inline double getFirstMean() { return mu1; }
-    inline double getSecondMean() { return mu2; }
+    inline double getFirstMean() const { return mu1; }
+    inline double getSecondMean() const { return mu2; }
 
     double P(int k) const override;
     double F(int k) const override;

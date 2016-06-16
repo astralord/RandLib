@@ -18,7 +18,7 @@ protected:
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableRand() {}
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(double exponent, double skewness);
     void setScale(double scale);
@@ -77,7 +77,7 @@ class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
 {
 public:
     HoltsmarkRand(double scale = 1, double location = 0) : StableRand(1.5, 0.0, scale, location) {}
-    std::string name() override;
+    std::string name() const override;
 };
 
 /**
@@ -88,7 +88,7 @@ class RANDLIBSHARED_EXPORT LandauRand : public StableRand
 {
 public:
     LandauRand(double scale = 1, double location = 0) : StableRand(1.0, 1.0, scale, location) {}
-    std::string name() override;
+    std::string name() const override;
 };
 
 #endif // STABLERAND_H

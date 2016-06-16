@@ -11,7 +11,7 @@ ExponentialRand::ExponentialRand(double rate) : GammaRand()
     setRate(rate);
 }
 
-std::string ExponentialRand::name()
+std::string ExponentialRand::name() const
 {
     return "Exponential(" + toStringWithPrecision(getRate()) + ")";
 }

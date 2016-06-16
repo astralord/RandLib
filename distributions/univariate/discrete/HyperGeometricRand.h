@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 
 public:
     HyperGeometricRand(int totalSize, int drawsNum, int successesNum);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(int totalSize, int drawsNum, int successesNum);
     inline int getTotalSize() { return N; }

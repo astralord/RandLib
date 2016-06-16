@@ -7,7 +7,7 @@ NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision
     setParameters(location, precision, shape, rate);
 }
 
-std::string NormalInverseGammaRand::name()
+std::string NormalInverseGammaRand::name() const
 {
     return "Normal-Inverse-Gamma(" + toStringWithPrecision(getLocation()) + ", "
                                    + toStringWithPrecision(getPrecision()) + ", "

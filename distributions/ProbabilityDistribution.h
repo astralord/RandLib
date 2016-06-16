@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
 
 protected:
-    std::string toStringWithPrecision(const double a_value, const int n = 6);
+    std::string toStringWithPrecision(const double a_value, const int n = 6) const;
 
 public:
     ProbabilityDistribution();
@@ -30,7 +30,7 @@ public:
      * @brief name
      * @return title of distribution, for instance "Normal(0, 1)"
      */
-    virtual std::string name() = 0;
+    virtual std::string name() const = 0;
 
     /**
      * @brief variate()

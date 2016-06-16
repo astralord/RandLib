@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT CantorRand : public SingularDistribution
     double generatorPrecision;
 public:
     CantorRand();
-    std::string name() override;
+    std::string name() const override;
 
 public:
     void setGeneratorPrecision(double precision);

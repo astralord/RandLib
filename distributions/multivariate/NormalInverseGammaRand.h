@@ -15,13 +15,13 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityD
 
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(double location, double precision, double shape, double rate);
-    inline double getLocation() { return mu; }
-    inline double getPrecision() { return lambda; }
-    inline double getShape() { return Y.getShape(); }
-    inline double getRate() { return Y.getRate(); }
+    inline double getLocation() const { return mu; }
+    inline double getPrecision() const { return lambda; }
+    inline double getShape() const { return Y.getShape(); }
+    inline double getRate() const { return Y.getRate(); }
 
     double f(DoublePair point) const override;
     double F(DoublePair point) const override;

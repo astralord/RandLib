@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 
 public:
     explicit DegenerateRand(double value = 0);
-    std::string name() override;
+    std::string name() const override;
 
     void setValue(double value);
     inline double getValue() const { return a; }

@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
 
 public:
     WeibullRand(double scale = 1, double shape = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(double scale, double shape);
     inline double getScale() const { return lambda; }

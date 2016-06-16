@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteDistribution
 {
 public:
     RademacherRand();
-    std::string name() override;
+    std::string name() const override;
 
     double P(int k) const override;
     double F(int k) const override;

@@ -8,7 +8,7 @@ ProbabilityDistribution<T>::ProbabilityDistribution()
 }
 
 template < typename T >
-std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_value, const int n)
+std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_value, const int n) const
 {
     std::ostringstream out;
     out << std::setprecision(n) << a_value;

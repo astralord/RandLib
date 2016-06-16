@@ -12,7 +12,7 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public GammaRand
 {
 public:
     InverseGammaRand(double shape = 1, double scale = 1);
-    std::string name() override;
+    std::string name() const override;
 
     double f(double x) const override;
     double F(double x) const override;

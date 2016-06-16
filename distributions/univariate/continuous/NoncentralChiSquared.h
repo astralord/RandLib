@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
 
 public:
     explicit NoncentralChiSquared(double degree = 1, double noncentrality = 0);
-    std::string name() override;
+    std::string name() const override;
 
     void setParameters(double degree, double noncentrality);
     inline double getDegree() const { return k; }

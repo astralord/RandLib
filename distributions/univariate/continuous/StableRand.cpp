@@ -13,7 +13,7 @@ StableRand::StableRand(double exponent, double skewness, double scale, double lo
     setLocation(location);
 }
 
-std::string StableRand::name()
+std::string StableRand::name() const
 {
     return "Stable("
             + toStringWithPrecision(getExponent()) + ", "
@@ -459,7 +459,7 @@ double StableRand::ExcessKurtosis() const
     return (alpha == 2) ? 0 : NAN;
 }
 
-std::string HoltsmarkRand::name()
+std::string HoltsmarkRand::name() const
 {
     return "Holtsmark("
             + toStringWithPrecision(getScale()) + ", "
@@ -467,7 +467,7 @@ std::string HoltsmarkRand::name()
 }
 
 
-std::string LandauRand::name()
+std::string LandauRand::name() const
 {
     return "Landau("
             + toStringWithPrecision(getScale()) + ", "

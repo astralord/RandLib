@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
     
 public:
     explicit WignerSemicircleRand(double radius);
-    std::string name() override;
+    std::string name() const override;
 
     void setRadius(double radius);
     inline double getRadius() const { return R; }

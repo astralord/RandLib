@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 
 public:
     LogNormalRand(double location = 0, double scale = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setLocation(double location);
     void setScale(double scale);

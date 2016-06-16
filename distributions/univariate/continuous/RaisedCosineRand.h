@@ -12,7 +12,7 @@ class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
     double s_pi; /// M_1_PI * s
 public:
     RaisedCosineRand(double location, double scale);
-    std::string name() override;
+    std::string name() const override;
 
     void setLocation(double location);
     inline double getLocation() const { return mu; }
@@ -45,7 +45,7 @@ class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineRand
 {
 public:
     RaabGreenRand() : RaisedCosineRand(0.0, M_PI) {}
-    std::string name() override;
+    std::string name() const override;
 };
 
 

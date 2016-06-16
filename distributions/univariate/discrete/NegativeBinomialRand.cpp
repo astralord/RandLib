@@ -9,7 +9,7 @@ NegativeBinomialRand<T>::NegativeBinomialRand(T number, double probability)
 }
 
 template< typename T >
-std::string NegativeBinomialRand<T>::name()
+std::string NegativeBinomialRand<T>::name() const
 {
     return "Negative Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
 }

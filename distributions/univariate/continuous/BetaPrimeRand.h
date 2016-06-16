@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
 {
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
-    std::string name() override;
+    std::string name() const override;
 
     double f(double x) const override;
     double F(double x) const override;

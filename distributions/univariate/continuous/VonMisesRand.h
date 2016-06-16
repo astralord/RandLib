@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
 
 public:
     VonMisesRand(double location, double concentration);
-    std::string name() override;
+    std::string name() const override;
 
     void setLocation(double location);
     void setConcentration(double concentration);
