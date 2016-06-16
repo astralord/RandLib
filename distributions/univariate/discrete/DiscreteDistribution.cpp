@@ -49,6 +49,22 @@ double DiscreteDistribution::Hazard(double x) const
 
 double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
+    SUPPORT_TYPE suppType = supportType();
+    if (suppType == FINITE_T) {
+        int k = std::floor(MinValue());
+        int upperBoundary = std::ceil(MaxValue());
+        double addon = 0, sum = 0;
+        do {
+            addon = funPtr(k);
+            if (addon != 0.0) {
+                addon *= P(k);
+                sum += addon;
+            }
+            ++k;
+        } while (k <= upperBoundary);
+        return sum;
+    }
+
     static constexpr double epsilon = 1e-12;
     static constexpr int maxIter = 1e4;
     int iter = 0;
@@ -58,15 +74,19 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     if (RandMath::areClose(x, startPoint, epsilon))
         --x;
 
+    // TODO: elaborate cases with left- and right-semifinite supports
+    double prob = 0;
     do {
         addon = funPtr(x);
-        if (addon != 0.0)
-            addon *= P(x);
-        sum += addon;
+        if (addon != 0.0) {
+            prob = P(x);
+            addon *= prob;
+            sum += addon;
+        }
         --x;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow
             return INFINITY;
-    } while (std::fabs(addon) > epsilon);
+    } while (prob > epsilon);
 
     iter = 0;
     x = std::ceil(startPoint);
@@ -74,14 +94,15 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         ++x;
     do {
         addon = funPtr(x);
-        if (addon != 0.0)
-            addon *= P(x);
-        addon *= P(x);
-        sum += addon;
+        if (addon != 0.0) {
+            prob = P(x);
+            addon *= prob;
+            sum += addon;
+        }
         ++x;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow
             return INFINITY;
-    } while (std::fabs(addon) > epsilon);
+    } while (prob > epsilon);
 
     return sum;
 }

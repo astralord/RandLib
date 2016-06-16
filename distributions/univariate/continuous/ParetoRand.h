@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 public:
     ParetoRand(double shape = 1, double scale = 1);
     std::string name() override;
-    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return xm; }
     double MaxValue() const override { return INFINITY; }
 

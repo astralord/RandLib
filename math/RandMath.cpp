@@ -254,7 +254,7 @@ long double RandMath::logLowerIncGamma(double a, double x)
 
 long double RandMath::upperIncGamma(double a, double x)
 {
-    return (x <= 0) ? std::tgamma(a) : std::exp(logUpperIncGamma(a, x));
+    return std::tgamma(a) - lowerIncGamma(a, x);
 }
 
 long double RandMath::logUpperIncGamma(double a, double x)
@@ -264,7 +264,7 @@ long double RandMath::logUpperIncGamma(double a, double x)
         return a * std::log(x);
 
     double y = x;
-    int n = 10;
+    int n = 20;
     for (int i = 0; i < n; ++i)
     {
         double m = n - i;

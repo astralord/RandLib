@@ -18,7 +18,9 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
     if (t == 0)
         return std::complex<double>(1, 0);
-    double startPoint = Median();
+    double startPoint = Mean();
+    if (!std::isfinite(startPoint))
+        startPoint = Median();
     double re = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
@@ -49,11 +51,11 @@ template< typename T >
 double UnivariateProbabilityDistribution<T>::Skewness() const
 {
     double mu = Mean();
-    if (std::isnan(mu) || std::isinf(mu))
+    if (!std::isfinite(mu))
         return NAN;
 
     double var = Variance();
-    if (std::isnan(var) || std::isinf(var))
+    if (!std::isfinite(var))
         return NAN;
 
     double sum = ExpectedValue([this, mu] (double x)
@@ -69,11 +71,11 @@ template< typename T >
 double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
 {
     double mu = Mean();
-    if (std::isnan(mu) || std::isinf(mu))
+    if (!std::isfinite(mu))
         return NAN;
 
     double var = Variance();
-    if (std::isnan(var) || std::isinf(var))
+    if (!std::isfinite(var))
         return NAN;
 
     double sum = ExpectedValue([this, mu] (double x)

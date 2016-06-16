@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 public:
     explicit ZetaRand(double exponent = 1.0);
     std::string name() override;
-    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 1; }
     double MaxValue() const override { return INFINITY; }
 

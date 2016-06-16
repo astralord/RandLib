@@ -15,7 +15,7 @@ double ContinuousDistribution::Quantile(double p) const
         return NAN;
 
     double root = Mean(); /// good starting point
-    if (std::isnan(root) || std::isinf(root))
+    if (!std::isfinite(root))
         root = 0.0;
     if (RandMath::findRoot([this, p] (double x)
     {
@@ -41,39 +41,69 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     /// use for distributions w/o explicit formula
     /// works good for unimodal and wide distributions
 
-    /// get such low boundary 'x' that |integrand(x)| < epsilon
-    static constexpr double epsilon = 1e-10;
-    static constexpr int maxIter = 1000;
-    int iter = 0;
-    /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
-    /// therefore function Variance() should stay pure and noone should calculate it by this function
-    double var = Variance();
-    if (std::isinf(var) || std::isnan(var))
-        var = 100; // dirty hack
-    double lowerBoundary = startPoint + var;
-    do {
-       lowerBoundary -= var;
-    } while (f(lowerBoundary) > epsilon && ++iter < maxIter);
+    double lowerBoundary = startPoint, upperBoundary = startPoint;
+    SUPPORT_TYPE suppType = supportType();
+    if (suppType == FINITE_T)
+    {
+        lowerBoundary = MinValue();
+        if (!std::isfinite(f(lowerBoundary)))
+            lowerBoundary *= 0.999;
 
-    if (iter == maxIter) /// can't take integral, integrand decreases too slow
-        return NAN;
+        upperBoundary = MaxValue();
+        if (!std::isfinite(f(upperBoundary)))
+            lowerBoundary *= 1.001;
+    }
+    else
+    {
+        static constexpr double epsilon = 1e-10;
+        static constexpr int maxIter = 1000;
+        int iter = 0;
+        /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
+        /// therefore function Variance() should stay pure and noone should calculate it by this function
+        double var = Variance();
+        if (!std::isfinite(var))
+            var = 100; // dirty hack
 
-    /// get such upper boundary 'x' that |integrand(x)| < epsilon
-    double upperBoundary = startPoint;
-    iter = 0;
-    do {
-       upperBoundary += var;
-    } while (f(upperBoundary) > epsilon && ++iter < maxIter);
+        if (suppType == RIGHTSEMIFINITE_T) {
+            lowerBoundary = MinValue();
+            if (!std::isfinite(f(lowerBoundary)))
+                lowerBoundary *= 0.999;
+        }
+        else
+        {
+            /// get such lower boundary 'x' that |integrand(x)| < epsilon
+            do {
+               lowerBoundary -= var;
+            } while (f(lowerBoundary) > epsilon && ++iter < maxIter);
 
-    if (iter == maxIter) /// can't take integral, integrand decreases too slow
-        return NAN;
+            if (iter == maxIter) /// can't take integral, integrand decreases too slow
+                return NAN;
+        }
+
+        if (suppType == LEFTSEMIFINITE_T) {
+            upperBoundary = MaxValue();
+            if (!std::isfinite(f(upperBoundary)))
+                lowerBoundary *= 1.001;
+        }
+        else
+        {
+            /// get such upper boundary 'x' that |integrand(x)| < epsilon
+            iter = 0;
+            do {
+               upperBoundary += var;
+            } while (f(upperBoundary) > epsilon && ++iter < maxIter);
+
+            if (iter == maxIter) /// can't take integral, integrand decreases too slow
+                return NAN;
+        }
+    }
 
     return RandMath::integral([this, funPtr] (double x)
     {
         double y = funPtr(x);
         return (y == 0.0) ? 0.0 : y * f(x);
     },
-    lowerBoundary, upperBoundary, epsilon);
+    lowerBoundary, upperBoundary);
 }
 
 double ContinuousDistribution::Median() const
@@ -86,14 +116,10 @@ double ContinuousDistribution::Mode() const
     // use only for unimodal distributions!
 
     double mu = Mean(); /// good starting point
-    if (std::isnan(mu) || std::isinf(mu))
-    {
+    if (!std::isfinite(mu))
         mu = Median(); /// this shouldn't be nan or inf
-        if (std::isnan(mu) || std::isinf(mu)) /// if the error occured
-            mu = 0.0;
-    }
     double step = 10 * Variance();
-    if (std::isnan(step) || std::isinf(step))
+    if (!std::isfinite(step))
         step = 100; // dirty hack
 
     /// localization

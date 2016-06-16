@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
 public:
     explicit NoncentralChiSquared(double degree = 1, double noncentrality = 0);
     std::string name() override;
-    SUPPORT_TYPE supportType() const override { return SEMIFINITE_T; }
+    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
