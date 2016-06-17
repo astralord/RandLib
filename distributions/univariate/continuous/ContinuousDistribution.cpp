@@ -35,77 +35,6 @@ double ContinuousDistribution::Hazard(double x) const
     return f(x) / (1.0 - F(x));
 }
 
-double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
-{
-    /// attempt to calculate expected value by numerical method
-    /// use for distributions w/o explicit formula
-    /// works good for unimodal and wide distributions
-
-    double lowerBoundary = startPoint, upperBoundary = startPoint;
-    SUPPORT_TYPE suppType = supportType();
-    if (suppType == FINITE_T)
-    {
-        lowerBoundary = MinValue();
-        if (!std::isfinite(f(lowerBoundary)))
-            lowerBoundary *= 0.999;
-
-        upperBoundary = MaxValue();
-        if (!std::isfinite(f(upperBoundary)))
-            lowerBoundary *= 1.001;
-    }
-    else
-    {
-        static constexpr double epsilon = 1e-10;
-        static constexpr int maxIter = 1000;
-        int iter = 0;
-        /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
-        /// therefore function Variance() should stay pure and noone should calculate it by this function
-        double var = Variance();
-        if (!std::isfinite(var))
-            var = 100; // dirty hack
-
-        if (suppType == RIGHTSEMIFINITE_T) {
-            lowerBoundary = MinValue();
-            if (!std::isfinite(f(lowerBoundary)))
-                lowerBoundary *= 0.999;
-        }
-        else
-        {
-            /// get such lower boundary 'x' that |integrand(x)| < epsilon
-            do {
-               lowerBoundary -= var;
-            } while (f(lowerBoundary) > epsilon && ++iter < maxIter);
-
-            if (iter == maxIter) /// can't take integral, integrand decreases too slow
-                return NAN;
-        }
-
-        if (suppType == LEFTSEMIFINITE_T) {
-            upperBoundary = MaxValue();
-            if (!std::isfinite(f(upperBoundary)))
-                lowerBoundary *= 1.001;
-        }
-        else
-        {
-            /// get such upper boundary 'x' that |integrand(x)| < epsilon
-            iter = 0;
-            do {
-               upperBoundary += var;
-            } while (f(upperBoundary) > epsilon && ++iter < maxIter);
-
-            if (iter == maxIter) /// can't take integral, integrand decreases too slow
-                return NAN;
-        }
-    }
-
-    return RandMath::integral([this, funPtr] (double x)
-    {
-        double y = funPtr(x);
-        return (y == 0.0) ? 0.0 : y * f(x);
-    },
-    lowerBoundary, upperBoundary);
-}
-
 double ContinuousDistribution::Median() const
 {
     return Quantile(0.5);
@@ -146,6 +75,97 @@ double ContinuousDistribution::Mode() const
     }, a, b, root);
 
     return root;
+}
+
+double ContinuousDistribution::getMinValueWithFinitePDF(const double &epsilon) const
+{
+    double lowerBoundary = MinValue();
+    if (!std::isfinite(f(lowerBoundary))) {
+        if (std::fabs(lowerBoundary) < 1)
+            lowerBoundary -= epsilon;
+        else
+            lowerBoundary *= 0.9999;
+    }
+    return lowerBoundary;
+}
+
+double ContinuousDistribution::getMaxValueWithFinitePDF(const double &epsilon) const
+{
+    double upperBoundary = MaxValue();
+    if (!std::isfinite(f(upperBoundary))) {
+        if (std::fabs(upperBoundary) < 1)
+            upperBoundary += epsilon;
+        else
+            upperBoundary *= 1.0001;
+    }
+    return upperBoundary;
+}
+
+
+double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
+{
+    /// attempt to calculate expected value by numerical method
+    /// use for distributions w/o explicit formula
+    /// works good for unimodal and distributions
+    static constexpr double epsilon = 1e-10;
+    static constexpr int maxIter = 1000;
+
+    double lowerBoundary = startPoint, upperBoundary = startPoint;
+    SUPPORT_TYPE suppType = supportType();
+    if (suppType == FINITE_T)
+    {
+        lowerBoundary = getMinValueWithFinitePDF(epsilon);
+        upperBoundary = getMaxValueWithFinitePDF(epsilon);
+    }
+    else
+    {
+        int iter = 0;
+        /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
+        /// therefore function Variance() should stay pure and noone should calculate it by this function
+        double var = Variance();
+        if (!std::isfinite(var))
+            var = 100; // dirty hack
+
+        if (suppType == RIGHTSEMIFINITE_T) {
+            lowerBoundary = getMinValueWithFinitePDF(epsilon);
+        }
+        else
+        {
+            // TODO: check that lowerBoundary < upperBoundary
+            /// get such lower boundary 'x' that f(x) < eps && |g(x)f(x)| < eps && F(x) < 0.001
+            double fx = 1;
+            do {
+               lowerBoundary -= var;
+               fx = f(lowerBoundary);
+            } while ((fx > epsilon || std::fabs(funPtr(lowerBoundary)) * fx > epsilon || F(lowerBoundary) > 0.001) && ++iter < maxIter);
+
+            if (iter == maxIter) /// can't take integral, integrand decreases too slow
+                return NAN;
+        }
+
+        if (suppType == LEFTSEMIFINITE_T) {
+            upperBoundary = getMaxValueWithFinitePDF(epsilon);
+        }
+        else
+        {
+            /// get such upper boundary 'x' that f(x) < eps && |g(x)f(x)| < eps && F(x) > 0.999
+            iter = 0;
+            double fx = 1;
+            do {
+               upperBoundary += var;
+               fx = f(upperBoundary);
+            } while ((fx > epsilon || std::fabs(funPtr(upperBoundary)) * fx > epsilon || F(upperBoundary) < 0.999) && ++iter < maxIter);
+
+            if (iter == maxIter) /// can't take integral, integrand decreases too slow
+                return NAN;
+        }
+    }
+
+    return RandMath::integral([this, funPtr] (double x)
+    {
+        return funPtr(x) * f(x);
+    },
+    lowerBoundary, upperBoundary);
 }
 
 double ContinuousDistribution::likelihood(const std::vector<double> &sample) const

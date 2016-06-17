@@ -68,14 +68,48 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     static constexpr double epsilon = 1e-12;
     static constexpr int maxIter = 1e4;
     int iter = 0;
-    long double sum = 0.0L;
-    double addon = 0;
+
+    if (suppType == RIGHTSEMIFINITE_T) {
+        int k = std::floor(MinValue());
+        double addon = 0, sum = 0, prob = 1;
+        do {
+            addon = funPtr(k);
+            if (addon != 0.0) {
+                prob = P(k);
+                addon *= prob;
+                sum += addon;
+            }
+            ++k;
+            if (++iter > maxIter) /// can't take sum, addon decreases too slow
+                return INFINITY;
+        } while (prob > epsilon || std::fabs(addon) > epsilon);
+        return sum;
+    }
+
+    if (suppType == LEFTSEMIFINITE_T) {
+        int k = std::floor(MaxValue());
+        double addon = 0, sum = 0, prob = 1;
+        do {
+            addon = funPtr(k);
+            if (addon != 0.0) {
+                prob = P(k);
+                addon *= prob;
+                sum += addon;
+            }
+            --k;
+            if (++iter > maxIter) /// can't take sum, addon decreases too slow
+                return INFINITY;
+        } while (prob > epsilon || std::fabs(addon) > epsilon);
+        return sum;
+    }
+
+    // TODO: transform all this spagetti code into good one
+
     double x = std::floor(startPoint);
     if (RandMath::areClose(x, startPoint, epsilon))
         --x;
 
-    // TODO: elaborate cases with left- and right-semifinite supports
-    double prob = 0;
+    double sum = 0, addon = 0, prob = 1;
     do {
         addon = funPtr(x);
         if (addon != 0.0) {
@@ -86,7 +120,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         --x;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow
             return INFINITY;
-    } while (prob > epsilon);
+    } while (prob > epsilon || std::fabs(addon) > epsilon);
 
     iter = 0;
     x = std::ceil(startPoint);
@@ -102,7 +136,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         ++x;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow
             return INFINITY;
-    } while (prob > epsilon);
+    } while (prob > epsilon || std::fabs(addon) > epsilon);
 
     return sum;
 }

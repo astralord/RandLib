@@ -34,6 +34,20 @@ public:
     double Median() const override;
     double Mode() const override;
 
+private:
+    /**
+     * @brief getMinValueWithFinitePDF
+     * @param epsilon
+     * @return y = MinValue() or its left limit if f(y) is not finite
+     */
+    double getMinValueWithFinitePDF(const double &epsilon) const;
+    /**
+     * @brief getMaxValueWithFinitePDF
+     * @param epsilon
+     * @return y = MaxValue() or its right limit if f(y) is not finite
+     */
+    double getMaxValueWithFinitePDF(const double &epsilon) const;
+
 protected:
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 

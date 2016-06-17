@@ -42,6 +42,14 @@ void UnivariateProbabilityDistribution<T>::CharacteristicFunction(const std::vec
 }
 
 template< typename T >
+void UnivariateProbabilityDistribution<T>::HazardFunction(const std::vector<double> &x, std::vector<double> &y) const
+{
+    int size = std::min(x.size(), y.size());
+    for (int i = 0; i != size; ++i)
+        y[i] = Hazard(x[i]);
+}
+
+template< typename T >
 double UnivariateProbabilityDistribution<T>::Median() const
 {
     return Quantile(0.5);

@@ -51,7 +51,7 @@ public:
     virtual double Variance() const = 0;
 
     /**
-     * @brief quantile
+     * @brief Quantile
      * @param p
      * @return such x that F(x) = p
      */
@@ -86,10 +86,17 @@ public:
     virtual double Hazard(double x) const = 0;
 
     /**
+     * @brief HazardFunction
+     * @param x input vector
+     * @param y output vector: y = Hazard(x)
+     */
+    void HazardFunction(const std::vector<double> &x, std::vector<double> &y) const;
+
+    /**
      * @brief ExpectedValue
-     * @param funPtr function which expected value should be returned
-     * @param startPoint argument in which vicinity value of funPtr definitely wouldn't be zero
-     * @return E[funPtr(x)]
+     * @param funPtr pointer on function g(x) which expected value should be returned
+     * @param startPoint argument in which vicinity value of g(x) definitely wouldn't be zero
+     * @return E[g(x)]
      */
     virtual double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const = 0;
 
