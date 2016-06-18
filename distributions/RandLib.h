@@ -66,4 +66,7 @@
 #include "multivariate/BivariateProbabilityDistribution.h"
 #include "multivariate/NormalInverseGammaRand.h"
 
+
+#include "univariate/SumRand.h"
+
 #endif // RANDLIB_H

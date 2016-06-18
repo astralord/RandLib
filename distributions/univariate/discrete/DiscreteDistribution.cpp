@@ -88,7 +88,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     return sum;
 }
 
-double DiscreteDistribution::likelihood(const std::vector<int> &sample) const
+double DiscreteDistribution::Likelihood(const std::vector<int> &sample) const
 {
     double res = 1.0;
     for (const int & var : sample )
@@ -96,7 +96,7 @@ double DiscreteDistribution::likelihood(const std::vector<int> &sample) const
     return res;
 }
 
-double DiscreteDistribution::loglikelihood(const std::vector<int> &sample) const
+double DiscreteDistribution::LogLikelihood(const std::vector<int> &sample) const
 {
     double res = 0.0;
     for (const int & var : sample )

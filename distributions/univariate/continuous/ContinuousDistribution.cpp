@@ -76,11 +76,6 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     lowerBoundary, upperBoundary, epsilon);
 }
 
-double ContinuousDistribution::Median() const
-{
-    return Quantile(0.5);
-}
-
 double ContinuousDistribution::Mode() const
 {
     // use only for unimodal distributions!
@@ -122,7 +117,7 @@ double ContinuousDistribution::Mode() const
     return root;
 }
 
-double ContinuousDistribution::likelihood(const std::vector<double> &sample) const
+double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const
 {
     double res = 1.0;
     for (const double & var : sample )
@@ -130,7 +125,7 @@ double ContinuousDistribution::likelihood(const std::vector<double> &sample) con
     return res;
 }
 
-double ContinuousDistribution::loglikelihood(const std::vector<double> &sample) const
+double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) const
 {
     double res = 0.0;
     for (const double & var : sample )

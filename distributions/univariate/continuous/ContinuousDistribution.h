@@ -3,6 +3,9 @@
 
 #include "../UnivariateProbabilityDistribution.h"
 
+template <typename T>
+class SumContinuousRand;
+
 /**
  * @brief The ContinuousDistribution class
  */
@@ -30,16 +33,16 @@ public:
 
     double Quantile(double p) const override;
     double Hazard(double x) const override;
-
-    double Median() const override;
     double Mode() const override;
 
 protected:
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
 public:
-    double likelihood(const std::vector<double> &sample) const;
-    double loglikelihood(const std::vector<double> &sample) const;
+    double Likelihood(const std::vector<double> &sample) const override;
+    double LogLikelihood(const std::vector<double> &sample) const override;
+
+    friend const SumContinuousRand<double> operator+(const ContinuousDistribution& left, const ContinuousDistribution& right);
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H
