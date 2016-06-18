@@ -22,11 +22,11 @@ private:
 public:
     GammaRand(double shape = 1, double rate = 1);
     virtual ~GammaRand() {}
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
-
     void setParameters(double shape, double rate);
     inline double getShape() const { return alpha; }
     inline double getScale() const { return theta; }
@@ -92,7 +92,7 @@ class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 {
 public:
     explicit ChiSquaredRand(int degree = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setDegree(int degree);
     inline int getDegree() const { return static_cast<int>(alpha + alpha); }
@@ -117,7 +117,7 @@ class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
 {
 public:
     ErlangRand(int shape = 1, double rate = 1);
-    std::string name() override;
+    std::string name() const override;
 
     inline int getShape() const;
     inline double getRate() const;

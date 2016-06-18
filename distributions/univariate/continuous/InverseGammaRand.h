@@ -12,7 +12,8 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public GammaRand
 {
 public:
     InverseGammaRand(double shape = 1, double scale = 1);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

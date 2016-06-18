@@ -6,7 +6,7 @@ WeibullRand::WeibullRand(double scale, double shape)
     setParameters(scale, shape);
 }
 
-std::string WeibullRand::name()
+std::string WeibullRand::name() const
 {
     return "Weibull(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

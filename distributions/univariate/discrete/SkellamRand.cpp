@@ -5,7 +5,7 @@ SkellamRand::SkellamRand(double mean1, double mean2)
     setMeans(mean1, mean2);
 }
 
-std::string SkellamRand::name()
+std::string SkellamRand::name() const
 {
     return "Skellam(" + toStringWithPrecision(getFirstMean()) + ", " + toStringWithPrecision(getSecondMean()) + ")";
 }

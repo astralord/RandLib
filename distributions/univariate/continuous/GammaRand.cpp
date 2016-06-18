@@ -8,7 +8,7 @@ GammaRand::GammaRand(double shape, double rate)
     setParameters(shape, rate);
 }
 
-std::string GammaRand::name()
+std::string GammaRand::name() const
 {
     return "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }
@@ -372,7 +372,7 @@ ChiSquaredRand::ChiSquaredRand(int degree)
     setDegree(degree);
 }
 
-std::string ChiSquaredRand::name()
+std::string ChiSquaredRand::name() const
 {
     return "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
 }
@@ -389,7 +389,7 @@ ErlangRand::ErlangRand(int shape, double rate)
     GammaRand::setParameters(std::max(shape, 1), rate);
 }
 
-std::string ErlangRand::name()
+std::string ErlangRand::name() const
 {
     return "Erlang(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }

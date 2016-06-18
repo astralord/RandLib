@@ -5,7 +5,7 @@ InverseGammaRand::InverseGammaRand(double shape, double scale) : GammaRand()
     setParameters(shape, scale);
 }
 
-std::string InverseGammaRand::name()
+std::string InverseGammaRand::name() const
 {
     return "Inverse-Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }

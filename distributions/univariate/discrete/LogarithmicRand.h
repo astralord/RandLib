@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
     double logQInv; /// 1 / log(q)
 public:
     explicit LogarithmicRand(double probability);
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 1; }
     double MaxValue() const override { return INFINITY; }

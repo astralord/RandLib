@@ -18,7 +18,8 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 
 public:
     explicit StudentTRand(int degree, double location = 0.0, double scale = 1.0);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }

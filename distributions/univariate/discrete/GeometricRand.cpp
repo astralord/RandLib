@@ -5,7 +5,7 @@ GeometricRand::GeometricRand(double probability) : PascalRand(1, probability)
 {
 }
 
-std::string GeometricRand::name()
+std::string GeometricRand::name() const
 {
     return "Geometric(" + toStringWithPrecision(getProbability()) + ")";
 }

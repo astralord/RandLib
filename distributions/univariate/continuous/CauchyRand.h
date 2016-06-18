@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT CauchyRand : public StableRand
 {
 public:
     CauchyRand(double location = 0, double scale = 1);
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }

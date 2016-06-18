@@ -12,7 +12,7 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
     setLocation(location);
 }
 
-std::string GeometricStableRand::name()
+std::string GeometricStableRand::name() const
 {
     return "Geometric Stable("
             + toStringWithPrecision(getExponent()) + ", "

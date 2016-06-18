@@ -27,7 +27,7 @@ private:
 public:
     BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
     virtual ~BetaRand() {}
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
@@ -81,7 +81,7 @@ class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
 public:
     ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setShape(double shape);
     inline double getShape() const { return beta; }
@@ -102,11 +102,11 @@ class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand
     double p, F;
 public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
-    std::string name() override;
+    std::string name() const override;
 
     void setFixatingIndexAndFrequency(double fixatingIndex, double frequency);
-    inline double getFrequency() { return p; }
-    inline double getFixatingIndex() { return F; }
+    inline double getFrequency() const { return p; }
+    inline double getFixatingIndex() const { return F; }
 
 private:
     using BetaRand::setParameters;

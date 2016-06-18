@@ -17,13 +17,13 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
     double b;
 public:
     explicit ZetaRand(double exponent = 1.0);
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 1; }
     double MaxValue() const override { return INFINITY; }
 
     void setExponent(double exponent);
-    inline double getExponent() { return s; }
+    inline double getExponent() const { return s; }
 
     double P(int k) const override;
     double F(int k) const override;

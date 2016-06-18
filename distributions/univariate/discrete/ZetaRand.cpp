@@ -7,7 +7,7 @@ ZetaRand::ZetaRand(double exponent)
     setExponent(exponent);
 }
 
-std::string ZetaRand::name()
+std::string ZetaRand::name() const
 {
     return "Zeta(" + toStringWithPrecision(getExponent()) + ")";
 }

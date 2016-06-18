@@ -18,7 +18,8 @@ class RANDLIBSHARED_EXPORT UniformRand : public BetaRand
 
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }

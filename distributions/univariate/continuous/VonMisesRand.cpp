@@ -7,7 +7,7 @@ VonMisesRand::VonMisesRand(double location, double concentration)
     setConcentration(concentration);
 }
 
-std::string VonMisesRand::name()
+std::string VonMisesRand::name() const
 {
     return "von Mises(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getConcentration()) + ")";
 }

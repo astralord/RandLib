@@ -7,7 +7,7 @@ BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValu
     setParameters(shape1, shape2, minValue, maxValue);
 }
 
-std::string BetaRand::name()
+std::string BetaRand::name() const
 {
     return "Beta(" + toStringWithPrecision(getAlpha()) + ", "
                    + toStringWithPrecision(getBeta()) + ", "
@@ -292,7 +292,7 @@ ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
     BetaRand::setParameters(1.0 - shape, shape, minValue, maxValue);
 }
 
-std::string ArcsineRand::name()
+std::string ArcsineRand::name() const
 {
     return "Arcsine(" + toStringWithPrecision(getMin()) + ", "
                       + toStringWithPrecision(getMax()) + ", "
@@ -310,7 +310,7 @@ BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
     setFixatingIndexAndFrequency(fixatingIndex, frequency);
 }
 
-std::string BaldingNicholsRand::name()
+std::string BaldingNicholsRand::name() const
 {
     return "Balding-Nichols(" + toStringWithPrecision(getFixatingIndex()) + ", " + toStringWithPrecision(getFrequency()) + ")";
 }

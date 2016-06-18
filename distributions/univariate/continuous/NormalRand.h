@@ -25,7 +25,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 
 public:
     NormalRand(double mean = 0, double var = 1);
-    std::string name() override;
+    std::string name() const override;
 
 private:
     using StableRand::setParameters;

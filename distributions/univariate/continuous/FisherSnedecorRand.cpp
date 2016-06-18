@@ -5,7 +5,7 @@ FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2)
     setDegrees(degree1, degree2);
 }
 
-std::string FisherSnedecorRand::name()
+std::string FisherSnedecorRand::name() const
 {
     return "Fisher(" + toStringWithPrecision(getFirstDegree()) + ", " + toStringWithPrecision(getSecondDegree()) + ")";
 }

@@ -36,7 +36,7 @@ private:
 
 public:
     BinomialRand(int number, double probability);
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return n; }

@@ -5,7 +5,7 @@ ExponentialNormalRand::ExponentialNormalRand(double location, double variance, d
     setParameters(location, variance, rate);
 }
 
-std::string ExponentialNormalRand::name()
+std::string ExponentialNormalRand::name() const
 {
     return "Exponential-Normal(" + toStringWithPrecision(getLocation()) + ", "
                                  + toStringWithPrecision(X.Variance()) + ", "

@@ -6,7 +6,7 @@ LogarithmicRand::LogarithmicRand(double probability)
     setProbability(probability);
 }
 
-std::string LogarithmicRand::name()
+std::string LogarithmicRand::name() const
 {
     return "Logarithmic(" + toStringWithPrecision(getProbability()) + ")";
 }

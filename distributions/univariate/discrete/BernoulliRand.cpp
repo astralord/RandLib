@@ -7,7 +7,7 @@ BernoulliRand::BernoulliRand(double probability) : BinomialRand(1, probability)
     boundary = q * RandGenerator::maxValue();
 }
 
-std::string BernoulliRand::name()
+std::string BernoulliRand::name() const
 {
     return "Bernoulli(" + toStringWithPrecision(getProbability()) + ")";
 }

@@ -7,7 +7,7 @@ PoissonRand::PoissonRand(double rate)
     setRate(rate);
 }
 
-std::string PoissonRand::name()
+std::string PoissonRand::name() const
 {
     return "Poisson(" + toStringWithPrecision(getRate()) + ")";
 }

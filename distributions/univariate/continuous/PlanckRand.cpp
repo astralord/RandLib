@@ -5,7 +5,7 @@ PlanckRand::PlanckRand(double shape, double scale)
     setParameters(shape, scale);
 }
 
-std::string PlanckRand::name()
+std::string PlanckRand::name() const
 {
     return "Planck(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
 }

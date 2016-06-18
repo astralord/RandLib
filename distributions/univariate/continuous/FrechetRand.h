@@ -13,7 +13,8 @@ class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 
 public:
     FrechetRand(double shape, double scale, double location);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return m; }
     double MaxValue() const override { return INFINITY; }

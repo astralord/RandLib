@@ -131,6 +131,20 @@ public:
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
     virtual double ExcessKurtosis() const;
+
+    /**
+     * @brief Likelihood
+     * @param sample
+     * @return product of f(x_i)
+     */
+    virtual double Likelihood(const std::vector<T> &sample) const = 0;
+
+    /**
+     * @brief LogLikelihood
+     * @param sample
+     * @return sum of log(f(x_i))
+     */
+    virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
 };
 
 #endif // UNIVARIATEPROBABILITYDISTRIBUTION_H

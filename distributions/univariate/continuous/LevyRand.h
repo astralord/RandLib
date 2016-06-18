@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT LevyRand : public StableRand
 {
 public:
     LevyRand(double location = 0, double scale = 1);
-    std::string name() override;
+    std::string name() const override;
 
 private:
     using StableRand::setParameters;

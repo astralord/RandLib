@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution
 
 public:
     BetaBinomialRand(int number, double shape1, double shape2);
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return 1; }

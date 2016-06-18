@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialRand
 
 public:
     explicit BernoulliRand(double probability = 0.5);
-    std::string name() override;
+    std::string name() const override;
 
 protected:
     using BinomialRand::setParameters;

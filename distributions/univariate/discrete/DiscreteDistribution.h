@@ -32,11 +32,11 @@ public:
 
     double Hazard(double x) const override;
 
-protected:
+public:
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
-    double likelihood(const std::vector<int> &sample) const;
-    double loglikelihood(const std::vector<int> &sample) const;
+    double Likelihood(const std::vector<int> &sample) const override;
+    double LogLikelihood(const std::vector<int> &sample) const override;
 };
 
 #endif // DISCRETE_DISTRIBUTION_H

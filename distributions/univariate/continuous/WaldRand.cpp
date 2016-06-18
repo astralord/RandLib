@@ -7,7 +7,7 @@ WaldRand::WaldRand(double mean, double shape)
     setParameters(mean, shape);
 }
 
-std::string WaldRand::name()
+std::string WaldRand::name() const
 {
     return "Wald(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getShape()) + ")";
 }

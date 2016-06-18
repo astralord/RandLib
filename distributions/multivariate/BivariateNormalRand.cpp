@@ -13,7 +13,7 @@ BivariateNormalRand::BivariateNormalRand(double mu1, double mu2, double sigma1, 
     setScale(sigma1, sigma2, correlation);
 }
 
-std::string BivariateNormalRand::name()
+std::string BivariateNormalRand::name() const
 {
     return "Bivariate Normal( (" + toStringWithPrecision(getFirstLocation()) + ", "
                                + toStringWithPrecision(getSecondLocation()) + "), ("

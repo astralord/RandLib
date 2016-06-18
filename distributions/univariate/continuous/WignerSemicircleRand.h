@@ -13,7 +13,8 @@ class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
     
 public:
     explicit WignerSemicircleRand(double radius);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return -R; }
     double MaxValue() const override { return R; }

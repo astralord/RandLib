@@ -28,7 +28,7 @@ private:
 
 public:
     NegativeBinomialRand(T number, double probability);
-    std::string name() override;
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

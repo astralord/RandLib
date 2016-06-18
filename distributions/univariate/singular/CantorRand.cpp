@@ -7,7 +7,7 @@ CantorRand::CantorRand()
     setGeneratorPrecision(MIN_POSITIVE);
 }
 
-std::string CantorRand::name()
+std::string CantorRand::name() const
 {
     return "Cantor";
 }
@@ -53,7 +53,7 @@ double CantorRand::variate() const
     long double prod = 1.0;
     do {
         prod /= 3.0;
-        sum += prod * B.standardVariate();
+        sum += prod * BernoulliRand::standardVariate();
     } while (prod > generatorPrecision);
     return sum + sum;
 }
@@ -113,5 +113,15 @@ double CantorRand::Skewness() const
 double CantorRand::ExcessKurtosis() const
 {
     return -1.6;
+}
+
+double CantorRand::Likelihood(const std::vector<double> &) const
+{
+    return NAN;
+}
+
+double CantorRand::LogLikelihood(const std::vector<double> &) const
+{
+    return NAN;
 }
 

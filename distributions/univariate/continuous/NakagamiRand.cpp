@@ -5,7 +5,7 @@ NakagamiRand::NakagamiRand(double shape, double spread)
     setParameters(shape, spread);
 }
 
-std::string NakagamiRand::name()
+std::string NakagamiRand::name() const
 {
     return "Nakagami(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getSpread()) + ")";
 }
@@ -72,7 +72,7 @@ ChiRand::ChiRand(int degree, double scale)
     setParameters(degree, scale);
 }
 
-std::string ChiRand::name()
+std::string ChiRand::name() const
 {
     return "Chi(" + toStringWithPrecision(getDegree()) + ", " + toStringWithPrecision(getScale()) +  ")";
 }
@@ -119,7 +119,7 @@ MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale) :
 {
 }
 
-std::string MaxwellBoltzmannRand::name()
+std::string MaxwellBoltzmannRand::name() const
 {
     return "Maxwell-Boltzmann(" + toStringWithPrecision(getScale()) + ")";
 }
@@ -183,7 +183,7 @@ RayleighRand::RayleighRand(double scale) :
 {
 }
 
-std::string RayleighRand::name()
+std::string RayleighRand::name() const
 {
     return "Rayleigh(" + toStringWithPrecision(getScale()) + ")";
 }

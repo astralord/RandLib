@@ -12,7 +12,8 @@ class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
     double s_pi; /// M_1_PI * s
 public:
     RaisedCosineRand(double location, double scale);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return mu - s; }
     double MaxValue() const override { return mu + s; }
@@ -48,7 +49,7 @@ class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineRand
 {
 public:
     RaabGreenRand() : RaisedCosineRand(0.0, M_PI) {}
-    std::string name() override;
+    std::string name() const override;
 };
 
 

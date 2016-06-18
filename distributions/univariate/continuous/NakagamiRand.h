@@ -15,7 +15,8 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 
 public:
     NakagamiRand(double shape = 0.5, double spread = 1);
-    std::string name() override;
+
+    std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
@@ -47,7 +48,7 @@ protected:
 
 public:
     explicit ChiRand(int degree, double scale = 1.0);
-    std::string name() override;
+    std::string name() const override;
 
 private:
     using NakagamiRand::setParameters;
@@ -56,8 +57,8 @@ private:
 
 public:
     void setParameters(int degree, double scale = 1.0);
-    inline int getDegree() { return 2 * NakagamiRand::getShape(); }
-    inline double getScale() { return sigma; }
+    inline int getDegree() const { return 2 * NakagamiRand::getShape(); }
+    inline double getScale() const { return sigma; }
 
 private:
     double skewnessImpl(double mean, double sigma) const;
@@ -78,7 +79,7 @@ class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ChiRand
 {
 public:
     explicit MaxwellBoltzmannRand(double scale);
-    std::string name() override;
+    std::string name() const override;
 
     double f(double x) const override;
     double F(double x) const override;
@@ -99,7 +100,7 @@ class RANDLIBSHARED_EXPORT RayleighRand : public ChiRand
 {
 public:
     explicit RayleighRand(double scale = 1);
-    std::string name() override;
+    std::string name() const override;
 
     void setScale(double scale);
 

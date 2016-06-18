@@ -18,18 +18,18 @@ class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDist
 public:
     BivariateNormalRand(DoublePair location, SquareMatrix<2> rootCovariance);
     BivariateNormalRand(double mu1, double mu2, double sigma1, double sigma2, double correlation);
-    std::string name() override;
+    std::string name() const override;
 
     void setLocation(DoublePair location);
     void setLocation(double location1, double location2);
     void setScale(SquareMatrix<2> rootCovariance);
     void setScale(double scale1, double scale2, double correlation);
     inline DoublePair getLocation() { return Mean(); }
-    inline double getFirstLocation() { return mu1; }
-    inline double getSecondLocation() { return mu2; }
-    inline double getFirstScale() { return sigma1; }
-    inline double getSecondScale() { return sigma2; }
-    inline double getCorrelation() { return ro; }
+    inline double getFirstLocation() const { return mu1; }
+    inline double getSecondLocation() const { return mu2; }
+    inline double getFirstScale() const { return sigma1; }
+    inline double getSecondScale() const { return sigma2; }
+    inline double getCorrelation() const { return ro; }
 
     double f(DoublePair point) const override;
     double F(DoublePair point) const override;
