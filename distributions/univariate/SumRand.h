@@ -6,25 +6,24 @@
 #include "discrete/DiscreteDistribution.h"
 
 /**
- * @brief The SumContinuousRand class
+ * @brief The SumRand class
  */
-template < typename T>
-class RANDLIBSHARED_EXPORT SumContinuousRand : public ContinuousDistribution
+template <typename T1, typename T2>
+class RANDLIBSHARED_EXPORT SumRand : public virtual UnivariateProbabilityDistribution<T1>
 {
-    const ContinuousDistribution &X;
-    const UnivariateProbabilityDistribution<T> &Y;
+    const UnivariateProbabilityDistribution<T1> &X;
+    const UnivariateProbabilityDistribution<T2> &Y;
 public:
-    SumContinuousRand(const ContinuousDistribution & leftRV, const UnivariateProbabilityDistribution<T> & rightRV);
-    virtual ~SumContinuousRand() {}
+    SumRand(const UnivariateProbabilityDistribution<T1> & leftRV, const UnivariateProbabilityDistribution<T2> & rightRV);
+    virtual ~SumRand() {}
     std::string name() const override;
 
     SUPPORT_TYPE supportType() const override;
     double MinValue() const override;
     double MaxValue() const override;
 
-    double f(double x) const override;
-    double F(double x) const override;
-    double variate() const override;
+    double F(T1 x) const override;
+    T1 variate() const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -33,8 +32,51 @@ public:
     double ExcessKurtosis() const override;
 };
 
-const SumContinuousRand<double> operator+(const ContinuousDistribution& left, const ContinuousDistribution& right) {
-    return SumContinuousRand<double>(left, right);
+
+/**
+ * @brief The SumContinuousRand class
+ */
+class RANDLIBSHARED_EXPORT SumContinuousRand : public SumRand<double, double>, public ContinuousDistribution
+{
+    const ContinuousDistribution &X, &Y;
+public:
+    SumContinuousRand(const ContinuousDistribution & leftRV, const ContinuousDistribution & rightRV) :
+        SumRand<double, double>(leftRV, rightRV),
+        X(leftRV), Y(rightRV)
+    {}
+    virtual ~SumContinuousRand() {}
+
+    double f(double x) const override;
+
+    friend const SumContinuousRand operator+(const ContinuousDistribution& left, const ContinuousDistribution& right);
+};
+
+const SumContinuousRand operator+(const ContinuousDistribution& left, const ContinuousDistribution& right) {
+    return SumContinuousRand(left, right);
+}
+
+
+/**
+ * @brief The SumDiscreteRand class
+ */
+class RANDLIBSHARED_EXPORT SumDiscreteRand : public SumRand<int, int>, public DiscreteDistribution
+{
+    const DiscreteDistribution &X, &Y;
+public:
+    SumDiscreteRand(const DiscreteDistribution & leftRV, const DiscreteDistribution & rightRV) :
+        SumRand<int, int>(leftRV, rightRV),
+        X(leftRV), Y(rightRV)
+    {}
+    virtual ~SumDiscreteRand() {}
+
+    double P(int k) const override;
+    int Mode() const override;
+
+    friend const SumDiscreteRand operator+(const DiscreteDistribution& left, const DiscreteDistribution& right);
+};
+
+const SumDiscreteRand operator+(const DiscreteDistribution& left, const DiscreteDistribution& right) {
+    return SumDiscreteRand(left, right);
 }
 
 

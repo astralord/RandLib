@@ -119,11 +119,14 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
         /// therefore function Variance() should stay pure and noone should calculate it by this function
         double var = Variance();
-        if (!std::isfinite(var))
-            var = 100; // dirty hack
+        bool varIsInfinite = !std::isfinite(var);
 
+        /// search lower boundary
         if (suppType == RIGHTSEMIFINITE_T) {
             lowerBoundary = getMinValueWithFinitePDF(epsilon);
+        }
+        else if (varIsInfinite) {
+            lowerBoundary = Quantile(0.001);
         }
         else
         {
@@ -139,8 +142,12 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
                 return NAN;
         }
 
+        /// search upper boundary
         if (suppType == LEFTSEMIFINITE_T) {
             upperBoundary = getMaxValueWithFinitePDF(epsilon);
+        }
+        else if (varIsInfinite) {
+            upperBoundary = Quantile(0.999);
         }
         else
         {

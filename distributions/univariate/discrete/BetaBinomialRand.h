@@ -18,7 +18,7 @@ public:
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
-    double MaxValue() const override { return 1; }
+    double MaxValue() const override { return n; }
 
     void setParameters(int number, double shape1, double shape2);
     inline int getNumber() const { return n; }

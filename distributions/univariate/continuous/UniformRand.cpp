@@ -19,7 +19,7 @@ void UniformRand::setSupport(double minValue, double maxValue)
 
 double UniformRand::f(double x) const
 {
-    return (x >= a && x <= b) ? bmaInv : 0;
+    return (x < a || x > b) ? 0 : bmaInv;
 }
 
 double UniformRand::F(double x) const

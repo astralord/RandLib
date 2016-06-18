@@ -3,13 +3,10 @@
 
 #include "../UnivariateProbabilityDistribution.h"
 
-template <typename T>
-class SumContinuousRand;
-
 /**
  * @brief The ContinuousDistribution class
  */
-class RANDLIBSHARED_EXPORT ContinuousDistribution : public UnivariateProbabilityDistribution<double>
+class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateProbabilityDistribution<double>
 {
 public:
     ContinuousDistribution() {}
@@ -54,8 +51,6 @@ public:
 
     double Likelihood(const std::vector<double> &sample) const override;
     double LogLikelihood(const std::vector<double> &sample) const override;
-
-    friend const SumContinuousRand<double> operator+(const ContinuousDistribution& left, const ContinuousDistribution& right);
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H
