@@ -27,6 +27,18 @@ public:
     virtual SUPPORT_TYPE supportType() const = 0;
 
     /**
+     * @brief isLeftBounded
+     * @return true if distribution is bounded from the left
+     */
+    bool isLeftBounded() const;
+
+    /**
+     * @brief isRightBounded
+     * @return true if distribution is bounded from the right
+     */
+    bool isRightBounded() const;
+
+    /**
      * @brief MinValue
      * @return minimum possible value that can be achieved by random variable
      */
@@ -99,6 +111,15 @@ public:
      * @return E[g(x)]
      */
     virtual double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const = 0;
+
+    /**
+     * @brief ExpectedValue
+     * @param funPtr pointer on function g(x) with finite support which expected value should be returned
+     * @param minPoint min{x | g(x) != 0}
+     * @param maxPoint max{x | g(x) != 0}
+     * @return E[g(x)]
+     */
+    virtual double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
 
     /**
      * @brief Median

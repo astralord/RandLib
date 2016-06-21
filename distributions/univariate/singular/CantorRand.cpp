@@ -115,13 +115,3 @@ double CantorRand::ExcessKurtosis() const
     return -1.6;
 }
 
-double CantorRand::Likelihood(const std::vector<double> &) const
-{
-    return NAN;
-}
-
-double CantorRand::LogLikelihood(const std::vector<double> &) const
-{
-    return NAN;
-}
-

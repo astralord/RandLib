@@ -97,6 +97,23 @@ double ContinuousDistribution::getMaxValueWithFinitePDF(const double &epsilon) c
     return upperBoundary;
 }
 
+double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const
+{
+    static constexpr double epsilon = 1e-10;
+    double lowerBoundary = minPoint, upperBoundary = maxPoint;
+    if (isRightBounded()) {
+        lowerBoundary = std::min(getMaxValueWithFinitePDF(epsilon), lowerBoundary);
+    }
+    if (isLeftBounded()) {
+        upperBoundary = std::max(getMinValueWithFinitePDF(epsilon), upperBoundary);
+    }
+    return RandMath::integral([this, funPtr] (double x)
+    {
+        return funPtr(x) * f(x);
+    },
+    lowerBoundary, upperBoundary);
+}
+
 
 double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
@@ -118,8 +135,8 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         int iter = 0;
         /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
         /// therefore function Variance() should stay pure and noone should calculate it by this function
-        double var = Variance();
-        bool varIsInfinite = !std::isfinite(var);
+        double step = 3 * Variance();
+        bool varIsInfinite = !std::isfinite(step);
 
         /// search lower boundary
         if (suppType == RIGHTSEMIFINITE_T) {
@@ -134,7 +151,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
             /// get such lower boundary 'x' that f(x) < eps && |g(x)f(x)| < eps && F(x) < 0.001
             double fx = 1;
             do {
-               lowerBoundary -= var;
+               lowerBoundary -= step;
                fx = f(lowerBoundary);
             } while ((fx > epsilon || std::fabs(funPtr(lowerBoundary)) * fx > epsilon || F(lowerBoundary) > 0.001) && ++iter < maxIter);
 
@@ -155,7 +172,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
             iter = 0;
             double fx = 1;
             do {
-               upperBoundary += var;
+               upperBoundary += step;
                fx = f(upperBoundary);
             } while ((fx > epsilon || std::fabs(funPtr(upperBoundary)) * fx > epsilon || F(upperBoundary) < 0.999) && ++iter < maxIter);
 

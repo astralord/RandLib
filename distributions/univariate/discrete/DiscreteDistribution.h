@@ -33,6 +33,7 @@ public:
     double Hazard(double x) const override;
 
 public:
+    double ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
     double Likelihood(const std::vector<int> &sample) const override;

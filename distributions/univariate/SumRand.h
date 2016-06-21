@@ -13,6 +13,10 @@ class RANDLIBSHARED_EXPORT SumRand : public virtual UnivariateProbabilityDistrib
 {
     const UnivariateProbabilityDistribution<T1> &X;
     const UnivariateProbabilityDistribution<T2> &Y;
+
+protected:
+    double Convolution(const std::function<double (T1)> &funPtrX, const std::function<double (T2)> &funPtrY, T1 x, bool isCDF) const;
+
 public:
     SumRand(const UnivariateProbabilityDistribution<T1> & leftRV, const UnivariateProbabilityDistribution<T2> & rightRV);
     virtual ~SumRand() {}

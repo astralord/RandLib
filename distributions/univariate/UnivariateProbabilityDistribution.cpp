@@ -6,6 +6,20 @@ UnivariateProbabilityDistribution<T>::UnivariateProbabilityDistribution()
 }
 
 template< typename T >
+bool UnivariateProbabilityDistribution<T>::isLeftBounded() const
+{
+    SUPPORT_TYPE supp = supportType();
+    return (supp == RIGHTSEMIFINITE_T || supp == FINITE_T);
+}
+
+template< typename T >
+bool UnivariateProbabilityDistribution<T>::isRightBounded() const
+{
+    SUPPORT_TYPE supp = supportType();
+    return (supp == LEFTSEMIFINITE_T || supp == FINITE_T);
+}
+
+template< typename T >
 void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
 {
     int size = std::min(p.size(), y.size());

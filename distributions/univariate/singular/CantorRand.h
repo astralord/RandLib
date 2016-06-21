@@ -32,8 +32,6 @@ public:
     double Median() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
-    double Likelihood(const std::vector<double> &sample) const override;
-    double LogLikelihood(const std::vector<double> &sample) const override;
 };
 
 #endif // CANTORRAND_H

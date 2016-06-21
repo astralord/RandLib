@@ -664,34 +664,34 @@ double RandMath::harmonicNumber(double exponent, int number)
 
 double RandMath::modifiedBesselFirstKind(double x, double n)
 {
-    if (n == 0.5)
-    {
-        if (x <= 0)
+    double roundN = std::round(n);
+    bool nIsInt = RandMath::areClose(n, roundN);
+
+    if (x < 0) {
+        if (nIsInt)
+        {
+            int nInt = roundN;
+            return (nInt % 2) ? -modifiedBesselFirstKind(-x, n) : modifiedBesselFirstKind(-x, n);
+        }
+        else
             return 0.0;
-        return std::sqrt(M_2_PI / x) * std::sinh(x);
     }
 
-    if (n == -0.5)
-    {
-        if (x < 0)
+    if (x == 0) {
+        if (n > 0 || nIsInt);
             return 0.0;
-        if (x == 0)
-            return INFINITY;
-        return std::sqrt(M_2_PI / x) * std::cosh(x);
+        return (n == 0) ? 1.0 : INFINITY;
     }
+
+    if (n == 0.5)
+        return std::sqrt(M_2_PI / x) * std::sinh(x);
+
+    if (n == -0.5)
+        return std::sqrt(M_2_PI / x) * std::cosh(x);
 
     /// small x
     if (x < 10)
     {
-        if (x < 0)
-            return 0;
-        if (x == 0)
-        {
-            if (n == 0)
-                return 1.0;
-            return 0.0;
-        }
-
         double halfX = 0.5 * x;
         double halfXSq = halfX * halfX;
         double addon = 1.0;

@@ -8,9 +8,79 @@ SumRand<T1, T2>::SumRand(const UnivariateProbabilityDistribution<T1> &leftRV, co
 }
 
 template <typename T1, typename T2>
+double SumRand<T1, T2>::Convolution(const std::function<double (T1)> &funPtrX, const std::function<double (T2)> &funPtrY, T1 x, bool isCDF) const
+{
+    SUPPORT_TYPE suppX = X.supportType(), suppY = Y.supportType();
+
+    if (suppX != INFINITE_T && suppY != INFINITE_T) {
+
+        bool integrandIsLeftBounded = false, integrandIsRightBounded = false;
+        T1 minPoint = 0, maxPoint = 0;
+
+        if (Y.isLeftBounded()) {
+            integrandIsLeftBounded = true;
+            minPoint = Y.MinValue();
+        }
+
+        if (X.isRightBounded() && !isCDF) {
+            T1 minPointX = x - X.MaxValue();
+            if (integrandIsLeftBounded)
+                minPoint = std::max(minPoint, minPointX);
+            else {
+                minPoint = minPointX;
+                integrandIsLeftBounded = true;
+            }
+        }
+
+        if (Y.isRightBounded()) {
+            integrandIsRightBounded = true;
+            maxPoint = Y.MaxValue();
+        }
+
+        if (X.isLeftBounded()) {
+            T1 minPointX = x - X.MinValue();
+            if (integrandIsRightBounded)
+                maxPoint = std::min(maxPoint, minPointX);
+            else {
+                maxPoint = minPointX;
+                integrandIsRightBounded = true;
+            }
+        }
+
+        if (minPoint > maxPoint) {
+            return 0.0;
+        }
+
+        if (integrandIsLeftBounded && integrandIsRightBounded) {
+            return Y.ExpectedValue([this, x, funPtrX](double t)
+            {
+                return funPtrX(x - t);
+            }, minPoint, maxPoint);
+        }
+    }
+
+    double startPoint = Mean();
+    if (!std::isfinite(startPoint))
+        startPoint = 0.0;
+
+    if (suppX == INFINITE_T) {
+        return Y.ExpectedValue([this, x, funPtrX](double t)
+        {
+            return funPtrX(x - t);
+        }, startPoint);
+    }
+
+    return X.ExpectedValue([this, x, funPtrY](double t)
+    {
+        return funPtrY(x - t);
+    }, startPoint);
+}
+
+
+template <typename T1, typename T2>
 std::string SumRand<T1, T2>::name() const
 {
-    return X.name() + "+" + Y.name();
+    return X.name() + " + " + Y.name();
 }
 
 template <typename T1, typename T2>
@@ -43,22 +113,18 @@ double SumRand<T1, T2>::MaxValue() const
 template <typename T1, typename T2>
 double SumRand<T1, T2>::F(T1 x) const
 {
-    double startPoint = Mean();
-    if (!std::isfinite(startPoint))
-        startPoint = 0.0;
-
-    if (X.supportType() == FINITE_T &&
-            (Y.supportType() != FINITE_T || X.MaxValue() - X.MinValue() <= Y.MaxValue() - Y.MinValue())) {
-        return X.ExpectedValue([this, x](double t)
-        {
-            return Y.F(x - t);
-        }, startPoint);
-    }
-
-    return Y.ExpectedValue([this, x](double t)
+    if (this->isLeftBounded() && x < MinValue())
+        return 0.0;
+    if (this->isRightBounded() && x > MaxValue())
+        return 1.0;
+    return Convolution([this](T1 t)
     {
-        return X.F(x - t);
-    }, startPoint);
+        return X.F(t);
+    },
+    [this](double t)
+    {
+        return Y.F(t);
+    }, x, true);
 }
 
 template <typename T1, typename T2>
@@ -115,41 +181,35 @@ double SumRand<T1, T2>::ExcessKurtosis() const
 
 double SumContinuousRand::f(double x) const
 {
-    double startPoint = Mean();
-    if (!std::isfinite(startPoint))
-        startPoint = 0.0;
-    if (X.supportType() == FINITE_T &&
-            (Y.supportType() != FINITE_T || X.MaxValue() - X.MinValue() <= Y.MaxValue() - Y.MinValue())) {
-        return X.ExpectedValue([this, x](double t)
-        {
-            return Y.f(x - t);
-        }, startPoint);
-    }
-
-    return Y.ExpectedValue([this, x](double t)
+    if (this->isLeftBounded() && x < MinValue())
+        return 0.0;
+    if (this->isRightBounded() && x > MaxValue())
+        return 0.0;
+    return Convolution([this](double t)
     {
-        return X.f(x - t);
-    }, startPoint);
+        return X.f(t);
+    },
+    [this](double t)
+    {
+        return Y.f(t);
+    }, x, false);
 }
 
 
 double SumDiscreteRand::P(int k) const
 {
-    double startPoint = Mean();
-    if (!std::isfinite(startPoint))
-        startPoint = 0.0;
-    if (X.supportType() == FINITE_T &&
-            (Y.supportType() != FINITE_T || X.MaxValue() - X.MinValue() <= Y.MaxValue() - Y.MinValue())) {
-        return X.ExpectedValue([this, k](double t)
-        {
-            return Y.P(k - t);
-        }, startPoint);
-    }
-
-    return Y.ExpectedValue([this, k](double t)
+    if (this->isLeftBounded() && k < MinValue())
+        return 0.0;
+    if (this->isRightBounded() && k > MaxValue())
+        return 0.0;
+    return Convolution([this](int x)
     {
-        return X.P(k - t);
-    }, startPoint);
+        return X.P(x);
+    },
+    [this](int x)
+    {
+        return Y.P(x);
+    }, k, false);
 }
 
 int SumDiscreteRand::Mode() const
@@ -157,3 +217,4 @@ int SumDiscreteRand::Mode() const
     // TODO: verify this!!!
     return X.Mode() + Y.Mode();
 }
+
