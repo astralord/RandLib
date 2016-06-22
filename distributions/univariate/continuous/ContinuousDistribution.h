@@ -34,17 +34,17 @@ public:
 
 private:
     /**
-     * @brief getMinValueWithFinitePDF
+     * @brief getLeftLimit
      * @param epsilon
-     * @return y = MinValue() or its left limit if f(y) is not finite
+     * @return value or its left limit if f(value) is not finite
      */
-    double getMinValueWithFinitePDF(const double &epsilon) const;
+    double getLeftLimit(double value, double epsilon) const;
     /**
-     * @brief getMaxValueWithFinitePDF
+     * @brief getRightLimit
      * @param epsilon
-     * @return y = MaxValue() or its right limit if f(y) is not finite
+     * @return value or its right limit if f(value) is not finite
      */
-    double getMaxValueWithFinitePDF(const double &epsilon) const;
+    double getRightLimit(double value, double epsilon) const;
 
 public:
     double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;

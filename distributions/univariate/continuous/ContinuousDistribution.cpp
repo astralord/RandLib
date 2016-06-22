@@ -72,29 +72,26 @@ double ContinuousDistribution::Mode() const
     return root;
 }
 
-
-double ContinuousDistribution::getMinValueWithFinitePDF(const double &epsilon) const
+double ContinuousDistribution::getLeftLimit(double value, double epsilon) const
 {
-    double lowerBoundary = MinValue();
-    if (!std::isfinite(f(lowerBoundary))) {
-        if (std::fabs(lowerBoundary) < 1)
-            lowerBoundary -= epsilon;
+    if (!std::isfinite(f(value))) {
+        if (std::fabs(value) < 1)
+            value -= epsilon;
         else
-            lowerBoundary *= 0.9999;
+            value *= 0.9999;
     }
-    return lowerBoundary;
+    return value;
 }
 
-double ContinuousDistribution::getMaxValueWithFinitePDF(const double &epsilon) const
+double ContinuousDistribution::getRightLimit(double value, double epsilon) const
 {
-    double upperBoundary = MaxValue();
-    if (!std::isfinite(f(upperBoundary))) {
-        if (std::fabs(upperBoundary) < 1)
-            upperBoundary += epsilon;
+    if (!std::isfinite(f(value))) {
+        if (std::fabs(value) < 1)
+            value += epsilon;
         else
-            upperBoundary *= 1.0001;
+            value *= 1.0001;
     }
-    return upperBoundary;
+    return value;
 }
 
 double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const
@@ -102,11 +99,17 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     static constexpr double epsilon = 1e-10;
     double lowerBoundary = minPoint, upperBoundary = maxPoint;
     if (isRightBounded()) {
-        lowerBoundary = std::min(getMaxValueWithFinitePDF(epsilon), lowerBoundary);
+        lowerBoundary = std::max(minPoint, lowerBoundary);
+        lowerBoundary = getLeftLimit(lowerBoundary, epsilon);
     }
     if (isLeftBounded()) {
-        upperBoundary = std::max(getMinValueWithFinitePDF(epsilon), upperBoundary);
+        upperBoundary = std::min(maxPoint, upperBoundary);
+        upperBoundary = getRightLimit(upperBoundary, epsilon);
     }
+
+    if (lowerBoundary >= upperBoundary)
+        return 0.0;
+
     return RandMath::integral([this, funPtr] (double x)
     {
         return funPtr(x) * f(x);
@@ -128,20 +131,20 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     SUPPORT_TYPE suppType = supportType();
     if (suppType == FINITE_T)
     {
-        lowerBoundary = getMinValueWithFinitePDF(epsilon2);
-        upperBoundary = getMaxValueWithFinitePDF(epsilon2);
+        lowerBoundary = getLeftLimit(MinValue(), epsilon2);
+        upperBoundary = getRightLimit(MaxValue(), epsilon2);
     }
     else
     {
         int iter = 0;
         /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
         /// therefore function Variance() should stay pure and noone should calculate it by this function
-        double step = 3 * Variance();
-        bool varIsInfinite = !std::isfinite(step);
+        double var = Variance();
+        bool varIsInfinite = !std::isfinite(var);
 
         /// search lower boundary
         if (suppType == RIGHTSEMIFINITE_T) {
-            lowerBoundary = getMinValueWithFinitePDF(epsilon2);
+            lowerBoundary = getLeftLimit(MinValue(), epsilon2);
         }
         else if (varIsInfinite) {
             lowerBoundary = Quantile(0.001);
@@ -152,7 +155,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
             /// get such lower boundary 'x' that f(x) < eps1 && |g(x)f(x)| < eps2 && F(x) < 0.001
             double fx = 1;
             do {
-               lowerBoundary -= step;
+               lowerBoundary -= var;
                fx = f(lowerBoundary);
             } while ((fx > epsilon1 || std::fabs(funPtr(lowerBoundary)) * fx > epsilon2 || F(lowerBoundary) > 0.001) && ++iter < maxIter);
 
@@ -162,7 +165,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
 
         /// search upper boundary
         if (suppType == LEFTSEMIFINITE_T) {
-            upperBoundary = getMaxValueWithFinitePDF(epsilon2);
+            upperBoundary = getRightLimit(MaxValue(), epsilon2);
         }
         else if (varIsInfinite) {
             upperBoundary = Quantile(0.999);
@@ -173,7 +176,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
             iter = 0;
             double fx = 1;
             do {
-               upperBoundary += step;
+               upperBoundary += var;
                fx = f(upperBoundary);
             } while ((fx > epsilon1 || std::fabs(funPtr(upperBoundary)) * fx > epsilon2 || F(upperBoundary) < 0.999) && ++iter < maxIter);
 

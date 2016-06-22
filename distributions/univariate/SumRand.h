@@ -83,5 +83,32 @@ const SumDiscreteRand operator+(const DiscreteDistribution& left, const Discrete
     return SumDiscreteRand(left, right);
 }
 
+/**
+ * @brief The SumContinuousDiscreteRand class
+ */
+class RANDLIBSHARED_EXPORT SumContinuousDiscreteRand : public SumRand<double, int>, public ContinuousDistribution
+{
+    const ContinuousDistribution &X;
+    const DiscreteDistribution &Y;
+public:
+    SumContinuousDiscreteRand(const ContinuousDistribution & leftRV, const DiscreteDistribution & rightRV) :
+        SumRand<double, int>(leftRV, rightRV),
+        X(leftRV), Y(rightRV)
+    {}
+    virtual ~SumContinuousDiscreteRand() {}
+
+    double f(double x) const override;
+
+    friend const SumContinuousDiscreteRand operator+(const ContinuousDistribution& left, const DiscreteDistribution& right);
+    friend const SumContinuousDiscreteRand operator+(const DiscreteDistribution& left, const ContinuousDistribution& right);
+};
+
+const SumContinuousDiscreteRand operator+(const ContinuousDistribution& left, const DiscreteDistribution& right) {
+    return SumContinuousDiscreteRand(left, right);
+}
+
+const SumContinuousDiscreteRand operator+(const DiscreteDistribution& left, const ContinuousDistribution& right) {
+    return SumContinuousDiscreteRand(right, left);
+}
 
 #endif // SUMRAND_H

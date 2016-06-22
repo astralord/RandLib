@@ -283,7 +283,7 @@ public:
      * @return
      */
     static long double integral(const std::function<double (double)> &funPtr, double a, double b,
-                                double epsilon = 1e-11, int maxRecursionDepth = 10);
+                                double epsilon = 1e-11, int maxRecursionDepth = 11);
 
     /**
      * @brief findRoot

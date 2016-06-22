@@ -12,10 +12,6 @@ double SumRand<T1, T2>::Convolution(const std::function<double (T1)> &funPtrX, c
 {
     SUPPORT_TYPE suppX = X.supportType(), suppY = Y.supportType();
 
-    if (x > 0) {
-        int asdasd = 1;
-    }
-
     if (suppX != INFINITE_T && suppY != INFINITE_T) {
 
         bool integrandIsLeftBounded = false, integrandIsRightBounded = false;
@@ -222,3 +218,18 @@ int SumDiscreteRand::Mode() const
     return X.Mode() + Y.Mode();
 }
 
+double SumContinuousDiscreteRand::f(double x) const
+{
+    if (this->isLeftBounded() && x < MinValue())
+        return 0.0;
+    if (this->isRightBounded() && x > MaxValue())
+        return 0.0;
+    return Convolution([this](double t)
+    {
+        return X.f(t);
+    },
+    [this](int t)
+    {
+        return Y.P(t);
+    }, x, false);
+}

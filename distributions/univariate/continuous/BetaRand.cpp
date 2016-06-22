@@ -87,7 +87,7 @@ void BetaRand::setBeta(double shape2)
 
 double BetaRand::f(double x) const
 {
-    if (x <= a || x >= b)
+    if (x < a || x > b)
         return 0;
 
     /// Standardize
@@ -294,9 +294,9 @@ ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
 
 std::string ArcsineRand::name() const
 {
-    return "Arcsine(" + toStringWithPrecision(getMin()) + ", "
-                      + toStringWithPrecision(getMax()) + ", "
-                      + toStringWithPrecision(getShape()) + ")";
+    return "Arcsine(" + toStringWithPrecision(getShape()) + ", "
+                      + toStringWithPrecision(getMin()) + ", "
+                      + toStringWithPrecision(getMax()) + ")";
 }
 
 void ArcsineRand::setShape(double shape)
