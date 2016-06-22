@@ -32,6 +32,23 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
     if (t == 0)
         return std::complex<double>(1, 0);
+
+    if (std::fabs(t) < 0.1)
+    {
+        double mean4 = FourthMoment();
+        if (std::isfinite(mean4)) {
+            double mean3 = ThirdMoment();
+            double mean2 = SecondMoment();
+            double mean1 = Mean();
+
+            double tSq = t * t;
+            double re = 1 - 0.5 * mean2 * tSq + mean4 * tSq * tSq / 24;
+            double im = mean1 - mean3 * tSq / 6;
+            im *= t;
+            return std::complex<double>(re, im);
+        }
+    }
+
     double startPoint = Mean();
     if (!std::isfinite(startPoint))
         startPoint = Median();
@@ -108,6 +125,42 @@ double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
     }, mu);
 
     return sum / (var * var) - 3;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::SecondMoment() const
+{
+    double mean = Mean();
+    return mean * mean + Variance();
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::ThirdMoment() const
+{
+    double mean = Mean();
+    double variance = Variance();
+    double skewness = Skewness();
+
+    double moment = skewness * std::sqrt(variance) * variance;
+    moment += mean * mean * mean;
+    moment += mean * variance;
+    return moment;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::FourthMoment() const
+{
+    double mean = Mean();
+    double variance = Variance();
+    double moment3 = ThirdMoment();
+    double kurtosis = Kurtosis();
+    double meanSq = mean * mean;
+
+    double moment = kurtosis * variance * variance;
+    moment -= 6 * meanSq * variance;
+    moment -= 3 * meanSq * meanSq;
+    moment += 4 * mean * moment3;
+    return moment;
 }
 
 template< typename T >

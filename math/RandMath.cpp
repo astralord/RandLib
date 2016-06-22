@@ -678,9 +678,9 @@ double RandMath::modifiedBesselFirstKind(double x, double n)
     }
 
     if (x == 0) {
-        if (n > 0 || nIsInt);
-            return 0.0;
-        return (n == 0) ? 1.0 : INFINITY;
+        if (n == 0)
+            return 1.0;
+        return (n > 0 || nIsInt) ? 0.0 : INFINITY;
     }
 
     if (n == 0.5)

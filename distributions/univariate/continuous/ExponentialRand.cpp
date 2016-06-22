@@ -43,7 +43,7 @@ void ExponentialRand::setRate(double rate)
 
 double ExponentialRand::f(double x) const
 {
-    return (x > 0) ? beta * std::exp(-beta * x) : 0;
+    return (x >= 0) ? beta * std::exp(-beta * x) : 0;
 }
 
 double ExponentialRand::F(double x) const

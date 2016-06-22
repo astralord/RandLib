@@ -154,6 +154,24 @@ public:
     virtual double ExcessKurtosis() const;
 
     /**
+     * @brief SecondMoment
+     * @return E[X^2]
+     */
+    virtual double SecondMoment() const;
+
+    /**
+     * @brief ThirdMoment
+     * @return E[X^3]
+     */
+    virtual double ThirdMoment() const;
+
+    /**
+     * @brief FourthMoment
+     * @return E[X^4]
+     */
+    virtual double FourthMoment() const;
+
+    /**
      * @brief Likelihood
      * @param sample
      * @return product of f(x_i)

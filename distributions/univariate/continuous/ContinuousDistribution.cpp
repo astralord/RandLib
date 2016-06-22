@@ -120,15 +120,16 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
     /// works good for unimodal and distributions
-    static constexpr double epsilon = 1e-10;
+    static constexpr double epsilon1 = 1e-5;
+    static constexpr double epsilon2 = 1e-10;
     static constexpr int maxIter = 1000;
 
     double lowerBoundary = startPoint, upperBoundary = startPoint;
     SUPPORT_TYPE suppType = supportType();
     if (suppType == FINITE_T)
     {
-        lowerBoundary = getMinValueWithFinitePDF(epsilon);
-        upperBoundary = getMaxValueWithFinitePDF(epsilon);
+        lowerBoundary = getMinValueWithFinitePDF(epsilon2);
+        upperBoundary = getMaxValueWithFinitePDF(epsilon2);
     }
     else
     {
@@ -140,7 +141,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
 
         /// search lower boundary
         if (suppType == RIGHTSEMIFINITE_T) {
-            lowerBoundary = getMinValueWithFinitePDF(epsilon);
+            lowerBoundary = getMinValueWithFinitePDF(epsilon2);
         }
         else if (varIsInfinite) {
             lowerBoundary = Quantile(0.001);
@@ -148,12 +149,12 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         else
         {
             // TODO: check that lowerBoundary < upperBoundary
-            /// get such lower boundary 'x' that f(x) < eps && |g(x)f(x)| < eps && F(x) < 0.001
+            /// get such lower boundary 'x' that f(x) < eps1 && |g(x)f(x)| < eps2 && F(x) < 0.001
             double fx = 1;
             do {
                lowerBoundary -= step;
                fx = f(lowerBoundary);
-            } while ((fx > epsilon || std::fabs(funPtr(lowerBoundary)) * fx > epsilon || F(lowerBoundary) > 0.001) && ++iter < maxIter);
+            } while ((fx > epsilon1 || std::fabs(funPtr(lowerBoundary)) * fx > epsilon2 || F(lowerBoundary) > 0.001) && ++iter < maxIter);
 
             if (iter == maxIter) /// can't take integral, integrand decreases too slow
                 return NAN;
@@ -161,20 +162,20 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
 
         /// search upper boundary
         if (suppType == LEFTSEMIFINITE_T) {
-            upperBoundary = getMaxValueWithFinitePDF(epsilon);
+            upperBoundary = getMaxValueWithFinitePDF(epsilon2);
         }
         else if (varIsInfinite) {
             upperBoundary = Quantile(0.999);
         }
         else
         {
-            /// get such upper boundary 'x' that f(x) < eps && |g(x)f(x)| < eps && F(x) > 0.999
+            /// get such upper boundary 'x' that f(x) < eps1 && |g(x)f(x)| < eps2 && F(x) > 0.999
             iter = 0;
             double fx = 1;
             do {
                upperBoundary += step;
                fx = f(upperBoundary);
-            } while ((fx > epsilon || std::fabs(funPtr(upperBoundary)) * fx > epsilon || F(upperBoundary) < 0.999) && ++iter < maxIter);
+            } while ((fx > epsilon1 || std::fabs(funPtr(upperBoundary)) * fx > epsilon2 || F(upperBoundary) < 0.999) && ++iter < maxIter);
 
             if (iter == maxIter) /// can't take integral, integrand decreases too slow
                 return NAN;

@@ -12,6 +12,10 @@ double SumRand<T1, T2>::Convolution(const std::function<double (T1)> &funPtrX, c
 {
     SUPPORT_TYPE suppX = X.supportType(), suppY = Y.supportType();
 
+    if (x > 0) {
+        int asdasd = 1;
+    }
+
     if (suppX != INFINITE_T && suppY != INFINITE_T) {
 
         bool integrandIsLeftBounded = false, integrandIsRightBounded = false;
