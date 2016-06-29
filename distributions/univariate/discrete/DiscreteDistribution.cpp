@@ -73,15 +73,18 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
 double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
     SUPPORT_TYPE suppType = supportType();
+    double sum = 0, addon = 0, prob = 0;
     if (suppType == FINITE_T) {
         int k = std::floor(MinValue());
         int upperBoundary = std::ceil(MaxValue());
-        double addon = 0, sum = 0;
         do {
             addon = funPtr(k);
             if (addon != 0.0) {
-                addon *= P(k);
-                sum += addon;
+                prob = P(k);
+                if (prob > 0.0) {
+                    addon *= prob;
+                    sum += addon;
+                }
             }
             ++k;
         } while (k <= upperBoundary);
@@ -94,13 +97,14 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
 
     if (suppType == RIGHTSEMIFINITE_T) {
         int k = std::floor(MinValue());
-        double addon = 0, sum = 0, prob = 0;
         do {
             addon = funPtr(k);
             if (addon != 0.0) {
                 prob = P(k);
-                addon *= prob;
-                sum += addon;
+                if (prob > 0.0) {
+                    addon *= prob;
+                    sum += addon;
+                }
             }
             ++k;
             if (++iter > maxIter) /// can't take sum, addon decreases too slow
@@ -111,13 +115,14 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
 
     if (suppType == LEFTSEMIFINITE_T) {
         int k = std::floor(MaxValue());
-        double addon = 0, sum = 0, prob = 0;
         do {
             addon = funPtr(k);
             if (addon != 0.0) {
                 prob = P(k);
-                addon *= prob;
-                sum += addon;
+                if (prob > 0.0) {
+                    addon *= prob;
+                    sum += addon;
+                }
             }
             --k;
             if (++iter > maxIter) /// can't take sum, addon decreases too slow
@@ -133,13 +138,14 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         --x;
     int k = x;
 
-    double sum = 0, addon = 0, prob = 0;
     do {
         addon = funPtr(k);
         if (addon != 0.0) {
             prob = P(k);
-            addon *= prob;
-            sum += addon;
+            if (prob > 0.0) {
+                addon *= prob;
+                sum += addon;
+            }
         }
         --k;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow
@@ -156,8 +162,10 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         addon = funPtr(k);
         if (addon != 0.0) {
             prob = P(k);
-            addon *= prob;
-            sum += addon;
+            if (prob > 0.0) {
+                addon *= prob;
+                sum += addon;
+            }
         }
         ++k;
         if (++iter > maxIter) /// can't take sum, addon decreases too slow

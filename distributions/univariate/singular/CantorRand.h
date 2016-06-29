@@ -9,16 +9,17 @@
  */
 class RANDLIBSHARED_EXPORT CantorRand : public SingularDistribution
 {
-    double generatorPrecision;
+    static constexpr int n = 30;
+    static double table[n]; /// all powers of 1/3 from 1 to n
+    static const bool dummy;
+    static bool setupTable();
+
 public:
     CantorRand();
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return 1; }
-
-    void setGeneratorPrecision(double precision);
-    inline double getGeneratorPrecision() const { return generatorPrecision; }
 
     double F(double x) const override;
     double variate() const override;

@@ -2,20 +2,24 @@
 #include "../discrete/BernoulliRand.h"
 #include "../continuous/UniformRand.h"
 
+double CantorRand::table[CantorRand::n] = {0};
+const bool CantorRand::dummy = CantorRand::setupTable();
+
+bool CantorRand::setupTable()
+{
+    table[0] = 0.33333333333333333333;
+    for (int i = 1; i != n; ++i)
+        table[i] = table[i - 1] / 3.0;
+    return true;
+}
+
 CantorRand::CantorRand()
 {
-    setGeneratorPrecision(MIN_POSITIVE);
 }
 
 std::string CantorRand::name() const
 {
     return "Cantor";
-}
-
-void CantorRand::setGeneratorPrecision(double precision)
-{
-    if (precision > 0.0)
-        generatorPrecision = precision;
 }
 
 double CantorRand::F(double x) const
@@ -50,11 +54,9 @@ double CantorRand::F(double x) const
 double CantorRand::variate() const
 {
     long double sum = 0.0;
-    long double prod = 1.0;
-    do {
-        prod /= 3.0;
-        sum += prod * BernoulliRand::standardVariate();
-    } while (prod > generatorPrecision);
+    for (int i = 0; i != n; ++i) {
+        sum += table[i] * BernoulliRand::standardVariate();
+    }
     return sum + sum;
 }
 
@@ -87,13 +89,8 @@ std::complex<double> CantorRand::CF(double t) const
     if (t == 0)
         return std::complex<double>(1, 0);
     double prod = 1.0;
-    double mult;
-    double aux = t;
-    do {
-        aux /= 3.0;
-        mult = std::cos(aux);
-        prod *= mult;
-    } while (mult > 1.0);
+    for (int i = 0; i != n; ++i)
+        prod *= std::cos(table[i]);
     std::complex<double> y(0.0, 0.5 * t);
     y = std::exp(y);
     return y * prod;

@@ -17,6 +17,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableRand
     double sigma0;
 
     //TODO: find a way to initialize them without dummy
+    // try to make tables also constexpr
     /// Tables for ziggurat
     static double stairWidth[257], stairHeight[256];
     static constexpr double x1 = 3.6541528853610088;

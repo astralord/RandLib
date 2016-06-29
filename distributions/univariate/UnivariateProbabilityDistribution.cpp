@@ -33,7 +33,7 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
     if (t == 0)
         return std::complex<double>(1, 0);
 
-    if (std::fabs(t) < 0.1)
+    if (std::fabs(t) < 0.05)
     {
         double mean4 = FourthMoment();
         if (std::isfinite(mean4)) {
@@ -50,8 +50,17 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
     }
 
     double startPoint = Mean();
-    if (!std::isfinite(startPoint))
-        startPoint = Median();
+    if (!std::isfinite(startPoint)) {
+        if (isLeftBounded())
+            startPoint = MinValue();
+        else if (isRightBounded())
+            startPoint = MaxValue();
+        else {
+            startPoint = Median();
+            if (!std::isfinite(startPoint))
+                startPoint = 0.0;
+        }
+    }
     double re = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);

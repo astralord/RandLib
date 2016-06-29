@@ -5,7 +5,6 @@
 #include "GammaRand.h"
 #include "StudentTRand.h"
 
-
 double NormalRand::stairWidth[257] = {0};
 double NormalRand::stairHeight[256] = {0};
 const bool NormalRand::dummy = NormalRand::setupTables();
