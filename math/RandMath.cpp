@@ -233,7 +233,9 @@ double RandMath::trigamma(double x)
 
 long double RandMath::lowerIncGamma(double a, double x)
 {
-    if (x <= 0)
+    if (x < 0)
+        return NAN;
+    if (x == 0)
         return 0.0;
     if (a == 1)
         return 1.0 - std::exp(-x);
@@ -244,10 +246,15 @@ long double RandMath::lowerIncGamma(double a, double x)
 
 long double RandMath::logLowerIncGamma(double a, double x)
 {
+    if (x < 0)
+        return NAN;
+    if (x == 0)
+        return -INFINITY;
     if (a == 1)
         return std::log(1.0 - std::exp(-x));
-    if (x <= 0)
-        return -INFINITY;
+    if (a == 2)
+        return M_LNPI + std::log(std::erf(std::sqrt(x)));
+
     double sum = 0;
     double term = 1.0 / a;
     int n = 1;
@@ -262,20 +269,24 @@ long double RandMath::logLowerIncGamma(double a, double x)
 
 long double RandMath::upperIncGamma(double a, double x)
 {
-    if (x <= 0)
-        return 0.0;
-    if (a == 2)
+    if (x < 0)
+        return NAN;
+    if (x == 0)
+        return std::tgamma(x);
+    if (a == 0.5)
         return M_SQRTPI * std::erfc(std::sqrt(x));
     return std::exp(logUpperIncGamma(a, x));
 }
 
 long double RandMath::logUpperIncGamma(double a, double x)
 {
-    if (x <= 0)
-        return -INFINITY;
+    if (x < 0)
+        return NAN;
+    if (x == 0)
+        return std::lgamma(x);
     if (a == 1)
         return -x;
-    if (a == 2)
+    if (a == 0.5)
         return M_LNPI + std::log(std::erfc(std::sqrt(x)));
 
     if (std::max(a, x) < 1e-3)
