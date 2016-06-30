@@ -33,7 +33,7 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
     if (t == 0)
         return std::complex<double>(1, 0);
 
-    if (std::fabs(t) < 0.05)
+    if (std::fabs(t) < 0.0001)
     {
         double mean4 = FourthMoment();
         if (std::isfinite(mean4)) {

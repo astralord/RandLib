@@ -233,11 +233,19 @@ double RandMath::trigamma(double x)
 
 long double RandMath::lowerIncGamma(double a, double x)
 {
-    return (x <= 0) ? 0.0 : std::exp(logLowerIncGamma(a, x));
+    if (x <= 0)
+        return 0.0;
+    if (a == 1)
+        return 1.0 - std::exp(-x);
+    if (a == 2)
+        return M_SQRTPI * std::erf(std::sqrt(x));
+    return std::exp(logLowerIncGamma(a, x));
 }
 
 long double RandMath::logLowerIncGamma(double a, double x)
 {
+    if (a == 1)
+        return std::log(1.0 - std::exp(-x));
     if (x <= 0)
         return -INFINITY;
     double sum = 0;
@@ -254,24 +262,37 @@ long double RandMath::logLowerIncGamma(double a, double x)
 
 long double RandMath::upperIncGamma(double a, double x)
 {
-    return std::tgamma(a) - lowerIncGamma(a, x);
+    if (x <= 0)
+        return 0.0;
+    if (a == 2)
+        return M_SQRTPI * std::erfc(std::sqrt(x));
+    return std::exp(logUpperIncGamma(a, x));
 }
 
 long double RandMath::logUpperIncGamma(double a, double x)
 {
-    static constexpr double minBound = 1e-2;
-    if (a < minBound && x < minBound)
-        return a * std::log(x);
+    if (x <= 0)
+        return -INFINITY;
+    if (a == 1)
+        return -x;
+    if (a == 2)
+        return M_LNPI + std::log(std::erfc(std::sqrt(x)));
 
-    double y = x;
-    int n = 20;
-    for (int i = 0; i < n; ++i)
-    {
-        double m = n - i;
-        y = 1.0 + m / y;
-        y = x + (m - a) / y;
+    if (std::max(a, x) < 1e-3)
+        return a * std::log(x);
+    if (x > 1.1) {
+        double y = x;
+        static constexpr int n = 20;
+        for (int i = 0; i < n; ++i)
+        {
+            double m = n - i;
+            y = 1.0 + m / y;
+            y = x + (m - a) / y;
+        }
+        return a * std::log(x) - x - std::log(y);
     }
-    return a * std::log(x) - x - std::log(y);
+
+    return std::log(std::tgamma(a) - lowerIncGamma(a, x));
 }
 
 double RandMath::betaFun(double a, double b)

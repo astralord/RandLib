@@ -109,5 +109,4 @@ constexpr long double M_CATALAN   = 0.91596559417721901505;
 constexpr long double M_PI_SQ     = 9.86960440108935861883;
 #endif
 
-
 #endif // CONSTANTS_H
