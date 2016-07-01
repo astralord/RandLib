@@ -13,7 +13,7 @@ std::string UniformRand::name() const
 
 void UniformRand::setSupport(double minValue, double maxValue)
 {
-    BetaRand::setSupport(minValue, maxValue);
+    BetaRand::setParameters(1, 1, minValue, maxValue);
     bmaInv = 1.0 / (b - a);
 }
 

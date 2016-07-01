@@ -28,61 +28,19 @@ void BetaRand::setParameters(double shape1, double shape2, double minValue, doub
     alpha = shape1;
     if (alpha <= 0)
         alpha = 1.0;
-    X.setParameters(alpha, 1);
 
     beta = shape2;
     if (beta <= 0)
         beta = 1.0;
-    Y.setParameters(beta, 1);
 
     /// we use log(Gamma(x)) in order to avoid too big numbers
-    double logGammaX = X.getLogGammaFunction();
-    double logGammaY = Y.getLogGammaFunction();
+    double logGammaX = std::lgamma(alpha);
+    double logGammaY = std::lgamma(beta);
     cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
     pdfCoef = cdfCoef - std::log(bma);
     cdfCoef = std::exp(cdfCoef);
 
-    setVariateConstants();
-}
-
-void BetaRand::setSupport(double minValue, double maxValue)
-{
-    a = minValue;
-    b = maxValue;
-
-    if (a >= b)
-        b = a + 1.0;
-
-    bma = b - a;
-    pdfCoef = std::log(cdfCoef / bma);
-}
-
-void BetaRand::setAlpha(double shape1)
-{
-    alpha = shape1;
-    if (alpha <= 0)
-        alpha = 1.0;
-    X.setParameters(alpha, 1);
-    double logGammaX = X.getLogGammaFunction();
-    double logGammaY = Y.getLogGammaFunction();
-    cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
-    pdfCoef = cdfCoef - std::log(bma);
-    cdfCoef = std::exp(cdfCoef);
-    setVariateConstants();
-}
-
-void BetaRand::setBeta(double shape2)
-{
-    beta = shape2;
-    if (beta <= 0)
-        beta = 1.0;
-    Y.setParameters(beta, 1);
-    double logGammaX = X.getLogGammaFunction();
-    double logGammaY = Y.getLogGammaFunction();
-    cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
-    pdfCoef = cdfCoef - std::log(bma);
-    cdfCoef = std::exp(cdfCoef);
-    setVariateConstants();
+    setCoefficientsForGenerator();
 }
 
 double BetaRand::f(double x) const
@@ -122,11 +80,12 @@ double BetaRand::F(double x) const
 
 double BetaRand::variateArcsine() const
 {
-    double x = std::sin(UniformRand::variate(-M_PI, M_PI));
-    return x * x;
+    double U = UniformRand::variate(-M_PI, M_PI);
+    double X = std::sin(U);
+    return X * X;
 }
 
-double BetaRand::variateForSmallEqualParameters() const
+double BetaRand::variateRejectionUniform() const
 {
     int iter = 0;
     do {
@@ -138,83 +97,208 @@ double BetaRand::variateForSmallEqualParameters() const
     return NAN; /// fail
 }
 
-double BetaRand::variateForLargeEqualParameters() const
+double BetaRand::variateCheng() const
+{
+    double U, V, R, T, X, Y;
+    do {
+        U = UniformRand::standardVariate();
+        V = UniformRand::standardVariate();
+        X = std::log(U / (1 - U)) / t;
+        Y = alpha * std::exp(X);
+        R = 1.0 / (beta + Y);
+
+        T = 4 * U * U * V;
+        T = std::log(T);
+        T -= u * X;
+        T -= s * std::log(s * R);
+    } while (T > 0);
+    return Y * R;
+}
+
+double BetaRand::variateAtkinsonWhittaker() const
 {
     int iter = 0;
     do {
-        double n = N.variate();
-        if (n < 0 || n > 1)
-            continue;
-        double u = UniformRand::standardVariate();
-        if (u < N.f(n) / (variateCoef * f(n)))
-            return n;
+        double U = UniformRand::standardVariate();
+        double W = ExponentialRand::standardVariate();
+        if (U <= s) {
+            double X = t * std::pow(U / s, 1.0 / alpha);
+            if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - t)))
+                return X;
+        }
+        else {
+            double X = 1.0 - (1.0 - t) * std::pow((1.0 - U) / (1.0 - s), 1.0 / beta);
+            if (W >= (1.0 - alpha) * std::log(X / t))
+                return X;
+        }
     } while (++iter <= 1e9); /// one billion should be enough
     return NAN; /// fail
 }
 
-double BetaRand::variateForDifferentParameters() const
+double BetaRand::variateRejectionNormal() const
 {
-    double x = X.variate();
-    return x / (x + Y.variate());
+    int iter = 0;
+    double N = 0, Z = 0;
+    double alpham1 = alpha - 1;
+    bool accepted = false;
+    do {
+        do {
+            N = NormalRand::standardVariate();
+            Z = N * N;
+        } while (Z >= alpha + alpham1);
+
+        double W = ExponentialRand::standardVariate() + s;
+        double aux = 0.5 - alpham1 / (alpha + alpham1 - Z);
+        aux *= Z;
+        if (W + aux < 0) {
+            aux = std::log(1.0 - Z / (alpha + alpham1));
+            aux *= alpham1;
+            aux += W + 0.5 * Z;
+            if (aux >= 0)
+                accepted = true;
+        }
+        else {
+            accepted = true;
+        }
+
+        if (accepted) {
+            return 0.5 + N * t;
+        }
+
+    } while (++iter <= 1e9); /// one billion should be enough
+    return NAN; /// fail
 }
 
-void BetaRand::setVariateConstants()
+double BetaRand::variateJohnk() const
 {
-    /// We need to storage variate coefficient only if alpha = beta and large enough
-    if (alpha > edgeForGenerators && RandMath::areClose(alpha, beta))
-    {
-        double t = 1.0 / (alpha + alpha + 1);
-        variateCoef = M_E * std::sqrt(0.5 * M_PI * M_E * t);
-        variateCoef *= std::pow(0.25 - 0.75 * t, alpha - 1);
-        variateCoef *= cdfCoef; /// /= Beta(alpha, alpha)
-
-        N.setLocation(0.5);
-        N.setVariance(0.25 * t);
-    }
+    double X = 0, Y = 0, Z = 0;
+    do {
+        double U = UniformRand::standardVariate();
+        double V = UniformRand::standardVariate();
+        X = std::pow(U, 1.0 / alpha);
+        Y = std::pow(V, 1.0 / beta);
+        Z = X + Y;
+    } while (Z > 1);
+    return X / Z;
 }
 
 double BetaRand::variate() const
 {
-    double var;
-    if (alpha == beta && alpha == 0.5)
-        var = variateArcsine();
-    else if (!(alpha == beta) || alpha < 1)
-        var =  variateForDifferentParameters();
-    else if (alpha == 1)
+    double var = 0;
+    GENERATOR_ID id = getIdOfUsedGenerator();
+
+    switch (id) {
+    case UNIFORM:
         var = UniformRand::standardVariate();
-    else if (alpha <= edgeForGenerators)
-        var = variateForSmallEqualParameters();
-    else
-        var = variateForLargeEqualParameters();
+        break;
+    case ARCSINE:
+        var = variateArcsine();
+        break;
+    case CHENG:
+        var = variateCheng();
+        break;
+    case REJECTION_UNIFORM:
+        var = variateRejectionUniform();
+        break;
+    case REJECTION_NORMAL:
+        var = variateRejectionNormal();
+        break;
+    case JOHNK:
+        var = variateJohnk();
+        break;
+    case ATKINSON_WHITTAKER:
+        var = variateAtkinsonWhittaker();
+        break;
+    }
+
     return a + bma * var;
 }
 
 void BetaRand::sample(std::vector<double> &outputData) const
 {
-    if (alpha == beta && alpha == 0.5) {
-        for (double &var : outputData)
-            var = variateArcsine();
-    }
-    else if (!(alpha == beta) || alpha < 1) {
-        for (double &var : outputData)
-            var = variateForDifferentParameters();
-    }
-    else if (alpha == 1) {
+    GENERATOR_ID id = getIdOfUsedGenerator();
+
+    switch (id) {
+    case UNIFORM: {
         for (double &var : outputData)
             var = UniformRand::standardVariate();
-    }
-    else if (alpha <= edgeForGenerators) {
+        }
+        break;
+    case ARCSINE: {
+            for (double &var : outputData)
+                var = variateArcsine();
+        }
+        break;
+    case CHENG: {
         for (double &var : outputData)
-            var = variateForSmallEqualParameters();
-    }
-    else {
+            var = variateCheng();
+        }
+        break;
+    case REJECTION_UNIFORM: {
         for (double &var : outputData)
-            var = variateForLargeEqualParameters();
+            var = variateRejectionUniform();
+        }
+        break;
+    case REJECTION_NORMAL: {
+        for (double &var : outputData)
+            var = variateRejectionNormal();
+        }
+        break;
+    case JOHNK: {
+        for (double &var : outputData)
+            var = variateJohnk();
+        }
+        break;
+    case ATKINSON_WHITTAKER: {
+        for (double &var : outputData)
+            var = variateAtkinsonWhittaker();
+        }
+        break;
     }
 
     /// Shift and scale
     for (double &var : outputData)
         var = a + bma * var;
+}
+
+BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
+{
+    if (alpha < 1 && beta < 1 && alpha + beta > 1)
+        return ATKINSON_WHITTAKER;
+
+    if (alpha == beta) {
+        /// Generators for symmetric density
+        if (alpha == 1.0)
+            return UNIFORM; /// Standard uniform variate
+        else if (alpha == 0.5)
+            return ARCSINE; /// Arcsine method
+        else if (alpha > 1)
+            return (alpha < 2) ? REJECTION_UNIFORM : REJECTION_NORMAL;
+    }
+    return (alpha + beta < 2) ? JOHNK : CHENG;
+}
+
+void BetaRand::setCoefficientsForGenerator()
+{
+    GENERATOR_ID id = getIdOfUsedGenerator();
+    if (id == REJECTION_NORMAL) {
+        double alpham1 = alpha - 1;
+        s = alpham1 * std::log(1.0 + 0.5 / alpham1) - 0.5;
+        t = 1.0 / std::sqrt(8 * alpha - 4);
+    }
+    else if (id == CHENG) {
+        s = alpha + beta;
+        t = std::min(alpha, beta);
+        if (t > 1)
+            t = std::sqrt((2 * alpha * beta - s) / (s - 2));
+        u = alpha + t;
+    }
+    else if (id == ATKINSON_WHITTAKER) {
+        t = std::sqrt(alpha * (1 - alpha));
+        t /= (t + std::sqrt(beta * (1 - beta)));
+        s = beta * t;
+        s /= (s + alpha * (1 - t));
+    }
 }
 
 double BetaRand::Mean() const
@@ -252,7 +336,7 @@ double BetaRand::Quantile(double p) const
 
 double BetaRand::Median() const
 {
-    return (alpha == beta) ? 0.5 : Quantile(0.5);
+    return (alpha == beta) ? 0.5 * (b + a) : Quantile(0.5);
 }
 
 double BetaRand::Mode() const
@@ -261,7 +345,7 @@ double BetaRand::Mode() const
     if (alpha > 1)
         mode = (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
     else
-        mode = (beta > 1) ? 0.0 : BernoulliRand::standardVariate(); // WRONG!
+        mode = (beta > 1) ? 0.0 : (alpha > beta);
     return a + bma * mode;
 }
 

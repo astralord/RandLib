@@ -308,25 +308,16 @@ long double RandMath::logUpperIncGamma(double a, double x)
 
 double RandMath::betaFun(double a, double b)
 {
-    double sum = a + b;
-    if (sum > 30)
-    {
-        double lgammaA = std::lgamma(a);
-        double lgammaB = (a == b) ? lgammaA : std::lgamma(b);
-        return std::exp(lgammaA + lgammaB - std::lgamma(sum));
-    }
-
-    if (a > b)
-        std::swap(a, b);
-
-    double gammaB = std::tgamma(b);
-    double res = gammaB / std::tgamma(sum);
-    return (a == b) ? res * gammaB : res * std::tgamma(a);
+    if (a <= 0 || b <= 0)
+        return NAN;
+    double lgammaA = std::lgamma(a);
+    double lgammaB = (a == b) ? lgammaA : std::lgamma(b);
+    return std::exp(lgammaA + lgammaB - std::lgamma(a + b));
 }
 
 double RandMath::regularizedBetaFun(double x, double a, double b)
 {
-    if (x < 0.0 || x > 1.0)
+    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
         return NAN;
     if (x == 1.0)
         return 1.0;
@@ -337,7 +328,7 @@ double RandMath::regularizedBetaFun(double x, double a, double b)
 
 double RandMath::incompleteBetaFun(double x, double a, double b)
 {
-    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
+    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
         return NAN;
     if (x == 0.0)
         return 0.0;
@@ -366,19 +357,33 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
         y -= std::pow(x, a) * std::pow(1 - x, b);
         return y / b;
     }
+
+    double minBound = 0, maxBound = x;
+    bool invert = false;
+    /// if x > mode
+    if (x > (a - 1) / (a + b - 2)) {
+        maxBound = 1;
+        minBound = x;
+        invert = true;
+    }
+    double y = 0;
+
     if (a != b)
     {
-        return integral([a, b] (double t)
+        y = integral([a, b] (double t)
         {
             return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
         },
-        0, x);
+        minBound, maxBound);
     }
-    return integral([a, b] (double t)
-    {
-        return std::pow(t - t * t, a - 1);
-    },
-    0, x);
+    else {
+        y = integral([a, b] (double t)
+        {
+            return std::pow(t - t * t, a - 1);
+        },
+        minBound, maxBound);
+    }
+    return (invert) ? betaFun(a, b) - y : y;
 }
 
 long double RandMath::gammaHalf(size_t k)

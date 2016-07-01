@@ -18,11 +18,11 @@ protected:
     double a, b, bma;
 
 private:
-    GammaRand X, Y;
-    NormalRand N; // TODO: we need to storage N OR (X AND Y)
     static constexpr double edgeForGenerators = 8.0;
     double pdfCoef, cdfCoef;
-    double variateCoef;
+
+    /// coefficients for generator:
+    double s, t, u;
 
 public:
     BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
@@ -33,9 +33,6 @@ public:
     double MaxValue() const override { return b; }
 
     void setParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
-    void setSupport(double minValue, double maxValue);
-    void setAlpha(double shape1);
-    void setBeta(double shape2);
     inline double getAlpha() const { return alpha; }
     inline double getBeta() const { return beta; }
     inline double getMin() const { return a; }
@@ -48,12 +45,67 @@ public:
     void sample(std::vector<double> &outputData) const override;
 
 private:
-    double variateArcsine() const;                  /// alpha = beta = 0.5
-    double variateForSmallEqualParameters() const;  /// alpha = beta, 1 < alpha < edgeForGenerators
-    double variateForLargeEqualParameters() const;  /// alpha = beta, alpha > edgeForGenerators
-    double variateForDifferentParameters() const;   /// otherwise
 
-    void setVariateConstants();
+    enum GENERATOR_ID {
+        UNIFORM,
+        ARCSINE,
+        CHENG,
+        REJECTION_UNIFORM,
+        REJECTION_NORMAL,
+        JOHNK,
+        ATKINSON_WHITTAKER
+    };
+
+    /**
+     * @brief getIdOfUsedGenerator
+     * @return id of the used variate generator according to shape parameters
+     */
+    GENERATOR_ID getIdOfUsedGenerator() const;
+
+    /**
+     * @brief setCoefficientsForGenerator
+     */
+    void setCoefficientsForGenerator();
+
+    /**
+     * @brief variateRejectionUniform
+     * Symmetric beta generator via rejection from the uniform density
+     * @return beta variate for 1 < alpha = beta < 2
+     */
+    double variateRejectionUniform() const;
+
+    /**
+     * @brief variateArcsine
+     * Arcsine beta generator
+     * @return beta variate for alpha = beta = 0.5
+     */
+    double variateArcsine() const;
+
+    /**
+     * @brief variateRejectionNormal
+     * Symmetric beta generator via rejection from the normal density
+     * @return beta variate for equal shape parameters > 2
+     */
+    double variateRejectionNormal() const;
+
+    /**
+     * @brief variateJohnk
+     * Johnk's beta generator
+     * @return beta variate for small shape parameters < 1
+     */
+    double variateJohnk() const;
+
+    /**
+     * @brief variateCheng
+     * @return
+     */
+    double variateCheng() const;
+
+    /**
+     * @brief variateAtkinsonWittaker
+     * @return
+     */
+    double variateAtkinsonWhittaker() const;
 
 public:
     double Mean() const override;
@@ -89,8 +141,6 @@ public:
 protected:
     /// prohibit to use beta's getters and setters
     using BetaRand::setParameters;
-    using BetaRand::setAlpha;
-    using BetaRand::setBeta;
 };
 
 
@@ -110,8 +160,6 @@ public:
 
 private:
     using BetaRand::setParameters;
-    using BetaRand::setAlpha;
-    using BetaRand::setBeta;
 };
 
 #endif // BETARAND_H

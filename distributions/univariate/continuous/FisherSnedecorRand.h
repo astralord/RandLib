@@ -25,8 +25,6 @@ public:
     double MaxValue() const override { return INFINITY; }
 
     void setDegrees(int degree1, int degree2);
-    void setFirstDegree(int degree1);
-    void setSecondDegree(int degree2);
     inline int getFirstDegree() const { return d1; }
     inline int getSecondDegree() const { return d2; }
 

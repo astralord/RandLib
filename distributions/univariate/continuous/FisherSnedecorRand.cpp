@@ -26,35 +26,6 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     pdfCoef += (a + 1) * std::log(d1_d2);
 }
 
-void FisherSnedecorRand::setFirstDegree(int degree1)
-{
-    d1 = std::max(degree1, 1);
-
-    B.setAlpha(.5 * d1);
-
-    a = .5 * d1 - 1;
-    d1_d2 = static_cast<double>(d1) / d2;
-    c = -.5 * (d1 + d2);
-    d2_d1 = 1.0 / d1_d2;
-
-    pdfCoef = std::log(B.getInverseBetaFunction());
-    pdfCoef += (a + 1) * std::log(d1_d2);
-}
-
-void FisherSnedecorRand::setSecondDegree(int degree2)
-{
-    d2 = std::max(degree2, 1);
-
-    B.setBeta(.5 * d2);
-
-    d1_d2 = static_cast<double>(d1) / d2;
-    d2_d1 = 1.0 / d1_d2;
-    c = -.5 * (d1 + d2);
-
-    pdfCoef = std::log(B.getInverseBetaFunction());
-    pdfCoef += (a + 1) * std::log(d1_d2);
-}
-
 double FisherSnedecorRand::f(double x) const
 {
     if (x <= 0)
