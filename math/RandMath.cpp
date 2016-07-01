@@ -768,6 +768,17 @@ double RandMath::modifiedBesselFirstKind(double x, double n)
     return y * sum;
 }
 
+double RandMath::modifiedBesselSecondKind(double x, double n)
+{
+    if (n == 0.5)
+        return M_SQRTPI * M_SQRT1_2 * std::exp(-x) / std::sqrt(x);
+
+    double y = modifiedBesselFirstKind(x, -n);
+    y -= modifiedBesselFirstKind(x, n);
+    y /= std::sin(n * M_PI);
+    return 0.5 * M_PI * y;
+}
+
 double RandMath::BernoulliNumber(int n)
 {
     std::vector<double> A(n);

@@ -359,6 +359,14 @@ public:
     static double modifiedBesselFirstKind(double x, double n);
 
     /**
+     * @brief modifiedBesselSecondKind
+     * @param x
+     * @param n
+     * @return K_n(x)
+     */
+    static double modifiedBesselSecondKind(double x, double n);
+
+    /**
      * @brief BernoulliNumber
      * @param n
      * @return Bernoulli number, calculated by Akiyama–Tanigawa algorithm
