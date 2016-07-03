@@ -110,7 +110,7 @@ private:
 public:
     double Mean() const override;
     double Variance() const override;
-    
+
     double Quantile(double p) const override;
 
     double Median() const override;

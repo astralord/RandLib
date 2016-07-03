@@ -32,6 +32,7 @@ public:
     double F(double x) const override;
     double variate() const override;
 
+    std::complex<double> CF(double t) const override;
     void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;

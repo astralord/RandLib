@@ -45,6 +45,11 @@ double FisherSnedecorRand::variate() const
     return d2_d1 * B.variate();
 }
 
+std::complex<double> FisherSnedecorRand::CF(double t) const
+{
+    return B.CF(d2_d1 * t);
+}
+
 void FisherSnedecorRand::sample(std::vector<double> &outputData) const
 {
     B.sample(outputData);
