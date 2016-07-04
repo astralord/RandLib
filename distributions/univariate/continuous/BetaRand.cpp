@@ -48,6 +48,18 @@ double BetaRand::f(double x) const
     if (x < a || x > b)
         return 0;
 
+    if (x == a) {
+        if (alpha == 1)
+            return 1.0 / bma;
+        return (alpha > 1) ? 0 : INFINITY;
+    }
+
+    if (x == b) {
+        if (beta == 1)
+            return 1.0 / bma;
+        return (beta > 1) ? 0 : INFINITY;
+    }
+
     /// Standardize
     x -= a;
     x /= bma;
@@ -313,6 +325,48 @@ double BetaRand::Variance() const
     var *= var * (var + 1);
     var = alpha * beta / var;
     return bma * bma * var;
+}
+
+std::complex<double> BetaRand::CF(double t) const
+{
+    if (t == 0)
+        return std::complex<double>(1, 0);
+    /// if we don't have singularity points, we can use direct integration
+    if (alpha >= 1 && beta >= 1)
+        return UnivariateProbabilityDistribution::CF(t);
+
+    double z = bma * t;
+    double sinZ = std::sin(z);
+    double cosZm1 = std::cos(z) - 1.0;
+
+    double re = RandMath::integral([this, z, cosZm1](double x) {
+        if (x >= 1)
+            return 0.0;
+        if (x <= 0)
+            return -cosZm1;
+        double f = std::cos(z * x) - 1;
+        f *= std::pow(x, alpha - 1);
+        f -= cosZm1;
+        return std::pow(1.0 - x, beta - 1) * f;
+    }, 0, 1);
+    re += 1.0 / cdfCoef;
+    re += cosZm1 / beta;
+
+    double im = RandMath::integral([this, z, sinZ](double x) {
+        if (x >= 1)
+            return 0.0;
+        if (x <= 0)
+            return -sinZ;
+        double f = std::sin(z * x);
+        f *= std::pow(x, alpha - 1);
+        f -= sinZ;
+        return std::pow(1.0 - x, beta - 1) * f;
+    }, 0, 1);
+    im += sinZ / beta;
+
+    std::complex<double> y(re, im);
+    y *= std::exp(std::complex<double>(0, t * a));
+    return cdfCoef * y;
 }
 
 double BetaRand::Quantile(double p) const

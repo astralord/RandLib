@@ -123,73 +123,61 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
     /// works good for unimodal and distributions
-    static constexpr double epsilon1 = 1e-5;
-    static constexpr double epsilon2 = 1e-10;
-    static constexpr int maxIter = 1000;
+    static constexpr double epsilon = 1e-10;
 
+    // TODO: get rid off startpoint
     double lowerBoundary = startPoint, upperBoundary = startPoint;
     SUPPORT_TYPE suppType = supportType();
     if (suppType == FINITE_T)
     {
-        lowerBoundary = getLeftLimit(MinValue(), epsilon2);
-        upperBoundary = getRightLimit(MaxValue(), epsilon2);
-    }
-    else
-    {
-        int iter = 0;
-        /// WARNING: we use variance - so there can be deadlock if we don't define this function explicitly
-        /// therefore function Variance() should stay pure and noone should calculate it by this function
-        double var = Variance();
-        bool varIsInfinite = !std::isfinite(var);
+        lowerBoundary = getLeftLimit(MinValue(), epsilon);
+        upperBoundary = getRightLimit(MaxValue(), epsilon);
 
-        /// search lower boundary
-        if (suppType == RIGHTSEMIFINITE_T) {
-            lowerBoundary = getLeftLimit(MinValue(), epsilon2);
-        }
-        else if (varIsInfinite) {
-            lowerBoundary = Quantile(0.001);
-        }
-        else
+        return RandMath::integral([this, funPtr] (double x)
         {
-            // TODO: check that lowerBoundary < upperBoundary
-            /// get such lower boundary 'x' that f(x) < eps1 && |g(x)f(x)| < eps2 && F(x) < 0.001
-            double fx = 1;
-            do {
-               lowerBoundary -= var;
-               fx = f(lowerBoundary);
-            } while ((fx > epsilon1 || std::fabs(funPtr(lowerBoundary)) * fx > epsilon2 || F(lowerBoundary) > 0.001) && ++iter < maxIter);
-
-            if (iter == maxIter) /// can't take integral, integrand decreases too slow
-                return NAN;
-        }
-
-        /// search upper boundary
-        if (suppType == LEFTSEMIFINITE_T) {
-            upperBoundary = getRightLimit(MaxValue(), epsilon2);
-        }
-        else if (varIsInfinite) {
-            upperBoundary = Quantile(0.999);
-        }
-        else
-        {
-            /// get such upper boundary 'x' that f(x) < eps1 && |g(x)f(x)| < eps2 && F(x) > 0.999
-            iter = 0;
-            double fx = 1;
-            do {
-               upperBoundary += var;
-               fx = f(upperBoundary);
-            } while ((fx > epsilon1 || std::fabs(funPtr(upperBoundary)) * fx > epsilon2 || F(upperBoundary) < 0.999) && ++iter < maxIter);
-
-            if (iter == maxIter) /// can't take integral, integrand decreases too slow
-                return NAN;
-        }
+            return funPtr(x) * f(x);
+        },
+        lowerBoundary, upperBoundary);
     }
-
+    else if (suppType == RIGHTSEMIFINITE_T) {
+        lowerBoundary = getLeftLimit(MinValue(), epsilon);
+        return RandMath::integral([this, funPtr, lowerBoundary] (double x)
+        {
+            if (x >= 1.0)
+                return 0.0;
+            double denom = 1.0 - x;
+            double t = lowerBoundary + x / denom;
+            double y = funPtr(t) * f(t);
+            denom *= denom;
+            return y / denom;
+        },
+        0.0, 1.0);
+    } else if (suppType == RIGHTSEMIFINITE_T) {
+        upperBoundary = getRightLimit(MaxValue(), epsilon);
+        return RandMath::integral([this, funPtr, upperBoundary] (double x)
+        {
+            if (x <= 0.0)
+                return 0.0;
+            double t = upperBoundary - (1.0 - x) / x;
+            double y = funPtr(t) * f(t);
+            return y / (x * x);
+        },
+        0.0, 1.0);
+    }
+    /// Infinite case
     return RandMath::integral([this, funPtr] (double x)
     {
-        return funPtr(x) * f(x);
+        if (std::fabs(x) >= 1.0)
+            return 0.0;
+        double x2 = x * x;
+        double denom = 1.0 - x2;
+        double t = x / denom;
+        double y = funPtr(t) * f(t);
+        denom *= denom;
+        return y * (1.0 + x2) / denom;
     },
-    lowerBoundary, upperBoundary);
+    -1.0, 1.0);
+
 }
 
 double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const

@@ -52,13 +52,6 @@ double LogCauchyRand::Quantile(double p) const
     return (p == 0) ? 0.0 : std::exp(X.Quantile(p));
 }
 
-std::complex<double> LogCauchyRand::CF(double t) const
-{
-    if (t == 0)
-        return std::complex<double>(1, 0);
-    return NAN; // TODO: does it exist? is it inf?
-}
-
 double LogCauchyRand::Median() const
 {
     return expMu;
