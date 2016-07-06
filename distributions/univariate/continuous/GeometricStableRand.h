@@ -46,7 +46,6 @@ private:
     double variateForCommonAlpha() const;
 public:
     double variate() const override;
-    
     void sample(std::vector<double> &outputData) const override;
 
     double Variance() const override;

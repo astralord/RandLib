@@ -239,8 +239,11 @@ long double RandMath::lowerIncGamma(double a, double x)
         return 0.0;
     if (a == 1)
         return 1.0 - std::exp(-x);
-    if (a == 2)
+    if (a == 0.5)
         return M_SQRTPI * std::erf(std::sqrt(x));
+    if (x > 1.1 && x > a) {
+        return std::tgamma(a) - upperIncGamma(a, x);
+    }
     return std::exp(logLowerIncGamma(a, x));
 }
 
@@ -252,16 +255,21 @@ long double RandMath::logLowerIncGamma(double a, double x)
         return -INFINITY;
     if (a == 1)
         return std::log(1.0 - std::exp(-x));
-    if (a == 2)
+    if (a == 0.5)
         return M_LNPI + std::log(std::erf(std::sqrt(x)));
 
-    double sum = 0;
-    double term = 1.0 / a;
-    int n = 1;
+    if (x > 1.1 && x > a) {
+        double y = std::tgamma(a) - upperIncGamma(a, x);
+        return std::log(y);
+    }
+
+    long double sum = 0;
+    long double term = 1.0 / a;
+    double n = a + 1;
     while (std::fabs(term) > MIN_POSITIVE)
     {
         sum = sum + term;
-        term *= x / (a + n);
+        term *= x / n;
         ++n;
     }
     return a * std::log(x) - x + std::log(sum);
@@ -275,6 +283,11 @@ long double RandMath::upperIncGamma(double a, double x)
         return std::tgamma(x);
     if (a == 0.5)
         return M_SQRTPI * std::erfc(std::sqrt(x));
+    if (a == 1)
+        return std::exp(-x);
+    if (x <= 1.1 || x <= a) {
+        return std::tgamma(a) - lowerIncGamma(a, x);
+    }
     return std::exp(logUpperIncGamma(a, x));
 }
 
@@ -288,22 +301,32 @@ long double RandMath::logUpperIncGamma(double a, double x)
         return -x;
     if (a == 0.5)
         return M_LNPI + std::log(std::erfc(std::sqrt(x)));
-
-    if (std::max(a, x) < 1e-3)
+    if (std::max(a, x) < 1e-5)
         return a * std::log(x);
-    if (x > 1.1) {
-        double y = x;
-        static constexpr int n = 20;
-        for (int i = 0; i < n; ++i)
-        {
-            double m = n - i;
-            y = 1.0 + m / y;
-            y = x + (m - a) / y;
-        }
-        return a * std::log(x) - x - std::log(y);
+    if (x > 1e4) {
+        return (a - 1) * std::log(x) - x;
     }
 
-    return std::log(std::tgamma(a) - lowerIncGamma(a, x));
+    if (x <= 1.1 || x <= a) {
+        double y = std::tgamma(a) - lowerIncGamma(a, x);
+        return std::log(y);
+    }
+
+    /// the modified Lentz's method
+    double fraction = 1.0 + x - a;
+    double C = fraction, D = 0, mult = 1;
+    double xmap1 = x - a + 1.0;
+    int i = 1;
+    do {
+        double s = i * (a - i);
+        double b = (i << 1) + xmap1;
+        D = b + s * D;
+        C = b + s / C;
+        D = 1.0 / D;
+        mult = C * D;
+        fraction *= mult;
+    } while (std::fabs(mult - 1.0) > MIN_POSITIVE && ++i < 10000);
+    return a * std::log(x) - x - std::log(fraction);
 }
 
 double RandMath::betaFun(double a, double b)
@@ -317,23 +340,23 @@ double RandMath::betaFun(double a, double b)
 
 double RandMath::regularizedBetaFun(double x, double a, double b)
 {
-    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
+    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0)
         return NAN;
+    if (b == 0.0 || x == 0.0)
+        return 0.0;
     if (x == 1.0)
         return 1.0;
-    if (x == 0.0)
-        return 0.0;
     return incompleteBetaFun(x, a, b) / betaFun(a, b);
 }
 
 double RandMath::incompleteBetaFun(double x, double a, double b)
 {
-    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
+    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
         return NAN;
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)
-        return betaFun(a, b);
+        return (b == 0) ? NAN : betaFun(a, b);
     if (a < 1)
     {
         double y = incompleteBetaFun(x, a + 1, b) * (a + b);
@@ -442,6 +465,7 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std:
     do {
         double alpha = 1.0;
         double oldRoot = root;
+        double oldFun = fun;
         step = fun / grad;
         do {
             root = oldRoot - alpha * step;
@@ -450,7 +474,7 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std:
             if (std::fabs(fun) < epsilon)
                 return true;
             alpha *= 0.5;
-        } while (grad == 0 && alpha > epsilon);
+        } while ((grad == 0 || std::fabs(oldFun) < std::fabs(fun)) && alpha > epsilon);
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     return (iter == maxIter) ? false : true;

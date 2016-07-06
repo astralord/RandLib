@@ -119,7 +119,7 @@ double NormalRand::standardVariate()
 std::complex<double> NormalRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     double sigma0T = sigma0 * t;
     return std::exp(std::complex<double>(-0.5 * sigma0T * sigma0T, mu * t));
 }

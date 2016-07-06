@@ -187,9 +187,7 @@ double GeometricStableRand::Variance() const
 
 std::complex<double> GeometricStableRand::CF(double t) const
 {
-    if (t == 0)
-        return std::complex<double>(1, 0);
-    return 1.0 / (1.0 + psi(t));
+    return (t == 0) ? 1.0 : 1.0 / (1.0 + psi(t));
 }
 
 double GeometricStableRand::Median() const
@@ -199,7 +197,7 @@ double GeometricStableRand::Median() const
         y = std::log(y);
         return sigma * k * y;
     }
-    return LimitingDistribution::Median();
+    return ContinuousDistribution::Median();
 }
 
 double GeometricStableRand::Mode() const

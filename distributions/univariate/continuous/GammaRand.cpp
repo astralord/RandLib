@@ -260,7 +260,7 @@ std::complex<double> GammaRand::CF(double t) const
 
 double GammaRand::Mode() const
 {
-    return (alpha < 1) ? 0 : (alpha - 1) * theta;
+    return (alpha <= 1) ? 0 : (alpha - 1) * theta;
 }
 
 double GammaRand::Skewness() const

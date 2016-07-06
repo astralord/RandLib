@@ -80,7 +80,7 @@ double TriangularRand::Variance() const
 std::complex<double> TriangularRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     double bmc = b - c, bma = b - a, cma = c - a;
     double at = a * t, bt = b * t, ct = c * t;
     std::complex<double> x(bmc * std::cos(at), bmc * std::sin(at));
@@ -89,7 +89,7 @@ std::complex<double> TriangularRand::CF(double t) const
     std::complex<double> numerator = x - y + z;
     /// in order to avoid numerical errors
     if (std::fabs(t) < 1e-10 && std::fabs(numerator.real()) < 1e-10)
-        return std::complex<double>(1, 0);
+        return 1;
     double denominator = bma * cma * bmc * t * t;
     std::complex<double> frac = -numerator / denominator;
     return frac + frac;

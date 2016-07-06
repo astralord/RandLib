@@ -68,7 +68,7 @@ double WaldRand::variate() const
 std::complex<double> WaldRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     double im = mu * mu;
     im *= t / lambda;
     std::complex<double> y(1, -im - im);

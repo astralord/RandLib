@@ -121,9 +121,15 @@ public:
 
     /**
      * @brief getInvBetaFunction
-     * @return 1 / B(alpha, beta)
+     * @return 1 / Beta(alpha, beta)
      */
     inline double getInverseBetaFunction() const { return cdfCoef; }
+
+    /**
+     * @brief getLogBetaFunction
+     * @return log Beta(alpha, beta)
+     */
+    inline double getLogBetaFunction() const { return -pdfCoef; }
 };
 
 

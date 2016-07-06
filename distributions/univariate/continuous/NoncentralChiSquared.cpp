@@ -20,11 +20,19 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
     lambda = std::max(noncentrality, 0.0);
     sqrtLambda = std::sqrt(lambda);
 
-    if (k > 1)
+    if (k > 1) {
         X.setParameters(0.5 * (k - 1), 0.5);
+    }
     else {
         X.setParameters(0.5 * k, 0.5);
         Y.setRate(0.5 * lambda);
+    }
+
+    if (k < 2) {
+        cdfCoef = lambda + k * M_LN2;
+        cdfCoef *= 0.5;
+        cdfCoef += std::lgamma(0.5 * k);
+        cdfCoef = std::exp(-cdfCoef);
     }
 }
 
@@ -49,25 +57,18 @@ double NoncentralChiSquared::F(double x) const
         }, 0, x);
     }
 
-    // TODO: find a min for bessel function
-    static constexpr double minBound = 0.01;
-    if (x < minBound) {
-        return RandMath::integral([this] (double t)
-        {
-            return f(t);
-        }, -MIN_POSITIVE, x);
-    }
+    double halfK = 0.5 * k;
+    double halfKm1 = halfK - 1.0;
+    double y = cdfCoef / halfK * std::pow(x, halfK);
 
-    // TODO: this value can be counted only once for fixed parameters
-    double y1 = RandMath::integral([this] (double t)
+    y += RandMath::integral([this, halfKm1] (double t)
     {
-        return f(t);
-    }, -MIN_POSITIVE, minBound);
+        if (t <= 0)
+            return 0.0;
+        return f(t) - cdfCoef * std::pow(t, halfKm1);
+    }, 0, x);
 
-    return y1 + RandMath::integral([this] (double t)
-    {
-        return f(t);
-    }, minBound, x);
+    return y;
 }
 
 double NoncentralChiSquared::variateForDegreeEqualOne() const
@@ -113,7 +114,7 @@ double NoncentralChiSquared::Variance() const
 std::complex<double> NoncentralChiSquared::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     std::complex<double> aux(1, -2 * t);
     std::complex<double> y(0, lambda * t);
     y = std::exp(y / aux);

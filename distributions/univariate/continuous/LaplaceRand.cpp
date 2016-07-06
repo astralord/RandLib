@@ -78,7 +78,7 @@ double LaplaceRand::Mean() const
 std::complex<double> LaplaceRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     double bt = sigma * t;
     double btSq = bt * bt;
     double denominator = (1 + kSq * btSq) * (1 + btSq / kSq);

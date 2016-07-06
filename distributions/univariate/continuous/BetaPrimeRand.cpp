@@ -12,11 +12,13 @@ std::string BetaPrimeRand::name() const
 
 double BetaPrimeRand::f(double x) const
 {
-    if (x <= 0)
+    if (x < 0)
         return 0;
-    double rv = std::pow(x, alpha - 1);
-    rv *= std::pow(1 + x, -alpha - beta);
-    return BetaRand::getInverseBetaFunction() * rv;
+    if (x == 0)
+        return (alpha > 1) ? 0.0 : INFINITY;
+    double y = (alpha - 1) * std::log(x);
+    y -= (alpha + beta) * std::log1p(x);
+    return std::exp(y - BetaRand::getLogBetaFunction());
 }
 
 double BetaPrimeRand::F(double x) const
@@ -50,6 +52,44 @@ double BetaPrimeRand::Variance() const
     double numerator = alpha * (alpha + betaAdj);
     double denominator = (betaAdj - 1) * betaAdj * betaAdj;
     return numerator / denominator;
+}
+
+std::complex<double> BetaPrimeRand::CF(double t) const
+{
+    if (t == 0)
+        return 1;
+    /// if no singularity - simple numeric integration
+    if (alpha > 1)
+        return UnivariateProbabilityDistribution::CF(t);
+
+    double re = RandMath::integral([this, t] (double x) {
+        if (x <= 0)
+            return 0.0;
+        double y = std::pow(1 + x, -alpha - beta) - 1.0;
+        y *= std::pow(x, alpha - 1);
+        return y;
+    }, 0, 1);
+
+    re += 1.0 / alpha;
+    re *= BetaRand::getInverseBetaFunction();
+
+    re += RandMath::integral([this, t] (double x)
+    {
+        if (x >= 1.0)
+            return 0.0;
+        double denom = 1.0 - x;
+        double p = 1.0 + x / denom;
+        double y = std::cos(p * t) * f(p);
+        denom *= denom;
+        return y / denom;
+    },
+    0.0, 1.0);
+
+    double im = ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    }, 0.0);
+    return std::complex<double>(re, im);
 }
 
 double BetaPrimeRand::Quantile(double p) const

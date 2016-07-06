@@ -34,12 +34,13 @@ double SkellamRand::P(int k) const
 double SkellamRand::F(int k) const
 {
     int i = std::max(0, -k);
-    double sum = 0, summand = 0.0;
+    double sum = 0, summand = 0.0, xCDF = 0;
     do {
-        summand = X.F(k + i) * Y.P(i);
+        xCDF = X.F(k + i);
+        summand = xCDF * Y.P(i);
         sum += summand;
         ++i;
-    } while (summand > MIN_POSITIVE);
+    } while (summand > MIN_POSITIVE || xCDF < 0.9);
     return sum;
 }
 
@@ -61,7 +62,7 @@ double SkellamRand::Variance() const
 std::complex<double> SkellamRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     std::complex<double> x(0, t);
     x = std::exp(x);
     x *= mu1;

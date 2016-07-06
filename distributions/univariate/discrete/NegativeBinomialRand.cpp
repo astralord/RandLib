@@ -200,7 +200,7 @@ template< typename T >
 std::complex<double> NegativeBinomialRand<T>::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     std::complex<double> it(0, t);
     std::complex<double> denominator = 1.0 - q * std::exp(it);
     return std::pow(p / denominator, r);

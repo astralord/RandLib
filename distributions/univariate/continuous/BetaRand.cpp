@@ -111,11 +111,11 @@ double BetaRand::variateRejectionUniform() const
 
 double BetaRand::variateCheng() const
 {
-    double U, V, R, T, X, Y;
+    double R, T, Y;
     do {
-        U = UniformRand::standardVariate();
-        V = UniformRand::standardVariate();
-        X = std::log(U / (1 - U)) / t;
+        double U = UniformRand::standardVariate();
+        double V = UniformRand::standardVariate();
+        double X = std::log(U / (1 - U)) / t;
         Y = alpha * std::exp(X);
         R = 1.0 / (beta + Y);
 
@@ -183,13 +183,12 @@ double BetaRand::variateRejectionNormal() const
 
 double BetaRand::variateJohnk() const
 {
-    double X = 0, Y = 0, Z = 0;
+    double X = 0, Z = 0;
     do {
         double U = UniformRand::standardVariate();
         double V = UniformRand::standardVariate();
         X = std::pow(U, 1.0 / alpha);
-        Y = std::pow(V, 1.0 / beta);
-        Z = X + Y;
+        Z = X + std::pow(V, 1.0 / beta);
     } while (Z > 1);
     return X / Z;
 }
@@ -295,7 +294,7 @@ void BetaRand::setCoefficientsForGenerator()
     GENERATOR_ID id = getIdOfUsedGenerator();
     if (id == REJECTION_NORMAL) {
         double alpham1 = alpha - 1;
-        s = alpham1 * std::log(1.0 + 0.5 / alpham1) - 0.5;
+        s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
         t = 1.0 / std::sqrt(8 * alpha - 4);
     }
     else if (id == CHENG) {
@@ -330,7 +329,7 @@ double BetaRand::Variance() const
 std::complex<double> BetaRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     /// if we don't have singularity points, we can use direct integration
     if (alpha >= 1 && beta >= 1)
         return UnivariateProbabilityDistribution::CF(t);

@@ -430,9 +430,7 @@ double StableRand::Variance() const
 
 std::complex<double> StableRand::CF(double t) const
 {
-    if (t == 0)
-        return std::complex<double>(1, 0);
-    return std::exp(-psi(t));
+    return (t == 0) ? 1.0 : std::exp(-psi(t));
 }
 
 double StableRand::Mode() const
@@ -447,6 +445,11 @@ double StableRand::Mode() const
             return -sigma / 3.0 + mu;
     }
     return ContinuousDistribution::Mode();
+}
+
+double StableRand::Median() const
+{
+    return (beta == 0) ? mu : ContinuousDistribution::Median();
 }
 
 double StableRand::Skewness() const

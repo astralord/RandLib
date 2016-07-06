@@ -63,7 +63,7 @@ double LogarithmicRand::Variance() const
 std::complex<double> LogarithmicRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     std::complex<double> y(0, t);
     y = std::exp(y);
     y = std::log(1.0 - p * y);

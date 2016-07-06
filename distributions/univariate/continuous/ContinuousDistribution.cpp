@@ -152,7 +152,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
             return y / denom;
         },
         0.0, 1.0);
-    } else if (suppType == RIGHTSEMIFINITE_T) {
+    } else if (suppType == LEFTSEMIFINITE_T) {
         upperBoundary = getRightLimit(MaxValue(), epsilon);
         return RandMath::integral([this, funPtr, upperBoundary] (double x)
         {

@@ -54,7 +54,7 @@ double LogisticRand::Variance() const
 std::complex<double> LogisticRand::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
     double pist = M_PI * s * t;
     std::complex<double> y(0.0, t * mu);
     y = std::exp(y);

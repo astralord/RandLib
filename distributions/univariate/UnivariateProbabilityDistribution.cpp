@@ -31,7 +31,7 @@ template< typename T >
 std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
     if (t == 0)
-        return std::complex<double>(1, 0);
+        return 1;
 
     if (std::fabs(t) < 0.0001)
     {

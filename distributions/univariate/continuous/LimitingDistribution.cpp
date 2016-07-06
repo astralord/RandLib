@@ -55,11 +55,6 @@ double LimitingDistribution::Mean() const
     return (alpha == 1.0) ? NAN : INFINITY;
 }
 
-double LimitingDistribution::Median() const
-{
-    return (beta == 0) ? mu : ContinuousDistribution::Median();
-}
-
 std::complex<double> LimitingDistribution::psi(double t) const
 {
     double fabsT = std::fabs(t);

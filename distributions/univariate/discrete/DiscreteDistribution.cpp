@@ -58,9 +58,9 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         upperBoundary = std::min(upperBoundary, static_cast<int>(std::ceil(MaxValue())));
     }
 
-    double addon = 0, sum = 0;
+    double sum = 0;
     do {
-        addon = funPtr(k);
+        double addon = funPtr(k);
         if (addon != 0.0) {
             addon *= P(k);
             sum += addon;

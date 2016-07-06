@@ -6,8 +6,7 @@ unsigned long long BasicRandGenerator<Generator>::variate()
 {
     if (Generator == JLKISS64)
         return BasicRandGenerator<Generator>::rand_JLKISS64();
-    else
-        return BasicRandGenerator<Generator>::rand_JKISS32();
+    return BasicRandGenerator<Generator>::rand_JKISS32();
 }
 
 template < char Generator >
