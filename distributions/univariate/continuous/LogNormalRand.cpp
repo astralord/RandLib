@@ -1,9 +1,9 @@
 #include "LogNormalRand.h"
 
-LogNormalRand::LogNormalRand(double location, double scale)
+LogNormalRand::LogNormalRand(double location, double squaredScale)
 {
     setLocation(location);
-    setScale(scale);
+    setScale(squaredScale > 0.0 ? std::sqrt(squaredScale) : 1.0);
 }
 
 std::string LogNormalRand::name() const
@@ -46,6 +46,13 @@ double LogNormalRand::Mean() const
 double LogNormalRand::Variance() const
 {
     return (expVar - 1) * expMu * expMu * expVar;
+}
+
+double LogNormalRand::quantile(double p, double location, double scale)
+{
+    if (p == 0.0)
+        return 0.0;
+    return std::exp(NormalRand::quantile(p, location, scale));
 }
 
 double LogNormalRand::Quantile(double p) const

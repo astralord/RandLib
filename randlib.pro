@@ -70,7 +70,10 @@ SOURCES += \
     math/SquareMatrix.cpp \
     distributions/univariate/continuous/NoncentralChiSquared.cpp \
     distributions/univariate/continuous/DegenerateRand.cpp \
-    distributions/univariate/SumRand.cpp
+    distributions/univariate/SumRand.cpp \
+    processes/StochasticProcess.cpp \
+    processes/BrownianMotion.cpp \
+    processes/GeometricBrownianMotion.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -138,7 +141,10 @@ HEADERS +=\
     math/SquareMatrix.h \
     distributions/univariate/continuous/NoncentralChiSquared.h \
     distributions/univariate/continuous/DegenerateRand.h \
-    distributions/univariate/SumRand.h
+    distributions/univariate/SumRand.h \
+    processes/StochasticProcess.h \
+    processes/BrownianMotion.h \
+    processes/GeometricBrownianMotion.h
 
 unix {
     target.path = /usr/lib

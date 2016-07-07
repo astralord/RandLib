@@ -150,9 +150,14 @@ double NormalRand::standardQuantile(double p)
     return t - numerator / denominator;
 }
 
+double NormalRand::quantile(double p, double mean, double scale)
+{
+    return mean + scale * standardQuantile(p);
+}
+
 double NormalRand::Quantile(double p) const
 {
-    return mu + sigma0 * standardQuantile(p);
+    return quantile(p, mu, sigma0);
 }
 
 double NormalRand::Moment(int n) const

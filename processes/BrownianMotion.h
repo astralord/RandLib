@@ -1,0 +1,26 @@
+#ifndef BROWNIANMOTION_H
+#define BROWNIANMOTION_H
+
+#include "StochasticProcess.h"
+#include "../distributions/univariate/continuous/NormalRand.h"
+
+/**
+ * @brief The BrownianMotion class
+ */
+class RANDLIBSHARED_EXPORT BrownianMotion : public StochasticProcess
+{
+    double sqrtDt;
+public:
+    BrownianMotion(double deltaT = 1.0);
+
+private:
+    double nextImpl() override;
+    double nextImpl(double deltaT) override;
+
+    double MeanImpl(double t) const override;
+    double VarianceImpl(double t) const override;
+    double QuantileImpl(double t, double p) const override;
+};
+
+
+#endif // BROWNIANMOTION_H

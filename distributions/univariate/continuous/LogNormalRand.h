@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
     NormalRand X;
 
 public:
-    LogNormalRand(double location = 0, double scale = 1);
+    LogNormalRand(double location = 0, double squaredScale = 1);
 
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
@@ -32,6 +32,7 @@ public:
     double Mean() const override;
     double Variance() const override;
 
+    static double quantile(double p, double location, double scale);
     double Quantile(double p) const override;
 
     double Median() const override;
