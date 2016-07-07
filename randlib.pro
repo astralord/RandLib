@@ -74,7 +74,8 @@ SOURCES += \
     processes/StochasticProcess.cpp \
     processes/BrownianMotion.cpp \
     processes/GeometricBrownianMotion.cpp \
-    processes/PoissonProcess.cpp
+    processes/PoissonProcess.cpp \
+    processes/CompoundPoissonProcess.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -136,7 +137,6 @@ HEADERS +=\
     math/Matrix.h \
     distributions/multivariate/MultivariateProbabilityDistribution.h \
     distributions/univariate/continuous/LogCauchyRand.h \
-    distributions/RandLib.h \
     distributions/univariate/continuous/LimitingDistribution.h \
     distributions/multivariate/BivariateNormalRand.h \
     math/SquareMatrix.h \
@@ -146,7 +146,11 @@ HEADERS +=\
     processes/StochasticProcess.h \
     processes/BrownianMotion.h \
     processes/GeometricBrownianMotion.h \
-    processes/PoissonProcess.h
+    processes/PoissonProcess.h \
+    distributions/Distributions.h \
+    processes/Processes.h \
+    RandLib.h \
+    processes/CompoundPoissonProcess.h
 
 unix {
     target.path = /usr/lib

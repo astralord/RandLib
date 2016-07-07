@@ -5,6 +5,9 @@
 #include "BrownianMotion.h"
 #include "../distributions/univariate/continuous/LogNormalRand.h"
 
+/**
+ * @brief The GeometricBrownianMotion class
+ */
 class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess
 {
     double mu, sigma, S0;
@@ -12,7 +15,7 @@ class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess
     BrownianMotion B;
 
 public:
-    GeometricBrownianMotion(double deltaT = 1.0, double drift = 0.0, double volatility = 1.0, double initialValue = 1.0);
+    GeometricBrownianMotion(double drift, double volatility, double initialValue, double deltaT = 1.0);
 
     inline double getDrift() { return mu; }
     inline double getVolatility() { return sigma; }

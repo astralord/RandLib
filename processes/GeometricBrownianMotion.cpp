@@ -1,6 +1,6 @@
 #include "GeometricBrownianMotion.h"
 
-GeometricBrownianMotion::GeometricBrownianMotion(double deltaT, double drift, double volatility, double initialValue) :
+GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility, double initialValue, double deltaT) :
     StochasticProcess(deltaT),
     mu(drift),
     sigma((volatility <= 0) ? 1.0 : volatility),

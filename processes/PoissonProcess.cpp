@@ -1,6 +1,6 @@
 #include "PoissonProcess.h"
 
-PoissonProcess::PoissonProcess(double deltaT, double rate) :
+PoissonProcess::PoissonProcess(double rate, double deltaT) :
     StochasticProcess(deltaT),
     lambda(rate > 0.0 ? rate : 1.0),
     futureJumpTime(ExponentialRand::variate(lambda))

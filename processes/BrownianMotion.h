@@ -11,7 +11,7 @@ class RANDLIBSHARED_EXPORT BrownianMotion : public StochasticProcess
 {
     double sqrtDt;
 public:
-    BrownianMotion(double deltaT = 1.0);
+    explicit BrownianMotion(double deltaT = 1.0);
 
 private:
     void nextImpl() override;

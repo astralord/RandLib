@@ -29,18 +29,14 @@ double StochasticProcess::Mean(double t) const
 {
     if (t < currentTime)
         return NAN; /// we consider only future time
-    if (t == currentTime)
-        return 0.0;
-    return MeanImpl(t);
+    return (t > currentTime) ? MeanImpl(t) : currentValue;
 }
 
 double StochasticProcess::Variance(double t) const
 {
     if (t < currentTime)
         return NAN; /// we consider only future time
-    if (t == currentTime)
-        return 0.0;
-    return VarianceImpl(t);
+    return (t > currentTime) ? VarianceImpl(t) : 0.0;
 }
 
 double StochasticProcess::Quantile(double t, double p) const

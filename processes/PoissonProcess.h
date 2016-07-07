@@ -5,12 +5,17 @@
 #include "../distributions/univariate/discrete/PoissonRand.h"
 #include "../distributions/univariate/continuous/ExponentialRand.h"
 
+/**
+ * @brief The PoissonProcess class
+ */
 class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess
 {
     double lambda;
     double futureJumpTime;
 public:
-    explicit PoissonProcess(double deltaT = 1.0, double rate = 1.0);
+    explicit PoissonProcess(double rate, double deltaT = 1.0);
+
+    inline double getRate() const { return lambda; }
 
 private:
     void nextImpl() override;
