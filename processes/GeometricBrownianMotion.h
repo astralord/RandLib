@@ -19,8 +19,8 @@ public:
     inline double getInitialValue() { return S0; }
 
 private:
-    double nextImpl() override;
-    double nextImpl(double deltaT) override;
+    void nextImpl() override;
+    void nextImpl(double deltaT) override;
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;

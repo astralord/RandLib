@@ -14,8 +14,8 @@ public:
     BrownianMotion(double deltaT = 1.0);
 
 private:
-    double nextImpl() override;
-    double nextImpl(double deltaT) override;
+    void nextImpl() override;
+    void nextImpl(double deltaT) override;
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;

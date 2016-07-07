@@ -68,4 +68,12 @@
 
 #include "univariate/SumRand.h"
 
+// TODO: move this file upside
+/// PROCESSES
+#include "../processes/StochasticProcess.h"
+#include "../processes/BrownianMotion.h"
+#include "../processes/GeometricBrownianMotion.h"
+#include "../processes/PoissonProcess.h"
+
+
 #endif // RANDLIB_H

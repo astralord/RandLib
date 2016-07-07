@@ -11,22 +11,20 @@ GeometricBrownianMotion::GeometricBrownianMotion(double deltaT, double drift, do
     currentValue = S0;
 }
 
-double GeometricBrownianMotion::nextImpl()
+void GeometricBrownianMotion::nextImpl()
 {
-    double S = B.next();
-    S *= sigma;
-    S += mumSigma2_2 * currentTime;
-    S = S0 * std::exp(S);
-    return S;
+    currentValue = B.next();
+    currentValue *= sigma;
+    currentValue += mumSigma2_2 * currentTime;
+    currentValue = S0 * std::exp(currentValue);
 }
 
-double GeometricBrownianMotion::nextImpl(double deltaT)
+void GeometricBrownianMotion::nextImpl(double deltaT)
 {
-    double S = B.next(deltaT);
-    S *= sigma;
-    S += mumSigma2_2 * currentTime;
-    S = S0 * std::exp(S);
-    return S;
+    currentValue = B.next(deltaT);
+    currentValue *= sigma;
+    currentValue += mumSigma2_2 * currentTime;
+    currentValue = S0 * std::exp(currentValue);
 }
 
 double GeometricBrownianMotion::MeanImpl(double t) const

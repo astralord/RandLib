@@ -2,6 +2,7 @@
 
 StochasticProcess::StochasticProcess(double deltaT) :
     currentTime(0.0),
+    currentValue(0.0),
     dt(std::max(deltaT, 0.0))
 {
 }
@@ -9,17 +10,19 @@ StochasticProcess::StochasticProcess(double deltaT) :
 double StochasticProcess::next()
 {
     currentTime += dt;
-    return nextImpl();
+    nextImpl();
+    return currentValue;
 }
 
 double StochasticProcess::next(double deltaT)
 {
     if (deltaT < 0)
         return NAN;
-    if (deltaT == 0)
-        return currentValue;
-    currentTime += deltaT;
-    return nextImpl(deltaT);
+    if (deltaT > 0) {
+        currentTime += deltaT;
+        nextImpl(deltaT);
+    }
+    return currentValue;
 }
 
 double StochasticProcess::Mean(double t) const

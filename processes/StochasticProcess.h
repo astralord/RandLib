@@ -12,8 +12,8 @@ class RANDLIBSHARED_EXPORT StochasticProcess
 protected:
     double currentTime, currentValue, dt;
 
-    virtual double nextImpl() = 0;
-    virtual double nextImpl(double deltaT) = 0;
+    virtual void nextImpl() = 0;
+    virtual void nextImpl(double deltaT) = 0;
     virtual double MeanImpl(double t) const = 0;
     virtual double VarianceImpl(double t) const = 0;
     virtual double QuantileImpl(double t, double p) const = 0;

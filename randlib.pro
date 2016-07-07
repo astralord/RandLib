@@ -73,7 +73,8 @@ SOURCES += \
     distributions/univariate/SumRand.cpp \
     processes/StochasticProcess.cpp \
     processes/BrownianMotion.cpp \
-    processes/GeometricBrownianMotion.cpp
+    processes/GeometricBrownianMotion.cpp \
+    processes/PoissonProcess.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -144,7 +145,8 @@ HEADERS +=\
     distributions/univariate/SumRand.h \
     processes/StochasticProcess.h \
     processes/BrownianMotion.h \
-    processes/GeometricBrownianMotion.h
+    processes/GeometricBrownianMotion.h \
+    processes/PoissonProcess.h
 
 unix {
     target.path = /usr/lib

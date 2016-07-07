@@ -4,19 +4,16 @@ BrownianMotion::BrownianMotion(double deltaT) :
     StochasticProcess(deltaT),
     sqrtDt(std::sqrt(dt))
 {
-    currentValue = 0;
 }
 
-double BrownianMotion::nextImpl()
+void BrownianMotion::nextImpl()
 {
     currentValue += NormalRand::variate(0, sqrtDt);
-    return currentValue;
 }
 
-double BrownianMotion::nextImpl(double deltaT)
+void BrownianMotion::nextImpl(double deltaT)
 {
     currentValue += NormalRand::variate(0, std::sqrt(deltaT));
-    return currentValue;
 }
 
 double BrownianMotion::MeanImpl(double) const
