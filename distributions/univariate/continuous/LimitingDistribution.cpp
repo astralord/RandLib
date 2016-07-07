@@ -50,9 +50,7 @@ void LimitingDistribution::setScale(double scale)
 
 double LimitingDistribution::Mean() const
 {
-    if (alpha > 1)
-        return mu;
-    return (alpha == 1.0) ? NAN : INFINITY;
+    return (alpha > 1) ? mu : NAN;
 }
 
 std::complex<double> LimitingDistribution::psi(double t) const

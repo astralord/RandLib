@@ -8,6 +8,7 @@ class RANDLIBSHARED_EXPORT StableProcess : public StochasticProcess
 {
     StableRand X;
     double dtCoef;
+    double drift, volatility;
 
 public:
     explicit StableProcess(double exponent, double skewness, double scale, double location, double deltaT = 1.0);
