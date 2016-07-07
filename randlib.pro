@@ -75,7 +75,8 @@ SOURCES += \
     processes/BrownianMotion.cpp \
     processes/GeometricBrownianMotion.cpp \
     processes/PoissonProcess.cpp \
-    processes/CompoundPoissonProcess.cpp
+    processes/CompoundPoissonProcess.cpp \
+    processes/StableProcess.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -150,7 +151,8 @@ HEADERS +=\
     distributions/Distributions.h \
     processes/Processes.h \
     RandLib.h \
-    processes/CompoundPoissonProcess.h
+    processes/CompoundPoissonProcess.h \
+    processes/StableProcess.h
 
 unix {
     target.path = /usr/lib

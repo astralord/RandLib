@@ -1,7 +1,7 @@
 #include "BrownianMotion.h"
 
 BrownianMotion::BrownianMotion(double deltaT) :
-    StochasticProcess(deltaT),
+    StableProcess(2.0, 0.0, M_SQRT1_2, 0.0, deltaT),
     sqrtDt(std::sqrt(dt))
 {
 }

@@ -7,6 +7,7 @@
 #include "GeometricBrownianMotion.h"
 #include "PoissonProcess.h"
 #include "CompoundPoissonProcess.h"
+#include "StableProcess.h"
 
 #endif // PROCESSES
 

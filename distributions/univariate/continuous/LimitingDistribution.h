@@ -25,6 +25,7 @@ public:
     inline double getSkewness() const { return beta; }
     inline double getScale() const { return sigma; }
     inline double getLocation() const { return mu; }
+    inline double getInvExponent() const { return alphaInv; }
 
     double Mean() const override;
 
