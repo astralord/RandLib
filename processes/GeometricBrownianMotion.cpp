@@ -6,7 +6,7 @@ GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility
     sigma((volatility <= 0) ? 1.0 : volatility),
     S0(initialValue),
     mumSigma2_2(mu - 0.5 * sigma * sigma),
-    B(0, sigma, deltaT)
+    B(0, sigma, dt)
 {
     currentValue = S0;
 }

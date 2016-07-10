@@ -4,7 +4,7 @@
 template <typename T>
 CompoundPoissonProcess<T>::CompoundPoissonProcess(double rate, const UnivariateProbabilityDistribution<T> &jumpDistribution, double deltaT) :
     StochasticProcess(deltaT),
-    N(rate, deltaT),
+    N(rate, dt),
     Y(jumpDistribution),
     jumpsAmount(0)
 {
@@ -46,7 +46,6 @@ double CompoundPoissonProcess<T>::QuantileImpl(double t, double p) const
     NormalRand X(Mean(t), Variance(t));
     return X.Quantile(p);
 }
-
 
 template class CompoundPoissonProcess<double>;
 template class CompoundPoissonProcess<int>;

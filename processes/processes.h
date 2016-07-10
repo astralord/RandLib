@@ -9,6 +9,7 @@
 #include "CompoundPoissonProcess.h"
 #include "StableProcess.h"
 #include "OrnsteinUhlenbeckProcess.h"
+#include "JumpDiffusionProcess.h"
 
 #endif // PROCESSES
 

@@ -77,7 +77,8 @@ SOURCES += \
     processes/PoissonProcess.cpp \
     processes/CompoundPoissonProcess.cpp \
     processes/StableProcess.cpp \
-    processes/OrnsteinUhlenbeckProcess.cpp
+    processes/OrnsteinUhlenbeckProcess.cpp \
+    processes/JumpDiffusionProcess.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -154,7 +155,8 @@ HEADERS +=\
     RandLib.h \
     processes/CompoundPoissonProcess.h \
     processes/StableProcess.h \
-    processes/OrnsteinUhlenbeckProcess.h
+    processes/OrnsteinUhlenbeckProcess.h \
+    processes/JumpDiffusionProcess.h
 
 unix {
     target.path = /usr/lib
