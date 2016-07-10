@@ -8,6 +8,7 @@
 #include "PoissonProcess.h"
 #include "CompoundPoissonProcess.h"
 #include "StableProcess.h"
+#include "OrnsteinUhlenbeckProcess.h"
 
 #endif // PROCESSES
 

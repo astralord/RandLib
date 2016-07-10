@@ -6,7 +6,7 @@ GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility
     sigma((volatility <= 0) ? 1.0 : volatility),
     S0(initialValue),
     mumSigma2_2(mu - 0.5 * sigma * sigma),
-    B(deltaT)
+    B(0, sigma, deltaT)
 {
     currentValue = S0;
 }
@@ -14,7 +14,6 @@ GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility
 void GeometricBrownianMotion::nextImpl()
 {
     currentValue = B.next();
-    currentValue *= sigma;
     currentValue += mumSigma2_2 * currentTime;
     currentValue = S0 * std::exp(currentValue);
 }
@@ -22,7 +21,6 @@ void GeometricBrownianMotion::nextImpl()
 void GeometricBrownianMotion::nextImpl(double deltaT)
 {
     currentValue = B.next(deltaT);
-    currentValue *= sigma;
     currentValue += mumSigma2_2 * currentTime;
     currentValue = S0 * std::exp(currentValue);
 }

@@ -6,12 +6,13 @@
 
 class RANDLIBSHARED_EXPORT StableProcess : public StochasticProcess
 {
+protected:
     StableRand X;
     double dtCoef;
-    double drift, volatility;
+    double mu, sigma;
 
 public:
-    explicit StableProcess(double exponent, double skewness, double scale, double location, double deltaT = 1.0);
+    StableProcess(double exponent, double skewness, double drift, double volatility, double deltaT = 1.0);
 
 private:
     void nextImpl() override;
@@ -20,6 +21,7 @@ private:
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;
     double QuantileImpl(double t, double p) const override;
+    void QuantileImpl(const std::vector<double> &t, std::vector<double> &outputData, double p) const;
 };
 
 #endif // STABLEPROCESS_H

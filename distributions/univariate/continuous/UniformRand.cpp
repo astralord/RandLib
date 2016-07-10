@@ -41,11 +41,15 @@ double UniformRand::variate(double minValue, double maxValue)
 
 double UniformRand::standardVariate()
 {
+#ifdef JKISS32RAND
+    return RandGenerator::variate() / 4294967296.0;
+#else
     double x;
     unsigned long long a = RandGenerator::variate();
     a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bits
     *((unsigned long long *)&x) = a; /// Make a double from bits
     return x - 1.0;
+#endif
 }
 
 double UniformRand::Mean() const

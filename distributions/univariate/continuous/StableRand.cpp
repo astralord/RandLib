@@ -301,7 +301,6 @@ double StableRand::cdfForCommonAlpha(double x) const
         xiAdj = -xi;
     }
 
-
     double y = RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
         double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);

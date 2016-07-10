@@ -1,4 +1,5 @@
 #include "CompoundPoissonProcess.h"
+#include "../distributions/univariate/continuous/NormalRand.h"
 
 template <typename T>
 CompoundPoissonProcess<T>::CompoundPoissonProcess(double rate, const UnivariateProbabilityDistribution<T> &jumpDistribution, double deltaT) :
@@ -41,9 +42,9 @@ double CompoundPoissonProcess<T>::VarianceImpl(double t) const
 template <typename T>
 double CompoundPoissonProcess<T>::QuantileImpl(double t, double p) const
 {
-    // TODO
-    // Quantile is very hard to derive - I'll leave it for now
-    return Mean(t) + (p - 0.5) * 6 * Variance(t);
+    // very rough approximation by normal distribution
+    NormalRand X(Mean(t), Variance(t));
+    return X.Quantile(p);
 }
 
 

@@ -1,29 +1,18 @@
 #include "BrownianMotion.h"
 
-BrownianMotion::BrownianMotion(double deltaT) :
-    StableProcess(2.0, 0.0, M_SQRT1_2, 0.0, deltaT),
-    sqrtDt(std::sqrt(dt))
+BrownianMotion::BrownianMotion(double drift, double volatility, double deltaT) :
+    StableProcess(2.0, 0.0, drift, volatility * M_SQRT1_2, deltaT)
 {
 }
 
 void BrownianMotion::nextImpl()
 {
-    currentValue += NormalRand::variate(0, sqrtDt);
+    currentValue += mu * dt + sigma * NormalRand::variate(0, dtCoef);
 }
 
 void BrownianMotion::nextImpl(double deltaT)
 {
-    currentValue += NormalRand::variate(0, std::sqrt(deltaT));
-}
-
-double BrownianMotion::MeanImpl(double) const
-{
-    return currentValue;
-}
-
-double BrownianMotion::VarianceImpl(double t) const
-{
-    return t - currentTime;
+    currentValue += mu * deltaT + sigma * NormalRand::variate(0, std::sqrt(deltaT));
 }
 
 double BrownianMotion::QuantileImpl(double t, double p) const

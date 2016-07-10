@@ -16,7 +16,14 @@ double ContinuousDistribution::Quantile(double p) const
 
     double root = Mean(); /// good starting point
     if (!std::isfinite(root))
-        root = 0.0;
+    {
+        if (isLeftBounded())
+            root = MinValue() + 1;
+        else if (isRightBounded())
+            root = MaxValue() - 1;
+        else
+            root = 0.0;
+    }
     if (RandMath::findRoot([this, p] (double x)
     {
         return F(x) - p;
