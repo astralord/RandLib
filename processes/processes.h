@@ -10,6 +10,7 @@
 #include "StableProcess.h"
 #include "OrnsteinUhlenbeckProcess.h"
 #include "JumpDiffusionProcess.h"
+#include "CauchyProcess.h"
 
 #endif // PROCESSES
 

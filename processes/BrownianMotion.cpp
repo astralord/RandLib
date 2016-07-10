@@ -17,5 +17,5 @@ void BrownianMotion::nextImpl(double deltaT)
 
 double BrownianMotion::QuantileImpl(double t, double p) const
 {
-    return NormalRand::quantile(p, currentValue, std::sqrt(t - currentTime));
+    return NormalRand::quantile(p, currentValue + mu * (t - currentTime), sigma * std::sqrt(t - currentTime));
 }
