@@ -16,12 +16,6 @@ void JumpDiffusionProcess<T>::nextImpl()
 }
 
 template <typename T>
-void JumpDiffusionProcess<T>::nextImpl(double deltaT)
-{
-    currentValue = B.next(deltaT) + J.next(deltaT);
-}
-
-template <typename T>
 double JumpDiffusionProcess<T>::MeanImpl(double t) const
 {
     return B.Mean(t) + J.Mean(t);

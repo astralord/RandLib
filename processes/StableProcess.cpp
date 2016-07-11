@@ -15,11 +15,6 @@ void StableProcess::nextImpl()
     currentValue += mu * dt + dtCoef * sigma * X.variate();
 }
 
-void StableProcess::nextImpl(double deltaT)
-{
-    currentValue += mu * dt + sigma * std::pow(deltaT, X.getInvExponent()) * X.variate();
-}
-
 double StableProcess::MeanImpl(double t) const
 {
     return (X.getExponent() > 1) ? currentValue + mu * (t - currentTime) : NAN;

@@ -12,12 +12,11 @@
 class RANDLIBSHARED_EXPORT BrownianMotion : public StableProcess
 {
 public:
-    explicit BrownianMotion(double drift, double volatility, double deltaT = 1.0);
+    explicit BrownianMotion(double deltaT = 1.0);
+    BrownianMotion(double drift, double volatility, double deltaT = 1.0);
 
 private:
     void nextImpl() override;
-    void nextImpl(double deltaT) override;
-
     double QuantileImpl(double t, double p) const override;
 };
 

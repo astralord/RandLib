@@ -16,11 +16,6 @@ void PoissonProcess::nextImpl()
     }
 }
 
-void PoissonProcess::nextImpl(double)
-{
-    nextImpl();
-}
-
 double PoissonProcess::MeanImpl(double t) const
 {
     return currentValue + lambda * (t - currentTime);

@@ -20,7 +20,6 @@ public:
 
 private:
     void nextImpl() override;
-    void nextImpl(double deltaT) override;
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;

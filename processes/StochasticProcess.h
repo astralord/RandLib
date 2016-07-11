@@ -30,13 +30,6 @@ public:
     double next();
 
     /**
-     * @brief next
-     * @param deltaT
-     * @return
-     */
-    double next(double deltaT);
-
-    /**
      * @brief Mean
      * @param t
      * @return Conditional mathematical expectation E[X(t)|F_s]
@@ -68,7 +61,6 @@ public:
 
 private:
     virtual void nextImpl() = 0;
-    virtual void nextImpl(double deltaT) = 0;
     virtual double MeanImpl(double t) const = 0;
     virtual double VarianceImpl(double t) const = 0;
     virtual double QuantileImpl(double t, double p) const = 0;

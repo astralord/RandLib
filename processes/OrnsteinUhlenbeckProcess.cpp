@@ -17,14 +17,6 @@ void OrnsteinUhlenbeckProcess::nextImpl()
     currentValue += X.variate();
 }
 
-void OrnsteinUhlenbeckProcess::nextImpl(double deltaT)
-{
-    double expmBetaDeltaT = std::exp(-beta * deltaT);
-    currentValue *= expmBetaDeltaT;
-    currentValue += alpha / beta * (1 - expmBetaDeltaT);
-    currentValue +=  0.5 * sigma * sigma / beta * (1 - expmBetaDeltaT * expmBetaDeltaT) * NormalRand::standardVariate();
-}
-
 double OrnsteinUhlenbeckProcess::MeanImpl(double t) const
 {
     double expmBetaDeltaT = std::exp(-beta * (t - currentTime));

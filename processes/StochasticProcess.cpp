@@ -20,17 +20,6 @@ double StochasticProcess::next()
     return currentValue;
 }
 
-double StochasticProcess::next(double deltaT)
-{
-    if (deltaT < 0)
-        return NAN;
-    if (deltaT > 0) {
-        currentTime += deltaT;
-        nextImpl(deltaT);
-    }
-    return currentValue;
-}
-
 double StochasticProcess::Mean(double t) const
 {
     if (t < currentTime)

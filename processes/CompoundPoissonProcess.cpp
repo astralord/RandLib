@@ -22,12 +22,6 @@ void CompoundPoissonProcess<T>::nextImpl()
 }
 
 template <typename T>
-void CompoundPoissonProcess<T>::nextImpl(double)
-{
-    nextImpl();
-}
-
-template <typename T>
 double CompoundPoissonProcess<T>::MeanImpl(double t) const
 {
     return currentValue + Y.Mean() * N.getRate() * (t - currentTime);

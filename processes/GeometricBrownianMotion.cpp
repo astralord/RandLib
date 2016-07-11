@@ -18,13 +18,6 @@ void GeometricBrownianMotion::nextImpl()
     currentValue = S0 * std::exp(currentValue);
 }
 
-void GeometricBrownianMotion::nextImpl(double deltaT)
-{
-    currentValue = B.next(deltaT);
-    currentValue += mumSigma2_2 * currentTime;
-    currentValue = S0 * std::exp(currentValue);
-}
-
 double GeometricBrownianMotion::MeanImpl(double t) const
 {
     return currentValue * std::exp(mu * (t - currentTime));
