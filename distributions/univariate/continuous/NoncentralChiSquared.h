@@ -38,6 +38,7 @@ private:
     double variateForDegreeEqualOne() const;
 
 public:
+    static double variate(double degree, double noncentrality);
     double variate() const override;
     void sample(std::vector<double> &outputData) const override;
 

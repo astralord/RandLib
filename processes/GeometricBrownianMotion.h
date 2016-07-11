@@ -1,7 +1,6 @@
 #ifndef GEOMETRICBROWNIANMOTION_H
 #define GEOMETRICBROWNIANMOTION_H
 
-#include "StochasticProcess.h"
 #include "BrownianMotion.h"
 #include "../distributions/univariate/continuous/LogNormalRand.h"
 

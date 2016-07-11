@@ -11,6 +11,7 @@
 #include "OrnsteinUhlenbeckProcess.h"
 #include "JumpDiffusionProcess.h"
 #include "CauchyProcess.h"
+#include "CoxIngersollRossProcess.h"
 
 #endif // PROCESSES
 

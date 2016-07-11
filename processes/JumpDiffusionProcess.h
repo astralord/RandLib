@@ -1,7 +1,6 @@
 #ifndef JUMPDIFFUSIONPROCESS_H
 #define JUMPDIFFUSIONPROCESS_H
 
-#include "StochasticProcess.h"
 #include "BrownianMotion.h"
 #include "CompoundPoissonProcess.h"
 

@@ -77,10 +77,26 @@ double NoncentralChiSquared::variateForDegreeEqualOne() const
     return y * y;
 }
 
+double NoncentralChiSquared::variate(double degree, double noncentrality)
+{
+    if (degree <= 0 || noncentrality < 0)
+        return NAN; /// wrong parameters
+
+    if (degree >= 1) {
+        double rv = (degree == 1) ? 0.0 : GammaRand::variate(0.5 * degree - 0.5, 0.5);
+        double y = std::sqrt(noncentrality) + NormalRand::standardVariate();
+        return rv + y * y;
+    }
+    return GammaRand::variate(0.5 * degree + PoissonRand::variate(0.5 * noncentrality), 0.5);
+}
+
 double NoncentralChiSquared::variate() const
 {
-    double y = (k == 1) ? X.variate() : 0.0;
-    return variateForDegreeEqualOne() + y;
+    if (k == 1)
+        return variateForDegreeEqualOne();
+    if (k > 1)
+        return X.variate() + variateForDegreeEqualOne();
+    return X.variate() + GammaRand::variate(Y.variate(), 0.5);
 }
 
 void NoncentralChiSquared::sample(std::vector<double> &outputData) const
