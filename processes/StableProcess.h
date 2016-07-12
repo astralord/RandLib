@@ -6,11 +6,11 @@
 
 /**
  * @brief The StableProcess class
- * dX(t) = mu * dt + sigma * dS(t),
- * where S(t) - S(s) ~ Stable(alpha, beta, (t - s)^(1/alpha), 0),
- * alpha is characteristic exponent, beta is skewness, mu is drift and sigma is volatility.
- * alpha == 2 - X(t) is a Brownian motion (Wiener process)
- * alpha == 1, beta == 0 - X(t) is a Cauchy process
+ * dX(t) = μdt + σdS(t),
+ * where S(t) - S(s) ~ Stable(α, β, (t - s)^(1/α), 0),
+ * α is characteristic exponent, β is skewness, μ is drift and σ is volatility.
+ * α == 2 - X(t) is a Brownian motion (Wiener process)
+ * α == 1, beta == 0 - X(t) is a Cauchy process
  */
 class RANDLIBSHARED_EXPORT StableProcess : public StochasticProcess<double>
 {

@@ -5,6 +5,9 @@
 #include "NormalRand.h"
 #include "ExponentialRand.h"
 
+/**
+ * @brief The ExponentialNormalRand class
+ */
 class RANDLIBSHARED_EXPORT ExponentialNormalRand : public ContinuousDistribution
 {
     NormalRand X;

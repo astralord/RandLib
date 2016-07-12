@@ -6,9 +6,9 @@
 
 /**
  * @brief The JumpDiffusionProcess class
- * dX(t) = mu * dt + sigma * dB(t) + dJ(t),
+ * dX(t) = μdt + σdB(t) + dJ(t),
  * where B(t) is a Brownian motion, J(t) is a Compound poisson process,
- * mu is drift and sigma is volatility.
+ * μ is drift and σ is volatility.
  */
 template <typename T>
 class RANDLIBSHARED_EXPORT JumpDiffusionProcess : public StochasticProcess<double>

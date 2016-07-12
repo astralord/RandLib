@@ -9,7 +9,7 @@
  * @brief The PoissonProcess class
  * X(t) = #(S_j < t)
  * where S_j = \sum_1^j W_i,
- * where W_i ~ Exp(lambda)
+ * where W_i ~ Exp(λ)
  */
 class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess<int>
 {

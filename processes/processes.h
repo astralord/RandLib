@@ -12,6 +12,7 @@
 #include "JumpDiffusionProcess.h"
 #include "CauchyProcess.h"
 #include "CoxIngersollRossProcess.h"
+#include "HestonProcess.h"
 
 #endif // PROCESSES
 

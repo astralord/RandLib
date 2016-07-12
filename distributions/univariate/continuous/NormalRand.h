@@ -10,7 +10,7 @@
  * Normal distribution
  * X ~ N(mu, sigma)
  *
- * f(x|\mu, \sigma) = 1 / (\sqrt(2 \pi) \sigma) * exp(-(x - \mu)^2 / (2 \sigma^2))
+ * f(x|μ, σ) = 1 / (√(2 π) σ) * exp(-(x - μ)^2 / (2 σ^2))
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 {

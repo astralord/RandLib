@@ -6,9 +6,9 @@
 /**
  * @brief The CauchyRand class
  * Cauchy distribution
- * X ~ Cauchy(\mu, \sigma)
+ * X ~ Cauchy(μ, σ)
  *
- * f(x|\mu, \sigma) = \sigma / [\pi (\sigma^2 + (x - \mu)^2)]
+ * f(x|μ, σ) = σ / [π (σ^2 + (x - μ)^2)]
  *
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public StableRand

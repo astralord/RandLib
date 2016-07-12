@@ -4,6 +4,9 @@
 #include "../ProbabilityDistribution.h"
 #include "../../math/SquareMatrix.h"
 
+/**
+ * @brief The MultivariateProbabilityDistribution class
+ */
 template <size_t n>
 class RANDLIBSHARED_EXPORT MultivariateProbabilityDistribution : public ProbabilityDistribution< std::vector<double> >
 {

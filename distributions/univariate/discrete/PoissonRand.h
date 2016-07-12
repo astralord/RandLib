@@ -7,16 +7,16 @@
 /**
  * @brief The PoissonRand class
  *
- * P(X = k) = \lambda^k * e^(-\lambda) / k!
+ * P(X = k) = λ^k * e^(-λ) / k!
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
     double lambda;
-    double expmLambda; /// exp(-lambda)
-    double logLambda; /// ln(lambda)
-    int floorLambda; /// floor(lambda)
-    double FFloorLambda; /// P(X < floor(lambda))
-    double PFloorLambda; /// P(X = floor(lambda))
+    double expmLambda; /// exp(-λ)
+    double logLambda; /// ln(λ)
+    int floorLambda; /// floor(λ)
+    double FFloorLambda; /// P(X < floor(λ))
+    double PFloorLambda; /// P(X = floor(λ))
 
 public:
     explicit PoissonRand(double rate = 1.0);

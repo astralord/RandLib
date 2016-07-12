@@ -7,7 +7,7 @@
 /**
  * @brief The CompoundPoissonProcess class
  * X(t) = \sum_{i=1}^{N(t)} Y_i,
- * where N(t) is a Poisson process with rate lambda and Y_i are i.i.d. random variables
+ * where N(t) is a Poisson process with rate λ and Y_i are i.i.d. random variables
  */
 template <typename T>
 class RANDLIBSHARED_EXPORT CompoundPoissonProcess : public StochasticProcess<int>

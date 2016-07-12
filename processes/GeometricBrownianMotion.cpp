@@ -1,21 +1,17 @@
 #include "GeometricBrownianMotion.h"
 
 GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility, double initialValue, double deltaT) :
-    StochasticProcess(deltaT),
+    StochasticProcess(deltaT, initialValue),
     mu(drift),
     sigma((volatility <= 0) ? 1.0 : volatility),
-    S0(initialValue),
     mumSigma2_2(mu - 0.5 * sigma * sigma),
-    B(0, sigma, dt)
+    X((mu - 0.5 * sigma * sigma) * dt, sigma * std::sqrt(dt))
 {
-    currentValue = S0;
 }
 
 void GeometricBrownianMotion::nextImpl()
 {
-    currentValue = B.next();
-    currentValue += mumSigma2_2 * currentTime;
-    currentValue = S0 * std::exp(currentValue);
+    currentValue *= X.variate();
 }
 
 double GeometricBrownianMotion::MeanImpl(double t) const

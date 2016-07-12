@@ -7,9 +7,9 @@
 /**
  * @brief The SkellamRand class
  * Skellam distribution
- * X ~ Skellam(\mu_1, \mu_2)
+ * X ~ Skellam(μ_1, μ_2)
  *
- * If Y ~ Poisson(\mu_1) and Z ~ Poisson(\mu_2) then Y - Z ~ Skellam(\mu_1, \mu_2)
+ * If Y ~ Poisson(μ_1) and Z ~ Poisson(μ_2) then Y - Z ~ Skellam(μ_1, μ_2)
  */
 // TODO: define it as a compound distribution
 class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution

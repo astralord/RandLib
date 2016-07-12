@@ -29,7 +29,7 @@ void StableRand::setParameters(double exponent, double skewness)
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
 
-    if (alpha == 1 && beta != 0) /// Case when alpha = 1 and not Cauchy
+    if (alpha == 1 && beta != 0) /// Case when α = 1 and not Cauchy
         pdfCoef = 0.5 / beta;
     if (alpha != 1 && alpha != 2 &&
         !(alpha == 0.5 && std::fabs(beta) == 1)) /// Common case

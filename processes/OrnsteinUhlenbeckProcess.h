@@ -6,8 +6,8 @@
 
 /**
  * @brief The OrnsteinUhlenbeckProcess class
- * dX(t) = (alpha - beta * X(t)) * dt + sigma * dB(t),
- * where B(t) is a Brownian motion, alpha is drift, beta is reversion speed and sigma is volatility.
+ * dX(t) = (α - βX(t))dt + σdB(t),
+ * where B(t) is a Brownian motion, α is drift, β is reversion speed and σ is volatility.
  */
 class RANDLIBSHARED_EXPORT OrnsteinUhlenbeckProcess : public StochasticProcess<double>
 {

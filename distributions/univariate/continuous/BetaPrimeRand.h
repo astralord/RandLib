@@ -6,11 +6,11 @@
 /**
  * @brief The BetaPrimeRand class
  *
- * f(x|\alpha, \beta) = x^{\alpha-1} (1+x)^{-\alpha - \beta} / B(\alpha, \beta)
+ * f(x|α, β) = x^{α-1} (1+x)^{-α - β} / B(α, β)
  *
- * X ~ Beta-Prime(\alpha, \beta)
- * If Y ~ Beta(\alpha, \beta), then X = Y / (1 - Y)
- * If Y ~ Gamma(\alpha), Z ~ Gamma(\beta), then X = Y / (Z - Y)
+ * X ~ Beta-Prime(α, β)
+ * If Y ~ Beta(α, β), then X = Y / (1 - Y)
+ * If Y ~ Gamma(α), Z ~ Gamma(β), then X = Y / (Z - Y)
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
 {

@@ -6,14 +6,14 @@
 /**
  * @brief The GammaRand class
  * Gamma distribution
- * X ~ \Gamma(k, \theta)
+ * X ~ \Gamma(k, θ)
  */
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
 protected:
     double alpha, theta, beta;
-    double cdfCoef; /// -lgamma(alpha)
-    double pdfCoef; ///  -lgamma(alpha) - alpha * log(theta)
+    double cdfCoef; /// -lgamma(α)
+    double pdfCoef; ///  -lgamma(α) - α * log(θ)
 
 private:
     double m, s, s_2, d, b, w, v, c; /// constants for sampling

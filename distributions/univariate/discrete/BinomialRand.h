@@ -86,7 +86,7 @@ public:
 
     /**
      * @brief fitProbability_Bayes
-     * fit probability p with assumption p ~ Beta(\alpha, \beta)
+     * fit probability p with assumption p ~ Beta(α, β)
      * @param sample
      * @param priorDistribution
      * @return posterior distribution

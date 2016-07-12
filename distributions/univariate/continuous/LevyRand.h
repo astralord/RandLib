@@ -6,11 +6,11 @@
 /**
  * @brief The LevyRand class
  * Levy distribution
- * X ~ Levy(\mu, \sigma)
+ * X ~ Levy(μ, σ)
  *
- * f(x|\mu, \sigma) = \sqrt(\sigma exp(\sigma / (\mu - x)) / (2 \pi (x - \mu)^3)
+ * f(x|μ, σ) = √(σ exp(σ / (μ - x)) / (2 π (x - μ)^3)
  *
- * X ~ Stable(0.5, 1, \sigma, \mu)
+ * X ~ Stable(0.5, 1, σ, μ)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public StableRand
 {

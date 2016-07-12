@@ -4,6 +4,9 @@
 #include "ContinuousDistribution.h"
 #include "UniformRand.h"
 
+/**
+ * @brief The LogisticRand class
+ */
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {
     double mu, s;

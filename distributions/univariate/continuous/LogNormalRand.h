@@ -27,6 +27,9 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
+
+    static double standardVariate();
+    static double variate(double location, double scale);
     double variate() const override;
 
     double Mean() const override;

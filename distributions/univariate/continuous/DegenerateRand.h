@@ -6,9 +6,9 @@
 /**
  * @brief The DegenerateRand class
  * Degenerate distribution
- * X ~ \delta(a)
+ * X ~ δ(a)
  *
- * f(x|a) = \delta(a)
+ * f(x|a) = δ(a)
  */
 class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 {

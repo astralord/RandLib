@@ -3,6 +3,11 @@
 
 #include "StableProcess.h"
 
+/**
+ * @brief The CauchyProcess class
+ * dX(t) = μdt + σdC(t),
+ * where C(t) - C(s) ~ Cauchy(0, t - s) for t > s, μ is drift and σ is volatility.
+ */
 class RANDLIBSHARED_EXPORT CauchyProcess : public StableProcess
 {
 public:

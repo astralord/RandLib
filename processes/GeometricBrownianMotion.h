@@ -6,21 +6,20 @@
 
 /**
  * @brief The GeometricBrownianMotion class
- * dX(t) = X(t) * (mu * dt + sigma * dB(t)),
- * where B(t) is a Brownian motion, mu is drift and sigma is volatility.
+ * dX(t) = μX(t)dt + σX(t)dB(t),
+ * where B(t) is a Brownian motion, μ is drift and σ is volatility.
  */
 class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess<double>
 {
-    double mu, sigma, S0;
+    double mu, sigma;
     double mumSigma2_2;
-    BrownianMotion B;
+    LogNormalRand X;
 
 public:
     GeometricBrownianMotion(double drift, double volatility, double initialValue, double deltaT = 1.0);
 
     inline double getDrift() { return mu; }
     inline double getVolatility() { return sigma; }
-    inline double getInitialValue() { return S0; }
 
 private:
     void nextImpl() override;

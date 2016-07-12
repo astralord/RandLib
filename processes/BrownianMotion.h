@@ -6,8 +6,8 @@
 
 /**
  * @brief The BrownianMotion class
- * dX(t) = mu * dt + sigma * dB(t),
- * where B(t) - B(s) ~ Normal(0, t - s) for t > s, mu is drift and sigma is volatility.
+ * dX(t) = μdt + σdB(t),
+ * where B(t) - B(s) ~ Normal(0, t - s) for t > s, μ is drift and σ is volatility.
  */
 class RANDLIBSHARED_EXPORT BrownianMotion : public StableProcess
 {

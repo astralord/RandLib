@@ -9,7 +9,7 @@
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
-    double alpham1Inv, alpha_alpham1; /// 1 / (alpha - 1) and alpha / (alpha - 1)
+    double alpham1Inv, alpha_alpham1; /// 1 / (α - 1) and α / (α - 1)
     double xi, integrandCoef;
 
 protected:

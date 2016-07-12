@@ -6,7 +6,7 @@
 /**
  * @brief The InverseGammaRand class
  * Inverse-Gamma distribution
- * X ~ Inv-Gamma(\alpha, \beta)
+ * X ~ Inv-Gamma(α, β)
  */
 class RANDLIBSHARED_EXPORT InverseGammaRand : public GammaRand
 {
