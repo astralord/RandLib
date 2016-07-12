@@ -11,7 +11,7 @@
  * where S_j = \sum_1^j W_i,
  * where W_i ~ Exp(lambda)
  */
-class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess
+class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess<int>
 {
     double lambda;
     double futureJumpTime;

@@ -1,16 +1,10 @@
 #ifndef PROBABILITY_DISTRIBUTION_H
 #define PROBABILITY_DISTRIBUTION_H
 
-#include <cmath>
 #include <string>
-#include <utility>
 
 #include "math/RandMath.h"
 #include "randlib_global.h"
-
-typedef std::pair <double, double> DoublePair;
-typedef std::pair <int, int> IntPair;
-typedef std::pair <double, int> DoubleIntPair;
 
 /**
  * @brief The ProbabilityDistribution class

@@ -5,12 +5,18 @@
 #include <functional>
 #include <complex>
 #include <vector>
+#include <cmath>
+#include <utility>
 
 #include "Constants.h"
 
 #include "randlib_global.h"
 
 constexpr double MIN_POSITIVE = 1e-21;
+
+typedef std::pair <double, double> DoublePair;
+typedef std::pair <int, int> IntPair;
+typedef std::pair <double, int> DoubleIntPair;
 
 /**
  * @brief The RandMath class

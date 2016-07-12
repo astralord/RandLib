@@ -2,44 +2,59 @@
 #define STOCHASTICPROCESS_H
 
 #include "randlib_global.h"
-#include <QVector>
+#include "../math/RandMath.h"
+
 
 /**
  * @brief The StochasticProcess class
  */
+
+template <typename T>
 class RANDLIBSHARED_EXPORT StochasticProcess
 {
 protected:
-    double currentTime, currentValue, dt;
+    double currentTime, dt;
+    T currentValue;
 
 public:
-    explicit StochasticProcess(double deltaT = 1.0, double initialValue = 0.0);
+    explicit StochasticProcess(double deltaT = 1.0, T initialValue = 0);
 
     /**
      * @brief reset
+     * @param initialValue
+     * set time to 0 and current value to initialValue
      */
-    void reset(double initialValue = 0.0);
+    void reset(T initialValue = 0.0);
 
+    /**
+     * @brief getCurrentTime
+     * @return current time
+     */
     inline double getCurrentTime() const { return currentTime; }
-    inline double getCurrentValue() const { return currentValue; }
+
+    /**
+     * @brief getCurrentValue
+     * @return current value
+     */
+    inline T getCurrentValue() const { return currentValue; }
 
     /**
      * @brief next
-     * @return
+     * @return next value
      */
-    double next();
+    T next();
 
     /**
      * @brief Mean
      * @param t
-     * @return Conditional mathematical expectation E[X(t)|F_s]
+     * @return Conditional mathematical expectation E[X(t)|X(s)], where s is the current time
      */
     double Mean(double t) const;
 
     /**
      * @brief Variance
      * @param t
-     * @return Conditional variance Var(X(t)|F_s)
+     * @return Conditional variance Var(X(t)|X(s)), where s is the current time
      */
     double Variance(double t) const;
 

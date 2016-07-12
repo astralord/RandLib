@@ -10,7 +10,7 @@
  * where N(t) is a Poisson process with rate lambda and Y_i are i.i.d. random variables
  */
 template <typename T>
-class RANDLIBSHARED_EXPORT CompoundPoissonProcess : public StochasticProcess
+class RANDLIBSHARED_EXPORT CompoundPoissonProcess : public StochasticProcess<int>
 {
     PoissonProcess N;
     const UnivariateProbabilityDistribution<T> &Y;

@@ -11,7 +11,7 @@
  * mu is drift and sigma is volatility.
  */
 template <typename T>
-class RANDLIBSHARED_EXPORT JumpDiffusionProcess : public StochasticProcess
+class RANDLIBSHARED_EXPORT JumpDiffusionProcess : public StochasticProcess<double>
 {
     BrownianMotion B;
     CompoundPoissonProcess<T> J;

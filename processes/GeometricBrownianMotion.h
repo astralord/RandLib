@@ -9,7 +9,7 @@
  * dX(t) = X(t) * (mu * dt + sigma * dB(t)),
  * where B(t) is a Brownian motion, mu is drift and sigma is volatility.
  */
-class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess
+class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess<double>
 {
     double mu, sigma, S0;
     double mumSigma2_2;

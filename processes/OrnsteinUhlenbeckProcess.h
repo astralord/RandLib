@@ -9,7 +9,7 @@
  * dX(t) = (alpha - beta * X(t)) * dt + sigma * dB(t),
  * where B(t) is a Brownian motion, alpha is drift, beta is reversion speed and sigma is volatility.
  */
-class RANDLIBSHARED_EXPORT OrnsteinUhlenbeckProcess : public StochasticProcess
+class RANDLIBSHARED_EXPORT OrnsteinUhlenbeckProcess : public StochasticProcess<double>
 {
     double alpha, beta, sigma;
     double expmBetaDt;

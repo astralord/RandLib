@@ -12,7 +12,7 @@
  * alpha == 2 - X(t) is a Brownian motion (Wiener process)
  * alpha == 1, beta == 0 - X(t) is a Cauchy process
  */
-class RANDLIBSHARED_EXPORT StableProcess : public StochasticProcess
+class RANDLIBSHARED_EXPORT StableProcess : public StochasticProcess<double>
 {
 protected:
     StableRand X;
