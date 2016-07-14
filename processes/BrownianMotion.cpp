@@ -16,7 +16,26 @@ void BrownianMotion::nextImpl()
     currentValue += mu * dt + sigma * NormalRand::variate(0, dtCoef);
 }
 
-double BrownianMotion::QuantileImpl(double t, double p) const
+void BrownianMotion::ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const
 {
-    return NormalRand::quantile(p, currentValue + mu * (t - currentTime), sigma * std::sqrt(t - currentTime));
+    double tau = t - currentTime;
+    if (tau <= 0)
+        return;
+    NormalRand X(currentValue + mu * tau, sigma * sigma * tau);
+    return X.ProbabilityDensityFunction(x, y);
+}
+
+void BrownianMotion::CumulativeDistributionFunction(double t, const std::vector<double> &x, std::vector<double> &y) const
+{
+    double tau = t - currentTime;
+    if (tau <= 0)
+        return;
+    NormalRand X(currentValue + mu * tau, sigma * sigma * tau);
+    return X.CumulativeDistributionFunction(x, y);
+}
+
+double BrownianMotion::Quantile(double t, double p) const
+{
+    double tau = t - currentTime;
+    return NormalRand::quantile(p, currentValue + mu * tau, sigma * std::sqrt(tau));
 }

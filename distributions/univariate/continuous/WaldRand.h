@@ -12,8 +12,8 @@ class RANDLIBSHARED_EXPORT WaldRand : public ContinuousDistribution
 {
     double mu, lambda;
 
-    double pdfCoef; /// √(λ / (2π))
-    double cdfCoef; /// \exp(2λ / μ)
+    double pdfCoef; /// (λ/(2π))^(1/2)
+    double cdfCoef; /// exp(2λ/μ)
 public:
     WaldRand(double mean = 1, double shape = 1);
 

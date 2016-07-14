@@ -7,6 +7,12 @@
 
 /**
  * @brief The ExponentialNormalRand class
+ * Exponentially modified Gaussian distribution
+ *
+ * Notation: X ~ EMG(μ, σ, β)
+ *
+ * Related distributions:
+ * X = Y + Z, where Y ~ Normal(μ, σ) and Z ~ Exp(β)
  */
 class RANDLIBSHARED_EXPORT ExponentialNormalRand : public ContinuousDistribution
 {

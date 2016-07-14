@@ -11,7 +11,26 @@ void CauchyProcess::nextImpl()
     currentValue += CauchyRand::variate(mu, sigma) * dt;
 }
 
-double CauchyProcess::QuantileImpl(double t, double p) const
+void CauchyProcess::ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const
 {
-    return CauchyRand::quantile(p, currentValue + mu * (t - currentTime), sigma * (t - currentTime));
+    double tau = t - currentTime;
+    if (tau <= 0)
+        return;
+    CauchyRand X(currentValue + mu * tau, sigma * tau);
+    return X.ProbabilityDensityFunction(x, y);
+}
+
+void CauchyProcess::CumulativeDistributionFunction(double t, const std::vector<double> &x, std::vector<double> &y) const
+{
+    double tau = t - currentTime;
+    if (tau <= 0)
+        return;
+    CauchyRand X(currentValue + mu * tau, sigma * tau);
+    return X.CumulativeDistributionFunction(x, y);
+}
+
+double CauchyProcess::Quantile(double t, double p) const
+{
+    double tau = t - currentTime;
+    return CauchyRand::quantile(p, currentValue + mu * tau, sigma * tau);
 }

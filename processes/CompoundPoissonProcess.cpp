@@ -3,8 +3,8 @@
 
 template <typename T>
 CompoundPoissonProcess<T>::CompoundPoissonProcess(double rate, const UnivariateProbabilityDistribution<T> &jumpDistribution, double deltaT) :
-    StochasticProcess(deltaT),
-    N(rate, dt),
+    StochasticProcess<T>(deltaT),
+    N(rate, this->dt),
     Y(jumpDistribution),
     jumpsAmount(0)
 {
@@ -16,7 +16,7 @@ void CompoundPoissonProcess<T>::nextImpl()
     N.next();
     double Nt = N.getCurrentValue();
     while (Nt > jumpsAmount) {
-        currentValue += Y.variate();
+        this->currentValue += Y.variate();
         ++jumpsAmount;
     }
 }
@@ -24,21 +24,13 @@ void CompoundPoissonProcess<T>::nextImpl()
 template <typename T>
 double CompoundPoissonProcess<T>::MeanImpl(double t) const
 {
-    return currentValue + Y.Mean() * N.getRate() * (t - currentTime);
+    return this->currentValue + Y.Mean() * N.getRate() * (t - this->currentTime);
 }
 
 template <typename T>
 double CompoundPoissonProcess<T>::VarianceImpl(double t) const
 {
-    return Y.Variance() * N.getRate() * (t - currentTime);
-}
-
-template <typename T>
-double CompoundPoissonProcess<T>::QuantileImpl(double t, double p) const
-{
-    // very rough approximation by normal distribution
-    NormalRand X(Mean(t), Variance(t));
-    return X.Quantile(p);
+    return Y.Variance() * N.getRate() * (t - this->currentTime);
 }
 
 template class CompoundPoissonProcess<double>;

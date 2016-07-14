@@ -27,14 +27,5 @@ double JumpDiffusionProcess<T>::VarianceImpl(double t) const
     return B.Variance(t) + J.Variance(t);
 }
 
-template <typename T>
-double JumpDiffusionProcess<T>::QuantileImpl(double t, double p) const
-{
-    // very rough approximation by normal distribution
-    // can work only for big t and existing mean and variance
-    NormalRand X(Mean(t), Variance(t));
-    return X.Quantile(p);
-}
-
 template class JumpDiffusionProcess<double>;
 template class JumpDiffusionProcess<int>;

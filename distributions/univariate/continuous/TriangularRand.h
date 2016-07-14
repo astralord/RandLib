@@ -5,6 +5,9 @@
 
 /**
  * @brief The TriangularRand class
+ * Triangular distribution
+ *
+ * Notation: X ~ Tri(a, b, c)
  */
 class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
 {

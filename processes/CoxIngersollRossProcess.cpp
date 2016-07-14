@@ -33,11 +33,3 @@ double CoxIngersollRossProcess::VarianceImpl(double t) const
     var *= sigma * sigma / beta;
     return var;
 }
-
-double CoxIngersollRossProcess::QuantileImpl(double t, double p) const
-{
-    // very rough approximation by normal distribution
-    // can work only for big t and existing mean and variance
-    NormalRand X(Mean(t), Variance(t));
-    return X.Quantile(p);
-}

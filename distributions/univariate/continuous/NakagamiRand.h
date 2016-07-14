@@ -5,6 +5,9 @@
 
 /**
  * @brief The NakagamiRand class
+ * Nakagami distribution
+ *
+ * Notation: X ~ Nakagami(m, w)
  */
 class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
@@ -39,6 +42,14 @@ public:
 
 /**
  * @brief The ChiRand class
+ * Chi distribution
+ *
+ * Notation: X ~ Chi(n, σ)
+ *
+ * Related distributions:
+ * X ~ Nakagami(n/2, nσ^2)
+ *
+ * @todo figure out the difference between chi-sigma and nakagami-sigma
  */
 class RANDLIBSHARED_EXPORT ChiRand : public NakagamiRand
 {
@@ -72,8 +83,11 @@ public:
 /**
  * @brief The MaxwellBoltzmannRand class
  * Maxwell-Boltzmann distribution
- * X ~ MB(a)
  *
+ * Notation: X ~ MB(σ)
+ *
+ * Related distributions:
+ * X ~ Chi(3, σ)
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ChiRand
 {
@@ -95,6 +109,13 @@ public:
 
 /**
  * @brief The RayleighRand class
+ * Rayleigh distribution
+ *
+ * Notation: X ~ Rayleigh(σ)
+ *
+ * Related distributions:
+ * X ~ Chi(2, σ)
+ *
  */
 class RANDLIBSHARED_EXPORT RayleighRand : public ChiRand
 {

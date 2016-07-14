@@ -7,9 +7,17 @@
 /**
  * @brief The BetaRand class
  * Beta distribution
- * X ~ Beta(alpha, beta)
  *
- * f(x|alpha, beta) = x^{alpha-1} (1-x)^{beta-1} / B(alpha, beta)
+ * f(x | α, β) = x^{α-1} (1-x)^{β-1} / B(α, β),
+ * where B(α, β) denotes Beta function
+ *
+ * Notation: X ~ Beta(α, β)
+ *
+ * Related distributions:
+ * 1 − X ~ Beta(β, α)
+ * X / (1 - X) ~ Beta-Prime(α, β)
+ * X = Y / (Y + Z), where Y ~ Gamma(α) and Z ~ Gamma(β)
+ * βX / α(1 - X) ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
 {

@@ -6,10 +6,12 @@
 /**
  * @brief The LevyRand class
  * Levy distribution
- * X ~ Levy(μ, σ)
  *
- * f(x|μ, σ) = √(σ exp(σ / (μ - x)) / (2 π (x - μ)^3)
+ * f(x|μ, σ) = ((σ exp(σ / (μ - x)) / (2 π (x - μ)^3))^(1/2)
  *
+ * Notation: X ~ Levy(μ, σ)
+ *
+ * Related distributions:
  * X ~ Stable(0.5, 1, σ, μ)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public StableRand

@@ -29,7 +29,7 @@ double OrnsteinUhlenbeckProcess::VarianceImpl(double t) const
     return 0.5 * sigma * sigma / beta * (1 - expmBetaDeltaT * expmBetaDeltaT);
 }
 
-double OrnsteinUhlenbeckProcess::QuantileImpl(double t, double p) const
+double OrnsteinUhlenbeckProcess::Quantile(double t, double p) const
 {
     double expmBetaDeltaT = std::exp(-beta * (t - currentTime));
     return NormalRand::quantile(p, expmBetaDeltaT * currentValue + alpha / beta * (1 - expmBetaDeltaT), sigma * std::sqrt(0.5 / beta * (1 - expmBetaDeltaT * expmBetaDeltaT)));

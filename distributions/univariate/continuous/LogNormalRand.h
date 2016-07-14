@@ -6,6 +6,7 @@
 
 /**
  * @brief The LogNormalRand class
+ * Log-normal distribution
  */
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 {

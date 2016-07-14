@@ -6,6 +6,9 @@
 
 /**
  * @brief The CantorRand class
+ * Cantor distribution
+ *
+ * Notation X ~ Cantor()
  */
 class RANDLIBSHARED_EXPORT CantorRand : public SingularDistribution
 {

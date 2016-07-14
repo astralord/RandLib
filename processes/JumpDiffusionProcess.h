@@ -7,8 +7,13 @@
 /**
  * @brief The JumpDiffusionProcess class
  * dX(t) = μdt + σdB(t) + dJ(t),
- * where B(t) is a Brownian motion, J(t) is a Compound poisson process,
+ * where B(t) is a Brownian motion, J(t) is a Compound poisson process.
  * μ is drift and σ is volatility.
+ *
+ * Notation: JD(t | μ, σ, λ, F)
+ *
+ * Closed-form solution:
+ * JD(t | μ, σ, λ, F) = B(t | μ, σ) + J(t | λ, F)
  */
 template <typename T>
 class RANDLIBSHARED_EXPORT JumpDiffusionProcess : public StochasticProcess<double>
@@ -24,7 +29,6 @@ private:
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;
-    double QuantileImpl(double t, double p) const override;
 };
 
 #endif // JUMPDIFFUSIONPROCESS_H

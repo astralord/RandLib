@@ -6,10 +6,13 @@
 /**
  * @brief The CauchyRand class
  * Cauchy distribution
- * X ~ Cauchy(μ, σ)
  *
  * f(x|μ, σ) = σ / [π (σ^2 + (x - μ)^2)]
  *
+ * Notation: X ~ Cauchy(μ, σ)
+ *
+ * Related distributions:
+ * X ~ Stable(1, 0, σ, μ)
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public StableRand
 {

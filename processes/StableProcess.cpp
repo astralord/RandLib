@@ -25,8 +25,10 @@ double StableProcess::VarianceImpl(double t) const
     return (X.getExponent() == 2.0) ? sigma * sigma * (t - currentTime) : INFINITY;
 }
 
-double StableProcess::QuantileImpl(double t, double p) const
+double StableProcess::Quantile(double t, double p) const
 {
+    if (p < 0 || p > 1 || t < currentTime)
+        return NAN;
     double q = X.Quantile(p);
     q *= sigma;
     q *= std::pow(t - currentTime, X.getInvExponent());
@@ -34,8 +36,14 @@ double StableProcess::QuantileImpl(double t, double p) const
     return currentValue + q;
 }
 
-void StableProcess::QuantileImpl(const std::vector<double> &t, std::vector<double> &outputData, double p) const
+void StableProcess::Quantile(const std::vector<double> &t, std::vector<double> &outputData, double p) const
 {
+    /// Assumed that t is sorted
+    if (p < 0 || p > 1 || t[0] < currentTime)
+        return;
+    if (t.size() > outputData.size())
+        return;
+
     double q = sigma * X.Quantile(p);
     double alphaInv = X.getInvExponent();
     for (size_t i = 0; i != t.size(); ++i)

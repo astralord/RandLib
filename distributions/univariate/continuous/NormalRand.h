@@ -8,9 +8,11 @@
 /**
  * @brief The NormalRand class
  * Normal distribution
- * X ~ N(mu, sigma)
  *
- * f(x|μ, σ) = 1 / (√(2 π) σ) * exp(-(x - μ)^2 / (2 σ^2))
+ * f(x | μ, σ) = 1 / ((2 π σ^2)^(1/2) * exp(-(x - μ)^2 / (2 σ^2))
+ *
+ * Notation: X ~ N(μ, σ)
+ *
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 {

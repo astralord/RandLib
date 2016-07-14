@@ -84,7 +84,7 @@ void ChiRand::setParameters(int degree, double scale)
         sigma = 1.0;
     sigmaSqInv = 1.0 / (sigma * sigma);
 
-    NakagamiRand::setParameters(0.5 * degree, degree * scale * scale);
+    NakagamiRand::setParameters(0.5 * degree, degree * sigma * sigma);
 }
 
 double ChiRand::skewnessImpl(double mean, double sigma) const

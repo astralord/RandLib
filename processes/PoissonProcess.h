@@ -10,6 +10,8 @@
  * X(t) = #(S_j < t)
  * where S_j = \sum_1^j W_i,
  * where W_i ~ Exp(λ)
+ *
+ * Notation: Poisson(t | λ)
  */
 class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess<int>
 {
@@ -25,7 +27,8 @@ private:
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;
-    double QuantileImpl(double t, double p) const override;
+public:
+    double Quantile(double t, double p) const;
 };
 
 #endif // POISSONPROCESS_H

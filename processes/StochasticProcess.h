@@ -58,28 +58,10 @@ public:
      */
     double Variance(double t) const;
 
-    /**
-     * @brief Quantile
-     * @param t
-     * @param p
-     * @return
-     */
-    double Quantile(double t, double p) const;
-
-    /**
-     * @brief Quantile
-     * @param t
-     * @param p
-     * @return
-     */
-    void Quantile(const std::vector<double> &t, std::vector<double> &outputData, double p) const;
-
 private:
     virtual void nextImpl() = 0;
     virtual double MeanImpl(double t) const = 0;
     virtual double VarianceImpl(double t) const = 0;
-    virtual double QuantileImpl(double t, double p) const = 0;
-    virtual void QuantileImpl(const std::vector<double> &t, std::vector<double> &outputData, double p) const;
 };
 
 #endif // STOCHASTICPROCESS_H

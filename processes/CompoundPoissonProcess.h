@@ -7,10 +7,12 @@
 /**
  * @brief The CompoundPoissonProcess class
  * X(t) = \sum_{i=1}^{N(t)} Y_i,
- * where N(t) is a Poisson process with rate λ and Y_i are i.i.d. random variables
+ * where N(t) is a Poisson process with rate λ and Y_i are i.i.d. random variables with a given distribution F(x)
+ *
+ * Notation: CompoundPoisson(t | λ, F)
  */
 template <typename T>
-class RANDLIBSHARED_EXPORT CompoundPoissonProcess : public StochasticProcess<int>
+class RANDLIBSHARED_EXPORT CompoundPoissonProcess : public StochasticProcess<T>
 {
     PoissonProcess N;
     const UnivariateProbabilityDistribution<T> &Y;
@@ -23,7 +25,6 @@ private:
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;
-    double QuantileImpl(double t, double p) const override;
 };
 
 #endif // COMPOUNDPOISSONPROCESS_H

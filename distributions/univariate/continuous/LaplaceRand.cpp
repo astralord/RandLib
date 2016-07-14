@@ -13,7 +13,7 @@ std::string LaplaceRand::name() const
 {
     return "Laplace(" + toStringWithPrecision(getShift()) + ", "
                       + toStringWithPrecision(getScale()) + ", "
-            + toStringWithPrecision(getAsymmetry()) + ")";
+                      + toStringWithPrecision(getAsymmetry()) + ")";
 }
 
 void LaplaceRand::setShift(double shift)

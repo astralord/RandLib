@@ -8,10 +8,12 @@
 /**
  * @brief The GeometricRand class
  * Geometric distribution
- * X ~ Geometric(p)
+ *
+ * Notation: X ~ Geometric(p)
  *
  * P(X = k) = p (1 - p)^k
  *
+ * Related distributions:
  * X ~ NB(1, p)
  */
 class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand

@@ -6,9 +6,10 @@
 /**
  * @brief The DegenerateRand class
  * Degenerate distribution
- * X ~ δ(a)
  *
  * f(x|a) = δ(a)
+ *
+ * Notation: X ~ δ(a)
  */
 class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 {

@@ -6,6 +6,7 @@
 
 /**
  * @brief The StableRand class
+ * Stable distribution
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {

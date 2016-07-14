@@ -6,7 +6,11 @@
 /**
  * @brief The GammaRand class
  * Gamma distribution
- * X ~ \Gamma(k, θ)
+ *
+ * Notation X ~ Gamma(k, θ)
+ *
+ * Related distributions:
+ * If X ~ Gamma(1, β), then X ~ Exp(β)
  */
 class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
@@ -84,8 +88,10 @@ public:
 /**
  * @brief The ChiSquaredRand class
  * Chi-squared distribution
- * X ~ \chi^2(n)
  *
+ * Notation: X ~ Chi^2(n)
+ *
+ * Related distributions:
  * X ~ Gamma(0.5 * n, 2)
  */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
@@ -108,8 +114,10 @@ protected:
 /**
  * @brief The ErlangRand class
  * Erlang distibution
- * X ~ Erlang(k, l)
  *
+ * Notation: X ~ Erlang(k, l)
+ *
+ * Related distributions:
  * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(l)
  * X ~ Gamma(k, 1/l)
  */

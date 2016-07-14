@@ -27,7 +27,25 @@ double GeometricBrownianMotion::VarianceImpl(double t) const
     return var * currentValue * currentValue;
 }
 
-double GeometricBrownianMotion::QuantileImpl(double t, double p) const
+void GeometricBrownianMotion::ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const
+{
+    double tau = t - currentTime;
+    if (tau <= 0)
+        return;
+    LogNormalRand X(std::log(currentValue) + mumSigma2_2 * tau, sigma * sigma * tau);
+    return X.ProbabilityDensityFunction(x, y);
+}
+
+void GeometricBrownianMotion::CumulativeDistributionFunction(double t, const std::vector<double> &x, std::vector<double> &y) const
+{
+    double tau = t - currentTime;
+    if (tau <= 0)
+        return;
+    LogNormalRand X(std::log(currentValue) + mumSigma2_2 * tau, sigma * sigma * tau);
+    return X.CumulativeDistributionFunction(x, y);
+}
+
+double GeometricBrownianMotion::Quantile(double t, double p) const
 {
     double tau = t - currentTime;
     return currentValue * LogNormalRand::quantile(p, mumSigma2_2 * tau, sigma * std::sqrt(tau));

@@ -5,12 +5,17 @@
 
 /**
  * @brief The BetaPrimeRand class
+ * Beta-prime distribution
  *
- * f(x|α, β) = x^{α-1} (1+x)^{-α - β} / B(α, β)
+ * f(x | α, β) = x^{α-1} (1 + x)^{-α - β} / B(α, β),
+ * where B(α, β) denotes Beta function
  *
- * X ~ Beta-Prime(α, β)
- * If Y ~ Beta(α, β), then X = Y / (1 - Y)
- * If Y ~ Gamma(α), Z ~ Gamma(β), then X = Y / (Z - Y)
+ * Notation: X ~ Beta-Prime(α, β)
+ *
+ * Related distributions:
+ * X / (X + 1) ~ Beta(α, β)
+ * X = Y / Z, where Y ~ Gamma(α) and Z ~ Gamma(β)
+ * X ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
 {

@@ -6,11 +6,14 @@
 /**
  * @brief The UniformRand class
  * Uniform continuous distribution
- * X ~ U(a, b)
  *
- * f(x|a, b) = 1 / (b - a) for a < x < b
+ * f(x | a, b) = 1 / (b - a) for a < x < b
  *
- * X ~ Beta(1, 1)
+ * Notation: X ~ U(a, b)
+ *
+ * Related distributions:
+ * X ~ Beta(1, 1, a, b)
+ * (X - a) / (b - a) ~ IH(1)
  */
 class RANDLIBSHARED_EXPORT UniformRand : public BetaRand
 {
