@@ -38,12 +38,16 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
 
 double NoncentralChiSquared::f(double x) const
 {
-    if (x < 0)
+    if (x < 0.0)
         return 0.0;
+    if (x == 0.0)
+        return (k >= 2) ? 0.0 : INFINITY;
     double halfkm1 = 0.5 * k - 1;
     double y = RandMath::modifiedBesselFirstKind(std::sqrt(lambda * x), halfkm1);
-    y *= std::pow(x / lambda, 0.5 * halfkm1);
-    return 0.5 * y * std::exp(-0.5 * (x + lambda));
+    double z = halfkm1 * std::log(x / lambda);
+    z -= x + lambda;
+    y = 0.5 * z + std::log(y);
+    return 0.5 * std::exp(y);
 }
 
 double NoncentralChiSquared::F(double x) const
@@ -57,10 +61,12 @@ double NoncentralChiSquared::F(double x) const
         }, 0, x);
     }
 
+    /// in this case we have singularity point at 0,
+    /// so we get rid of it by subtracting the function
+    /// which has the same behaviour at this point
     double halfK = 0.5 * k;
     double halfKm1 = halfK - 1.0;
     double y = cdfCoef / halfK * std::pow(x, halfK);
-
     y += RandMath::integral([this, halfKm1] (double t)
     {
         if (t <= 0)
