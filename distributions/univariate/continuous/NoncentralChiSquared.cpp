@@ -101,19 +101,20 @@ double NoncentralChiSquared::variate() const
 
 void NoncentralChiSquared::sample(std::vector<double> &outputData) const
 {
-    if (k != 1)
-        X.sample(outputData);
-    else
-        std::fill(outputData.begin(), outputData.end(), 0.0);
-    if (k >= 1)
-    {
+    if (k == 1) {
         for (double & var : outputData)
-            var += variateForDegreeEqualOne();
+            var = variateForDegreeEqualOne();
     }
-    else
-    {
-        for (double & var : outputData)
-            var += GammaRand::variate(Y.variate(), 0.5);
+    else {
+        X.sample(outputData);
+        if (k > 1) {
+            for (double & var : outputData)
+                var += variateForDegreeEqualOne();
+        }
+        else {
+            for (double & var : outputData)
+                var += GammaRand::variate(Y.variate(), 0.5);
+        }
     }
 }
 
