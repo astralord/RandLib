@@ -162,6 +162,49 @@ bool LaplaceRand::fitScaleMLE(const std::vector<double> &sample)
     setScale(deviation);
     return true;
 }
+
+bool LaplaceRand::fitAsymmetryMLE(const std::vector<double> &sample)
+{
+    int n = sample.size();
+    double posSum = 0.0, negSum = 0.0;
+    for (double x : sample) {
+        if (x < m)
+            negSum -= (x - m);
+        else
+            posSum += (x - m);
+    }
+
+    if (posSum == negSum) {
+        setAsymmetry(1.0);
+        return true;
+    }
+
+    double sigmaN = sigma * n;
+    double root = 1.0;
+    double minBound, maxBound;
+    if (posSum < -negSum) {
+        minBound = 1.0;
+        maxBound = std::sqrt(negSum / posSum);
+    }
+    else {
+        minBound = std::sqrt(negSum / posSum);
+        maxBound = 1.0;
+    }
+
+    if (!RandMath::findRoot([sample, posSum, negSum, sigmaN] (double t)
+    {
+        double tSq = t * t;
+        double y = 1.0 - tSq;
+        y /= (t * (tSq + 1.0));
+        y *= sigmaN;
+        y += negSum / tSq - posSum;
+        return y;
+    }, minBound, maxBound, root))
+        return false;
+
+    setAsymmetry(root);
+    return true;
+}
     
 bool LaplaceRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 {

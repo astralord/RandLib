@@ -48,6 +48,7 @@ public:
     /// Maximum likelihood estimation
     bool fitLocationMLE(const std::vector<double> &sample);
     bool fitScaleMLE(const std::vector<double> &sample);
+    bool fitAsymmetryMLE(const std::vector<double> &sample);
     bool fitLocationAndScaleMLE(const std::vector<double> &sample);
     
     /// Method of moments
