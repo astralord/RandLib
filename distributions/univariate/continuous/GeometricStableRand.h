@@ -26,11 +26,8 @@ public:
     double MinValue() const override { return (alpha < 1 && beta == 1) ? 0 : -INFINITY; }
     double MaxValue() const override { return INFINITY; }
 
-private:
-    void setAsymmetry();
 public:
     void setParameters(double exponent, double skewness);
-    void setLocation(double location);
     void setScale(double scale);
 
 protected:

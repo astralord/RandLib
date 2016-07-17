@@ -21,46 +21,17 @@ std::string GeometricStableRand::name() const
             + toStringWithPrecision(getLocation()) + ")";
 }
 
-void GeometricStableRand::setAsymmetry()
-{
-    /// Calculate value of asymmetry
-    if (mu == 0)
-        k = 1;
-    else {
-        double sigma2 = sigma + sigma;
-        k = mu * mu + sigma2 * sigma2;
-        k = std::sqrt(k);
-        k -= mu;
-        k /= sigma2;
-    }
-    kInv = 1.0 / k;
-    kSq = k * k;
-    pdfCoef = 1.0 / (sigma * (k + kInv));
-    cdfCoef = 1.0 / (1 + kSq);
-}
-
 void GeometricStableRand::setParameters(double exponent, double skewness)
 {
     LimitingDistribution::setParameters(exponent, skewness);
     Z.setParameters(alpha, beta);
-
-    if (alpha == 2)
-        setAsymmetry();
-}
-
-void GeometricStableRand::setLocation(double location)
-{
-    LimitingDistribution::setLocation(location);
-    if (alpha == 2)
-        setAsymmetry();
 }
 
 void GeometricStableRand::setScale(double scale)
 {
     LimitingDistribution::setScale(scale);
-    pdfCoef = 1.0 / (sigma * (k + kInv));
     if (alpha == 2)
-        setAsymmetry();
+        pdfCoef = 1.0 / (sigma * (k + kInv));
 }
 
 double GeometricStableRand::pdfLaplace(double x) const

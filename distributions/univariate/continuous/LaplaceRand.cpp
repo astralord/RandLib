@@ -26,7 +26,11 @@ void LaplaceRand::setAsymmetry(double asymmetry)
     k = asymmetry;
     if (k <= 0)
         k = 1.0;
-    setLocation((1.0 - k * k) * sigma / k);
+    kInv = 1.0 / k;
+    kSq = k * k;
+    pdfCoef = 1.0 / (sigma * (k + kInv));
+    cdfCoef = 1.0 / (1 + kSq);
+    setLocation((1.0 - kSq) * sigma / k);
 }
 
 double LaplaceRand::f(double x) const
@@ -106,15 +110,12 @@ double LaplaceRand::Entropy() const
 
 bool LaplaceRand::fitLocationMLE(const std::vector<double> &sample)
 {
-    if (k != 1)
-        return false;
     int n = sample.size();
     if (n <= 0)
         return false;
 
-    /// Calculate median
+    /// Calculate median (considering asymmetry)
     /// we use root-finding algorithm for median search
-    /// but note, that it can be better to use median-for-median algorithm
     double median = 0.0;
     double minVar = sample[0], maxVar = minVar;
     for (double var : sample) {
@@ -122,19 +123,18 @@ bool LaplaceRand::fitLocationMLE(const std::vector<double> &sample)
         maxVar = std::max(var, maxVar);
         median += var;
     }
-    median /= n;
+    median /= n; /// sample mean
 
-    if (!RandMath::findRoot([sample] (double med)
+    if (!RandMath::findRoot([this, sample] (double med)
     {
-        /// sum of sign(x) - derivative of sum of abs(x)
-        double x = 0.0;
-        for (double var : sample) {
-            if (var > med)
-                ++x;
-            else if (var < med)
-                --x;
+        double y = 0.0;
+        for (double x : sample) {
+            if (x > med)
+                y -= kSq;
+            else if (x < med)
+                ++y;
         }
-        return x;
+        return y;
     },
     minVar, maxVar, median
     ))
@@ -146,17 +146,18 @@ bool LaplaceRand::fitLocationMLE(const std::vector<double> &sample)
 
 bool LaplaceRand::fitScaleMLE(const std::vector<double> &sample)
 {
-    if (k != 1)
-        return false;
     int n = sample.size();
     if (n <= 0)
         return false;
 
     double deviation = 0.0;
-    for (double var : sample) {
-        deviation += std::fabs(var - mu);
+    for (double x : sample) {
+        if (x > m)
+            deviation += kSq * (x - m);
+        else
+            deviation -= (x - m);
     }
-    deviation /= n;
+    deviation /= (k * n);
 
     setScale(deviation);
     return true;
@@ -169,22 +170,30 @@ bool LaplaceRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
 
 bool LaplaceRand::fitLocationMM(const std::vector<double> &sample)
 {
-    if (k != 1)
-        return false;
-    setShift(RandMath::sampleMean(sample));
+    double y = RandMath::sampleMean(sample);
+    setShift(y - sigma * (1.0 / k - k));
     return true;
 }
 
 bool LaplaceRand::fitScaleMM(const std::vector<double> &sample)
 {
-    if (k != 1)
-        return false;
-    double var = RandMath::sampleVariance(sample, mu);
-    setScale(std::sqrt(0.5 * var));
+    if (k == 1) {
+        /// can't derive scale from mean
+        double var = RandMath::sampleVariance(sample, m);
+        setScale(std::sqrt(0.5 * var));
+    }
+    else {
+        double y = RandMath::sampleMean(sample);
+        setScale((y - m) * k / (1.0 - kSq));
+    }
     return true;
 }
 
 bool LaplaceRand::fitLocationAndScaleMM(const std::vector<double> &sample)
 {
-    return fitLocationMM(sample) ? fitScaleMM(sample) : false;
+    if (!fitLocationMM(sample))
+        return false;
+    double var = RandMath::sampleVariance(sample, m);
+    setScale(std::sqrt(0.5 * var));
+    return true;
 }
