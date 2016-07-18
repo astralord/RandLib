@@ -91,6 +91,25 @@ std::complex<double> LaplaceRand::CF(double t) const
     return x * y * z / denominator;
 }
 
+double LaplaceRand::Quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+
+    if (p < kSq / (1 + kSq)) {
+        double q = p * (1.0 / kSq + 1.0);
+        q = std::log(q);
+        q *= k * sigma;
+        return m + q;
+    }
+    else {
+        double q = (kSq + 1) * (1 - p);
+        q = std::log(q);
+        q *= sigma / k;
+        return m - q;
+    }
+}
+
 double LaplaceRand::Median() const
 {
     return m + GeometricStableRand::Median();
@@ -166,15 +185,15 @@ bool LaplaceRand::fitScaleMLE(const std::vector<double> &sample)
 bool LaplaceRand::fitAsymmetryMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
-    double posSum = 0.0, negSum = 0.0;
+    double xPlus = 0.0, xMinus = 0.0;
     for (double x : sample) {
         if (x < m)
-            negSum -= (x - m);
+            xMinus -= (x - m);
         else
-            posSum += (x - m);
+            xPlus += (x - m);
     }
 
-    if (posSum == negSum) {
+    if (xPlus == xMinus) {
         setAsymmetry(1.0);
         return true;
     }
@@ -182,22 +201,22 @@ bool LaplaceRand::fitAsymmetryMLE(const std::vector<double> &sample)
     double sigmaN = sigma * n;
     double root = 1.0;
     double minBound, maxBound;
-    if (posSum < -negSum) {
+    if (xPlus < -xMinus) {
         minBound = 1.0;
-        maxBound = std::sqrt(negSum / posSum);
+        maxBound = std::sqrt(xMinus / xPlus);
     }
     else {
-        minBound = std::sqrt(negSum / posSum);
+        minBound = std::sqrt(xMinus / xPlus);
         maxBound = 1.0;
     }
 
-    if (!RandMath::findRoot([sample, posSum, negSum, sigmaN] (double t)
+    if (!RandMath::findRoot([sample, xPlus, xMinus, sigmaN] (double t)
     {
         double tSq = t * t;
         double y = 1.0 - tSq;
         y /= (t * (tSq + 1.0));
         y *= sigmaN;
-        y += negSum / tSq - posSum;
+        y += xMinus / tSq - xPlus;
         return y;
     }, minBound, maxBound, root))
         return false;
@@ -205,10 +224,43 @@ bool LaplaceRand::fitAsymmetryMLE(const std::vector<double> &sample)
     setAsymmetry(root);
     return true;
 }
-    
-bool LaplaceRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
+
+bool LaplaceRand::fitScaleAndAsymmetryMLE(const std::vector<double> &sample)
 {
-    return fitLocationMLE(sample) ? fitScaleMLE(sample) : false;
+    int n = sample.size();
+    double xPlus = 0.0, xMinus = 0.0;
+    for (double x : sample) {
+        if (x < m)
+            xMinus -= (x - m);
+        else
+            xPlus += (x - m);
+    }
+    xPlus /= n;
+    xMinus /= n;
+
+    // TODO: find workaround for those two cases (generalisation?)
+    if (xMinus == 0) {
+        /// X ~ Exp(1 / xPlus)
+        return false;
+    }
+    if (xPlus == 0) {
+        /// -X ~ Exp(1 / xMinus)
+        return false;
+    }
+
+    double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);
+    double scale = xPlusSqrt + xMinusSqrt;
+    scale *= std::sqrt(xPlusSqrt * xMinusSqrt);
+
+    setScale(scale);
+    setAsymmetry(std::pow(xMinus / xPlus, 0.25));
+
+    return true;
+}
+
+bool LaplaceRand::fitMLE(const std::vector<double> &sample)
+{
+    return fitLocationMLE(sample) ? fitScaleAndAsymmetryMLE(sample) : false;
 }
 
 bool LaplaceRand::fitLocationMM(const std::vector<double> &sample)
@@ -229,6 +281,17 @@ bool LaplaceRand::fitScaleMM(const std::vector<double> &sample)
         double y = RandMath::sampleMean(sample);
         setScale((y - m) * k / (1.0 - kSq));
     }
+    return true;
+}
+
+bool LaplaceRand::fitAsymmetryMM(const std::vector<double> &sample)
+{
+    double mean = RandMath::sampleMean(sample);
+    double aux = (m - mean) / sigma;
+    double asymmetry = aux * aux + 4;
+    asymmetry = std::sqrt(asymmetry);
+    asymmetry += aux;
+    setAsymmetry(0.5 * asymmetry);
     return true;
 }
 

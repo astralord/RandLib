@@ -29,16 +29,16 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
 
+    double variate() const override;
     static double variate(double location, double scale);
     static double variate(double location, double scale, double asymmetry);
-
     void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
 
     std::complex<double> CF(double t) const override;
+    double Quantile(double p) const override;
 
     double Median() const override;
     double Mode() const override;
@@ -49,11 +49,14 @@ public:
     bool fitLocationMLE(const std::vector<double> &sample);
     bool fitScaleMLE(const std::vector<double> &sample);
     bool fitAsymmetryMLE(const std::vector<double> &sample);
-    bool fitLocationAndScaleMLE(const std::vector<double> &sample);
-    
+    bool fitScaleAndAsymmetryMLE(const std::vector<double> &sample);
+    bool fitMLE(const std::vector<double> &sample);
+
+    // TODO: add fitMM
     /// Method of moments
     bool fitLocationMM(const std::vector<double> &sample);
     bool fitScaleMM(const std::vector<double> &sample);
+    bool fitAsymmetryMM(const std::vector<double> &sample);
     bool fitLocationAndScaleMM(const std::vector<double> &sample);
 };
 
