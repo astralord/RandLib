@@ -46,18 +46,36 @@ public:
     double Entropy() const;
 
     /// Maximum likelihood estimation
+    /// One parameter
     bool fitLocationMLE(const std::vector<double> &sample);
     bool fitScaleMLE(const std::vector<double> &sample);
     bool fitAsymmetryMLE(const std::vector<double> &sample);
+    /// Two parameters
+    bool fitLocationAndScaleMLE(const std::vector<double> &sample);
+    bool fitLocationAndAsymmetryMLE(const std::vector<double> &sample);
     bool fitScaleAndAsymmetryMLE(const std::vector<double> &sample);
+    /// All parameters
     bool fitMLE(const std::vector<double> &sample);
 
-    // TODO: add fitMM
+private:
+    /**
+     * @brief getAsymmetryFromSkewness
+     * @param sample
+     * @return numeric solution of equation Skewness() = skewness
+     */
+    double getAsymmetryFromSkewness(double skewness);
+public:
     /// Method of moments
+    /// One parameter
     bool fitLocationMM(const std::vector<double> &sample);
     bool fitScaleMM(const std::vector<double> &sample);
     bool fitAsymmetryMM(const std::vector<double> &sample);
+    /// Two parameters
     bool fitLocationAndScaleMM(const std::vector<double> &sample);
+    bool fitLocationAndAsymmetryMM(const std::vector<double> &sample);
+    bool fitScaleAndAsymmetryMM(const std::vector<double> &sample);
+    /// All parameters
+    bool fitMM(const std::vector<double> &sample);
 };
 
 #endif // LAPLACERAND_H
