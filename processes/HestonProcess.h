@@ -24,7 +24,7 @@
  */
 class RANDLIBSHARED_EXPORT HestonProcess : public StochasticProcess<double>
 {
-    double mu, ro;
+    double mu, rho;
     CoxIngersollRossProcess V;
     BivariateNormalRand BW;
 
@@ -35,7 +35,7 @@ public:
     inline double getVolatilityDrift() { return V.getDrift(); }
     inline double getReversionSpeed() { return V.getReversionSpeed(); }
     inline double getVolatility() { return V.getVolatility(); }
-    inline double getCorrelation() { return ro; }
+    inline double getCorrelation() { return rho; }
 
 private:
     void nextImpl() override;

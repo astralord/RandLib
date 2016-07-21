@@ -480,14 +480,6 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std:
     return (iter == maxIter) ? false : true;
 }
 
-bool RandMath::findRoot(const std::function<double (double)> &funPtr, double &root, double epsilon)
-{
-    return findRoot(funPtr, [funPtr, epsilon] (double x)
-    {
-        return 0.5 * (funPtr(x + epsilon) - funPtr(x - epsilon)) / epsilon;
-    }, root, epsilon);
-}
-
 bool RandMath::findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
 {
     /// Sanity check

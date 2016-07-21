@@ -3,9 +3,9 @@
 HestonProcess::HestonProcess(double drift, double volatilityDrift, double reversionSpeed, double volatility, double initialValue, double volatilityInitialValue, double correlation, double deltaT) :
     StochasticProcess(deltaT, initialValue),
     mu(drift),
-    ro(std::max(0.0, std::min(correlation, 1.0))),
+    rho(std::max(0.0, std::min(correlation, 1.0))),
     V(volatilityDrift, reversionSpeed, volatility, volatilityInitialValue),
-    BW(0, 0, dt, dt, ro)
+    BW(0, 0, dt, dt, rho)
 {
 
 }

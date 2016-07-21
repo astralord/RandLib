@@ -10,7 +10,7 @@
 class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<double, double>
 {
     double mu1, mu2;
-    double sigma1, sigma2, ro;
+    double sigma1, sigma2, rho;
 
     NormalRand X, Y;
     double pdfCoef, sqrt1mroSq;
@@ -29,7 +29,7 @@ public:
     inline double getSecondLocation() const { return mu2; }
     inline double getFirstScale() const { return sigma1; }
     inline double getSecondScale() const { return sigma2; }
-    inline double getCorrelation() const { return ro; }
+    inline double getCorrelation() const { return rho; }
 
     double f(DoublePair point) const override;
     double F(DoublePair point) const override;

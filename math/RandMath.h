@@ -297,19 +297,9 @@ public:
      * @param funPtr
      * @param root starting point
      * @param epsilon
-     * @return
+     * @return true if success, false otherwise
      */
     static bool findRoot(const std::function<double (double)> &funPtr, const std::function<double (double)> &derPtr, double & root, double epsilon = 1e-10);
-
-    /**
-     * @brief findRoot
-     * Quasi-Newton's root-finding procedure
-     * @param funPtr
-     * @param root starting point
-     * @param epsilon
-     * @return
-     */
-    static bool findRoot(const std::function<double (double)> &funPtr, double &root, double epsilon = 1e-10);
 
     /**
      * @brief findRoot
