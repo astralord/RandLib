@@ -11,7 +11,7 @@
  * where S_j = \sum_1^j W_i,
  * where W_i ~ Exp(λ)
  *
- * Notation: Poisson(t | λ)
+ * Notation: N(t | λ)
  */
 class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess<int>
 {

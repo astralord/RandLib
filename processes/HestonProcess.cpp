@@ -1,10 +1,10 @@
 #include "HestonProcess.h"
 
-HestonProcess::HestonProcess(double drift, double volatilityDrift, double reversionSpeed, double volatility, double initialValue, double volatilityInitialValue, double correlation, double deltaT) :
+HestonProcess::HestonProcess(double drift, double volatilityMean, double reversionSpeed, double volatility, double initialValue, double volatilityInitialValue, double correlation, double deltaT) :
     StochasticProcess(deltaT, initialValue),
     mu(drift),
     rho(std::max(0.0, std::min(correlation, 1.0))),
-    V(volatilityDrift, reversionSpeed, volatility, volatilityInitialValue),
+    V(volatilityMean, reversionSpeed, volatility, volatilityInitialValue),
     BW(0, 0, dt, dt, rho)
 {
 
@@ -18,7 +18,7 @@ void HestonProcess::nextImpl()
     double sqrtV = std::sqrt(v);
     DoublePair X = BW.variate();
     double dB = X.first, dW  = X.second;
-    v += (V.getDrift() - V.getReversionSpeed() * v) * dt;
+    v += V.getReversionSpeed() * (V.getMean() - v) * dt;
     v += sqrtV * V.getVolatility() * dW;
 
     /// Simulate Heston from CIR

@@ -9,7 +9,7 @@
  * X(t) = \sum_{i=1}^{N(t)} Y_i,
  * where N(t) is a Poisson process with rate λ and Y_i are i.i.d. random variables with a given distribution F(x)
  *
- * Notation: CompoundPoisson(t | λ, F)
+ * Notation: J(t | λ, F)
  */
 template <typename T>
 class RANDLIBSHARED_EXPORT CompoundPoissonProcess : public StochasticProcess<T>

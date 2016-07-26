@@ -7,7 +7,7 @@
 /**
  * @brief The JumpDiffusionProcess class
  * dX(t) = μdt + σdB(t) + dJ(t),
- * where B(t) is a Brownian motion, J(t) is a Compound poisson process.
+ * where B(t) is a Brownian motion, J(t) is a Compound Poisson process.
  * μ is drift and σ is volatility.
  *
  * Notation: JD(t | μ, σ, λ, F)

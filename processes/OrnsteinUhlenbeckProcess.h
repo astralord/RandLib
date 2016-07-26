@@ -6,19 +6,19 @@
 
 /**
  * @brief The OrnsteinUhlenbeckProcess class
- * dX(t) = (α - βX(t))dt + σdB(t),
+ * dX(t) = β(α - X(t))dt + σdB(t),
  * where B(t) is a standard Brownian motion,
- * α is drift, β is reversion speed and σ is volatility.
+ * α is mean, β is reversion speed and σ is volatility.
  *
  * Notation: OU(t | α, β, σ, X0)
  *
  * Closed-form solution:
  * OU(t | α, β, σ) = X0 exp(-βt) + Y,
- * where Y ~ Normal(α(1 - exp(-βt))/β, σ^2 (1 - exp(-2βt)) / 2β)
+ * where Y ~ Normal(α(1 - exp(-βt)), σ^2 (1 - exp(-2βt)) / 2β)
  *
  * Special cases:
- * OU(t | α, β, 0) = X0 exp(-βt) + α(1 - exp(-βt))/β,
- * OU(t | α, 0, σ) = X0 + B(t | α, σ)
+ * OU(t | α, β, 0) = X0 exp(-βt) + α(1 - exp(-βt)),
+ * OU(t | α, 0, σ) = X0 + B(t | 0, σ)
  */
 class RANDLIBSHARED_EXPORT OrnsteinUhlenbeckProcess : public StochasticProcess<double>
 {
@@ -27,9 +27,9 @@ class RANDLIBSHARED_EXPORT OrnsteinUhlenbeckProcess : public StochasticProcess<d
     NormalRand X;
 
 public:
-    OrnsteinUhlenbeckProcess(double drift, double reversionSpeed, double volatility, double initialValue, double deltaT = 1.0);
+    OrnsteinUhlenbeckProcess(double mean, double reversionSpeed, double volatility, double initialValue, double deltaT = 1.0);
 
-    inline double getDrift() { return alpha; }
+    inline double getMean() { return alpha; }
     inline double getReversionSpeed() { return beta; }
     inline double getVolatility() { return sigma; }
 
