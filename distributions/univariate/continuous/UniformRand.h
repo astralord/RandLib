@@ -54,17 +54,17 @@ public:
     /// Maximum likelihood estimation
     bool fitMinimumMLE(const std::vector<double> &sample);
     bool fitMaximumMLE(const std::vector<double> &sample);
-    bool fitSupportMLE(const std::vector<double> &sample);
+    bool fitMLE(const std::vector<double> &sample);
     
     /// Method of moments
     bool fitMinimumMM(const std::vector<double> &sample);
     bool fitMaximumMM(const std::vector<double> &sample);
-    bool fitSupportMM(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
     
     /// Minimum-variance unbiased estimator
     bool fitMinimumUMVU(const std::vector<double> &sample);
     bool fitMaximumUMVU(const std::vector<double> &sample);
-    bool fitSupportUMVU(const std::vector<double> &sample);
+    bool fitUMVU(const std::vector<double> &sample);
 };
 
 #endif // UNIFORMRAND_H

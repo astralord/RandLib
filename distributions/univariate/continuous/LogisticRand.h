@@ -40,9 +40,12 @@ public:
     double ExcessKurtosis() const override;
     
     /// Method of moments
-    bool fitLocation_MM(const std::vector<double> &sample);
-    bool fitScale_MM(const std::vector<double> &sample);
-    bool fit_MM(const std::vector<double> &sample);
+    bool fitLocationMM(const std::vector<double> &sample);
+    bool fitScaleMM(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
+
+    /// Maximum-likelihood
+    bool fitLocationMLE(const std::vector<double> &sample);
 };
 
 #endif // LOGISTICRAND_H

@@ -159,7 +159,7 @@ bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fitLocationAndScaleMM(const std::vector<double> &sample)
+bool LogNormalRand::fitMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -191,7 +191,7 @@ bool LogNormalRand::fitScaleMLE(const std::vector<double> &sample)
     return true;
 }
 
-bool LogNormalRand::fitLocationAndScaleMLE(const std::vector<double> &sample)
+bool LogNormalRand::fitMLE(const std::vector<double> &sample)
 {
     size_t n = sample.size();
     if (n == 0 || !checkValidity(sample))
@@ -244,7 +244,7 @@ bool LogNormalRand::fitScaleBayes(const std::vector<double> &sample, InverseGamm
     return true;
 }
 
-bool LogNormalRand::fitLocationAndScaleBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+bool LogNormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)

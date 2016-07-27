@@ -40,11 +40,22 @@ public:
     double F(double x) const override;
     
 private:
-    static double variateForIntegerShape(int shape);     /// Erlang distribution (use for k < 5)
-    static double variateForHalfIntegerShape(int shape); /// GA algorithm for k = [n] + 0.5 and k < 5
-    static double variateForSmallShape(double shape);    /// GS algorithm for small k < 1
-    static double variateForMediumShape(double shape);   /// GP algorithm for 1 < k < 3
-    double variateForLargeShape() const;                 /// GO algorithm for the most common case k > 3
+
+    enum GENERATOR_ID {
+        GA1, /// Erlang distribution and k < 5
+        GA2, /// k = [n] + 0.5 and k < 5
+        GS, /// k < 1
+        GP, /// 1 < k < 3
+        GO /// k > 3
+    };
+
+    static GENERATOR_ID getIdOfUsedGenerator(double shape);
+
+    static double variateForIntegerShape(int shape);
+    static double variateForHalfIntegerShape(int shape);
+    static double variateForSmallShape(double shape);
+    static double variateForMediumShape(double shape);
+    double variateForLargeShape() const;
     static double variateForLargeShape(double shape);
     
 public:
@@ -67,12 +78,12 @@ public:
 
     /// Maximum-likelihood estimation
     bool fitScaleMLE(const std::vector<double> &sample);
-    bool fitShapeAndScaleMLE(const std::vector<double> &sample);
+    bool fitMLE(const std::vector<double> &sample);
     
     /// Method of moments
     bool fitShapeMM(const std::vector<double> &sample);
     bool fitScaleMM(const std::vector<double> &sample);
-    bool fitShapeAndScaleMM(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
 
     /// Bayes estimation
     bool fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution);

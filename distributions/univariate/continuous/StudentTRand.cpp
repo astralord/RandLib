@@ -109,6 +109,19 @@ double StudentTRand::Variance() const
     return (v > 1) ? INFINITY : NAN;
 }
 
+std::complex<double> StudentTRand::CF(double t) const
+{
+    double x = std::sqrt(v) * std::fabs(t * sigma); // value of sqrt(v) can be hashed
+    double vHalf = 0.5 * v;
+    double y = vHalf * std::log(x);
+    y -= Y.getLogGammaFunction();
+    y -= (vHalf - 1) * M_LN2;
+    std::complex<double> cf(y, t * mu);
+    cf = std::exp(cf);
+    cf *= RandMath::modifiedBesselSecondKind(x, vHalf);
+    return cf;
+}
+
 double StudentTRand::Quantile(double p) const
 {
     if (p < 0 || p > 1)

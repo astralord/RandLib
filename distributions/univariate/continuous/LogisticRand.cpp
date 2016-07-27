@@ -91,20 +91,46 @@ double LogisticRand::ExcessKurtosis() const
 }
 
 /// Method of moments
-bool LogisticRand::fitLocation_MM(const std::vector<double> &sample)
+bool LogisticRand::fitLocationMM(const std::vector<double> &sample)
 {
     setLocation(RandMath::sampleMean(sample));
     return true;
 }
 
-bool LogisticRand::fitScale_MM(const std::vector<double> &sample)
+bool LogisticRand::fitScaleMM(const std::vector<double> &sample)
 {
     double var = RandMath::sampleVariance(sample, mu);
     setScale(std::sqrt(3 * var) / M_PI);
     return true;
 }
 
-bool LogisticRand::fit_MM(const std::vector<double> &sample)
+bool LogisticRand::fitMM(const std::vector<double> &sample)
 {
-    return fitLocation_MM(sample) ? fitScale_MM(sample) : false;
+    return fitLocationMM(sample) ? fitScaleMM(sample) : false;
+}
+
+bool LogisticRand::fitLocationMLE(const std::vector<double> &sample)
+{
+    double nHalf = 0.5 * sample.size();
+    if (nHalf <= 0)
+        return false;
+    double root = 0;
+    if (!RandMath::findRoot([this, sample, nHalf](double m)
+    {
+        double f1 = 0, f2 = 0;
+        for (double x : sample)
+        {
+            double aux = std::exp((m - x) / s);
+            double denom = 1.0 + aux;
+            f1 += 1.0 / denom;
+            denom *= denom;
+            f2 -= aux / denom;
+        }
+        f1 -= nHalf;
+        return DoublePair(f1, f2);
+    }, root))
+        return false;
+
+    setLocation(root);
+    return true;
 }

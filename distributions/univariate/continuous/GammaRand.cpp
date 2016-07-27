@@ -63,6 +63,22 @@ double GammaRand::F(double x) const
     return std::exp(y);
 }
 
+GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
+{
+    if (shape < 5) {
+        double shapeRound = std::round(shape);
+        if (RandMath::areClose(shape, shapeRound))
+            return GA1;
+        if (RandMath::areClose(shape - 0.5, shapeRound))
+            return GA2;
+        if (shape <= 1)
+            return GS;
+        if (shape <= 3)
+            return GP;
+    }
+    return GO;
+}
+
 double GammaRand::variateForIntegerShape(int shape)
 {
     double rv = 0;
@@ -178,18 +194,23 @@ double GammaRand::variateForLargeShape(double shape)
 
 double GammaRand::standardVariate(double shape)
 {
-    if (shape < 5) {
-        double shapeRound = std::round(shape);
-        if (RandMath::areClose(shape, shapeRound))
-            return variateForIntegerShape(shapeRound);
-        if (RandMath::areClose(shape - 0.5, shapeRound))
-            return variateForHalfIntegerShape(shapeRound);
-        if (shape <= 1)
-            return variateForSmallShape(shape);
-        if (shape <= 3)
-            return variateForMediumShape(shape);
+    GENERATOR_ID genId = getIdOfUsedGenerator(shape);
+
+    switch(genId) {
+    case GA1:
+        return variateForIntegerShape(std::round(shape));
+    case GA2:
+        return variateForHalfIntegerShape(std::round(shape));
+    case GS:
+        return variateForSmallShape(shape);
+    case GP:
+        return variateForMediumShape(shape);
+    case GO:
+        return variateForLargeShape(shape);
+    default:
+        return NAN;
     }
-    return variateForLargeShape(shape);
+    return NAN;
 }
 
 double GammaRand::variate(double shape, double rate)
@@ -199,48 +220,53 @@ double GammaRand::variate(double shape, double rate)
 
 double GammaRand::variate() const
 {
-    if (alpha < 5) {
-        double alphaRound = std::round(alpha);
-        if (RandMath::areClose(alpha, alphaRound))
-            return theta * variateForIntegerShape(alphaRound);
-        if (RandMath::areClose(alpha - 0.5, alphaRound))
-            return theta * variateForHalfIntegerShape(alphaRound);
-        if (alpha <= 1)
-            return theta * variateForSmallShape(alpha);
-        if (alpha <= 3)
-            return theta * variateForMediumShape(alpha);
+    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
+
+    switch(genId) {
+    case GA1:
+        return theta * variateForIntegerShape(alpha);
+    case GA2:
+        return theta * variateForHalfIntegerShape(alpha);
+    case GS:
+        return theta * variateForSmallShape(alpha);
+    case GP:
+        return theta * variateForMediumShape(alpha);
+    case GO:
+        return theta * variateForLargeShape();
+    default:
+        return NAN;
     }
-    return theta * variateForLargeShape();
+    return NAN;
 }
 
 void GammaRand::sample(std::vector<double> &outputData) const
 {
-    if (alpha < 5) {
-        double alphaRound = std::round(alpha);
-        if (RandMath::areClose(alpha, alphaRound)) {
-            for (double &var : outputData)
-                var = theta * variateForIntegerShape(alphaRound);
-            return;
-        }
-        if (RandMath::areClose(alpha - 0.5, alphaRound)) {
-            for (double &var : outputData)
-                var = theta * variateForHalfIntegerShape(alphaRound);
-            return;
-        }
-        if (alpha <= 1) {
-            for (double &var : outputData)
-                var = theta * variateForSmallShape(alpha);
-            return;
-        }
-        if (alpha <= 3) {
-            for (double &var : outputData)
-                var = theta * variateForMediumShape(alpha);
-            return;
-        }
-    }
+    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
-    for (double &var : outputData)
-        var = theta * variateForLargeShape();
+    switch(genId) {
+    case GA1:
+        for (double &var : outputData)
+            var = theta * variateForIntegerShape(alpha);
+        break;
+    case GA2:
+        for (double &var : outputData)
+            var = theta * variateForHalfIntegerShape(alpha);
+        break;
+    case GS:
+        for (double &var : outputData)
+            var = theta * variateForSmallShape(alpha);
+        break;
+    case GP:
+        for (double &var : outputData)
+            var = theta * variateForMediumShape(alpha);
+        break;
+    case GO:
+        for (double &var : outputData)
+            var = theta * variateForLargeShape();
+        break;
+    default:
+        return;
+    }
 }
 
 double GammaRand::Mean() const
@@ -290,7 +316,7 @@ bool GammaRand::fitScaleMLE(const std::vector<double> &sample)
     return true;
 }
 
-bool GammaRand::fitShapeAndScaleMLE(const std::vector<double> &sample)
+bool GammaRand::fitMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
@@ -339,7 +365,7 @@ bool GammaRand::fitScaleMM(const std::vector<double> &sample)
     return fitScaleMLE(sample);
 }
 
-bool GammaRand::fitShapeAndScaleMM(const std::vector<double> &sample)
+bool GammaRand::fitMM(const std::vector<double> &sample)
 {  
     if (!checkValidity(sample))
         return false;

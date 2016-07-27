@@ -181,7 +181,7 @@ bool NormalRand::fitVarianceMLE(const std::vector<double> &sample)
     return true;
 }
 
-bool NormalRand::fitMeanAndVarianceMLE(const std::vector<double> &sample)
+bool NormalRand::fitMLE(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample) ? fitVarianceMLE(sample) : false;
 }
@@ -196,9 +196,9 @@ bool NormalRand::fitVarianceMM(const std::vector<double> &sample)
     return fitVarianceMLE(sample);
 }
 
-bool NormalRand::fitMeanAndVarianceMM(const std::vector<double> &sample)
+bool NormalRand::fitMM(const std::vector<double> &sample)
 {
-    return fitMeanAndVarianceMLE(sample);
+    return fitMLE(sample);
 }
 
 bool NormalRand::fitMeanUMVU(const std::vector<double> &sample)
@@ -216,17 +216,17 @@ bool NormalRand::fitVarianceUMVU(const std::vector<double> &sample)
     return true;
 }
 
-bool NormalRand::fitMeanAndVarianceUMVU(const std::vector<double> &sample)
+bool NormalRand::fitUMVU(const std::vector<double> &sample)
 {
     return fitMeanMLE(sample) ? fitVarianceUMVU(sample) : false;
 }
 
-bool NormalRand::fitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
+bool NormalRand::fitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
 {
     size_t n = sample.size();
     if (n < 2 || alpha <= 0 || alpha > 1)
         return false;
-    if (!fitMeanAndVarianceUMVU(sample))
+    if (!fitUMVU(sample))
         return false;
     double p = 1.0 - 0.5 * alpha;
 
@@ -274,7 +274,7 @@ bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGamm
     return true;
 }
 
-bool NormalRand::fitMeanAndVarianceBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+bool NormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)

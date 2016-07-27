@@ -54,9 +54,9 @@ public:
 
     double Moment(int n) const;
 
-    bool fitRateMM(const std::vector<double> &sample);
-    bool fitRateMLE(const std::vector<double> &sample);
-    bool fitRateUMVU(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
+    bool fitMLE(const std::vector<double> &sample);
+    bool fitUMVU(const std::vector<double> &sample);
 };
 
 #endif // EXPONENTIALRAND_H

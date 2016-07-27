@@ -278,16 +278,14 @@ double LaplaceRand::getAsymmetryFromSkewness(double skewness)
     double root = 1.0;
     if (!RandMath::findRoot([skewness] (double x)
     {
-        double xSq = x * x;
-        double x4 = xSq * xSq;
-        double y = std::pow(x4 + 1, 1.5);
-        y = 2 * (1 - x4 * xSq) / y;
-        return y - skewness;
-    }, [] (double x)
-    {
+        /// f(x)
         double x2 = x * x, x3 = x2 * x, x4 = x2 * x2;
-        double y = std::pow(1 + x4, 2.5);
-        return -12 * x3 * (1 + x2) / y;
+        double aux = std::pow(x4 + 1, 1.5);
+        double f1 = 2 * (1 - x4 * x2) / aux - skewness;
+        /// f'(x)
+        double y = (1 + x4) * aux;
+        double f2 = -12 * x3 * (1 + x2) / y;
+        return DoublePair(f1, f2);
     }, root))
         return NAN;
     return root;

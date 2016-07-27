@@ -135,7 +135,7 @@ bool UniformRand::fitMaximumMLE(const std::vector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitSupportMLE(const std::vector<double> &sample)
+bool UniformRand::fitMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -163,7 +163,7 @@ bool UniformRand::fitMaximumMM(const std::vector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitSupportMM(const std::vector<double> &sample)
+bool UniformRand::fitMM(const std::vector<double> &sample)
 {
     double mean = RandMath::sampleMean(sample);
     double var = RandMath::sampleVariance(sample, mean);
@@ -208,7 +208,7 @@ bool UniformRand::fitMaximumUMVU(const std::vector<double> &sample)
     return true;
 }
 
-bool UniformRand::fitSupportUMVU(const std::vector<double> &sample)
+bool UniformRand::fitUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)

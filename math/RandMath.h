@@ -303,6 +303,16 @@ public:
 
     /**
      * @brief findRoot
+     * Newton's root-finding procedure
+     * @param funPtr
+     * @param root starting point
+     * @param epsilon
+     * @return true if success, false otherwise
+     */
+    static bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double epsilon = 1e-10);
+
+    /**
+     * @brief findRoot
      * Brent's root-finding procedure
      * @param funPtr
      * @param a lower boundary

@@ -162,7 +162,7 @@ double ParetoRand::Entropy() const
     return std::log(xm * alphaInv) + alphaInv + 1;
 }
 
-bool ParetoRand::fitShapeAndScaleMLE(const std::vector<double> &sample)
+bool ParetoRand::fitMLE(const std::vector<double> &sample)
 {
     double n = sample.size();
     if (n <= 0)

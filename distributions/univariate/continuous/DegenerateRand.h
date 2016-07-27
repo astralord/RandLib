@@ -41,6 +41,19 @@ public:
     double ExcessKurtosis() const override;
 
     double Entropy() const;
+
+    /**
+     * @brief fitMLE
+     * @param sample
+     * @return
+     */
+    bool fitMLE(const std::vector<double> &sample);
+    /**
+     * @brief fitMM
+     * @param sample
+     * @return
+     */
+    bool fitMM(const std::vector<double> &sample);
 };
 
 #endif // DEGENERATERAND_H
