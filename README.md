@@ -39,16 +39,16 @@ std::cout << "\n";
 
 /// Bayesian
 NormalInverseGammaRand prior(0, 1, 1, 1);
-X.fitMeanAndVarianceBayes(data, prior);
+X.fitBayes(data, prior);
 std::cout << "Bayesian estimator: " << X.name() << "\n";
 std::cout << "(Posterior distribution: " << prior.name() << ")\n";
 
 /// UMVU
-X.fitMeanAndVarianceUMVU(data);
+X.fitUMVU(data);
 std::cout << "UMVU estimator: " << X.name() << "\n";
 
 /// Maximum-likelihood
-X.fitMeanAndVarianceMLE(data);
+X.fitMLE(data);
 std::cout << "Maximum-likelihood estimator: " << X.name() << "\n";
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
