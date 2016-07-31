@@ -24,13 +24,13 @@ private:
     double a1, a2, a3, a4;
     double coefa3, coefa4;
 
-    double pFloor; /// [n * min(p, q)] / n
+    double minpq, pFloor; /// min(p, q) and [n * min(p, q)] / n respectively
     double logPFloor, logQFloor; /// log(pFloor) and log(1 - pFloor)
     double pRes; /// min(p, q) - pFloor
     double npFloor, nqFloor; /// [n * p] and [n * q] if p < 0.5, otherwise - vice versa
     double logPnpInv; /// log(P(npFloor))
 
-    static constexpr double generatorEdge = 7.0;
+    static constexpr double generatorEdge = 10.0;
 
     GeometricRand G;
 
@@ -62,12 +62,22 @@ public:
     double F(int k) const override;
 
 private:
+    enum GENERATOR_ID {
+        BERNOULLI_SUM,
+        WAITING,
+        REJECTION
+    };
+
+    GENERATOR_ID getIdOfUsedGenerator() const;
+
     int variateRejection() const;
     int variateWaiting(int number) const;
 
 public:
     int variate() const override;
-    static int variate(int n, double p);
+    static int variateBernoulliSum(int number, double probability);
+    static int variate(int number, double probability);
+    void sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

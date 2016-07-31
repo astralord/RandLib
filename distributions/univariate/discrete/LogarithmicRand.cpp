@@ -34,7 +34,6 @@ int LogarithmicRand::variate() const
 {
     /// Kemp's second accelerated generator
     /// p. 548, "Non-Uniform Random Variate Generation" by Luc Devroye
-    /// note that algorithm there has a typo in CASE part
     double V = UniformRand::standardVariate();
     if (V >= p)
         return 1.0;

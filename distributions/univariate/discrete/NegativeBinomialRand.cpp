@@ -36,11 +36,11 @@ void NegativeBinomialRand<int>::setParameters(int number, double probability)
     if (r < 10)
     {
         /// we use two different generators for two different cases
-        /// if p < 0.2 then the tail is too heavy
-        /// (probability to be in main body is less than 0.977482)
+        /// if p < 0.08 then the tail is too heavy
+        /// (probability to be in main body is less than 0.75)
         /// thus we return highest integer less than variate from exponential distribution
         /// otherwise we choose table method
-        if (p < 0.2) {
+        if (p < 0.08) {
             table[0] = -std::log(q);
         }
         else
@@ -116,7 +116,7 @@ int NegativeBinomialRand<int>::variateGeometricByTable() const
 template<>
 int NegativeBinomialRand<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(ExponentialRand::standardVariate() * table[0]);
+    return std::floor(ExponentialRand::variate(table[0]));
 }
 
 template<>

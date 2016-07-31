@@ -68,9 +68,9 @@ double ParetoRand::variateForCommonAlpha(double shape)
 
 double ParetoRand::standardVariate(double shape)
 {
-    if (shape == 1)
+    if (RandMath::areClose(shape, 1.0))
         return variateForAlphaOne();
-    if (shape == 2)
+    if (RandMath::areClose(shape, 2.0))
         return variateForAlphaTwo();
     return variateForCommonAlpha(shape);
 }
@@ -87,11 +87,11 @@ double ParetoRand::variate() const
 
 void ParetoRand::sample(std::vector<double> &outputData) const
 {
-    if (alpha == 1) {
+    if (RandMath::areClose(alpha, 1.0)) {
         for (double &var : outputData)
             var = xm * variateForAlphaOne();
     }
-    else if (alpha == 2) {
+    else if (RandMath::areClose(alpha, 2.0)) {
         for (double &var : outputData)
             var = xm * variateForAlphaTwo();
     }

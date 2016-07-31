@@ -42,11 +42,11 @@ public:
 private:
 
     enum GENERATOR_ID {
-        GA1, /// Erlang distribution and k < 5
-        GA2, /// k = [n] + 0.5 and k < 5
-        GS, /// k < 1
-        GP, /// 1 < k < 3
-        GO /// k > 3
+        INTEGER_SHAPE, /// Erlang distribution (k is integer) and k <= 5
+        HALF_INTEGER_SHAPE, /// k = [n] + 0.5 and k <= 3.5
+        SMALL_SHAPE, /// k < 1
+        MEDIUM_SHAPE, /// 1 < k < 3
+        LARGE_SHAPE /// k > 3
     };
 
     static GENERATOR_ID getIdOfUsedGenerator(double shape);

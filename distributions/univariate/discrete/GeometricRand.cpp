@@ -27,13 +27,13 @@ double GeometricRand::F(int k) const
 
 int GeometricRand::variate() const
 {
-    return (p < 0.2) ? variateGeometricThroughExponential() : variateGeometricByTable();
+    return (p < 0.08) ? variateGeometricThroughExponential() : variateGeometricByTable();
 }
 
 int GeometricRand::variate(double probability)
 {
-    /// here we use 0.1 instead of 0.2 because log(1-p) wasn't hashed
-    if (probability < 0.1)
+    /// here we use 0.05 instead of 0.08 because log(1-p) wasn't hashed
+    if (probability < 0.08)
         return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
 
     double U = UniformRand::standardVariate();
@@ -49,7 +49,7 @@ int GeometricRand::variate(double probability)
 
 void GeometricRand::sample(std::vector<int> &outputData) const
 {
-    if (p < 0.2) {
+    if (p < 0.08) {
         for (int &var : outputData)
             var = variateGeometricThroughExponential();
     }
@@ -80,7 +80,7 @@ bool GeometricRand::checkValidity(const std::vector<double> &sample)
     return true;
 }
 
-bool GeometricRand::fitProbabilityMLE(const std::vector<double> &sample)
+bool GeometricRand::fitMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -88,12 +88,12 @@ bool GeometricRand::fitProbabilityMLE(const std::vector<double> &sample)
     return true;
 }
 
-bool GeometricRand::fitProbabilityMM(const std::vector<double> &sample)
+bool GeometricRand::fitMM(const std::vector<double> &sample)
 {
-    return fitProbabilityMLE(sample);
+    return fitMLE(sample);
 }
 
-bool GeometricRand::fitProbabilityBayes(const std::vector<double> &sample, BetaRand &priorDistribution)
+bool GeometricRand::fitBayes(const std::vector<double> &sample, BetaRand &priorDistribution)
 {
     int n = sample.size();
     if (!checkValidity(sample))

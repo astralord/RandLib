@@ -256,7 +256,7 @@ long double RandMath::logLowerIncGamma(double a, double x)
     if (a == 1)
         return std::log(1.0 - std::exp(-x));
     if (a == 0.5)
-        return M_LNPI + std::log(std::erf(std::sqrt(x)));
+        return 0.5 * M_LNPI + std::log(std::erf(std::sqrt(x)));
 
     if (x > 1.1 && x > a) {
         double y = std::tgamma(a) - upperIncGamma(a, x);
@@ -300,7 +300,7 @@ long double RandMath::logUpperIncGamma(double a, double x)
     if (a == 1)
         return -x;
     if (a == 0.5)
-        return M_LNPI + std::log(std::erfc(std::sqrt(x)));
+        return 0.5 * M_LNPI + std::log(std::erfc(std::sqrt(x)));
     if (std::max(a, x) < 1e-5)
         return a * std::log(x);
     if (x > 1e4) {

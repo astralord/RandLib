@@ -41,9 +41,9 @@ public:
     
     bool checkValidity(const std::vector<double> &sample);
 
-    bool fitProbabilityMLE(const std::vector<double> &sample);
-    bool fitProbabilityMM(const std::vector<double> &sample);
-    bool fitProbabilityBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
+    bool fitMLE(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
+    bool fitBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

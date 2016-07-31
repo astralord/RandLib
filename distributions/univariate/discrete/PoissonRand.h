@@ -14,9 +14,9 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
     double lambda;
     double expmLambda; /// exp(-λ)
     double logLambda; /// ln(λ)
-    int floorLambda; /// floor(λ)
-    double FFloorLambda; /// P(X < floor(λ))
-    double PFloorLambda; /// P(X = floor(λ))
+    int floorLambda; /// [λ]
+    double FFloorLambda; /// P(X < [λ])
+    double PFloorLambda; /// P(X = [λ])
 
 public:
     explicit PoissonRand(double rate = 1.0);
@@ -45,8 +45,9 @@ public:
 
     bool checkValidity(const std::vector<double> &sample);
 
-    bool fitRateMLE(const std::vector<double> &sample);
-    bool fitRateBayes(const std::vector<double> &sample, GammaRand & priorDistribution);
+    bool fitMLE(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
+    bool fitBayes(const std::vector<double> &sample, GammaRand & priorDistribution);
 };
 
 #endif // POISSONRAND_H

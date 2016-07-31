@@ -34,6 +34,10 @@ public:
     static int standardVariate();
 
     inline double Entropy();
+
+    bool fitMLE(const std::vector<double> &sample);
+    bool fitMM(const std::vector<double> &sample);
+    bool fitBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
 };
 
 #endif // BERNOULLIRAND_H

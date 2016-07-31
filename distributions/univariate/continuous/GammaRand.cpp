@@ -41,7 +41,7 @@ void GammaRand::setParameters(double shape, double rate)
     cdfCoef = -std::lgamma(alpha);
     pdfCoef = cdfCoef + alpha * std::log(beta);
 
-    if (alpha > 3)
+    if (getIdOfUsedGenerator(alpha) == LARGE_SHAPE)
         setConstantsForGenerator();
 }
 
@@ -65,18 +65,20 @@ double GammaRand::F(double x) const
 
 GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
 {
-    if (shape < 5) {
-        double shapeRound = std::round(shape);
-        if (RandMath::areClose(shape, shapeRound))
-            return GA1;
-        if (RandMath::areClose(shape - 0.5, shapeRound))
-            return GA2;
-        if (shape <= 1)
-            return GS;
-        if (shape <= 3)
-            return GP;
+    if (shape < 1)
+        return SMALL_SHAPE;
+    if (shape <= 5) {
+        if (RandMath::areClose(shape, std::round(shape)))
+            return INTEGER_SHAPE;
+        if (shape <= 3.5) {
+            double shapeMHalf = shape - 0.5;
+            if (RandMath::areClose(shapeMHalf, std::round(shapeMHalf)))
+                return HALF_INTEGER_SHAPE;
+            if (shape < 3)
+                return MEDIUM_SHAPE;
+        }
     }
-    return GO;
+    return LARGE_SHAPE;
 }
 
 double GammaRand::variateForIntegerShape(int shape)
@@ -156,8 +158,7 @@ double GammaRand::variateForLargeShape() const
             } while (rv < 0 || rv > b);
             U = UniformRand::standardVariate();
             double S = .5 * N * N;
-            if (N > 0)
-            {
+            if (N > 0) {
                 if (U < 1 - w * S)
                     return rv;
             }
@@ -173,8 +174,9 @@ double GammaRand::variateForLargeShape() const
 
 double GammaRand::variateForLargeShape(double shape)
 {
+    /// Marsaglia and Tsang’s Method for shape > 1
     double d = shape - 1.0 / 3;
-    double c = std::sqrt(9 * d);
+    double c = 3 * std::sqrt(d);
     int iter = 0;
     do {
         double N;
@@ -197,15 +199,15 @@ double GammaRand::standardVariate(double shape)
     GENERATOR_ID genId = getIdOfUsedGenerator(shape);
 
     switch(genId) {
-    case GA1:
+    case INTEGER_SHAPE:
         return variateForIntegerShape(std::round(shape));
-    case GA2:
+    case HALF_INTEGER_SHAPE:
         return variateForHalfIntegerShape(std::round(shape));
-    case GS:
+    case SMALL_SHAPE:
         return variateForSmallShape(shape);
-    case GP:
+    case MEDIUM_SHAPE:
         return variateForMediumShape(shape);
-    case GO:
+    case LARGE_SHAPE:
         return variateForLargeShape(shape);
     default:
         return NAN;
@@ -223,15 +225,15 @@ double GammaRand::variate() const
     GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
     switch(genId) {
-    case GA1:
+    case INTEGER_SHAPE:
         return theta * variateForIntegerShape(alpha);
-    case GA2:
+    case HALF_INTEGER_SHAPE:
         return theta * variateForHalfIntegerShape(alpha);
-    case GS:
+    case SMALL_SHAPE:
         return theta * variateForSmallShape(alpha);
-    case GP:
+    case MEDIUM_SHAPE:
         return theta * variateForMediumShape(alpha);
-    case GO:
+    case LARGE_SHAPE:
         return theta * variateForLargeShape();
     default:
         return NAN;
@@ -244,23 +246,23 @@ void GammaRand::sample(std::vector<double> &outputData) const
     GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
     switch(genId) {
-    case GA1:
+    case INTEGER_SHAPE:
         for (double &var : outputData)
             var = theta * variateForIntegerShape(alpha);
         break;
-    case GA2:
+    case HALF_INTEGER_SHAPE:
         for (double &var : outputData)
             var = theta * variateForHalfIntegerShape(alpha);
         break;
-    case GS:
+    case SMALL_SHAPE:
         for (double &var : outputData)
             var = theta * variateForSmallShape(alpha);
         break;
-    case GP:
+    case MEDIUM_SHAPE:
         for (double &var : outputData)
             var = theta * variateForMediumShape(alpha);
         break;
-    case GO:
+    case LARGE_SHAPE:
         for (double &var : outputData)
             var = theta * variateForLargeShape();
         break;

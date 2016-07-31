@@ -124,7 +124,7 @@ bool PoissonRand::checkValidity(const std::vector<double> &sample)
     return true;
 }
 
-bool PoissonRand::fitRateMLE(const std::vector<double> &sample)
+bool PoissonRand::fitMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -132,7 +132,12 @@ bool PoissonRand::fitRateMLE(const std::vector<double> &sample)
     return true;
 }
 
-bool PoissonRand::fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
+bool PoissonRand::fitMM(const std::vector<double> &sample)
+{
+    return fitMLE(sample);
+}
+
+bool PoissonRand::fitBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))

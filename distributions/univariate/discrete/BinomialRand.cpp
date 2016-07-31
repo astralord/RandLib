@@ -16,17 +16,22 @@ std::string BinomialRand::name() const
 
 void BinomialRand::setGeneratorConstants()
 {
-    double minpq = std::min(p, q);
+    minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
-    if (npFloor <= generatorEdge)
-    {
+    pFloor = npFloor / n;
+    pRes = minpq - pFloor;
+
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    if (genId == BERNOULLI_SUM)
+        return;
+    else if (genId == WAITING) {
         G.setProbability(minpq);
         return;
     }
+
     nqFloor = n - npFloor;
-    pFloor = npFloor / n;
-    pRes = minpq - pFloor;
     double qFloor = 1.0 - pFloor;
+
     if (pRes > 0)
         G.setProbability(pRes / qFloor);
 
@@ -111,6 +116,22 @@ double BinomialRand::F(int k) const
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
 
+BinomialRand::GENERATOR_ID BinomialRand::getIdOfUsedGenerator() const
+{
+    /// if (n is tiny and minpq is big) or p = 0.5 and n is not so large,
+    /// we just sum Bernoulli random variables
+    if ((n <= 3) || (n <= 13 && minpq > 0.025 * (n + 6)) || (n <= 200 && RandMath::areClose(p, 0.5)))
+        return BERNOULLI_SUM;
+
+    /// for small [np] we use simple waiting algorithm
+    if ((npFloor <= generatorEdge) ||
+        (pRes > 0 && npFloor <= generatorEdge + 2))
+        return WAITING;
+
+    /// otherwise
+    return REJECTION;
+}
+
 int BinomialRand::variateRejection() const
 {
     /// a rejection algorithm by Devroye and Naderlsamanl (1980)
@@ -186,27 +207,95 @@ int BinomialRand::variateWaiting(int number) const
 
 int BinomialRand::variate() const
 {
-    /// for small (n * p) we can use simple waiting algorithm
-    if (npFloor <= generatorEdge)
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    switch (genId) {
+    case WAITING:
     {
-        int var = variateWaiting(n);
+        double var = variateWaiting(n);
         return (p <= 0.5) ? var : n - var;
     }
-
-    /// if X ~ Bin(n, p') and Y ~ Bin(n - Y, (p - p') / (1 - p'))
-    /// then Z = X + Y ~ Bin(n, p)
-    int Y = variateRejection();
-    if (pRes > 0)
-        Y += variateWaiting(n - Y);
-    return (p > 0.5) ? n - Y : Y;
+    case REJECTION:
+    {
+        /// if X ~ Bin(n, p') and Y ~ Bin(n - Y, (p - p') / (1 - p'))
+        /// then Z = X + Y ~ Bin(n, p)
+        int Y = variateRejection();
+        if (pRes > 0)
+            Y += variateWaiting(n - Y);
+        return (p > 0.5) ? n - Y : Y;
+    }
+    case BERNOULLI_SUM:
+    default:
+        return variateBernoulliSum(n, p);
+    }
+    return -1; /// unexpected return
 }
 
-int BinomialRand::variate(int n, double p)
+int BinomialRand::variateBernoulliSum(int number, double probability)
 {
     int var = 0;
-    for (int i = 0; i != n; ++i)
-        var += BernoulliRand::variate(p);
+    if (RandMath::areClose(probability, 0.5)) {
+        for (int i = 0; i != number; ++i)
+            var += BernoulliRand::standardVariate();
+    }
+    else {
+        for (int i = 0; i != number; ++i)
+            var += BernoulliRand::variate(probability);
+    }
     return var;
+}
+
+int BinomialRand::variate(int number, double probability)
+{
+    return variateBernoulliSum(number, probability);
+}
+
+void BinomialRand::sample(std::vector<int> &outputData) const
+{
+    if (p == 0.0) {
+        std::fill(outputData.begin(), outputData.end(), 0);
+        return;
+    }
+    if (RandMath::areClose(p, 1.0)) {
+        std::fill(outputData.begin(), outputData.end(), n);
+        return;
+    }
+
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    switch (genId) {
+    case WAITING:
+    {
+        if (p <= 0.5) {
+            for (int &var : outputData)
+               var = variateWaiting(n);
+        }
+        else {
+            for (int &var : outputData)
+               var = n - variateWaiting(n);
+        }
+        return;
+    }
+    case REJECTION:
+    {
+        for (int &var : outputData)
+            var = variateRejection();
+        if (pRes > 0) {
+            for (int &var : outputData)
+                var += variateWaiting(n - var);
+        }
+        if (p > 0.5) {
+            for (int &var : outputData)
+               var = n - var;
+        }
+        return;
+    }
+    case BERNOULLI_SUM:
+    default:
+    {
+        for (int &var : outputData)
+           var = variateBernoulliSum(n, p);
+        return;
+    }
+    }
 }
 
 double BinomialRand::Mean() const
