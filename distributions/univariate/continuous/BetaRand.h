@@ -22,15 +22,16 @@
 class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
 {
 protected:
-    double alpha, beta; /// hashed parameters
+    /// parameters of distribution
+    double alpha, beta;
     double a, b, bma;
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    double mLogBeta; /// log(Beta(α, β)
-    double betaInv; /// 1 / Beta(α, β)
+    double mLogBetaFun; /// log(Beta(α, β)
+    double betaFunInv; /// 1 / Beta(α, β)
 
-    /// coefficients for generator:
+    /// coefficients for generators
     double s, t, u;
 
 public:
@@ -132,13 +133,13 @@ public:
      * @brief getInvBetaFunction
      * @return 1 / Beta(α, β)
      */
-    inline double getInverseBetaFunction() const { return betaInv; }
+    inline double getInverseBetaFunction() const { return betaFunInv; }
 
     /**
      * @brief getLogBetaFunction
      * @return log Beta(α, β)
      */
-    inline double getLogBetaFunction() const { return -mLogBeta; }
+    inline double getLogBetaFunction() const { return -mLogBetaFun; }
 };
 
 

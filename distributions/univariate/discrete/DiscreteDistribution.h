@@ -28,11 +28,11 @@ public:
      */
     void ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const;
 
+    int Mode() const override;
     double Quantile(double probability) const override;
 
     double Hazard(double x) const override;
 
-public:
     double ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 

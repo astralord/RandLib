@@ -9,6 +9,29 @@ void DiscreteDistribution::ProbabilityMassFunction(const std::vector<int> &x, st
         y[i] = P(x[i]);
 }
 
+int DiscreteDistribution::Mode() const
+{
+    /// Works only for unimodal and monotone from start point to mode distributions
+    int x = Median();
+    double prob = P(x), newProb = P(x + 1);
+    if (prob < newProb) {
+        do {
+            ++x;
+            prob = newProb;
+            newProb = P(x + 1);
+        } while (prob < newProb);
+    }
+    else {
+        newProb = P(x - 1);
+        while (prob < newProb) {
+            --x;
+            prob = newProb;
+            newProb = P(x - 1);
+        }
+    }
+    return x;
+}
+
 double DiscreteDistribution::Quantile(double probability) const
 {
     if (probability < 0 || probability > 1)

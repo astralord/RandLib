@@ -74,7 +74,6 @@ public:
     virtual ~SumDiscreteRand() {}
 
     double P(int k) const override;
-    int Mode() const override;
 
     friend const SumDiscreteRand operator+(const DiscreteDistribution& left, const DiscreteDistribution& right);
 };

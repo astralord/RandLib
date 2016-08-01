@@ -212,12 +212,6 @@ double SumDiscreteRand::P(int k) const
     }, k, false);
 }
 
-int SumDiscreteRand::Mode() const
-{
-    // TODO: verify this!!!
-    return X.Mode() + Y.Mode();
-}
-
 double SumContinuousDiscreteRand::f(double x) const
 {
     if (this->isLeftBounded() && x < MinValue())

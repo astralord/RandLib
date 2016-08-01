@@ -36,9 +36,9 @@ void BetaRand::setParameters(double shape1, double shape2, double minValue, doub
     /// we use log(Gamma(x)) in order to avoid too big numbers
     double logGammaX = std::lgamma(alpha);
     double logGammaY = std::lgamma(beta);
-    betaInv = std::lgamma(alpha + beta) - logGammaX - logGammaY;
-    mLogBeta = betaInv - std::log(bma);
-    betaInv = std::exp(betaInv);
+    betaFunInv = std::lgamma(alpha + beta) - logGammaX - logGammaY;
+    mLogBetaFun = betaFunInv - std::log(bma);
+    betaFunInv = std::exp(betaFunInv);
 
     setCoefficientsForGenerator();
 }
@@ -71,7 +71,7 @@ double BetaRand::f(double x) const
         y = (alpha - 1) * std::log(x);
         y += (beta - 1) * std::log(1 - x);
     }
-    return std::exp(mLogBeta + y);
+    return std::exp(mLogBetaFun + y);
 }
 
 double BetaRand::F(double x) const
@@ -87,7 +87,7 @@ double BetaRand::F(double x) const
 
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(x));
-    return betaInv * RandMath::incompleteBetaFun(x, alpha, beta);
+    return betaFunInv * RandMath::incompleteBetaFun(x, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const
@@ -118,7 +118,6 @@ double BetaRand::variateCheng() const
         double X = std::log(U / (1 - U)) / t;
         Y = alpha * std::exp(X);
         R = 1.0 / (beta + Y);
-
         T = 4 * U * U * V;
         T = std::log(T);
         T -= u * X;
@@ -348,7 +347,7 @@ std::complex<double> BetaRand::CF(double t) const
         f -= cosZm1;
         return std::pow(1.0 - x, beta - 1) * f;
     }, 0, 1);
-    re += 1.0 / betaInv;
+    re += 1.0 / betaFunInv;
     re += cosZm1 / beta;
 
     double im = RandMath::integral([this, z, sinZ](double x) {
@@ -365,7 +364,7 @@ std::complex<double> BetaRand::CF(double t) const
 
     std::complex<double> y(re, im);
     y *= std::exp(std::complex<double>(0, t * a));
-    return betaInv * y;
+    return betaFunInv * y;
 }
 
 double BetaRand::Quantile(double p) const
