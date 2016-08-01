@@ -48,9 +48,9 @@ double BetaPrimeRand::Variance() const
 {
     if (beta <= 2)
         return INFINITY;
-    double betaAdj = beta - 1;
-    double numerator = alpha * (alpha + betaAdj);
-    double denominator = (betaAdj - 1) * betaAdj * betaAdj;
+    double betam1 = beta - 1;
+    double numerator = alpha * (alpha + betam1);
+    double denominator = (betam1 - 1) * betam1 * betam1;
     return numerator / denominator;
 }
 

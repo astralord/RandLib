@@ -23,6 +23,7 @@ private:
     T r;
     GammaRand Y;
     double pdfCoef;
+    double logQ;
     static constexpr int tableSize = 16;
     double table[tableSize];
 
@@ -43,10 +44,20 @@ public:
     double P(int k) const override;
     double F(int k) const override;
 protected:
+
+    enum GENERATOR_ID {
+        TABLE,
+        EXPONENTIAL,
+        GAMMA_POISSON
+    };
+
+    GENERATOR_ID getIdOfUsedGenerator() const;
+
     int variateGeometricByTable() const;
     int variateGeometricThroughExponential() const;
 private:
-    int variateThroughGeometric() const;
+    int variateByTable() const;
+    int variateThroughExponential() const;
     int variateThroughGammaPoisson() const;
 
 public:

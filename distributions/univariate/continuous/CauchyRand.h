@@ -43,6 +43,9 @@ public:
     double Quantile(double p) const override;
 
     double Entropy() const;
+
+    /// Method of moments
+    bool fitMM(const std::vector<double> &) { return false; }
 };
 
 #endif // CAUCHYRAND_H

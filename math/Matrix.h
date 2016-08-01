@@ -14,8 +14,8 @@ class RANDLIBSHARED_EXPORT Matrix {
 protected:
     std::vector<double> data;
 public:
-    Matrix(const double initialValue = 0.0);
-    Matrix(const Matrix<n, m> & other);
+    explicit Matrix(const double initialValue = 0.0);
+    explicit Matrix(const Matrix<n, m> & other);
     Matrix<n, m> & operator=(const Matrix<n, m> & other);
     ~Matrix() {}
 

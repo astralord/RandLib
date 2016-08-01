@@ -7,8 +7,8 @@ template <size_t n>
 class RANDLIBSHARED_EXPORT SquareMatrix : public Matrix<n, n>
 {
 public:
-    SquareMatrix(const double initialValue = 0.0) : Matrix<n, n>(initialValue) {}
-    SquareMatrix(const SquareMatrix<n> & other) : Matrix<n, n> (other) {}
+    explicit SquareMatrix(const double initialValue = 0.0) : Matrix<n, n>(initialValue) {}
+    explicit SquareMatrix(const SquareMatrix<n> & other) : Matrix<n, n> (other) {}
     ~SquareMatrix() {}
 
     void toIdentity();

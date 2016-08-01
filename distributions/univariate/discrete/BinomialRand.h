@@ -30,8 +30,6 @@ private:
     double npFloor, nqFloor; /// [n * p] and [n * q] if p < 0.5, otherwise - vice versa
     double logPnpInv; /// log(P(npFloor))
 
-    static constexpr double generatorEdge = 10.0;
-
     GeometricRand G;
 
 public:

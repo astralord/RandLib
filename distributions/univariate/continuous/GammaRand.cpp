@@ -38,8 +38,8 @@ void GammaRand::setParameters(double shape, double rate)
         beta = 1.0;
     theta = 1.0 / beta;
 
-    cdfCoef = -std::lgamma(alpha);
-    pdfCoef = cdfCoef + alpha * std::log(beta);
+    mLgammaShape = -std::lgamma(alpha);
+    pdfCoef = mLgammaShape + alpha * std::log(beta);
 
     if (getIdOfUsedGenerator(alpha) == LARGE_SHAPE)
         setConstantsForGenerator();
@@ -59,7 +59,7 @@ double GammaRand::F(double x) const
 {
     if (x <= 0)
         return 0;
-    double y = cdfCoef + RandMath::logLowerIncGamma(alpha, x * beta);
+    double y = mLgammaShape + RandMath::logLowerIncGamma(alpha, x * beta);
     return std::exp(y);
 }
 

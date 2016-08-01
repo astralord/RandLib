@@ -41,9 +41,9 @@ int LogarithmicRand::variate() const
     double y = 1.0 - std::exp(U / logQInv);
     if (V > y)
         return 1.0;
-    if (V <= y * y)
-        return std::floor(1.0 + std::log(V) / std::log(y));
-    return 2.0;
+    if (V > y * y)
+        return 2.0;
+    return std::floor(1.0 + std::log(V) / std::log(y));
 }
 
 double LogarithmicRand::Mean() const

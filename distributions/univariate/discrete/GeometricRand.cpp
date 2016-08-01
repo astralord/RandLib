@@ -27,13 +27,18 @@ double GeometricRand::F(int k) const
 
 int GeometricRand::variate() const
 {
-    return (p < 0.08) ? variateGeometricThroughExponential() : variateGeometricByTable();
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    if (genId == EXPONENTIAL)
+        return variateGeometricThroughExponential();
+    if (genId == TABLE)
+        return variateGeometricByTable();
+    return -1; /// unexpected return
 }
 
 int GeometricRand::variate(double probability)
 {
     /// here we use 0.05 instead of 0.08 because log(1-p) wasn't hashed
-    if (probability < 0.08)
+    if (probability < 0.05)
         return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
 
     double U = UniformRand::standardVariate();
@@ -49,11 +54,12 @@ int GeometricRand::variate(double probability)
 
 void GeometricRand::sample(std::vector<int> &outputData) const
 {
-    if (p < 0.08) {
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    if (genId == EXPONENTIAL) {
         for (int &var : outputData)
             var = variateGeometricThroughExponential();
     }
-    else {
+    else if (genId == TABLE) {
         for (int &var : outputData)
             var = variateGeometricByTable();
     }

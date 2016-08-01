@@ -27,76 +27,73 @@ void NegativeBinomialRand<T>::setValidParameters(T number, double probability)
     q = 1.0 - p;
 }
 
-template<>
-void NegativeBinomialRand<int>::setParameters(int number, double probability)
+template< typename T >
+void NegativeBinomialRand<T>::setParameters(T number, double probability)
 {
     setValidParameters(number, probability);
-    pdfCoef = std::pow(p, r) / RandMath::factorial(r - 1);
+    pdfCoef = r * std::log(p);
+    pdfCoef -= std::lgamma(r);
+    logQ = std::log(q);
 
-    if (r < 10)
-    {
-        /// we use two different generators for two different cases
-        /// if p < 0.08 then the tail is too heavy
-        /// (probability to be in main body is less than 0.75)
-        /// thus we return highest integer less than variate from exponential distribution
-        /// otherwise we choose table method
-        if (p < 0.08) {
-            table[0] = -std::log(q);
-        }
-        else
-        {
-            table[0] = p;
-            double prod = p;
-            for (int i = 1; i < tableSize; ++i)
-            {
-                prod *= q;
-                table[i] = table[i - 1] + prod;
-            }
-        }
-    }
-    else {
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+
+    if (genId == GAMMA_POISSON) {
         Y.setParameters(r, p / q);
     }
+    else if (genId == TABLE) {
+        /// table method
+        table[0] = p;
+        double prod = p;
+        for (int i = 1; i < tableSize; ++i)
+        {
+            prod *= q;
+            table[i] = table[i - 1] + prod;
+        }
+    }
 }
 
-template<>
-void NegativeBinomialRand<double>::setParameters(double number, double probability)
+template< typename T >
+double NegativeBinomialRand<T>::P(int k) const
 {
-    setValidParameters(number, probability);
-    pdfCoef = std::pow(p, r) / std::tgamma(r);
-    Y.setParameters(r, p / q);
-}
+    if (k < 0)
+        return 0.0;
 
-template<>
-double NegativeBinomialRand<double>::P(int k) const
-{
-    return (k < 0) ? 0 : pdfCoef * std::tgamma(r + k) / RandMath::factorial(k) * std::pow(q, k);
-}
-
-template<>
-double NegativeBinomialRand<int>::P(int k) const
-{
-    return (k < 0) ? 0 : pdfCoef * RandMath::factorial(r + k - 1) / RandMath::factorial(k) * std::pow(q, k);
+    double y = std::lgamma(r + k);
+    y -= std::lgamma(k + 1);
+    y += k * logQ;
+    y += pdfCoef;
+    return std::exp(y);
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::F(int k) const
 {
-    if (k < 0.0)
-        return 0.0;
-    return 1.0 - RandMath::regularizedBetaFun(q, k + 1, r);
+    return (k < 0) ? 0.0 : 1.0 - RandMath::regularizedBetaFun(q, k + 1, r);
+}
+
+template< >
+NegativeBinomialRand<int>::GENERATOR_ID NegativeBinomialRand<int>::getIdOfUsedGenerator() const
+{
+    /// if r is small, we use two different generators for two different cases:
+    /// if p < 0.08 then the tail is too heavy
+    /// (probability to be in main body is less than 0.75),
+    /// then we return highest integer less than variate from exponential distribution
+    /// otherwise we choose table method
+    if (r < 10)
+        return (p < 0.08) ? EXPONENTIAL : TABLE;
+    return GAMMA_POISSON;
+}
+
+template< >
+NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialRand<double>::getIdOfUsedGenerator() const
+{
+    return GAMMA_POISSON;
 }
 
 template< typename T >
 int NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 {
     return PoissonRand::variate(Y.variate());
-}
-
-template<>
-int NegativeBinomialRand<double>::variate() const
-{
-    return variateThroughGammaPoisson();
 }
 
 template<>
@@ -116,34 +113,42 @@ int NegativeBinomialRand<int>::variateGeometricByTable() const
 template<>
 int NegativeBinomialRand<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(ExponentialRand::variate(table[0]));
+    return std::floor(ExponentialRand::variate(-logQ));
 }
 
 template<>
-int NegativeBinomialRand<int>::variateThroughGeometric() const
+int NegativeBinomialRand<int>::variateByTable() const
 {
-    double res = 0;
-    if (p < 0.2)
-    {
-        for (int i = 0; i < r; ++i) {
-            res += variateGeometricThroughExponential();
-        }
+    double var = 0;
+    for (int i = 0; i < r; ++i) {
+        var += variateGeometricByTable();
     }
-    else
-    {
-        for (int i = 0; i < r; ++i) {
-            res += variateGeometricByTable();
-        }
+    return var;
+}
+
+template<>
+int NegativeBinomialRand<int>::variateThroughExponential() const
+{
+    double var = 0;
+    for (int i = 0; i < r; ++i) {
+        var += variateGeometricThroughExponential();
     }
-    return res;
+    return var;
+}
+
+template<>
+int NegativeBinomialRand<double>::variate() const
+{
+    return variateThroughGammaPoisson();
 }
 
 template<>
 int NegativeBinomialRand<int>::variate() const
 {
-    if (r < 10)
-        return variateThroughGeometric();
-    return variateThroughGammaPoisson();
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    if (genId == TABLE)
+        return variateByTable();
+    return (genId == EXPONENTIAL) ? variateThroughExponential() : variateThroughGammaPoisson();
 }
 
 template<>
@@ -156,29 +161,16 @@ void NegativeBinomialRand<double>::sample(std::vector<int> &outputData) const
 template<>
 void NegativeBinomialRand<int>::sample(std::vector<int> &outputData) const
 {
-    if (r < 10)
-    {
-        if (p < 0.2)
-        {
-            for (int &var : outputData)
-            {
-                var = 0;
-                for (int i = 0; i < r; ++i)
-                    var += variateGeometricThroughExponential();
-            }
-        }
-        else
-        {
-            for (int &var : outputData)
-            {
-                var = 0;
-                for (int i = 0; i < r; ++i)
-                    var += variateGeometricByTable();
-            }
-        }
+    GENERATOR_ID genId = getIdOfUsedGenerator();
+    if (genId == TABLE) {
+        for (int & var : outputData)
+            var = variateByTable();
     }
-    else
-    {
+    else if (genId == EXPONENTIAL) {
+        for (int & var : outputData)
+            var = variateThroughExponential();
+    }
+    else {
         for (int &var : outputData)
             var = variateThroughGammaPoisson();
     }

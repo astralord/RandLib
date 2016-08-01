@@ -27,7 +27,8 @@ protected:
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    double pdfCoef, cdfCoef;
+    double mLogBeta; /// log(Beta(α, β)
+    double betaInv; /// 1 / Beta(α, β)
 
     /// coefficients for generator:
     double s, t, u;
@@ -78,14 +79,14 @@ private:
     /**
      * @brief variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
-     * @return beta variate for 1 < alpha = beta < 2
+     * @return beta variate for 1 < α = β < 2
      */
     double variateRejectionUniform() const;
 
     /**
      * @brief variateArcsine
      * Arcsine beta generator
-     * @return beta variate for alpha = beta = 0.5
+     * @return beta variate for α = β = 0.5
      */
     double variateArcsine() const;
 
@@ -129,15 +130,15 @@ public:
 
     /**
      * @brief getInvBetaFunction
-     * @return 1 / Beta(alpha, beta)
+     * @return 1 / Beta(α, β)
      */
-    inline double getInverseBetaFunction() const { return cdfCoef; }
+    inline double getInverseBetaFunction() const { return betaInv; }
 
     /**
      * @brief getLogBetaFunction
-     * @return log Beta(alpha, beta)
+     * @return log Beta(α, β)
      */
-    inline double getLogBetaFunction() const { return -pdfCoef; }
+    inline double getLogBetaFunction() const { return -mLogBeta; }
 };
 
 

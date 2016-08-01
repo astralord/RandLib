@@ -25,7 +25,7 @@ double InverseGammaRand::F(double x) const
     if (x <= 0)
         return 0.0;
     double y = RandMath::logUpperIncGamma(alpha, beta / x);
-    return std::exp(cdfCoef + y);
+    return std::exp(mLgammaShape + y);
 }
 
 double InverseGammaRand::variate() const

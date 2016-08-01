@@ -36,9 +36,9 @@ void BetaRand::setParameters(double shape1, double shape2, double minValue, doub
     /// we use log(Gamma(x)) in order to avoid too big numbers
     double logGammaX = std::lgamma(alpha);
     double logGammaY = std::lgamma(beta);
-    cdfCoef = std::lgamma(alpha + beta) - logGammaX - logGammaY;
-    pdfCoef = cdfCoef - std::log(bma);
-    cdfCoef = std::exp(cdfCoef);
+    betaInv = std::lgamma(alpha + beta) - logGammaX - logGammaY;
+    mLogBeta = betaInv - std::log(bma);
+    betaInv = std::exp(betaInv);
 
     setCoefficientsForGenerator();
 }
@@ -50,13 +50,13 @@ double BetaRand::f(double x) const
 
     if (x == a) {
         if (alpha == 1)
-            return 1.0 / bma;
+            return beta / bma;
         return (alpha > 1) ? 0 : INFINITY;
     }
 
     if (x == b) {
         if (beta == 1)
-            return 1.0 / bma;
+            return alpha / bma;
         return (beta > 1) ? 0 : INFINITY;
     }
 
@@ -71,7 +71,7 @@ double BetaRand::f(double x) const
         y = (alpha - 1) * std::log(x);
         y += (beta - 1) * std::log(1 - x);
     }
-    return std::exp(pdfCoef + y);
+    return std::exp(mLogBeta + y);
 }
 
 double BetaRand::F(double x) const
@@ -87,7 +87,7 @@ double BetaRand::F(double x) const
 
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(x));
-    return cdfCoef * RandMath::incompleteBetaFun(x, alpha, beta);
+    return betaInv * RandMath::incompleteBetaFun(x, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const
@@ -348,7 +348,7 @@ std::complex<double> BetaRand::CF(double t) const
         f -= cosZm1;
         return std::pow(1.0 - x, beta - 1) * f;
     }, 0, 1);
-    re += 1.0 / cdfCoef;
+    re += 1.0 / betaInv;
     re += cosZm1 / beta;
 
     double im = RandMath::integral([this, z, sinZ](double x) {
@@ -365,7 +365,7 @@ std::complex<double> BetaRand::CF(double t) const
 
     std::complex<double> y(re, im);
     y *= std::exp(std::complex<double>(0, t * a));
-    return cdfCoef * y;
+    return betaInv * y;
 }
 
 double BetaRand::Quantile(double p) const

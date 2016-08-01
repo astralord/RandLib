@@ -1,7 +1,7 @@
 #include "BivariateNormalRand.h"
 
 
-BivariateNormalRand::BivariateNormalRand(DoublePair location, SquareMatrix<2> rootCovariance)
+BivariateNormalRand::BivariateNormalRand(DoublePair location, const SquareMatrix<2> &rootCovariance)
 {
     setLocation(location);
     setScale(rootCovariance);
@@ -59,7 +59,7 @@ void BivariateNormalRand::setScale(double scale1, double scale2, double correlat
     pdfCoef = 0.5 * M_1_PI / (sigma1 * sigma2 * sqrt1mroSq);
 }
 
-void BivariateNormalRand::setScale(SquareMatrix<2> rootCovariance)
+void BivariateNormalRand::setScale(const SquareMatrix<2> &rootCovariance)
 {
     setScale(rootCovariance(0, 0), rootCovariance(1, 1), rootCovariance(1, 0));
 }

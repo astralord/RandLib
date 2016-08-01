@@ -19,7 +19,7 @@ void BinomialRand::setGeneratorConstants()
     minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
     pFloor = npFloor / n;
-    pRes = minpq - pFloor;
+    pRes = (RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor);
 
     GENERATOR_ID genId = getIdOfUsedGenerator();
     if (genId == BERNOULLI_SUM)
@@ -31,7 +31,6 @@ void BinomialRand::setGeneratorConstants()
 
     nqFloor = n - npFloor;
     double qFloor = 1.0 - pFloor;
-
     if (pRes > 0)
         G.setProbability(pRes / qFloor);
 
@@ -124,8 +123,8 @@ BinomialRand::GENERATOR_ID BinomialRand::getIdOfUsedGenerator() const
         return BERNOULLI_SUM;
 
     /// for small [np] we use simple waiting algorithm
-    if ((npFloor <= generatorEdge) ||
-        (pRes > 0 && npFloor <= generatorEdge + 2))
+    if ((npFloor <= 12) ||
+        (pRes > 0 && npFloor <= 18))
         return WAITING;
 
     /// otherwise

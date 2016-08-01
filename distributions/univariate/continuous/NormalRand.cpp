@@ -229,16 +229,17 @@ bool NormalRand::fitUMVU(const std::vector<double> &sample, DoublePair &confiden
     if (!fitUMVU(sample))
         return false;
     double p = 1.0 - 0.5 * alpha;
+    size_t nm1 = n - 1;
 
     /// calculate confidence interval for mean
-    StudentTRand t(n - 1);
+    StudentTRand t(nm1);
     double interval = t.Quantile(p) * sigma0 / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
-    ChiSquaredRand chi(n - 1);
-    double numerator = (n - 1) * sigma0 * sigma0;
+    ChiSquaredRand chi(nm1);
+    double numerator = nm1 * sigma0 * sigma0;
     confidenceIntervalForVariance.first = numerator / chi.Quantile(p);
     confidenceIntervalForVariance.second = numerator / chi.Quantile(1.0 - p);
     return true;

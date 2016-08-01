@@ -54,8 +54,11 @@ public:
 
     double Moment(int n) const;
 
-    bool fitMM(const std::vector<double> &sample);
+    /// Maximum-likelihood estimation
     bool fitMLE(const std::vector<double> &sample);
+    /// Method of moments
+    bool fitMM(const std::vector<double> &sample);
+    /// Uniformly minimum variance unbiased estimator
     bool fitUMVU(const std::vector<double> &sample);
 };
 
