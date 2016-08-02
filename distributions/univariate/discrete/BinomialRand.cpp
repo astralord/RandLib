@@ -124,7 +124,7 @@ BinomialRand::GENERATOR_ID BinomialRand::getIdOfUsedGenerator() const
 
     /// for small [np] we use simple waiting algorithm
     if ((npFloor <= 12) ||
-        (pRes > 0 && npFloor <= 18))
+        (pRes > 0 && npFloor <= 16))
         return WAITING;
 
     /// otherwise

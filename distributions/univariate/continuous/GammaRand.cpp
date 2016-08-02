@@ -15,16 +15,9 @@ std::string GammaRand::name() const
 
 void GammaRand::setConstantsForGenerator()
 {
-    m = alpha - 1;
-    static constexpr double M_SQRT8_3 = 1.63299316185545206546;
-    double sqrtAlpha = std::sqrt(alpha);
-    s_2 = M_SQRT8_3 * sqrtAlpha + alpha;
-    s = std::sqrt(s_2);
-    d = M_SQRT2 * M_SQRT3 * s_2;
-    b = d + m;
-    w = s_2 / (m - 1);
-    v = (s_2 + s_2) / (m * sqrtAlpha);
-    c = b + std::log(s * d / b) - m - m - 3.7203285;
+    t = 0.07 + 0.75 * std::sqrt(1.0 - alpha);
+    b = 1.0 + std::exp(-t) * alpha / t;
+    alphaInv = 1.0 / alpha;
 }
 
 void GammaRand::setParameters(double shape, double rate)
@@ -41,7 +34,7 @@ void GammaRand::setParameters(double shape, double rate)
     mLgammaShape = -std::lgamma(alpha);
     pdfCoef = mLgammaShape + alpha * std::log(beta);
 
-    if (getIdOfUsedGenerator(alpha) == LARGE_SHAPE)
+    if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE)
         setConstantsForGenerator();
 }
 
@@ -65,42 +58,60 @@ double GammaRand::F(double x) const
 
 GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
 {
-    if (shape < 1)
+    if (shape < 0.34)
         return SMALL_SHAPE;
-    if (shape <= 5) {
-        if (RandMath::areClose(shape, std::round(shape)))
-            return INTEGER_SHAPE;
-        if (shape <= 3.5) {
-            double shapeMHalf = shape - 0.5;
-            if (RandMath::areClose(shapeMHalf, std::round(shapeMHalf)))
-                return HALF_INTEGER_SHAPE;
-            if (shape < 3)
-                return MEDIUM_SHAPE;
-        }
-    }
-    return LARGE_SHAPE;
+    if (shape <= 3 && RandMath::areClose(shape, std::round(shape)))
+        return INTEGER_SHAPE;
+    if (RandMath::areClose(shape, 1.5))
+        return ONE_AND_A_HALF_SHAPE;
+    if (shape > 1 && shape < 1.2)
+        return FISHMAN;
+    return MARSAGLIA;
 }
 
-double GammaRand::variateForIntegerShape(int shape)
+double GammaRand::variateThroughExponentialSum(int shape)
 {
-    double rv = 0;
+    double X = 0;
     for (int i = 0; i < shape; ++i)
-        rv += ExponentialRand::standardVariate();
-    return rv;
+        X += ExponentialRand::standardVariate();
+    return X;
 }
 
-double GammaRand::variateForHalfIntegerShape(int shape)
+double GammaRand::variateForShapeOneAndAHalf()
 {
-    double rv = 0;
-    for (int i = 0; i < shape; ++i)
-        rv += ExponentialRand::standardVariate();
+    double W = ExponentialRand::standardVariate();
     double N = NormalRand::standardVariate();
-    return rv + .5 * N * N;
+    return W + 0.5 * N * N;
 }
 
-double GammaRand::variateForSmallShape(double shape)
+double GammaRand::variateBest() const
 {
-    double rv = 0;
+    /// Algorithm RGS for gamma variates (Best, 1983)
+    double X = 0;
+    int iter = 0;
+    do {
+        double V = b * UniformRand::standardVariate();
+        double W = UniformRand::standardVariate();
+        if (V <= 1) {
+            X = t * std::pow(V, alphaInv);
+            if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
+                return X;
+        }
+        else {
+            X = -std::log(alphaInv * t * (b - V));
+            double Y = X / t;
+            if (W * (alpha + Y - alpha * Y) <= 1 || W <= std::pow(Y, alpha - 1))
+                return X;
+        }
+    } while (++iter < 1e9); /// one billion should be enough
+    return NAN; /// shouldn't end up here
+}
+
+
+double GammaRand::variateAhrensDieter(double shape)
+{
+    /// Rejection algorithm GS for gamma variates (Ahrens and Dieter, 1974)
+    double X = 0;
     int iter = 0;
     double shapeInv = 1.0 / shape;
     double t = shapeInv + M_1_E;
@@ -110,22 +121,23 @@ double GammaRand::variateForSmallShape(double shape)
         double W = ExponentialRand::standardVariate();
         if (p <= 1)
         {
-            rv = std::pow(p, shapeInv);
-            if (rv <= W)
-                return rv;
+            X = std::pow(p, shapeInv);
+            if (X <= W)
+                return X;
         }
         else
         {
-            rv = -std::log(t * (1 - U));
-            if ((1 - shape) * std::log(rv) <= W)
-                return rv;
+            X = -std::log(t * (1 - U));
+            if ((1 - shape) * std::log(X) <= W)
+                return X;
         }
     } while (++iter < 1e9); /// one billion should be enough
     return NAN; /// shouldn't end up here
 }
 
-double GammaRand::variateForMediumShape(double shape)
+double GammaRand::variateFishman(double shape)
 {
+    /// G. Fishman algorithm (shape > 1)
     double W1, W2;
     double shapem1 = shape - 1;
     do {
@@ -135,46 +147,9 @@ double GammaRand::variateForMediumShape(double shape)
     return shape * W1;
 }
 
-double GammaRand::variateForLargeShape() const
+double GammaRand::variateMarsagliaTsang(double shape)
 {
-    double rv = 0;
-    int iter = 0;
-    do {
-        double U = UniformRand::standardVariate();
-        if (U <= 0.0095722652)
-        {
-            double W1 = ExponentialRand::standardVariate();
-            double W2 = ExponentialRand::standardVariate();
-            rv = b * (1 + W1 / d);
-            if (m * (rv / b - std::log(rv / m)) + c <= W2)
-                return rv;
-        }
-        else
-        {
-            double N;
-            do {
-                N = NormalRand::standardVariate();
-                rv = s * N + m;
-            } while (rv < 0 || rv > b);
-            U = UniformRand::standardVariate();
-            double S = .5 * N * N;
-            if (N > 0) {
-                if (U < 1 - w * S)
-                    return rv;
-            }
-            else if (U < 1 + S * (v * N - w))
-                return rv;
-
-            if (std::log(U) < m * std::log(rv / m) + m - rv + S)
-                return rv;
-        }
-    } while (++iter < 1e9); /// one billion should be enough
-    return NAN; /// shouldn't end up here
-}
-
-double GammaRand::variateForLargeShape(double shape)
-{
-    /// Marsaglia and Tsang’s Method for shape > 1
+    /// Marsaglia and Tsang’s Method (shape > 1/3)
     double d = shape - 1.0 / 3;
     double c = 3 * std::sqrt(d);
     int iter = 0;
@@ -200,15 +175,15 @@ double GammaRand::standardVariate(double shape)
 
     switch(genId) {
     case INTEGER_SHAPE:
-        return variateForIntegerShape(std::round(shape));
-    case HALF_INTEGER_SHAPE:
-        return variateForHalfIntegerShape(std::round(shape));
+        return variateThroughExponentialSum(std::round(shape));
+    case ONE_AND_A_HALF_SHAPE:
+        return variateForShapeOneAndAHalf();
     case SMALL_SHAPE:
-        return variateForSmallShape(shape);
-    case MEDIUM_SHAPE:
-        return variateForMediumShape(shape);
-    case LARGE_SHAPE:
-        return variateForLargeShape(shape);
+        return variateAhrensDieter(shape);
+    case FISHMAN:
+        return variateFishman(shape);
+    case MARSAGLIA:
+        return variateMarsagliaTsang(shape);
     default:
         return NAN;
     }
@@ -226,15 +201,15 @@ double GammaRand::variate() const
 
     switch(genId) {
     case INTEGER_SHAPE:
-        return theta * variateForIntegerShape(alpha);
-    case HALF_INTEGER_SHAPE:
-        return theta * variateForHalfIntegerShape(alpha);
+        return theta * variateThroughExponentialSum(alpha);
+    case ONE_AND_A_HALF_SHAPE:
+        return theta * variateForShapeOneAndAHalf();
     case SMALL_SHAPE:
-        return theta * variateForSmallShape(alpha);
-    case MEDIUM_SHAPE:
-        return theta * variateForMediumShape(alpha);
-    case LARGE_SHAPE:
-        return theta * variateForLargeShape();
+        return theta * variateBest();
+    case FISHMAN:
+        return theta * variateFishman(alpha);
+    case MARSAGLIA:
+        return theta * variateMarsagliaTsang(alpha);
     default:
         return NAN;
     }
@@ -248,23 +223,23 @@ void GammaRand::sample(std::vector<double> &outputData) const
     switch(genId) {
     case INTEGER_SHAPE:
         for (double &var : outputData)
-            var = theta * variateForIntegerShape(alpha);
+            var = theta * variateThroughExponentialSum(alpha);
         break;
-    case HALF_INTEGER_SHAPE:
+    case ONE_AND_A_HALF_SHAPE:
         for (double &var : outputData)
-            var = theta * variateForHalfIntegerShape(alpha);
+            var = theta * variateForShapeOneAndAHalf();
         break;
     case SMALL_SHAPE:
         for (double &var : outputData)
-            var = theta * variateForSmallShape(alpha);
+            var = theta * variateBest();
         break;
-    case MEDIUM_SHAPE:
+    case FISHMAN:
         for (double &var : outputData)
-            var = theta * variateForMediumShape(alpha);
+            var = theta * variateFishman(alpha);
         break;
-    case LARGE_SHAPE:
+    case MARSAGLIA:
         for (double &var : outputData)
-            var = theta * variateForLargeShape();
+            var = theta * variateMarsagliaTsang(alpha);
         break;
     default:
         return;

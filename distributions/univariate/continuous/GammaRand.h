@@ -20,7 +20,7 @@ protected:
     double pdfCoef; ///  -lgamma(α) - α * log(θ)
 
 private:
-    double m, s, s_2, d, b, w, v, c; /// constants for sampling
+    double t, b, alphaInv; /// constants for sampling
     void setConstantsForGenerator();
 
 public:
@@ -42,21 +42,21 @@ public:
 private:
 
     enum GENERATOR_ID {
-        INTEGER_SHAPE, /// Erlang distribution (k is integer) and k <= 5
-        HALF_INTEGER_SHAPE, /// k = [n] + 0.5 and k <= 3.5
-        SMALL_SHAPE, /// k < 1
-        MEDIUM_SHAPE, /// 1 < k < 3
-        LARGE_SHAPE /// k > 3
+        INTEGER_SHAPE, /// Erlang distribution for k = 1, 2, 3
+        ONE_AND_A_HALF_SHAPE, /// k = 1.5
+        SMALL_SHAPE, /// k < 0.34
+        FISHMAN, /// 1 < k < 1.2
+        MARSAGLIA /// 0.34 < k < 1 or k >= 1.2
     };
 
     static GENERATOR_ID getIdOfUsedGenerator(double shape);
 
-    static double variateForIntegerShape(int shape);
-    static double variateForHalfIntegerShape(int shape);
-    static double variateForSmallShape(double shape);
-    static double variateForMediumShape(double shape);
-    double variateForLargeShape() const;
-    static double variateForLargeShape(double shape);
+    static double variateThroughExponentialSum(int shape);
+    static double variateForShapeOneAndAHalf();
+    double variateBest() const;
+    static double variateAhrensDieter(double shape);
+    static double variateFishman(double shape);
+    static double variateMarsagliaTsang(double shape);
     
 public:
     static double standardVariate(double shape);
