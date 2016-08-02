@@ -24,7 +24,6 @@ void NegativeBinomialRand<T>::setValidParameters(T number, double probability)
     p = probability;
     if (p > 1.0 || p < 0.0)
         p = 0.5;
-    q = 1.0 - p;
 }
 
 template< typename T >
@@ -33,14 +32,11 @@ void NegativeBinomialRand<T>::setParameters(T number, double probability)
     setValidParameters(number, probability);
     pdfCoef = r * std::log(p);
     pdfCoef -= std::lgamma(r);
+    q = 1.0 - p;
     logQ = std::log(q);
+    qDivP = q / p;
 
-    GENERATOR_ID genId = getIdOfUsedGenerator();
-
-    if (genId == GAMMA_POISSON) {
-        Y.setParameters(r, p / q);
-    }
-    else if (genId == TABLE) {
+    if (getIdOfUsedGenerator() == TABLE) {
         /// table method
         table[0] = p;
         double prod = p;
@@ -93,7 +89,7 @@ NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialRand<double>::getIdOf
 template< typename T >
 int NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 {
-    return PoissonRand::variate(Y.variate());
+    return PoissonRand::variate(qDivP * GammaRand::standardVariate(r));
 }
 
 template<>
@@ -179,13 +175,13 @@ void NegativeBinomialRand<int>::sample(std::vector<int> &outputData) const
 template< typename T >
 double NegativeBinomialRand<T>::Mean() const
 {
-    return q * r / p;
+    return qDivP * r;
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::Variance() const
 {
-    return q * r / (p * p);
+    return qDivP * r / p;
 }
 
 template< typename T >
@@ -201,7 +197,7 @@ std::complex<double> NegativeBinomialRand<T>::CF(double t) const
 template< typename T >
 int NegativeBinomialRand<T>::Mode() const
 {
-    return (r > 1) ? std::floor((r - 1) * q / p) : 0;
+    return (r > 1) ? std::floor((r - 1) * qDivP) : 0;
 }
 
 template< typename T >
@@ -213,8 +209,7 @@ double NegativeBinomialRand<T>::Skewness() const
 template< typename T >
 double NegativeBinomialRand<T>::ExcessKurtosis() const
 {
-    double kurtosis = p * p;
-    kurtosis /= q;
+    double kurtosis = p / qDivP;
     kurtosis += 6;
     return kurtosis / r;
 }

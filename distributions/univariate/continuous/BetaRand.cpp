@@ -146,12 +146,18 @@ double BetaRand::variateAtkinsonWhittaker() const
     return NAN; /// fail
 }
 
+double BetaRand::variateGammaRatio() const
+{
+    double Y = GammaRand::standardVariate(alpha);
+    double Z = GammaRand::standardVariate(beta);
+    return Y / (Y + Z);
+}
+
 double BetaRand::variateRejectionNormal() const
 {
     int iter = 0;
     double N = 0, Z = 0;
     double alpham1 = alpha - 1;
-    bool accepted = false;
     do {
         do {
             N = NormalRand::standardVariate();
@@ -161,20 +167,13 @@ double BetaRand::variateRejectionNormal() const
         double W = ExponentialRand::standardVariate() + s;
         double aux = 0.5 - alpham1 / (alpha + alpham1 - Z);
         aux *= Z;
-        if (W + aux < 0) {
-            aux = std::log(1.0 - Z / (alpha + alpham1));
-            aux *= alpham1;
-            aux += W + 0.5 * Z;
-            if (aux >= 0)
-                accepted = true;
-        }
-        else {
-            accepted = true;
-        }
-
-        if (accepted) {
+        if (W + aux >= 0)
             return 0.5 + N * t;
-        }
+        aux = std::log(1.0 - Z / (alpha + alpham1));
+        aux *= alpham1;
+        aux += W + 0.5 * Z;
+        if (aux >= 0)
+            return 0.5 + N * t;
 
     } while (++iter <= 1e9); /// one billion should be enough
     return NAN; /// fail
@@ -218,6 +217,10 @@ double BetaRand::variate() const
         break;
     case ATKINSON_WHITTAKER:
         var = variateAtkinsonWhittaker();
+        break;
+    case GAMMA_RATIO:
+    default:
+        var = variateGammaRatio();
         break;
     }
 
@@ -264,6 +267,12 @@ void BetaRand::sample(std::vector<double> &outputData) const
             var = variateAtkinsonWhittaker();
         }
         break;
+    case GAMMA_RATIO:
+    default: {
+        for (double &var : outputData)
+            var = variateGammaRatio();
+        }
+        break;
     }
 
     /// Shift and scale
@@ -276,16 +285,18 @@ BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
     if (alpha < 1 && beta < 1 && alpha + beta > 1)
         return ATKINSON_WHITTAKER;
 
-    if (alpha == beta) {
+    if (RandMath::areClose(alpha, beta)) {
         /// Generators for symmetric density
-        if (alpha == 1.0)
+        if (RandMath::areClose(alpha, 1.0))
             return UNIFORM; /// Standard uniform variate
-        else if (alpha == 0.5)
+        else if (RandMath::areClose(alpha, 0.5))
             return ARCSINE; /// Arcsine method
         else if (alpha > 1)
             return (alpha < 2) ? REJECTION_UNIFORM : REJECTION_NORMAL;
     }
-    return (alpha + beta < 2) ? JOHNK : CHENG;
+    if (alpha + beta < 2)
+        return JOHNK;
+    return (std::min(alpha, beta) < 0.5) ? GAMMA_RATIO : CHENG;
 }
 
 void BetaRand::setCoefficientsForGenerator()

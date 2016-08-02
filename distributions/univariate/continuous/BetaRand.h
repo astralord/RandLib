@@ -63,7 +63,8 @@ private:
         REJECTION_UNIFORM,
         REJECTION_NORMAL,
         JOHNK,
-        ATKINSON_WHITTAKER
+        ATKINSON_WHITTAKER,
+        GAMMA_RATIO
     };
 
     /**
@@ -107,15 +108,24 @@ private:
 
     /**
      * @brief variateCheng
-     * @return
+     * Cheng's beta generator
+     * @return beta variate for α + β > 2 and min(α, β) > 0.5
      */
     double variateCheng() const;
 
     /**
-     * @brief variateAtkinsonWittaker
-     * @return
+     * @brief variateAtkinsonWhittaker
+     * Atkinson-Whittaker beta generator
+     * @return beta variate for max(α, β) < 1 and α + β > 1
      */
     double variateAtkinsonWhittaker() const;
+
+    /**
+     * @brief variateGammaRatio
+     * Gamma ratio beta generator
+     * @return beta variate for α + β > 2 and min(α, β) < 0.5
+     */
+    double variateGammaRatio() const;
 
 public:
     double Mean() const override;

@@ -21,9 +21,9 @@ protected:
 
 private:
     T r;
-    GammaRand Y;
     double pdfCoef;
-    double logQ;
+    double logQ; /// log(q)
+    double qDivP; /// q / p
     static constexpr int tableSize = 16;
     double table[tableSize];
 
