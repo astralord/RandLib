@@ -171,6 +171,9 @@ double GammaRand::variateMarsagliaTsang(double shape)
 
 double GammaRand::standardVariate(double shape)
 {
+    if (shape <= 0)
+        return NAN;
+
     GENERATOR_ID genId = getIdOfUsedGenerator(shape);
 
     switch(genId) {
