@@ -65,6 +65,7 @@
 /// BIVARIATE
 #include "multivariate/BivariateProbabilityDistribution.h"
 #include "multivariate/NormalInverseGammaRand.h"
+#include "multivariate/BivariateNormalRand.h"
 
 #include "univariate/SumRand.h"
 
