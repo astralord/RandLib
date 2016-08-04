@@ -10,6 +10,7 @@
 class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution<double, double>
 {
     double mu, lambda;
+    double alpha, beta;
     InverseGammaRand Y;
     double pdfCoef, cdfCoef;
 
@@ -22,8 +23,8 @@ public:
     void setParameters(double location, double precision, double shape, double rate);
     inline double getLocation() const { return mu; }
     inline double getPrecision() const { return lambda; }
-    inline double getShape() const { return Y.getShape(); }
-    inline double getRate() const { return Y.getRate(); }
+    inline double getShape() const { return alpha; }
+    inline double getRate() const { return beta; }
 
     double f(DoublePair point) const override;
     double F(DoublePair point) const override;

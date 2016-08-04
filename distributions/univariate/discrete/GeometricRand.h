@@ -38,12 +38,10 @@ public:
     double Median() const override;
 
     double Entropy() const;
-    
-    bool checkValidity(const std::vector<double> &sample);
 
-    bool fitMLE(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
-    bool fitBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
+    bool fitMLE(const std::vector<int> &sample);
+    bool fitMM(const std::vector<int> &sample);
+    bool fitBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

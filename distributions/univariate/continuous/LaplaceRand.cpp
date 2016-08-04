@@ -293,7 +293,7 @@ double LaplaceRand::getAsymmetryFromSkewness(double skewness)
 
 bool LaplaceRand::fitLocationMM(const std::vector<double> &sample)
 {
-    double y = RandMath::sampleMean(sample);
+    double y = sampleMean(sample);
     setShift(y - sigma * (1.0 / k - k));
     return true;
 }
@@ -302,11 +302,11 @@ bool LaplaceRand::fitScaleMM(const std::vector<double> &sample)
 {
     if (k == 1) {
         /// can't derive scale from mean
-        double var = RandMath::sampleVariance(sample, m);
+        double var = sampleVariance(sample, m);
         setScale(std::sqrt(0.5 * var));
     }
     else {
-        double y = RandMath::sampleMean(sample);
+        double y = sampleMean(sample);
         setScale((y - m) * k / (1.0 - kSq));
     }
     return true;
@@ -314,7 +314,7 @@ bool LaplaceRand::fitScaleMM(const std::vector<double> &sample)
 
 bool LaplaceRand::fitAsymmetryMM(const std::vector<double> &sample)
 {
-    double mean = RandMath::sampleMean(sample);
+    double mean = sampleMean(sample);
     double aux = (m - mean) / sigma;
     double asymmetry = aux * aux + 4;
     asymmetry = std::sqrt(asymmetry);
@@ -325,8 +325,8 @@ bool LaplaceRand::fitAsymmetryMM(const std::vector<double> &sample)
 
 bool LaplaceRand::fitLocationAndScaleMM(const std::vector<double> &sample)
 {
-    double mean = RandMath::sampleMean(sample);
-    double var = RandMath::sampleVariance(sample, mean);
+    double mean = sampleMean(sample);
+    double var = sampleVariance(sample, mean);
     double scale = (var * kSq) / (1 + kSq * kSq);
     setScale(std::sqrt(scale));
     setShift(mean - sigma * (1.0 / k - k));
@@ -335,8 +335,8 @@ bool LaplaceRand::fitLocationAndScaleMM(const std::vector<double> &sample)
 
 bool LaplaceRand::fitLocationAndAsymmetryMM(const std::vector<double> &sample)
 {
-    double mean = RandMath::sampleMean(sample);
-    double skewness = RandMath::sampleSkewness(sample, mean);
+    double mean = sampleMean(sample);
+    double skewness = sampleSkewness(sample, mean);
     /// getting asymmetry from skewness (because from variance result is ambiguous)
     double root = getAsymmetryFromSkewness(skewness);
     if (!std::isfinite(root))
@@ -348,8 +348,8 @@ bool LaplaceRand::fitLocationAndAsymmetryMM(const std::vector<double> &sample)
 
 bool LaplaceRand::fitScaleAndAsymmetryMM(const std::vector<double> &sample)
 {
-    double mean = RandMath::sampleMean(sample);
-    double var = RandMath::sampleVariance(sample, mean);
+    double mean = sampleMean(sample);
+    double var = sampleVariance(sample, mean);
     double z = mean - m;
     double a = var / (z * z);
     double am1 = a - 1;
@@ -361,9 +361,9 @@ bool LaplaceRand::fitScaleAndAsymmetryMM(const std::vector<double> &sample)
 
 bool LaplaceRand::fitMM(const std::vector<double> &sample)
 {
-    double mean = RandMath::sampleMean(sample);
-    double var = RandMath::sampleVariance(sample, mean);
-    double skewness = RandMath::sampleSkewness(sample, mean, std::sqrt(var));
+    double mean = sampleMean(sample);
+    double var = sampleVariance(sample, mean);
+    double skewness = sampleSkewness(sample, mean, std::sqrt(var));
     double root = getAsymmetryFromSkewness(skewness);
     setAsymmetry(root);
     double scale = (var * kSq) / (1 + kSq * kSq);

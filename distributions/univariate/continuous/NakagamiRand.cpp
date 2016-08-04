@@ -245,20 +245,11 @@ double RayleighRand::ExcessKurtosis() const
     return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }
 
-bool RayleighRand::checkValidity(const std::vector<double> &sample)
-{
-    for (double var : sample) {
-        if (var < 0)
-            return false;
-    }
-    return true;
-}
-
 bool RayleighRand::fitScaleMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    double sigmaSq = 0.5 * RandMath::rawMoment(sample, 2);
+    double sigmaSq = 0.5 * rawMoment(sample, 2);
     setScale(std::sqrt(sigmaSq));
     return true;
 }
@@ -271,7 +262,7 @@ bool RayleighRand::fitScaleUMVU(const std::vector<double> &sample)
     if (n == 0)
         return false;
 
-    double sigmaSq = 0.5 * RandMath::rawMoment(sample, 2);
+    double sigmaSq = 0.5 * rawMoment(sample, 2);
 
     /// Calculate unbiased sigma
     double sigmaEst = std::sqrt(sigmaSq);

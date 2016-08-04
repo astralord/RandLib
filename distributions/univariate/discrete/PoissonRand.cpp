@@ -115,36 +115,27 @@ double PoissonRand::ExcessKurtosis() const
     return 1.0 / lambda;
 }
 
-bool PoissonRand::checkValidity(const std::vector<double> &sample)
-{
-    for (int var : sample) {
-        if (var < 0)
-            return false;
-    }
-    return true;
-}
-
-bool PoissonRand::fitMLE(const std::vector<double> &sample)
+bool PoissonRand::fitMLE(const std::vector<int> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setRate(RandMath::sampleMean(sample));
+    setRate(sampleMean(sample));
     return true;
 }
 
-bool PoissonRand::fitMM(const std::vector<double> &sample)
+bool PoissonRand::fitMM(const std::vector<int> &sample)
 {
     return fitMLE(sample);
 }
 
-bool PoissonRand::fitBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
+bool PoissonRand::fitBayes(const std::vector<int> &sample, GammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
         return false;
     double alpha = priorDistribution.getShape();
     double beta = priorDistribution.getRate();
-    priorDistribution.setParameters(alpha + RandMath::sum(sample), beta + n);
+    priorDistribution.setParameters(alpha + sampleSum(sample), beta + n);
     setRate(priorDistribution.Mean());
     return true;
 }

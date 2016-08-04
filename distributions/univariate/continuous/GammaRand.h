@@ -42,11 +42,11 @@ public:
 private:
 
     enum GENERATOR_ID {
-        INTEGER_SHAPE, /// Erlang distribution for k = 1, 2, 3
-        ONE_AND_A_HALF_SHAPE, /// k = 1.5
-        SMALL_SHAPE, /// k < 0.34
-        FISHMAN, /// 1 < k < 1.2
-        MARSAGLIA /// 0.34 < k < 1 or k >= 1.2
+        INTEGER_SHAPE, /// Erlang distribution for α = 1, 2, 3
+        ONE_AND_A_HALF_SHAPE, /// α = 1.5
+        SMALL_SHAPE, /// α < 0.34
+        FISHMAN, /// 1 < α < 1.2
+        MARSAGLIA /// 0.34 < α < 1 or α >= 1.2
     };
 
     static GENERATOR_ID getIdOfUsedGenerator(double shape);
@@ -74,8 +74,6 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    bool checkValidity(const std::vector<double> &sample);
-
     /// Maximum-likelihood estimation
     bool fitScaleMLE(const std::vector<double> &sample);
     bool fitMLE(const std::vector<double> &sample);
@@ -90,7 +88,7 @@ public:
 
     /**
      * @brief getLogGammaFunction
-     * @return 1.0 / Gamma(k)
+     * @return log(Gamma(α))
      */
     inline double getLogGammaFunction() const { return -mLgammaShape; }
 };

@@ -171,13 +171,13 @@ double NormalRand::Moment(int n) const
 
 bool NormalRand::fitMeanMLE(const std::vector<double> &sample)
 {
-    setLocation(RandMath::sampleMean(sample));
+    setLocation(sampleMean(sample));
     return true;
 }
 
 bool NormalRand::fitVarianceMLE(const std::vector<double> &sample)
 {
-    setVariance(RandMath::sampleVariance(sample));
+    setVariance(sampleVariance(sample));
     return true;
 }
 
@@ -211,7 +211,7 @@ bool NormalRand::fitVarianceUMVU(const std::vector<double> &sample)
     int n = sample.size();
     if (n <= 1)
         return false;
-    double s = RandMath::sampleVariance(sample, mu);
+    double s = sampleVariance(sample, mu);
     setVariance(n * s / (n - 1));
     return true;
 }
@@ -253,7 +253,7 @@ bool NormalRand::fitMeanBayes(const std::vector<double> &sample, NormalRand &pri
     double mu0 = priorDistribution.getLocation();
     double tau0 = priorDistribution.getPrecision();
     double tau = getPrecision();
-    double numerator = RandMath::sum(sample) * tau + tau0 * mu0;
+    double numerator = sampleSum(sample) * tau + tau0 * mu0;
     double denominator = n * tau + tau0;
     priorDistribution.setLocation(numerator / denominator);
     priorDistribution.setVariance(1.0 / denominator);
@@ -269,7 +269,7 @@ bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGamm
     double alpha = priorDistribution.getShape();
     double beta = priorDistribution.getRate();
     double newAlpha = alpha + 0.5 * n;
-    double newBeta = beta + 0.5 * n * RandMath::sampleVariance(sample, mu);
+    double newBeta = beta + 0.5 * n * sampleVariance(sample, mu);
     priorDistribution.setParameters(newAlpha, newBeta);
     setVariance(priorDistribution.Mean());
     return true;
@@ -284,11 +284,11 @@ bool NormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGammaR
     double beta = priorDistribution.getRate();
     double mu0 = priorDistribution.getLocation();
     double lambda = priorDistribution.getPrecision();
-    double sum = RandMath::sum(sample), average = sum / n;
+    double sum = sampleSum(sample), average = sum / n;
     double newLambda = lambda + n;
     double newMu0 = (lambda * mu0 + sum) / newLambda;
     double newAlpha = alpha + 0.5 * n;
-    double variance = RandMath::sampleVariance(sample, average);
+    double variance = sampleVariance(sample, average);
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
     priorDistribution.setParameters(newMu0, newLambda, newAlpha, newBeta);

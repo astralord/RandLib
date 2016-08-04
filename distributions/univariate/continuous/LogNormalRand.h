@@ -49,8 +49,6 @@ private:
     double logSecondMoment(const std::vector<double> &sample);
 
 public:
-    bool checkValidity(const std::vector<double> &sample);
-
     /// Method of moments
     bool fitLocationMM(const std::vector<double> &sample);
     bool fitScaleMM(const std::vector<double> &sample);

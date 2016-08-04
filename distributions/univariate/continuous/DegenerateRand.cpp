@@ -78,12 +78,9 @@ double DegenerateRand::Entropy() const
 
 bool DegenerateRand::fitMLE(const std::vector<double> &sample)
 {
-    double value = sample.at(0);
-    for (double var : sample) {
-        if (var != value)
-            return false;
-    }
-    setValue(value);
+    if (!checkValidity(sample))
+        return false;
+    setValue(sample.at(0));
     return true;
 }
 

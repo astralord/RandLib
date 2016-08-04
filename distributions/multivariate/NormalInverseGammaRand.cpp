@@ -22,12 +22,12 @@ void NormalInverseGammaRand::setParameters(double location, double precision, do
     if (lambda <= 0)
         lambda = 1.0;
     Y.setParameters(shape, rate);
+    alpha = Y.getShape();
+    beta = Y.getRate();
 
-    pdfCoef = std::sqrt(0.5 * lambda / M_PI);
-    double alpha = Y.getShape();
-    double beta = Y.getRate();
-    cdfCoef = 1.0 / std::tgamma(alpha);
-    pdfCoef *= std::pow(beta, alpha) * cdfCoef;
+    cdfCoef = -Y.getLogGammaFunction();
+    pdfCoef = 0.5 * std::log(0.5 * lambda / M_PI);
+    pdfCoef += alpha * std::log(beta) + cdfCoef;
 }
 
 double NormalInverseGammaRand::f(DoublePair point) const
@@ -36,17 +36,16 @@ double NormalInverseGammaRand::f(DoublePair point) const
     if (sigmaSq <= 0)
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
-    double alpha = Y.getShape();
-    double beta = Y.getRate();
-    double y = std::pow(1.0 / sigmaSq, alpha + 1);
-    y /= sigma;
+    double y = (alpha + 1) * std::log(1.0 / sigmaSq);
     double degree = (x - mu);
     degree *= degree;
     degree *= lambda;
     degree += beta + beta;
     degree /= (sigmaSq + sigmaSq);
-    y *= std::exp(-degree);
-    return pdfCoef * y;
+    y -= degree;
+    y = std::exp(pdfCoef + y);
+    y /= sigma;
+    return y;
 }
 
 double NormalInverseGammaRand::F(DoublePair point) const
@@ -59,13 +58,11 @@ double NormalInverseGammaRand::F(DoublePair point) const
     y *= (x - mu) / sigma;
     y = std::erf(y);
     ++y;
-    double alpha = Y.getShape();
-    double beta = Y.getRate();
     double z = beta /sigmaSq;
-    y *= std::pow(z, alpha);
-    y *= std::exp(-z);
+    double temp = alpha * std::log(z) - z;
+    y *= std::exp(temp + cdfCoef);
     y /= (sigmaSq + sigmaSq);
-    return cdfCoef * y;
+    return y;
 }
 
 DoublePair NormalInverseGammaRand::variate() const
@@ -87,8 +84,6 @@ DoublePair NormalInverseGammaRand::Mean() const
 
 void NormalInverseGammaRand::Covariance(SquareMatrix<2> &matrix) const
 {
-    double alpha = Y.getShape();
-    double beta = Y.getRate();
     if (alpha <= 0.5)
         matrix(0, 0) = NAN;
     else if (alpha <= 1)
@@ -106,7 +101,6 @@ double NormalInverseGammaRand::Correlation() const
 
 void NormalInverseGammaRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
-    double alpha = Y.getShape(), beta = Y.getRate();
     StudentTRand X(2 * Y.getShape(), mu, std::sqrt(alpha * lambda / beta));
     distribution = X;
 }

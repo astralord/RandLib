@@ -35,9 +35,9 @@ public:
 
     inline double Entropy();
 
-    bool fitMLE(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
-    bool fitBayes(const std::vector<double> &sample, BetaRand &priorDistribution);
+    bool fitMLE(const std::vector<int> &sample);
+    bool fitMM(const std::vector<int> &sample);
+    bool fitBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
 };
 
 #endif // BERNOULLIRAND_H

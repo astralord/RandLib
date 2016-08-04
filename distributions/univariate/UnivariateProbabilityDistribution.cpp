@@ -173,9 +173,142 @@ double UnivariateProbabilityDistribution<T>::FourthMoment() const
 }
 
 template< typename T >
+bool UnivariateProbabilityDistribution<T>::checkValidity(const std::vector<T> &sample) const
+{
+    if (isLeftBounded()) {
+        for (T var : sample) {
+            if (var < MinValue())
+                return false;
+        }
+    }
+    if (isRightBounded()) {
+        for (T var : sample) {
+            if (var > MinValue())
+                return false;
+        }
+    }
+    return true;
+}
+
+template< typename T >
 double UnivariateProbabilityDistribution<T>::Kurtosis() const
 {
     return ExcessKurtosis() + 3.0;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleSum(const std::vector<T> &sample)
+{
+    long double sum = 0.0L;
+    for (double var : sample) {
+        sum += var;
+    }
+    return sum;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleMean(const std::vector<T> &sample)
+{
+    size_t n = sample.size();
+    return (n > 0) ? sampleSum(sample) / n : 0;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T> &sample, double mean)
+{
+    return rawMoment(sample, 2) - mean * mean;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T> &sample)
+{
+    return sampleVariance(sample, sampleMean(sample));
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample, double mean, double stdev)
+{
+    return normalisedMoment(sample, 3, mean, stdev);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample, double mean)
+{
+    return normalisedMoment(sample, 3, mean);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample)
+{
+    return normalisedMoment(sample, 3);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::rawMoment(const std::vector<T> &sample, int k)
+{
+    int n = sample.size();
+    if (n <= 0 || k < 0)
+        return 0.0;
+    long double sum = 0.0L;
+    switch(k) {
+        case 0:
+            return n;
+        case 1:
+            return sampleMean(sample);
+        case 2:
+            for (double var : sample)
+                sum += var * var;
+            break;
+        default:
+            for (double var : sample)
+                sum += std::pow(var, k);
+    }
+    return sum / n;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::centralMoment(const std::vector<T> &sample, int k, double mean)
+{
+    int n = sample.size();
+    if (n <= 0 || k <= 1)
+        return 0.0;
+    if (k == 2)
+        return sampleVariance(sample, mean);
+    long double sum = 0.0L;
+    for (double var : sample)
+        sum += std::pow(var - mean, k);
+    return sum / n;
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::centralMoment(const std::vector<T> &sample, int k)
+{
+    return (k == 1) ? 0.0 : centralMoment(sample, k, sampleMean(sample));
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::normalisedMoment(const std::vector<T> &sample, int k, double mean, double stdev)
+{
+    return (k == 2) ? 1.0 : centralMoment(sample, k, mean) / std::pow(stdev, k);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::normalisedMoment(const std::vector<T> &sample, int k, double mean)
+{
+    if (k == 2)
+        return 1.0;
+    double variance = sampleVariance(sample, mean);
+    return centralMoment(sample, k, mean) / std::pow(variance, 0.5 * k);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::normalisedMoment(const std::vector<T> &sample, int k)
+{
+    if (k == 2)
+        return 1.0;
+    double mean = sampleMean(sample);
+    double variance = sampleVariance(sample, mean);
+    return centralMoment(sample, k, mean) / std::pow(variance, 0.5 * k);
 }
 
 template class UnivariateProbabilityDistribution<double>;

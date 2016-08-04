@@ -104,15 +104,6 @@ double LogNormalRand::ExcessKurtosis() const
     return res - 6;
 }
 
-bool LogNormalRand::checkValidity(const std::vector<double> &sample)
-{
-    for (double var : sample) {
-        if (var <= 0)
-            return false;
-    }
-    return true;
-}
-
 double LogNormalRand::logAverage(const std::vector<double> &sample)
 {
     size_t n = sample.size();
@@ -142,7 +133,7 @@ bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    double average = RandMath::sampleMean(sample);
+    double average = sampleMean(sample);
     double var = X.Variance();
     setLocation(std::log(average) - 0.5 * var);
     return true;
@@ -152,7 +143,7 @@ bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    double average = RandMath::sampleMean(sample);
+    double average = sampleMean(sample);
     double mu = X.getLocation();
     double aux = std::log(average) - mu;
     setScale(std::sqrt(aux + aux));
@@ -163,8 +154,8 @@ bool LogNormalRand::fitMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    double average = RandMath::sampleMean(sample);
-    double secondMoment = RandMath::rawMoment(sample, 2);
+    double average = sampleMean(sample);
+    double secondMoment = rawMoment(sample, 2);
     double averageSq = average * average;
     setLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
     setScale(std::sqrt(std::log(secondMoment / averageSq)));

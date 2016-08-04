@@ -93,13 +93,13 @@ double LogisticRand::ExcessKurtosis() const
 /// Method of moments
 bool LogisticRand::fitLocationMM(const std::vector<double> &sample)
 {
-    setLocation(RandMath::sampleMean(sample));
+    setLocation(sampleMean(sample));
     return true;
 }
 
 bool LogisticRand::fitScaleMM(const std::vector<double> &sample)
 {
-    double var = RandMath::sampleVariance(sample, mu);
+    double var = sampleVariance(sample, mu);
     setScale(std::sqrt(3 * var) / M_PI);
     return true;
 }

@@ -184,6 +184,70 @@ public:
      * @return sum of log(f(x_i))
      */
     virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
+
+    /**
+     * @brief checkValidity
+     * @param sample
+     * verify if sample can be returned from such distribution
+     * @return true if yes
+     */
+    bool checkValidity(const std::vector<T> &sample) const;
+
+    /**
+     * @brief sum
+     * @param sample
+     * @return sum of all elements in a sample
+     */
+    static double sampleSum(const std::vector<T> &sample);
+    /**
+     * @brief sampleMean
+     * @param sample
+     * @return arithmetic average
+     */
+    static double sampleMean(const std::vector<T> &sample);
+    /**
+     * @brief sampleVariance
+     * @param sample
+     * @param mean known (or sample) average
+     * @return second central moment
+     */
+    static double sampleVariance(const std::vector<T> &sample, double mean);
+    static double sampleVariance(const std::vector<T> &sample);
+    /**
+     * @brief sampleSkewness
+     * @param sample
+     * @param mean
+     * @param stdev
+     * @return
+     */
+    static double sampleSkewness(const std::vector<T> &sample, double mean, double stdev);
+    static double sampleSkewness(const std::vector<T> &sample, double mean);
+    static double sampleSkewness(const std::vector<T> &sample);
+    /**
+     * @brief rawMoment
+     * @param sample
+     * @return k-th raw moment
+     */
+    static double rawMoment(const std::vector<T> &sample, int k);
+    /**
+     * @brief centralMoment
+     * @param sample
+     * @param mean known (or sample) average
+     * @return k-th central moment
+     */
+    static double centralMoment(const std::vector<T> &sample, int k, double mean);
+    static double centralMoment(const std::vector<T> &sample, int k);
+    /**
+     * @brief normalisedMoment
+     * @param sample
+     * @param k
+     * @param mean
+     * @param stdev
+     * @return
+     */
+    static double normalisedMoment(const std::vector<T> &sample, int k, double mean, double stdev);
+    static double normalisedMoment(const std::vector<T> &sample, int k, double mean);
+    static double normalisedMoment(const std::vector<T> &sample, int k);
 };
 
 #endif // UNIVARIATEPROBABILITYDISTRIBUTION_H

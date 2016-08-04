@@ -151,22 +151,22 @@ bool UniformRand::fitMLE(const std::vector<double> &sample)
 
 bool UniformRand::fitMinimumMM(const std::vector<double> &sample)
 {
-    double m = RandMath::sampleMean(sample);
+    double m = sampleMean(sample);
     setSupport(m + m - b, b);
     return true;
 }
 
 bool UniformRand::fitMaximumMM(const std::vector<double> &sample)
 {
-    double m = RandMath::sampleMean(sample);
+    double m = sampleMean(sample);
     setSupport(a, m + m - a);
     return true;
 }
 
 bool UniformRand::fitMM(const std::vector<double> &sample)
 {
-    double mean = RandMath::sampleMean(sample);
-    double var = RandMath::sampleVariance(sample, mean);
+    double mean = sampleMean(sample);
+    double var = sampleVariance(sample, mean);
     double s = std::sqrt(3 * var);
     setSupport(mean - s, mean + s);
     return true;

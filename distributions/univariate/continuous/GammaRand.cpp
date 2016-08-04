@@ -279,20 +279,11 @@ double GammaRand::ExcessKurtosis() const
     return 6.0 / alpha;
 }
 
-bool GammaRand::checkValidity(const std::vector<double> &sample)
-{
-    for (double var : sample) {
-        if (var < 0)
-            return false;
-    }
-    return true;
-}
-
 bool GammaRand::fitScaleMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(alpha, alpha / RandMath::sampleMean(sample));
+    setParameters(alpha, alpha / sampleMean(sample));
     return true;
 }
 
@@ -303,7 +294,7 @@ bool GammaRand::fitMLE(const std::vector<double> &sample)
         return false;
 
     /// Calculate averages
-    double average = RandMath::sampleMean(sample);
+    double average = sampleMean(sample);
     long double logAverage = 0.0L;
     for (double var : sample) {
         logAverage += std::log(var);
@@ -336,7 +327,7 @@ bool GammaRand::fitShapeMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(RandMath::sampleMean(sample) * beta, beta);
+    setParameters(sampleMean(sample) * beta, beta);
     return true;
 }
 
@@ -349,8 +340,8 @@ bool GammaRand::fitMM(const std::vector<double> &sample)
 {  
     if (!checkValidity(sample))
         return false;
-    double mu1 = RandMath::sampleMean(sample);
-    double var = RandMath::sampleVariance(sample, mu1);
+    double mu1 = sampleMean(sample);
+    double var = sampleVariance(sample, mu1);
     double shape = mu1 * mu1 / var;
     
     setParameters(shape, shape / mu1);
@@ -365,7 +356,7 @@ bool GammaRand::fitRateBayes(const std::vector<double> &sample, GammaRand &prior
     double alpha0 = priorDistribution.getShape();
     double beta0 = priorDistribution.getRate();
     double newAlpha = alpha * n + alpha0;
-    double newBeta = RandMath::sum(sample) + beta0;
+    double newBeta = sampleSum(sample) + beta0;
     priorDistribution.setParameters(newAlpha, newBeta);
     setParameters(alpha, priorDistribution.Mean());
     return true;

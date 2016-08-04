@@ -130,7 +130,7 @@ bool ExponentialRand::fitUMVU(const std::vector<double> &sample)
     int n = sample.size();
     if (n <= 1 || !checkValidity(sample))
         return false;
-    double mean = RandMath::sampleMean(sample);
+    double mean = sampleMean(sample);
     setRate((n - 1) * mean / n);
     return true;
 }

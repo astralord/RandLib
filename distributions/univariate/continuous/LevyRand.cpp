@@ -58,15 +58,6 @@ double LevyRand::Quantile(double p) const
     return mu + x * x;
 }
 
-bool LevyRand::checkValidity(const std::vector<double> &sample)
-{
-    for (double var : sample) {
-        if (var <= mu)
-            return false;
-    }
-    return true;
-}
-
 bool LevyRand::fitScaleMLE(const std::vector<double> &sample)
 {
     double n = sample.size();
