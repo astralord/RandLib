@@ -88,10 +88,8 @@ std::complex<double> PoissonRand::CF(double t) const
 {
     if (t == 0)
         return 1;
-    std::complex<double> y(0.0, t);
-    y = std::exp(y) - 1.0;
-    y *= lambda;
-    return std::exp(y);
+    std::complex<double> y(std::cos(t) - 1.0, std::sin(t));
+    return std::exp(lambda * y);
 }
 
 double PoissonRand::Median() const
@@ -102,7 +100,7 @@ double PoissonRand::Median() const
 
 int PoissonRand::Mode() const
 {
-    return std::floor(lambda);
+    return floorLambda;
 }
 
 double PoissonRand::Skewness() const

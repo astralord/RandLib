@@ -34,9 +34,7 @@ void BetaRand::setParameters(double shape1, double shape2, double minValue, doub
         beta = 1.0;
 
     /// we use log(Gamma(x)) in order to avoid too big numbers
-    double logGammaX = std::lgamma(alpha);
-    double logGammaY = std::lgamma(beta);
-    betaFunInv = std::lgamma(alpha + beta) - logGammaX - logGammaY;
+    betaFunInv = std::lgamma(alpha + beta) - std::lgamma(alpha) - std::lgamma(beta);
     mLogBetaFun = betaFunInv - std::log(bma);
     betaFunInv = std::exp(betaFunInv);
 
@@ -96,7 +94,6 @@ double BetaRand::variateArcsine() const
     double X = std::sin(U);
     return X * X;
 }
-
 
 double BetaRand::variateRejectionUniform() const
 {
@@ -177,18 +174,19 @@ double BetaRand::variateRejectionNormal() const
     int iter = 0;
     double N = 0, Z = 0;
     double alpham1 = alpha - 1;
+    double alpha2m1 = alpha + alpham1;
     do {
         do {
             N = NormalRand::standardVariate();
             Z = N * N;
-        } while (Z >= alpha + alpham1);
+        } while (Z >= alpha2m1);
 
         double W = ExponentialRand::standardVariate() + s;
-        double aux = 0.5 - alpham1 / (alpha + alpham1 - Z);
+        double aux = 0.5 - alpham1 / (alpha2m1 - Z);
         aux *= Z;
         if (W + aux >= 0)
             return 0.5 + N * t;
-        aux = std::log(1.0 - Z / (alpha + alpham1));
+        aux = std::log(1.0 - Z / alpha2m1);
         aux *= alpham1;
         aux += W + 0.5 * Z;
         if (aux >= 0)
