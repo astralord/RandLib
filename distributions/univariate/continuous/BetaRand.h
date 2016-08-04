@@ -26,6 +26,8 @@ protected:
     double alpha, beta;
     double a, b, bma;
 
+    GammaRand GammaRV1, GammaRV2;
+
 private:
     static constexpr double edgeForGenerators = 8.0;
     double mLogBetaFun; /// log(Beta(α, β)
@@ -117,7 +119,7 @@ private:
     /**
      * @brief variateCheng
      * Cheng's beta generator
-     * @return beta variate for α + β > 2 and min(α, β) > 0.5
+     * @return beta variate for max(α, β) > 1 and min(α, β) > 0.5
      */
     double variateCheng() const;
 
@@ -131,7 +133,7 @@ private:
     /**
      * @brief variateGammaRatio
      * Gamma ratio beta generator
-     * @return beta variate for α + β > 2 and min(α, β) < 0.5
+     * @return beta variate for the rest variations of shapes
      */
     double variateGammaRatio() const;
 

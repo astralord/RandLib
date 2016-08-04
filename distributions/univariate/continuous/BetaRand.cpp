@@ -25,16 +25,14 @@ void BetaRand::setParameters(double shape1, double shape2, double minValue, doub
 
     bma = b - a;
 
-    alpha = shape1;
-    if (alpha <= 0)
-        alpha = 1.0;
+    GammaRV1.setParameters(shape1, 1);
+    GammaRV2.setParameters(shape2, 1);
 
-    beta = shape2;
-    if (beta <= 0)
-        beta = 1.0;
+    alpha = GammaRV1.getShape();
+    beta = GammaRV2.getShape();
 
     /// we use log(Gamma(x)) in order to avoid too big numbers
-    betaFunInv = std::lgamma(alpha + beta) - std::lgamma(alpha) - std::lgamma(beta);
+    betaFunInv = std::lgamma(alpha + beta) - GammaRV1.getLogGammaFunction() - GammaRV2.getLogGammaFunction();
     mLogBetaFun = betaFunInv - std::log(bma);
     betaFunInv = std::exp(betaFunInv);
 
@@ -164,8 +162,8 @@ double BetaRand::variateAtkinsonWhittaker() const
 
 double BetaRand::variateGammaRatio() const
 {
-    double Y = GammaRand::standardVariate(alpha);
-    double Z = GammaRand::standardVariate(beta);
+    double Y = GammaRV1.variate();
+    double Z = GammaRV2.variate();
     return Y / (Y + Z);
 }
 
@@ -257,8 +255,8 @@ void BetaRand::sample(std::vector<double> &outputData) const
         }
         break;
     case ARCSINE: {
-            for (double &var : outputData)
-                var = variateArcsine();
+        for (double &var : outputData)
+            var = variateArcsine();
         }
         break;
     case CHENG: {
@@ -293,8 +291,9 @@ void BetaRand::sample(std::vector<double> &outputData) const
         break;
     case GAMMA_RATIO:
     default: {
+        GammaRV1.sample(outputData);
         for (double &var : outputData)
-            var = variateGammaRatio();
+            var /= (var + GammaRV2.variate());
         }
         break;
     }
@@ -321,9 +320,9 @@ BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
             /// Rejection from uniform or normal distribution
             return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;
     }
-    if (alpha + beta < 2)
-        return JOHNK;
-    return (std::min(alpha, beta) < 0.5) ? GAMMA_RATIO : CHENG;
+    if (std::min(alpha, beta) > 0.5 && std::max(alpha, beta) > 1)
+        return CHENG;
+    return (alpha + beta < 2) ? JOHNK : GAMMA_RATIO;
 }
 
 void BetaRand::setCoefficientsForGenerator()
