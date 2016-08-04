@@ -97,14 +97,33 @@ double BetaRand::variateArcsine() const
     return X * X;
 }
 
+
 double BetaRand::variateRejectionUniform() const
 {
+    /// Rejection method from uniform distribution
+    /// boosted for specific value of shapes α = β = 1.5
     int iter = 0;
     do {
-        double u1 = UniformRand::standardVariate();
-        double u2 = UniformRand::standardVariate();
-        if (u2 <= std::pow(4 * u1 * (1 - u1), alpha - 1))
-            return u1;
+        double U = UniformRand::standardVariate();
+        double V = UniformRand::standardVariate();
+        if (0.25 * V * V <= U - U * U)
+            return U;
+    } while (++iter <= 1e9); /// one billion should be enough
+    return NAN; /// fail
+}
+
+double BetaRand::variateRejectionUniformExtended() const
+{
+    /// Rejection method from uniform distribution
+    /// boosted by using exponential distribution
+    int iter = 0;
+    static constexpr double M_LN4 = M_LN2 + M_LN2;
+    do {
+        double U = UniformRand::standardVariate();
+        double W = ExponentialRand::standardVariate();
+        double edge = M_LN4 + std::log(U - U * U);
+        if (W >= (1.0 - alpha) * edge)
+            return U;
     } while (++iter <= 1e9); /// one billion should be enough
     return NAN; /// fail
 }
@@ -209,6 +228,9 @@ double BetaRand::variate() const
     case REJECTION_UNIFORM:
         var = variateRejectionUniform();
         break;
+    case REJECTION_UNIFORM_EXTENDED:
+        var = variateRejectionUniformExtended();
+        break;
     case REJECTION_NORMAL:
         var = variateRejectionNormal();
         break;
@@ -252,6 +274,11 @@ void BetaRand::sample(std::vector<double> &outputData) const
             var = variateRejectionUniform();
         }
         break;
+    case REJECTION_UNIFORM_EXTENDED: {
+        for (double &var : outputData)
+            var = variateRejectionUniformExtended();
+        }
+        break;
     case REJECTION_NORMAL: {
         for (double &var : outputData)
             var = variateRejectionNormal();
@@ -291,8 +318,11 @@ BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
             return UNIFORM; /// Standard uniform variate
         else if (RandMath::areClose(alpha, 0.5))
             return ARCSINE; /// Arcsine method
+        else if (RandMath::areClose(alpha, 1.5))
+            return REJECTION_UNIFORM; /// Rejection method from uniform distribution
         else if (alpha > 1)
-            return (alpha < 2) ? REJECTION_UNIFORM : REJECTION_NORMAL;
+            /// Rejection from uniform or normal distribution
+            return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;
     }
     if (alpha + beta < 2)
         return JOHNK;

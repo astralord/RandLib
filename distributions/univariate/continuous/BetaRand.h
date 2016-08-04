@@ -61,6 +61,7 @@ private:
         ARCSINE,
         CHENG,
         REJECTION_UNIFORM,
+        REJECTION_UNIFORM_EXTENDED,
         REJECTION_NORMAL,
         JOHNK,
         ATKINSON_WHITTAKER,
@@ -81,9 +82,16 @@ private:
     /**
      * @brief variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
-     * @return beta variate for 1 < α = β < 2
+     * @return beta variate for α = β = 1.5
      */
     double variateRejectionUniform() const;
+
+    /**
+     * @brief variateRejectionUniform
+     * Symmetric beta generator via rejection from the uniform density
+     * @return beta variate for 1 < α = β < 2 and α != 1.5
+     */
+    double variateRejectionUniformExtended() const;
 
     /**
      * @brief variateArcsine
