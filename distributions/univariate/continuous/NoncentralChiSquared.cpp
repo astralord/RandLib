@@ -18,8 +18,11 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
         k = 1;
     halfK = 0.5 * k;
 
-    lambda = std::max(noncentrality, 0.0);
+    lambda = noncentrality;
+    if (lambda <= 0)
+        lambda = 1;
     sqrtLambda = std::sqrt(lambda);
+    logLambda = std::log(lambda);
 
     if (k < 1)
         Y.setRate(0.5 * lambda);
@@ -28,7 +31,6 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
         cdfCoef = lambda + k * M_LN2;
         cdfCoef *= 0.5;
         cdfCoef += std::lgamma(halfK);
-        cdfCoef = std::exp(-cdfCoef);
     }
 }
 
@@ -38,9 +40,9 @@ double NoncentralChiSquared::f(double x) const
         return 0.0;
     if (x == 0.0)
         return (k >= 2) ? 0.0 : INFINITY;
-    double halfkm1 = halfK - 1;
-    double y = RandMath::modifiedBesselFirstKind(std::sqrt(lambda * x), halfkm1);
-    double z = halfkm1 * std::log(x / lambda);
+    double halfKm1 = halfK - 1;
+    double y = RandMath::modifiedBesselFirstKind(sqrtLambda * std::sqrt(x), halfKm1);
+    double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
     y = 0.5 * z + std::log(y);
     return 0.5 * std::exp(y);
@@ -60,13 +62,28 @@ double NoncentralChiSquared::F(double x) const
     /// in this case we have singularity point at 0,
     /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
+    double y = std::log(x) * halfK;
+    y -= cdfCoef;
+    y = std::exp(y) / halfK;
+
     double halfKm1 = halfK - 1.0;
-    double y = cdfCoef / halfK * std::pow(x, halfK);
     y += RandMath::integral([this, halfKm1] (double t)
     {
         if (t <= 0)
             return 0.0;
-        return f(t) - cdfCoef * std::pow(t, halfKm1);
+        /// Calculate log of leveling factor
+        double logT = std::log(t);
+        double exponent = halfKm1 * logT;
+        exponent -= cdfCoef;
+
+        /// Calculate log(2f(t))
+        double bessel = RandMath::modifiedBesselFirstKind(sqrtLambda * std::sqrt(t), halfKm1);
+        double z = halfKm1 * (logT - logLambda);
+        z -= t + lambda;
+        double log2F = 0.5 * z + std::log(bessel);
+
+        /// Return difference f(t) - factor
+        return 0.5 * std::exp(log2F) - std::exp(exponent);
     }, 0, x);
 
     return y;
@@ -105,11 +122,11 @@ void NoncentralChiSquared::sample(std::vector<double> &outputData) const
     if (k >= 1) {
         for (double & var : outputData)
             var = variateForDegreeEqualOne();
-        if (!RandMath::areClose(k, 1)) {
-            double halfKmHalf = halfK - 0.5;
-            for (double & var : outputData)
-                var += 2 * GammaRand::standardVariate(halfKmHalf);
-        }
+        if (RandMath::areClose(k, 1))
+            return;
+        double halfKmHalf = halfK - 0.5;
+        for (double & var : outputData)
+            var += 2 * GammaRand::standardVariate(halfKmHalf);
     }
     else {
         for (double & var : outputData)

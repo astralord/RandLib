@@ -25,9 +25,8 @@ void NormalInverseGammaRand::setParameters(double location, double precision, do
     alpha = Y.getShape();
     beta = Y.getRate();
 
-    cdfCoef = -Y.getLogGammaFunction();
     pdfCoef = 0.5 * std::log(0.5 * lambda / M_PI);
-    pdfCoef += alpha * std::log(beta) + cdfCoef;
+    pdfCoef += alpha * std::log(beta) - Y.getLogGammaFunction();
 }
 
 double NormalInverseGammaRand::f(DoublePair point) const
@@ -36,7 +35,7 @@ double NormalInverseGammaRand::f(DoublePair point) const
     if (sigmaSq <= 0)
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
-    double y = (alpha + 1) * std::log(1.0 / sigmaSq);
+    double y = (alpha + 1) - std::log(sigmaSq);
     double degree = (x - mu);
     degree *= degree;
     degree *= lambda;
@@ -60,7 +59,7 @@ double NormalInverseGammaRand::F(DoublePair point) const
     ++y;
     double z = beta /sigmaSq;
     double temp = alpha * std::log(z) - z;
-    y *= std::exp(temp + cdfCoef);
+    y *= std::exp(temp - Y.getLogGammaFunction());
     y /= (sigmaSq + sigmaSq);
     return y;
 }

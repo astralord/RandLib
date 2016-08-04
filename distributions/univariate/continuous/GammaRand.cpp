@@ -66,7 +66,7 @@ GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
         return ONE_AND_A_HALF_SHAPE;
     if (shape > 1 && shape < 1.2)
         return FISHMAN;
-    return MARSAGLIA;
+    return MARSAGLIA_TSANG;
 }
 
 double GammaRand::variateThroughExponentialSum(int shape)
@@ -185,7 +185,7 @@ double GammaRand::standardVariate(double shape)
         return variateAhrensDieter(shape);
     case FISHMAN:
         return variateFishman(shape);
-    case MARSAGLIA:
+    case MARSAGLIA_TSANG:
         return variateMarsagliaTsang(shape);
     default:
         return NAN;
@@ -211,7 +211,7 @@ double GammaRand::variate() const
         return theta * variateBest();
     case FISHMAN:
         return theta * variateFishman(alpha);
-    case MARSAGLIA:
+    case MARSAGLIA_TSANG:
         return theta * variateMarsagliaTsang(alpha);
     default:
         return NAN;
@@ -240,7 +240,7 @@ void GammaRand::sample(std::vector<double> &outputData) const
         for (double &var : outputData)
             var = theta * variateFishman(alpha);
         break;
-    case MARSAGLIA:
+    case MARSAGLIA_TSANG:
         for (double &var : outputData)
             var = theta * variateMarsagliaTsang(alpha);
         break;

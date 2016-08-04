@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
 {
     double k, lambda;
     double halfK; /// 0.5 * k
-    double sqrtLambda;
+    double sqrtLambda, logLambda;
 
     PoissonRand Y;
 

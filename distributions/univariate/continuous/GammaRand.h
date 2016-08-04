@@ -7,7 +7,7 @@
  * @brief The GammaRand class
  * Gamma distribution
  *
- * Notation X ~ Gamma(k, θ)
+ * Notation X ~ Gamma(k, β)
  *
  * Related distributions:
  * If X ~ Gamma(1, β), then X ~ Exp(β)
@@ -46,7 +46,7 @@ private:
         ONE_AND_A_HALF_SHAPE, /// α = 1.5
         SMALL_SHAPE, /// α < 0.34
         FISHMAN, /// 1 < α < 1.2
-        MARSAGLIA /// 0.34 < α < 1 or α >= 1.2
+        MARSAGLIA_TSANG /// 0.34 < α < 1 or α >= 1.2
     };
 
     static GENERATOR_ID getIdOfUsedGenerator(double shape);
