@@ -187,8 +187,7 @@ int BinomialRand::variateRejection() const
         X += npFloor;
         if (!reject && X >= 0 && X <= n && V <= logProbFloor(X) - logPnpInv)
             return X;
-
-    } while (++iter < 1e9);
+    } while (++iter <= MAX_ITER_REJECTION);
     return -1;
 }
 

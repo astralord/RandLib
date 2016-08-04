@@ -80,7 +80,7 @@ double ExponentialRand::standardVariate()
 
         /// rejection - go back
 
-    } while (++iter <= 1e9); /// one billion should be enough to be sure there is a bug
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
 }
 

@@ -108,7 +108,7 @@ double BetaRand::variateRejectionUniform() const
         double V = UniformRand::standardVariate();
         if (0.25 * V * V <= U - U * U)
             return U;
-    } while (++iter <= 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 
@@ -124,7 +124,7 @@ double BetaRand::variateRejectionUniformExtended() const
         double edge = M_LN4 + std::log(U - U * U);
         if (W >= (1.0 - alpha) * edge)
             return U;
-    } while (++iter <= 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 
@@ -161,7 +161,7 @@ double BetaRand::variateAtkinsonWhittaker() const
             if (W >= (1.0 - alpha) * std::log(X / t))
                 return X;
         }
-    } while (++iter <= 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 
@@ -193,8 +193,7 @@ double BetaRand::variateRejectionNormal() const
         aux += W + 0.5 * Z;
         if (aux >= 0)
             return 0.5 + N * t;
-
-    } while (++iter <= 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 

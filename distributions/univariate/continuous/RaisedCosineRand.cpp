@@ -76,7 +76,7 @@ double RaisedCosineRand::standardVariate()
                 return 0.0;
             return (X > 0.0) ? M_PI - X : -M_PI - X;
         }
-    } while (++iter < 1e9);
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN;
 }
 

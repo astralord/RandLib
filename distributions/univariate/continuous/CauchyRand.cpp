@@ -37,7 +37,7 @@ double CauchyRand::standardVariate()
     do {
         x = UniformRand::variate(-1, 1);
         y = UniformRand::variate(-1, 1);
-    } while (x * x + y * y > 1.0 || y == 0.0);
+    } while (y == 0.0 || x * x + y * y > 1.0);
     return x / y;
 }
     

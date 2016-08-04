@@ -112,7 +112,7 @@ double NormalRand::standardVariate()
         if (UniformRand::variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
 
-    } while (++iter <= 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
 }
 

@@ -49,7 +49,7 @@ int ZetaRand::variate() const
         /// there was typo in the book - '<=' instead of '>'
         if (V * X * (T - 1) <= b * T )
             return X;
-    } while (++iter < 1e9);
+    } while (++iter <= MAX_ITER_REJECTION);
     return -1; /// doesn't work
 }
 

@@ -60,7 +60,7 @@ double VonMisesRand::variate() const
         if ((std::fabs(theta) <= M_PI) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
             return mu + theta;
-    } while (++iter < 1e9);
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 

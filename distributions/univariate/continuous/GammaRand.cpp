@@ -103,7 +103,7 @@ double GammaRand::variateBest() const
             if (W * (alpha + Y - alpha * Y) <= 1 || W <= std::pow(Y, alpha - 1))
                 return X;
         }
-    } while (++iter < 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// shouldn't end up here
 }
 
@@ -131,7 +131,7 @@ double GammaRand::variateAhrensDieter(double shape)
             if ((1 - shape) * std::log(X) <= W)
                 return X;
         }
-    } while (++iter < 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// shouldn't end up here
 }
 
@@ -165,7 +165,7 @@ double GammaRand::variateMarsagliaTsang(double shape)
         if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
             return d * v;
         }
-    } while (++iter < 1e9); /// one billion should be enough
+    } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// shouldn't end up here
 }
 

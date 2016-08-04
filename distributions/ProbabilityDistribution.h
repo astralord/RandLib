@@ -7,6 +7,14 @@
 #include "randlib_global.h"
 
 /**
+ * @brief MAX_ITER_REJECTION
+ * upper boundary for maximum amount of iterations in rejection methods
+ * one hundred should be enough to be sure there is a bug
+ * (or rejection method is too slow to be used)
+ */
+constexpr double MAX_ITER_REJECTION = 100;
+
+/**
  * @brief The ProbabilityDistribution class
  */
 template < typename T >
