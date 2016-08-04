@@ -31,8 +31,8 @@ public:
     NegativeBinomialRand(T number, double probability);
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    int MinValue() const override { return 0; }
+    int MaxValue() const override { return INT_MAX; }
 
 private:
     void setValidParameters(T number, double probability);

@@ -19,8 +19,8 @@ public:
     explicit ZetaRand(double exponent = 1.0);
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 1; }
-    double MaxValue() const override { return INFINITY; }
+    int MinValue() const override { return 1; }
+    int MaxValue() const override { return INT_MAX; }
 
     void setExponent(double exponent);
     inline double getExponent() const { return s; }

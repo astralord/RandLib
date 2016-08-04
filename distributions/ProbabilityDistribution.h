@@ -27,6 +27,18 @@ public:
     virtual std::string name() const = 0;
 
     /**
+     * @brief MinValue
+     * @return minimum possible value that can be achieved by random variable
+     */
+    virtual T MinValue() const = 0;
+
+    /**
+     * @brief MaxValue
+     * @return maximum possible value that can be achieved by random variable
+     */
+    virtual T MaxValue() const = 0;
+
+    /**
      * @brief variate()
      * @return random variable
      */

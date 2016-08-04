@@ -19,6 +19,8 @@ public:
     BivariateNormalRand(DoublePair location, const SquareMatrix<2> &rootCovariance);
     BivariateNormalRand(double mu1, double mu2, double sigma1, double sigma2, double correlation);
     std::string name() const override;
+    DoublePair MinValue() const { return DoublePair(-INFINITY, -INFINITY); }
+    DoublePair MaxValue() const { return DoublePair(INFINITY, INFINITY); }
 
     void setLocation(DoublePair location);
     void setLocation(double location1, double location2);

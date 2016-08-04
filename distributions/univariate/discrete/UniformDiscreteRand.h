@@ -20,8 +20,8 @@ public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
-    double MinValue() const override { return a; }
-    double MaxValue() const override { return b; }
+    int MinValue() const override { return a; }
+    int MaxValue() const override { return b; }
 
     void setBoundaries(int minValue, int maxValue);
     inline int getMinValue() const { return a; }

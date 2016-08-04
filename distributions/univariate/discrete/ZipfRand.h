@@ -24,8 +24,8 @@ public:
     ZipfRand(double exponent, int number);
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
-    double MinValue() const override { return 1; }
-    double MaxValue() const override { return n; }
+    int MinValue() const override { return 1; }
+    int MaxValue() const override { return n; }
 
     void setParameters(double exponent, int number);
     inline double getExponent() const { return s; }

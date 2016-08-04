@@ -99,13 +99,13 @@ SUPPORT_TYPE SumRand<T1, T2>::supportType() const
 }
 
 template <typename T1, typename T2>
-double SumRand<T1, T2>::MinValue() const
+T1 SumRand<T1, T2>::MinValue() const
 {
     return X.MinValue() + Y.MinValue();
 }
 
 template <typename T1, typename T2>
-double SumRand<T1, T2>::MaxValue() const
+T1 SumRand<T1, T2>::MaxValue() const
 {
     return X.MaxValue() + Y.MaxValue();
 }

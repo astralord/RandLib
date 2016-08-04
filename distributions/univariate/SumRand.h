@@ -23,8 +23,8 @@ public:
     std::string name() const override;
 
     SUPPORT_TYPE supportType() const override;
-    double MinValue() const override;
-    double MaxValue() const override;
+    T1 MinValue() const override;
+    T1 MaxValue() const override;
 
     double F(T1 x) const override;
     T1 variate() const override;

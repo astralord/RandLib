@@ -18,8 +18,8 @@ public:
     HyperGeometricRand(int totalSize, int drawsNum, int successesNum);
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return FINITE_T; }
-    double MinValue() const override { return std::max(0, n - N + K); }
-    double MaxValue() const override { return std::min(n, K); }
+    int MinValue() const override { return std::max(0, n - N + K); }
+    int MaxValue() const override { return std::min(n, K); }
 
     void setParameters(int totalSize, int drawsNum, int successesNum);
     inline int getTotalSize() { return N; }

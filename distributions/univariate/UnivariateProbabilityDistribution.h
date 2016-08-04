@@ -42,13 +42,13 @@ public:
      * @brief MinValue
      * @return minimum possible value that can be achieved by random variable
      */
-    virtual double MinValue() const = 0;
+    virtual T MinValue() const override = 0;
 
     /**
      * @brief MaxValue
      * @return maximum possible value that can be achieved by random variable
      */
-    virtual double MaxValue() const = 0;
+    virtual T MaxValue() const override = 0;
 
     /**
      * @brief Mean

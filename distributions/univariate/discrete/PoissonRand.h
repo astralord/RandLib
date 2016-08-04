@@ -22,8 +22,8 @@ public:
     explicit PoissonRand(double rate = 1.0);
     std::string name() const override;
     SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    int MinValue() const override { return 0; }
+    int MaxValue() const override { return INT_MAX; }
 
     void setRate(double rate);
     inline double getRate() const { return lambda; }
