@@ -132,7 +132,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     /// works good for unimodal and distributions
     static constexpr double epsilon = 1e-10;
 
-    // TODO: get rid off startpoint
+    // TODO: get rid of startpoint
     double lowerBoundary = startPoint, upperBoundary = startPoint;
     SUPPORT_TYPE suppType = supportType();
     if (suppType == FINITE_T)
