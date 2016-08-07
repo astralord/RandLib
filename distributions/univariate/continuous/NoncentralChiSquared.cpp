@@ -38,10 +38,13 @@ double NoncentralChiSquared::f(double x) const
 {
     if (x < 0.0)
         return 0.0;
-    if (x == 0.0)
-        return (k >= 2) ? 0.0 : INFINITY;
+    if (x == 0.0) {
+        if (k == 2)
+            return 0.5 * std::exp(-0.5 * lambda);
+        return (k > 2) ? 0.0 : INFINITY;
+    }
     double halfKm1 = halfK - 1;
-    double y = RandMath::modifiedBesselFirstKind(sqrtLambda * std::sqrt(x), halfKm1);
+    double y = RandMath::modifiedBesselFirstKind(std::sqrt(lambda * x), halfKm1);
     double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
     y = 0.5 * z + std::log(y);
@@ -77,7 +80,7 @@ double NoncentralChiSquared::F(double x) const
         exponent -= cdfCoef;
 
         /// Calculate log(2f(t))
-        double bessel = RandMath::modifiedBesselFirstKind(sqrtLambda * std::sqrt(t), halfKm1);
+        double bessel = RandMath::modifiedBesselFirstKind(std::sqrt(lambda * t), halfKm1);
         double z = halfKm1 * (logT - logLambda);
         z -= t + lambda;
         double log2F = 0.5 * z + std::log(bessel);

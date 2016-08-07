@@ -42,6 +42,12 @@ double GammaRand::f(double x) const
 {
     if (x < 0)
         return 0;
+    if (x == 0)
+    {
+        if (alpha > 1)
+            return 0.0;
+        return (alpha == 1) ? beta : INFINITY;
+    }
     double y = (alpha - 1) * std::log(x);
     y -= x * beta;
     y += pdfCoef;

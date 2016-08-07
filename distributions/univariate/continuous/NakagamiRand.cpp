@@ -23,7 +23,11 @@ void NakagamiRand::setParameters(double shape, double spread)
 
 double NakagamiRand::f(double x) const
 {
-    return (x <= 0) ? 0.0 : 2 * x * Y.f(x * x);
+    if (x < 0.0)
+        return 0.0;
+    if (x == 0)
+        return (m > 0.5) ? 0.0 : M_SQRT2 / M_SQRTPI / std::sqrt(w);
+    return (x < 0) ? 0.0 : 2 * x * Y.f(x * x);
 }
 
 double NakagamiRand::F(double x) const

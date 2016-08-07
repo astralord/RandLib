@@ -24,6 +24,8 @@ void LogCauchyRand::setScale(double scale)
 
 double LogCauchyRand::f(double x) const
 {
+    if (x == 0)
+        return INFINITY;
     return (x > 0) ? X.f(std::log(x)) / x : 0.0;
 }
 

@@ -65,7 +65,7 @@ double BetaRand::f(double x) const
         y = (alpha - 1) * std::log(x - x * x);
     else {
         y = (alpha - 1) * std::log(x);
-        y += (beta - 1) * std::log(1 - x);
+        y += (beta - 1) * std::log1p(-x);
     }
     return std::exp(mLogBetaFun + y);
 }

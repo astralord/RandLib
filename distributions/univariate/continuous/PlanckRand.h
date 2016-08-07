@@ -30,6 +30,7 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
+    void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

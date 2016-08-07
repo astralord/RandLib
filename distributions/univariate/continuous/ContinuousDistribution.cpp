@@ -13,14 +13,19 @@ double ContinuousDistribution::Quantile(double p) const
 {
     if (p < 0 || p > 1)
         return NAN;
-
     double root = Mean(); /// good starting point
     if (!std::isfinite(root))
     {
-        if (isLeftBounded())
+        if (isLeftBounded()) {
             root = MinValue() + 1;
-        else if (isRightBounded())
+            while(f(root) <= MIN_POSITIVE)
+                ++root;
+        }
+        else if (isRightBounded()) {
             root = MaxValue() - 1;
+            while(f(root) <= MIN_POSITIVE)
+                --root;
+        }
         else
             root = 0.0;
     }

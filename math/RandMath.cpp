@@ -258,7 +258,8 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
     if (a < 1)
     {
         double y = incompleteBetaFun(x, a + 1, b) * (a + b);
-        y += std::pow(x, a) * std::pow(1 - x, b);
+        double z = a * std::log(x) + b * std::log(1 - x);
+        y += std::exp(z);
         return y / a;
     }
     if (b < 1)
@@ -275,7 +276,8 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
             return std::pow(x, a) * sum;
         }
         double y = incompleteBetaFun(x, a, b + 1) * (a + b);
-        y -= std::pow(x, a) * std::pow(1 - x, b);
+        double z = a * std::log(x) + b * std::log(1 - x);
+        y -= std::exp(z);
         return y / b;
     }
 
@@ -293,7 +295,8 @@ double RandMath::incompleteBetaFun(double x, double a, double b)
     {
         y = integral([a, b] (double t)
         {
-            return std::pow(t, a - 1) * std::pow(1 - t, b - 1);
+            double z = (a - 1) * std::log(t) + (b - 1) * std::log(1 - t);
+            return std::exp(z);
         },
         minBound, maxBound);
     }
@@ -372,7 +375,7 @@ bool RandMath::findRoot(const std::function<double (double)> &funPtr, const std:
             if (std::fabs(fun) < epsilon)
                 return true;
             alpha *= 0.5;
-        } while ((grad == 0 || std::fabs(oldFun) < std::fabs(fun)) && alpha > epsilon);
+        } while ((std::fabs(grad) <= epsilon || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     return (iter == maxIter) ? false : true;
@@ -399,7 +402,7 @@ bool RandMath::findRoot(const std::function<DoublePair (double)> &funPtr, double
             if (std::fabs(fun) < epsilon)
                 return true;
             alpha *= 0.5;
-        } while ((grad == 0 || std::fabs(oldFun) < std::fabs(fun)) && alpha > epsilon);
+        } while ((std::fabs(grad) <= epsilon || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     return (iter == maxIter) ? false : true;

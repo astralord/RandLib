@@ -5,6 +5,7 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 
+
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
     : LimitingDistribution(exponent, skewness, scale, location)
 {
@@ -26,14 +27,22 @@ void StableRand::setParameters(double exponent, double skewness)
 {
     LimitingDistribution::setParameters(exponent, skewness);
 
+    /// set id of distribution
+    if (RandMath::areClose(alpha, 2.0))
+        distributionId = NORMAL;
+    else if (RandMath::areClose(alpha, 1.0))
+        distributionId = (beta == 0.0) ? CAUCHY : UNITY_EXPONENT;
+    else if (RandMath::areClose(alpha, 0.5) && RandMath::areClose(std::fabs(beta), 1.0))
+        distributionId = LEVY;
+    else
+        distributionId = COMMON;
+
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
 
-    if (alpha == 1 && beta != 0) /// Case when α = 1 and not Cauchy
+    if (distributionId == UNITY_EXPONENT)
         pdfCoef = 0.5 / beta;
-    if (alpha != 1 && alpha != 2 &&
-        !(alpha == 0.5 && std::fabs(beta) == 1)) /// Common case
-    {
+    else if (distributionId == COMMON) {
         xi = alphaInv * B;
         integrandCoef = alpham1Inv * std::log(std::cos(B));
     }
@@ -42,12 +51,11 @@ void StableRand::setParameters(double exponent, double skewness)
 void StableRand::setScale(double scale)
 {
     LimitingDistribution::setScale(scale);
-
-    if (alpha == 2) /// Normal
+    if (distributionId == NORMAL)
         pdfCoef = 0.5 / sigma;
-    else if (alpha == 0.5 && std::fabs(beta) == 1) /// +/- Levy
+    else if (distributionId == LEVY)
         pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
-    else if (alpha != 1)
+    else if (distributionId == COMMON)
         pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
 }
 
@@ -81,12 +89,12 @@ double StableRand::pdfLevy(double x) const
     return pdfCoef * y;
 }
 
-double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
+double StableRand::integrandAuxForUnityExponent(double theta, double xAdj) const
 {
-    if (theta >= M_PI_2)
-        return (beta > 0) ? 1e6 : -1e6;
-    if (theta <= -M_PI_2)
-        return (beta > 0) ? -1e6 : 1e6;
+    if (theta > M_PI_2 || RandMath::areClose(theta, M_PI_2))
+        return (beta > 0) ? BIG_NUMBER : -BIG_NUMBER;
+    if (theta < -M_PI_2 || RandMath::areClose(theta, -M_PI_2))
+        return (beta > 0) ? -BIG_NUMBER : BIG_NUMBER;
     if (theta == 0.0)
         return xAdj;
     double cosTheta = std::cos(theta);
@@ -96,17 +104,19 @@ double StableRand::integrandAuxForAlphaEqualOne(double theta, double xAdj) const
     if (std::isinf(u) || std::isnan(u))
     {
         if (theta < 0.0)
-            return (beta > 0) ? -1e6 : 1e6;
-        return (beta > 0) ? 1e6 : -1e6;
+            return (beta > 0) ? -BIG_NUMBER : BIG_NUMBER;
+        return (beta > 0) ? BIG_NUMBER : -BIG_NUMBER;
     }
     return u + xAdj;
 }
 
-double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
+double StableRand::integrandForUnityExponent(double theta, double xAdj) const
 {
     if (std::fabs(theta) >= M_PI_2)
         return 0.0;
-    double u = integrandAuxForAlphaEqualOne(theta, xAdj);
+    double u = integrandAuxForUnityExponent(theta, xAdj);
+    if (std::fabs(u) >= BIG_NUMBER)
+        return 0.0;
     u = std::exp(u);
     u *= std::exp(-u);
     if (std::isinf(u) || std::isnan(u))
@@ -114,7 +124,7 @@ double StableRand::integrandForAlphaEqualOne(double theta, double xAdj) const
     return u;
 }
 
-double StableRand::pdfForAlphaEqualOne(double x) const
+double StableRand::pdfForUnityExponent(double x) const
 {
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
@@ -123,20 +133,21 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     /// find peak of integrand
     double theta0 = 0;
 
-    std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForAlphaEqualOne, this, std::placeholders::_1, xAdj);
+    std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
     RandMath::findRoot(funPtr, -M_PI_2, M_PI_2, theta0);
 
     /// Sanity check
     if (std::fabs(theta0) >= M_PI_2)
         theta0 = 0.0;
 
-    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForAlphaEqualOne, this, std::placeholders::_1, xAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
 
     /// if theta0 is too close to +/- pi/2 then we can still underestimate the integral
     int maxRecursionDepth = 10;
-    if (M_PI_2 - std::fabs(theta0) < 0.1)
+    double closeness = M_PI_2 - std::fabs(theta0);
+    if (closeness < 0.1)
         maxRecursionDepth = 20;
-    else if (M_PI_2 - std::fabs(theta0) < 0.2)
+    else if (closeness < 0.2)
         maxRecursionDepth = 15;
 
     double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0, 1e-11, maxRecursionDepth);
@@ -145,12 +156,12 @@ double StableRand::pdfForAlphaEqualOne(double x) const
     return std::fabs(pdfCoef) * (int1 + int2) / sigma;
 }
 
-double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const
+double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const
 {
-    if (theta >= M_PI_2)
-        return alpha < 1 ? 1e6 : -1e6; // +/-INF
-    if (theta <= -M_PI_2 || theta <= -xiAdj)
-        return alpha < 1 ? -1e6 : +1e6; // +/-INF
+    if (theta > M_PI_2 || RandMath::areClose(theta, M_PI_2))
+        return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
+    if (theta < -M_PI_2 || RandMath::areClose(theta, -M_PI_2) || theta < -xiAdj || RandMath::areClose(theta, -xiAdj))
+        return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
     double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = std::sin(thetaAdj);
     double cosTheta = std::cos(theta);
@@ -161,15 +172,17 @@ double StableRand::integrandAuxForCommonAlpha(double theta, double xAdj, double 
     {
         /// we got numerical error, need to investigate to which extreme point we are closer
         if (theta < 0.5 * (M_PI_2 - xiAdj))
-            return alpha < 1 ? -1e6 : +1e6; // +/-INF
-        return alpha < 1 ? 1e6 : -1e6; // +/-INF
+            return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
+        return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
     }
     return integrandCoef + xAdj + y;
 }
 
-double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const
+double StableRand::integrandForCommonExponent(double theta, double xAdj, double xiAdj) const
 {
-    double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
+    double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
+    if (std::fabs(u) >= BIG_NUMBER)
+        return 0.0;
     u = std::exp(u);
     u *= std::exp(-u);
     if (std::isinf(u) || std::isnan(u))
@@ -177,21 +190,23 @@ double StableRand::integrandForCommonAlpha(double theta, double xAdj, double xiA
     return u;
 }
 
-double StableRand::pdfForCommonAlpha(double x) const
+double StableRand::pdfForCommonExponent(double x) const
 {
     x = (x - mu) / sigma; /// Standardize
 
     // TODO: elaborate dangerous values - alpha close to 1 and zero
     if (std::fabs(x) < 1e-4) /// if we are close to 0 then we do interpolation avoiding dangerous variates
     {
-        double numerator = std::tgamma(1 + alphaInv);
-        numerator *= std::cos(xi);
-        double denominator = sigma * std::pow(1 + zeta * zeta, .5 * alphaInv);
-        double y0 =  M_1_PI * numerator / denominator; /// f(0)
+        double y0 = std::lgamma(1 + alphaInv);
+        y0 -= 0.5 * alphaInv * std::log(1.0 + zeta * zeta);
+        y0 = std::exp(y0);
+        y0 *= std::cos(xi);
+        y0 /= (M_PI * sigma);
+        /// Now y0 = f(0)
         if (std::fabs(x) < MIN_POSITIVE)
             return y0;
         double b = (x > 0) ? 1.1e-4 : -1.1e-4;
-        double y1 = pdfForCommonAlpha(mu + sigma * b);
+        double y1 = pdfForCommonExponent(mu + sigma * b);
         return RandMath::linearInterpolation(0, b, y0, y1, x); // TODO: find a way to do better interpolation than linear
     }
 
@@ -215,12 +230,12 @@ double StableRand::pdfForCommonAlpha(double x) const
     double theta0 = 0.5 * (M_PI_2 - xiAdj);
     if (-xiAdj < M_PI_2)
     {
-        std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+        std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
         RandMath::findRoot(funPtr, -xiAdj, M_PI_2, theta0);
     }
 
     /// calculate two integrals
-    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonAlpha, this, std::placeholders::_1, xAdj, xiAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
     double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
     return pdfCoef * (int1 + int2) / x;
@@ -228,18 +243,20 @@ double StableRand::pdfForCommonAlpha(double x) const
 
 double StableRand::f(double x) const
 {
-    /// Check all 'good' cases
-    if (alpha == 2)
+    switch (distributionId) {
+    case NORMAL:
         return pdfNormal(x);
-    if (alpha == 1 && beta == 0)
+    case CAUCHY:
         return pdfCauchy(x);
-    if (alpha == .5 && beta == 1)
-        return pdfLevy(x);
-    if (alpha == .5 && beta == -1)
-        return pdfLevy(-x);
-
-    /// Now check the others
-    return (alpha == 1) ? pdfForAlphaEqualOne(x) : pdfForCommonAlpha(x);
+    case LEVY:
+        return (beta > 0) ? pdfLevy(x) : pdfLevy(-x);
+    case UNITY_EXPONENT:
+        return pdfForUnityExponent(x);
+    case COMMON:
+        return pdfForCommonExponent(x);
+    default:
+        return NAN; /// unexpected return
+    }
 }
 
 double StableRand::cdfNormal(double x) const
@@ -271,7 +288,7 @@ double StableRand::cdfLevy(double x) const
     return std::erfc(y);
 }
 
-double StableRand::cdfForCommonAlpha(double x) const
+double StableRand::cdfForCommonExponent(double x) const
 {
     x = (x - mu) / sigma; /// Standardize
     
@@ -281,7 +298,7 @@ double StableRand::cdfForCommonAlpha(double x) const
         if (std::fabs(x) < MIN_POSITIVE)
             return y0;
         double b = (x > 0) ? 1.1e-4 : -1.1e-4;
-        double y1 = cdfForCommonAlpha(mu + sigma * b);
+        double y1 = cdfForCommonExponent(mu + sigma * b);
         return RandMath::linearInterpolation(0, b, y0, y1, x);
     }
     
@@ -303,7 +320,11 @@ double StableRand::cdfForCommonAlpha(double x) const
 
     double y = RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
-        double u = integrandAuxForCommonAlpha(theta, xAdj, xiAdj);
+        double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
+        if (u >= BIG_NUMBER)
+            return 0.0;
+        else if (u <= -BIG_NUMBER)
+            return 1.0;
         u = std::exp(u);
         return std::exp(-u);
     },
@@ -317,41 +338,44 @@ double StableRand::cdfForCommonAlpha(double x) const
     return (x > 0) ? y : 1 - y;
 }
     
-double StableRand::cdfForAlphaEqualOne(double x) const
+double StableRand::cdfForUnityExponent(double x) const
 {
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
-
     double xAdj = -M_PI * x * pdfCoef;
-
     double y = RandMath::integral([this, xAdj] (double theta)
     {
-        double u = integrandAuxForAlphaEqualOne(theta, xAdj);
+        double u = integrandAuxForUnityExponent(theta, xAdj);
+        if (u >= BIG_NUMBER)
+            return 0.0;
+        else if (u <= -BIG_NUMBER)
+            return 1.0;
         u = std::exp(u);
         return std::exp(-u);
     },
     -M_PI_2, M_PI_2);
-
     y *= M_1_PI;
     return (beta > 0) ? y : 1 - y;
 }
 
 double StableRand::F(double x) const
 {
-    /// Check all 'good' cases    
-    if (alpha == 2)
+    switch (distributionId) {
+    case NORMAL:
         return cdfNormal(x);
-    if (alpha == 1 && beta == 0)
+    case CAUCHY:
         return cdfCauchy(x);
-    if (alpha == .5 && beta == 1)
-        return cdfLevy(x);
-    if (alpha == .5 && beta == -1)
-        return 1.0 - cdfLevy(-x);
-
-    /// Now check the others
-    return (alpha == 1) ? cdfForAlphaEqualOne(x) : cdfForCommonAlpha(x);
+    case LEVY:
+        return (beta > 0) ? cdfLevy(x) : 1.0 - cdfLevy(-x);
+    case UNITY_EXPONENT:
+        return cdfForUnityExponent(x);
+    case COMMON:
+        return cdfForCommonExponent(x);
+    default:
+        return NAN; /// unexpected return
+    }
 }
 
-double StableRand::variateForCommonAlpha() const
+double StableRand::variateForCommonExponent() const
 {
     double U = UniformRand::variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::standardVariate();
@@ -364,7 +388,7 @@ double StableRand::variateForCommonAlpha() const
     return mu + sigma * X;
 }
 
-double StableRand::variateForAlphaEqualOne() const
+double StableRand::variateForUnityExponent() const
 {
     double U = UniformRand::variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::standardVariate();
@@ -379,52 +403,64 @@ double StableRand::variateForAlphaEqualOne() const
 
 double StableRand::variate() const
 {
-    /// Check all 'good' cases
-    if (alpha == 2)
+    switch (distributionId) {
+    case NORMAL:
         return NormalRand::variate(mu, M_SQRT2 * sigma);
-    if (alpha == 1 && beta == 0)
+    case CAUCHY:
         return CauchyRand::variate(mu, sigma);
-    if (alpha == .5 && beta == 1)
-        return LevyRand::variate(mu, sigma);
-    if (alpha == .5 && beta == -1)
-        return -LevyRand::variate(mu, sigma);
-
-    /// Now check the others
-    return (alpha == 1) ? variateForAlphaEqualOne() : variateForCommonAlpha();
+    case LEVY:
+        return RandMath::sign(beta) * LevyRand::variate(mu, sigma);
+    case UNITY_EXPONENT:
+        return variateForUnityExponent();
+    case COMMON:
+        return variateForCommonExponent();
+    default:
+        return NAN; /// unexpected return
+    }
 }
 
 void StableRand::sample(std::vector<double> &outputData) const
 {
-    /// Check all 'good' cases
-    if (alpha == 2) {
+    switch (distributionId) {
+    case NORMAL: {
         for (double &var : outputData)
             var = NormalRand::variate(mu, M_SQRT2 * sigma);
     }
-    else if (alpha == 1 && beta == 0) {
+        break;
+    case CAUCHY: {
         for (double &var : outputData)
             var = CauchyRand::variate(mu, sigma);
     }
-    else if (alpha == .5 && beta == 1) {
-        for (double &var : outputData)
-            var = LevyRand::variate(mu, sigma);
+        break;
+    case LEVY: {
+        if (beta > 0) {
+            for (double &var : outputData)
+                var = LevyRand::variate(mu, sigma);
+        }
+        else {
+            for (double &var : outputData)
+                var = -LevyRand::variate(mu, sigma);
+        }
     }
-    else if (alpha == .5 && beta == -1) {
+        break;
+    case UNITY_EXPONENT: {
         for (double &var : outputData)
-            var = -LevyRand::variate(mu, sigma);
+            var = variateForUnityExponent();
     }
-    else if (alpha == 1) {
+        break;
+    case COMMON: {
         for (double &var : outputData)
-            var = variateForAlphaEqualOne();
+            var = variateForCommonExponent();
     }
-    else {
-        for (double &var : outputData)
-            var = variateForCommonAlpha();
+        break;
+    default:
+        break;
     }
 }
 
 double StableRand::Variance() const
 {
-    return (alpha == 2) ? 2 * sigma * sigma : INFINITY;
+    return (distributionId == NORMAL)  ? 2 * sigma * sigma : INFINITY;
 }
 
 std::complex<double> StableRand::CF(double t) const
@@ -434,16 +470,15 @@ std::complex<double> StableRand::CF(double t) const
 
 double StableRand::Mode() const
 {
-    if (beta == 0 || alpha == 2)
+    switch (distributionId) {
+    case NORMAL:
+    case CAUCHY:
         return mu;
-    if (alpha == 0.5)
-    {
-        if (beta == 1)
-            return sigma / 3.0 + mu;
-        if (beta == -1)
-            return -sigma / 3.0 + mu;
+    case LEVY:
+        return mu + RandMath::sign(beta) * sigma / 3.0;
+    default:
+        return ContinuousDistribution::Mode();
     }
-    return ContinuousDistribution::Mode();
 }
 
 double StableRand::Median() const
@@ -453,12 +488,12 @@ double StableRand::Median() const
 
 double StableRand::Skewness() const
 {
-    return (alpha == 2) ? 0 : NAN;
+    return (distributionId == NORMAL) ? 0 : NAN;
 }
 
 double StableRand::ExcessKurtosis() const
 {
-    return (alpha == 2) ? 0 : NAN;
+    return (distributionId == NORMAL)  ? 0 : NAN;
 }
 
 std::string HoltsmarkRand::name() const

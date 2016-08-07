@@ -13,6 +13,18 @@ class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
     double alpham1Inv, alpha_alpham1; /// 1 / (α - 1) and α / (α - 1)
     double xi, integrandCoef;
 
+    static constexpr double BIG_NUMBER = 1e6; /// aka infinity for pdf and cdf calculations
+
+    enum DISTRIBUTION_ID {
+        NORMAL,
+        LEVY,
+        CAUCHY,
+        UNITY_EXPONENT,
+        COMMON
+    };
+
+    DISTRIBUTION_ID distributionId;
+
 protected:
     double pdfCoef;
 
@@ -42,13 +54,13 @@ protected:
     double pdfCauchy(double x) const;
     double pdfLevy(double x) const;
 private:
-    double integrandAuxForAlphaEqualOne(double theta, double xAdj) const;
-    double integrandForAlphaEqualOne(double theta, double xAdj) const;
-    double pdfForAlphaEqualOne(double x) const;
+    double integrandAuxForUnityExponent(double theta, double xAdj) const;
+    double integrandForUnityExponent(double theta, double xAdj) const;
+    double pdfForUnityExponent(double x) const;
 
-    double integrandAuxForCommonAlpha(double theta, double xAdj, double xiAdj) const;
-    double integrandForCommonAlpha(double theta, double xAdj, double xiAdj) const;
-    double pdfForCommonAlpha(double x) const;
+    double integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const;
+    double integrandForCommonExponent(double theta, double xAdj, double xiAdj) const;
+    double pdfForCommonExponent(double x) const;
 public:    
     double f(double x) const override;
     
@@ -58,15 +70,15 @@ protected:
     double cdfCauchy(double x) const;
     double cdfLevy(double x) const;
 private:
-    double cdfForCommonAlpha(double x) const;
-    double cdfForAlphaEqualOne(double x) const;
+    double cdfForCommonExponent(double x) const;
+    double cdfForUnityExponent(double x) const;
 public:
     double F(double x) const override;
     
 private:
     /// variate
-    double variateForCommonAlpha() const;
-    double variateForAlphaEqualOne() const;
+    double variateForCommonExponent() const;
+    double variateForUnityExponent() const;
 public:
     double variate() const override;
     void sample(std::vector<double> &outputData) const override;

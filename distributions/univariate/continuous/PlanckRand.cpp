@@ -20,7 +20,7 @@ void PlanckRand::setParameters(double shape, double scale)
         b = 1.0;
 
     Z.setExponent(a + 1);
-    G.setParameters(a + 1, 1.0);
+    G.setParameters(a + 1, b);
 
     pdfCoef = std::log(Z.getInverseZetaFunction());
     pdfCoef += (a + 1) * std::log(b);
@@ -78,9 +78,14 @@ double PlanckRand::F(double x) const
 
 double PlanckRand::variate() const
 {
-    double g = G.variate();
-    double z = Z.variate();
-    return g / (b * z);
+    return G.variate() / Z.variate();
+}
+
+void PlanckRand::sample(std::vector<double> &outputData) const
+{
+    G.sample(outputData);
+    for (double & var : outputData)
+        var /= Z.variate();
 }
 
 double PlanckRand::Mean() const
