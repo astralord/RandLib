@@ -70,63 +70,81 @@ long double RandMath::binomialCoef(int n, int k)
 
 double RandMath::digamma(double x)
 {
+    /// Negative argument
     if (x < 0.0)
         return digamma(1.0 - x) + M_PI / std::tan(M_PI * (1.0 - x));
-    double dgam = 0.0;
+
+    /// Large argument
     if (x > 1000.0)
         return std::log(x) - 0.5 / x;
-    while (x > 2.0)
-    {
-        // TODO: make it faster
-        --x;
-        dgam += 1.0 / x;
-    }
-    double y = x - 1.0;
-    dgam += y / x - M_EULER;
-    // TODO: mininize error by bigger n
-    static constexpr int n = 6;
-    static constexpr double c[] = {0.64493313, -0.20203181,
-                                   0.08209433, -0.03591665,
-                                   0.01485925, -0.00472050};
-    double r = std::pow(y, n + 1);
-    dgam += 0.5 * r;
-    for (int i = 0; i != n; ++i)
-        dgam += c[i] * (std::pow(y, i + 1) - r);
 
-    if (x < 0.0) /// for x < 0 use Digamma(1-x) = Digamma(x) + pi/tan(pi*x);
-        dgam -= M_PI / std::tan(M_PI * x) + 1.0 / x;
-    return dgam;
+    /// Value at zero is undefined
+    if (x == 0.0)
+        return NAN; /// +/- INFINITY
+
+    double y;
+    if (x == 1.0)
+        y = 0;
+    else if (x == 0.5)
+        y = 2 * M_LN2;
+    else if (x == 0.25)
+        y = -0.5 * M_PI - 3 * M_LN2;
+    else {
+        /// Use property: digamma(x) = digamma(x + 1) - 1 / x
+        /// and integral representation
+        y = RandMath::integral([x] (double t)
+        {
+            if (t >= 1)
+                return x;
+            if (t <= 0)
+                return 0.0;
+            return (1.0 - std::pow(t, x)) / (1.0 - t);
+        }, 0, 1) - 1.0 / x;
+    }
+    return y - M_EULER;
 }
 
 double RandMath::trigamma(double x)
 {
+    /// Negative argument
     if (x < 0.0)
     {
         double z = M_PI / std::sin(M_PI * (1.0 - x));
         return z - digamma(1.0 - x);
     }
-    double tgam = 0.0;
-    if (x > 1000.0)
-    {
+
+    /// Large argument
+    if (x > 200.0)
         return (x + 0.5) / (x * x);
-    }
-    while (x > 2.0)
+
+    /// Special values
+    if (x == 0.0)
+        return INFINITY;
+    if (x == 0.25)
+        return M_PI_SQ + 8 * M_CATALAN;
+    if (x == 0.5)
+        return 0.5 * M_PI_SQ;
+    if (x == 1.0)
+        return M_PI_SQ / 6.0;
+    if (x == 1.5)
+        return 0.5 * M_PI_SQ - 4.0;
+    if (x == 2.0)
+        return M_PI_SQ / 6.0 - 1.0;
+
+    /// Use integral representation
+    return -RandMath::integral([x] (double t)
     {
-        --x;
-        tgam -= 1.0 / (x * x);
-    }
-    double y = x - 1.0;
-    tgam += 1.0 / (x * x);
-    // TODO: mininize error by bigger n and don't use same constants twice
-    static constexpr int n = 6;
-    static constexpr double c[] = {0.64493313, -0.20203181,
-                                   0.08209433, -0.03591665,
-                                   0.01485925, -0.00472050};
-    double r = (n + 1) * std::pow(y, n);
-    tgam += 0.5 * r;
-    for (int i = 0; i != n; ++i)
-        tgam += c[i] * ((i + 1) * std::pow(y, i) - r);
-    return tgam;
+        if (t >= 1)
+            return -1.0;
+        if (t <= 0)
+            return 0.0;
+        double logT = std::log(t);
+        double y = x * logT;
+        y = std::exp(y);
+        y *= logT;
+        y /= (1.0 - t);
+        return y;
+    }, 0, 1) + 1.0 / (x * x);
 }
 
 long double RandMath::lowerIncGamma(double a, double x)
