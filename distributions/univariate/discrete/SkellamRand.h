@@ -35,6 +35,7 @@ public:
     double P(int k) const override;
     double F(int k) const override;
     int variate() const override;
+    void sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

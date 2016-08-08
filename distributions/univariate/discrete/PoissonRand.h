@@ -32,6 +32,7 @@ public:
     double F(int k) const override;
     int variate() const override;
     static int variate(double rate);
+    void sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

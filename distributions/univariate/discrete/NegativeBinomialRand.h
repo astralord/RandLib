@@ -26,6 +26,7 @@ private:
     double qDivP; /// q / p
     static constexpr int tableSize = 16;
     double table[tableSize];
+    GammaRand GammaRV;
 
 public:
     NegativeBinomialRand(T number, double probability);

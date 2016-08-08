@@ -74,6 +74,12 @@ int PoissonRand::variate(double rate)
     return k;
 }
 
+void PoissonRand::sample(std::vector<int> &outputData) const
+{
+    for (int & var : outputData)
+        var = variate();
+}
+
 double PoissonRand::Mean() const
 {
     return lambda;

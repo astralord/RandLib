@@ -198,7 +198,7 @@ double StableRand::pdfForCommonExponent(double x) const
     if (std::fabs(x) < 1e-4) /// if we are close to 0 then we do interpolation avoiding dangerous variates
     {
         double y0 = std::lgamma(1 + alphaInv);
-        y0 -= 0.5 * alphaInv * std::log(1.0 + zeta * zeta);
+        y0 -= 0.5 * alphaInv * std::log1p(zeta * zeta);
         y0 = std::exp(y0);
         y0 *= std::cos(xi);
         y0 /= (M_PI * sigma);
@@ -207,7 +207,7 @@ double StableRand::pdfForCommonExponent(double x) const
             return y0;
         double b = (x > 0) ? 1.1e-4 : -1.1e-4;
         double y1 = pdfForCommonExponent(mu + sigma * b);
-        return RandMath::linearInterpolation(0, b, y0, y1, x); // TODO: find a way to do better interpolation than linear
+        return RandMath::linearInterpolation(0, b, y0, y1, x);
     }
 
     double xiAdj = xi; /// +- xi

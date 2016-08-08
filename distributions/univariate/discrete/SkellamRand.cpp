@@ -49,6 +49,13 @@ int SkellamRand::variate() const
     return X.variate() - Y.variate();
 }
 
+void SkellamRand::sample(std::vector<int> &outputData) const
+{
+    X.sample(outputData);
+    for (int & var : outputData)
+        var -= Y.variate();
+}
+
 double SkellamRand::Mean() const
 {
     return mu1 - mu2;

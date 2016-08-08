@@ -30,11 +30,12 @@ template< typename T >
 void NegativeBinomialRand<T>::setParameters(T number, double probability)
 {
     setValidParameters(number, probability);
-    pdfCoef = r * std::log(p);
-    pdfCoef -= std::lgamma(r);
     q = 1.0 - p;
     logQ = std::log(q);
-    qDivP = q / p;
+    GammaRV.setParameters(r, p / q);
+    qDivP = GammaRV.getScale();
+    pdfCoef = r * std::log(p);
+    pdfCoef -= GammaRV.getLogGammaFunction();
 
     if (getIdOfUsedGenerator() == TABLE) {
         /// table method
@@ -89,7 +90,7 @@ NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialRand<double>::getIdOf
 template< typename T >
 int NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 {
-    return PoissonRand::variate(qDivP * GammaRand::standardVariate(r));
+    return PoissonRand::variate(GammaRV.variate());
 }
 
 template<>
@@ -189,8 +190,7 @@ std::complex<double> NegativeBinomialRand<T>::CF(double t) const
 {
     if (t == 0)
         return 1;
-    std::complex<double> it(0, t);
-    std::complex<double> denominator = 1.0 - q * std::exp(it);
+    std::complex<double> denominator(1.0 - q * std::cos(t), -q * std::sin(t));
     return std::pow(p / denominator, r);
 }
 
