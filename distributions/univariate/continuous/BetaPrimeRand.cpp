@@ -92,15 +92,15 @@ std::complex<double> BetaPrimeRand::CF(double t) const
     return std::complex<double>(re, im);
 }
 
-double BetaPrimeRand::Quantile(double p) const
+double BetaPrimeRand::QuantileImpl(double p) const
 {
-    double x = BetaRand::Quantile(p);
+    double x = BetaRand::QuantileImpl(p);
     return x / (1.0 - x);
 }
 
 double BetaPrimeRand::Median() const
 {
-    return (alpha == beta) ? 1.0 : Quantile(0.5);
+    return (alpha == beta) ? 1.0 : QuantileImpl(0.5);
 }
 
 double BetaPrimeRand::Mode() const

@@ -9,10 +9,8 @@ void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double
         y[i] = f(x[i]);
 }
 
-double ContinuousDistribution::Quantile(double p) const
+double ContinuousDistribution::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
     double root = Mean(); /// good starting point
     if (!std::isfinite(root))
     {
@@ -134,7 +132,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
-    /// works good for unimodal and distributions
+    /// works good for unimodal distributions
     static constexpr double epsilon = 1e-10;
 
     // TODO: get rid of startpoint

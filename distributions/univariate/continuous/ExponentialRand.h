@@ -46,7 +46,7 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    double Quantile(double p) const override;
+    double QuantileImpl(double p) const override;
 
     double Median() const override;
 

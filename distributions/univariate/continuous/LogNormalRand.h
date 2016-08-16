@@ -37,7 +37,7 @@ public:
     double Variance() const override;
 
     static double quantile(double p, double location, double scale);
-    double Quantile(double p) const override;
+    double QuantileImpl(double p) const override;
 
     double Median() const override;
     double Mode() const override;

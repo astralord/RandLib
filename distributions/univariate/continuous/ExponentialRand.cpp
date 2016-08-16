@@ -89,11 +89,9 @@ std::complex<double> ExponentialRand::CF(double t) const
     return 1.0 / std::complex<double>(1.0, -theta * t);
 }
 
-double ExponentialRand::Quantile(double p) const
+double ExponentialRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
-    return -theta * std::log(1.0 - p);
+    return -theta * std::log1p(-p);
 }
 
 double ExponentialRand::Median() const
@@ -112,7 +110,7 @@ double ExponentialRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return RandMath::factorial(n) / std::pow(beta, n);
+    return std::exp(std::lgamma(n + 1) - n * std::log(beta));
 }
 
 bool ExponentialRand::fitMM(const std::vector<double> &sample)

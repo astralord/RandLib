@@ -51,7 +51,7 @@ public:
     std::complex<double> CF(double t) const override;
     static double standardQuantile(double p);
     static double quantile(double p, double mean, double scale);
-    double Quantile(double p) const override;
+    double QuantileImpl(double p) const override;
 
     double Moment(int n) const;
 

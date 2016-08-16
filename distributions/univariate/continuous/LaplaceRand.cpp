@@ -29,8 +29,8 @@ void LaplaceRand::setAsymmetry(double asymmetry)
     kInv = 1.0 / k;
     kSq = k * k;
     pdfCoef = 1.0 / (sigma * (k + kInv));
-    cdfCoef = 1.0 / (1 + kSq);
-    setLocation((1.0 - kSq) * sigma / k);
+    cdfCoef = -std::log1p(kSq);
+    mu = (1.0 - kSq) * sigma * kInv;
 }
 
 double LaplaceRand::f(double x) const
@@ -91,11 +91,8 @@ std::complex<double> LaplaceRand::CF(double t) const
     return x * y * z / denominator;
 }
 
-double LaplaceRand::Quantile(double p) const
+double LaplaceRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
-
     if (p < kSq / (1 + kSq)) {
         double q = p * (1.0 / kSq + 1.0);
         q = std::log(q);

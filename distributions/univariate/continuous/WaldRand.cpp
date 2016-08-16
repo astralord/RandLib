@@ -21,7 +21,7 @@ void WaldRand::setParameters(double mean, double shape)
     lambda = shape;
     if (lambda <= 0)
         lambda = 1.0;
-    pdfCoef = std::sqrt(.5 * lambda * M_1_PI);
+    pdfCoef = 0.5 * std::log(0.5 * lambda * M_1_PI);
     cdfCoef = std::exp(2 * lambda / mu);
 }
 
@@ -34,8 +34,8 @@ double WaldRand::f(double x) const
     double z = (x - mu);
     z *= z;
     z *= -.5 * lambda * xInv / (mu * mu);
-    z = std::exp(z);
-    return pdfCoef * y * z;
+    z = std::exp(z + pdfCoef);
+    return y * z;
 }
 
 double WaldRand::F(double x) const

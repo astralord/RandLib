@@ -62,12 +62,21 @@ public:
      */
     virtual double Variance() const = 0;
 
+private:
     /**
-     * @brief Quantile
+     * @brief QuantileImpl
      * @param p
      * @return such x that F(x) = p
      */
-    virtual double Quantile(double p) const = 0;
+    virtual double QuantileImpl(double p) const = 0;
+
+public:
+    /**
+     * @brief Quantile
+     * @param p
+     * @return QuantileImpl(p) if p is in (0, 1)
+     */
+    double Quantile(double p) const;
 
     /**
      * @brief QuantileFunction

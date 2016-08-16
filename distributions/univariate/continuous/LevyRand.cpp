@@ -50,10 +50,8 @@ std::complex<double> LevyRand::CF(double t) const
     return std::exp(y);
 }
 
-double LevyRand::Quantile(double p) const
+double LevyRand::QuantileImpl(double p) const
 {
-    if (p == 0.0)
-        return mu;
     double x = pdfCoef * M_SQRT2PI / NormalRand::standardQuantile(0.5 * p);
     return mu + x * x;
 }

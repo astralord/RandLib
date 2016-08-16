@@ -7,6 +7,8 @@
 /**
  * @brief The StableRand class
  * Stable distribution
+ *
+ * X ~ Stable(α, β, σ, μ)
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
@@ -27,6 +29,9 @@ class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 
 protected:
     double pdfCoef;
+    double lgammaExponent; /// log(gamma(α))
+    double pdfCoefLimit; /// coefficient for tail approximation
+    double pdfXLimit; /// boundary k for such that for |x| > k we use tail approximation
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
@@ -97,7 +102,9 @@ public:
 
 /**
  * @brief The HoltsmarkRand class
- * X ~ Stable(1.5, 0.0, scale, location)
+ *
+ * X ~ Holtsmark(σ, μ)
+ * X ~ Stable(1.5, 0, σ, μ)
  */
 class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
 {
@@ -108,7 +115,9 @@ public:
 
 /**
  * @brief The LandauRand class
- * X ~ Stable(1.0, 1.0, scale, location)
+ *
+ * X ~ Landau(σ, μ)
+ * X ~ Stable(1, 1, σ, μ)
  */
 class RANDLIBSHARED_EXPORT LandauRand : public StableRand
 {

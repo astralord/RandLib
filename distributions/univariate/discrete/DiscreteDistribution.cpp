@@ -32,10 +32,8 @@ int DiscreteDistribution::Mode() const
     return x;
 }
 
-double DiscreteDistribution::Quantile(double probability) const
+double DiscreteDistribution::QuantileImpl(double probability) const
 {
-    if (probability < 0 || probability > 1)
-        return NAN;
     double mean = Mean();
     int down = static_cast<int>(std::floor(mean)), up = down + 1;
     double fu = F(up), fd = F(down);

@@ -40,11 +40,20 @@ void StableRand::setParameters(double exponent, double skewness)
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
 
-    if (distributionId == UNITY_EXPONENT)
+    if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / beta;
+        /// pdfXLimit is such k that f(x) < 1e-4 for |x| > k
+        pdfXLimit = std::sqrt(2e4 / M_PI * M_E);
+    }
     else if (distributionId == COMMON) {
         xi = alphaInv * B;
         integrandCoef = alpham1Inv * std::log(std::cos(B));
+        pdfCoef = M_1_PI * alpha / (std::fabs(1 - alpha) * sigma);
+        lgammaExponent = std::lgamma(alpha);
+        pdfCoefLimit = alpha * std::sin(M_PI_2 * alpha) / M_PI;
+        /// pdfXLimit is such k that f(x) < 1e-4 for |x| > k
+        pdfXLimit = 2e4 * pdfCoefLimit * std::exp(lgammaExponent);
+        pdfXLimit = std::pow(pdfXLimit, 1.0 / (alpha + 1));
     }
 }
 
@@ -128,11 +137,16 @@ double StableRand::pdfForUnityExponent(double x) const
 {
     x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
+    if (std::fabs(x) > pdfXLimit) {
+        double y = 1.0 / (M_PI * x * x);
+        y *= (x > 0) ? (1 + beta) : (1 - beta);
+        return y;
+    }
+
     double xAdj = -M_PI * x * pdfCoef;
 
-    /// find peak of integrand
+    /// Find peak of the integrand
     double theta0 = 0;
-
     std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
     RandMath::findRoot(funPtr, -M_PI_2, M_PI_2, theta0);
 
@@ -142,7 +156,7 @@ double StableRand::pdfForUnityExponent(double x) const
 
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
 
-    /// if theta0 is too close to +/- pi/2 then we can still underestimate the integral
+    /// If theta0 is too close to +/- pi/2 then we can still underestimate the integral
     int maxRecursionDepth = 10;
     double closeness = M_PI_2 - std::fabs(theta0);
     if (closeness < 0.1)
@@ -170,7 +184,7 @@ double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, doub
     y += alpha_alpham1 * std::log(cosTheta / sinThetaAdj);
     if (std::isinf(y) || std::isnan(y))
     {
-        /// we got numerical error, need to investigate to which extreme point we are closer
+        /// We got numerical error, need to investigate to which extreme point we are closer
         if (theta < 0.5 * (M_PI_2 - xiAdj))
             return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
         return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
@@ -194,8 +208,21 @@ double StableRand::pdfForCommonExponent(double x) const
 {
     x = (x - mu) / sigma; /// Standardize
 
-    // TODO: elaborate dangerous values - alpha close to 1 and zero
-    if (std::fabs(x) < 1e-4) /// if we are close to 0 then we do interpolation avoiding dangerous variates
+    double absX = x;
+    double xiAdj = xi; /// +- xi
+    if (x > 0) {
+        if (alpha < 1 && beta == -1)
+            return 0.0;
+    }
+    else {
+        if (alpha < 1 && beta == 1)
+            return 0.0;
+        absX = -x;
+        xiAdj = -xi;
+    }
+
+    /// If x is too close to 0, we do interpolation avoiding dangerous variates
+    if (absX < 1e-4)
     {
         double y0 = std::lgamma(1 + alphaInv);
         y0 -= 0.5 * alphaInv * std::log1p(zeta * zeta);
@@ -210,23 +237,21 @@ double StableRand::pdfForCommonExponent(double x) const
         return RandMath::linearInterpolation(0, b, y0, y1, x);
     }
 
-    double xiAdj = xi; /// +- xi
-    if (x > 0)
-    {
-        if (alpha < 1 && beta == -1)
-            return 0;
-    }
-    else
-    {
-        if (alpha < 1 && beta == 1)
-            return 0;
-        x = -x;
-        xiAdj = -xi;
+    double logAbsX = std::log(absX);
+
+    /// If x is quite large we use tail approximation
+    if (absX > pdfXLimit) {
+        double y = lgammaExponent;
+        y -= (alpha + 1) * logAbsX;
+        y = std::exp(y);
+        y *= pdfCoefLimit;
+        y *= (x > 0) ? (1 + beta) : (1 - beta);
+        return y;
     }
 
-    double xAdj = alpha_alpham1 * std::log(x);
+    double xAdj = alpha_alpham1 * logAbsX;
 
-    /// find the peak of the integrand
+    /// Search for the peak of the integrand
     double theta0 = 0.5 * (M_PI_2 - xiAdj);
     if (-xiAdj < M_PI_2)
     {
@@ -234,11 +259,11 @@ double StableRand::pdfForCommonExponent(double x) const
         RandMath::findRoot(funPtr, -xiAdj, M_PI_2, theta0);
     }
 
-    /// calculate two integrals
+    /// Calculate sum of two integrals
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
     double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
-    return pdfCoef * (int1 + int2) / x;
+    return pdfCoef * (int1 + int2) / absX;
 }
 
 double StableRand::f(double x) const
@@ -380,11 +405,11 @@ double StableRand::variateForCommonExponent() const
     double U = UniformRand::variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::standardVariate();
     double alphaUB = alpha * U + B;
-    double X = S * std::sin(alphaUB); /// S * sin(alpha * V + B)
+    double X = std::sin(alphaUB);
     double W_adj = W / std::cos(U - alphaUB);
-    X *= W_adj; /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B)
-    X *= std::pow(W_adj * std::cos(U), -alphaInv); /// S * sin(alpha * V + B) * W / cos((1 - alpha) * V - B) /
-                                                   /// ((W * cos(V) / cos((1 - alpha) * V - B)) ^ (1 / alpha))
+    X *= W_adj;
+    double R = S - alphaInv * std::log(W_adj * std::cos(U));
+    X *= std::exp(R);
     return mu + sigma * X;
 }
 
@@ -470,15 +495,12 @@ std::complex<double> StableRand::CF(double t) const
 
 double StableRand::Mode() const
 {
-    switch (distributionId) {
-    case NORMAL:
-    case CAUCHY:
+    /// For symmetric distributions mode is μ (see Wintner(1936))
+    if (beta == 0)
         return mu;
-    case LEVY:
-        return mu + RandMath::sign(beta) * sigma / 3.0;
-    default:
-        return ContinuousDistribution::Mode();
-    }
+    if (distributionId == LEVY)
+        return mu + beta * sigma / 3.0;
+    return ContinuousDistribution::Mode();
 }
 
 double StableRand::Median() const

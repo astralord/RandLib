@@ -127,13 +127,7 @@ std::complex<double> NormalRand::CF(double t) const
 double NormalRand::standardQuantile(double p)
 {
     /// Abramowitz and Stegun improved approximation
-    if (p < 0.5)
-        return -standardQuantile(1.0 - p);
-    else
-        p = 1.0 - p;
-    if (p < 0.0 || p > 1.0)
-        return NAN;
-    long double t = -std::log(p);
+    long double t = (p < 0.5) ? -std::log(p) : -std::log1p(-p);
     t = std::sqrt(t + t);
     static constexpr long double c[] = {2.653962002601684482l, 1.561533700212080345l, 0.061146735765196993l};
     static constexpr long double d[] = {1.904875182836498708l, 0.454055536444233510l, 0.009547745327068945l};
@@ -147,17 +141,20 @@ double NormalRand::standardQuantile(double p)
     denominator += d[0];
     denominator *= t;
     denominator += 1.0;
-    return t - numerator / denominator;
+    double y = numerator / denominator - t;
+    return (p < 0.5) ? y : -y;
 }
 
 double NormalRand::quantile(double p, double mean, double scale)
 {
+    if (p < 0 || p > 1)
+        return NAN;
     return mean + scale * standardQuantile(p);
 }
 
-double NormalRand::Quantile(double p) const
+double NormalRand::QuantileImpl(double p) const
 {
-    return quantile(p, mu, sigma0);
+    return mu + sigma0 * standardQuantile(p);
 }
 
 double NormalRand::Moment(int n) const
@@ -233,15 +230,15 @@ bool NormalRand::fitUMVU(const std::vector<double> &sample, DoublePair &confiden
 
     /// calculate confidence interval for mean
     StudentTRand t(nm1);
-    double interval = t.Quantile(p) * sigma0 / std::sqrt(n);
+    double interval = t.QuantileImpl(p) * sigma0 / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
     ChiSquaredRand chi(nm1);
     double numerator = nm1 * sigma0 * sigma0;
-    confidenceIntervalForVariance.first = numerator / chi.Quantile(p);
-    confidenceIntervalForVariance.second = numerator / chi.Quantile(1.0 - p);
+    confidenceIntervalForVariance.first = numerator / chi.QuantileImpl(p);
+    confidenceIntervalForVariance.second = numerator / chi.QuantileImpl(1.0 - p);
     return true;
 }
 

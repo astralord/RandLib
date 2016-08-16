@@ -23,7 +23,7 @@ public:
     double Variance() const override;
 
     std::complex<double> CF(double t) const override;
-    double Quantile(double p) const;
+    double QuantileImpl(double p) const;
 
     double Median() const override;
     double Mode() const override;

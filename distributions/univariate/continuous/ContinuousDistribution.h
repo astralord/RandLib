@@ -28,7 +28,7 @@ public:
      */
     void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
-    double Quantile(double p) const override;
+    double QuantileImpl(double p) const override;
     double Hazard(double x) const override;
     double Mode() const override;
 

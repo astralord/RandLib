@@ -117,10 +117,8 @@ double ParetoRand::Variance() const
     return (alpha > 1) ? INFINITY : NAN;
 }
 
-double ParetoRand::Quantile(double p) const
+double ParetoRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
     return xm / std::pow(1 - p, alphaInv);
 }
 

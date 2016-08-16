@@ -49,9 +49,9 @@ double LogCauchyRand::Variance() const
     return INFINITY;
 }
 
-double LogCauchyRand::Quantile(double p) const
+double LogCauchyRand::QuantileImpl(double p) const
 {
-    return (p == 0) ? 0.0 : std::exp(X.Quantile(p));
+    return std::exp(X.QuantileImpl(p));
 }
 
 double LogCauchyRand::Median() const

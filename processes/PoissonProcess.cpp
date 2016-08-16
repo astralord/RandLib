@@ -29,6 +29,6 @@ double PoissonProcess::VarianceImpl(double t) const
 double PoissonProcess::Quantile(double t, double p) const
 {
     PoissonRand X(lambda * (t - currentTime));
-    return X.Quantile(p) + currentValue;
+    return X.QuantileImpl(p) + currentValue;
 }
 

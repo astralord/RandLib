@@ -17,7 +17,7 @@ void LogarithmicRand::setProbability(double probability)
     if (p <= 0 || p >= 1)
         p = 0.5;
     q = 1.0 - p;
-    logQInv = 1.0 / std::log(q);
+    logQInv = 1.0 / std::log1p(-p);
 }
 
 double LogarithmicRand::P(int k) const
@@ -63,8 +63,7 @@ std::complex<double> LogarithmicRand::CF(double t) const
 {
     if (t == 0)
         return 1;
-    std::complex<double> y(0, t);
-    y = std::exp(y);
+    std::complex<double> y(std::cos(t), std::sin(t));
     y = std::log(1.0 - p * y);
     return y * logQInv;
 }

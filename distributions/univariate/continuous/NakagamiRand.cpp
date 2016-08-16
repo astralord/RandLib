@@ -222,11 +222,9 @@ double RayleighRand::Variance() const
     return (2.0 - M_PI_2) / sigmaSqInv;
 }
 
-double RayleighRand::Quantile(double p) const
+double RayleighRand::QuantileImpl(double p) const
 {
-    if (p < 0.0 || p > 1.0)
-        return NAN;
-    return sigma * std::sqrt(-2 * std::log(1 - p));
+    return sigma * std::sqrt(-2 * std::log1p(-p));
 }
 
 double RayleighRand::Median() const

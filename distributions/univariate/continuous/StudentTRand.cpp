@@ -92,8 +92,9 @@ void StudentTRand::sample(std::vector<double> &outputData) const
             var = CauchyRand::variate(mu, sigma);
     }
     else {
+        Y.sample(outputData);
         for (double &var : outputData)
-            var = mu + sigma * NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
+            var = mu + sigma * NormalRand::standardVariate() / std::sqrt(var / v);
     }
 }
 
@@ -122,11 +123,8 @@ std::complex<double> StudentTRand::CF(double t) const
     return cf;
 }
 
-double StudentTRand::Quantile(double p) const
+double StudentTRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-         return NAN;
-
     double temp = p - 0.5;
     if (v == 1)
         return (std::tan(M_PI * temp) - mu) / sigma;
@@ -139,7 +137,7 @@ double StudentTRand::Quantile(double p) const
         double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
         return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
     }
-    return ContinuousDistribution::Quantile(p);
+    return ContinuousDistribution::QuantileImpl(p);
 }
 
 double StudentTRand::Median() const

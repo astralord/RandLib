@@ -39,7 +39,7 @@ int GeometricRand::variate(double probability)
 {
     /// here we use 0.05 instead of 0.08 because log(1-p) wasn't hashed
     if (probability < 0.05)
-        return std::floor(ExponentialRand::variate(-std::log(1 - probability)));
+        return std::floor(ExponentialRand::variate(-std::log1p(-probability)));
 
     double U = UniformRand::standardVariate();
     int x = 0;

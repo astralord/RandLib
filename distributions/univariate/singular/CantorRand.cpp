@@ -70,11 +70,8 @@ double CantorRand::Variance() const
     return 0.125;
 }
 
-double CantorRand::Quantile(double p) const
+double CantorRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
-
     double root = 0.5;
     if (RandMath::findRoot([this, p] (double x)
     {

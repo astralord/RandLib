@@ -32,5 +32,6 @@ void CauchyProcess::CumulativeDistributionFunction(double t, const std::vector<d
 double CauchyProcess::Quantile(double t, double p) const
 {
     double tau = t - currentTime;
-    return CauchyRand::quantile(p, currentValue + mu * tau, sigma * tau);
+    double y = mu + sigma * std::tan(M_PI * (p - 0.5));
+    return currentValue + y * tau;
 }

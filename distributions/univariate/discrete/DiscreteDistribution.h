@@ -29,7 +29,7 @@ public:
     void ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const;
 
     int Mode() const override;
-    double Quantile(double probability) const override;
+    double QuantileImpl(double probability) const override;
 
     double Hazard(double x) const override;
 

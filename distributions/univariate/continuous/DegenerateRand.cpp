@@ -42,13 +42,14 @@ double DegenerateRand::Variance() const
 
 std::complex<double> DegenerateRand::CF(double t) const
 {
-    std::complex<double> y(0, a * t);
-    return std::exp(y);
+    double re = std::cos(a * t);
+    double im = std::sin(a * t);
+    return std::complex<double>(re, im);
 }
 
-double DegenerateRand::Quantile(double p) const
+double DegenerateRand::QuantileImpl(double) const
 {
-    return p;
+    return a;
 }
 
 double DegenerateRand::Median() const

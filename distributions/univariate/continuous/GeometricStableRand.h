@@ -12,9 +12,10 @@ class RANDLIBSHARED_EXPORT GeometricStableRand : public LimitingDistribution
     StableRand Z;
 
 protected:
-    double k; /// asymmetry coefficient for alpha = 2
+    /// parameters for α = 2
+    double k; /// asymmetry coefficient
     double kInv, kSq; /// 1 / k and k * k
-    double pdfCoef; /// 1 / (sigma * (k + 1 / k))
+    double pdfCoef; /// 1 / (σ * (k + 1 / k))
     double cdfCoef; /// 1 / (1 + k * k)
 
 public:
@@ -27,20 +28,24 @@ public:
     double MaxValue() const override { return INFINITY; }
 
 public:
-    void setParameters(double exponent, double skewness);
-    void setScale(double scale);
+    void setParameters(double exponent, double skewness, double scale, double location);
 
 protected:
     double pdfLaplace(double x) const;
     double cdfLaplace(double x) const;
+
+private:
+    double pdfByLevy(double x) const;
 
 public:
     double f(double x) const override;
     double F(double x) const override;
 
 private:
-    double variateForAlphaEqualOne() const;
-    double variateForCommonAlpha() const;
+    double variateForUnityExponent() const;
+    double variateForCommonExponent() const;
+    double variateByLevy(bool positive) const;
+    double variateByCauchy() const;
 public:
     double variate() const override;
     void sample(std::vector<double> &outputData) const override;

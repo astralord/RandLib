@@ -9,7 +9,7 @@
 class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
 {
     double lambda, k;
-    double lambdaInv, kInv;
+    double kInv;
 
 public:
     WeibullRand(double scale = 1, double shape = 1);
@@ -30,7 +30,7 @@ public:
     double Mean() const override;
     double Variance() const override;
 
-    double Quantile(double p) const override;
+    double QuantileImpl(double p) const override;
 
     double Median() const override;
     double Mode() const override;

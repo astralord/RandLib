@@ -31,7 +31,7 @@ void NegativeBinomialRand<T>::setParameters(T number, double probability)
 {
     setValidParameters(number, probability);
     q = 1.0 - p;
-    logQ = std::log(q);
+    logQ = std::log1p(-p);
     GammaRV.setParameters(r, p / q);
     qDivP = GammaRV.getScale();
     pdfCoef = r * std::log(p);

@@ -8,7 +8,6 @@
 /**
  * @brief The StochasticProcess class
  */
-
 template <typename T>
 class RANDLIBSHARED_EXPORT StochasticProcess
 {

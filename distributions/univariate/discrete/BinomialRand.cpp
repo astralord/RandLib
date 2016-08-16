@@ -74,7 +74,7 @@ void BinomialRand::setGeneratorConstants()
     a4 += a3;
 
     logPFloor = std::log(pFloor);
-    logQFloor = (pFloor == qFloor) ? logPFloor : std::log(qFloor);
+    logQFloor = (pFloor == qFloor) ? logPFloor : std::log1p(-pFloor);
 
     logPnpInv = logProbFloor(npFloor);
 }

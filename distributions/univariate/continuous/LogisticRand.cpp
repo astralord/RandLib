@@ -63,10 +63,8 @@ std::complex<double> LogisticRand::CF(double t) const
     return y;
 }
 
-double LogisticRand::Quantile(double p) const
+double LogisticRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
     return mu - s * std::log(1.0 / p - 1);
 }
 

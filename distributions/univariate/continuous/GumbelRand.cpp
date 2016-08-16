@@ -62,10 +62,8 @@ double GumbelRand::Variance() const
     return v * v / 6;
 }
 
-double GumbelRand::Quantile(double p) const
+double GumbelRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
     return mu - beta * std::log(-std::log(p));
 }
 

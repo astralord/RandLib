@@ -73,9 +73,9 @@ double FisherSnedecorRand::Variance() const
     return numerator / denominator;
 }
 
-double FisherSnedecorRand::Quantile(double p) const
+double FisherSnedecorRand::QuantileImpl(double p) const
 {
-    return d2_d1 * B.Quantile(p);
+    return d2_d1 * B.QuantileImpl(p);
 }
 
 double FisherSnedecorRand::Median() const

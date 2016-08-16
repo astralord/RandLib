@@ -20,6 +20,18 @@ bool UnivariateProbabilityDistribution<T>::isRightBounded() const
 }
 
 template< typename T >
+double UnivariateProbabilityDistribution<T>::Quantile(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return MinValue();
+    if (p == 1)
+        return MaxValue();
+    return QuantileImpl(p);
+}
+
+template< typename T >
 void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
 {
     int size = std::min(p.size(), y.size());
@@ -33,7 +45,7 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
     if (t == 0)
         return 1;
 
-    if (std::fabs(t) < 0.0001)
+    if (std::fabs(t) < 1e-4)
     {
         double mean4 = FourthMoment();
         if (std::isfinite(mean4)) {
@@ -92,7 +104,7 @@ void UnivariateProbabilityDistribution<T>::HazardFunction(const std::vector<doub
 template< typename T >
 double UnivariateProbabilityDistribution<T>::Median() const
 {
-    return Quantile(0.5);
+    return QuantileImpl(0.5);
 }
 
 template< typename T >

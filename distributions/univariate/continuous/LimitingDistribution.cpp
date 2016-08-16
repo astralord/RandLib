@@ -29,7 +29,7 @@ void LimitingDistribution::setParameters(double exponent, double skewness)
     {   // TODO: don't do also for Levy
         B = beta * std::tan(M_PI_2 * alpha);
         zeta = -B;
-        S = std::pow(1 + B * B, .5 * alphaInv);
+        S = 0.5 * alphaInv * std::log1p(B * B);
         B = std::atan(B);
     }
 }
@@ -57,8 +57,8 @@ std::complex<double> LimitingDistribution::psi(double t) const
 {
     double fabsT = std::fabs(t);
     double x = (alpha == 1) ? beta * M_2_PI * log(fabsT) : zeta;
-    if (t > 0)
+    if (t < 0)
         x = -x;
     double re = std::pow(sigma * fabsT, alpha);
-    return std::complex<double>(re, re * x + mu * t);
+    return std::complex<double>(re, re * x - mu * t);
 }

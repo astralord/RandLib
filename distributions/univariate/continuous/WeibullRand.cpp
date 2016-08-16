@@ -16,7 +16,6 @@ void WeibullRand::setParameters(double scale, double shape)
     lambda = scale;
     if (lambda <= 0)
         lambda = 1.0;
-    lambdaInv = 1.0 / lambda;
     
     k = shape;
     if (k <= 0)
@@ -26,18 +25,23 @@ void WeibullRand::setParameters(double scale, double shape)
 
 double WeibullRand::f(double x) const
 {
-    if (x <= 0)
+    if (x < 0)
         return 0;
-    double xAdj = x * lambdaInv;
+    if (x == 0) {
+        if (k == 1)
+            return 1.0 / lambda;
+        return (k > 1) ? 0.0 : INFINITY;
+    }
+    double xAdj = x / lambda;
     double xAdjPow = std::pow(xAdj, k - 1);
-    return k * lambdaInv * xAdjPow * std::exp(-xAdj * xAdjPow);
+    return k / lambda * xAdjPow * std::exp(-xAdj * xAdjPow);
 }
 
 double WeibullRand::F(double x) const
 {
     if (x <= 0)
         return 0;
-    return 1 - std::exp(-std::pow(x * lambdaInv, k));
+    return 1 - std::exp(-std::pow(x / lambda, k));
 }
 
 double WeibullRand::variate() const
@@ -58,14 +62,9 @@ double WeibullRand::Variance() const
     return lambda * lambda * res;
 }
 
-double WeibullRand::Quantile(double p) const
+double WeibullRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
-    if (p == 0.0)
-        return 0.0;
-
-    double x = -std::log(1.0 - p);
+    double x = -std::log1p(-p);
     x = std::pow(x, kInv);
     return lambda * x;
 }
@@ -77,8 +76,8 @@ double WeibullRand::Median() const
 
 double WeibullRand::Mode() const
 {
-    if (k < 1)
-        return INFINITY;
+    if (k <= 1)
+        return 0;
     return lambda * std::pow(1 - kInv, kInv);
 }
 

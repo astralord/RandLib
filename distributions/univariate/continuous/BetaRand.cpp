@@ -184,7 +184,7 @@ double BetaRand::variateRejectionNormal() const
         aux *= Z;
         if (W + aux >= 0)
             return 0.5 + N * t;
-        aux = std::log(1.0 - Z / alpha2m1);
+        aux = std::log1p(-Z / alpha2m1);
         aux *= alpham1;
         aux += W + 0.5 * Z;
         if (aux >= 0)
@@ -404,15 +404,17 @@ std::complex<double> BetaRand::CF(double t) const
     return betaFunInv * y;
 }
 
-double BetaRand::Quantile(double p) const
+double BetaRand::QuantileImpl(double p) const
 {
-    if (p < 0 || p > 1)
-        return NAN;
     double root = p;
-    if (alpha == beta && beta == 0.5)
+    if (alpha == beta)
     {
-        double x = std::sin(0.5 * M_PI * p);
-        return a + bma * x * x;
+        if (alpha == 0.5) {
+            double x = std::sin(0.5 * M_PI * p);
+            return a + bma * x * x;
+        }
+        if (alpha == 1)
+            return a + bma * p;
     }
     if (RandMath::findRoot([this, p] (double x)
     {
@@ -425,7 +427,7 @@ double BetaRand::Quantile(double p) const
 
 double BetaRand::Median() const
 {
-    return (alpha == beta) ? 0.5 * (b + a) : Quantile(0.5);
+    return (alpha == beta) ? 0.5 * (b + a) : QuantileImpl(0.5);
 }
 
 double BetaRand::Mode() const
