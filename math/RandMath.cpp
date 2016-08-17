@@ -431,33 +431,6 @@ long double integral(const std::function<double (double)> &funPtr,
     return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
 
-bool findRoot(const std::function<double (double)> &funPtr, const std::function<double (double)> &derPtr, double &root, double epsilon)
-{
-    /// Sanity check
-    epsilon = std::max(epsilon, MIN_POSITIVE);
-    static constexpr int maxIter = 1e5;
-    int iter = 0;
-    double step = epsilon + 1;
-    double grad = derPtr(root);
-    double fun = funPtr(root);
-    do {
-        double alpha = 1.0;
-        double oldRoot = root;
-        double oldFun = fun;
-        step = fun / grad;
-        do {
-            root = oldRoot - alpha * step;
-            grad = derPtr(root);
-            fun = funPtr(root);
-            if (std::fabs(fun) < epsilon)
-                return true;
-            alpha *= 0.5;
-        } while ((std::fabs(grad) <= epsilon || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
-    } while (std::fabs(step) > epsilon && ++iter < maxIter);
-
-    return (iter == maxIter) ? false : true;
-}
-
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, double epsilon)
 {
     /// Sanity check

@@ -14,11 +14,14 @@ double BetaPrimeRand::f(double x) const
 {
     if (x < 0)
         return 0;
-    if (x == 0)
+    if (x == 0) {
+        if (alpha == 1)
+            return getInverseBetaFunction();
         return (alpha > 1) ? 0.0 : INFINITY;
+    }
     double y = (alpha - 1) * std::log(x);
     y -= (alpha + beta) * std::log1p(x);
-    return std::exp(y - BetaRand::getLogBetaFunction());
+    return std::exp(y - getLogBetaFunction());
 }
 
 double BetaPrimeRand::F(double x) const

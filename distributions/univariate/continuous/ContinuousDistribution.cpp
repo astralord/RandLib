@@ -29,11 +29,9 @@ double ContinuousDistribution::QuantileImpl(double p) const
     }
     if (RandMath::findRoot([this, p] (double x)
     {
-        return F(x) - p;
-    },
-    [this] (double x)
-    {
-        return f(x);
+        double first = F(x) - p;
+        double second = f(x);
+        return DoublePair(first, second);
     }, root))
         return root;
     /// if we can't find quantile, then probably p == 1

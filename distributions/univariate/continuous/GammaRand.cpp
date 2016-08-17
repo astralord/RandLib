@@ -270,6 +270,20 @@ std::complex<double> GammaRand::CF(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
+double GammaRand::QuantileImpl(double p) const
+{
+    double root = p * Mean() / (1 - p); /// good starting point
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        double first = F(x) - p;
+        double second = f(x);
+        return DoublePair(first, second);
+    }, root))
+        return root;
+    /// if we can't find quantile, then probably p -> 1
+    return INFINITY;
+}
+
 double GammaRand::Mode() const
 {
     return (alpha <= 1) ? 0 : (alpha - 1) * theta;
@@ -315,13 +329,12 @@ bool GammaRand::fitMLE(const std::vector<double> &sample)
     shape -= sm3;
     shape /= sp12;
 
+
     if (!RandMath::findRoot([s] (double x)
     {
-        return std::log(x) - RandMath::digamma(x) - s;
-    },
-    [] (double x)
-    {
-        return 1.0 / x - RandMath::trigamma(x);
+        double first = std::log(x) - RandMath::digamma(x) - s;
+        double second = 1.0 / x - RandMath::trigamma(x);
+        return DoublePair(first, second);
     }, shape))
         return false;
 

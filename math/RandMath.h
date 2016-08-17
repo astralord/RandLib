@@ -167,16 +167,6 @@ long double integral(const std::function<double (double)> &funPtr, double a, dou
  * @param epsilon
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<double (double)> &funPtr, const std::function<double (double)> &derPtr, double & root, double epsilon = 1e-10);
-
-/**
- * @brief findRoot
- * Newton's root-finding procedure
- * @param funPtr
- * @param root starting point
- * @param epsilon
- * @return true if success, false otherwise
- */
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double epsilon = 1e-10);
 
 /**

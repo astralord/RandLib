@@ -22,14 +22,19 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     c = -.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
-    pdfCoef = std::log(B.getInverseBetaFunction());
-    pdfCoef += (a + 1) * std::log(d1_d2);
+    pdfCoef = (a + 1) * std::log(d1_d2);
+    pdfCoef -= B.getLogBetaFunction();
 }
 
 double FisherSnedecorRand::f(double x) const
 {
-    if (x <= 0)
+    if (x < 0)
         return 0.0;
+    if (x == 0) {
+        if (a == 0)
+            return std::exp(pdfCoef);
+        return (a > 0) ? 0.0 : INFINITY;
+    }
     double y = a * std::log(x);
     y += c * std::log1p(d1_d2 * x);
     return std::exp(pdfCoef + y);
