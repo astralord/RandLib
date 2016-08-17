@@ -16,7 +16,8 @@ constexpr double MIN_POSITIVE = 1e-21;
 
 typedef std::pair <double, double> DoublePair;
 typedef std::pair <int, int> IntPair;
-typedef std::pair <double, int> DoubleIntPair;
+
+typedef std::tuple <double, double, double> DoubleTriplet;
 
 namespace RandMath
 {
@@ -158,6 +159,16 @@ long double gammaHalf(size_t k);
  */
 long double integral(const std::function<double (double)> &funPtr, double a, double b,
                             double epsilon = 1e-11, int maxRecursionDepth = 11);
+
+/**
+ * @brief findRoot
+ * Newton's root-finding procedure
+ * @param funPtr
+ * @param root
+ * @param epsilon
+ * @return true if success, false otherwise
+ */
+bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double epsilon = 1e-10);
 
 /**
  * @brief findRoot

@@ -7,6 +7,5 @@ BivariateProbabilityDistribution<T1, T2>::BivariateProbabilityDistribution()
 }
 
 template class BivariateProbabilityDistribution<double, double>;
-template class BivariateProbabilityDistribution<double, int>;
 template class BivariateProbabilityDistribution<int, int>;
 

@@ -431,6 +431,35 @@ long double integral(const std::function<double (double)> &funPtr,
     return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
 
+bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root, double epsilon)
+{
+    /// Sanity check
+    epsilon = std::max(epsilon, MIN_POSITIVE);
+    static constexpr int maxIter = 1e5;
+    int iter = 0;
+    double step = epsilon + 1;
+    DoubleTriplet y = funPtr(root);
+    double f, fx, fxx;
+    std::tie(f, fx, fxx) = y;
+    do {
+        double alpha = 1.0;
+        double oldRoot = root;
+        double oldFun = f;
+        step = f / fx;
+        step *= 1 + 0.5 * f * fxx / (fx * fx);
+        do {
+            root = oldRoot - alpha * step;
+            y = funPtr(root);
+            std::tie(f, fx, fxx) = y;
+            if (std::fabs(f) < epsilon)
+                return true;
+            alpha *= 0.5;
+        } while ((std::fabs(fx) <= epsilon || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
+    } while (std::fabs(step) > epsilon && ++iter < maxIter);
+
+    return (iter == maxIter) ? false : true;
+}
+
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, double epsilon)
 {
     /// Sanity check
@@ -720,6 +749,7 @@ double zetaRiemann(double s)
     double NS = std::pow(N, -s);
     return y + N * NS / (s - 1) + 0.5 * NS;
 }
+
 
 }
 

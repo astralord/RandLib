@@ -38,7 +38,6 @@ template class ProbabilityDistribution<int>;
 
 /// Bivariate
 template class ProbabilityDistribution<DoublePair>;
-template class ProbabilityDistribution<DoubleIntPair>;
 template class ProbabilityDistribution<IntPair>;
 
 /// Multivariate
