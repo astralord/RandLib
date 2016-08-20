@@ -1,8 +1,8 @@
 #include "InverseGammaRand.h"
 
-InverseGammaRand::InverseGammaRand(double shape, double scale) : GammaRand()
+InverseGammaRand::InverseGammaRand(double shape, double rate)
 {
-    setParameters(shape, scale);
+    setParameters(shape, rate);
 }
 
 std::string InverseGammaRand::name() const
@@ -10,14 +10,18 @@ std::string InverseGammaRand::name() const
     return "Inverse-Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
 }
 
+void InverseGammaRand::setParameters(double shape, double rate)
+{
+    X.setParameters(shape, rate);
+    alpha = X.getShape();
+    beta = X.getRate();
+}
+
 double InverseGammaRand::f(double x) const
 {
     if (x <= 0)
         return 0.0;
-    double y = -(alpha + 1) * std::log(x);
-    y -= beta / x;
-    y += pdfCoef;
-    return std::exp(y);
+    return X.f(1.0 / x) / (x * x);
 }
 
 double InverseGammaRand::F(double x) const
@@ -25,17 +29,17 @@ double InverseGammaRand::F(double x) const
     if (x <= 0)
         return 0.0;
     double y = RandMath::logUpperIncGamma(alpha, beta / x);
-    return std::exp(mLgammaShape + y);
+    return std::exp(y - getLogGammaFunction());
 }
 
 double InverseGammaRand::variate() const
 {
-    return 1.0 / GammaRand::variate();
+    return 1.0 / X.variate();
 }
 
 void InverseGammaRand::sample(std::vector<double> &outputData) const
 {
-    GammaRand::sample(outputData);
+    X.sample(outputData);
     for (double &var : outputData)
         var = 1.0 / var;
 }
@@ -52,6 +56,11 @@ double InverseGammaRand::Variance() const
     double var = beta / (alpha - 1);
     var *= var;
     return var / (alpha - 2);
+}
+
+double InverseGammaRand::QuantileImpl(double p) const
+{
+    return 1.0 / X.QuantileImpl(1 - p);
 }
 
 double InverseGammaRand::Mode() const

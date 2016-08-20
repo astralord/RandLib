@@ -445,8 +445,9 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
         double alpha = 1.0;
         double oldRoot = root;
         double oldFun = f;
-        step = f / fx;
-        step *= 1 + 0.5 * f * fxx / (fx * fx);
+        double numerator = 2 * f * fx;
+        double denominator = 2 * fx * fx - f * fxx;
+        step = numerator / denominator;
         do {
             root = oldRoot - alpha * step;
             y = funPtr(root);
@@ -748,6 +749,51 @@ double zetaRiemann(double s)
     double y = harmonicNumber(s, N);
     double NS = std::pow(N, -s);
     return y + N * NS / (s - 1) + 0.5 * NS;
+}
+
+double WLambert(double x, double w0, double epsilon)
+{
+    double w = w0;
+    double step = 0;
+    do {
+        double ew = std::exp(w);
+        double wew = w * ew;
+        double numerator1 = wew - x;
+        double wp1 = w + 1;
+        double denominator1 = ew * wp1;
+        double numerator2 = (w + 2) * numerator1;
+        double denominator2 = 2 * wp1;
+        step = numerator2 / denominator2;
+        step = numerator1 / (denominator1 - step);
+        w -= step;
+    } while (std::fabs(step) > epsilon);
+    return w;
+}
+
+double W0Lambert(double x, double epsilon)
+{
+    double w = 0;
+    if (x < -M_1_E)
+        return NAN;
+    if (x > 10) {
+        double logX = std::log(x);
+        double loglogX = std::log(logX);
+        w = logX - loglogX;
+    }
+    return WLambert(x, w, epsilon);
+}
+
+double Wm1Lambert(double x, double epsilon)
+{
+    double w = -2;
+    if (x < -M_1_E || x > 0)
+        return NAN;
+    if (x > -0.1) {
+        double logmX = std::log(-x);
+        double logmlogmX = std::log(-logmX);
+        w = logmX - logmlogmX;
+    }
+    return WLambert(x, w, epsilon);
 }
 
 

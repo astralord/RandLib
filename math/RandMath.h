@@ -254,6 +254,31 @@ double BernoulliNumber(int n);
  * @return Riemann zeta function
  */
 double zetaRiemann(double s);
+
+/**
+ * @brief WLambert
+ * @param x
+ * @param w
+ * @param epsilon
+ * @return
+ */
+double WLambert(double x, double w0, double epsilon = 1e-11);
+
+/**
+ * @brief W0Lambert
+ * @param x
+ * @param epsilon
+ * @return W0 branch of Lambert W function
+ */
+double W0Lambert(double x, double epsilon = 1e-11);
+
+/**
+ * @brief W1Lambert
+ * @param x
+ * @param epsilon
+ * @return
+ */
+double Wm1Lambert(double x, double epsilon = 1e-11);
 }
 
 #endif // RANDMATH_H

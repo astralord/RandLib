@@ -42,13 +42,11 @@ double WaldRand::F(double x) const
 {
     if (x <= 0)
         return 0;
-    double a = std::sqrt(lambda / x);
+    double a = std::sqrt(0.5 * lambda / x);
     double b = a * x / mu;
-    double d1 = (b - a) / M_SQRT2;
-    double d2 = (-b - a) / M_SQRT2;
-    double y = 1 + std::erf(d1);
-    double z = 1 + std::erf(d2);
-    return .5 * (y + cdfCoef * z);
+    double y = 1 + std::erf(b - a);
+    double z = std::erfc(b + a);
+    return 0.5 * (y + cdfCoef * z);
 }
 
 double WaldRand::variate() const

@@ -2,6 +2,7 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 #include "NormalRand.h"
+#include <QDebug>
 
 GammaRand::GammaRand(double shape, double rate)
 {
@@ -17,7 +18,6 @@ void GammaRand::setConstantsForGenerator()
 {
     t = 0.07 + 0.75 * std::sqrt(1.0 - alpha);
     b = 1.0 + std::exp(-t) * alpha / t;
-    alphaInv = 1.0 / alpha;
 }
 
 void GammaRand::setParameters(double shape, double rate)
@@ -25,6 +25,7 @@ void GammaRand::setParameters(double shape, double rate)
     alpha = shape;
     if (alpha <= 0)
         alpha = 1.0;
+    alphaInv = 1.0 / alpha;
     
     beta = rate;
     if (beta <= 0)
@@ -270,18 +271,117 @@ std::complex<double> GammaRand::CF(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
+double GammaRand::initRootForSmallP(double r) const
+{
+    double root = 0;
+    double c[5];
+    c[4] = 1;
+    /// first coefficient
+    double denominator = alpha + 1;
+    c[3] = 1.0 / denominator;
+    /// second coefficient
+    denominator *= denominator;
+    denominator *= alpha + 2;
+    c[2] = 0.5 * (3 * alpha + 5) / denominator;
+    /// third coefficient
+    denominator *= 3 * (alpha + 1) * (alpha + 3);
+    c[1] = 8 * alpha + 33;
+    c[1] *= alpha;
+    c[1] += 31;
+    c[1] /= denominator;
+    /// fourth coefficient
+    denominator *= 8 * (alpha + 1) * (alpha + 2) * (alpha + 4);
+    c[0] = 125 * alpha + 1179;
+    c[0] *= alpha;
+    c[0] += 3971;
+    c[0] *= alpha;
+    c[0] += 5661;
+    c[0] *= alpha;
+    c[0] += 2888;
+    c[0] /= denominator;
+    /// now calculate root
+    for (int i = 0; i != 5; ++i) {
+        root += c[i];
+        root *= r;
+    }
+    return root;
+}
+
+double GammaRand::initRootForLargeP(double logQ) const
+{
+    /// look for approximate value of x -> INFINITY
+    double x = (logQ - mLgammaShape) / alpha;
+    x = -std::exp(x) / alpha;
+    return -alpha * RandMath::Wm1Lambert(x);
+}
+
+double GammaRand::initRootForLargeShape(double p) const
+{
+    if (p == 0.5)
+        return alpha;
+    double nu0 = NormalRand::standardQuantile(p) / std::sqrt(alpha);
+    double lambda = 0.5 * nu0 * nu0 + 1;
+    lambda = -std::exp(-lambda);
+    if (nu0 > 0)
+        lambda = -RandMath::Wm1Lambert(lambda);
+    else
+        lambda = -RandMath::W0Lambert(lambda);
+    return lambda * alpha;
+}
+
 double GammaRand::QuantileImpl(double p) const
 {
-    double root = p * Mean() / (1 - p); /// good starting point
+    /// Method is taken from
+    /// EFFICIENT AND ACCURATE ALGORITHMS FOR THE
+    /// COMPUTATION AND INVERSION OF THE INCOMPLETE
+    /// GAMMA FUNCTION RATIOS
+    /// (AMPARO GIL, JAVIER SEGURA, AND NICO M. TEMME)
+    double root = 0;
+    double r = std::log(p * alpha) - mLgammaShape;
+    r = std::exp(r * alphaInv);
+    if (alpha < 10) {
+        /// if p -> 0
+        if (r < 0.2 * (alpha + 1))
+            root = initRootForSmallP(r);
+        else {
+            double logQ = std::log1p(-p);
+            double logAlpha = std::log(alpha); // can be hashed
+            double maxBoundary1 = -0.5 * alpha - logAlpha + mLgammaShape; /// boundary adviced in a paper
+            double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
+            /// if p -> 1
+            if (logQ < std::min(maxBoundary1, maxBoundary2))
+                root = initRootForLargeP(logQ);
+            else if (alpha < 1)
+                root = r;
+            else
+                root = initRootForLargeShape(p);
+        }
+    }
+    else {
+        root = initRootForLargeShape(p);
+    }
+
+    root /= beta;
+
+    double frp = F(root) - p, frx = f(root), dx = -frp / frx;
+    qDebug() << "P is" << p << "and root is" << root << "(F(x) - p =" << frp << ", f(x) =" << frx << ", dx =" << dx << ")";
+
     if (RandMath::findRoot([this, p] (double x)
     {
+        if (x <= 0)
+            return DoubleTriplet(-p, 0, 0);
         double first = F(x) - p;
         double second = f(x);
-        return DoublePair(first, second);
+        double z = (alpha - 1) - beta * x;
+        double third = (alpha - 2) * std::log(x);
+        third -= beta * x;
+        third += pdfCoef;
+        third = z * std::exp(third);
+        return DoubleTriplet(first, second, third);
     }, root))
         return root;
-    /// if we can't find quantile, then probably p -> 1
-    return INFINITY;
+    /// if we can't find quantile, then probably something bad has happened
+    return NAN;
 }
 
 double GammaRand::Mode() const

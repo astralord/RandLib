@@ -69,6 +69,13 @@ public:
     double Variance() const override;
 
     std::complex<double> CF(double t) const override;
+
+private:
+    double initRootForSmallP(double r) const;
+    double initRootForLargeP(double logQ) const;
+    double initRootForSmallShape(double p) const;
+    double initRootForLargeShape(double p) const;
+public:
     double QuantileImpl(double p) const override;
 
     double Mode() const override;
