@@ -91,7 +91,7 @@ std::complex<double> LaplaceRand::CF(double t) const
     return x * y * z / denominator;
 }
 
-double LaplaceRand::QuantileImpl(double p) const
+double LaplaceRand::quantileImpl(double p) const
 {
     if (p < kSq / (1 + kSq)) {
         double q = p * (1.0 / kSq + 1.0);
@@ -101,6 +101,22 @@ double LaplaceRand::QuantileImpl(double p) const
     }
     else {
         double q = (kSq + 1) * (1 - p);
+        q = std::log(q);
+        q *= sigma / k;
+        return m - q;
+    }
+}
+
+double LaplaceRand::quantileImpl1m(double p) const
+{
+    if (p > 1.0 / (1 + kSq)) {
+        double q = (1.0 - p) * (1.0 / kSq + 1.0);
+        q = std::log(q);
+        q *= k * sigma;
+        return m + q;
+    }
+    else {
+        double q = (kSq + 1) * p;
         q = std::log(q);
         q *= sigma / k;
         return m - q;

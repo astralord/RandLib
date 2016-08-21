@@ -34,8 +34,12 @@ public:
     static double standardVariate();
     
     std::complex<double> CF(double t) const override;
-    double QuantileImpl(double p) const override;
-    
+
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+public:
     /// Maximum likelihood estimators
     bool fitScaleMLE(const std::vector<double> &sample);
 };

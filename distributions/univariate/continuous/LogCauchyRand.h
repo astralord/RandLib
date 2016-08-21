@@ -31,13 +31,14 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
-    double QuantileImpl(double p) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+public:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 };
 
 #endif // LOGCAUCHYRAND_H

@@ -20,16 +20,15 @@ public:
     double F(int k) const override;
     int variate() const override;
 
-    double Mean() const override { return 0; }
-    double Variance() const override { return 1; }
-
-    std::complex<double> CF(double t) const override;
-
+    double Mean() const override;
+    double Variance() const override;
     double Median() const override;
     int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
-    
+
+    std::complex<double> CF(double t) const override;
+
     double Entropy();
 };
 

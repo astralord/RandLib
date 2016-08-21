@@ -47,9 +47,14 @@ std::complex<double> CauchyRand::CF(double t) const
     return std::exp(x);
 }
 
-double CauchyRand::QuantileImpl(double p) const
+double CauchyRand::quantileImpl(double p) const
 {
-    return mu + sigma * std::tan(M_PI * (p - 0.5));
+    return mu - sigma / std::tan(M_PI * p);
+}
+
+double CauchyRand::quantileImpl1m(double p) const
+{
+    return mu + sigma / std::tan(M_PI * p);
 }
 
 double CauchyRand::Entropy() const

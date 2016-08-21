@@ -44,11 +44,11 @@ public:
 
     double Mean() const override;
     double Variance() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     std::complex<double> CF(double t) const override;
 
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
 };
 
 #endif // NONCENTRALCHISQUARED_H

@@ -51,13 +51,12 @@ public:
     void sample(std::vector<double> &outputData) const override;
 
     double Variance() const override;
-
-    std::complex<double> CF(double t) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    std::complex<double> CF(double t) const override;
 };
 
 #endif // GEOMETRICSTABLERAND_H

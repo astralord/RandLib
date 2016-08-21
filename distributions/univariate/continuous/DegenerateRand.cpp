@@ -47,7 +47,12 @@ std::complex<double> DegenerateRand::CF(double t) const
     return std::complex<double>(re, im);
 }
 
-double DegenerateRand::QuantileImpl(double) const
+double DegenerateRand::quantileImpl(double) const
+{
+    return a;
+}
+
+double DegenerateRand::quantileImpl1m(double) const
 {
     return a;
 }

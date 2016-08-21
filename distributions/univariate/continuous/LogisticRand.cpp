@@ -45,6 +45,11 @@ double LogisticRand::variate() const
     return mu + s * std::log(1.0 / UniformRand::standardVariate() - 1);
 }
 
+double LogisticRand::Mean() const
+{
+    return mu;
+}
+
 double LogisticRand::Variance() const
 {
     double sPi = s * M_PI;
@@ -63,9 +68,14 @@ std::complex<double> LogisticRand::CF(double t) const
     return y;
 }
 
-double LogisticRand::QuantileImpl(double p) const
+double LogisticRand::quantileImpl(double p) const
 {
     return mu - s * std::log(1.0 / p - 1);
+}
+
+double LogisticRand::quantileImpl1m(double p) const
+{
+    return mu - s * std::log(p / (1.0 - p));
 }
 
 double LogisticRand::Median() const

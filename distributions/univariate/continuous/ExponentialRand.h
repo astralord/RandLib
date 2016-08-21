@@ -42,14 +42,16 @@ public:
     double variate() const override;
 
     static double variate(double rate);
+    double Median() const override;
     static double standardVariate();
 
     std::complex<double> CF(double t) const override;
 
-    double QuantileImpl(double p) const override;
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 
-    double Median() const override;
-
+public:
     double Entropy() const;
 
     double Moment(int n) const;

@@ -57,6 +57,39 @@ double BetaPrimeRand::Variance() const
     return numerator / denominator;
 }
 
+double BetaPrimeRand::Median() const
+{
+    return (alpha == beta) ? 1.0 : quantileImpl(0.5);
+}
+
+double BetaPrimeRand::Mode() const
+{
+    return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
+}
+
+double BetaPrimeRand::Skewness() const
+{
+    if (beta <= 3)
+        return INFINITY;
+    double aux = alpha + beta - 1;
+    double skewness = (beta - 2) / (alpha * aux);
+    skewness = std::sqrt(skewness);
+    aux += alpha;
+    aux += aux;
+    return aux * skewness / (beta - 3);
+}
+
+double BetaPrimeRand::ExcessKurtosis() const
+{
+    if (beta <= 4)
+        return INFINITY;
+    double betam1 = beta - 1;
+    double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
+    numerator += 5 * beta - 11;
+    double denominator = (beta - 3) * (beta - 4);
+    return 6 * numerator / denominator;
+}
+
 std::complex<double> BetaPrimeRand::CF(double t) const
 {
     if (t == 0)
@@ -95,41 +128,14 @@ std::complex<double> BetaPrimeRand::CF(double t) const
     return std::complex<double>(re, im);
 }
 
-double BetaPrimeRand::QuantileImpl(double p) const
+double BetaPrimeRand::quantileImpl(double p) const
 {
-    double x = BetaRand::QuantileImpl(p);
+    double x = BetaRand::Quantile(p);
     return x / (1.0 - x);
 }
 
-double BetaPrimeRand::Median() const
+double BetaPrimeRand::quantileImpl1m(double p) const
 {
-    return (alpha == beta) ? 1.0 : QuantileImpl(0.5);
-}
-
-double BetaPrimeRand::Mode() const
-{
-    return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
-}
-
-double BetaPrimeRand::Skewness() const
-{
-    if (beta <= 3)
-        return INFINITY;
-    double aux = alpha + beta - 1;
-    double skewness = (beta - 2) / (alpha * aux);
-    skewness = std::sqrt(skewness);
-    aux += alpha;
-    aux += aux;
-    return aux * skewness / (beta - 3);
-}
-
-double BetaPrimeRand::ExcessKurtosis() const
-{
-    if (beta <= 4)
-        return INFINITY;
-    double betam1 = beta - 1;
-    double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
-    numerator += 5 * beta - 11;
-    double denominator = (beta - 3) * (beta - 4);
-    return 6 * numerator / denominator;
+    double x = BetaRand::Quantile1m(p);
+    return x / (1.0 - x);
 }

@@ -32,7 +32,7 @@ int DiscreteDistribution::Mode() const
     return x;
 }
 
-double DiscreteDistribution::QuantileImpl(double probability) const
+double DiscreteDistribution::quantileImpl(double p) const
 {
     double mean = Mean();
     int down = static_cast<int>(std::floor(mean)), up = down + 1;
@@ -40,7 +40,7 @@ double DiscreteDistribution::QuantileImpl(double probability) const
     int iter = 0;
     static constexpr int maxIter = 1e4;
     /// go up
-    while (fu < probability)
+    while (fu < p)
     {
         fd = fu;
         fu = F(++up);
@@ -51,7 +51,7 @@ double DiscreteDistribution::QuantileImpl(double probability) const
 
     iter = 0;
     /// go down
-    while (fd > probability)
+    while (fd > p)
     {
         fd = F(--down);
         if (++iter > maxIter)
@@ -60,7 +60,38 @@ double DiscreteDistribution::QuantileImpl(double probability) const
     up = down + 1;
 
     /// if lower quantile is not equal probability, we return upper quantile
-    return (fd < probability) ? up : down;
+    return (fd < p) ? up : down;
+}
+
+double DiscreteDistribution::quantileImpl1m(double p) const
+{
+    double mean = Mean();
+    int down = static_cast<int>(std::floor(mean)), up = down + 1;
+    double fu = F(up), fd = F(down);
+    int iter = 0;
+    static constexpr int maxIter = 1e4;
+    /// go up
+    while (1.0 - fu > p)
+    {
+        fd = fu;
+        fu = F(++up);
+        if (++iter > maxIter)
+            return NAN;
+    }
+    down = up - 1;
+
+    iter = 0;
+    /// go down
+    while (1.0 - fd < p)
+    {
+        fd = F(--down);
+        if (++iter > maxIter)
+            return NAN;
+    }
+    up = down + 1;
+
+    /// if lower quantile is not equal probability, we return upper quantile
+    return (1.0 - fd > p) ? up : down;
 }
 
 double DiscreteDistribution::Hazard(double x) const

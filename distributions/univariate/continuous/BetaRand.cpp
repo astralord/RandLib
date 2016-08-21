@@ -362,6 +362,42 @@ double BetaRand::Variance() const
     return bma * bma * var;
 }
 
+double BetaRand::Median() const
+{
+    return (alpha == beta) ? 0.5 * (b + a) : quantileImpl(0.5);
+}
+
+double BetaRand::Mode() const
+{
+    double mode;
+    if (alpha > 1)
+        mode = (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
+    else
+        mode = (beta > 1) ? 0.0 : (alpha > beta);
+    return a + bma * mode;
+}
+
+double BetaRand::Skewness() const
+{
+    double skewness = (alpha + beta + 1) / (alpha * beta);
+    skewness = std::sqrt(skewness);
+    skewness *= (alpha - beta);
+    skewness /= (alpha + beta + 2);
+    return skewness + skewness;
+}
+
+double BetaRand::ExcessKurtosis() const
+{
+    double sum = alpha + beta;
+    double kurtosis = alpha - beta;
+    kurtosis *= kurtosis;
+    kurtosis *= (sum + 1);
+    kurtosis /= (alpha * beta * (sum + 2));
+    --kurtosis;
+    kurtosis /= (sum + 3);
+    return 6 * kurtosis;
+}
+
 std::complex<double> BetaRand::CF(double t) const
 {
     if (t == 0)
@@ -404,9 +440,8 @@ std::complex<double> BetaRand::CF(double t) const
     return betaFunInv * y;
 }
 
-double BetaRand::QuantileImpl(double p) const
+double BetaRand::quantileImpl(double p) const
 {
-    double root = p;
     if (alpha == beta)
     {
         if (alpha == 0.5) {
@@ -416,6 +451,7 @@ double BetaRand::QuantileImpl(double p) const
         if (alpha == 1)
             return a + bma * p;
     }
+    double root = a + bma * p;
     if (RandMath::findRoot([this, p] (double x)
     {
         return BetaRand::F(x) - p;
@@ -425,40 +461,26 @@ double BetaRand::QuantileImpl(double p) const
     return NAN;
 }
 
-double BetaRand::Median() const
+double BetaRand::quantileImpl1m(double p) const
 {
-    return (alpha == beta) ? 0.5 * (b + a) : QuantileImpl(0.5);
-}
-
-double BetaRand::Mode() const
-{
-    double mode;
-    if (alpha > 1)
-        mode = (beta > 1) ? (alpha - 1) / (alpha + beta - 2) : 1.0;
-    else
-        mode = (beta > 1) ? 0.0 : (alpha > beta);
-    return a + bma * mode;
-}
-
-double BetaRand::Skewness() const
-{
-    double skewness = (alpha + beta + 1) / (alpha * beta);
-    skewness = std::sqrt(skewness);
-    skewness *= (alpha - beta);
-    skewness /= (alpha + beta + 2);
-    return skewness + skewness;
-}
-
-double BetaRand::ExcessKurtosis() const
-{
-    double sum = alpha + beta;
-    double kurtosis = alpha - beta;
-    kurtosis *= kurtosis;
-    kurtosis *= (sum + 1);
-    kurtosis /= (alpha * beta * (sum + 2));
-    --kurtosis;
-    kurtosis /= (sum + 3);
-    return 6 * kurtosis;
+    if (alpha == beta)
+    {
+        if (alpha == 0.5) {
+            double x = std::sin(0.5 * M_PI * p);
+            return a + bma * x * x;
+        }
+        if (alpha == 1)
+            return a + bma * p;
+    }
+    double root = a + bma - bma * p;
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        double y = F(x) - 1;
+        return y + p;
+    },
+    a, b, root))
+        return root;
+    return NAN;
 }
 
 

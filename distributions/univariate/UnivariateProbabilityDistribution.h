@@ -64,19 +64,33 @@ public:
 
 private:
     /**
-     * @brief QuantileImpl
+     * @brief quantileImpl
      * @param p
      * @return such x that F(x) = p
      */
-    virtual double QuantileImpl(double p) const = 0;
+    virtual double quantileImpl(double p) const = 0;
+
+    /**
+     * @brief quantileImpl1m
+     * @param p
+     * @return such x that F(x) = 1 - p
+     */
+    virtual double quantileImpl1m(double p) const = 0;
 
 public:
     /**
      * @brief Quantile
      * @param p
-     * @return QuantileImpl(p) if p is in (0, 1)
+     * @return quantileImpl(p) if p is in (0, 1)
      */
     double Quantile(double p) const;
+
+    /**
+     * @brief Quantile1m
+     * @param p
+     * @return quantileImpl1m(p) if p is in (0, 1)
+     */
+    double Quantile1m(double p) const;
 
     /**
      * @brief QuantileFunction

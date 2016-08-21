@@ -63,6 +63,16 @@ double WaldRand::variate() const
     return (UniformRand::standardVariate() <= 1.0 / (1 + x)) ? mu * x : mu / x;
 }
 
+double WaldRand::Mean() const
+{
+    return mu;
+}
+
+double WaldRand::Variance() const
+{
+    return mu * mu * mu / lambda;
+}
+
 std::complex<double> WaldRand::CF(double t) const
 {
     if (t == 0)

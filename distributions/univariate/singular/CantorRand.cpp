@@ -70,12 +70,24 @@ double CantorRand::Variance() const
     return 0.125;
 }
 
-double CantorRand::QuantileImpl(double p) const
+double CantorRand::quantileImpl(double p) const
 {
-    double root = 0.5;
+    double root = p;
     if (RandMath::findRoot([this, p] (double x)
     {
         return F(x) - p;
+    }, 0.0, 1.0, root))
+        return root;
+    return NAN;
+}
+
+double CantorRand::quantileImpl1m(double p) const
+{
+    double root = 1.0 - p;
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        double y = F(x) - 1;
+        return y + p;
     }, 0.0, 1.0, root))
         return root;
     return NAN;

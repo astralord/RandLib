@@ -67,6 +67,9 @@ public:
 
     double Mean() const override;
     double Variance() const override;
+    double Mode() const override;
+    double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     std::complex<double> CF(double t) const override;
 
@@ -75,13 +78,11 @@ private:
     double initRootForLargeP(double logQ) const;
     double initRootForSmallShape(double p) const;
     double initRootForLargeShape(double p) const;
+    double df(double x) const;
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
 public:
-    double QuantileImpl(double p) const override;
-
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
-
     /// Maximum-likelihood estimation
     bool fitScaleMLE(const std::vector<double> &sample);
     bool fitMLE(const std::vector<double> &sample);

@@ -2,7 +2,6 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 #include "NormalRand.h"
-#include <QDebug>
 
 GammaRand::GammaRand(double shape, double rate)
 {
@@ -329,7 +328,16 @@ double GammaRand::initRootForLargeShape(double p) const
     return lambda * alpha;
 }
 
-double GammaRand::QuantileImpl(double p) const
+double GammaRand::df(double x) const
+{
+    double z = (alpha - 1) - beta * x;
+    double y = (alpha - 2) * std::log(x);
+    y -= beta * x;
+    y += pdfCoef;
+    return z * std::exp(y);
+}
+
+double GammaRand::quantileImpl(double p) const
 {
     /// Method is taken from
     /// EFFICIENT AND ACCURATE ALGORITHMS FOR THE
@@ -363,25 +371,48 @@ double GammaRand::QuantileImpl(double p) const
 
     root /= beta;
 
-    double frp = F(root) - p, frx = f(root), dx = -frp / frx;
-    qDebug() << "P is" << p << "and root is" << root << "(F(x) - p =" << frp << ", f(x) =" << frx << ", dx =" << dx << ")";
-
     if (RandMath::findRoot([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(-p, 0, 0);
         double first = F(x) - p;
         double second = f(x);
-        double z = (alpha - 1) - beta * x;
-        double third = (alpha - 2) * std::log(x);
-        third -= beta * x;
-        third += pdfCoef;
-        third = z * std::exp(third);
+        double third = df(x);
         return DoubleTriplet(first, second, third);
     }, root))
         return root;
     /// if we can't find quantile, then probably something bad has happened
     return NAN;
+}
+
+double GammaRand::quantileImpl1m(double p) const
+{
+    if (alpha < 10) {
+        double logQ = std::log(p);
+        double logAlpha = std::log(alpha); // can be hashed
+        double maxBoundary1 = -0.5 * alpha - logAlpha + mLgammaShape; /// boundary adviced in a paper
+        double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
+        /// if p -> 1
+        if (logQ < std::min(maxBoundary1, maxBoundary2)) {
+            double root = initRootForLargeP(logQ) / beta;
+            if (RandMath::findRoot([this, p] (double x)
+            {
+                if (x <= 0)
+                    return DoubleTriplet(-p, 0, 0);
+                double first = F(x) - 1;
+                first += p;
+                double second = f(x);
+                double third = df(x);
+                return DoubleTriplet(first, second, third);
+            }, root))
+                return root;
+            /// if we can't find quantile, then probably something bad has happened
+            return NAN;
+
+        }
+    }
+    /// in this case p is not small enough
+    return quantileImpl(1.0 - p);
 }
 
 double GammaRand::Mode() const

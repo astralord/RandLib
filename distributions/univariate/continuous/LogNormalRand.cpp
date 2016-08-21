@@ -65,9 +65,14 @@ double LogNormalRand::quantile(double p, double location, double scale)
     return std::exp(NormalRand::quantile(p, location, scale));
 }
 
-double LogNormalRand::QuantileImpl(double p) const
+double LogNormalRand::quantileImpl(double p) const
 {
-    return std::exp(X.QuantileImpl(p));
+    return std::exp(X.Quantile(p));
+}
+
+double LogNormalRand::quantileImpl1m(double p) const
+{
+    return std::exp(X.Quantile1m(p));
 }
 
 double LogNormalRand::Median() const

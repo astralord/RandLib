@@ -29,7 +29,7 @@ double StableProcess::Quantile(double t, double p) const
 {
     if (p < 0 || p > 1 || t < currentTime)
         return NAN;
-    double q = X.QuantileImpl(p);
+    double q = X.Quantile(p);
     q *= sigma;
     q *= std::pow(t - currentTime, X.getInvExponent());
     q += mu * (t - currentTime);
@@ -44,7 +44,7 @@ void StableProcess::Quantile(const std::vector<double> &t, std::vector<double> &
     if (t.size() > outputData.size())
         return;
 
-    double q = sigma * X.QuantileImpl(p);
+    double q = sigma * X.Quantile(p);
     double alphaInv = X.getInvExponent();
     for (size_t i = 0; i != t.size(); ++i)
     {

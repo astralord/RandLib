@@ -9,7 +9,7 @@ void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double
         y[i] = f(x[i]);
 }
 
-double ContinuousDistribution::QuantileImpl(double p) const
+double ContinuousDistribution::quantileImpl(double p) const
 {
     double root = Mean(); /// good starting point
     if (!std::isfinite(root))
@@ -30,6 +30,36 @@ double ContinuousDistribution::QuantileImpl(double p) const
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = F(x) - p;
+        double second = f(x);
+        return DoublePair(first, second);
+    }, root))
+        return root;
+    /// if we can't find quantile, then probably p == 1
+    return INFINITY;
+}
+
+double ContinuousDistribution::quantileImpl1m(double p) const
+{
+    double root = Mean(); /// good starting point
+    if (!std::isfinite(root))
+    {
+        if (isLeftBounded()) {
+            root = MinValue() + 1;
+            while(f(root) <= MIN_POSITIVE)
+                ++root;
+        }
+        else if (isRightBounded()) {
+            root = MaxValue() - 1;
+            while(f(root) <= MIN_POSITIVE)
+                --root;
+        }
+        else
+            root = 0.0;
+    }
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        double first = F(x) - 1;
+        first += p;
         double second = f(x);
         return DoublePair(first, second);
     }, root))

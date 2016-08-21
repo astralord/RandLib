@@ -89,9 +89,14 @@ std::complex<double> ExponentialRand::CF(double t) const
     return 1.0 / std::complex<double>(1.0, -theta * t);
 }
 
-double ExponentialRand::QuantileImpl(double p) const
+double ExponentialRand::quantileImpl(double p) const
 {
     return -theta * std::log1p(-p);
+}
+
+double ExponentialRand::quantileImpl1m(double p) const
+{
+    return -theta * std::log(p);
 }
 
 double ExponentialRand::Median() const

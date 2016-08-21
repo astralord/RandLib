@@ -71,9 +71,16 @@ double FrechetRand::Variance() const
     return s * s * var;
 }
 
-double FrechetRand::QuantileImpl(double p) const
+double FrechetRand::quantileImpl(double p) const
 {
     double x = -std::log(p);
+    x = s / std::pow(x, alphaInv);
+    return x + m;
+}
+
+double FrechetRand::quantileImpl1m(double p) const
+{
+    double x = -std::log1p(-p);
     x = s / std::pow(x, alphaInv);
     return x + m;
 }

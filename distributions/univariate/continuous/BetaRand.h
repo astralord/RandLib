@@ -140,15 +140,18 @@ private:
 public:
     double Mean() const override;
     double Variance() const override;
-
-    std::complex<double> CF(double t) const override;
-    double QuantileImpl(double p) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+    std::complex<double> CF(double t) const override;
+
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+public:
     /**
      * @brief getInvBetaFunction
      * @return 1 / Beta(α, β)

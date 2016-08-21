@@ -123,7 +123,7 @@ std::complex<double> StudentTRand::CF(double t) const
     return cf;
 }
 
-double StudentTRand::QuantileImpl(double p) const
+double StudentTRand::quantileImpl(double p) const
 {
     double temp = p - 0.5;
     if (v == 1)
@@ -137,7 +137,24 @@ double StudentTRand::QuantileImpl(double p) const
         double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
         return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
     }
-    return ContinuousDistribution::QuantileImpl(p);
+    return ContinuousDistribution::Quantile(p);
+}
+
+double StudentTRand::quantileImpl1m(double p) const
+{
+    double temp = 0.5 - p;
+    if (v == 1)
+        return (std::tan(M_PI * temp) - mu) / sigma;
+    double alpha = 4 * p * (1.0 - p);
+    if (v == 2)
+        return (2.0 * temp * std::sqrt(2.0 / alpha) - mu) / sigma;
+    if (v == 4)
+    {
+        double sqrtAlpha = std::sqrt(alpha);
+        double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
+        return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
+    }
+    return ContinuousDistribution::Quantile1m(p);
 }
 
 double StudentTRand::Median() const

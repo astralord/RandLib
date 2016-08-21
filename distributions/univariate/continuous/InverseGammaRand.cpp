@@ -58,9 +58,14 @@ double InverseGammaRand::Variance() const
     return var / (alpha - 2);
 }
 
-double InverseGammaRand::QuantileImpl(double p) const
+double InverseGammaRand::quantileImpl(double p) const
 {
-    return 1.0 / X.QuantileImpl(1 - p);
+    return 1.0 / X.Quantile1m(p);
+}
+
+double InverseGammaRand::quantileImpl1m(double p) const
+{
+    return 1.0 / X.Quantile(p);
 }
 
 double InverseGammaRand::Mode() const

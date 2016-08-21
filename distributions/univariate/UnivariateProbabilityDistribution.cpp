@@ -28,7 +28,19 @@ double UnivariateProbabilityDistribution<T>::Quantile(double p) const
         return MinValue();
     if (p == 1)
         return MaxValue();
-    return QuantileImpl(p);
+    return quantileImpl(p);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::Quantile1m(double p) const
+{
+    if (p < 0 || p > 1)
+        return NAN;
+    if (p == 0)
+        return MaxValue();
+    if (p == 1)
+        return MinValue();
+    return quantileImpl1m(p);
 }
 
 template< typename T >
@@ -104,7 +116,7 @@ void UnivariateProbabilityDistribution<T>::HazardFunction(const std::vector<doub
 template< typename T >
 double UnivariateProbabilityDistribution<T>::Median() const
 {
-    return QuantileImpl(0.5);
+    return quantileImpl(0.5);
 }
 
 template< typename T >

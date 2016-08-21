@@ -51,8 +51,12 @@ public:
     std::complex<double> CF(double t) const override;
     static double standardQuantile(double p);
     static double quantile(double p, double mean, double scale);
-    double QuantileImpl(double p) const override;
 
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+public:
     double Moment(int n) const;
 
     /// Maximum likelihood estimators

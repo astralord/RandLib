@@ -117,9 +117,14 @@ double ParetoRand::Variance() const
     return (alpha > 1) ? INFINITY : NAN;
 }
 
-double ParetoRand::QuantileImpl(double p) const
+double ParetoRand::quantileImpl(double p) const
 {
     return xm / std::pow(1 - p, alphaInv);
+}
+
+double ParetoRand::quantileImpl1m(double p) const
+{
+    return xm / std::pow(p, alphaInv);
 }
 
 double ParetoRand::Median() const

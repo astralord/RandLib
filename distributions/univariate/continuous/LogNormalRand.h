@@ -35,16 +35,17 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
-    static double quantile(double p, double location, double scale);
-    double QuantileImpl(double p) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+    static double quantile(double p, double location, double scale);
+
 private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
     double logAverage(const std::vector<double> &sample);
     double logSecondMoment(const std::vector<double> &sample);
 

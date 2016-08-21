@@ -62,9 +62,14 @@ double GumbelRand::Variance() const
     return v * v / 6;
 }
 
-double GumbelRand::QuantileImpl(double p) const
+double GumbelRand::quantileImpl(double p) const
 {
     return mu - beta * std::log(-std::log(p));
+}
+
+double GumbelRand::quantileImpl1m(double p) const
+{
+    return mu - beta * std::log(-std::log1p(-p));
 }
 
 double GumbelRand::Median() const

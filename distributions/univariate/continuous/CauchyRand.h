@@ -37,8 +37,12 @@ public:
     static double standardVariate();
 
     std::complex<double> CF(double t) const override;
-    double QuantileImpl(double p) const override;
 
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+public:
     double Entropy() const;
 
     /// Method of moments

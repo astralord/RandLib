@@ -35,7 +35,6 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
     double Mode() const override;
 };
 
@@ -100,7 +99,6 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
@@ -130,14 +128,15 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
-    double QuantileImpl(double p) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+private:
+    double quantileImpl(double p) const override;
+
+public:
     bool fitScaleMLE(const std::vector<double> &sample);
     bool fitScaleUMVU(const std::vector<double> &sample);
 };

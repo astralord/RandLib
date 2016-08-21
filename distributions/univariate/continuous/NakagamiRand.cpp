@@ -222,7 +222,7 @@ double RayleighRand::Variance() const
     return (2.0 - M_PI_2) / sigmaSqInv;
 }
 
-double RayleighRand::QuantileImpl(double p) const
+double RayleighRand::quantileImpl(double p) const
 {
     return sigma * std::sqrt(-2 * std::log1p(-p));
 }

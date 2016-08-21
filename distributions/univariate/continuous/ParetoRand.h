@@ -38,19 +38,20 @@ public:
     static double standardVariate(double shape);
     static double variate(double shape, double scale);
     double variate() const override;
-
     void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
-
-    double QuantileImpl(double p) const override;
-
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+public:
     inline double Entropy() const;
 
     bool fitMLE(const std::vector<double> &sample);

@@ -29,6 +29,16 @@ int RademacherRand::variate() const
     return BernoulliRand::standardVariate() ? 1 : -1;
 }
 
+double RademacherRand::Mean() const
+{
+    return 0;
+}
+
+double RademacherRand::Variance() const
+{
+    return 1;
+}
+
 std::complex<double> RademacherRand::CF(double t) const
 {
     return std::cos(t);

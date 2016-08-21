@@ -441,6 +441,8 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
     DoubleTriplet y = funPtr(root);
     double f, fx, fxx;
     std::tie(f, fx, fxx) = y;
+    if (std::fabs(f) < epsilon)
+        return root;
     do {
         double alpha = 1.0;
         double oldRoot = root;
@@ -470,6 +472,8 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
     double step = epsilon + 1;
     DoublePair y = funPtr(root);
     double fun = y.first, grad = y.second;
+    if (std::fabs(fun) < epsilon)
+        return root;
     do {
         double alpha = 1.0;
         double oldRoot = root;

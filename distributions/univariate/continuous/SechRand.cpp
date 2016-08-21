@@ -43,10 +43,18 @@ std::complex<double> SechRand::CF(double t) const
     return 1.0 / std::cosh(t);
 }
 
-double SechRand::QuantileImpl(double p) const
+double SechRand::quantileImpl(double p) const
 {
     double x = M_PI_2 * p;
     x = std::tan(x);
+    x = std::log(x);
+    return M_2_PI * x;
+}
+
+double SechRand::quantileImpl1m(double p) const
+{
+    double x = M_PI_2 * p;
+    x = 1.0 / std::tan(x);
     x = std::log(x);
     return M_2_PI * x;
 }

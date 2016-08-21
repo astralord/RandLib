@@ -28,11 +28,13 @@ public:
      */
     void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
-    double QuantileImpl(double p) const override;
     double Hazard(double x) const override;
     double Mode() const override;
 
 private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
     /**
      * @brief getLeftLimit
      * @param epsilon

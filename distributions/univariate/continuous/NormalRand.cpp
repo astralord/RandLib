@@ -126,6 +126,7 @@ std::complex<double> NormalRand::CF(double t) const
 
 double NormalRand::standardQuantile(double p)
 {
+    // TODO: redo by erfinv
     /// Abramowitz and Stegun improved approximation
     long double t = (p < 0.5) ? -std::log(p) : -std::log1p(-p);
     t = std::sqrt(t + t);
@@ -152,9 +153,15 @@ double NormalRand::quantile(double p, double mean, double scale)
     return mean + scale * standardQuantile(p);
 }
 
-double NormalRand::QuantileImpl(double p) const
+double NormalRand::quantileImpl(double p) const
 {
     return mu + sigma0 * standardQuantile(p);
+}
+
+double NormalRand::quantileImpl1m(double p) const
+{
+    // TODO: redo by erfcinv
+    return mu + sigma0 * standardQuantile(1.0 - p);
 }
 
 double NormalRand::Moment(int n) const
@@ -230,15 +237,15 @@ bool NormalRand::fitUMVU(const std::vector<double> &sample, DoublePair &confiden
 
     /// calculate confidence interval for mean
     StudentTRand t(nm1);
-    double interval = t.QuantileImpl(p) * sigma0 / std::sqrt(n);
+    double interval = t.Quantile(p) * sigma0 / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
     ChiSquaredRand chi(nm1);
     double numerator = nm1 * sigma0 * sigma0;
-    confidenceIntervalForVariance.first = numerator / chi.QuantileImpl(p);
-    confidenceIntervalForVariance.second = numerator / chi.QuantileImpl(1.0 - p);
+    confidenceIntervalForVariance.first = numerator / chi.Quantile(p);
+    confidenceIntervalForVariance.second = numerator / chi.Quantile(1.0 - p); // TODO: redo with Quantile1m
     return true;
 }
 

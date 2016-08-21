@@ -79,13 +79,12 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
-    std::complex<double> CF(double t) const override;
-    
     double Median() const override;
     int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    std::complex<double> CF(double t) const override;
 
     bool fitProbabilityMLE(const std::vector<int> &sample);
     bool fitProbabilityMM(const std::vector<int> &sample);

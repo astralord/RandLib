@@ -30,14 +30,13 @@ public:
     double F(double x) const override;
     double variate() const override;
 
-    double Mean() const override { return mu; }
-    double Variance() const override { return mu * mu * mu / lambda; }
-
-    std::complex<double> CF(double t) const override;
-    
+    double Mean() const override;
+    double Variance() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    std::complex<double> CF(double t) const override;
 };
 
 

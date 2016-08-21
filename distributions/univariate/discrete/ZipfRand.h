@@ -29,7 +29,7 @@ public:
 
     void setParameters(double exponent, int number);
     inline double getExponent() const { return s; }
-    inline size_t getNumber() const { return n; }
+    inline int getNumber() const { return n; }
 
     double P(int k) const override;
     double F(int k) const override;
@@ -37,12 +37,11 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-    
-    std::complex<double> CF(double t) const override;
-     
     int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    std::complex<double> CF(double t) const override;
 };
 
 #endif // ZIPFRAND_H

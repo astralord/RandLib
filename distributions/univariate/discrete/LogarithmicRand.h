@@ -30,10 +30,9 @@ public:
 
     double Mean() const override;
     double Variance() const override;
+    int Mode() const override;
 
     std::complex<double> CF(double t) const override;
-
-    int Mode() const override;
 };
 
 #endif // LOGARITHMICRAND_H

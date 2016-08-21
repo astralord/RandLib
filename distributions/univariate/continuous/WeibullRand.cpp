@@ -62,9 +62,16 @@ double WeibullRand::Variance() const
     return lambda * lambda * res;
 }
 
-double WeibullRand::QuantileImpl(double p) const
+double WeibullRand::quantileImpl(double p) const
 {
     double x = -std::log1p(-p);
+    x = std::pow(x, kInv);
+    return lambda * x;
+}
+
+double WeibullRand::quantileImpl1m(double p) const
+{
+    double x = -std::log(p);
     x = std::pow(x, kInv);
     return lambda * x;
 }

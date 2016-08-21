@@ -72,9 +72,14 @@ std::complex<double> UniformRand::CF(double t) const
     return numerator / denominator;
 }
 
-double UniformRand::QuantileImpl(double p) const
+double UniformRand::quantileImpl(double p) const
 {
     return a + bma * p;
+}
+
+double UniformRand::quantileImpl1m(double p) const
+{
+    return a + bma - bma * p;
 }
 
 double UniformRand::Median() const

@@ -28,18 +28,19 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double variate() const override;
-
     void sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
-
-    double QuantileImpl(double p) const override;
-
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+public:
     double getLogGammaFunction() const { return X.getLogGammaFunction(); }
 };
 

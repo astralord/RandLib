@@ -34,7 +34,6 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-
     double Mode() const override;
 };
 
