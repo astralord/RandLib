@@ -6,9 +6,9 @@ CauchyRand::CauchyRand(double location, double scale)
 {
 }
 
-std::string CauchyRand::name() const
+std::string CauchyRand::Name() const
 {
-    return "Cauchy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Cauchy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
 double CauchyRand::f(double x) const
@@ -21,22 +21,22 @@ double CauchyRand::F(double x) const
     return StableRand::cdfCauchy(x);
 }
 
-double CauchyRand::variate() const
+double CauchyRand::Variate() const
 {
-    return mu + sigma * standardVariate();
+    return mu + sigma * StandardVariate();
 }
 
-double CauchyRand::variate(double location, double scale)
+double CauchyRand::Variate(double location, double scale)
 {
-    return location + scale * standardVariate();
+    return location + scale * StandardVariate();
 }
 
-double CauchyRand::standardVariate()
+double CauchyRand::StandardVariate()
 {
     double x, y;
     do {
-        x = UniformRand::variate(-1, 1);
-        y = UniformRand::variate(-1, 1);
+        x = UniformRand::Variate(-1, 1);
+        y = UniformRand::Variate(-1, 1);
     } while (y == 0.0 || x * x + y * y > 1.0);
     return x / y;
 }

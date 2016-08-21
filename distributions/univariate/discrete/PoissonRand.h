@@ -20,19 +20,19 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 
 public:
     explicit PoissonRand(double rate = 1.0);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return INT_MAX; }
 
-    void setRate(double rate);
-    inline double getRate() const { return lambda; }
+    void SetRate(double rate);
+    inline double GetRate() const { return lambda; }
 
     double P(int k) const override;
     double F(int k) const override;
-    int variate() const override;
-    static int variate(double rate);
-    void sample(std::vector<int> &outputData) const override;
+    int Variate() const override;
+    static int Variate(double rate);
+    void Sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -43,9 +43,9 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    bool fitMLE(const std::vector<int> &sample);
-    bool fitMM(const std::vector<int> &sample);
-    bool fitBayes(const std::vector<int> &sample, GammaRand & priorDistribution);
+    bool FitMLE(const std::vector<int> &Sample);
+    bool FitMM(const std::vector<int> &Sample);
+    bool FitBayes(const std::vector<int> &Sample, GammaRand & priorDistribution);
 };
 
 #endif // POISSONRAND_H

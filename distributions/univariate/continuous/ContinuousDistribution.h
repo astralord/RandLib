@@ -36,24 +36,24 @@ private:
     double quantileImpl1m(double p) const override;
 
     /**
-     * @brief getLeftLimit
+     * @brief GetLeftLimit
      * @param epsilon
      * @return value or its left limit if f(value) is not finite
      */
-    double getLeftLimit(double value, double epsilon) const;
+    double GetLeftLimit(double value, double epsilon) const;
     /**
-     * @brief getRightLimit
+     * @brief GetRightLimit
      * @param epsilon
      * @return value or its right limit if f(value) is not finite
      */
-    double getRightLimit(double value, double epsilon) const;
+    double GetRightLimit(double value, double epsilon) const;
 
 public:
     double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
-    double Likelihood(const std::vector<double> &sample) const override;
-    double LogLikelihood(const std::vector<double> &sample) const override;
+    double Likelihood(const std::vector<double> &Sample) const override;
+    double LogLikelihood(const std::vector<double> &Sample) const override;
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H

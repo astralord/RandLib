@@ -16,26 +16,26 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityD
 
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);
-    std::string name() const override;
+    std::string Name() const override;
     DoublePair MinValue() const { return DoublePair(-INFINITY, 0); }
     DoublePair MaxValue() const { return DoublePair(INFINITY, INFINITY); }
 
-    void setParameters(double location, double precision, double shape, double rate);
-    inline double getLocation() const { return mu; }
-    inline double getPrecision() const { return lambda; }
-    inline double getShape() const { return alpha; }
-    inline double getRate() const { return beta; }
+    void SetParameters(double location, double precision, double shape, double rate);
+    inline double GetLocation() const { return mu; }
+    inline double GetPrecision() const { return lambda; }
+    inline double GetShape() const { return alpha; }
+    inline double GetRate() const { return beta; }
 
     double f(DoublePair point) const override;
     double F(DoublePair point) const override;
-    DoublePair variate() const override;
+    DoublePair Variate() const override;
 
     DoublePair Mean() const override;
     void Covariance(SquareMatrix<2> &matrix) const override;
     double Correlation() const override;
 
-    void getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
-    void getSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
+    void GetFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
+    void GetSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

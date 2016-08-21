@@ -20,14 +20,14 @@ protected:
 public:
     SumRand(const UnivariateProbabilityDistribution<T1> & leftRV, const UnivariateProbabilityDistribution<T2> & rightRV);
     virtual ~SumRand() {}
-    std::string name() const override;
+    std::string Name() const override;
 
-    SUPPORT_TYPE supportType() const override;
+    SUPPORT_TYPE SupportType() const override;
     T1 MinValue() const override;
     T1 MaxValue() const override;
 
     double F(T1 x) const override;
-    T1 variate() const override;
+    T1 Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

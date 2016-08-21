@@ -2,15 +2,15 @@
 
 UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
 {
-    setBoundaries(minValue, maxValue);
+    SetBoundaries(minValue, maxValue);
 }
 
-std::string UniformDiscreteRand::name() const
+std::string UniformDiscreteRand::Name() const
 {
-    return "Uniform Discrete(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
+    return "Uniform Discrete(" + toStringWithPrecision(GetMinValue()) + ", " + toStringWithPrecision(GetMaxValue()) + ")";
 }
 
-void UniformDiscreteRand::setBoundaries(int minValue, int maxValue)
+void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
 {
     a = minValue;
     b = maxValue;
@@ -38,7 +38,7 @@ double UniformDiscreteRand::F(int k) const
     return (k - a + 1) * nInv;
 }
 
-int UniformDiscreteRand::variate() const
+int UniformDiscreteRand::Variate() const
 {
     double x = (RandGenerator::variate() % n);
     return a + x;
@@ -62,7 +62,7 @@ double UniformDiscreteRand::Median() const
 int UniformDiscreteRand::Mode() const
 {
     /// any from {a, ..., b}
-    return variate();
+    return Variate();
 }
 
 double UniformDiscreteRand::Skewness() const

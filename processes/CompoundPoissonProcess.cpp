@@ -14,9 +14,9 @@ template <typename T>
 void CompoundPoissonProcess<T>::nextImpl()
 {
     N.next();
-    double Nt = N.getCurrentValue();
+    double Nt = N.GetCurrentValue();
     while (Nt > jumpsAmount) {
-        this->currentValue += Y.variate();
+        this->currentValue += Y.Variate();
         ++jumpsAmount;
     }
 }
@@ -24,13 +24,13 @@ void CompoundPoissonProcess<T>::nextImpl()
 template <typename T>
 double CompoundPoissonProcess<T>::MeanImpl(double t) const
 {
-    return this->currentValue + Y.Mean() * N.getRate() * (t - this->currentTime);
+    return this->currentValue + Y.Mean() * N.GetRate() * (t - this->currentTime);
 }
 
 template <typename T>
 double CompoundPoissonProcess<T>::VarianceImpl(double t) const
 {
-    return Y.Variance() * N.getRate() * (t - this->currentTime);
+    return Y.Variance() * N.GetRate() * (t - this->currentTime);
 }
 
 template class CompoundPoissonProcess<double>;

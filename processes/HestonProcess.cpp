@@ -14,12 +14,12 @@ void HestonProcess::nextImpl()
 {
     /// Euler discretization
     /// Simulate CIR process
-    static double v = V.getCurrentValue();
+    static double v = V.GetCurrentValue();
     double sqrtV = std::sqrt(v);
-    DoublePair X = BW.variate();
+    DoublePair X = BW.Variate();
     double dB = X.first, dW  = X.second;
-    v += V.getReversionSpeed() * (V.getMean() - v) * dt;
-    v += sqrtV * V.getVolatility() * dW;
+    v += V.GetReversionSpeed() * (V.GetMean() - v) * dt;
+    v += sqrtV * V.GetVolatility() * dW;
 
     /// Simulate Heston from CIR
     double s = 1.0 + mu * dt + sqrtV * dB;

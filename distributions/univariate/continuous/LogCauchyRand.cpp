@@ -2,24 +2,24 @@
 
 LogCauchyRand::LogCauchyRand(double location, double scale)
 {
-    setLocation(location);
-    setScale(scale);
+    SetLocation(location);
+    SetScale(scale);
 }
 
-std::string LogCauchyRand::name() const
+std::string LogCauchyRand::Name() const
 {
-    return "Log-Cauchy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Log-Cauchy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void LogCauchyRand::setLocation(double location)
+void LogCauchyRand::SetLocation(double location)
 {
-    X.setLocation(location);
-    expMu = std::exp(X.getLocation());
+    X.SetLocation(location);
+    expMu = std::exp(X.GetLocation());
 }
 
-void LogCauchyRand::setScale(double scale)
+void LogCauchyRand::SetScale(double scale)
 {
-    X.setScale(scale);
+    X.SetScale(scale);
 }
 
 double LogCauchyRand::f(double x) const
@@ -34,9 +34,9 @@ double LogCauchyRand::F(double x) const
     return (x > 0) ? X.F(std::log(x)) : 0.0;
 }
 
-double LogCauchyRand::variate() const
+double LogCauchyRand::Variate() const
 {
-    return std::exp(X.variate());
+    return std::exp(X.Variate());
 }
 
 double LogCauchyRand::Mean() const

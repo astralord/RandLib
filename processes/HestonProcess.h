@@ -10,7 +10,7 @@
  * where V(t) is CIR process (volatility) satisfying:
  * dV(t) = β(α - V(t))dt + σ(V(t))^(1/2)dW(t).
  * B(t) and W(t) are correlated Wiener processes with dB(t)dW(t) = ρdt,
- * μ is the drift term (the rate of return of the asset),
+ * μ is the drift term (the rate of return of the asSet),
  * α is the mean of V(t),
  * β is the reversion speed of V(t),
  * σ is the volatility of V(t),
@@ -31,11 +31,11 @@ class RANDLIBSHARED_EXPORT HestonProcess : public StochasticProcess<double>
 public:
     HestonProcess(double drift, double volatilityMean, double reversionSpeed, double volatility, double initialValue, double volatilityInitialValue, double correlation, double deltaT = 1.0);
 
-    inline double getDrift() { return mu; }
-    inline double getVolatilityMean() { return V.getMean(); }
-    inline double getReversionSpeed() { return V.getReversionSpeed(); }
-    inline double getVolatility() { return V.getVolatility(); }
-    inline double getCorrelation() { return rho; }
+    inline double GetDrift() { return mu; }
+    inline double GetVolatilityMean() { return V.GetMean(); }
+    inline double GetReversionSpeed() { return V.GetReversionSpeed(); }
+    inline double GetVolatility() { return V.GetVolatility(); }
+    inline double GetCorrelation() { return rho; }
 
 private:
     void nextImpl() override;

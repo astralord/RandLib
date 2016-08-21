@@ -5,21 +5,21 @@
 
 GammaRand::GammaRand(double shape, double rate)
 {
-    setParameters(shape, rate);
+    SetParameters(shape, rate);
 }
 
-std::string GammaRand::name() const
+std::string GammaRand::Name() const
 {
-    return "Gamma(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
+    return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
-void GammaRand::setConstantsForGenerator()
+void GammaRand::SetConstantsForGenerator()
 {
     t = 0.07 + 0.75 * std::sqrt(1.0 - alpha);
     b = 1.0 + std::exp(-t) * alpha / t;
 }
 
-void GammaRand::setParameters(double shape, double rate)
+void GammaRand::SetParameters(double shape, double rate)
 {
     alpha = shape;
     if (alpha <= 0)
@@ -34,8 +34,8 @@ void GammaRand::setParameters(double shape, double rate)
     mLgammaShape = -std::lgamma(alpha);
     pdfCoef = mLgammaShape + alpha * std::log(beta);
 
-    if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE)
-        setConstantsForGenerator();
+    if (GetIdOfUsedGenerator(alpha) == SMALL_SHAPE)
+        SetConstantsForGenerator();
 }
 
 double GammaRand::f(double x) const
@@ -62,7 +62,7 @@ double GammaRand::F(double x) const
     return std::exp(y);
 }
 
-GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
+GammaRand::GENERATOR_ID GammaRand::GetIdOfUsedGenerator(double shape)
 {
     if (shape < 0.34)
         return SMALL_SHAPE;
@@ -79,14 +79,14 @@ double GammaRand::variateThroughExponentialSum(int shape)
 {
     double X = 0;
     for (int i = 0; i < shape; ++i)
-        X += ExponentialRand::standardVariate();
+        X += ExponentialRand::StandardVariate();
     return X;
 }
 
 double GammaRand::variateForShapeOneAndAHalf()
 {
-    double W = ExponentialRand::standardVariate();
-    double N = NormalRand::standardVariate();
+    double W = ExponentialRand::StandardVariate();
+    double N = NormalRand::StandardVariate();
     return W + 0.5 * N * N;
 }
 
@@ -96,8 +96,8 @@ double GammaRand::variateBest() const
     double X = 0;
     int iter = 0;
     do {
-        double V = b * UniformRand::standardVariate();
-        double W = UniformRand::standardVariate();
+        double V = b * UniformRand::StandardVariate();
+        double W = UniformRand::StandardVariate();
         if (V <= 1) {
             X = t * std::pow(V, alphaInv);
             if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
@@ -122,9 +122,9 @@ double GammaRand::variateAhrensDieter(double shape)
     double shapeInv = 1.0 / shape;
     double t = shapeInv + M_1_E;
     do {
-        double U = UniformRand::standardVariate();
+        double U = UniformRand::StandardVariate();
         double p = shape * t * U;
-        double W = ExponentialRand::standardVariate();
+        double W = ExponentialRand::StandardVariate();
         if (p <= 1)
         {
             X = std::pow(p, shapeInv);
@@ -147,8 +147,8 @@ double GammaRand::variateFishman(double shape)
     double W1, W2;
     double shapem1 = shape - 1;
     do {
-        W1 = ExponentialRand::standardVariate();
-        W2 = ExponentialRand::standardVariate();
+        W1 = ExponentialRand::StandardVariate();
+        W2 = ExponentialRand::StandardVariate();
     } while (W2 < shapem1 * (W1 - std::log(W1) - 1));
     return shape * W1;
 }
@@ -162,12 +162,12 @@ double GammaRand::variateMarsagliaTsang(double shape)
     do {
         double N;
         do {
-            N = NormalRand::standardVariate();
+            N = NormalRand::StandardVariate();
         } while (N <= -c);
         double v = 1 + N / c;
         v = v * v * v;
         N *= N;
-        double U = UniformRand::standardVariate();
+        double U = UniformRand::StandardVariate();
         if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
             return d * v;
         }
@@ -175,12 +175,12 @@ double GammaRand::variateMarsagliaTsang(double shape)
     return NAN; /// shouldn't end up here
 }
 
-double GammaRand::standardVariate(double shape)
+double GammaRand::StandardVariate(double shape)
 {
     if (shape <= 0)
         return NAN;
 
-    GENERATOR_ID genId = getIdOfUsedGenerator(shape);
+    GENERATOR_ID genId = GetIdOfUsedGenerator(shape);
 
     switch(genId) {
     case INTEGER_SHAPE:
@@ -199,14 +199,14 @@ double GammaRand::standardVariate(double shape)
     return NAN;
 }
 
-double GammaRand::variate(double shape, double rate)
+double GammaRand::Variate(double shape, double rate)
 {
-    return standardVariate(shape) / rate;
+    return StandardVariate(shape) / rate;
 }
 
-double GammaRand::variate() const
+double GammaRand::Variate() const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
+    GENERATOR_ID genId = GetIdOfUsedGenerator(alpha);
 
     switch(genId) {
     case INTEGER_SHAPE:
@@ -225,9 +225,9 @@ double GammaRand::variate() const
     return NAN;
 }
 
-void GammaRand::sample(std::vector<double> &outputData) const
+void GammaRand::Sample(std::vector<double> &outputData) const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
+    GENERATOR_ID genId = GetIdOfUsedGenerator(alpha);
 
     switch(genId) {
     case INTEGER_SHAPE:
@@ -430,15 +430,15 @@ double GammaRand::ExcessKurtosis() const
     return 6.0 / alpha;
 }
 
-bool GammaRand::fitScaleMLE(const std::vector<double> &sample)
+bool GammaRand::FitScaleMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(alpha, alpha / sampleMean(sample));
+    SetParameters(alpha, alpha / sampleMean(sample));
     return true;
 }
 
-bool GammaRand::fitMLE(const std::vector<double> &sample)
+bool GammaRand::FitMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
@@ -469,24 +469,24 @@ bool GammaRand::fitMLE(const std::vector<double> &sample)
     }, shape))
         return false;
 
-    setParameters(shape, shape / average);
+    SetParameters(shape, shape / average);
     return true;
 }
 
-bool GammaRand::fitShapeMM(const std::vector<double> &sample)
+bool GammaRand::FitShapeMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(sampleMean(sample) * beta, beta);
+    SetParameters(sampleMean(sample) * beta, beta);
     return true;
 }
 
-bool GammaRand::fitScaleMM(const std::vector<double> &sample)
+bool GammaRand::FitScaleMM(const std::vector<double> &sample)
 {
-    return fitScaleMLE(sample);
+    return FitScaleMLE(sample);
 }
 
-bool GammaRand::fitMM(const std::vector<double> &sample)
+bool GammaRand::FitMM(const std::vector<double> &sample)
 {  
     if (!checkValidity(sample))
         return false;
@@ -494,21 +494,21 @@ bool GammaRand::fitMM(const std::vector<double> &sample)
     double var = sampleVariance(sample, mu1);
     double shape = mu1 * mu1 / var;
     
-    setParameters(shape, shape / mu1);
+    SetParameters(shape, shape / mu1);
     return true;
 }
 
-bool GammaRand::fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
+bool GammaRand::FitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
         return false;
-    double alpha0 = priorDistribution.getShape();
-    double beta0 = priorDistribution.getRate();
+    double alpha0 = priorDistribution.GetShape();
+    double beta0 = priorDistribution.GetRate();
     double newAlpha = alpha * n + alpha0;
     double newBeta = sampleSum(sample) + beta0;
-    priorDistribution.setParameters(newAlpha, newBeta);
-    setParameters(alpha, priorDistribution.Mean());
+    priorDistribution.SetParameters(newAlpha, newBeta);
+    SetParameters(alpha, priorDistribution.Mean());
     return true;
 }
 
@@ -516,37 +516,37 @@ bool GammaRand::fitRateBayes(const std::vector<double> &sample, GammaRand &prior
 /// CHI-SQUARED
 ChiSquaredRand::ChiSquaredRand(int degree)
 {
-    setDegree(degree);
+    SetDegree(degree);
 }
 
-std::string ChiSquaredRand::name() const
+std::string ChiSquaredRand::Name() const
 {
-    return "Chi-squared(" + toStringWithPrecision(getDegree()) + ")";
+    return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
 }
 
-void ChiSquaredRand::setDegree(int degree)
+void ChiSquaredRand::SetDegree(int degree)
 {
-    GammaRand::setParameters((degree < 1) ? 0.5 : 0.5 * degree, 0.5);
+    GammaRand::SetParameters((degree < 1) ? 0.5 : 0.5 * degree, 0.5);
 }
 
 
 /// ERLANG
 ErlangRand::ErlangRand(int shape, double rate)
 {
-    GammaRand::setParameters(std::max(shape, 1), rate);
+    GammaRand::SetParameters(std::max(shape, 1), rate);
 }
 
-std::string ErlangRand::name() const
+std::string ErlangRand::Name() const
 {
-    return "Erlang(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getRate()) + ")";
+    return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
-int ErlangRand::getShape() const
+int ErlangRand::GetShape() const
 {
-    return static_cast<int>(GammaRand::getShape());
+    return static_cast<int>(GammaRand::GetShape());
 }
 
-double ErlangRand::getRate() const
+double ErlangRand::GetRate() const
 {
-    return 1.0 / GammaRand::getScale();
+    return 1.0 / GammaRand::GetScale();
 }

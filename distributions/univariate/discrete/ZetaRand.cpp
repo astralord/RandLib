@@ -4,15 +4,15 @@
 
 ZetaRand::ZetaRand(double exponent)
 {
-    setExponent(exponent);
+    SetExponent(exponent);
 }
 
-std::string ZetaRand::name() const
+std::string ZetaRand::Name() const
 {
-    return "Zeta(" + toStringWithPrecision(getExponent()) + ")";
+    return "Zeta(" + toStringWithPrecision(GetExponent()) + ")";
 }
 
-void ZetaRand::setExponent(double exponent)
+void ZetaRand::SetExponent(double exponent)
 {
     s = exponent;
     /// sanity check
@@ -37,15 +37,15 @@ double ZetaRand::F(int k) const
     return zetaSInv * RandMath::harmonicNumber(s, k);
 }
 
-int ZetaRand::variate() const
+int ZetaRand::Variate() const
 {
     /// Luc Devroye, p. 551
     /// rejection sampling from rounded down Pareto distribution
     int iter = 0;
     do {
-        double X = std::floor(ParetoRand::standardVariate(sm1));
+        double X = std::floor(ParetoRand::StandardVariate(sm1));
         double T = std::pow(1.0 + 1.0 / X, sm1);
-        double V = UniformRand::standardVariate();
+        double V = UniformRand::StandardVariate();
         /// there was typo in the book - '<=' instead of '>'
         if (V * X * (T - 1) <= b * T )
             return X;

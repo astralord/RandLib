@@ -5,14 +5,14 @@ GeometricRand::GeometricRand(double probability) : PascalRand(1, probability)
 {
 }
 
-std::string GeometricRand::name() const
+std::string GeometricRand::Name() const
 {
-    return "Geometric(" + toStringWithPrecision(getProbability()) + ")";
+    return "Geometric(" + toStringWithPrecision(GetProbability()) + ")";
 }
 
-void GeometricRand::setProbability(double probability)
+void GeometricRand::SetProbability(double probability)
 {
-    setParameters(1, probability);
+    SetParameters(1, probability);
 }
 
 double GeometricRand::P(int k) const
@@ -25,9 +25,9 @@ double GeometricRand::F(int k) const
     return (k < 0) ? 0 : 1 - std::pow(q, k + 1);
 }
 
-int GeometricRand::variate() const
+int GeometricRand::Variate() const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == EXPONENTIAL)
         return variateGeometricThroughExponential();
     if (genId == TABLE)
@@ -35,13 +35,13 @@ int GeometricRand::variate() const
     return -1; /// unexpected return
 }
 
-int GeometricRand::variate(double probability)
+int GeometricRand::Variate(double probability)
 {
     /// here we use 0.05 instead of 0.08 because log(1-p) wasn't hashed
     if (probability < 0.05)
-        return std::floor(ExponentialRand::variate(-std::log1p(-probability)));
+        return std::floor(ExponentialRand::Variate(-std::log1p(-probability)));
 
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     int x = 0;
     double prod = probability, sum = prod, q = 1 - probability;
     while (U > sum) {
@@ -52,9 +52,9 @@ int GeometricRand::variate(double probability)
     return x;
 }
 
-void GeometricRand::sample(std::vector<int> &outputData) const
+void GeometricRand::Sample(std::vector<int> &outputData) const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == EXPONENTIAL) {
         for (int &var : outputData)
             var = variateGeometricThroughExponential();
@@ -77,27 +77,27 @@ double GeometricRand::Entropy() const
     return (a + b) / (M_LN2 * p);
 }
 
-bool GeometricRand::fitMLE(const std::vector<int> &sample)
+bool GeometricRand::FitMLE(const std::vector<int> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setProbability(1.0 / (sampleMean(sample) + 1));
+    SetProbability(1.0 / (sampleMean(sample) + 1));
     return true;
 }
 
-bool GeometricRand::fitMM(const std::vector<int> &sample)
+bool GeometricRand::FitMM(const std::vector<int> &sample)
 {
-    return fitMLE(sample);
+    return FitMLE(sample);
 }
 
-bool GeometricRand::fitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
+bool GeometricRand::FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
 {
     int n = sample.size();
     if (!checkValidity(sample))
         return false;
-    double alpha = priorDistribution.getAlpha();
-    double beta = priorDistribution.getBeta();
-    priorDistribution.setParameters(alpha + n, beta + sampleSum(sample));
-    setProbability(priorDistribution.Mean());
+    double alpha = priorDistribution.GetAlpha();
+    double beta = priorDistribution.GetBeta();
+    priorDistribution.SetParameters(alpha + n, beta + sampleSum(sample));
+    SetProbability(priorDistribution.Mean());
     return true;
 }

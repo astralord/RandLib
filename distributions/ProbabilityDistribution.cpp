@@ -1,6 +1,6 @@
 #include "ProbabilityDistribution.h"
 #include <sstream>      // std::ostringstream
-#include <iomanip>      // std::setprecision
+#include <iomanip>      // std::Setprecision
 
 template < typename T >
 ProbabilityDistribution<T>::ProbabilityDistribution()
@@ -16,10 +16,10 @@ std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_val
 }
 
 template < typename T >
-void ProbabilityDistribution<T>::sample(std::vector<T> &outputData) const
+void ProbabilityDistribution<T>::Sample(std::vector<T> &outputData) const
 {
     for (T &var : outputData)
-        var = variate();
+        var = Variate();
 }
 
 template < typename T >

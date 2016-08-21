@@ -14,18 +14,18 @@ class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
 public:
     WeibullRand(double scale = 1, double shape = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
-    void setParameters(double scale, double shape);
-    inline double getScale() const { return lambda; }
-    inline double getShape() const { return k; }
+    void SetParameters(double scale, double shape);
+    inline double GetScale() const { return lambda; }
+    inline double GetShape() const { return k; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

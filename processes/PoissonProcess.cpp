@@ -3,7 +3,7 @@
 PoissonProcess::PoissonProcess(double rate, double deltaT) :
     StochasticProcess(deltaT),
     lambda(rate > 0.0 ? rate : 1.0),
-    futureJumpTime(ExponentialRand::variate(lambda))
+    futureJumpTime(ExponentialRand::Variate(lambda))
 {
 
 }
@@ -12,7 +12,7 @@ void PoissonProcess::nextImpl()
 {
     while (currentTime > futureJumpTime) {
         ++currentValue;
-        futureJumpTime += ExponentialRand::variate(lambda);
+        futureJumpTime += ExponentialRand::Variate(lambda);
     }
 }
 

@@ -24,21 +24,21 @@ class RANDLIBSHARED_EXPORT ExponentialNormalRand : public ContinuousDistribution
 public:
     explicit ExponentialNormalRand(double location = 0, double variance = 1, double rate = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return INFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }
 
-    void setParameters(double location, double variance, double rate);
-    inline double getLocation() const { return X.getLocation(); }
-    inline double getScale() const { return X.getScale(); }
-    inline double getRate() const { return Y.getRate(); }
+    void SetParameters(double location, double variance, double rate);
+    inline double GetLocation() const { return X.GetLocation(); }
+    inline double GetScale() const { return X.GetScale(); }
+    inline double GetRate() const { return Y.GetRate(); }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    static double variate(double location, double rootVar, double rate);
+    static double Variate(double location, double rootVar, double rate);
 
     double Mean() const override;
     double Variance() const override;

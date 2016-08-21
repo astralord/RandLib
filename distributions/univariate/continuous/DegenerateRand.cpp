@@ -2,15 +2,15 @@
 
 DegenerateRand::DegenerateRand(double value)
 {
-    setValue(value);
+    SetValue(value);
 }
 
-std::string DegenerateRand::name() const
+std::string DegenerateRand::Name() const
 {
     return "Degenerate";
 }
 
-void DegenerateRand::setValue(double value)
+void DegenerateRand::SetValue(double value)
 {
     a = value;
 }
@@ -25,7 +25,7 @@ double DegenerateRand::F(double x) const
     return (x < a) ? 0.0 : 1.0;
 }
 
-double DegenerateRand::variate() const
+double DegenerateRand::Variate() const
 {
     return a;
 }
@@ -82,15 +82,15 @@ double DegenerateRand::Entropy() const
     return 0.0;
 }
 
-bool DegenerateRand::fitMLE(const std::vector<double> &sample)
+bool DegenerateRand::FitMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setValue(sample.at(0));
+    SetValue(sample.at(0));
     return true;
 }
 
-bool DegenerateRand::fitMM(const std::vector<double> &sample)
+bool DegenerateRand::FitMM(const std::vector<double> &sample)
 {
-    return fitMLE(sample);
+    return FitMLE(sample);
 }

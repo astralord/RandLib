@@ -44,11 +44,11 @@ public:
         return product;
     }
 
-    void getSquare(Matrix<n, n> & squaredMatrix) const;
+    void GetSquare(Matrix<n, n> & squaredMatrix) const;
     void fill(double value);
     void clear();
 
-    bool getTransposed(Matrix<m, n> & transposedMatrix) const;
+    bool GetTransposed(Matrix<m, n> & transposedMatrix) const;
 };
 
 template <size_t n>

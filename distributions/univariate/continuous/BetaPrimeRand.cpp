@@ -5,9 +5,9 @@ BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
 {
 }
 
-std::string BetaPrimeRand::name() const
+std::string BetaPrimeRand::Name() const
 {
-    return "Beta Prime(" + toStringWithPrecision(getAlpha()) + ", " + toStringWithPrecision(getBeta()) + ")";
+    return "Beta Prime(" + toStringWithPrecision(GetAlpha()) + ", " + toStringWithPrecision(GetBeta()) + ")";
 }
 
 double BetaPrimeRand::f(double x) const
@@ -16,12 +16,12 @@ double BetaPrimeRand::f(double x) const
         return 0;
     if (x == 0) {
         if (alpha == 1)
-            return getInverseBetaFunction();
+            return GetInverseBetaFunction();
         return (alpha > 1) ? 0.0 : INFINITY;
     }
     double y = (alpha - 1) * std::log(x);
     y -= (alpha + beta) * std::log1p(x);
-    return std::exp(y - getLogBetaFunction());
+    return std::exp(y - GetLogBetaFunction());
 }
 
 double BetaPrimeRand::F(double x) const
@@ -29,15 +29,15 @@ double BetaPrimeRand::F(double x) const
     return (x > 0) ? BetaRand::F(x / (1.0 + x)) : 0;
 }
 
-double BetaPrimeRand::variate() const
+double BetaPrimeRand::Variate() const
 {
-    double x = BetaRand::variate();
+    double x = BetaRand::Variate();
     return x / (1.0 - x);
 }
 
-void BetaPrimeRand::sample(std::vector<double> &outputData) const
+void BetaPrimeRand::Sample(std::vector<double> &outputData) const
 {
-    BetaRand::sample(outputData);
+    BetaRand::Sample(outputData);
     for (double &var : outputData)
         var = var / (1.0 - var);
 }
@@ -107,7 +107,7 @@ std::complex<double> BetaPrimeRand::CF(double t) const
     }, 0, 1);
 
     re += 1.0 / alpha;
-    re *= BetaRand::getInverseBetaFunction();
+    re *= BetaRand::GetInverseBetaFunction();
 
     re += RandMath::integral([this, t] (double x)
     {

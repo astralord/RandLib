@@ -30,17 +30,17 @@ private:
 
 public:
     NegativeBinomialRand(T number, double probability);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return INT_MAX; }
 
 private:
-    void setValidParameters(T number, double probability);
+    void SetValidParameters(T number, double probability);
 public:
-    void setParameters(T number, double probability);
-    inline double getProbability() const { return p; }
-    inline T getNumber() const { return r; }
+    void SetParameters(T number, double probability);
+    inline double GetProbability() const { return p; }
+    inline T GetNumber() const { return r; }
 
     double P(int k) const override;
     double F(int k) const override;
@@ -52,7 +52,7 @@ protected:
         GAMMA_POISSON
     };
 
-    GENERATOR_ID getIdOfUsedGenerator() const;
+    GENERATOR_ID GetIdOfUsedGenerator() const;
 
     int variateGeometricByTable() const;
     int variateGeometricThroughExponential() const;
@@ -62,8 +62,8 @@ private:
     int variateThroughGammaPoisson() const;
 
 public:
-    int variate() const override;
-    void sample(std::vector<int> &outputData) const override;
+    int Variate() const override;
+    void Sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

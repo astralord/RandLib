@@ -17,17 +17,17 @@ class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 
 public:
     explicit DegenerateRand(double value = 0);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return a; }
 
-    void setValue(double value);
-    inline double getValue() const { return a; }
+    void SetValue(double value);
+    inline double GetValue() const { return a; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -47,17 +47,17 @@ public:
     double Entropy() const;
 
     /**
-     * @brief fitMLE
+     * @brief FitMLE
      * @param sample
      * @return
      */
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &Sample);
     /**
-     * @brief fitMM
+     * @brief FitMM
      * @param sample
      * @return
      */
-    bool fitMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &Sample);
 };
 
 #endif // DEGENERATERAND_H

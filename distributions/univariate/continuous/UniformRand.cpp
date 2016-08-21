@@ -3,17 +3,17 @@
 
 UniformRand::UniformRand(double minValue, double maxValue)
 {
-    setSupport(minValue, maxValue);
+    SetSupport(minValue, maxValue);
 }
 
-std::string UniformRand::name() const
+std::string UniformRand::Name() const
 {
-    return "Uniform(" + toStringWithPrecision(getMinValue()) + ", " + toStringWithPrecision(getMaxValue()) + ")";
+    return "Uniform(" + toStringWithPrecision(GetMinValue()) + ", " + toStringWithPrecision(GetMaxValue()) + ")";
 }
 
-void UniformRand::setSupport(double minValue, double maxValue)
+void UniformRand::SetSupport(double minValue, double maxValue)
 {
-    BetaRand::setParameters(1, 1, minValue, maxValue);
+    BetaRand::SetParameters(1, 1, minValue, maxValue);
     bmaInv = 1.0 / (b - a);
 }
 
@@ -29,17 +29,17 @@ double UniformRand::F(double x) const
     return (x > b) ? 1 : bmaInv * (x - a);
 }
 
-double UniformRand::variate() const
+double UniformRand::Variate() const
 {
-    return a + standardVariate() * bma;
+    return a + StandardVariate() * bma;
 }
 
-double UniformRand::variate(double minValue, double maxValue)
+double UniformRand::Variate(double minValue, double maxValue)
 {
-    return minValue + standardVariate() * (maxValue - minValue);
+    return minValue + StandardVariate() * (maxValue - minValue);
 }
 
-double UniformRand::standardVariate()
+double UniformRand::StandardVariate()
 {
 #ifdef JKISS32RAND
     return RandGenerator::variate() / 4294967296.0;
@@ -90,7 +90,7 @@ double UniformRand::Median() const
 double UniformRand::Mode() const
 {
     /// this can be any value in [a, b]
-    return variate();
+    return Variate();
 }
 
 double UniformRand::Skewness() const
@@ -108,7 +108,7 @@ double UniformRand::Entropy() const
     return (b == a) ? -INFINITY : std::log(bma);
 }
 
-bool UniformRand::fitMinimumMLE(const std::vector<double> &sample)
+bool UniformRand::FitMinimumMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -119,11 +119,11 @@ bool UniformRand::fitMinimumMLE(const std::vector<double> &sample)
             return false;
         minVar = std::min(var, minVar);
     }
-    setSupport(minVar, b);
+    SetSupport(minVar, b);
     return true;
 }
 
-bool UniformRand::fitMaximumMLE(const std::vector<double> &sample)
+bool UniformRand::FitMaximumMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -134,11 +134,11 @@ bool UniformRand::fitMaximumMLE(const std::vector<double> &sample)
             return false;
         maxVar = std::max(var, maxVar);
     }
-    setSupport(a, maxVar);
+    SetSupport(a, maxVar);
     return true;
 }
 
-bool UniformRand::fitMLE(const std::vector<double> &sample)
+bool UniformRand::FitMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -148,34 +148,34 @@ bool UniformRand::fitMLE(const std::vector<double> &sample)
         maxVar = std::max(var, maxVar);
         minVar = std::min(var, minVar);
     }
-    setSupport(minVar, maxVar);
+    SetSupport(minVar, maxVar);
     return true;
 }
 
-bool UniformRand::fitMinimumMM(const std::vector<double> &sample)
+bool UniformRand::FitMinimumMM(const std::vector<double> &sample)
 {
     double m = sampleMean(sample);
-    setSupport(m + m - b, b);
+    SetSupport(m + m - b, b);
     return true;
 }
 
-bool UniformRand::fitMaximumMM(const std::vector<double> &sample)
+bool UniformRand::FitMaximumMM(const std::vector<double> &sample)
 {
     double m = sampleMean(sample);
-    setSupport(a, m + m - a);
+    SetSupport(a, m + m - a);
     return true;
 }
 
-bool UniformRand::fitMM(const std::vector<double> &sample)
+bool UniformRand::FitMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
     double s = std::sqrt(3 * var);
-    setSupport(mean - s, mean + s);
+    SetSupport(mean - s, mean + s);
     return true;
 }
 
-bool UniformRand::fitMinimumUMVU(const std::vector<double> &sample)
+bool UniformRand::FitMinimumUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -189,11 +189,11 @@ bool UniformRand::fitMinimumUMVU(const std::vector<double> &sample)
     
     /// E[min] = b - n / (n + 1) * (b - a)
     minVar = (minVar * (n + 1) - b) / n;
-    setSupport(minVar, b);
+    SetSupport(minVar, b);
     return true;
 }
 
-bool UniformRand::fitMaximumUMVU(const std::vector<double> &sample)
+bool UniformRand::FitMaximumUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -207,11 +207,11 @@ bool UniformRand::fitMaximumUMVU(const std::vector<double> &sample)
     
     /// E[max] = (b - a) * n / (n + 1) + a
     maxVar = (maxVar * (n + 1) - a) / n;
-    setSupport(a, maxVar);
+    SetSupport(a, maxVar);
     return true;
 }
 
-bool UniformRand::fitUMVU(const std::vector<double> &sample)
+bool UniformRand::FitUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 0)
@@ -228,6 +228,6 @@ bool UniformRand::fitUMVU(const std::vector<double> &sample)
     minVar = (minVar * n - maxVar) / (n - 1);
     maxVar = (maxVar * (n + 1) - minVar) / n;
 
-    setSupport(minVar, maxVar);
+    SetSupport(minVar, maxVar);
     return true;
 }

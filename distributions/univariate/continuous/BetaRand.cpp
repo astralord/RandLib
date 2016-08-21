@@ -4,18 +4,18 @@
 
 BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValue)
 {
-    setParameters(shape1, shape2, minValue, maxValue);
+    SetParameters(shape1, shape2, minValue, maxValue);
 }
 
-std::string BetaRand::name() const
+std::string BetaRand::Name() const
 {
-    return "Beta(" + toStringWithPrecision(getAlpha()) + ", "
-                   + toStringWithPrecision(getBeta()) + ", "
-                   + toStringWithPrecision(getMin()) + ", "
-                   + toStringWithPrecision(getMax()) + ")";
+    return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
+                   + toStringWithPrecision(GetBeta()) + ", "
+                   + toStringWithPrecision(GetMin()) + ", "
+                   + toStringWithPrecision(GetMax()) + ")";
 }
 
-void BetaRand::setParameters(double shape1, double shape2, double minValue, double maxValue)
+void BetaRand::SetParameters(double shape1, double shape2, double minValue, double maxValue)
 {
     a = minValue;
     b = maxValue;
@@ -25,18 +25,18 @@ void BetaRand::setParameters(double shape1, double shape2, double minValue, doub
 
     bma = b - a;
 
-    GammaRV1.setParameters(shape1, 1);
-    GammaRV2.setParameters(shape2, 1);
+    GammaRV1.SetParameters(shape1, 1);
+    GammaRV2.SetParameters(shape2, 1);
 
-    alpha = GammaRV1.getShape();
-    beta = GammaRV2.getShape();
+    alpha = GammaRV1.GetShape();
+    beta = GammaRV2.GetShape();
 
     /// we use log(Gamma(x)) in order to avoid too big numbers
-    betaFunInv = std::lgamma(alpha + beta) - GammaRV1.getLogGammaFunction() - GammaRV2.getLogGammaFunction();
+    betaFunInv = std::lgamma(alpha + beta) - GammaRV1.GetLogGammaFunction() - GammaRV2.GetLogGammaFunction();
     mLogBetaFun = betaFunInv - std::log(bma);
     betaFunInv = std::exp(betaFunInv);
 
-    setCoefficientsForGenerator();
+    SetCoefficientsForGenerator();
 }
 
 double BetaRand::f(double x) const
@@ -88,7 +88,7 @@ double BetaRand::F(double x) const
 
 double BetaRand::variateArcsine() const
 {
-    double U = UniformRand::variate(-M_PI, M_PI);
+    double U = UniformRand::Variate(-M_PI, M_PI);
     double X = std::sin(U);
     return X * X;
 }
@@ -99,8 +99,8 @@ double BetaRand::variateRejectionUniform() const
     /// boosted for specific value of shapes α = β = 1.5
     int iter = 0;
     do {
-        double U = UniformRand::standardVariate();
-        double V = UniformRand::standardVariate();
+        double U = UniformRand::StandardVariate();
+        double V = UniformRand::StandardVariate();
         if (0.25 * V * V <= U - U * U)
             return U;
     } while (++iter <= MAX_ITER_REJECTION);
@@ -114,8 +114,8 @@ double BetaRand::variateRejectionUniformExtended() const
     int iter = 0;
     static constexpr double M_LN4 = M_LN2 + M_LN2;
     do {
-        double U = UniformRand::standardVariate();
-        double W = ExponentialRand::standardVariate();
+        double U = UniformRand::StandardVariate();
+        double W = ExponentialRand::StandardVariate();
         double edge = M_LN4 + std::log(U - U * U);
         if (W >= (1.0 - alpha) * edge)
             return U;
@@ -127,8 +127,8 @@ double BetaRand::variateCheng() const
 {
     double R, T, Y;
     do {
-        double U = UniformRand::standardVariate();
-        double V = UniformRand::standardVariate();
+        double U = UniformRand::StandardVariate();
+        double V = UniformRand::StandardVariate();
         double X = std::log(U / (1 - U)) / t;
         Y = alpha * std::exp(X);
         R = 1.0 / (beta + Y);
@@ -144,8 +144,8 @@ double BetaRand::variateAtkinsonWhittaker() const
 {
     int iter = 0;
     do {
-        double U = UniformRand::standardVariate();
-        double W = ExponentialRand::standardVariate();
+        double U = UniformRand::StandardVariate();
+        double W = ExponentialRand::StandardVariate();
         if (U <= s) {
             double X = t * std::pow(U / s, 1.0 / alpha);
             if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - t)))
@@ -162,8 +162,8 @@ double BetaRand::variateAtkinsonWhittaker() const
 
 double BetaRand::variateGammaRatio() const
 {
-    double Y = GammaRV1.variate();
-    double Z = GammaRV2.variate();
+    double Y = GammaRV1.Variate();
+    double Z = GammaRV2.Variate();
     return Y / (Y + Z);
 }
 
@@ -175,11 +175,11 @@ double BetaRand::variateRejectionNormal() const
     double alpha2m1 = alpha + alpham1;
     do {
         do {
-            N = NormalRand::standardVariate();
+            N = NormalRand::StandardVariate();
             Z = N * N;
         } while (Z >= alpha2m1);
 
-        double W = ExponentialRand::standardVariate() + s;
+        double W = ExponentialRand::StandardVariate() + s;
         double aux = 0.5 - alpham1 / (alpha2m1 - Z);
         aux *= Z;
         if (W + aux >= 0)
@@ -197,22 +197,22 @@ double BetaRand::variateJohnk() const
 {
     double X = 0, Z = 0;
     do {
-        double U = UniformRand::standardVariate();
-        double V = UniformRand::standardVariate();
+        double U = UniformRand::StandardVariate();
+        double V = UniformRand::StandardVariate();
         X = std::pow(U, 1.0 / alpha);
         Z = X + std::pow(V, 1.0 / beta);
     } while (Z > 1);
     return X / Z;
 }
 
-double BetaRand::variate() const
+double BetaRand::Variate() const
 {
     double var = 0;
-    GENERATOR_ID id = getIdOfUsedGenerator();
+    GENERATOR_ID id = GetIdOfUsedGenerator();
 
     switch (id) {
     case UNIFORM:
-        var = UniformRand::standardVariate();
+        var = UniformRand::StandardVariate();
         break;
     case ARCSINE:
         var = variateArcsine();
@@ -244,14 +244,14 @@ double BetaRand::variate() const
     return a + bma * var;
 }
 
-void BetaRand::sample(std::vector<double> &outputData) const
+void BetaRand::Sample(std::vector<double> &outputData) const
 {
-    GENERATOR_ID id = getIdOfUsedGenerator();
+    GENERATOR_ID id = GetIdOfUsedGenerator();
 
     switch (id) {
     case UNIFORM: {
         for (double &var : outputData)
-            var = UniformRand::standardVariate();
+            var = UniformRand::StandardVariate();
         }
         break;
     case ARCSINE: {
@@ -291,9 +291,9 @@ void BetaRand::sample(std::vector<double> &outputData) const
         break;
     case GAMMA_RATIO:
     default: {
-        GammaRV1.sample(outputData);
+        GammaRV1.Sample(outputData);
         for (double &var : outputData)
-            var /= (var + GammaRV2.variate());
+            var /= (var + GammaRV2.Variate());
         }
         break;
     }
@@ -303,7 +303,7 @@ void BetaRand::sample(std::vector<double> &outputData) const
         var = a + bma * var;
 }
 
-BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
+BetaRand::GENERATOR_ID BetaRand::GetIdOfUsedGenerator() const
 {
     if (alpha < 1 && beta < 1 && alpha + beta > 1)
         return ATKINSON_WHITTAKER;
@@ -325,9 +325,9 @@ BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
     return (alpha + beta < 2) ? JOHNK : GAMMA_RATIO;
 }
 
-void BetaRand::setCoefficientsForGenerator()
+void BetaRand::SetCoefficientsForGenerator()
 {
-    GENERATOR_ID id = getIdOfUsedGenerator();
+    GENERATOR_ID id = GetIdOfUsedGenerator();
     if (id == REJECTION_NORMAL) {
         double alpham1 = alpha - 1;
         s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
@@ -486,33 +486,33 @@ double BetaRand::quantileImpl1m(double p) const
 
 ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
 {
-    BetaRand::setParameters(1.0 - shape, shape, minValue, maxValue);
+    BetaRand::SetParameters(1.0 - shape, shape, minValue, maxValue);
 }
 
-std::string ArcsineRand::name() const
+std::string ArcsineRand::Name() const
 {
-    return "Arcsine(" + toStringWithPrecision(getShape()) + ", "
-                      + toStringWithPrecision(getMin()) + ", "
-                      + toStringWithPrecision(getMax()) + ")";
+    return "Arcsine(" + toStringWithPrecision(GetShape()) + ", "
+                      + toStringWithPrecision(GetMin()) + ", "
+                      + toStringWithPrecision(GetMax()) + ")";
 }
 
-void ArcsineRand::setShape(double shape)
+void ArcsineRand::SetShape(double shape)
 {
-    BetaRand::setParameters(1.0 - shape, shape, a, b);
+    BetaRand::SetParameters(1.0 - shape, shape, a, b);
 }
 
 
 BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
 {
-    setFixatingIndexAndFrequency(fixatingIndex, frequency);
+    SetFixatingIndexAndFrequency(fixatingIndex, frequency);
 }
 
-std::string BaldingNicholsRand::name() const
+std::string BaldingNicholsRand::Name() const
 {
-    return "Balding-Nichols(" + toStringWithPrecision(getFixatingIndex()) + ", " + toStringWithPrecision(getFrequency()) + ")";
+    return "Balding-Nichols(" + toStringWithPrecision(GetFixatingIndex()) + ", " + toStringWithPrecision(GetFrequency()) + ")";
 }
 
-void BaldingNicholsRand::setFixatingIndexAndFrequency(double fixatingIndex, double frequency)
+void BaldingNicholsRand::SetFixatingIndexAndFrequency(double fixatingIndex, double frequency)
 {
     F = fixatingIndex;
     if (F <= 0 || F >= 1)
@@ -523,5 +523,5 @@ void BaldingNicholsRand::setFixatingIndexAndFrequency(double fixatingIndex, doub
         p = 0.5;
 
     double frac = (1.0 - F) / F, fracP = frac * p;
-    BetaRand::setParameters(fracP, frac - fracP);
+    BetaRand::SetParameters(fracP, frac - fracP);
 }

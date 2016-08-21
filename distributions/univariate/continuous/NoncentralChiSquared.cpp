@@ -2,16 +2,16 @@
 
 NoncentralChiSquared::NoncentralChiSquared(double degree, double noncentrality)
 {
-    setParameters(degree, noncentrality);
+    SetParameters(degree, noncentrality);
 }
 
-std::string NoncentralChiSquared::name() const
+std::string NoncentralChiSquared::Name() const
 {
-    return "Noncentral Chi-Squared(" + toStringWithPrecision(getDegree()) + ", "
-            + toStringWithPrecision(getNoncentrality()) + ")";
+    return "Noncentral Chi-Squared(" + toStringWithPrecision(GetDegree()) + ", "
+            + toStringWithPrecision(GetNoncentrality()) + ")";
 }
 
-void NoncentralChiSquared::setParameters(double degree, double noncentrality)
+void NoncentralChiSquared::SetParameters(double degree, double noncentrality)
 {
     k = degree;
     if (k <= 0)
@@ -25,7 +25,7 @@ void NoncentralChiSquared::setParameters(double degree, double noncentrality)
     logLambda = std::log(lambda);
 
     if (k < 1)
-        Y.setRate(0.5 * lambda);
+        Y.SetRate(0.5 * lambda);
 
     if (k < 2) {
         cdfCoef = lambda + k * M_LN2;
@@ -63,7 +63,7 @@ double NoncentralChiSquared::F(double x) const
     }
 
     /// in this case we have singularity point at 0,
-    /// so we get rid of it by subtracting the function
+    /// so we Get rid of it by subtracting the function
     /// which has the same behaviour at this point
     double y = std::log(x) * halfK;
     y -= cdfCoef;
@@ -94,33 +94,33 @@ double NoncentralChiSquared::F(double x) const
 
 double NoncentralChiSquared::variateForDegreeEqualOne() const
 {
-    double y = sqrtLambda + NormalRand::standardVariate();
+    double y = sqrtLambda + NormalRand::StandardVariate();
     return y * y;
 }
 
-double NoncentralChiSquared::variate(double degree, double noncentrality)
+double NoncentralChiSquared::Variate(double degree, double noncentrality)
 {
     if (degree <= 0 || noncentrality < 0)
         return NAN; /// wrong parameters
 
     if (degree >= 1) {
-        double rv = (degree == 1) ? 0.0 : 2 * GammaRand::standardVariate(0.5 * degree - 0.5);
-        double y = std::sqrt(noncentrality) + NormalRand::standardVariate();
+        double rv = (degree == 1) ? 0.0 : 2 * GammaRand::StandardVariate(0.5 * degree - 0.5);
+        double y = std::sqrt(noncentrality) + NormalRand::StandardVariate();
         return rv + y * y;
     }
-    return 2 * GammaRand::standardVariate(0.5 * degree + PoissonRand::variate(0.5 * noncentrality));
+    return 2 * GammaRand::StandardVariate(0.5 * degree + PoissonRand::Variate(0.5 * noncentrality));
 }
 
-double NoncentralChiSquared::variate() const
+double NoncentralChiSquared::Variate() const
 {
     if (k == 1)
         return variateForDegreeEqualOne();
     if (k > 1)
-        return 2 * GammaRand::standardVariate(halfK - 0.5) + variateForDegreeEqualOne();
-    return 2 * GammaRand::standardVariate(halfK + Y.variate());
+        return 2 * GammaRand::StandardVariate(halfK - 0.5) + variateForDegreeEqualOne();
+    return 2 * GammaRand::StandardVariate(halfK + Y.Variate());
 }
 
-void NoncentralChiSquared::sample(std::vector<double> &outputData) const
+void NoncentralChiSquared::Sample(std::vector<double> &outputData) const
 {
     if (k >= 1) {
         for (double & var : outputData)
@@ -129,11 +129,11 @@ void NoncentralChiSquared::sample(std::vector<double> &outputData) const
             return;
         double halfKmHalf = halfK - 0.5;
         for (double & var : outputData)
-            var += 2 * GammaRand::standardVariate(halfKmHalf);
+            var += 2 * GammaRand::StandardVariate(halfKmHalf);
     }
     else {
         for (double & var : outputData)
-            var = 2 * GammaRand::standardVariate(halfK + Y.variate());
+            var = 2 * GammaRand::StandardVariate(halfK + Y.Variate());
     }
 }
 

@@ -19,25 +19,25 @@ class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialRand
 
 public:
     explicit BernoulliRand(double probability = 0.5);
-    std::string name() const override;
+    std::string Name() const override;
 
 protected:
-    using BinomialRand::setParameters;
+    using BinomialRand::SetParameters;
 
 public:
-    void setProbability(double probability);
+    void SetProbability(double probability);
 
     double P(int k) const override;
     double F(int k) const override;
-    int variate() const override;
-    static int variate(double p);
-    static int standardVariate();
+    int Variate() const override;
+    static int Variate(double p);
+    static int StandardVariate();
 
     inline double Entropy();
 
-    bool fitMLE(const std::vector<int> &sample);
-    bool fitMM(const std::vector<int> &sample);
-    bool fitBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
+    bool FitMLE(const std::vector<int> &Sample);
+    bool FitMM(const std::vector<int> &Sample);
+    bool FitBayes(const std::vector<int> &Sample, BetaRand &priorDistribution);
 };
 
 #endif // BERNOULLIRAND_H

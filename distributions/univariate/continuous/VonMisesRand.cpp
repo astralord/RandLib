@@ -3,21 +3,21 @@
 
 VonMisesRand::VonMisesRand(double location, double concentration)
 {
-    setLocation(location);
-    setConcentration(concentration);
+    SetLocation(location);
+    SetConcentration(concentration);
 }
 
-std::string VonMisesRand::name() const
+std::string VonMisesRand::Name() const
 {
-    return "von Mises(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getConcentration()) + ")";
+    return "von Mises(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetConcentration()) + ")";
 }
 
-void VonMisesRand::setLocation(double location)
+void VonMisesRand::SetLocation(double location)
 {
     mu = location;
 }
 
-void VonMisesRand::setConcentration(double concentration)
+void VonMisesRand::SetConcentration(double concentration)
 {
     k = concentration;
     if (k <= 0)
@@ -49,13 +49,13 @@ double VonMisesRand::F(double x) const
     mu - M_PI, x);
 }
 
-double VonMisesRand::variate() const
+double VonMisesRand::Variate() const
 {
     /// Generating von Mises variates by the ratio-of-uniforms method
     /// Lucio Barabesi. Dipartimento di Metodi Quantitativi, Universiteta di Siena
     int iter = 0;
     do {
-        double U = UniformRand::standardVariate(), V = UniformRand::variate(-1, 1);
+        double U = UniformRand::StandardVariate(), V = UniformRand::Variate(-1, 1);
         double theta = s * V / U;
         if ((std::fabs(theta) <= M_PI) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))

@@ -20,20 +20,20 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
 
 public:
     LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
-    std::string name() const override;
+    std::string Name() const override;
 
-    void setShift(double shift);
-    void setAsymmetry(double asymmetry);
-    inline double getShift() const { return m; }
-    inline double getAsymmetry() const { return k; }
+    void SetShift(double shift);
+    void SetAsymmetry(double asymmetry);
+    inline double GetShift() const { return m; }
+    inline double GetAsymmetry() const { return k; }
 
     double f(double x) const override;
     double F(double x) const override;
 
-    double variate() const override;
-    static double variate(double location, double scale);
-    static double variate(double location, double scale, double asymmetry);
-    void sample(std::vector<double> &outputData) const override;
+    double Variate() const override;
+    static double Variate(double location, double scale);
+    static double Variate(double location, double scale, double asymmetry);
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Median() const override;
@@ -50,35 +50,35 @@ public:
 
     /// Maximum likelihood estimation
     /// One parameter
-    bool fitLocationMLE(const std::vector<double> &sample);
-    bool fitScaleMLE(const std::vector<double> &sample);
-    bool fitAsymmetryMLE(const std::vector<double> &sample);
+    bool FitLocationMLE(const std::vector<double> &Sample);
+    bool FitScaleMLE(const std::vector<double> &Sample);
+    bool FitAsymmetryMLE(const std::vector<double> &Sample);
     /// Two parameters
-    bool fitLocationAndScaleMLE(const std::vector<double> &sample);
-    bool fitLocationAndAsymmetryMLE(const std::vector<double> &sample);
-    bool fitScaleAndAsymmetryMLE(const std::vector<double> &sample);
+    bool FitLocationAndScaleMLE(const std::vector<double> &Sample);
+    bool FitLocationAndAsymmetryMLE(const std::vector<double> &Sample);
+    bool FitScaleAndAsymmetryMLE(const std::vector<double> &Sample);
     /// All parameters
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &Sample);
 
 private:
     /**
-     * @brief getAsymmetryFromSkewness
+     * @brief GetAsymmetryFromSkewness
      * @param sample
      * @return numeric solution of equation Skewness() = skewness
      */
-    double getAsymmetryFromSkewness(double skewness);
+    double GetAsymmetryFromSkewness(double skewness);
 public:
     /// Method of moments
     /// One parameter
-    bool fitLocationMM(const std::vector<double> &sample);
-    bool fitScaleMM(const std::vector<double> &sample);
-    bool fitAsymmetryMM(const std::vector<double> &sample);
+    bool FitLocationMM(const std::vector<double> &Sample);
+    bool FitScaleMM(const std::vector<double> &Sample);
+    bool FitAsymmetryMM(const std::vector<double> &Sample);
     /// Two parameters
-    bool fitLocationAndScaleMM(const std::vector<double> &sample);
-    bool fitLocationAndAsymmetryMM(const std::vector<double> &sample);
-    bool fitScaleAndAsymmetryMM(const std::vector<double> &sample);
+    bool FitLocationAndScaleMM(const std::vector<double> &Sample);
+    bool FitLocationAndAsymmetryMM(const std::vector<double> &Sample);
+    bool FitScaleAndAsymmetryMM(const std::vector<double> &Sample);
     /// All parameters
-    bool fitMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &Sample);
 };
 
 #endif // LAPLACERAND_H

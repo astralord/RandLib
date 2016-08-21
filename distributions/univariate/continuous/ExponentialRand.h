@@ -21,29 +21,29 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
     static double stairWidth[257], stairHeight[256];
     static double constexpr x1 = 7.69711747013104972;
     static bool dummy;
-    static bool setupTables();
+    static bool SetupTables();
 
 public:
     explicit ExponentialRand(double rate = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
 protected:
-    using GammaRand::setParameters;
+    using GammaRand::SetParameters;
 
 public:
-    void setRate(double rate);
+    void SetRate(double rate);
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    static double variate(double rate);
+    static double Variate(double rate);
     double Median() const override;
-    static double standardVariate();
+    static double StandardVariate();
 
     std::complex<double> CF(double t) const override;
 
@@ -57,11 +57,11 @@ public:
     double Moment(int n) const;
 
     /// Maximum-likelihood estimation
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &Sample);
     /// Method of moments
-    bool fitMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &Sample);
     /// Uniformly minimum variance unbiased estimator
-    bool fitUMVU(const std::vector<double> &sample);
+    bool FitUMVU(const std::vector<double> &Sample);
 };
 
 #endif // EXPONENTIALRAND_H

@@ -26,8 +26,8 @@ class RANDLIBSHARED_EXPORT GeometricBrownianMotion : public StochasticProcess<do
 public:
     GeometricBrownianMotion(double drift, double volatility, double initialValue, double deltaT = 1.0);
 
-    inline double getDrift() { return mu; }
-    inline double getVolatility() { return sigma; }
+    inline double GetDrift() { return mu; }
+    inline double GetVolatility() { return sigma; }
 
 private:
     void nextImpl() override;

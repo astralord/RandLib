@@ -2,15 +2,15 @@
 
 PlanckRand::PlanckRand(double shape, double scale)
 {
-    setParameters(shape, scale);
+    SetParameters(shape, scale);
 }
 
-std::string PlanckRand::name() const
+std::string PlanckRand::Name() const
 {
-    return "Planck(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Planck(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void PlanckRand::setParameters(double shape, double scale)
+void PlanckRand::SetParameters(double shape, double scale)
 {
     a = shape;
     if (a <= 0)
@@ -19,12 +19,12 @@ void PlanckRand::setParameters(double shape, double scale)
     if (b <= 0)
         b = 1.0;
 
-    Z.setExponent(a + 1);
-    G.setParameters(a + 1, b);
+    Z.SetExponent(a + 1);
+    G.SetParameters(a + 1, b);
 
-    pdfCoef = std::log(Z.getInverseZetaFunction());
+    pdfCoef = std::log(Z.GetInverseZetaFunction());
     pdfCoef += (a + 1) * std::log(b);
-    pdfCoef -= G.getLogGammaFunction();
+    pdfCoef -= G.GetLogGammaFunction();
 }
 
 double PlanckRand::f(double x) const
@@ -76,16 +76,16 @@ double PlanckRand::F(double x) const
     return integral1 + integral2;
 }
 
-double PlanckRand::variate() const
+double PlanckRand::Variate() const
 {
-    return G.variate() / Z.variate();
+    return G.Variate() / Z.Variate();
 }
 
-void PlanckRand::sample(std::vector<double> &outputData) const
+void PlanckRand::Sample(std::vector<double> &outputData) const
 {
-    G.sample(outputData);
+    G.Sample(outputData);
     for (double & var : outputData)
-        var /= Z.variate();
+        var /= Z.Variate();
 }
 
 double PlanckRand::Mean() const

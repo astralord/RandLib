@@ -13,20 +13,20 @@ class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 public:
     GumbelRand(double location, double scale);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return INFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }
 
-    void setLocation(double location);
-    void setScale(double scale);
-    inline double getLocation() const { return mu; }
-    inline double getScale() const { return beta; }
+    void SetLocation(double location);
+    void SetScale(double scale);
+    inline double GetLocation() const { return mu; }
+    inline double GetScale() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
-    static double variate(double location, double scale);
+    double Variate() const override;
+    static double Variate(double location, double scale);
 
     double Mean() const override;
     double Variance() const override;

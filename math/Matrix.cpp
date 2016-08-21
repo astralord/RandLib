@@ -51,7 +51,7 @@ Matrix<n,m> &Matrix<n, m>::operator+=(const Matrix<n,m> &right)
 }
 
 template <size_t n, size_t m>
-void Matrix<n, m>::getSquare(Matrix<n, n> &squaredMatrix) const
+void Matrix<n, m>::GetSquare(Matrix<n, n> &squaredMatrix) const
 {
     for (size_t i = 0; i != n; ++i) {
         for (size_t j = i; j != n; ++j) {
@@ -76,7 +76,7 @@ void Matrix<n, m>::clear()
 }
 
 template <size_t n, size_t m>
-bool Matrix<n, m>::getTransposed(Matrix<m, n> &transposedMatrix) const
+bool Matrix<n, m>::GetTransposed(Matrix<m, n> &transposedMatrix) const
 {
     for (size_t i = 0; i != n; ++i)
         for (size_t j = 0; j != m; ++j)

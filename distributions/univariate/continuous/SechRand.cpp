@@ -6,7 +6,7 @@ SechRand::SechRand()
 
 }
 
-std::string SechRand::name() const
+std::string SechRand::Name() const
 {
     return "Hyperbolic secant";
 }
@@ -22,9 +22,9 @@ double SechRand::F(double x) const
     return M_2_PI * std::atan(y);
 }
 
-double SechRand::variate() const
+double SechRand::Variate() const
 {
-    double y = std::fabs(CauchyRand::standardVariate());
+    double y = std::fabs(CauchyRand::StandardVariate());
     return M_2_PI * std::log(y);
 }
 

@@ -6,9 +6,9 @@ LevyRand::LevyRand(double location, double scale)
 {
 }
 
-std::string LevyRand::name() const
+std::string LevyRand::Name() const
 {
-    return "Levy(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Levy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
 double LevyRand::f(double x) const
@@ -21,22 +21,22 @@ double LevyRand::F(double x) const
     return StableRand::cdfLevy(x);
 }
 
-double LevyRand::variate() const
+double LevyRand::Variate() const
 {
-    double rv = NormalRand::standardVariate();
+    double rv = NormalRand::StandardVariate();
     rv *= rv;
     rv = sigma / rv;
     return mu + rv;
 }
 
-double LevyRand::variate(double location, double scale)
+double LevyRand::Variate(double location, double scale)
 {
-    return location + scale * standardVariate();
+    return location + scale * StandardVariate();
 }
 
-double LevyRand::standardVariate()
+double LevyRand::StandardVariate()
 {
-    double rv = NormalRand::standardVariate();
+    double rv = NormalRand::StandardVariate();
     return 1.0 / (rv * rv);
 }
 
@@ -63,7 +63,7 @@ double LevyRand::quantileImpl1m(double p) const
     return mu + x * x;
 }
 
-bool LevyRand::fitScaleMLE(const std::vector<double> &sample)
+bool LevyRand::FitScaleMLE(const std::vector<double> &sample)
 {
     double n = sample.size();
     if (n <= 0 || !checkValidity(sample))
@@ -71,6 +71,6 @@ bool LevyRand::fitScaleMLE(const std::vector<double> &sample)
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);
-    setScale(n / invSum);
+    SetScale(n / invSum);
     return true;
 }

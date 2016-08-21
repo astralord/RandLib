@@ -13,7 +13,7 @@ public:
 
     void toIdentity();
     /// Gauss-Jordan method (not fast and non-optimized)
-    bool getInverse(SquareMatrix<n> &invertedMatrix) const;
+    bool GetInverse(SquareMatrix<n> &invertedMatrix) const;
 };
 
 #endif // SQUAREMATRIX_H

@@ -3,21 +3,21 @@
 YuleRand::YuleRand(double shape) :
 X(shape, 1.0)
 {
-    setShape(shape);
+    SetShape(shape);
 }
 
-std::string YuleRand::name() const
+std::string YuleRand::Name() const
 {
-    return "Yule(" + toStringWithPrecision(getShape()) + ")";
+    return "Yule(" + toStringWithPrecision(GetShape()) + ")";
 }
 
-void YuleRand::setShape(double shape)
+void YuleRand::SetShape(double shape)
 {
     ro = shape;
     if (ro <= 0)
         ro = 1.0;
     lgamma1pRo = std::lgamma(ro + 1);
-    X.setShape(ro);
+    X.SetShape(ro);
 }
 
 double YuleRand::P(int k) const
@@ -43,16 +43,16 @@ double YuleRand::F(int k) const
     return 1 - k * y;
 }
 
-int YuleRand::variate() const
+int YuleRand::Variate() const
 {
-    double prob = 1.0 / X.variate();
-    return GeometricRand::variate(prob) + 1;
+    double prob = 1.0 / X.Variate();
+    return GeometricRand::Variate(prob) + 1;
 }
 
-int YuleRand::variate(double shape)
+int YuleRand::Variate(double shape)
 {
-    double prob = 1.0 / ParetoRand::standardVariate(shape);
-    return GeometricRand::variate(prob) + 1;
+    double prob = 1.0 / ParetoRand::StandardVariate(shape);
+    return GeometricRand::Variate(prob) + 1;
 }
 
 double YuleRand::Mean() const

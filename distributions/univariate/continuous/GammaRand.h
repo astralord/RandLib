@@ -21,20 +21,20 @@ protected:
 
 private:
     double t, b, alphaInv; /// constants for sampling
-    void setConstantsForGenerator();
+    void SetConstantsForGenerator();
 
 public:
     GammaRand(double shape = 1, double rate = 1);
     virtual ~GammaRand() {}
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
-    void setParameters(double shape, double rate);
-    inline double getShape() const { return alpha; }
-    inline double getScale() const { return theta; }
-    inline double getRate() const { return beta; }
+    void SetParameters(double shape, double rate);
+    inline double GetShape() const { return alpha; }
+    inline double GetScale() const { return theta; }
+    inline double GetRate() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -49,7 +49,7 @@ private:
         MARSAGLIA_TSANG /// 0.34 < α < 1 or α >= 1.2
     };
 
-    static GENERATOR_ID getIdOfUsedGenerator(double shape);
+    static GENERATOR_ID GetIdOfUsedGenerator(double shape);
 
     static double variateThroughExponentialSum(int shape);
     static double variateForShapeOneAndAHalf();
@@ -59,11 +59,11 @@ private:
     static double variateMarsagliaTsang(double shape);
     
 public:
-    static double standardVariate(double shape);
-    static double variate(double shape, double rate);
+    static double StandardVariate(double shape);
+    static double Variate(double shape, double rate);
 
-    double variate() const override; 
-    void sample(std::vector<double> &outputData) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -84,22 +84,22 @@ private:
 
 public:
     /// Maximum-likelihood estimation
-    bool fitScaleMLE(const std::vector<double> &sample);
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitScaleMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &Sample);
     
     /// Method of moments
-    bool fitShapeMM(const std::vector<double> &sample);
-    bool fitScaleMM(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
+    bool FitShapeMM(const std::vector<double> &Sample);
+    bool FitScaleMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &Sample);
 
     /// Bayes estimation
-    bool fitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution);
+    bool FitRateBayes(const std::vector<double> &Sample, GammaRand &priorDistribution);
 
     /**
-     * @brief getLogGammaFunction
+     * @brief GetLogGammaFunction
      * @return log(Gamma(α))
      */
-    inline double getLogGammaFunction() const { return -mLgammaShape; }
+    inline double GetLogGammaFunction() const { return -mLgammaShape; }
 };
 
 
@@ -116,16 +116,16 @@ class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 {
 public:
     explicit ChiSquaredRand(int degree = 1);
-    std::string name() const override;
+    std::string Name() const override;
 
-    void setDegree(int degree);
-    inline int getDegree() const { return static_cast<int>(alpha + alpha); }
+    void SetDegree(int degree);
+    inline int GetDegree() const { return static_cast<int>(alpha + alpha); }
 
 protected:
-    /// prohibit to use gamma's public getters and setters
-    using GammaRand::setParameters;
-    using GammaRand::getShape;
-    using GammaRand::getScale;
+    /// prohibit to use gamma's public Getters and Setters
+    using GammaRand::SetParameters;
+    using GammaRand::GetShape;
+    using GammaRand::GetScale;
 };
 
 
@@ -143,16 +143,16 @@ class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
 {
 public:
     ErlangRand(int shape = 1, double rate = 1);
-    std::string name() const override;
+    std::string Name() const override;
 
-    inline int getShape() const;
-    inline double getRate() const;
+    inline int GetShape() const;
+    inline double GetRate() const;
 
 protected:
-    /// prohibit to use gamma's public getters and setters
-    using GammaRand::setParameters;
-    using GammaRand::getShape;
-    using GammaRand::getScale;
+    /// prohibit to use gamma's public Getters and Setters
+    using GammaRand::SetParameters;
+    using GammaRand::GetShape;
+    using GammaRand::GetScale;
 };
 
 

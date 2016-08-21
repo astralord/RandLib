@@ -19,23 +19,23 @@ public:
     explicit StochasticProcess(double deltaT = 1.0, T initialValue = 0);
 
     /**
-     * @brief reset
+     * @brief reSet
      * @param initialValue
-     * set time to 0 and current value to initialValue
+     * Set time to 0 and current value to initialValue
      */
-    void reset(T initialValue = 0.0);
+    void reSet(T initialValue = 0.0);
 
     /**
-     * @brief getCurrentTime
+     * @brief GetCurrentTime
      * @return current time
      */
-    inline double getCurrentTime() const { return currentTime; }
+    inline double GetCurrentTime() const { return currentTime; }
 
     /**
-     * @brief getCurrentValue
+     * @brief GetCurrentValue
      * @return current value
      */
-    inline T getCurrentValue() const { return currentValue; }
+    inline T GetCurrentValue() const { return currentValue; }
 
     /**
      * @brief next

@@ -3,15 +3,15 @@
 
 ParetoRand::ParetoRand(double shape, double scale)
 {
-    setParameters(shape, scale);
+    SetParameters(shape, scale);
 }
 
-std::string ParetoRand::name() const
+std::string ParetoRand::Name() const
 {
-    return "Pareto(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Pareto(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void ParetoRand::setParameters(double shape, double scale)
+void ParetoRand::SetParameters(double shape, double scale)
 {
     alpha = shape;
     if (alpha <= 0)
@@ -24,7 +24,7 @@ void ParetoRand::setParameters(double shape, double scale)
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
-void ParetoRand::setShape(double shape)
+void ParetoRand::SetShape(double shape)
 {
     alpha = shape;
     if (alpha <= 0)
@@ -33,7 +33,7 @@ void ParetoRand::setShape(double shape)
     pdfCoef = alpha * std::pow(xm, alpha);
 }
 
-void ParetoRand::setScale(double scale)
+void ParetoRand::SetScale(double scale)
 {
     xm = scale;
     if (xm <= 0)
@@ -53,20 +53,20 @@ double ParetoRand::F(double x) const
 
 double ParetoRand::variateForAlphaOne()
 {
-    return 1.0 / UniformRand::standardVariate();
+    return 1.0 / UniformRand::StandardVariate();
 }
 
 double ParetoRand::variateForAlphaTwo()
 {
-    return 1.0 / std::sqrt(UniformRand::standardVariate());
+    return 1.0 / std::sqrt(UniformRand::StandardVariate());
 }
 
 double ParetoRand::variateForCommonAlpha(double shape)
 {
-    return std::exp(ExponentialRand::variate(shape));
+    return std::exp(ExponentialRand::Variate(shape));
 }
 
-double ParetoRand::standardVariate(double shape)
+double ParetoRand::StandardVariate(double shape)
 {
     if (RandMath::areClose(shape, 1.0))
         return variateForAlphaOne();
@@ -75,17 +75,17 @@ double ParetoRand::standardVariate(double shape)
     return variateForCommonAlpha(shape);
 }
 
-double ParetoRand::variate(double shape, double scale)
+double ParetoRand::Variate(double shape, double scale)
 {
-    return scale * standardVariate(shape);
+    return scale * StandardVariate(shape);
 }
 
-double ParetoRand::variate() const
+double ParetoRand::Variate() const
 {
-    return xm * standardVariate(alpha);
+    return xm * StandardVariate(alpha);
 }
 
-void ParetoRand::sample(std::vector<double> &outputData) const
+void ParetoRand::Sample(std::vector<double> &outputData) const
 {
     if (RandMath::areClose(alpha, 1.0)) {
         for (double &var : outputData)
@@ -165,7 +165,7 @@ double ParetoRand::Entropy() const
     return std::log(xm * alphaInv) + alphaInv + 1;
 }
 
-bool ParetoRand::fitMLE(const std::vector<double> &sample)
+bool ParetoRand::FitMLE(const std::vector<double> &sample)
 {
     double n = sample.size();
     if (n <= 0)
@@ -191,6 +191,6 @@ bool ParetoRand::fitMLE(const std::vector<double> &sample)
         logAverage += std::log(var / minVar);
     logAverage = n / logAverage;
 
-    setParameters(logAverage, minVar);
+    SetParameters(logAverage, minVar);
     return true;
 }

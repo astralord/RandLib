@@ -13,21 +13,21 @@ class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 public:
     RaisedCosineRand(double location, double scale);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return mu - s; }
     double MaxValue() const override { return mu + s; }
 
-    void setLocation(double location);
-    inline double getLocation() const { return mu; }
-    void setScale(double scale);
-    inline double getScale() const { return s; }
+    void SetLocation(double location);
+    inline double GetLocation() const { return mu; }
+    void SetScale(double scale);
+    inline double GetScale() const { return s; }
 
     double f(double x) const override;
     double F(double x) const override;
 
-    static double standardVariate();
-    double variate() const override;
+    static double StandardVariate();
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -48,7 +48,7 @@ class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineRand
 {
 public:
     RaabGreenRand() : RaisedCosineRand(0.0, M_PI) {}
-    std::string name() const override;
+    std::string Name() const override;
 };
 
 

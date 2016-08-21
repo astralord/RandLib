@@ -21,10 +21,10 @@ public:
     virtual ~UnivariateProbabilityDistribution() {}
 
     /**
-     * @brief supportType
+     * @brief SupportType
      * @return type of support
      */
-    virtual SUPPORT_TYPE supportType() const = 0;
+    virtual SUPPORT_TYPE SupportType() const = 0;
 
     /**
      * @brief isLeftBounded
@@ -199,14 +199,14 @@ public:
      * @param sample
      * @return product of f(x_i)
      */
-    virtual double Likelihood(const std::vector<T> &sample) const = 0;
+    virtual double Likelihood(const std::vector<T> &Sample) const = 0;
 
     /**
      * @brief LogLikelihood
      * @param sample
      * @return sum of log(f(x_i))
      */
-    virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
+    virtual double LogLikelihood(const std::vector<T> &Sample) const = 0;
 
     /**
      * @brief checkValidity
@@ -214,28 +214,28 @@ public:
      * verify if sample can be returned from such distribution
      * @return true if yes
      */
-    bool checkValidity(const std::vector<T> &sample) const;
+    bool checkValidity(const std::vector<T> &Sample) const;
 
     /**
      * @brief sum
      * @param sample
      * @return sum of all elements in a sample
      */
-    static double sampleSum(const std::vector<T> &sample);
+    static double sampleSum(const std::vector<T> &Sample);
     /**
      * @brief sampleMean
      * @param sample
      * @return arithmetic average
      */
-    static double sampleMean(const std::vector<T> &sample);
+    static double sampleMean(const std::vector<T> &Sample);
     /**
      * @brief sampleVariance
      * @param sample
      * @param mean known (or sample) average
      * @return second central moment
      */
-    static double sampleVariance(const std::vector<T> &sample, double mean);
-    static double sampleVariance(const std::vector<T> &sample);
+    static double sampleVariance(const std::vector<T> &Sample, double mean);
+    static double sampleVariance(const std::vector<T> &Sample);
     /**
      * @brief sampleSkewness
      * @param sample
@@ -243,23 +243,23 @@ public:
      * @param stdev
      * @return
      */
-    static double sampleSkewness(const std::vector<T> &sample, double mean, double stdev);
-    static double sampleSkewness(const std::vector<T> &sample, double mean);
-    static double sampleSkewness(const std::vector<T> &sample);
+    static double sampleSkewness(const std::vector<T> &Sample, double mean, double stdev);
+    static double sampleSkewness(const std::vector<T> &Sample, double mean);
+    static double sampleSkewness(const std::vector<T> &Sample);
     /**
      * @brief rawMoment
      * @param sample
      * @return k-th raw moment
      */
-    static double rawMoment(const std::vector<T> &sample, int k);
+    static double rawMoment(const std::vector<T> &Sample, int k);
     /**
      * @brief centralMoment
      * @param sample
      * @param mean known (or sample) average
      * @return k-th central moment
      */
-    static double centralMoment(const std::vector<T> &sample, int k, double mean);
-    static double centralMoment(const std::vector<T> &sample, int k);
+    static double centralMoment(const std::vector<T> &Sample, int k, double mean);
+    static double centralMoment(const std::vector<T> &Sample, int k);
     /**
      * @brief normalisedMoment
      * @param sample
@@ -268,9 +268,9 @@ public:
      * @param stdev
      * @return
      */
-    static double normalisedMoment(const std::vector<T> &sample, int k, double mean, double stdev);
-    static double normalisedMoment(const std::vector<T> &sample, int k, double mean);
-    static double normalisedMoment(const std::vector<T> &sample, int k);
+    static double normalisedMoment(const std::vector<T> &Sample, int k, double mean, double stdev);
+    static double normalisedMoment(const std::vector<T> &Sample, int k, double mean);
+    static double normalisedMoment(const std::vector<T> &Sample, int k);
 };
 
 #endif // UNIVARIATEPROBABILITYDISTRIBUTION_H

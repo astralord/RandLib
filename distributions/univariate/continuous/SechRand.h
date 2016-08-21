@@ -11,13 +11,13 @@ class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
 public:
     SechRand();
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return INFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return INFINITY; }
     double MaxValue() const override { return INFINITY; }
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

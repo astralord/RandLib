@@ -3,18 +3,18 @@
 
 TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit)
 {
-    setParameters(lowerLimit, mode, upperLimit);
+    SetParameters(lowerLimit, mode, upperLimit);
 }
 
-std::string TriangularRand::name() const
+std::string TriangularRand::Name() const
 {
     return "Triangular("
-            + toStringWithPrecision(getLowerLimit()) + ", "
-            + toStringWithPrecision(getMode()) + ", "
-            + toStringWithPrecision(getUpperLimit()) + ")";
+            + toStringWithPrecision(GetLowerLimit()) + ", "
+            + toStringWithPrecision(GetMode()) + ", "
+            + toStringWithPrecision(GetUpperLimit()) + ")";
 }
 
-void TriangularRand::setParameters(double lowerLimit, double mode, double upperLimit)
+void TriangularRand::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
     a = lowerLimit;
     if (mode > a)
@@ -25,10 +25,10 @@ void TriangularRand::setParameters(double lowerLimit, double mode, double upperL
         b = upperLimit;
     else
         b = c + 1.0;
-    setConstantsForGenerator();
+    SetConstantsForGenerator();
 }
 
-void TriangularRand::setConstantsForGenerator()
+void TriangularRand::SetConstantsForGenerator()
 {
     constForGenerator = (c - a) / (b - a);
     coefGenerator1 = (b - a) * (c - a);
@@ -59,9 +59,9 @@ double TriangularRand::F(double x) const
     return 1.0;
 }
 
-double TriangularRand::variate() const
+double TriangularRand::Variate() const
 {
-    double u = UniformRand::standardVariate();
+    double u = UniformRand::StandardVariate();
     if (u < constForGenerator)
         return a + std::sqrt(u * coefGenerator1);
     return b - std::sqrt((1 - u) * coefGenerator2);

@@ -2,21 +2,21 @@
 
 WignerSemicircleRand::WignerSemicircleRand(double radius)
 {
-    setRadius(radius);
+    SetRadius(radius);
 }
 
-std::string WignerSemicircleRand::name() const
+std::string WignerSemicircleRand::Name() const
 {
-    return "Wigner Semicircle(" + toStringWithPrecision(getRadius()) + ")";
+    return "Wigner Semicircle(" + toStringWithPrecision(GetRadius()) + ")";
 }
 
-void WignerSemicircleRand::setRadius(double radius)
+void WignerSemicircleRand::SetRadius(double radius)
 {
     R = radius;
     if (R <= 0)
         R = 1.0;
     RSq = R * R;
-    X.setParameters(1.5, 1.5);
+    X.SetParameters(1.5, 1.5);
 }
 
 double WignerSemicircleRand::f(double x) const
@@ -42,9 +42,9 @@ double WignerSemicircleRand::F(double x) const
     return 0.5 + (y + z) * M_1_PI;
 }
 
-double WignerSemicircleRand::variate() const
+double WignerSemicircleRand::Variate() const
 {
-    double x = X.variate();
+    double x = X.Variate();
     x += x - 1;
     return R * x;
 }

@@ -2,21 +2,21 @@
 
 SkellamRand::SkellamRand(double mean1, double mean2)
 {
-    setMeans(mean1, mean2);
+    SetMeans(mean1, mean2);
 }
 
-std::string SkellamRand::name() const
+std::string SkellamRand::Name() const
 {
-    return "Skellam(" + toStringWithPrecision(getFirstMean()) + ", " + toStringWithPrecision(getSecondMean()) + ")";
+    return "Skellam(" + toStringWithPrecision(GetFirstMean()) + ", " + toStringWithPrecision(GetSecondMean()) + ")";
 }
 
-void SkellamRand::setMeans(double mean1, double mean2)
+void SkellamRand::SetMeans(double mean1, double mean2)
 {
     mu1 = mean1;
-    X.setRate(mu1);
+    X.SetRate(mu1);
 
     mu2 = mean2;
-    Y.setRate(mu2);
+    Y.SetRate(mu2);
 
     pmfCoef1 = std::exp(-mu1 - mu2);
     pmfCoef2 = std::sqrt(mu1 / mu2);
@@ -44,16 +44,16 @@ double SkellamRand::F(int k) const
     return sum;
 }
 
-int SkellamRand::variate() const
+int SkellamRand::Variate() const
 {
-    return X.variate() - Y.variate();
+    return X.Variate() - Y.Variate();
 }
 
-void SkellamRand::sample(std::vector<int> &outputData) const
+void SkellamRand::Sample(std::vector<int> &outputData) const
 {
-    X.sample(outputData);
+    X.Sample(outputData);
     for (int & var : outputData)
-        var -= Y.variate();
+        var -= Y.Variate();
 }
 
 double SkellamRand::Mean() const

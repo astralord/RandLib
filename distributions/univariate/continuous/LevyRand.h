@@ -18,20 +18,20 @@ class RANDLIBSHARED_EXPORT LevyRand : public StableRand
 {
 public:
     LevyRand(double location = 0, double scale = 1);
-    std::string name() const override;
+    std::string Name() const override;
 
 private:
-    using StableRand::setParameters;
-    using StableRand::getExponent;
-    using StableRand::getSkewness;
+    using StableRand::SetParameters;
+    using StableRand::GetExponent;
+    using StableRand::GetSkewness;
 
 public:
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    static double variate(double location, double scale);
-    static double standardVariate();
+    static double Variate(double location, double scale);
+    static double StandardVariate();
     
     std::complex<double> CF(double t) const override;
 
@@ -41,7 +41,7 @@ private:
 
 public:
     /// Maximum likelihood estimators
-    bool fitScaleMLE(const std::vector<double> &sample);
+    bool FitScaleMLE(const std::vector<double> &Sample);
 };
 
 #endif // LEVYRAND_H

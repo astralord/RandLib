@@ -3,15 +3,15 @@
 
 LogarithmicRand::LogarithmicRand(double probability)
 {
-    setProbability(probability);
+    SetProbability(probability);
 }
 
-std::string LogarithmicRand::name() const
+std::string LogarithmicRand::Name() const
 {
-    return "Logarithmic(" + toStringWithPrecision(getProbability()) + ")";
+    return "Logarithmic(" + toStringWithPrecision(GetProbability()) + ")";
 }
 
-void LogarithmicRand::setProbability(double probability)
+void LogarithmicRand::SetProbability(double probability)
 {
     p = probability;
     if (p <= 0 || p >= 1)
@@ -30,14 +30,14 @@ double LogarithmicRand::F(int k) const
     return (k < 1) ? 0 : 1 + logQInv * RandMath::incompleteBetaFun(p, k + 1, 0);
 }
 
-int LogarithmicRand::variate() const
+int LogarithmicRand::Variate() const
 {
     /// Kemp's second accelerated generator
     /// p. 548, "Non-Uniform Random Variate Generation" by Luc Devroye
-    double V = UniformRand::standardVariate();
+    double V = UniformRand::StandardVariate();
     if (V >= p)
         return 1.0;
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     double y = 1.0 - std::exp(U / logQInv);
     if (V > y)
         return 1.0;

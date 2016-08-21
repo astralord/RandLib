@@ -2,21 +2,21 @@
 
 LogisticRand::LogisticRand(double location, double scale)
 {
-    setLocation(location);
-    setScale(scale);
+    SetLocation(location);
+    SetScale(scale);
 }
 
-std::string LogisticRand::name() const
+std::string LogisticRand::Name() const
 {
-    return "Logistic(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Logistic(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void LogisticRand::setLocation(double location)
+void LogisticRand::SetLocation(double location)
 {
     mu = location;
 }
 
-void LogisticRand::setScale(double scale)
+void LogisticRand::SetScale(double scale)
 {
     s = scale;
     if (s <= 0)
@@ -38,11 +38,11 @@ double LogisticRand::F(double x) const
     return 1.0 / (1 + expX);
 }
 
-double LogisticRand::variate() const
+double LogisticRand::Variate() const
 {
     /// there can be used rejection method from Laplace or Cauchy (Luc Devroye, p. 471)
     /// or ziggurat
-    return mu + s * std::log(1.0 / UniformRand::standardVariate() - 1);
+    return mu + s * std::log(1.0 / UniformRand::StandardVariate() - 1);
 }
 
 double LogisticRand::Mean() const
@@ -99,25 +99,25 @@ double LogisticRand::ExcessKurtosis() const
 }
 
 /// Method of moments
-bool LogisticRand::fitLocationMM(const std::vector<double> &sample)
+bool LogisticRand::FitLocationMM(const std::vector<double> &sample)
 {
-    setLocation(sampleMean(sample));
+    SetLocation(sampleMean(sample));
     return true;
 }
 
-bool LogisticRand::fitScaleMM(const std::vector<double> &sample)
+bool LogisticRand::FitScaleMM(const std::vector<double> &sample)
 {
     double var = sampleVariance(sample, mu);
-    setScale(std::sqrt(3 * var) / M_PI);
+    SetScale(std::sqrt(3 * var) / M_PI);
     return true;
 }
 
-bool LogisticRand::fitMM(const std::vector<double> &sample)
+bool LogisticRand::FitMM(const std::vector<double> &sample)
 {
-    return fitLocationMM(sample) ? fitScaleMM(sample) : false;
+    return FitLocationMM(sample) ? FitScaleMM(sample) : false;
 }
 
-bool LogisticRand::fitLocationMLE(const std::vector<double> &sample)
+bool LogisticRand::FitLocationMLE(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();
     if (nHalf <= 0)
@@ -139,6 +139,6 @@ bool LogisticRand::fitLocationMLE(const std::vector<double> &sample)
     }, root))
         return false;
 
-    setLocation(root);
+    SetLocation(root);
     return true;
 }

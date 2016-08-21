@@ -4,37 +4,37 @@
 
 StudentTRand::StudentTRand(int degree, double location, double scale)
 {
-    setDegree(degree);
-    setLocation(location);
-    setScale(scale);
+    SetDegree(degree);
+    SetLocation(location);
+    SetScale(scale);
 }
 
-std::string StudentTRand::name() const
+std::string StudentTRand::Name() const
 {
     if (mu == 0.0 && sigma == 1.0)
-        return "Student's t(" + toStringWithPrecision(getDegree()) + ")";
-    return "Student's t(" + toStringWithPrecision(getDegree()) + ", "
-                          + toStringWithPrecision(getLocation()) + ", "
-                          + toStringWithPrecision(getScale()) + ")";
+        return "Student's t(" + toStringWithPrecision(GetDegree()) + ")";
+    return "Student's t(" + toStringWithPrecision(GetDegree()) + ", "
+                          + toStringWithPrecision(GetLocation()) + ", "
+                          + toStringWithPrecision(GetScale()) + ")";
 }
 
-void StudentTRand::setDegree(int degree)
+void StudentTRand::SetDegree(int degree)
 {
     v = std::max(degree, 1);
-    Y.setDegree(v);
+    Y.SetDegree(v);
 
     vp1Half = 0.5 * (v + 1);
     pdfCoef = std::lgamma(vp1Half);
     pdfCoef -= 0.5 * std::log(M_PI * v);
-    pdfCoef -= Y.getLogGammaFunction();
+    pdfCoef -= Y.GetLogGammaFunction();
 }
 
-void StudentTRand::setLocation(double location)
+void StudentTRand::SetLocation(double location)
 {
     mu = location;
 }
 
-void StudentTRand::setScale(double scale)
+void StudentTRand::SetScale(double scale)
 {
     sigma = scale;
     if (sigma <= 0)
@@ -76,25 +76,25 @@ double StudentTRand::F(double x) const
     mu, x);
 }
 
-double StudentTRand::variate() const
+double StudentTRand::Variate() const
 {
     //v = inf -> normal
     if (v == 1)
-        return CauchyRand::variate(mu, sigma);
-    return mu + sigma * NormalRand::standardVariate() / std::sqrt(Y.variate() / v);
+        return CauchyRand::Variate(mu, sigma);
+    return mu + sigma * NormalRand::StandardVariate() / std::sqrt(Y.Variate() / v);
 }
 
-void StudentTRand::sample(std::vector<double> &outputData) const
+void StudentTRand::Sample(std::vector<double> &outputData) const
 {
     //v = inf -> normal
     if (v == 1) {
         for (double &var : outputData)
-            var = CauchyRand::variate(mu, sigma);
+            var = CauchyRand::Variate(mu, sigma);
     }
     else {
-        Y.sample(outputData);
+        Y.Sample(outputData);
         for (double &var : outputData)
-            var = mu + sigma * NormalRand::standardVariate() / std::sqrt(var / v);
+            var = mu + sigma * NormalRand::StandardVariate() / std::sqrt(var / v);
     }
 }
 
@@ -115,7 +115,7 @@ std::complex<double> StudentTRand::CF(double t) const
     double x = std::sqrt(v) * std::fabs(t * sigma); // value of sqrt(v) can be hashed
     double vHalf = 0.5 * v;
     double y = vHalf * std::log(x);
-    y -= Y.getLogGammaFunction();
+    y -= Y.GetLogGammaFunction();
     y -= (vHalf - 1) * M_LN2;
     std::complex<double> cf(y, t * mu);
     cf = std::exp(cf);

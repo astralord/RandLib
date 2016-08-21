@@ -5,17 +5,17 @@
 template< typename T >
 NegativeBinomialRand<T>::NegativeBinomialRand(T number, double probability)
 {
-    setParameters(number, probability);
+    SetParameters(number, probability);
 }
 
 template< typename T >
-std::string NegativeBinomialRand<T>::name() const
+std::string NegativeBinomialRand<T>::Name() const
 {
-    return "Negative Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
+    return "Negative Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
 }
 
 template< typename T >
-void NegativeBinomialRand<T>::setValidParameters(T number, double probability)
+void NegativeBinomialRand<T>::SetValidParameters(T number, double probability)
 {
     r = number;
     if (r <= 0.0)
@@ -27,17 +27,17 @@ void NegativeBinomialRand<T>::setValidParameters(T number, double probability)
 }
 
 template< typename T >
-void NegativeBinomialRand<T>::setParameters(T number, double probability)
+void NegativeBinomialRand<T>::SetParameters(T number, double probability)
 {
-    setValidParameters(number, probability);
+    SetValidParameters(number, probability);
     q = 1.0 - p;
     logQ = std::log1p(-p);
-    GammaRV.setParameters(r, p / q);
-    qDivP = GammaRV.getScale();
+    GammaRV.SetParameters(r, p / q);
+    qDivP = GammaRV.GetScale();
     pdfCoef = r * std::log(p);
-    pdfCoef -= GammaRV.getLogGammaFunction();
+    pdfCoef -= GammaRV.GetLogGammaFunction();
 
-    if (getIdOfUsedGenerator() == TABLE) {
+    if (GetIdOfUsedGenerator() == TABLE) {
         /// table method
         table[0] = p;
         double prod = p;
@@ -69,7 +69,7 @@ double NegativeBinomialRand<T>::F(int k) const
 }
 
 template< >
-NegativeBinomialRand<int>::GENERATOR_ID NegativeBinomialRand<int>::getIdOfUsedGenerator() const
+NegativeBinomialRand<int>::GENERATOR_ID NegativeBinomialRand<int>::GetIdOfUsedGenerator() const
 {
     /// if r is small, we use two different generators for two different cases:
     /// if p < 0.08 then the tail is too heavy
@@ -82,7 +82,7 @@ NegativeBinomialRand<int>::GENERATOR_ID NegativeBinomialRand<int>::getIdOfUsedGe
 }
 
 template< >
-NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialRand<double>::getIdOfUsedGenerator() const
+NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialRand<double>::GetIdOfUsedGenerator() const
 {
     return GAMMA_POISSON;
 }
@@ -90,13 +90,13 @@ NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialRand<double>::getIdOf
 template< typename T >
 int NegativeBinomialRand<T>::variateThroughGammaPoisson() const
 {
-    return PoissonRand::variate(GammaRV.variate());
+    return PoissonRand::Variate(GammaRV.Variate());
 }
 
 template<>
 int NegativeBinomialRand<int>::variateGeometricByTable() const
 {
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     /// handle tail by recursion
     if (U > table[tableSize - 1])
         return tableSize + variateGeometricByTable();
@@ -110,7 +110,7 @@ int NegativeBinomialRand<int>::variateGeometricByTable() const
 template<>
 int NegativeBinomialRand<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(ExponentialRand::variate(-logQ));
+    return std::floor(ExponentialRand::Variate(-logQ));
 }
 
 template<>
@@ -134,31 +134,31 @@ int NegativeBinomialRand<int>::variateThroughExponential() const
 }
 
 template<>
-int NegativeBinomialRand<double>::variate() const
+int NegativeBinomialRand<double>::Variate() const
 {
     return variateThroughGammaPoisson();
 }
 
 template<>
-int NegativeBinomialRand<int>::variate() const
+int NegativeBinomialRand<int>::Variate() const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE)
         return variateByTable();
     return (genId == EXPONENTIAL) ? variateThroughExponential() : variateThroughGammaPoisson();
 }
 
 template<>
-void NegativeBinomialRand<double>::sample(std::vector<int> &outputData) const
+void NegativeBinomialRand<double>::Sample(std::vector<int> &outputData) const
 {
     for (int &var : outputData)
         var = variateThroughGammaPoisson();
 }
 
 template<>
-void NegativeBinomialRand<int>::sample(std::vector<int> &outputData) const
+void NegativeBinomialRand<int>::Sample(std::vector<int> &outputData) const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE) {
         for (int & var : outputData)
             var = variateByTable();

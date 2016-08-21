@@ -24,29 +24,29 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableRand
     static double stairWidth[257], stairHeight[256];
     static constexpr double x1 = 3.6541528853610088;
     static const bool dummy;
-    static bool setupTables();
+    static bool SetupTables();
 
 public:
     NormalRand(double mean = 0, double var = 1);
-    std::string name() const override;
+    std::string Name() const override;
 
 private:
-    using StableRand::setParameters;
-    using StableRand::getExponent;
-    using StableRand::getSkewness;
+    using StableRand::SetParameters;
+    using StableRand::GetExponent;
+    using StableRand::GetSkewness;
 
 public:
-    void setScale(double scale);
-    void setVariance(double var);
-    inline double getScale() const { return sigma0; }
-    inline double getPrecision() const { return 1.0 / (sigma0 * sigma0); }
+    void SetScale(double scale);
+    void SetVariance(double var);
+    inline double GetScale() const { return sigma0; }
+    inline double GetPrecision() const { return 1.0 / (sigma0 * sigma0); }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    static double variate(double mean, double rootVar);
-    static double standardVariate();
+    static double Variate(double mean, double rootVar);
+    static double StandardVariate();
 
     std::complex<double> CF(double t) const override;
     static double standardQuantile(double p);
@@ -60,25 +60,25 @@ public:
     double Moment(int n) const;
 
     /// Maximum likelihood estimators
-    bool fitMeanMLE(const std::vector<double> &sample);
-    bool fitVarianceMLE(const std::vector<double> &sample);
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitMeanMLE(const std::vector<double> &Sample);
+    bool FitVarianceMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &Sample);
 
     /// Method of moments (the same as MLE)
-    bool fitMeanMM(const std::vector<double> &sample);
-    bool fitVarianceMM(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
+    bool FitMeanMM(const std::vector<double> &Sample);
+    bool FitVarianceMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &Sample);
     
     /// Uniformly minimum variance unbiased (UMVU) estimators
-    bool fitMeanUMVU(const std::vector<double> &sample);
-    bool fitVarianceUMVU(const std::vector<double> &sample);
-    bool fitUMVU(const std::vector<double> &sample);
-    bool fitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
+    bool FitMeanUMVU(const std::vector<double> &Sample);
+    bool FitVarianceUMVU(const std::vector<double> &Sample);
+    bool FitUMVU(const std::vector<double> &Sample);
+    bool FitUMVU(const std::vector<double> &Sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
 
     /// Bayesian estimation
-    bool fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
-    bool fitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution);
-    bool fitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution);
+    bool FitMeanBayes(const std::vector<double> &Sample, NormalRand &priorDistribution);
+    bool FitVarianceBayes(const std::vector<double> &Sample, InverseGammaRand &priorDistribution);
+    bool FitBayes(const std::vector<double> &Sample, NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

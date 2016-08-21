@@ -17,18 +17,18 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution
 public:
     InverseGammaRand(double shape = 1, double rate = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
-    void setParameters(double shape, double rate);
-    inline double getShape() const { return alpha; }
-    inline double getRate() const { return beta; }
+    void SetParameters(double shape, double rate);
+    inline double GetShape() const { return alpha; }
+    inline double GetRate() const { return beta; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
-    void sample(std::vector<double> &outputData) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -41,7 +41,7 @@ private:
     double quantileImpl1m(double p) const override;
 
 public:
-    double getLogGammaFunction() const { return X.getLogGammaFunction(); }
+    double GetLogGammaFunction() const { return X.GetLogGammaFunction(); }
 };
 
 #endif // INVERSEGAMMARAND_H

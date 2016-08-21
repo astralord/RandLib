@@ -15,19 +15,19 @@ class RANDLIBSHARED_EXPORT LogCauchyRand : public ContinuousDistribution
 public:
     LogCauchyRand(double location = 0, double scale = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
-    void setLocation(double location);
-    void setScale(double scale);
-    inline double getLocation() const { return X.getLocation(); }
-    inline double getScale() const { return X.getScale(); }
+    void SetLocation(double location);
+    void SetScale(double scale);
+    inline double GetLocation() const { return X.GetLocation(); }
+    inline double GetScale() const { return X.GetScale(); }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

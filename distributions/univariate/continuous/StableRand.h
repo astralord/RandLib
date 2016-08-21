@@ -37,8 +37,8 @@ public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableRand() {}
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override {
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override {
         if (alpha < 1) {
             if (beta == 1)
                 return RIGHTSEMIFINITE_T;
@@ -50,8 +50,8 @@ public:
     double MinValue() const override { return (alpha < 1 && beta == 1) ? mu : -INFINITY; }
     double MaxValue() const override { return (alpha < 1 && beta == -1) ? mu : INFINITY; }
 
-    void setParameters(double exponent, double skewness);
-    void setScale(double scale);
+    void SetParameters(double exponent, double skewness);
+    void SetScale(double scale);
     
 protected:
     /// Probability distribution functions
@@ -85,8 +85,8 @@ private:
     double variateForCommonExponent() const;
     double variateForUnityExponent() const;
 public:
-    double variate() const override;
-    void sample(std::vector<double> &outputData) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
 public:
     double Variance() const override;
@@ -109,7 +109,7 @@ class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
 {
 public:
     HoltsmarkRand(double scale = 1, double location = 0) : StableRand(1.5, 0.0, scale, location) {}
-    std::string name() const override;
+    std::string Name() const override;
 };
 
 /**
@@ -122,7 +122,7 @@ class RANDLIBSHARED_EXPORT LandauRand : public StableRand
 {
 public:
     LandauRand(double scale = 1, double location = 0) : StableRand(1.0, 1.0, scale, location) {}
-    std::string name() const override;
+    std::string Name() const override;
 };
 
 #endif // STABLERAND_H

@@ -9,25 +9,25 @@
 StableRand::StableRand(double exponent, double skewness, double scale, double location)
     : LimitingDistribution(exponent, skewness, scale, location)
 {
-    setParameters(exponent, skewness);
-    setScale(scale);
-    setLocation(location);
+    SetParameters(exponent, skewness);
+    SetScale(scale);
+    SetLocation(location);
 }
 
-std::string StableRand::name() const
+std::string StableRand::Name() const
 {
     return "Stable("
-            + toStringWithPrecision(getExponent()) + ", "
-            + toStringWithPrecision(getSkewness()) + ", "
-            + toStringWithPrecision(getScale()) + ", "
-            + toStringWithPrecision(getLocation()) + ")";
+            + toStringWithPrecision(GetExponent()) + ", "
+            + toStringWithPrecision(GetSkewness()) + ", "
+            + toStringWithPrecision(GetScale()) + ", "
+            + toStringWithPrecision(GetLocation()) + ")";
 }
 
-void StableRand::setParameters(double exponent, double skewness)
+void StableRand::SetParameters(double exponent, double skewness)
 {
-    LimitingDistribution::setParameters(exponent, skewness);
+    LimitingDistribution::SetParameters(exponent, skewness);
 
-    /// set id of distribution
+    /// Set id of distribution
     if (RandMath::areClose(alpha, 2.0))
         distributionId = NORMAL;
     else if (RandMath::areClose(alpha, 1.0))
@@ -57,9 +57,9 @@ void StableRand::setParameters(double exponent, double skewness)
     }
 }
 
-void StableRand::setScale(double scale)
+void StableRand::SetScale(double scale)
 {
-    LimitingDistribution::setScale(scale);
+    LimitingDistribution::SetScale(scale);
     if (distributionId == NORMAL)
         pdfCoef = 0.5 / sigma;
     else if (distributionId == LEVY)
@@ -402,8 +402,8 @@ double StableRand::F(double x) const
 
 double StableRand::variateForCommonExponent() const
 {
-    double U = UniformRand::variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::standardVariate();
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::StandardVariate();
     double alphaUB = alpha * U + B;
     double X = std::sin(alphaUB);
     double W_adj = W / std::cos(U - alphaUB);
@@ -415,8 +415,8 @@ double StableRand::variateForCommonExponent() const
 
 double StableRand::variateForUnityExponent() const
 {
-    double U = UniformRand::variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::standardVariate();
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::StandardVariate();
     double pi_2pBetaU = M_PI_2 + beta * U;
     double X = logSigma;
     X -= std::log(M_PI_2 * W * std::cos(U) / pi_2pBetaU);
@@ -426,15 +426,15 @@ double StableRand::variateForUnityExponent() const
     return mu + sigma * X;
 }
 
-double StableRand::variate() const
+double StableRand::Variate() const
 {
     switch (distributionId) {
     case NORMAL:
-        return NormalRand::variate(mu, M_SQRT2 * sigma);
+        return NormalRand::Variate(mu, M_SQRT2 * sigma);
     case CAUCHY:
-        return CauchyRand::variate(mu, sigma);
+        return CauchyRand::Variate(mu, sigma);
     case LEVY:
-        return RandMath::sign(beta) * LevyRand::variate(mu, sigma);
+        return RandMath::sign(beta) * LevyRand::Variate(mu, sigma);
     case UNITY_EXPONENT:
         return variateForUnityExponent();
     case COMMON:
@@ -444,27 +444,27 @@ double StableRand::variate() const
     }
 }
 
-void StableRand::sample(std::vector<double> &outputData) const
+void StableRand::Sample(std::vector<double> &outputData) const
 {
     switch (distributionId) {
     case NORMAL: {
         for (double &var : outputData)
-            var = NormalRand::variate(mu, M_SQRT2 * sigma);
+            var = NormalRand::Variate(mu, M_SQRT2 * sigma);
     }
         break;
     case CAUCHY: {
         for (double &var : outputData)
-            var = CauchyRand::variate(mu, sigma);
+            var = CauchyRand::Variate(mu, sigma);
     }
         break;
     case LEVY: {
         if (beta > 0) {
             for (double &var : outputData)
-                var = LevyRand::variate(mu, sigma);
+                var = LevyRand::Variate(mu, sigma);
         }
         else {
             for (double &var : outputData)
-                var = -LevyRand::variate(mu, sigma);
+                var = -LevyRand::Variate(mu, sigma);
         }
     }
         break;
@@ -518,17 +518,17 @@ double StableRand::ExcessKurtosis() const
     return (distributionId == NORMAL)  ? 0 : NAN;
 }
 
-std::string HoltsmarkRand::name() const
+std::string HoltsmarkRand::Name() const
 {
     return "Holtsmark("
-            + toStringWithPrecision(getScale()) + ", "
-            + toStringWithPrecision(getLocation()) + ")";
+            + toStringWithPrecision(GetScale()) + ", "
+            + toStringWithPrecision(GetLocation()) + ")";
 }
 
 
-std::string LandauRand::name() const
+std::string LandauRand::Name() const
 {
     return "Landau("
-            + toStringWithPrecision(getScale()) + ", "
-            + toStringWithPrecision(getLocation()) + ")";
+            + toStringWithPrecision(GetScale()) + ", "
+            + toStringWithPrecision(GetLocation()) + ")";
 }

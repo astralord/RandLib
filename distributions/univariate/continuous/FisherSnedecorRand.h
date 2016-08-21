@@ -20,19 +20,19 @@ class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 public:
     FisherSnedecorRand(int degree1, int degree2);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
-    void setDegrees(int degree1, int degree2);
-    inline int getFirstDegree() const { return d1; }
-    inline int getSecondDegree() const { return d2; }
+    void SetDegrees(int degree1, int degree2);
+    inline int GetFirstDegree() const { return d1; }
+    inline int GetSecondDegree() const { return d2; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
-    void sample(std::vector<double> &outputData) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

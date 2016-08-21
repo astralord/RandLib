@@ -2,17 +2,17 @@
 
 HyperGeometricRand::HyperGeometricRand(int totalSize, int drawsNum, int successesNum)
 {
-    setParameters(totalSize, drawsNum, successesNum);
+    SetParameters(totalSize, drawsNum, successesNum);
 }
 
-std::string HyperGeometricRand::name() const
+std::string HyperGeometricRand::Name() const
 {
     return "HyperGeometric(" + toStringWithPrecision(N) + ", "
                              + toStringWithPrecision(n) + ", "
                              + toStringWithPrecision(K) + ")";
 }
 
-void HyperGeometricRand::setParameters(int totalSize, int drawsNum, int successesNum)
+void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successesNum)
 {
     N = std::max(totalSize, 1);
 
@@ -45,13 +45,13 @@ double HyperGeometricRand::F(int k) const
     return sum;
 }
 
-int HyperGeometricRand::variate() const
+int HyperGeometricRand::Variate() const
 {
     double p = p0;
     int sum = 0;
     for (int i = 1; i <= n; ++i)
     {
-        if (BernoulliRand::variate(p) && ++sum >= K)
+        if (BernoulliRand::Variate(p) && ++sum >= K)
             return sum;
         p = (K - sum);
         p /= (N - i);

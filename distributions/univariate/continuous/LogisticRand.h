@@ -14,19 +14,19 @@ class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 public:
     LogisticRand(double location = 0, double scale = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return INFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }
 
-    void setLocation(double location);
-    void setScale(double scale);
-    inline double getLocation() const { return mu; }
-    inline double getScale() const { return s; }
+    void SetLocation(double location);
+    void SetScale(double scale);
+    inline double GetLocation() const { return mu; }
+    inline double GetScale() const { return s; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -42,12 +42,12 @@ private:
 
 public:
     /// Method of moments
-    bool fitLocationMM(const std::vector<double> &sample);
-    bool fitScaleMM(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
+    bool FitLocationMM(const std::vector<double> &Sample);
+    bool FitScaleMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &Sample);
 
     /// Maximum-likelihood
-    bool fitLocationMLE(const std::vector<double> &sample);
+    bool FitLocationMLE(const std::vector<double> &Sample);
 };
 
 #endif // LOGISTICRAND_H

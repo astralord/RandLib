@@ -10,7 +10,7 @@ SumRand<T1, T2>::SumRand(const UnivariateProbabilityDistribution<T1> &leftRV, co
 template <typename T1, typename T2>
 double SumRand<T1, T2>::Convolution(const std::function<double (T1)> &funPtrX, const std::function<double (T2)> &funPtrY, T1 x, bool isCDF) const
 {
-    SUPPORT_TYPE suppX = X.supportType(), suppY = Y.supportType();
+    SUPPORT_TYPE suppX = X.SupportType(), suppY = Y.SupportType();
 
     if (suppX != INFINITE_T && suppY != INFINITE_T) {
 
@@ -78,15 +78,15 @@ double SumRand<T1, T2>::Convolution(const std::function<double (T1)> &funPtrX, c
 
 
 template <typename T1, typename T2>
-std::string SumRand<T1, T2>::name() const
+std::string SumRand<T1, T2>::Name() const
 {
-    return X.name() + " + " + Y.name();
+    return X.Name() + " + " + Y.Name();
 }
 
 template <typename T1, typename T2>
-SUPPORT_TYPE SumRand<T1, T2>::supportType() const
+SUPPORT_TYPE SumRand<T1, T2>::SupportType() const
 {
-    SUPPORT_TYPE XT = X.supportType(), YT = Y.supportType();
+    SUPPORT_TYPE XT = X.SupportType(), YT = Y.SupportType();
     if (XT == FINITE_T)
         return YT;
     if (YT == FINITE_T)
@@ -128,9 +128,9 @@ double SumRand<T1, T2>::F(T1 x) const
 }
 
 template <typename T1, typename T2>
-T1 SumRand<T1, T2>::variate() const
+T1 SumRand<T1, T2>::Variate() const
 {
-    return X.variate() + Y.variate();
+    return X.Variate() + Y.Variate();
 }
 
 template <typename T1, typename T2>

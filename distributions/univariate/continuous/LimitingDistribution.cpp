@@ -2,12 +2,12 @@
 
 LimitingDistribution::LimitingDistribution(double exponent, double skewness, double scale, double location)
 {
-    setParameters(exponent, skewness);
-    setLocation(location);
-    setScale(scale);
+    SetParameters(exponent, skewness);
+    SetLocation(location);
+    SetScale(scale);
 }
 
-void LimitingDistribution::setParameters(double exponent, double skewness)
+void LimitingDistribution::SetParameters(double exponent, double skewness)
 {
     alpha = std::min(exponent, 2.0);
     if (alpha <= 0)
@@ -34,12 +34,12 @@ void LimitingDistribution::setParameters(double exponent, double skewness)
     }
 }
 
-void LimitingDistribution::setLocation(double location)
+void LimitingDistribution::SetLocation(double location)
 {
     mu = location;
 }
 
-void LimitingDistribution::setScale(double scale)
+void LimitingDistribution::SetScale(double scale)
 {
     sigma = scale;
     if (sigma <= 0)

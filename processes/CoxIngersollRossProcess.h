@@ -27,9 +27,9 @@ class RANDLIBSHARED_EXPORT CoxIngersollRossProcess : public StochasticProcess<do
 public:
     CoxIngersollRossProcess(double mean, double reversionSpeed, double volatility, double initialValue, double deltaT = 1.0);
 
-    inline double getMean() { return alpha; }
-    inline double getReversionSpeed() { return beta; }
-    inline double getVolatility() { return sigma; }
+    inline double GetMean() { return alpha; }
+    inline double GetReversionSpeed() { return beta; }
+    inline double GetVolatility() { return sigma; }
 
 private:
     void nextImpl() override;

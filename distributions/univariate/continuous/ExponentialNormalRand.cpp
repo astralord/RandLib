@@ -2,25 +2,25 @@
 
 ExponentialNormalRand::ExponentialNormalRand(double location, double variance, double rate)
 {
-    setParameters(location, variance, rate);
+    SetParameters(location, variance, rate);
 }
 
-std::string ExponentialNormalRand::name() const
+std::string ExponentialNormalRand::Name() const
 {
-    return "Exponential-Normal(" + toStringWithPrecision(getLocation()) + ", "
+    return "Exponential-Normal(" + toStringWithPrecision(GetLocation()) + ", "
                                  + toStringWithPrecision(X.Variance()) + ", "
-                                 + toStringWithPrecision(getRate()) + ")";
+                                 + toStringWithPrecision(GetRate()) + ")";
 }
 
-void ExponentialNormalRand::setParameters(double location, double variance, double rate)
+void ExponentialNormalRand::SetParameters(double location, double variance, double rate)
 {
-    X.setLocation(location);
-    X.setVariance(variance);
-    Y.setRate(rate);
+    X.SetLocation(location);
+    X.SetVariance(variance);
+    Y.SetRate(rate);
 
-    double mu = X.getLocation();
-    double sigma = X.getScale();
-    double lambda = Y.getRate();
+    double mu = X.GetLocation();
+    double sigma = X.GetScale();
+    double lambda = Y.GetRate();
     double var = sigma * sigma;
     a = 0.5 * lambda * var;
     c = mu + a;
@@ -31,7 +31,7 @@ void ExponentialNormalRand::setParameters(double location, double variance, doub
 
 double ExponentialNormalRand::f(double x) const
 {
-    double lambda = Y.getRate();
+    double lambda = Y.GetRate();
     double y = a - x;
     y *= b;
     y = std::erfc(y);
@@ -44,22 +44,22 @@ double ExponentialNormalRand::f(double x) const
 
 double ExponentialNormalRand::F(double x) const
 {
-    double u = Y.getRate() * (x - X.getLocation());
+    double u = Y.GetRate() * (x - X.GetLocation());
     double y = X.F(x);
     double exponent = -u + 0.5 * v * v;
     exponent = std::exp(exponent);
-    exponent *= X.F(x - v * X.getScale());
+    exponent *= X.F(x - v * X.GetScale());
     return y - exponent;
 }
 
-double ExponentialNormalRand::variate() const
+double ExponentialNormalRand::Variate() const
 {
-    return X.variate() + Y.variate();
+    return X.Variate() + Y.Variate();
 }
 
-double ExponentialNormalRand::variate(double location, double rootVar, double rate)
+double ExponentialNormalRand::Variate(double location, double rootVar, double rate)
 {
-    return NormalRand::variate(location, rootVar) + ExponentialRand::variate(rate);
+    return NormalRand::Variate(location, rootVar) + ExponentialRand::Variate(rate);
 }
 
 double ExponentialNormalRand::Mean() const
@@ -79,8 +79,8 @@ std::complex<double> ExponentialNormalRand::CF(double t) const
 
 double ExponentialNormalRand::Skewness() const
 {
-    double sigma = X.getScale();
-    double lambda = Y.getRate();
+    double sigma = X.GetScale();
+    double lambda = Y.GetRate();
     double tmp = 1.0 / (sigma * lambda);
     double tmpSq = tmp * tmp;
     double y = 1.0 + tmpSq;
@@ -92,8 +92,8 @@ double ExponentialNormalRand::Skewness() const
 
 double ExponentialNormalRand::ExcessKurtosis() const
 {
-    double sigma = X.getScale();
-    double lambda = Y.getRate();
+    double sigma = X.GetScale();
+    double lambda = Y.GetRate();
     double tmp = 1.0 / (sigma * lambda);
     tmp *= tmp;
     double numerator = 1.0 + 2.0 * tmp + 3.0 * tmp * tmp;

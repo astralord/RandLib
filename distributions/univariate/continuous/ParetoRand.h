@@ -15,16 +15,16 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 public:
     ParetoRand(double shape = 1, double scale = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return xm; }
     double MaxValue() const override { return INFINITY; }
 
-    void setParameters(double shape, double scale);
-    void setShape(double shape);
-    void setScale(double scale);
-    inline double getShape() const { return alpha; }
-    inline double getScale() const { return xm; }
+    void SetParameters(double shape, double scale);
+    void SetShape(double shape);
+    void SetScale(double scale);
+    inline double GetShape() const { return alpha; }
+    inline double GetScale() const { return xm; }
 
     double f(double x) const override;
     double F(double x) const override;
@@ -35,10 +35,10 @@ private:
     static double variateForCommonAlpha(double shape);
 
 public:
-    static double standardVariate(double shape);
-    static double variate(double shape, double scale);
-    double variate() const override;
-    void sample(std::vector<double> &outputData) const override;
+    static double StandardVariate(double shape);
+    static double Variate(double shape, double scale);
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -54,7 +54,7 @@ private:
 public:
     inline double Entropy() const;
 
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &Sample);
 };
 
 #endif // PARETORAND_H

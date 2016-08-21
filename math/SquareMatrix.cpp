@@ -9,7 +9,7 @@ void SquareMatrix<n>::toIdentity()
 }
 
 template <size_t n>
-bool SquareMatrix<n>::getInverse(SquareMatrix<n> &invertedMatrix) const
+bool SquareMatrix<n>::GetInverse(SquareMatrix<n> &invertedMatrix) const
 {
     // SHOULD CHECK IF MATRIX IS SINGULAR
 

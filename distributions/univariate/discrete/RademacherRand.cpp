@@ -5,7 +5,7 @@ RademacherRand::RademacherRand()
 {
 }
 
-std::string RademacherRand::name() const
+std::string RademacherRand::Name() const
 {
     return "Rademacher";
 }
@@ -24,9 +24,9 @@ double RademacherRand::F(int k) const
     return (k < 1) ? 0.5 : 1.0;
 }
 
-int RademacherRand::variate() const
+int RademacherRand::Variate() const
 {
-    return BernoulliRand::standardVariate() ? 1 : -1;
+    return BernoulliRand::StandardVariate() ? 1 : -1;
 }
 
 double RademacherRand::Mean() const
@@ -52,7 +52,7 @@ double RademacherRand::Median() const
 int RademacherRand::Mode() const
 {
     /// any from {-1, 1}
-    return variate();
+    return Variate();
 }
 
 double RademacherRand::Skewness() const

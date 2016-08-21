@@ -39,22 +39,22 @@ private:
 public:
     BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
     virtual ~BetaRand() {}
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
 
-    void setParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
-    inline double getAlpha() const { return alpha; }
-    inline double getBeta() const { return beta; }
-    inline double getMin() const { return a; }
-    inline double getMax() const { return b; }
+    void SetParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
+    inline double GetAlpha() const { return alpha; }
+    inline double GetBeta() const { return beta; }
+    inline double GetMin() const { return a; }
+    inline double GetMax() const { return b; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    void sample(std::vector<double> &outputData) const override;
+    void Sample(std::vector<double> &outputData) const override;
 
 private:
 
@@ -71,15 +71,15 @@ private:
     };
 
     /**
-     * @brief getIdOfUsedGenerator
+     * @brief GetIdOfUsedGenerator
      * @return id of the used variate generator according to shape parameters
      */
-    GENERATOR_ID getIdOfUsedGenerator() const;
+    GENERATOR_ID GetIdOfUsedGenerator() const;
 
     /**
-     * @brief setCoefficientsForGenerator
+     * @brief SetCoefficientsForGenerator
      */
-    void setCoefficientsForGenerator();
+    void SetCoefficientsForGenerator();
 
     /**
      * @brief variateRejectionUniform
@@ -153,16 +153,16 @@ private:
 
 public:
     /**
-     * @brief getInvBetaFunction
+     * @brief GetInvBetaFunction
      * @return 1 / Beta(α, β)
      */
-    inline double getInverseBetaFunction() const { return betaFunInv; }
+    inline double GetInverseBetaFunction() const { return betaFunInv; }
 
     /**
-     * @brief getLogBetaFunction
+     * @brief GetLogBetaFunction
      * @return log Beta(α, β)
      */
-    inline double getLogBetaFunction() const { return -mLogBetaFun; }
+    inline double GetLogBetaFunction() const { return -mLogBetaFun; }
 };
 
 
@@ -173,14 +173,14 @@ class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
 public:
     ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1);
-    std::string name() const override;
+    std::string Name() const override;
 
-    void setShape(double shape);
-    inline double getShape() const { return beta; }
+    void SetShape(double shape);
+    inline double GetShape() const { return beta; }
 
 protected:
-    /// prohibit to use beta's getters and setters
-    using BetaRand::setParameters;
+    /// prohibit to use beta's Getters and Setters
+    using BetaRand::SetParameters;
 };
 
 
@@ -192,14 +192,14 @@ class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand
     double p, F;
 public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
-    std::string name() const override;
+    std::string Name() const override;
 
-    void setFixatingIndexAndFrequency(double fixatingIndex, double frequency);
-    inline double getFrequency() const { return p; }
-    inline double getFixatingIndex() const { return F; }
+    void SetFixatingIndexAndFrequency(double fixatingIndex, double frequency);
+    inline double GetFrequency() const { return p; }
+    inline double GetFixatingIndex() const { return F; }
 
 private:
-    using BetaRand::setParameters;
+    using BetaRand::SetParameters;
 };
 
 #endif // BETARAND_H

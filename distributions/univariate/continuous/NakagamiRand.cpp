@@ -2,15 +2,15 @@
 
 NakagamiRand::NakagamiRand(double shape, double spread)
 {
-    setParameters(shape, spread);
+    SetParameters(shape, spread);
 }
 
-std::string NakagamiRand::name() const
+std::string NakagamiRand::Name() const
 {
-    return "Nakagami(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getSpread()) + ")";
+    return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
 }
 
-void NakagamiRand::setParameters(double shape, double spread)
+void NakagamiRand::SetParameters(double shape, double spread)
 {
     m = std::max(shape, 0.5);
     w = spread;
@@ -18,7 +18,7 @@ void NakagamiRand::setParameters(double shape, double spread)
         w = 1.0;
 
     sigma = m / w;
-    Y.setParameters(m, sigma);
+    Y.SetParameters(m, sigma);
 }
 
 double NakagamiRand::f(double x) const
@@ -35,14 +35,14 @@ double NakagamiRand::F(double x) const
     return (x <= 0) ? 0.0 : Y.F(x * x);
 }
 
-double NakagamiRand::variate() const
+double NakagamiRand::Variate() const
 {
-    return std::sqrt(Y.variate());
+    return std::sqrt(Y.Variate());
 }
 
-void NakagamiRand::sample(std::vector<double> &outputData) const
+void NakagamiRand::Sample(std::vector<double> &outputData) const
 {
-    Y.sample(outputData);
+    Y.Sample(outputData);
     for (double & var : outputData)
         var = std::sqrt(var);
 }
@@ -50,7 +50,7 @@ void NakagamiRand::sample(std::vector<double> &outputData) const
 double NakagamiRand::Mean() const
 {
     double y = std::lgamma(m + 0.5);
-    y -= Y.getLogGammaFunction();
+    y -= Y.GetLogGammaFunction();
     y -= 0.5 * std::log(sigma);
     return std::exp(y);
 }
@@ -58,7 +58,7 @@ double NakagamiRand::Mean() const
 double NakagamiRand::Variance() const
 {
     double y = std::lgamma(m + 0.5);
-    y -= Y.getLogGammaFunction();
+    y -= Y.GetLogGammaFunction();
     y = std::exp(y + y);
     return w * (1 - y / m);
 }
@@ -73,22 +73,22 @@ double NakagamiRand::Mode() const
 /// CHI
 ChiRand::ChiRand(int degree, double scale)
 {
-    setParameters(degree, scale);
+    SetParameters(degree, scale);
 }
 
-std::string ChiRand::name() const
+std::string ChiRand::Name() const
 {
-    return "Chi(" + toStringWithPrecision(getDegree()) + ", " + toStringWithPrecision(getScale()) +  ")";
+    return "Chi(" + toStringWithPrecision(GetDegree()) + ", " + toStringWithPrecision(GetScale()) +  ")";
 }
 
-void ChiRand::setParameters(int degree, double scale)
+void ChiRand::SetParameters(int degree, double scale)
 {
     sigma = scale;
     if (sigma <= 0)
         sigma = 1.0;
     sigmaSqInv = 1.0 / (sigma * sigma);
 
-    NakagamiRand::setParameters(0.5 * degree, degree * sigma * sigma);
+    NakagamiRand::SetParameters(0.5 * degree, degree * sigma * sigma);
 }
 
 double ChiRand::skewnessImpl(double mean, double sigma) const
@@ -123,9 +123,9 @@ MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale) :
 {
 }
 
-std::string MaxwellBoltzmannRand::name() const
+std::string MaxwellBoltzmannRand::Name() const
 {
-    return "Maxwell-Boltzmann(" + toStringWithPrecision(getScale()) + ")";
+    return "Maxwell-Boltzmann(" + toStringWithPrecision(GetScale()) + ")";
 }
 
 double MaxwellBoltzmannRand::f(double x) const
@@ -187,14 +187,14 @@ RayleighRand::RayleighRand(double scale) :
 {
 }
 
-std::string RayleighRand::name() const
+std::string RayleighRand::Name() const
 {
-    return "Rayleigh(" + toStringWithPrecision(getScale()) + ")";
+    return "Rayleigh(" + toStringWithPrecision(GetScale()) + ")";
 }
 
-void RayleighRand::setScale(double scale)
+void RayleighRand::SetScale(double scale)
 {
-    ChiRand::setParameters(2, scale);
+    ChiRand::SetParameters(2, scale);
 }
 
 double RayleighRand::f(double x) const
@@ -247,16 +247,16 @@ double RayleighRand::ExcessKurtosis() const
     return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }
 
-bool RayleighRand::fitScaleMLE(const std::vector<double> &sample)
+bool RayleighRand::FitScaleMLE(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
     double sigmaSq = 0.5 * rawMoment(sample, 2);
-    setScale(std::sqrt(sigmaSq));
+    SetScale(std::sqrt(sigmaSq));
     return true;
 }
 
-bool RayleighRand::fitScaleUMVU(const std::vector<double> &sample)
+bool RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
@@ -270,7 +270,7 @@ bool RayleighRand::fitScaleUMVU(const std::vector<double> &sample)
     double sigmaEst = std::sqrt(sigmaSq);
 
     if (n > 30)
-        setScale((1 + 0.1252 / n) * sigmaEst); /// err < 1e-6
+        SetScale((1 + 0.1252 / n) * sigmaEst); /// err < 1e-6
     else
     {
         double coef = RandMath::factorial(n - 1);
@@ -281,7 +281,7 @@ bool RayleighRand::fitScaleUMVU(const std::vector<double> &sample)
         coef *= pow2n;
         coef *= pow2n;
 
-        setScale(coef * sigmaEst);
+        SetScale(coef * sigmaEst);
     }
     return true;
 }

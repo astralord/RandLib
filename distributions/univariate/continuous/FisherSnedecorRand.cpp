@@ -2,20 +2,20 @@
 
 FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2)
 {
-    setDegrees(degree1, degree2);
+    SetDegrees(degree1, degree2);
 }
 
-std::string FisherSnedecorRand::name() const
+std::string FisherSnedecorRand::Name() const
 {
-    return "Fisher(" + toStringWithPrecision(getFirstDegree()) + ", " + toStringWithPrecision(getSecondDegree()) + ")";
+    return "Fisher(" + toStringWithPrecision(GetFirstDegree()) + ", " + toStringWithPrecision(GetSecondDegree()) + ")";
 }
 
-void FisherSnedecorRand::setDegrees(int degree1, int degree2)
+void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
 {
     d1 = std::max(degree1, 1);
     d2 = std::max(degree2, 1);
 
-    B.setParameters(.5 * d1, .5 * d2);
+    B.SetParameters(.5 * d1, .5 * d2);
 
     a = .5 * d1 - 1;
     d1_d2 = static_cast<double>(d1) / d2;
@@ -23,7 +23,7 @@ void FisherSnedecorRand::setDegrees(int degree1, int degree2)
     d2_d1 = 1.0 / d1_d2;
 
     pdfCoef = (a + 1) * std::log(d1_d2);
-    pdfCoef -= B.getLogBetaFunction();
+    pdfCoef -= B.GetLogBetaFunction();
 }
 
 double FisherSnedecorRand::f(double x) const
@@ -45,9 +45,9 @@ double FisherSnedecorRand::F(double x) const
     return B.F(d1_d2 * x);
 }
 
-double FisherSnedecorRand::variate() const
+double FisherSnedecorRand::Variate() const
 {
-    return d2_d1 * B.variate();
+    return d2_d1 * B.Variate();
 }
 
 std::complex<double> FisherSnedecorRand::CF(double t) const
@@ -55,9 +55,9 @@ std::complex<double> FisherSnedecorRand::CF(double t) const
     return B.CF(d2_d1 * t);
 }
 
-void FisherSnedecorRand::sample(std::vector<double> &outputData) const
+void FisherSnedecorRand::Sample(std::vector<double> &outputData) const
 {
-    B.sample(outputData);
+    B.Sample(outputData);
     for (double &var : outputData)
         var = d2_d1 * var;
 }

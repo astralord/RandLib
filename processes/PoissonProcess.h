@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT PoissonProcess : public StochasticProcess<int>
 public:
     explicit PoissonProcess(double rate, double deltaT = 1.0);
 
-    inline double getRate() const { return lambda; }
+    inline double GetRate() const { return lambda; }
 
 private:
     void nextImpl() override;

@@ -8,25 +8,25 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
     : LimitingDistribution(exponent, skewness, scale, location),
       Z(exponent, skewness)
 {
-    setParameters(exponent, skewness, scale, location);
+    SetParameters(exponent, skewness, scale, location);
 }
 
-std::string GeometricStableRand::name() const
+std::string GeometricStableRand::Name() const
 {
     return "Geometric Stable("
-            + toStringWithPrecision(getExponent()) + ", "
-            + toStringWithPrecision(getSkewness()) + ", "
-            + toStringWithPrecision(getScale()) + ", "
-            + toStringWithPrecision(getLocation()) + ")";
+            + toStringWithPrecision(GetExponent()) + ", "
+            + toStringWithPrecision(GetSkewness()) + ", "
+            + toStringWithPrecision(GetScale()) + ", "
+            + toStringWithPrecision(GetLocation()) + ")";
 }
 
-void GeometricStableRand::setParameters(double exponent, double skewness, double scale, double location)
+void GeometricStableRand::SetParameters(double exponent, double skewness, double scale, double location)
 {
-    LimitingDistribution::setParameters(exponent, skewness);
-    LimitingDistribution::setScale(scale);
-    LimitingDistribution::setLocation(location);
+    LimitingDistribution::SetParameters(exponent, skewness);
+    LimitingDistribution::SetScale(scale);
+    LimitingDistribution::SetLocation(location);
 
-    Z.setParameters(alpha, beta);
+    Z.SetParameters(alpha, beta);
 
     if (alpha == 2) {
         double sigma2 = sigma + sigma;
@@ -208,9 +208,9 @@ double GeometricStableRand::F(double x) const
 
 double GeometricStableRand::variateForUnityExponent() const
 {
-    double U = UniformRand::variate(-M_PI_2, M_PI_2);
-    double W1 = ExponentialRand::standardVariate();
-    double W2 = ExponentialRand::standardVariate();
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
+    double W1 = ExponentialRand::StandardVariate();
+    double W2 = ExponentialRand::StandardVariate();
     double pi_2BetaU = M_PI_2 + beta * U;
     double X = logSigma;
     X += std::log(sigma * W2 * pi_2BetaU / (M_PI_2 * W1 * std::cos(U)));
@@ -224,13 +224,13 @@ double GeometricStableRand::variateForUnityExponent() const
 
 double GeometricStableRand::variateForCommonExponent() const
 {
-    double U = UniformRand::variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::standardVariate();
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::StandardVariate();
     double alphaUB = alpha * U + B;
     double X = std::sin(alphaUB);
     double W_adj = W / std::cos(U - alphaUB);
     X *= W_adj;
-    double Y = ExponentialRand::standardVariate();
+    double Y = ExponentialRand::StandardVariate();
     W_adj *= std::cos(U);
     W_adj = Y / W_adj;
     double R = S + alphaInv * std::log(W_adj);
@@ -240,8 +240,8 @@ double GeometricStableRand::variateForCommonExponent() const
 
 double GeometricStableRand::variateByLevy(bool positive) const
 {
-    double W = ExponentialRand::standardVariate();
-    double X = LevyRand::standardVariate();
+    double W = ExponentialRand::StandardVariate();
+    double X = LevyRand::StandardVariate();
     if (!positive)
         X = -X;
     X *= sigma * W;
@@ -251,15 +251,15 @@ double GeometricStableRand::variateByLevy(bool positive) const
 
 double GeometricStableRand::variateByCauchy() const
 {
-    double W = ExponentialRand::standardVariate();
-    double X = CauchyRand::variate(mu, sigma);
+    double W = ExponentialRand::StandardVariate();
+    double X = CauchyRand::Variate(mu, sigma);
     return X * W;
 }
 
-double GeometricStableRand::variate() const
+double GeometricStableRand::Variate() const
 {
     if (alpha == 2)
-        return (mu == 0) ? LaplaceRand::variate(0, sigma) : LaplaceRand::variate(0, sigma, k);
+        return (mu == 0) ? LaplaceRand::Variate(0, sigma) : LaplaceRand::Variate(0, sigma, k);
     if (alpha == 0.5) {
         if (beta == 1)
             return variateByLevy(true);
@@ -271,16 +271,16 @@ double GeometricStableRand::variate() const
     return variateForCommonExponent();
 }
 
-void GeometricStableRand::sample(std::vector<double> &outputData) const
+void GeometricStableRand::Sample(std::vector<double> &outputData) const
 {
     if (alpha == 2) {
         if (mu == 0) {
             for (double &var : outputData)
-                var = LaplaceRand::variate(0, sigma);
+                var = LaplaceRand::Variate(0, sigma);
         }
         else {
             for (double &var : outputData)
-                var = LaplaceRand::variate(0, sigma, k);
+                var = LaplaceRand::Variate(0, sigma, k);
         }
     }
     else if (alpha == 0.5 && std::fabs(beta) == 1) {

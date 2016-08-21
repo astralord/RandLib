@@ -110,7 +110,7 @@ double ContinuousDistribution::Mode() const
     return root;
 }
 
-double ContinuousDistribution::getLeftLimit(double value, double epsilon) const
+double ContinuousDistribution::GetLeftLimit(double value, double epsilon) const
 {
     if (!std::isfinite(f(value))) {
         if (std::fabs(value) < 1)
@@ -121,7 +121,7 @@ double ContinuousDistribution::getLeftLimit(double value, double epsilon) const
     return value;
 }
 
-double ContinuousDistribution::getRightLimit(double value, double epsilon) const
+double ContinuousDistribution::GetRightLimit(double value, double epsilon) const
 {
     if (!std::isfinite(f(value))) {
         if (std::fabs(value) < 1)
@@ -138,11 +138,11 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     double lowerBoundary = minPoint, upperBoundary = maxPoint;
     if (isRightBounded()) {
         lowerBoundary = std::max(minPoint, lowerBoundary);
-        lowerBoundary = getLeftLimit(lowerBoundary, epsilon);
+        lowerBoundary = GetLeftLimit(lowerBoundary, epsilon);
     }
     if (isLeftBounded()) {
         upperBoundary = std::min(maxPoint, upperBoundary);
-        upperBoundary = getRightLimit(upperBoundary, epsilon);
+        upperBoundary = GetRightLimit(upperBoundary, epsilon);
     }
 
     if (lowerBoundary >= upperBoundary)
@@ -163,13 +163,13 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     /// works good for unimodal distributions
     static constexpr double epsilon = 1e-10;
 
-    // TODO: get rid of startpoint
+    // TODO: Get rid of startpoint
     double lowerBoundary = startPoint, upperBoundary = startPoint;
-    SUPPORT_TYPE suppType = supportType();
+    SUPPORT_TYPE suppType = SupportType();
     if (suppType == FINITE_T)
     {
-        lowerBoundary = getLeftLimit(MinValue(), epsilon);
-        upperBoundary = getRightLimit(MaxValue(), epsilon);
+        lowerBoundary = GetLeftLimit(MinValue(), epsilon);
+        upperBoundary = GetRightLimit(MaxValue(), epsilon);
 
         return RandMath::integral([this, funPtr] (double x)
         {
@@ -178,7 +178,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         lowerBoundary, upperBoundary);
     }
     else if (suppType == RIGHTSEMIFINITE_T) {
-        lowerBoundary = getLeftLimit(MinValue(), epsilon);
+        lowerBoundary = GetLeftLimit(MinValue(), epsilon);
         return RandMath::integral([this, funPtr, lowerBoundary] (double x)
         {
             if (x >= 1.0)
@@ -191,7 +191,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         },
         0.0, 1.0);
     } else if (suppType == LEFTSEMIFINITE_T) {
-        upperBoundary = getRightLimit(MaxValue(), epsilon);
+        upperBoundary = GetRightLimit(MaxValue(), epsilon);
         return RandMath::integral([this, funPtr, upperBoundary] (double x)
         {
             if (x <= 0.0)

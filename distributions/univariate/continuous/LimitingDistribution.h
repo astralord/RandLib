@@ -17,15 +17,15 @@ public:
     LimitingDistribution(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~LimitingDistribution() {}
 
-    void setParameters(double exponent, double skewness);
-    void setLocation(double location);
-    void setScale(double scale);
+    void SetParameters(double exponent, double skewness);
+    void SetLocation(double location);
+    void SetScale(double scale);
 
-    inline double getExponent() const { return alpha; }
-    inline double getSkewness() const { return beta; }
-    inline double getScale() const { return sigma; }
-    inline double getLocation() const { return mu; }
-    inline double getInvExponent() const { return alphaInv; }
+    inline double GetExponent() const { return alpha; }
+    inline double GetSkewness() const { return beta; }
+    inline double GetScale() const { return sigma; }
+    inline double GetLocation() const { return mu; }
+    inline double GetInvExponent() const { return alphaInv; }
 
     double Mean() const override;
 

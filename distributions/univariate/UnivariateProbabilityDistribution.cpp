@@ -8,14 +8,14 @@ UnivariateProbabilityDistribution<T>::UnivariateProbabilityDistribution()
 template< typename T >
 bool UnivariateProbabilityDistribution<T>::isLeftBounded() const
 {
-    SUPPORT_TYPE supp = supportType();
+    SUPPORT_TYPE supp = SupportType();
     return (supp == RIGHTSEMIFINITE_T || supp == FINITE_T);
 }
 
 template< typename T >
 bool UnivariateProbabilityDistribution<T>::isRightBounded() const
 {
-    SUPPORT_TYPE supp = supportType();
+    SUPPORT_TYPE supp = SupportType();
     return (supp == LEFTSEMIFINITE_T || supp == FINITE_T);
 }
 

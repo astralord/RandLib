@@ -11,7 +11,7 @@ GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility
 
 void GeometricBrownianMotion::nextImpl()
 {
-    currentValue *= X.variate();
+    currentValue *= X.Variate();
 }
 
 double GeometricBrownianMotion::MeanImpl(double t) const
@@ -48,5 +48,5 @@ void GeometricBrownianMotion::CumulativeDistributionFunction(double t, const std
 double GeometricBrownianMotion::Quantile(double t, double p) const
 {
     double tau = t - currentTime;
-    return currentValue * LogNormalRand::quantile(p, mumSigma2_2 * tau, sigma * std::sqrt(tau));
+    return currentValue * std::exp(NormalRand::quantile(p, mumSigma2_2 * tau, sigma * std::sqrt(tau)));
 }

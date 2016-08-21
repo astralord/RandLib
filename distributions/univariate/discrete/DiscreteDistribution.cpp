@@ -101,7 +101,7 @@ double DiscreteDistribution::Hazard(double x) const
 
 double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const
 {
-    SUPPORT_TYPE suppType = supportType();
+    SUPPORT_TYPE suppType = SupportType();
     int k = minPoint, upperBoundary = maxPoint;
     if (suppType == FINITE_T || suppType == RIGHTSEMIFINITE_T) {
         k = std::max(k, static_cast<int>(std::floor(MinValue())));
@@ -124,7 +124,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
 
 double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
-    SUPPORT_TYPE suppType = supportType();
+    SUPPORT_TYPE suppType = SupportType();
     double sum = 0, addon = 0, prob = 0;
     if (suppType == FINITE_T) {
         int k = std::floor(MinValue());
@@ -183,7 +183,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         return sum;
     }
 
-    // TODO: transform all this spagetti code into good one
+    // TODO: transform all this spaGetti code into good one
 
     double x = std::floor(startPoint);
     if (RandMath::areClose(x, startPoint, epsilon))

@@ -3,21 +3,21 @@
 
 RaisedCosineRand::RaisedCosineRand(double location, double scale)
 {
-    setLocation(location);
-    setScale(scale);
+    SetLocation(location);
+    SetScale(scale);
 }
 
-std::string RaisedCosineRand::name() const
+std::string RaisedCosineRand::Name() const
 {
-    return "Raised cosine(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void RaisedCosineRand::setLocation(double location)
+void RaisedCosineRand::SetLocation(double location)
 {
     mu = location;
 }
 
-void RaisedCosineRand::setScale(double scale)
+void RaisedCosineRand::SetScale(double scale)
 {
     s = scale;
     if (s <= 0)
@@ -48,12 +48,12 @@ double RaisedCosineRand::F(double x) const
     return 0.5 * y;
 }
 
-double RaisedCosineRand::standardVariate()
+double RaisedCosineRand::StandardVariate()
 {
     /// p. 160. Non-Uniform Random Variate Generation. Luc Devroye
-    double X = UniformRand::variate(-M_PI_2, M_PI_2);
+    double X = UniformRand::Variate(-M_PI_2, M_PI_2);
     double XSq = X * X;
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     U += U;
     int a = 0, b = -1;
     double W = 0.0, V = 1.0;
@@ -80,9 +80,9 @@ double RaisedCosineRand::standardVariate()
     return NAN;
 }
 
-double RaisedCosineRand::variate() const
+double RaisedCosineRand::Variate() const
 {
-    return mu + s_pi * standardVariate();
+    return mu + s_pi * StandardVariate();
 }
 
 double RaisedCosineRand::Mean() const
@@ -135,7 +135,7 @@ double RaisedCosineRand::ExcessKurtosis() const
 }
 
 
-std::string RaabGreenRand::name() const
+std::string RaabGreenRand::Name() const
 {
     return "Raab Green";
 }

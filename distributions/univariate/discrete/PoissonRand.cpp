@@ -4,15 +4,15 @@
 
 PoissonRand::PoissonRand(double rate)
 {
-    setRate(rate);
+    SetRate(rate);
 }
 
-std::string PoissonRand::name() const
+std::string PoissonRand::Name() const
 {
-    return "Poisson(" + toStringWithPrecision(getRate()) + ")";
+    return "Poisson(" + toStringWithPrecision(GetRate()) + ")";
 }
 
-void PoissonRand::setRate(double rate)
+void PoissonRand::SetRate(double rate)
 {
     lambda = rate;
     if (lambda <= 0)
@@ -38,9 +38,9 @@ double PoissonRand::F(int k) const
     return (k < 0) ? 0 : RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);
 }
 
-int PoissonRand::variate() const
+int PoissonRand::Variate() const
 {
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     int k = floorLambda;
     double s = FFloorLambda, p = PFloorLambda;
     if (s < U)
@@ -63,21 +63,21 @@ int PoissonRand::variate() const
     return k;
 }
 
-int PoissonRand::variate(double rate)
+int PoissonRand::Variate(double rate)
 {
     int k = -1;
     double s = 0;
     do {
-        s += ExponentialRand::standardVariate();
+        s += ExponentialRand::StandardVariate();
         ++k;
     } while (s < rate);
     return k;
 }
 
-void PoissonRand::sample(std::vector<int> &outputData) const
+void PoissonRand::Sample(std::vector<int> &outputData) const
 {
     for (int & var : outputData)
-        var = variate();
+        var = Variate();
 }
 
 double PoissonRand::Mean() const
@@ -119,27 +119,27 @@ double PoissonRand::ExcessKurtosis() const
     return 1.0 / lambda;
 }
 
-bool PoissonRand::fitMLE(const std::vector<int> &sample)
+bool PoissonRand::FitMLE(const std::vector<int> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setRate(sampleMean(sample));
+    SetRate(sampleMean(sample));
     return true;
 }
 
-bool PoissonRand::fitMM(const std::vector<int> &sample)
+bool PoissonRand::FitMM(const std::vector<int> &sample)
 {
-    return fitMLE(sample);
+    return FitMLE(sample);
 }
 
-bool PoissonRand::fitBayes(const std::vector<int> &sample, GammaRand &priorDistribution)
+bool PoissonRand::FitBayes(const std::vector<int> &sample, GammaRand &priorDistribution)
 {
     int n = sample.size();
     if (n <= 0 || !checkValidity(sample))
         return false;
-    double alpha = priorDistribution.getShape();
-    double beta = priorDistribution.getRate();
-    priorDistribution.setParameters(alpha + sampleSum(sample), beta + n);
-    setRate(priorDistribution.Mean());
+    double alpha = priorDistribution.GetShape();
+    double beta = priorDistribution.GetRate();
+    priorDistribution.SetParameters(alpha + sampleSum(sample), beta + n);
+    SetRate(priorDistribution.Mean());
     return true;
 }

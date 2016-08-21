@@ -4,27 +4,27 @@
 
 BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
 {
-    setParameters(number, shape1, shape2);
+    SetParameters(number, shape1, shape2);
 }
 
-std::string BetaBinomialRand::name() const
+std::string BetaBinomialRand::Name() const
 {
-    return "Beta-Binomial(" + toStringWithPrecision(getNumber()) + ", "
-                            + toStringWithPrecision(getAlpha()) + ", "
-                            + toStringWithPrecision(getBeta()) + ")";
+    return "Beta-Binomial(" + toStringWithPrecision(GetNumber()) + ", "
+                            + toStringWithPrecision(GetAlpha()) + ", "
+                            + toStringWithPrecision(GetBeta()) + ")";
 }
 
-void BetaBinomialRand::setParameters(int number, double shape1, double shape2)
+void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
 {
     n = std::max(number, 1);
-    B.setParameters(shape1, shape2);
+    B.SetParameters(shape1, shape2);
 }
 
 double BetaBinomialRand::P(int k) const
 {
     if (k < 0 || k > n)
         return 0.0;
-    return RandMath::binomialCoef(n, k) * RandMath::betaFun(k + B.getAlpha(), n - k + B.getBeta()) * B.getInverseBetaFunction();
+    return RandMath::binomialCoef(n, k) * RandMath::betaFun(k + B.GetAlpha(), n - k + B.GetBeta()) * B.GetInverseBetaFunction();
 }
 
 double BetaBinomialRand::F(int k) const
@@ -41,23 +41,23 @@ double BetaBinomialRand::F(int k) const
     return sum;
 }
 
-int BetaBinomialRand::variate() const
+int BetaBinomialRand::Variate() const
 {
-    double p = B.variate();
-    return BinomialRand::variate(n, p);
+    double p = B.Variate();
+    return BinomialRand::Variate(n, p);
 }
 
 double BetaBinomialRand::Mean() const
 {
-    double alpha = B.getAlpha();
-    double beta = B.getBeta();
+    double alpha = B.GetAlpha();
+    double beta = B.GetBeta();
     return n * alpha / (alpha + beta);
 }
 
 double BetaBinomialRand::Variance() const
 {
-    double alpha = B.getAlpha();
-    double beta = B.getBeta();
+    double alpha = B.GetAlpha();
+    double beta = B.GetBeta();
     double alphaPBeta = alpha + beta;
     double numerator = n * alpha * beta * (alphaPBeta + n);
     double denominator = alphaPBeta * alphaPBeta;
@@ -83,8 +83,8 @@ int BetaBinomialRand::Mode() const
 
 double BetaBinomialRand::Skewness() const
 {
-    double alpha = B.getAlpha();
-    double beta = B.getBeta();
+    double alpha = B.GetAlpha();
+    double beta = B.GetBeta();
     double alphaPBeta = alpha + beta;
     double res = (1 + alphaPBeta) / (n * alpha * beta * (alphaPBeta + n));
     res = std::sqrt(res);
@@ -95,8 +95,8 @@ double BetaBinomialRand::Skewness() const
 
 double BetaBinomialRand::ExcessKurtosis() const
 {
-    double alpha = B.getAlpha();
-    double beta = B.getBeta();
+    double alpha = B.GetAlpha();
+    double beta = B.GetBeta();
     double alphaPBeta = alpha + beta;
     double alphaBetaN = alpha * beta * n;
     double res = alpha * beta * (n - 2);

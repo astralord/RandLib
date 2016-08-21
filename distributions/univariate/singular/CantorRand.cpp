@@ -3,9 +3,9 @@
 #include "../continuous/UniformRand.h"
 
 double CantorRand::table[CantorRand::n] = {0};
-const bool CantorRand::dummy = CantorRand::setupTable();
+const bool CantorRand::dummy = CantorRand::SetupTable();
 
-bool CantorRand::setupTable()
+bool CantorRand::SetupTable()
 {
     table[0] = 0.33333333333333333333;
     for (int i = 1; i != n; ++i)
@@ -17,7 +17,7 @@ CantorRand::CantorRand()
 {
 }
 
-std::string CantorRand::name() const
+std::string CantorRand::Name() const
 {
     return "Cantor";
 }
@@ -51,11 +51,11 @@ double CantorRand::F(double x) const
     return v;
 }
 
-double CantorRand::variate() const
+double CantorRand::Variate() const
 {
     long double sum = 0.0;
     for (int i = 0; i != n; ++i) {
-        sum += table[i] * BernoulliRand::standardVariate();
+        sum += table[i] * BernoulliRand::StandardVariate();
     }
     return sum + sum;
 }
@@ -107,7 +107,7 @@ std::complex<double> CantorRand::CF(double t) const
 
 double CantorRand::Median() const
 {
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     return (U + 1.0) / 3.0;
 }
 

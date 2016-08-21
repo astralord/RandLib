@@ -20,28 +20,28 @@ class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand
 {
 public:
     explicit GeometricRand(double probability = 0.5);
-    std::string name() const override;
+    std::string Name() const override;
 
 protected:
-    using NegativeBinomialRand::setParameters;
+    using NegativeBinomialRand::SetParameters;
 
 public:
-    void setProbability(double probability);
+    void SetProbability(double probability);
 
     double P(int k) const override;
     double F(int k) const override;
-    int variate() const override;
-    static int variate(double probability);
+    int Variate() const override;
+    static int Variate(double probability);
 
-    void sample(std::vector<int> &outputData) const override;
+    void Sample(std::vector<int> &outputData) const override;
 
     double Median() const override;
 
     double Entropy() const;
 
-    bool fitMLE(const std::vector<int> &sample);
-    bool fitMM(const std::vector<int> &sample);
-    bool fitBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
+    bool FitMLE(const std::vector<int> &Sample);
+    bool FitMM(const std::vector<int> &Sample);
+    bool FitBayes(const std::vector<int> &Sample, BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

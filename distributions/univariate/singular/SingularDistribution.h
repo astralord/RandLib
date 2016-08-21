@@ -17,8 +17,8 @@ private:
     double Mode() const override;
     double ExpectedValue(const std::function<double (double)> &, double) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
-    double Likelihood(const std::vector<double> &sample) const override;
-    double LogLikelihood(const std::vector<double> &sample) const override;
+    double Likelihood(const std::vector<double> &Sample) const override;
+    double LogLikelihood(const std::vector<double> &Sample) const override;
 };
 
 

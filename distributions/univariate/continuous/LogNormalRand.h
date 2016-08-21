@@ -16,22 +16,22 @@ class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 public:
     LogNormalRand(double location = 0, double squaredScale = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
-    void setLocation(double location);
-    void setScale(double scale);
-    inline double getLocation() const { return X.Mean(); }
-    inline double getScale() const { return X.getScale(); }
+    void SetLocation(double location);
+    void SetScale(double scale);
+    inline double GetLocation() const { return X.Mean(); }
+    inline double GetScale() const { return X.GetScale(); }
 
     double f(double x) const override;
     double F(double x) const override;
 
-    static double standardVariate();
-    static double variate(double location, double scale);
-    double variate() const override;
+    static double StandardVariate();
+    static double Variate(double location, double scale);
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -40,30 +40,28 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    static double quantile(double p, double location, double scale);
-
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 
-    double logAverage(const std::vector<double> &sample);
-    double logSecondMoment(const std::vector<double> &sample);
+    double logAverage(const std::vector<double> &Sample);
+    double logSecondMoment(const std::vector<double> &Sample);
 
 public:
     /// Method of moments
-    bool fitLocationMM(const std::vector<double> &sample);
-    bool fitScaleMM(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
+    bool FitLocationMM(const std::vector<double> &Sample);
+    bool FitScaleMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &Sample);
 
     /// Maximum-likelihod estimation
-    bool fitLocationMLE(const std::vector<double> &sample);
-    bool fitScaleMLE(const std::vector<double> &sample);
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitLocationMLE(const std::vector<double> &Sample);
+    bool FitScaleMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &Sample);
 
     /// Bayesian estimation
-    bool fitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
-    bool fitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution);
-    bool fitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution);
+    bool FitLocationBayes(const std::vector<double> &Sample, NormalRand &priorDistribution);
+    bool FitScaleBayes(const std::vector<double> &Sample, InverseGammaRand &priorDistribution);
+    bool FitBayes(const std::vector<double> &Sample, NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // LOGNORMALRAND_H

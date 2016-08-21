@@ -2,24 +2,24 @@
 
 LogNormalRand::LogNormalRand(double location, double squaredScale)
 {
-    setLocation(location);
-    setScale(squaredScale > 0.0 ? std::sqrt(squaredScale) : 1.0);
+    SetLocation(location);
+    SetScale(squaredScale > 0.0 ? std::sqrt(squaredScale) : 1.0);
 }
 
-std::string LogNormalRand::name() const
+std::string LogNormalRand::Name() const
 {
-    return "Log-Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Log-Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void LogNormalRand::setLocation(double location)
+void LogNormalRand::SetLocation(double location)
 {
-    X.setLocation(location);
+    X.SetLocation(location);
     expMu = std::exp(X.Mean());
 }
 
-void LogNormalRand::setScale(double scale)
+void LogNormalRand::SetScale(double scale)
 {
-    X.setScale(scale);
+    X.SetScale(scale);
     expVar = std::exp(X.Variance());
 }
 
@@ -33,19 +33,19 @@ double LogNormalRand::F(double x) const
     return (x > 0) ? X.F(std::log(x)) : 0;
 }
 
-double LogNormalRand::standardVariate()
+double LogNormalRand::StandardVariate()
 {
-    return std::exp(NormalRand::standardVariate());
+    return std::exp(NormalRand::StandardVariate());
 }
 
-double LogNormalRand::variate(double location, double scale)
+double LogNormalRand::Variate(double location, double scale)
 {
-    return std::exp(NormalRand::variate(location, scale));
+    return std::exp(NormalRand::Variate(location, scale));
 }
 
-double LogNormalRand::variate() const
+double LogNormalRand::Variate() const
 {
-    return std::exp(X.variate());
+    return std::exp(X.Variate());
 }
 
 double LogNormalRand::Mean() const
@@ -56,13 +56,6 @@ double LogNormalRand::Mean() const
 double LogNormalRand::Variance() const
 {
     return (expVar - 1) * expMu * expMu * expVar;
-}
-
-double LogNormalRand::quantile(double p, double location, double scale)
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    return std::exp(NormalRand::quantile(p, location, scale));
 }
 
 double LogNormalRand::quantileImpl(double p) const
@@ -124,60 +117,60 @@ double LogNormalRand::logSecondMoment(const std::vector<double> &sample)
     return logSum / n;
 }
 
-bool LogNormalRand::fitLocationMM(const std::vector<double> &sample)
+bool LogNormalRand::FitLocationMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
     double average = sampleMean(sample);
     double var = X.Variance();
-    setLocation(std::log(average) - 0.5 * var);
+    SetLocation(std::log(average) - 0.5 * var);
     return true;
 }
 
-bool LogNormalRand::fitScaleMM(const std::vector<double> &sample)
+bool LogNormalRand::FitScaleMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
     double average = sampleMean(sample);
-    double mu = X.getLocation();
+    double mu = X.GetLocation();
     double aux = std::log(average) - mu;
-    setScale(std::sqrt(aux + aux));
+    SetScale(std::sqrt(aux + aux));
     return true;
 }
 
-bool LogNormalRand::fitMM(const std::vector<double> &sample)
+bool LogNormalRand::FitMM(const std::vector<double> &sample)
 {
     if (!checkValidity(sample))
         return false;
     double average = sampleMean(sample);
     double secondMoment = rawMoment(sample, 2);
     double averageSq = average * average;
-    setLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
-    setScale(std::sqrt(std::log(secondMoment / averageSq)));
+    SetLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
+    SetScale(std::sqrt(std::log(secondMoment / averageSq)));
     return true;
 }
 
-bool LogNormalRand::fitLocationMLE(const std::vector<double> &sample)
+bool LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
 {
     size_t n = sample.size();
     if (n == 0 || !checkValidity(sample))
         return false;
-    setLocation(logAverage(sample));
+    SetLocation(logAverage(sample));
     return true;
 }
 
-bool LogNormalRand::fitScaleMLE(const std::vector<double> &sample)
+bool LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
 {
     size_t n = sample.size();
     if (n == 0 || !checkValidity(sample))
         return false;
-    double mu = X.getLocation();
+    double mu = X.GetLocation();
     double logVariance = logSecondMoment(sample) - mu * mu;
-    setScale(std::sqrt(logVariance));
+    SetScale(std::sqrt(logVariance));
     return true;
 }
 
-bool LogNormalRand::fitMLE(const std::vector<double> &sample)
+bool LogNormalRand::FitMLE(const std::vector<double> &sample)
 {
     size_t n = sample.size();
     if (n == 0 || !checkValidity(sample))
@@ -194,51 +187,51 @@ bool LogNormalRand::fitMLE(const std::vector<double> &sample)
     logVariance /= n;
     logVariance -= logMean * logMean;
 
-    setLocation(logMean);
-    setScale(std::sqrt(logVariance));
+    SetLocation(logMean);
+    SetScale(std::sqrt(logVariance));
     return true;
 }
 
-bool LogNormalRand::fitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
+bool LogNormalRand::FitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)
         return false;
-    double mu0 = priorDistribution.getLocation();
-    double tau0 = priorDistribution.getPrecision();
-    double tau = X.getPrecision();
+    double mu0 = priorDistribution.GetLocation();
+    double tau0 = priorDistribution.GetPrecision();
+    double tau = X.GetPrecision();
     double numerator = n * logAverage(sample) * tau + tau0 * mu0;
     double denominator = n * tau + tau0;
-    priorDistribution.setLocation(numerator / denominator);
-    priorDistribution.setVariance(1.0 / denominator);
-    setLocation(priorDistribution.Mean());
+    priorDistribution.SetLocation(numerator / denominator);
+    priorDistribution.SetVariance(1.0 / denominator);
+    SetLocation(priorDistribution.Mean());
     return true;
 }
 
-bool LogNormalRand::fitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
+bool LogNormalRand::FitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)
         return false;
-    double alpha = priorDistribution.getShape();
-    double beta = priorDistribution.getRate();
+    double alpha = priorDistribution.GetShape();
+    double beta = priorDistribution.GetRate();
     double newAlpha = alpha + 0.5 * n;
-    double mu = X.getLocation();
+    double mu = X.GetLocation();
     double newBeta = beta + 0.5 * n * (logSecondMoment(sample) - mu * mu);
-    priorDistribution.setParameters(newAlpha, 1.0 / newBeta);
-    setScale(std::sqrt(priorDistribution.Mean()));
+    priorDistribution.SetParameters(newAlpha, 1.0 / newBeta);
+    SetScale(std::sqrt(priorDistribution.Mean()));
     return true;
 }
 
-bool LogNormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+bool LogNormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)
         return false;
-    double alpha = priorDistribution.getShape();
-    double beta = priorDistribution.getRate();
-    double mu0 = priorDistribution.getLocation();
-    double lambda = priorDistribution.getPrecision();
+    double alpha = priorDistribution.GetShape();
+    double beta = priorDistribution.GetRate();
+    double mu0 = priorDistribution.GetLocation();
+    double lambda = priorDistribution.GetPrecision();
     double average = logAverage(sample), sum = n * average;
     double newLambda = lambda + n;
     double newMu0 = (lambda * mu0 + sum) / newLambda;
@@ -246,9 +239,9 @@ bool LogNormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGam
     double variance = logSecondMoment(sample) - average * average;
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
-    priorDistribution.setParameters(newMu0, newLambda, newAlpha, newBeta);
+    priorDistribution.SetParameters(newMu0, newLambda, newAlpha, newBeta);
     DoublePair mean = priorDistribution.Mean();
-    setLocation(mean.first);
-    setScale(std::sqrt(mean.second));
+    SetLocation(mean.first);
+    SetScale(std::sqrt(mean.second));
     return true;
 }

@@ -3,21 +3,21 @@
 
 GumbelRand::GumbelRand(double location, double scale)
 {
-    setLocation(location);
-    setScale(scale);
+    SetLocation(location);
+    SetScale(scale);
 }
 
-std::string GumbelRand::name() const
+std::string GumbelRand::Name() const
 {
-    return "Gumbel(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Gumbel(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void GumbelRand::setLocation(double location)
+void GumbelRand::SetLocation(double location)
 {
     mu = location;
 }
 
-void GumbelRand::setScale(double scale)
+void GumbelRand::SetScale(double scale)
 {
     beta = scale;
     if (beta <= 0)
@@ -40,14 +40,14 @@ double GumbelRand::F(double x) const
     return std::exp(-y);
 }
 
-double GumbelRand::variate() const
+double GumbelRand::Variate() const
 {
-    return GumbelRand::variate(mu, beta);
+    return GumbelRand::Variate(mu, beta);
 }
 
-double GumbelRand::variate(double location, double scale)
+double GumbelRand::Variate(double location, double scale)
 {
-    double w = ExponentialRand::standardVariate();
+    double w = ExponentialRand::StandardVariate();
     return location - scale * std::log(w);
 }
 

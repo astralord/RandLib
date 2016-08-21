@@ -7,28 +7,28 @@
 
 double NormalRand::stairWidth[257] = {0};
 double NormalRand::stairHeight[256] = {0};
-const bool NormalRand::dummy = NormalRand::setupTables();
+const bool NormalRand::dummy = NormalRand::SetupTables();
 
 NormalRand::NormalRand(double mean, double var)
     : StableRand(2.0, 0.0, 1.0, mean)
 {
-    setVariance(var);
+    SetVariance(var);
 }
 
-std::string NormalRand::name() const
+std::string NormalRand::Name() const
 {
-    return "Normal(" + toStringWithPrecision(getLocation()) + ", " + toStringWithPrecision(Variance()) + ")";
+    return "Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(Variance()) + ")";
 }
 
-void NormalRand::setScale(double scale)
+void NormalRand::SetScale(double scale)
 {
     sigma0 = scale;
     if (sigma0 <= 0.0)
         sigma0 = 1.0;
-    StableRand::setScale(scale * M_SQRT1_2);
+    StableRand::SetScale(scale * M_SQRT1_2);
 }
 
-bool NormalRand::setupTables()
+bool NormalRand::SetupTables()
 {
     static constexpr long double A = 4.92867323399e-3l; /// area under rectangle
 
@@ -47,11 +47,11 @@ bool NormalRand::setupTables()
     return true;
 }
 
-void NormalRand::setVariance(double var)
+void NormalRand::SetVariance(double var)
 {
     if (var <= 0)
         var = 1.0;
-    setScale(std::sqrt(var));
+    SetScale(std::sqrt(var));
 }
 
 double NormalRand::f(double x) const
@@ -64,24 +64,24 @@ double NormalRand::F(double x) const
     return StableRand::cdfNormal(x);
 }
 
-double NormalRand::variate() const
+double NormalRand::Variate() const
 {
-    return mu + sigma0 * standardVariate();
+    return mu + sigma0 * StandardVariate();
 }
 
-double NormalRand::variate(double mean, double rootVar)
+double NormalRand::Variate(double mean, double rootVar)
 {
-    return mean + rootVar * standardVariate();
+    return mean + rootVar * StandardVariate();
 }
 
-double NormalRand::standardVariate()
+double NormalRand::StandardVariate()
 {
     /// Ziggurat algorithm by George Marsaglia using 256 strips
     int iter = 0;
     do {
         unsigned long long B = RandGenerator::variate();
         int stairId = B & 255;
-        double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
+        double x = UniformRand::StandardVariate() * stairWidth[stairId]; /// Get horizontal coordinate
 
         if (x < stairWidth[stairId + 1])
             return ((signed)B > 0) ? x : -x;
@@ -92,15 +92,15 @@ double NormalRand::standardVariate()
 
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::variate(x1);
+                x = ExponentialRand::Variate(x1);
                 z -= 0.5 * x * x;
             }
 
             if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
-                    x = ExponentialRand::variate(x1);
-                    z = ExponentialRand::standardVariate() - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
+                    x = ExponentialRand::Variate(x1);
+                    z = ExponentialRand::StandardVariate() - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
 
@@ -109,7 +109,7 @@ double NormalRand::standardVariate()
         }
 
         /// handle the wedges of other stairs
-        if (UniformRand::variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
+        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
 
     } while (++iter <= MAX_ITER_REJECTION);
@@ -173,64 +173,64 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma0, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-bool NormalRand::fitMeanMLE(const std::vector<double> &sample)
+bool NormalRand::FitMeanMLE(const std::vector<double> &sample)
 {
-    setLocation(sampleMean(sample));
+    SetLocation(sampleMean(sample));
     return true;
 }
 
-bool NormalRand::fitVarianceMLE(const std::vector<double> &sample)
+bool NormalRand::FitVarianceMLE(const std::vector<double> &sample)
 {
-    setVariance(sampleVariance(sample));
+    SetVariance(sampleVariance(sample));
     return true;
 }
 
-bool NormalRand::fitMLE(const std::vector<double> &sample)
+bool NormalRand::FitMLE(const std::vector<double> &sample)
 {
-    return fitMeanMLE(sample) ? fitVarianceMLE(sample) : false;
+    return FitMeanMLE(sample) ? FitVarianceMLE(sample) : false;
 }
 
-bool NormalRand::fitMeanMM(const std::vector<double> &sample)
+bool NormalRand::FitMeanMM(const std::vector<double> &sample)
 {
-    return fitMeanMLE(sample);
+    return FitMeanMLE(sample);
 }
 
-bool NormalRand::fitVarianceMM(const std::vector<double> &sample)
+bool NormalRand::FitVarianceMM(const std::vector<double> &sample)
 {
-    return fitVarianceMLE(sample);
+    return FitVarianceMLE(sample);
 }
 
-bool NormalRand::fitMM(const std::vector<double> &sample)
+bool NormalRand::FitMM(const std::vector<double> &sample)
 {
-    return fitMLE(sample);
+    return FitMLE(sample);
 }
 
-bool NormalRand::fitMeanUMVU(const std::vector<double> &sample)
+bool NormalRand::FitMeanUMVU(const std::vector<double> &sample)
 {
-    return fitMeanMLE(sample);
+    return FitMeanMLE(sample);
 }
 
-bool NormalRand::fitVarianceUMVU(const std::vector<double> &sample)
+bool NormalRand::FitVarianceUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 1)
         return false;
     double s = sampleVariance(sample, mu);
-    setVariance(n * s / (n - 1));
+    SetVariance(n * s / (n - 1));
     return true;
 }
 
-bool NormalRand::fitUMVU(const std::vector<double> &sample)
+bool NormalRand::FitUMVU(const std::vector<double> &sample)
 {
-    return fitMeanMLE(sample) ? fitVarianceUMVU(sample) : false;
+    return FitMeanMLE(sample) ? FitVarianceUMVU(sample) : false;
 }
 
-bool NormalRand::fitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
+bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
 {
     size_t n = sample.size();
     if (n < 2 || alpha <= 0 || alpha > 1)
         return false;
-    if (!fitUMVU(sample))
+    if (!FitUMVU(sample))
         return false;
     double p = 1.0 - 0.5 * alpha;
     size_t nm1 = n - 1;
@@ -249,45 +249,45 @@ bool NormalRand::fitUMVU(const std::vector<double> &sample, DoublePair &confiden
     return true;
 }
 
-bool NormalRand::fitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
+bool NormalRand::FitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)
         return false;
-    double mu0 = priorDistribution.getLocation();
-    double tau0 = priorDistribution.getPrecision();
-    double tau = getPrecision();
+    double mu0 = priorDistribution.GetLocation();
+    double tau0 = priorDistribution.GetPrecision();
+    double tau = GetPrecision();
     double numerator = sampleSum(sample) * tau + tau0 * mu0;
     double denominator = n * tau + tau0;
-    priorDistribution.setLocation(numerator / denominator);
-    priorDistribution.setVariance(1.0 / denominator);
-    setLocation(priorDistribution.Mean());
+    priorDistribution.SetLocation(numerator / denominator);
+    priorDistribution.SetVariance(1.0 / denominator);
+    SetLocation(priorDistribution.Mean());
     return true;
 }
 
-bool NormalRand::fitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
+bool NormalRand::FitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)
         return false;
-    double alpha = priorDistribution.getShape();
-    double beta = priorDistribution.getRate();
+    double alpha = priorDistribution.GetShape();
+    double beta = priorDistribution.GetRate();
     double newAlpha = alpha + 0.5 * n;
     double newBeta = beta + 0.5 * n * sampleVariance(sample, mu);
-    priorDistribution.setParameters(newAlpha, newBeta);
-    setVariance(priorDistribution.Mean());
+    priorDistribution.SetParameters(newAlpha, newBeta);
+    SetVariance(priorDistribution.Mean());
     return true;
 }
 
-bool NormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+bool NormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     if (n == 0)
         return false;
-    double alpha = priorDistribution.getShape();
-    double beta = priorDistribution.getRate();
-    double mu0 = priorDistribution.getLocation();
-    double lambda = priorDistribution.getPrecision();
+    double alpha = priorDistribution.GetShape();
+    double beta = priorDistribution.GetRate();
+    double mu0 = priorDistribution.GetLocation();
+    double lambda = priorDistribution.GetPrecision();
     double sum = sampleSum(sample), average = sum / n;
     double newLambda = lambda + n;
     double newMu0 = (lambda * mu0 + sum) / newLambda;
@@ -295,9 +295,9 @@ bool NormalRand::fitBayes(const std::vector<double> &sample, NormalInverseGammaR
     double variance = sampleVariance(sample, average);
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
-    priorDistribution.setParameters(newMu0, newLambda, newAlpha, newBeta);
+    priorDistribution.SetParameters(newMu0, newLambda, newAlpha, newBeta);
     DoublePair mean = priorDistribution.Mean();
-    setLocation(mean.first);
-    setVariance(mean.second);
+    SetLocation(mean.first);
+    SetVariance(mean.second);
     return true;
 }

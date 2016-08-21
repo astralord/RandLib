@@ -3,16 +3,16 @@
 
 ZipfRand::ZipfRand(double exponent, int number)
 {
-    setParameters(exponent, number);
+    SetParameters(exponent, number);
 }
 
-std::string ZipfRand::name() const
+std::string ZipfRand::Name() const
 {
-    return "Zipf(" + toStringWithPrecision(getExponent()) + ", "
-                   + toStringWithPrecision(getNumber()) + ")";
+    return "Zipf(" + toStringWithPrecision(GetExponent()) + ", "
+                   + toStringWithPrecision(GetNumber()) + ")";
 }
 
-void ZipfRand::setParameters(double exponent, int number)
+void ZipfRand::SetParameters(double exponent, int number)
 {
     s = exponent;
     if (s <= 1.0)
@@ -50,9 +50,9 @@ double ZipfRand::F(int k) const
     return RandMath::harmonicNumber(s, k) * invHarmonicNumber;
 }
 
-int ZipfRand::variate() const
+int ZipfRand::Variate() const
 {
-    double U = UniformRand::standardVariate();
+    double U = UniformRand::StandardVariate();
     int k = 1;
 
     /// if we didn't manage to hash values for such U

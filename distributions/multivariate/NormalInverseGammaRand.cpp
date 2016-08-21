@@ -4,29 +4,29 @@
 
 NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision, double shape, double rate)
 {
-    setParameters(location, precision, shape, rate);
+    SetParameters(location, precision, shape, rate);
 }
 
-std::string NormalInverseGammaRand::name() const
+std::string NormalInverseGammaRand::Name() const
 {
-    return "Normal-Inverse-Gamma(" + toStringWithPrecision(getLocation()) + ", "
-                                   + toStringWithPrecision(getPrecision()) + ", "
-                                   + toStringWithPrecision(getShape()) + ", "
-                                   + toStringWithPrecision(getRate()) + ")";
+    return "Normal-Inverse-Gamma(" + toStringWithPrecision(GetLocation()) + ", "
+                                   + toStringWithPrecision(GetPrecision()) + ", "
+                                   + toStringWithPrecision(GetShape()) + ", "
+                                   + toStringWithPrecision(GetRate()) + ")";
 }
 
-void NormalInverseGammaRand::setParameters(double location, double precision, double shape, double rate)
+void NormalInverseGammaRand::SetParameters(double location, double precision, double shape, double rate)
 {
     mu = location;
     lambda = precision;
     if (lambda <= 0)
         lambda = 1.0;
-    Y.setParameters(shape, rate);
-    alpha = Y.getShape();
-    beta = Y.getRate();
+    Y.SetParameters(shape, rate);
+    alpha = Y.GetShape();
+    beta = Y.GetRate();
 
     pdfCoef = 0.5 * std::log(0.5 * lambda / M_PI);
-    pdfCoef += alpha * std::log(beta) - Y.getLogGammaFunction();
+    pdfCoef += alpha * std::log(beta) - Y.GetLogGammaFunction();
 }
 
 double NormalInverseGammaRand::f(DoublePair point) const
@@ -59,17 +59,17 @@ double NormalInverseGammaRand::F(DoublePair point) const
     ++y;
     double z = beta /sigmaSq;
     double temp = alpha * std::log(z) - z;
-    y *= std::exp(temp - Y.getLogGammaFunction());
+    y *= std::exp(temp - Y.GetLogGammaFunction());
     y /= (sigmaSq + sigmaSq);
     return y;
 }
 
-DoublePair NormalInverseGammaRand::variate() const
+DoublePair NormalInverseGammaRand::Variate() const
 {
     DoublePair var;
-    var.second = Y.variate();
+    var.second = Y.Variate();
     double coef = std::sqrt(var.second) / lambda;
-    var.first = mu + coef * NormalRand::standardVariate();
+    var.first = mu + coef * NormalRand::StandardVariate();
     return var;
 }
 
@@ -98,13 +98,13 @@ double NormalInverseGammaRand::Correlation() const
     return 0.0;
 }
 
-void NormalInverseGammaRand::getFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
+void NormalInverseGammaRand::GetFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
-    StudentTRand X(2 * Y.getShape(), mu, std::sqrt(alpha * lambda / beta));
+    StudentTRand X(2 * Y.GetShape(), mu, std::sqrt(alpha * lambda / beta));
     distribution = X;
 }
 
-void NormalInverseGammaRand::getSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
+void NormalInverseGammaRand::GetSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
 {
     distribution = Y;
 }

@@ -8,7 +8,7 @@ CauchyProcess::CauchyProcess(double drift, double volatility, double deltaT) :
 
 void CauchyProcess::nextImpl()
 {
-    currentValue += CauchyRand::variate(mu, sigma) * dt;
+    currentValue += CauchyRand::Variate(mu, sigma) * dt;
 }
 
 void CauchyProcess::ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const

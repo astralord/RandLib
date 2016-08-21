@@ -15,17 +15,17 @@ class RANDLIBSHARED_EXPORT CantorRand : public SingularDistribution
     static constexpr int n = 30;
     static double table[n]; /// all powers of 1/3 from 1 to n
     static const bool dummy;
-    static bool setupTable();
+    static bool SetupTable();
 
 public:
     CantorRand();
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return 1; }
 
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

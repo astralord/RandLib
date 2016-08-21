@@ -7,14 +7,14 @@ BernoulliRand::BernoulliRand(double probability) : BinomialRand(1, probability)
     boundary = q * RandGenerator::maxValue();
 }
 
-std::string BernoulliRand::name() const
+std::string BernoulliRand::Name() const
 {
-    return "Bernoulli(" + toStringWithPrecision(getProbability()) + ")";
+    return "Bernoulli(" + toStringWithPrecision(GetProbability()) + ")";
 }
 
-void BernoulliRand::setProbability(double probability)
+void BernoulliRand::SetProbability(double probability)
 {
-    setParameters(1, probability);
+    SetParameters(1, probability);
     boundary = q * RandGenerator::maxValue();
 }
 
@@ -28,17 +28,17 @@ double BernoulliRand::F(int k) const
     return (k < 0) ? 0 : ((k < 1) ? q : 1);
 }
 
-int BernoulliRand::variate() const
+int BernoulliRand::Variate() const
 {
     return RandGenerator::variate() > boundary;
 }
 
-int BernoulliRand::variate(double p)
+int BernoulliRand::Variate(double p)
 {
-    return UniformRand::standardVariate() <= p;
+    return UniformRand::StandardVariate() <= p;
 }
 
-int BernoulliRand::standardVariate()
+int BernoulliRand::StandardVariate()
 {
     static const size_t maxDecimals = RandGenerator::maxDecimals();
     static size_t decimals = 1;
@@ -62,17 +62,17 @@ double BernoulliRand::Entropy()
     return -(p * std::log(p) + q * std::log(q));
 }
 
-bool BernoulliRand::fitMLE(const std::vector<int> &sample)
+bool BernoulliRand::FitMLE(const std::vector<int> &sample)
 {
-    return fitProbabilityMLE(sample);
+    return FitProbabilityMLE(sample);
 }
 
-bool BernoulliRand::fitMM(const std::vector<int> &sample)
+bool BernoulliRand::FitMM(const std::vector<int> &sample)
 {
-    return fitProbabilityMM(sample);
+    return FitProbabilityMM(sample);
 }
 
-bool BernoulliRand::fitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
+bool BernoulliRand::FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
 {
-    return fitProbabilityBayes(sample, priorDistribution);
+    return FitProbabilityBayes(sample, priorDistribution);
 }

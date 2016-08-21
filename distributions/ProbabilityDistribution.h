@@ -29,10 +29,10 @@ public:
     virtual ~ProbabilityDistribution() {}
 
     /**
-     * @brief name
+     * @brief Name
      * @return title of distribution, for instance "Normal(0, 1)"
      */
-    virtual std::string name() const = 0;
+    virtual std::string Name() const = 0;
 
     /**
      * @brief MinValue
@@ -50,13 +50,13 @@ public:
      * @brief variate()
      * @return random variable
      */
-    virtual T variate() const = 0;
+    virtual T Variate() const = 0;
 
     /**
      * @brief sample
      * @param outputData
      */
-    virtual void sample(std::vector<T> &outputData) const;
+    virtual void Sample(std::vector<T> &outputData) const;
 
     /**
      * @brief F

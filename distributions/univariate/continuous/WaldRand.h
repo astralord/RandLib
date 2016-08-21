@@ -17,18 +17,18 @@ class RANDLIBSHARED_EXPORT WaldRand : public ContinuousDistribution
 public:
     WaldRand(double mean = 1, double shape = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
-    void setParameters(double mean, double shape);
-    inline double getMean() const { return mu; }
-    inline double getShape() const { return lambda; }
+    void SetParameters(double mean, double shape);
+    inline double GetMean() const { return mu; }
+    inline double GetShape() const { return lambda; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

@@ -17,24 +17,24 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
     double b;
 public:
     explicit ZetaRand(double exponent = 1.0);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return RIGHTSEMIFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 1; }
     int MaxValue() const override { return INT_MAX; }
 
-    void setExponent(double exponent);
-    inline double getExponent() const { return s; }
+    void SetExponent(double exponent);
+    inline double GetExponent() const { return s; }
 
     double P(int k) const override;
     double F(int k) const override;
-    int variate() const override;
+    int Variate() const override;
 
     double Mean() const override;
     double Variance() const override;
     int Mode() const override;
     double Skewness() const override;
 
-    inline double getInverseZetaFunction() { return zetaSInv; }
+    inline double GetInverseZetaFunction() { return zetaSInv; }
 };
 
 #endif // ZETARAND_H

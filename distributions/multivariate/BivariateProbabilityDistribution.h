@@ -23,8 +23,8 @@ public:
     virtual void Covariance(SquareMatrix<2> &matrix) const = 0;
     virtual double Correlation() const = 0;
 
-    virtual void getFirstMarginalDistribution(UnivariateProbabilityDistribution<T1> &distribution) const = 0;
-    virtual void getSecondMarginalDistribution(UnivariateProbabilityDistribution<T2> &distribution) const = 0;
+    virtual void GetFirstMarginalDistribution(UnivariateProbabilityDistribution<T1> &distribution) const = 0;
+    virtual void GetSecondMarginalDistribution(UnivariateProbabilityDistribution<T2> &distribution) const = 0;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H

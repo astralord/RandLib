@@ -34,24 +34,24 @@ private:
 
 public:
     BinomialRand(int number, double probability);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return n; }
 
 private:
-    void setGeneratorConstants();
+    void SetGeneratorConstants();
 
 public:
-    void setParameters(int number, double probability);
-    inline double getNumber() const { return n; }
-    inline double getProbability() const { return p; }
+    void SetParameters(int number, double probability);
+    inline double GetNumber() const { return n; }
+    inline double GetProbability() const { return p; }
 
 private:
     /**
      * @brief logProbFloor
      * @param k
-     * @return logarithm of probability to get k if p = pFloor
+     * @return logarithm of probability to Get k if p = pFloor
      */
     double logProbFloor(int k) const;
 
@@ -66,16 +66,16 @@ private:
         REJECTION
     };
 
-    GENERATOR_ID getIdOfUsedGenerator() const;
+    GENERATOR_ID GetIdOfUsedGenerator() const;
 
     int variateRejection() const;
     int variateWaiting(int number) const;
 
 public:
-    int variate() const override;
+    int Variate() const override;
     static int variateBernoulliSum(int number, double probability);
-    static int variate(int number, double probability);
-    void sample(std::vector<int> &outputData) const override;
+    static int Variate(int number, double probability);
+    void Sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
@@ -86,17 +86,17 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    bool fitProbabilityMLE(const std::vector<int> &sample);
-    bool fitProbabilityMM(const std::vector<int> &sample);
+    bool FitProbabilityMLE(const std::vector<int> &Sample);
+    bool FitProbabilityMM(const std::vector<int> &Sample);
 
     /**
-     * @brief fitProbability_Bayes
-     * fit probability p with assumption p ~ Beta(α, β)
+     * @brief FitProbability_Bayes
+     * Fit probability p with assumption p ~ Beta(α, β)
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
      */
-    bool fitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
+    bool FitProbabilityBayes(const std::vector<int> &Sample, BetaRand &priorDistribution);
 };
 
 

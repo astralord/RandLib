@@ -2,15 +2,15 @@
 
 IrwinHallRand::IrwinHallRand(int number)
 {
-    setNumber(number);
+    SetNumber(number);
 }
 
-std::string IrwinHallRand::name() const
+std::string IrwinHallRand::Name() const
 {
-    return "Irwin-Hall(" + toStringWithPrecision(getNumber()) + ")";
+    return "Irwin-Hall(" + toStringWithPrecision(GetNumber()) + ")";
 }
 
-void IrwinHallRand::setNumber(int number)
+void IrwinHallRand::SetNumber(int number)
 {
     n = std::max(1, number);
     cdfCoef = 0.5 / RandMath::factorial(n);
@@ -54,11 +54,11 @@ double IrwinHallRand::F(double x) const
     return 0.5 + cdfCoef * sum;
 }
 
-double IrwinHallRand::variate() const
+double IrwinHallRand::Variate() const
 {
     double sum = 0.0;
     for (int i = 0; i != n; ++i)
-        sum += U.variate();
+        sum += U.Variate();
     return sum;
 }
 

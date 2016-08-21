@@ -18,18 +18,18 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return a; }
     int MaxValue() const override { return b; }
 
-    void setBoundaries(int minValue, int maxValue);
-    inline int getMinValue() const { return a; }
-    inline int getMaxValue() const { return b; }
+    void SetBoundaries(int minValue, int maxValue);
+    inline int GetMinValue() const { return a; }
+    inline int GetMaxValue() const { return b; }
 
     double P(int k) const override;
     double F(int k) const override;
-    int variate() const override;
+    int Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

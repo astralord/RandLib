@@ -22,21 +22,21 @@ class RANDLIBSHARED_EXPORT UniformRand : public BetaRand
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
 
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
 
-    void setSupport(double minValue, double maxValue);
-    inline double getMinValue() const { return a; }
-    inline double getMaxValue() const { return b; }
+    void SetSupport(double minValue, double maxValue);
+    inline double GetMinValue() const { return a; }
+    inline double GetMaxValue() const { return b; }
 
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    static double variate(double minValue, double maxValue);
-    static double standardVariate();
+    static double Variate(double minValue, double maxValue);
+    static double StandardVariate();
 
     double Mean() const override;
     double Variance() const override;
@@ -55,19 +55,19 @@ public:
     inline double Entropy() const;
 
     /// Maximum likelihood estimation
-    bool fitMinimumMLE(const std::vector<double> &sample);
-    bool fitMaximumMLE(const std::vector<double> &sample);
-    bool fitMLE(const std::vector<double> &sample);
+    bool FitMinimumMLE(const std::vector<double> &Sample);
+    bool FitMaximumMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &Sample);
     
     /// Method of moments
-    bool fitMinimumMM(const std::vector<double> &sample);
-    bool fitMaximumMM(const std::vector<double> &sample);
-    bool fitMM(const std::vector<double> &sample);
+    bool FitMinimumMM(const std::vector<double> &Sample);
+    bool FitMaximumMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &Sample);
     
     /// Minimum-variance unbiased estimator
-    bool fitMinimumUMVU(const std::vector<double> &sample);
-    bool fitMaximumUMVU(const std::vector<double> &sample);
-    bool fitUMVU(const std::vector<double> &sample);
+    bool FitMinimumUMVU(const std::vector<double> &Sample);
+    bool FitMaximumUMVU(const std::vector<double> &Sample);
+    bool FitUMVU(const std::vector<double> &Sample);
 };
 
 #endif // UNIFORMRAND_H

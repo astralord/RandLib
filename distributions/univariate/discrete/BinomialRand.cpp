@@ -6,35 +6,35 @@
 
 BinomialRand::BinomialRand(int number, double probability)
 {
-    setParameters(number, probability);
+    SetParameters(number, probability);
 }
 
-std::string BinomialRand::name() const
+std::string BinomialRand::Name() const
 {
-    return "Binomial(" + toStringWithPrecision(getNumber()) + ", " + toStringWithPrecision(getProbability()) + ")";
+    return "Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
 }
 
-void BinomialRand::setGeneratorConstants()
+void BinomialRand::SetGeneratorConstants()
 {
     minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
     pFloor = npFloor / n;
     pRes = (RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor);
 
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == BERNOULLI_SUM)
         return;
     else if (genId == WAITING) {
-        G.setProbability(minpq);
+        G.SetProbability(minpq);
         return;
     }
 
     nqFloor = n - npFloor;
     double qFloor = 1.0 - pFloor;
     if (pRes > 0)
-        G.setProbability(pRes / qFloor);
+        G.SetProbability(pRes / qFloor);
 
-    /// set deltas
+    /// Set deltas
     double npq = npFloor * qFloor;
     double coef = 128.0 * n / M_PI;
     delta1 = coef * pFloor / (81.0 * qFloor);
@@ -50,13 +50,13 @@ void BinomialRand::setGeneratorConstants()
     else
         delta2 = 1.0;
 
-    /// set sigmas and c
+    /// Set sigmas and c
     double npqSqrt = std::sqrt(npq);
     sigma1 = npqSqrt * (1.0 + 0.25 * delta1 / npFloor);
     sigma2 = npqSqrt * (1.0 + 0.25 * delta2 / nqFloor);
     c = 2.0 * delta1 / npFloor;
 
-    /// set a's
+    /// Set a's
     a1 = 0.5 * std::exp(c) * sigma1 * M_SQRT2PI;
 
     a2 = 0.5 * sigma2 * M_SQRT2PI;
@@ -79,14 +79,14 @@ void BinomialRand::setGeneratorConstants()
     logPnpInv = logProbFloor(npFloor);
 }
 
-void BinomialRand::setParameters(int number, double probability)
+void BinomialRand::SetParameters(int number, double probability)
 {
     n = std::max(number, 1);
     p = std::min(probability, 1.0);
     p = std::max(p, 0.0);
     q = 1.0 - p;
     np = n * p;
-    setGeneratorConstants();
+    SetGeneratorConstants();
 }
 
 double BinomialRand::logProbFloor(int k) const
@@ -115,7 +115,7 @@ double BinomialRand::F(int k) const
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
 
-BinomialRand::GENERATOR_ID BinomialRand::getIdOfUsedGenerator() const
+BinomialRand::GENERATOR_ID BinomialRand::GetIdOfUsedGenerator() const
 {
     /// if (n is tiny and minpq is big) or p = 0.5 and n is not so large,
     /// we just sum Bernoulli random variables
@@ -140,35 +140,35 @@ int BinomialRand::variateRejection() const
     int iter = 0;
     double X, Y, V;
     do {
-        double U = UniformRand::variate(0, a4);
+        double U = UniformRand::Variate(0, a4);
         if (U <= a1)
         {
-            double N = NormalRand::standardVariate();
+            double N = NormalRand::StandardVariate();
             Y = sigma1 * std::fabs(N);
             reject = (Y >= delta1);
             if (!reject)
             {
-                double W = ExponentialRand::standardVariate();
+                double W = ExponentialRand::StandardVariate();
                 X = std::floor(Y);
                 V = -W - 0.5 * N * N + c;
             }
         }
         else if (U <= a2)
         {
-            double N = NormalRand::standardVariate();
+            double N = NormalRand::StandardVariate();
             Y = sigma2 * std::fabs(N);
             reject = (Y >= delta2);
             if (!reject)
             {
-                double W = ExponentialRand::standardVariate();
+                double W = ExponentialRand::StandardVariate();
                 X = std::floor(-Y);
                 V = -W - 0.5 * N * N;
             }
         }
         else if (U <= a3)
         {
-            double W1 = ExponentialRand::standardVariate();
-            double W2 = ExponentialRand::standardVariate();
+            double W1 = ExponentialRand::StandardVariate();
+            double W2 = ExponentialRand::StandardVariate();
             Y = delta1 + W1 / coefa3;
             X = std::floor(Y);
             V = -W2 - coefa3 * Y + delta1 / nqFloor;
@@ -176,8 +176,8 @@ int BinomialRand::variateRejection() const
         }
         else
         {
-            double W1 = ExponentialRand::standardVariate();
-            double W2 = ExponentialRand::standardVariate();
+            double W1 = ExponentialRand::StandardVariate();
+            double W2 = ExponentialRand::StandardVariate();
             Y = delta2 + W1 / coefa4;
             X = std::floor(-Y);
             V = -W2 - coefa4 * Y;
@@ -197,15 +197,15 @@ int BinomialRand::variateWaiting(int number) const
     /// sum of geometrically distributed variables
     int X = -1, sum = 0;
     do {
-        sum += G.variate() + 1.0;
+        sum += G.Variate() + 1.0;
         ++X;
     } while (sum <= number);
     return X;
 }
 
-int BinomialRand::variate() const
+int BinomialRand::Variate() const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     switch (genId) {
     case WAITING:
     {
@@ -233,21 +233,21 @@ int BinomialRand::variateBernoulliSum(int number, double probability)
     int var = 0;
     if (RandMath::areClose(probability, 0.5)) {
         for (int i = 0; i != number; ++i)
-            var += BernoulliRand::standardVariate();
+            var += BernoulliRand::StandardVariate();
     }
     else {
         for (int i = 0; i != number; ++i)
-            var += BernoulliRand::variate(probability);
+            var += BernoulliRand::Variate(probability);
     }
     return var;
 }
 
-int BinomialRand::variate(int number, double probability)
+int BinomialRand::Variate(int number, double probability)
 {
     return variateBernoulliSum(number, probability);
 }
 
-void BinomialRand::sample(std::vector<int> &outputData) const
+void BinomialRand::Sample(std::vector<int> &outputData) const
 {
     if (p == 0.0) {
         std::fill(outputData.begin(), outputData.end(), 0);
@@ -258,7 +258,7 @@ void BinomialRand::sample(std::vector<int> &outputData) const
         return;
     }
 
-    GENERATOR_ID genId = getIdOfUsedGenerator();
+    GENERATOR_ID genId = GetIdOfUsedGenerator();
     switch (genId) {
     case WAITING:
     {
@@ -334,26 +334,26 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
-bool BinomialRand::fitProbabilityMLE(const std::vector<int> &sample)
+bool BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
 {
     if (!checkValidity(sample))
         return false;
-    setParameters(n, sampleMean(sample) / n);
+    SetParameters(n, sampleMean(sample) / n);
     return true;
 }
 
-bool BinomialRand::fitProbabilityMM(const std::vector<int> &sample)
+bool BinomialRand::FitProbabilityMM(const std::vector<int> &sample)
 {
-    return fitProbabilityMLE(sample);
+    return FitProbabilityMLE(sample);
 }
 
-bool BinomialRand::fitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
+bool BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
 {
     int N = sample.size();
     double sum = sampleSum(sample);
-    double alpha = priorDistribution.getAlpha();
-    double beta = priorDistribution.getBeta();
-    priorDistribution.setParameters(sum + alpha, N * n - sum + beta);
-    setParameters(n, priorDistribution.Mean());
+    double alpha = priorDistribution.GetAlpha();
+    double beta = priorDistribution.GetBeta();
+    priorDistribution.SetParameters(sum + alpha, N * n - sum + beta);
+    SetParameters(n, priorDistribution.Mean());
     return true;
 }

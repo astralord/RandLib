@@ -4,19 +4,19 @@
 
 double ExponentialRand::stairWidth[257] = {0};
 double ExponentialRand::stairHeight[256] = {0};
-bool ExponentialRand::dummy = ExponentialRand::setupTables();
+bool ExponentialRand::dummy = ExponentialRand::SetupTables();
 
 ExponentialRand::ExponentialRand(double rate) : GammaRand()
 {
-    setRate(rate);
+    SetRate(rate);
 }
 
-std::string ExponentialRand::name() const
+std::string ExponentialRand::Name() const
 {
-    return "Exponential(" + toStringWithPrecision(getRate()) + ")";
+    return "Exponential(" + toStringWithPrecision(GetRate()) + ")";
 }
 
-bool ExponentialRand::setupTables()
+bool ExponentialRand::SetupTables()
 {
     /// Set up ziggurat tables
     static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
@@ -36,9 +36,9 @@ bool ExponentialRand::setupTables()
     return true;
 }
 
-void ExponentialRand::setRate(double rate)
+void ExponentialRand::SetRate(double rate)
 {
-    setParameters(1, rate);
+    SetParameters(1, rate);
 }
 
 double ExponentialRand::f(double x) const
@@ -51,31 +51,31 @@ double ExponentialRand::F(double x) const
     return (x > 0) ? 1 - std::exp(-beta * x) : 0;
 }
 
-double ExponentialRand::variate() const
+double ExponentialRand::Variate() const
 {
-    return theta * standardVariate();
+    return theta * StandardVariate();
 }
 
-double ExponentialRand::variate(double rate)
+double ExponentialRand::Variate(double rate)
 {
-    return standardVariate() / rate;
+    return StandardVariate() / rate;
 }
 
-double ExponentialRand::standardVariate()
+double ExponentialRand::StandardVariate()
 {
     /// Ziggurat algorithm
     int iter = 0;
     do {
         int stairId = RandGenerator::variate() & 255;
-        double x = UniformRand::standardVariate() * stairWidth[stairId]; /// get horizontal coordinate
+        double x = UniformRand::StandardVariate() * stairWidth[stairId]; /// Get horizontal coordinate
 
         if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
             return x;
 
         if (stairId == 0) /// if we catch the tail
-            return x1 + standardVariate();
+            return x1 + StandardVariate();
 
-        if (UniformRand::variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-x)) /// if we are under the curve - accept
+        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-x)) /// if we are under the curve - accept
             return x;
 
         /// rejection - go back
@@ -118,22 +118,22 @@ double ExponentialRand::Moment(int n) const
     return std::exp(std::lgamma(n + 1) - n * std::log(beta));
 }
 
-bool ExponentialRand::fitMM(const std::vector<double> &sample)
+bool ExponentialRand::FitMM(const std::vector<double> &sample)
 {
-    return fitScaleMLE(sample);
+    return FitScaleMLE(sample);
 }
 
-bool ExponentialRand::fitMLE(const std::vector<double> &sample)
+bool ExponentialRand::FitMLE(const std::vector<double> &sample)
 {
-    return fitScaleMLE(sample);
+    return FitScaleMLE(sample);
 }
 
-bool ExponentialRand::fitUMVU(const std::vector<double> &sample)
+bool ExponentialRand::FitUMVU(const std::vector<double> &sample)
 {   
     int n = sample.size();
     if (n <= 1 || !checkValidity(sample))
         return false;
     double mean = sampleMean(sample);
-    setRate((n - 1) * mean / n);
+    SetRate((n - 1) * mean / n);
     return true;
 }

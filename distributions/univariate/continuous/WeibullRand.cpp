@@ -3,15 +3,15 @@
 
 WeibullRand::WeibullRand(double scale, double shape)
 {
-    setParameters(scale, shape);
+    SetParameters(scale, shape);
 }
 
-std::string WeibullRand::name() const
+std::string WeibullRand::Name() const
 {
-    return "Weibull(" + toStringWithPrecision(getShape()) + ", " + toStringWithPrecision(getScale()) + ")";
+    return "Weibull(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void WeibullRand::setParameters(double scale, double shape)
+void WeibullRand::SetParameters(double scale, double shape)
 {
     lambda = scale;
     if (lambda <= 0)
@@ -44,9 +44,9 @@ double WeibullRand::F(double x) const
     return 1 - std::exp(-std::pow(x / lambda, k));
 }
 
-double WeibullRand::variate() const
+double WeibullRand::Variate() const
 {
-    return lambda * std::pow(ExponentialRand::standardVariate(), kInv);
+    return lambda * std::pow(ExponentialRand::StandardVariate(), kInv);
 }
 
 double WeibullRand::Mean() const

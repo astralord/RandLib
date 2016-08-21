@@ -16,19 +16,19 @@ class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 
 public:
     HyperGeometricRand(int totalSize, int drawsNum, int successesNum);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return FINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return std::max(0, n - N + K); }
     int MaxValue() const override { return std::min(n, K); }
 
-    void setParameters(int totalSize, int drawsNum, int successesNum);
-    inline int getTotalSize() { return N; }
-    inline int getDrawsNum() { return n; }
-    inline int getSuccessesNum() { return K; }
+    void SetParameters(int totalSize, int drawsNum, int successesNum);
+    inline int GetTotalSize() { return N; }
+    inline int GetDrawsNum() { return n; }
+    inline int GetSuccessesNum() { return K; }
 
     double P(int k) const override;
     double F(int k) const override;
-    int variate() const override;
+    int Variate() const override;
 
     double Mean() const override;
     double Variance() const override;

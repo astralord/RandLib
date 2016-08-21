@@ -4,15 +4,15 @@
 
 WaldRand::WaldRand(double mean, double shape)
 {
-    setParameters(mean, shape);
+    SetParameters(mean, shape);
 }
 
-std::string WaldRand::name() const
+std::string WaldRand::Name() const
 {
-    return "Wald(" + toStringWithPrecision(getMean()) + ", " + toStringWithPrecision(getShape()) + ")";
+    return "Wald(" + toStringWithPrecision(GetMean()) + ", " + toStringWithPrecision(GetShape()) + ")";
 }
 
-void WaldRand::setParameters(double mean, double shape)
+void WaldRand::SetParameters(double mean, double shape)
 {
     mu = mean;
     if (mu <= 0)
@@ -49,9 +49,9 @@ double WaldRand::F(double x) const
     return 0.5 * (y + cdfCoef * z);
 }
 
-double WaldRand::variate() const
+double WaldRand::Variate() const
 {
-    double y = NormalRand::standardVariate();
+    double y = NormalRand::StandardVariate();
     y *= y;
     double my = mu * y;
     double x = 4 * lambda + my;
@@ -60,7 +60,7 @@ double WaldRand::variate() const
     x = my - x;
     x *= .5 / lambda;
     ++x;
-    return (UniformRand::standardVariate() <= 1.0 / (1 + x)) ? mu * x : mu / x;
+    return (UniformRand::StandardVariate() <= 1.0 / (1 + x)) ? mu * x : mu / x;
 }
 
 double WaldRand::Mean() const

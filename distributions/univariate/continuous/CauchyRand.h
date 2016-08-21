@@ -18,23 +18,23 @@ class RANDLIBSHARED_EXPORT CauchyRand : public StableRand
 {
 public:
     CauchyRand(double location = 0, double scale = 1);
-    std::string name() const override;
-    SUPPORT_TYPE supportType() const override { return INFINITE_T; }
+    std::string Name() const override;
+    SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }
 
 private:
-    using StableRand::setParameters;
-    using StableRand::getExponent;
-    using StableRand::getSkewness;
+    using StableRand::SetParameters;
+    using StableRand::GetExponent;
+    using StableRand::GetSkewness;
 
 public:
     double f(double x) const override;
     double F(double x) const override;
-    double variate() const override;
+    double Variate() const override;
 
-    static double variate(double location, double scale);
-    static double standardVariate();
+    static double Variate(double location, double scale);
+    static double StandardVariate();
 
     std::complex<double> CF(double t) const override;
 
@@ -46,7 +46,7 @@ public:
     double Entropy() const;
 
     /// Method of moments
-    bool fitMM(const std::vector<double> &) { return false; }
+    bool FitMM(const std::vector<double> &) { return false; }
 };
 
 #endif // CAUCHYRAND_H
