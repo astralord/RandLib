@@ -61,7 +61,6 @@ SOURCES += \
     distributions/multivariate/BivariateProbabilityDistribution.cpp \
     distributions/multivariate/NormalInverseGammaRand.cpp \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
-    distributions/univariate/continuous/ExponentialNormalRand.cpp \
     math/Matrix.cpp \
     distributions/multivariate/MultivariateProbabilityDistribution.cpp \
     distributions/univariate/continuous/LogCauchyRand.cpp \
@@ -81,7 +80,8 @@ SOURCES += \
     processes/JumpDiffusionProcess.cpp \
     processes/CauchyProcess.cpp \
     processes/CoxIngersollRossProcess.cpp \
-    processes/HestonProcess.cpp
+    processes/HestonProcess.cpp \
+    distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -139,7 +139,6 @@ HEADERS +=\
     distributions/multivariate/BivariateProbabilityDistribution.h \
     distributions/multivariate/NormalInverseGammaRand.h \
     distributions/univariate/discrete/BetaBinomialRand.h \
-    distributions/univariate/continuous/ExponentialNormalRand.h \
     math/Matrix.h \
     distributions/multivariate/MultivariateProbabilityDistribution.h \
     distributions/univariate/continuous/LogCauchyRand.h \
@@ -162,7 +161,8 @@ HEADERS +=\
     processes/JumpDiffusionProcess.h \
     processes/CauchyProcess.h \
     processes/CoxIngersollRossProcess.h \
-    processes/HestonProcess.h
+    processes/HestonProcess.h \
+    distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h
 
 unix {
     target.path = /usr/lib

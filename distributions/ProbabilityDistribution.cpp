@@ -1,6 +1,6 @@
 #include "ProbabilityDistribution.h"
 #include <sstream>      // std::ostringstream
-#include <iomanip>      // std::Setprecision
+#include <iomanip>      // std::setprecision
 
 template < typename T >
 ProbabilityDistribution<T>::ProbabilityDistribution()

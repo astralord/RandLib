@@ -23,13 +23,12 @@
 
 /// CONTINUOUS
 #include "univariate/continuous/ContinuousDistribution.h"
-#include "univariate/continuous/LimitingDistribution.h"
 #include "univariate/continuous/BetaPrimeRand.h"
 #include "univariate/continuous/BetaRand.h"
 #include "univariate/continuous/CauchyRand.h"
 #include "univariate/continuous/DegenerateRand.h"
 #include "univariate/continuous/ExponentialRand.h"
-#include "univariate/continuous/ExponentialNormalRand.h"
+#include "univariate/continuous/ExponentiallyModifiedGaussianRand.h"
 #include "univariate/continuous/FisherSnedecorRand.h"
 #include "univariate/continuous/FrechetRand.h"
 #include "univariate/continuous/GammaRand.h"
@@ -39,6 +38,7 @@
 #include "univariate/continuous/IrwinHallRand.h"
 #include "univariate/continuous/LaplaceRand.h"
 #include "univariate/continuous/LevyRand.h"
+#include "univariate/continuous/LimitingDistribution.h"
 #include "univariate/continuous/LogCauchyRand.h"
 #include "univariate/continuous/LogisticRand.h"
 #include "univariate/continuous/LogNormalRand.h"
@@ -67,6 +67,7 @@
 #include "multivariate/NormalInverseGammaRand.h"
 #include "multivariate/BivariateNormalRand.h"
 
+/// SUM
 #include "univariate/SumRand.h"
 
 #endif // RANDLIB_H

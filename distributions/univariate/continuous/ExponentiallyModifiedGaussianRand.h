@@ -1,12 +1,12 @@
-#ifndef EXPONENTIALNORMALRAND_H
-#define EXPONENTIALNORMALRAND_H
+#ifndef EXPONENTIALLYMODIFIEDGAUSSIANRAND_H
+#define EXPONENTIALLYMODIFIEDGAUSSIANRAND_H
 
 #include "ContinuousDistribution.h"
 #include "NormalRand.h"
 #include "ExponentialRand.h"
 
 /**
- * @brief The ExponentialNormalRand class
+ * @brief The ExponentiallyModifiedGaussianRand class
  * Exponentially modified Gaussian distribution
  *
  * Notation: X ~ EMG(μ, σ, β)
@@ -14,7 +14,7 @@
  * Related distributions:
  * X = Y + Z, where Y ~ Normal(μ, σ) and Z ~ Exp(β)
  */
-class RANDLIBSHARED_EXPORT ExponentialNormalRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution
 {
     NormalRand X;
     ExponentialRand Y;
@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT ExponentialNormalRand : public ContinuousDistribution
     double a, b, c, v; /// auxiliary variables
 
 public:
-    explicit ExponentialNormalRand(double location = 0, double variance = 1, double rate = 1);
+    explicit ExponentiallyModifiedGaussianRand(double location = 0, double variance = 1, double rate = 1);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
@@ -47,6 +47,4 @@ public:
     std::complex<double> CF(double t) const override;
 };
 
-
-
-#endif // EXPONENTIALNORMALRAND_H
+#endif // EXPONENTIALLYMODIFIEDGAUSSIANRAND_H

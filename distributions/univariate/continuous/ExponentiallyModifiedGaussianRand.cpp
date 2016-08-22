@@ -1,18 +1,18 @@
-#include "ExponentialNormalRand.h"
+#include "ExponentiallyModifiedGaussianRand.h"
 
-ExponentialNormalRand::ExponentialNormalRand(double location, double variance, double rate)
+ExponentiallyModifiedGaussianRand::ExponentiallyModifiedGaussianRand(double location, double variance, double rate)
 {
     SetParameters(location, variance, rate);
 }
 
-std::string ExponentialNormalRand::Name() const
+std::string ExponentiallyModifiedGaussianRand::Name() const
 {
-    return "Exponential-Normal(" + toStringWithPrecision(GetLocation()) + ", "
-                                 + toStringWithPrecision(X.Variance()) + ", "
-                                 + toStringWithPrecision(GetRate()) + ")";
+    return "Exponentially modified Gaussian(" + toStringWithPrecision(GetLocation()) + ", "
+                                              + toStringWithPrecision(X.Variance()) + ", "
+                                              + toStringWithPrecision(GetRate()) + ")";
 }
 
-void ExponentialNormalRand::SetParameters(double location, double variance, double rate)
+void ExponentiallyModifiedGaussianRand::SetParameters(double location, double variance, double rate)
 {
     X.SetLocation(location);
     X.SetVariance(variance);
@@ -29,7 +29,7 @@ void ExponentialNormalRand::SetParameters(double location, double variance, doub
     v = lambda * sigma;
 }
 
-double ExponentialNormalRand::f(double x) const
+double ExponentiallyModifiedGaussianRand::f(double x) const
 {
     double lambda = Y.GetRate();
     double y = a - x;
@@ -42,7 +42,7 @@ double ExponentialNormalRand::f(double x) const
     return y * exponent;
 }
 
-double ExponentialNormalRand::F(double x) const
+double ExponentiallyModifiedGaussianRand::F(double x) const
 {
     double u = Y.GetRate() * (x - X.GetLocation());
     double y = X.F(x);
@@ -52,32 +52,32 @@ double ExponentialNormalRand::F(double x) const
     return y - exponent;
 }
 
-double ExponentialNormalRand::Variate() const
+double ExponentiallyModifiedGaussianRand::Variate() const
 {
     return X.Variate() + Y.Variate();
 }
 
-double ExponentialNormalRand::Variate(double location, double rootVar, double rate)
+double ExponentiallyModifiedGaussianRand::Variate(double location, double rootVar, double rate)
 {
     return NormalRand::Variate(location, rootVar) + ExponentialRand::Variate(rate);
 }
 
-double ExponentialNormalRand::Mean() const
+double ExponentiallyModifiedGaussianRand::Mean() const
 {
     return X.Mean() + Y.Mean();
 }
 
-double ExponentialNormalRand::Variance() const
+double ExponentiallyModifiedGaussianRand::Variance() const
 {
     return X.Variance() + Y.Variance();
 }
 
-std::complex<double> ExponentialNormalRand::CF(double t) const
+std::complex<double> ExponentiallyModifiedGaussianRand::CF(double t) const
 {
     return X.CF(t) * Y.CF(t);
 }
 
-double ExponentialNormalRand::Skewness() const
+double ExponentiallyModifiedGaussianRand::Skewness() const
 {
     double sigma = X.GetScale();
     double lambda = Y.GetRate();
@@ -90,7 +90,7 @@ double ExponentialNormalRand::Skewness() const
     return y + y;
 }
 
-double ExponentialNormalRand::ExcessKurtosis() const
+double ExponentiallyModifiedGaussianRand::ExcessKurtosis() const
 {
     double sigma = X.GetScale();
     double lambda = Y.GetRate();
