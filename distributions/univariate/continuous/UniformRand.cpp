@@ -41,20 +41,30 @@ double UniformRand::Variate(double minValue, double maxValue)
 
 double UniformRand::StandardVariate()
 {
-#ifdef JKISS32RAND
-    return RandGenerator::variate() / 4294967296.0;
-#else
+#ifdef UNIDBLRAND
+    double x;
+    unsigned int a, b;
+    a = RandGenerator::variate() >> 6; /// Upper 26 bits
+    b = RandGenerator::variate() >> 5; /// Upper 27 bits
+    x = (a * 134217728.0 + b) / 9007199254740992.0;
+    return x;
+#elif defined(JLKISS64RAND)
     double x;
     unsigned long long a = RandGenerator::variate();
-    a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bits
-    *((unsigned long long *)&x) = a; /// Make a double from bits
+    a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bit
+    *(reinterpret_cast<unsigned long long *>(&x)) = a; /// Make a double from bits
     return x - 1.0;
+#else
+    double x = RandGenerator::variate();
+    x += 0.5;
+    x /= 4294967296.0;
+    return x;
 #endif
 }
 
 double UniformRand::Mean() const
 {
-    return .5 * (b + a);
+    return 0.5 * (b + a);
 }
 
 double UniformRand::Variance() const
@@ -66,8 +76,9 @@ std::complex<double> UniformRand::CF(double t) const
 {
     if (t == 0)
         return 1;
-    std::complex<double> x(0, t * a), y(0, t * b);
-    std::complex<double> numerator = std::exp(y) - std::exp(x);
+    double cosX = std::cos(t * b), sinX = std::sin(t * b);
+    double cosY = std::cos(t * a), sinY = std::sin(t * a);
+    std::complex<double> numerator(cosX - cosY, sinX - sinY);
     std::complex<double> denominator(0, t * bma);
     return numerator / denominator;
 }

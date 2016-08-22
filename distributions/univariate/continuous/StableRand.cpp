@@ -288,9 +288,7 @@ double StableRand::cdfNormal(double x) const
 {
     double y = x - mu;
     y *= pdfCoef;
-    y = std::erf(y);
-    ++y;
-    return 0.5 * y;
+    return 0.5 * std::erfc(-y);
 }
 
 double StableRand::cdfCauchy(double x) const
@@ -488,11 +486,6 @@ double StableRand::Variance() const
     return (distributionId == NORMAL)  ? 2 * sigma * sigma : INFINITY;
 }
 
-std::complex<double> StableRand::CF(double t) const
-{
-    return (t == 0) ? 1.0 : std::exp(-psi(t));
-}
-
 double StableRand::Mode() const
 {
     /// For symmetric distributions mode is μ (see Wintner(1936))
@@ -516,6 +509,11 @@ double StableRand::Skewness() const
 double StableRand::ExcessKurtosis() const
 {
     return (distributionId == NORMAL)  ? 0 : NAN;
+}
+
+std::complex<double> StableRand::CF(double t) const
+{
+    return (t == 0) ? 1.0 : std::exp(-psi(t));
 }
 
 std::string HoltsmarkRand::Name() const

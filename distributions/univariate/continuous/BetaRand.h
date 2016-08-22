@@ -147,7 +147,7 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-private:
+protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 

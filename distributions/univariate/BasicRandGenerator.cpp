@@ -27,25 +27,25 @@ unsigned long long BasicRandGenerator<JLKISS64>::variate()
 }
 
 template <>
-unsigned long long BasicRandGenerator<JKISS32>::variate()
+unsigned long long BasicRandGenerator<JKISS>::variate()
 {
     static unsigned int X = 123456789 ^ time(0);
-    static unsigned int Y = X ^ X;
+    static unsigned int C = 6543217;
+    static unsigned int Y = X ^ C;
     static unsigned int Z = X ^ Y;
-    static unsigned int W = X ^ Z;
-    static bool C = 0;
+    unsigned long long t = 698769069ULL * Z + C;
 
+    X *= 69069;
+    X += 12345;
+
+    Y ^= Y << 13;
+    Y ^= Y >> 17;
     Y ^= Y << 5;
-    Y ^= Y >> 7;
-    Y ^= Y << 22;
 
-    int t = Z + W + C;
-    Z = W;
-    C = t < 0;
-    W = t & 2147483647;
-    X += 1411392427;
+    C = t >> 32;
+    Z = t;
 
-    return X + Y + W;
+    return X + Y + Z;
 }
 
 template < char Generator >
@@ -62,4 +62,4 @@ size_t BasicRandGenerator<Generator>::maxDecimals()
 }
 
 template class BasicRandGenerator<JLKISS64>;
-template class BasicRandGenerator<JKISS32>;
+template class BasicRandGenerator<JKISS>;

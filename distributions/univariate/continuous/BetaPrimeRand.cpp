@@ -130,12 +130,12 @@ std::complex<double> BetaPrimeRand::CF(double t) const
 
 double BetaPrimeRand::quantileImpl(double p) const
 {
-    double x = BetaRand::Quantile(p);
+    double x = BetaRand::quantileImpl(p);
     return x / (1.0 - x);
 }
 
 double BetaPrimeRand::quantileImpl1m(double p) const
 {
-    double x = BetaRand::Quantile1m(p);
+    double x = BetaRand::quantileImpl1m(p);
     return x / (1.0 - x);
 }

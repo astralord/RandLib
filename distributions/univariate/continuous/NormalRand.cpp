@@ -108,6 +108,7 @@ double NormalRand::StandardVariate()
             return ((signed)B > 0) ? x : -x;
         }
 
+
         /// handle the wedges of other stairs
         if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
@@ -245,7 +246,7 @@ bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confiden
     ChiSquaredRand chi(nm1);
     double numerator = nm1 * sigma0 * sigma0;
     confidenceIntervalForVariance.first = numerator / chi.Quantile(p);
-    confidenceIntervalForVariance.second = numerator / chi.Quantile(1.0 - p); // TODO: redo with Quantile1m
+    confidenceIntervalForVariance.second = numerator / chi.Quantile1m(p);
     return true;
 }
 

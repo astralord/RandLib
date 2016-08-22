@@ -227,6 +227,11 @@ double RayleighRand::quantileImpl(double p) const
     return sigma * std::sqrt(-2 * std::log1p(-p));
 }
 
+double RayleighRand::quantileImpl1m(double p) const
+{
+    return sigma * std::sqrt(-2 * std::log(p));
+}
+
 double RayleighRand::Median() const
 {
     return sigma * std::sqrt(M_LN2 + M_LN2);

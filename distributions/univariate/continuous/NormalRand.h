@@ -60,25 +60,25 @@ public:
     double Moment(int n) const;
 
     /// Maximum likelihood estimators
-    bool FitMeanMLE(const std::vector<double> &Sample);
-    bool FitVarianceMLE(const std::vector<double> &Sample);
-    bool FitMLE(const std::vector<double> &Sample);
+    bool FitMeanMLE(const std::vector<double> &sample);
+    bool FitVarianceMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &sample);
 
     /// Method of moments (the same as MLE)
-    bool FitMeanMM(const std::vector<double> &Sample);
-    bool FitVarianceMM(const std::vector<double> &Sample);
-    bool FitMM(const std::vector<double> &Sample);
+    bool FitMeanMM(const std::vector<double> &sample);
+    bool FitVarianceMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &sample);
     
     /// Uniformly minimum variance unbiased (UMVU) estimators
-    bool FitMeanUMVU(const std::vector<double> &Sample);
-    bool FitVarianceUMVU(const std::vector<double> &Sample);
-    bool FitUMVU(const std::vector<double> &Sample);
-    bool FitUMVU(const std::vector<double> &Sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
+    bool FitMeanUMVU(const std::vector<double> &sample);
+    bool FitVarianceUMVU(const std::vector<double> &sample);
+    bool FitUMVU(const std::vector<double> &sample);
+    bool FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
 
     /// Bayesian estimation
-    bool FitMeanBayes(const std::vector<double> &Sample, NormalRand &priorDistribution);
-    bool FitVarianceBayes(const std::vector<double> &Sample, InverseGammaRand &priorDistribution);
-    bool FitBayes(const std::vector<double> &Sample, NormalInverseGammaRand &priorDistribution);
+    bool FitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
+    bool FitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution);
+    bool FitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

@@ -3,17 +3,17 @@
 
 FrechetRand::FrechetRand(double shape, double scale, double location)
 {
-    setParameters(shape, scale, location);
+    SetParameters(shape, scale, location);
 }
 
-std::string FrechetRand::name() const
+std::string FrechetRand::Name() const
 {
-    return "Frechet(" + toStringWithPrecision(getShape()) + ", "
-                      + toStringWithPrecision(getScale()) + ", "
-                      + toStringWithPrecision(getLocation()) + ")";
+    return "Frechet(" + toStringWithPrecision(GetShape()) + ", "
+                      + toStringWithPrecision(GetScale()) + ", "
+                      + toStringWithPrecision(GetLocation()) + ")";
 }
 
-void FrechetRand::setParameters(double shape, double scale, double location)
+void FrechetRand::SetParameters(double shape, double scale, double location)
 {
     alpha = shape;
     if (alpha <= 0)
@@ -49,9 +49,9 @@ double FrechetRand::F(double x) const
     return std::exp(-xPow);
 }
 
-double FrechetRand::variate() const
+double FrechetRand::Variate() const
 {
-    return m + s / std::pow(ExponentialRand::standardVariate(), alphaInv);
+    return m + s / std::pow(ExponentialRand::StandardVariate(), alphaInv);
 }
 
 double FrechetRand::Mean() const

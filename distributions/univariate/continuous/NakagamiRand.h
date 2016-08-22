@@ -135,6 +135,7 @@ public:
 
 private:
     double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 
 public:
     bool FitScaleMLE(const std::vector<double> &Sample);

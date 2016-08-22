@@ -57,11 +57,11 @@ public:
     double Moment(int n) const;
 
     /// Maximum-likelihood estimation
-    bool FitMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &sample);
     /// Method of moments
-    bool FitMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &sample);
     /// Uniformly minimum variance unbiased estimator
-    bool FitUMVU(const std::vector<double> &Sample);
+    bool FitUMVU(const std::vector<double> &sample);
 };
 
 #endif // EXPONENTIALRAND_H

@@ -27,6 +27,10 @@ public:
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
 
+private:
+    using BetaRand::SetParameters;
+
+public:
     void SetSupport(double minValue, double maxValue);
     inline double GetMinValue() const { return a; }
     inline double GetMaxValue() const { return b; }

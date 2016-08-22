@@ -84,16 +84,16 @@ private:
 
 public:
     /// Maximum-likelihood estimation
-    bool FitScaleMLE(const std::vector<double> &Sample);
-    bool FitMLE(const std::vector<double> &Sample);
+    bool FitScaleMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &sample);
     
     /// Method of moments
-    bool FitShapeMM(const std::vector<double> &Sample);
-    bool FitScaleMM(const std::vector<double> &Sample);
-    bool FitMM(const std::vector<double> &Sample);
+    bool FitShapeMM(const std::vector<double> &sample);
+    bool FitScaleMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &sample);
 
     /// Bayes estimation
-    bool FitRateBayes(const std::vector<double> &Sample, GammaRand &priorDistribution);
+    bool FitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution);
 
     /**
      * @brief GetLogGammaFunction
