@@ -11,8 +11,18 @@ void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double
 
 double ContinuousDistribution::quantileImpl(double p) const
 {
-    double root = Mean(); /// good starting point
-    if (!std::isfinite(root))
+    double root = 0.0;
+    SUPPORT_TYPE supp = SupportType();
+    if (supp == FINITE_T) {
+        if (RandMath::findRoot([this, p] (double x)
+        {
+            return F(x) - p;
+        }, MinValue(), MaxValue(), root))
+            return root;
+        return NAN;
+    }
+    double mean = Mean();
+    if (!std::isfinite(mean))
     {
         if (isLeftBounded()) {
             root = MinValue() + 1;
@@ -24,9 +34,11 @@ double ContinuousDistribution::quantileImpl(double p) const
             while(f(root) <= MIN_POSITIVE)
                 --root;
         }
-        else
-            root = 0.0;
     }
+    else {
+        root = mean;
+    }
+
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = F(x) - p;
@@ -34,14 +46,23 @@ double ContinuousDistribution::quantileImpl(double p) const
         return DoublePair(first, second);
     }, root))
         return root;
-    /// if we can't find quantile, then probably p == 1
-    return INFINITY;
+    return NAN;
 }
 
 double ContinuousDistribution::quantileImpl1m(double p) const
 {
-    double root = Mean(); /// good starting point
-    if (!std::isfinite(root))
+    double root = 0.0;
+    SUPPORT_TYPE supp = SupportType();
+    if (supp == FINITE_T) {
+        if (RandMath::findRoot([this, p] (double x)
+        {
+            return F(x) - p;
+        }, MinValue(), MaxValue(), root))
+            return root;
+        return NAN;
+    }
+    double mean = Mean();
+    if (!std::isfinite(mean))
     {
         if (isLeftBounded()) {
             root = MinValue() + 1;
@@ -53,9 +74,11 @@ double ContinuousDistribution::quantileImpl1m(double p) const
             while(f(root) <= MIN_POSITIVE)
                 --root;
         }
-        else
-            root = 0.0;
     }
+    else {
+        root = mean;
+    }
+
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = F(x) - 1;
@@ -64,8 +87,7 @@ double ContinuousDistribution::quantileImpl1m(double p) const
         return DoublePair(first, second);
     }, root))
         return root;
-    /// if we can't find quantile, then probably p == 1
-    return INFINITY;
+    return NAN;
 }
 
 double ContinuousDistribution::Hazard(double x) const

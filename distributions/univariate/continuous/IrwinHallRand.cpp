@@ -77,31 +77,6 @@ std::complex<double> IrwinHallRand::CF(double t) const
     return std::pow(U.CF(t), n);
 }
 
-double IrwinHallRand::quantileImpl(double p) const
-{
-    double root = p * n;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        return F(x) - p;
-    },
-    0, n, root))
-        return root;
-    return NAN;
-}
-
-double IrwinHallRand::quantileImpl1m(double p) const
-{
-    double root = n - p * n;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double y = F(x) - 1;
-        return y + p;
-    },
-    0, n, root))
-        return root;
-    return NAN;
-}
-
 double IrwinHallRand::Median() const
 {
     return 0.5 * n;

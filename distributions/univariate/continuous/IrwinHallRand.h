@@ -42,10 +42,6 @@ public:
     double ExcessKurtosis() const override;
 
     std::complex<double> CF(double t) const override;
-
-private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
 };
 
 #endif // IRWINHALLRAND_H

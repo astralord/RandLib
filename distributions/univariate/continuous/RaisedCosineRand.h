@@ -9,7 +9,7 @@
 class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 {
     double mu, s;
-    double s_pi; /// M_1_PI * s
+    double s_pi;
 public:
     RaisedCosineRand(double location, double scale);
 

@@ -1,13 +1,20 @@
 #include "BetaPrimeRand.h"
 
 BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
-    : BetaRand(shape1, shape2)
 {
+    SetParameters(shape1, shape2);
 }
 
 std::string BetaPrimeRand::Name() const
 {
     return "Beta Prime(" + toStringWithPrecision(GetAlpha()) + ", " + toStringWithPrecision(GetBeta()) + ")";
+}
+
+void BetaPrimeRand::SetParameters(double shape1, double shape2)
+{
+    B.SetParameters(shape1, shape2);
+    alpha = B.GetAlpha();
+    beta = B.GetBeta();
 }
 
 double BetaPrimeRand::f(double x) const
@@ -26,18 +33,18 @@ double BetaPrimeRand::f(double x) const
 
 double BetaPrimeRand::F(double x) const
 {
-    return (x > 0) ? BetaRand::F(x / (1.0 + x)) : 0;
+    return (x > 0) ? B.F(x / (1.0 + x)) : 0;
 }
 
 double BetaPrimeRand::Variate() const
 {
-    double x = BetaRand::Variate();
+    double x = B.Variate();
     return x / (1.0 - x);
 }
 
 void BetaPrimeRand::Sample(std::vector<double> &outputData) const
 {
-    BetaRand::Sample(outputData);
+    B.Sample(outputData);
     for (double &var : outputData)
         var = var / (1.0 - var);
 }
@@ -107,7 +114,7 @@ std::complex<double> BetaPrimeRand::CF(double t) const
     }, 0, 1);
 
     re += 1.0 / alpha;
-    re *= BetaRand::GetInverseBetaFunction();
+    re *= GetInverseBetaFunction();
 
     re += RandMath::integral([this, t] (double x)
     {
@@ -130,12 +137,12 @@ std::complex<double> BetaPrimeRand::CF(double t) const
 
 double BetaPrimeRand::quantileImpl(double p) const
 {
-    double x = BetaRand::quantileImpl(p);
+    double x = B.Quantile(p);
     return x / (1.0 - x);
 }
 
 double BetaPrimeRand::quantileImpl1m(double p) const
 {
-    double x = BetaRand::quantileImpl1m(p);
+    double x = B.Quantile1m(p);
     return x / (1.0 - x);
 }

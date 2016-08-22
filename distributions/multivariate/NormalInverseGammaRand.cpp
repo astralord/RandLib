@@ -55,8 +55,7 @@ double NormalInverseGammaRand::F(DoublePair point) const
     double sigma = std::sqrt(sigmaSq);
     double y = 0.5 * lambda;
     y *= (x - mu) / sigma;
-    y = std::erf(y);
-    ++y;
+    y = std::erfc(-y);
     double z = beta /sigmaSq;
     double temp = alpha * std::log(z) - z;
     y *= std::exp(temp - Y.GetLogGammaFunction());

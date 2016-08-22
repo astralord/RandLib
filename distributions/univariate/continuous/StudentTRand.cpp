@@ -137,7 +137,7 @@ double StudentTRand::quantileImpl(double p) const
         double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
         return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
     }
-    return ContinuousDistribution::Quantile(p);
+    return ContinuousDistribution::quantileImpl(p);
 }
 
 double StudentTRand::quantileImpl1m(double p) const
@@ -154,7 +154,7 @@ double StudentTRand::quantileImpl1m(double p) const
         double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
         return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
     }
-    return ContinuousDistribution::Quantile1m(p);
+    return ContinuousDistribution::quantileImpl1m(p);
 }
 
 double StudentTRand::Median() const

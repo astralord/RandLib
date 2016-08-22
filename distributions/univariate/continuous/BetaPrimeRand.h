@@ -17,11 +17,17 @@
  * X = Y / Z, where Y ~ Gamma(α) and Z ~ Gamma(β)
  * X ~ F(2α, 2β)
  */
-class RANDLIBSHARED_EXPORT BetaPrimeRand : public BetaRand
+class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
 {
+    double alpha, beta;
+    BetaRand B;
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
     std::string Name() const override;
+    void SetParameters(double shape1, double shape2);
+    inline double GetAlpha() const { return alpha; }
+    inline double GetBeta() const { return beta; }
+
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
@@ -44,6 +50,18 @@ public:
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+public:
+    /**
+     * @brief GetInvBetaFunction
+     * @return 1 / Beta(α, β)
+     */
+    inline double GetInverseBetaFunction() const { return B.GetInverseBetaFunction(); }
+
+    /**
+     * @brief GetLogBetaFunction
+     * @return log Beta(α, β)
+     */
+    inline double GetLogBetaFunction() const { return B.GetLogBetaFunction(); }
 };
 
 #endif // BETAPRIMERAND_H

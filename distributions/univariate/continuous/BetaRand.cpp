@@ -451,14 +451,7 @@ double BetaRand::quantileImpl(double p) const
         if (alpha == 1)
             return a + bma * p;
     }
-    double root = a + bma * p;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        return BetaRand::F(x) - p;
-    },
-    a, b, root))
-        return root;
-    return NAN;
+    return ContinuousDistribution::quantileImpl(p);
 }
 
 double BetaRand::quantileImpl1m(double p) const
@@ -472,15 +465,7 @@ double BetaRand::quantileImpl1m(double p) const
         if (alpha == 1)
             return a + bma * p;
     }
-    double root = a + bma - bma * p;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double y = F(x) - 1;
-        return y + p;
-    },
-    a, b, root))
-        return root;
-    return NAN;
+    return ContinuousDistribution::quantileImpl1m(p);
 }
 
 

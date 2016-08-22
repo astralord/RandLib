@@ -31,7 +31,7 @@ public:
     double Hazard(double x) const override;
     double Mode() const override;
 
-private:
+protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 

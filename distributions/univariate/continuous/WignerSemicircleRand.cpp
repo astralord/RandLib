@@ -39,7 +39,7 @@ double WignerSemicircleRand::F(double x) const
     double y = RSq - x * x;
     y = x * std::sqrt(y) / RSq;
     double z = std::asin(x / R);
-    return 0.5 + (y + z) * M_1_PI;
+    return 0.5 + (y + z) / M_PI;
 }
 
 double WignerSemicircleRand::Variate() const
@@ -83,3 +83,4 @@ double WignerSemicircleRand::Entropy() const
 {
     return std::log(M_PI * R) - 0.5;
 }
+
