@@ -6,7 +6,7 @@ With RandLib one can work with probability distributions.
 ```c++
 NormalRand distribution(0, 1);
 std::vector<double> data(1e6);
-distribution.sample(data);
+distribution.Sample(data);
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
 
@@ -30,8 +30,8 @@ Skewness = 6.18488 and Excess Kurtosis = 110.936
 ```c++
 NormalRand X(0, 1);
 std::vector<double> data(10);
-X.sample(data);
-std::cout << "True distribution: " << X.name() << "\n";
+X.Sample(data);
+std::cout << "True distribution: " << X.Name() << "\n";
 std::cout << "Sample: ";
 for (double var : data)
     std::cout << var << "  ";
@@ -39,17 +39,17 @@ std::cout << "\n";
 
 /// Bayesian
 NormalInverseGammaRand prior(0, 1, 1, 1);
-X.fitBayes(data, prior);
-std::cout << "Bayesian estimator: " << X.name() << "\n";
-std::cout << "(Posterior distribution: " << prior.name() << ")\n";
+X.FitBayes(data, prior);
+std::cout << "Bayesian estimator: " << X.Name() << "\n";
+std::cout << "(Posterior distribution: " << prior.Name() << ")\n";
 
 /// UMVU
-X.fitUMVU(data);
-std::cout << "UMVU estimator: " << X.name() << "\n";
+X.FitUMVU(data);
+std::cout << "UMVU estimator: " << X.Name() << "\n";
 
 /// Maximum-likelihood
-X.fitMLE(data);
-std::cout << "Maximum-likelihood estimator: " << X.name() << "\n";
+X.FitMLE(data);
+std::cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
 ```
