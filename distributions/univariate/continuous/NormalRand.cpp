@@ -33,12 +33,15 @@ bool NormalRand::SetupTables()
     static constexpr long double A = 4.92867323399e-3l; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = std::exp(-.5 * x1 * x1);
-    stairWidth[0] = A / stairHeight[0];
+    stairHeight[0] = 0.001260285930498597; /// std::exp(-0.5 * x1 * x1);
+    stairWidth[0] = 3.9107579595370918075; /// A / stairHeight[0];
     /// implicit value for the top layer
     stairWidth[256] = 0;
 
-    for (size_t i = 1; i <= 255; ++i)
+    stairWidth[1] = x1;
+    stairHeight[1] = 0.002609072746106362;
+
+    for (size_t i = 2; i <= 255; ++i)
     {
         /// such y_i that f(x_{i+1}) = y_i
         stairWidth[i] = std::sqrt(-2 * std::log(stairHeight[i - 1]));
