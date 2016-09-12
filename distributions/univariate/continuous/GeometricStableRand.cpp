@@ -78,35 +78,70 @@ double GeometricStableRand::pdfByLevy(double x) const
     }
 
     /// If mu != 0
-    double a = x / sigma, c = RandMath::sign(beta) * mu / sigma;
-    double h = std::sqrt(1 - 2 * c);
-    double K = 1 - c - h;
-    K *= a / (c * c);
-    K = std::exp(K);
-    K /= 2 * sigma * c * h;
-
-    if (mu < 0) {
+    double a = x / sigma, c = mu / sigma;
+    if (beta < 0) {
+        a = -a;
+        c = -c;
+    }
+    if (a < 0 && c >= 0)
+        return 0.0;
+    if (c < 0.5) {
+        double h = std::sqrt(1 - 2 * c);
+        double K = 1 - c - h;
+        K *= a / (c * c);
+        K = std::exp(K);
+        K /= 2 * sigma * c * h;
         double p =  std::exp(a * h / (c * c));
-        if (a < 0)
+        if (a < 0 && c < 0)
             return -2 * K * (1 + h) * p * p;
         double sqrtHalfA = std::sqrt(0.5 * a);
         double g = (1 + h) / c;
         g *= sqrtHalfA;
-        g = std::erfc(-g);
         double q = (1 - h) / c;
         q *= sqrtHalfA;
-        q = std::erfc(q);
-
-        /// g can be too small while p is too big
-        double y = -(g * p) * p;
-        y *= (1 + h);
-        y -= (1 - h) * q;
+        double y = p;
+        if (c > 0) /// c is in (0, 0.5)
+            y *= std::erfc(g); /// g can be too small while p is too big
+        else
+            y *= -std::erfc(-g);
+        y *= (1 + h) * p;
+        y -= (1 - h) * std::erfc(q);
         y *= K;
         return y;
     }
+    else {
+        /// we do numerical integration in this case
+        // (as I wasn't able to handle complex integrals)
+        double adivc = a / c;
+        double y = RandMath::integral([this, a, c, adivc] (double t)
+        {
+            if (t <= 0 || t >= adivc)
+                return 0.0;
+            double amct = a - c * t;
+            double integrand = 0.5 * t / amct;
+            ++integrand;
+            integrand *= t;
+            integrand = std::exp(-integrand);
+            integrand *= t;
+            integrand /= amct * std::sqrt(amct);
+            return integrand;
+        }, 0, adivc);
+        return y / (sigma * M_SQRT2PI);
+    }
 
-    // TODO: for mu > 0 and beta == -1
+    // TODO: beta == -1
     return 0.0;
+}
+
+double GeometricStableRand::pdfByCauchy(double x) const
+{
+    double muSqpSigmaSq = mu * mu + sigma * sigma;
+    double temp = sigma * x / muSqpSigmaSq;
+    double y = sigma * std::sin(temp);
+    y += mu * std::cos(temp);
+    y /= muSqpSigmaSq;
+    y *= std::exp(-mu * x / muSqpSigmaSq);
+    return -y;
 }
 
 double GeometricStableRand::f(double x) const
@@ -122,6 +157,10 @@ double GeometricStableRand::f(double x) const
         if (x > 0 && mu <= 0 && beta < 0)
             return 0.0;
     }
+
+    /// Cauchy case
+    if (alpha == 1.0 && beta == 0.0)
+        return pdfByCauchy(x);
 
     /// Levy case
     if (alpha == 0.5 && std::fabs(beta) == 1)

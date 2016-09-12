@@ -9,17 +9,17 @@ StochasticProcess<T>::StochasticProcess(double deltaT, T initialValue) :
 }
 
 template <typename T>
-void StochasticProcess<T>::reSet(T initialValue)
+void StochasticProcess<T>::reset(T initialValue)
 {
     currentTime = 0.0;
     currentValue = initialValue;
 }
 
 template <typename T>
-T StochasticProcess<T>::next()
+T StochasticProcess<T>::Next()
 {
     currentTime += dt;
-    nextImpl();
+    NextImpl();
     return currentValue;
 }
 

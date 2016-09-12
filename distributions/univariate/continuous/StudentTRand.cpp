@@ -54,8 +54,9 @@ double StudentTRand::f(double x) const
 
 double StudentTRand::F(double x) const
 {
+    // TODO: consider v == 3 and v == 4
     if (v == 1)
-        return 0.5 + std::atan((x - mu) / sigma) * M_1_PI;
+        return 0.5 + std::atan((x - mu) / sigma) / M_PI;
     if (v == 2) {
         x -= mu;
         x /= sigma;
@@ -125,34 +126,36 @@ std::complex<double> StudentTRand::CF(double t) const
 
 double StudentTRand::quantileImpl(double p) const
 {
+    // TODO: consider v == 3
     double temp = p - 0.5;
     if (v == 1)
-        return (std::tan(M_PI * temp) - mu) / sigma;
-    double alpha = 4 * p * (1.0 - p);
+        return std::tan(M_PI * temp) * sigma + mu;
+    double pq = p * (1.0 - p);
     if (v == 2)
-        return (2.0 * temp * std::sqrt(2.0 / alpha) - mu) / sigma;
+        return sigma * 2.0 * temp * std::sqrt(0.5 / pq) + mu;
     if (v == 4)
     {
-        double sqrtAlpha = std::sqrt(alpha);
-        double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
-        return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
+        double alpha = 2 * std::sqrt(pq);
+        double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
+        return mu + sigma * 2 * RandMath::sign(temp) * std::sqrt(beta);
     }
     return ContinuousDistribution::quantileImpl(p);
 }
 
 double StudentTRand::quantileImpl1m(double p) const
 {
+    // TODO: consider v == 3
     double temp = 0.5 - p;
     if (v == 1)
-        return (std::tan(M_PI * temp) - mu) / sigma;
-    double alpha = 4 * p * (1.0 - p);
+        return std::tan(M_PI * temp) * sigma + mu;
+    double pq = p * (1.0 - p);
     if (v == 2)
-        return (2.0 * temp * std::sqrt(2.0 / alpha) - mu) / sigma;
+        return sigma * 2 * temp * std::sqrt(0.5 / pq) + mu;
     if (v == 4)
     {
-        double sqrtAlpha = std::sqrt(alpha);
-        double q = std::cos(std::acos(sqrtAlpha) / 3.0) / sqrtAlpha;
-        return (2 * RandMath::sign(temp) * std::sqrt(q - 1) - mu) / sigma;
+        double alpha = 2 * std::sqrt(pq);
+        double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
+        return mu + sigma * 2 * RandMath::sign(temp) * std::sqrt(beta);
     }
     return ContinuousDistribution::quantileImpl1m(p);
 }

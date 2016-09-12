@@ -18,7 +18,7 @@ public:
     BrownianMotion(double drift, double volatility, double deltaT = 1.0);
 
 private:
-    void nextImpl() override;
+    void NextImpl() override;
 
 public:
     void ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const;

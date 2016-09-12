@@ -16,7 +16,7 @@ public:
     CauchyProcess(double drift = 0.0, double volatility = 1.0, double deltaT = 1.0);
 
 private:
-    void nextImpl() override;
+    void NextImpl() override;
 
 public:
     void ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const;

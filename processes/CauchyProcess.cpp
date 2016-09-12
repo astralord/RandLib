@@ -6,7 +6,7 @@ CauchyProcess::CauchyProcess(double drift, double volatility, double deltaT) :
 {
 }
 
-void CauchyProcess::nextImpl()
+void CauchyProcess::NextImpl()
 {
     currentValue += CauchyRand::Variate(mu, sigma) * dt;
 }

@@ -19,11 +19,11 @@ public:
     explicit StochasticProcess(double deltaT = 1.0, T initialValue = 0);
 
     /**
-     * @brief reSet
+     * @brief reset
      * @param initialValue
      * Set time to 0 and current value to initialValue
      */
-    void reSet(T initialValue = 0.0);
+    void reset(T initialValue = 0.0);
 
     /**
      * @brief GetCurrentTime
@@ -38,10 +38,10 @@ public:
     inline T GetCurrentValue() const { return currentValue; }
 
     /**
-     * @brief next
+     * @brief Next
      * @return next value
      */
-    T next();
+    T Next();
 
     /**
      * @brief Mean
@@ -58,7 +58,7 @@ public:
     double Variance(double t) const;
 
 private:
-    virtual void nextImpl() = 0;
+    virtual void NextImpl() = 0;
     virtual double MeanImpl(double t) const = 0;
     virtual double VarianceImpl(double t) const = 0;
 };

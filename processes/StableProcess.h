@@ -33,7 +33,7 @@ public:
     double Quantile(double t, double p) const;
     void Quantile(const std::vector<double> &t, std::vector<double> &outputData, double p) const;
 private:
-    void nextImpl() override;
+    void NextImpl() override;
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;

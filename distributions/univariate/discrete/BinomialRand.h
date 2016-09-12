@@ -70,10 +70,10 @@ private:
 
     int variateRejection() const;
     int variateWaiting(int number) const;
+    static int variateBernoulliSum(int number, double probability);
 
 public:
     int Variate() const override;
-    static int variateBernoulliSum(int number, double probability);
     static int Variate(int number, double probability);
     void Sample(std::vector<int> &outputData) const override;
 

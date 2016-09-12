@@ -8,7 +8,7 @@ PoissonProcess::PoissonProcess(double rate, double deltaT) :
 
 }
 
-void PoissonProcess::nextImpl()
+void PoissonProcess::NextImpl()
 {
     while (currentTime > futureJumpTime) {
         ++currentValue;

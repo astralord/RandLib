@@ -36,6 +36,7 @@ protected:
 
 private:
     double pdfByLevy(double x) const;
+    double pdfByCauchy(double x) const;
 
 public:
     double f(double x) const override;

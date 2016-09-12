@@ -11,9 +11,9 @@ CompoundPoissonProcess<T>::CompoundPoissonProcess(double rate, const UnivariateP
 }
 
 template <typename T>
-void CompoundPoissonProcess<T>::nextImpl()
+void CompoundPoissonProcess<T>::NextImpl()
 {
-    N.next();
+    N.Next();
     double Nt = N.GetCurrentValue();
     while (Nt > jumpsAmount) {
         this->currentValue += Y.Variate();

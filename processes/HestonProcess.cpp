@@ -10,7 +10,7 @@ HestonProcess::HestonProcess(double drift, double volatilityMean, double reversi
 
 }
 
-void HestonProcess::nextImpl()
+void HestonProcess::NextImpl()
 {
     /// Euler discretization
     /// Simulate CIR process

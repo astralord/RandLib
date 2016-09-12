@@ -11,7 +11,7 @@ OrnsteinUhlenbeckProcess::OrnsteinUhlenbeckProcess(double mean, double reversion
 
 }
 
-void OrnsteinUhlenbeckProcess::nextImpl()
+void OrnsteinUhlenbeckProcess::NextImpl()
 {
     currentValue *= expmBetaDt;
     currentValue += X.Variate();

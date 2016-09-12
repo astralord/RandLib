@@ -10,7 +10,7 @@ StableProcess::StableProcess(double exponent, double skewness, double drift, dou
 
 }
 
-void StableProcess::nextImpl()
+void StableProcess::NextImpl()
 {
     currentValue += mu * dt + dtCoef * sigma * X.Variate();
 }

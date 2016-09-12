@@ -10,9 +10,9 @@ JumpDiffusionProcess<T>::JumpDiffusionProcess(double drift, double volatility, d
 }
 
 template <typename T>
-void JumpDiffusionProcess<T>::nextImpl()
+void JumpDiffusionProcess<T>::NextImpl()
 {
-    currentValue = B.next() + J.next();
+    currentValue = B.Next() + J.Next();
 }
 
 template <typename T>

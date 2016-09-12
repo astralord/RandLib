@@ -9,7 +9,7 @@ GeometricBrownianMotion::GeometricBrownianMotion(double drift, double volatility
 {
 }
 
-void GeometricBrownianMotion::nextImpl()
+void GeometricBrownianMotion::NextImpl()
 {
     currentValue *= X.Variate();
 }

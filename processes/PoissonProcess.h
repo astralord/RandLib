@@ -23,7 +23,7 @@ public:
     inline double GetRate() const { return lambda; }
 
 private:
-    void nextImpl() override;
+    void NextImpl() override;
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;

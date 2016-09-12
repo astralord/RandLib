@@ -25,7 +25,7 @@ public:
     JumpDiffusionProcess(double drift, double volatility, double rate, const UnivariateProbabilityDistribution<T> &jumpDistribution, double deltaT = 1.0);
 
 private:
-    void nextImpl() override;
+    void NextImpl() override;
 
     double MeanImpl(double t) const override;
     double VarianceImpl(double t) const override;

@@ -185,7 +185,7 @@ bool NormalRand::FitMeanMLE(const std::vector<double> &sample)
 
 bool NormalRand::FitVarianceMLE(const std::vector<double> &sample)
 {
-    SetVariance(sampleVariance(sample));
+    SetVariance(sampleVariance(sample, mu));
     return true;
 }
 
@@ -236,20 +236,20 @@ bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confiden
         return false;
     if (!FitUMVU(sample))
         return false;
-    double p = 1.0 - 0.5 * alpha;
+    double halfAlpha = 0.5 * alpha;
     size_t nm1 = n - 1;
 
     /// calculate confidence interval for mean
     StudentTRand t(nm1);
-    double interval = t.Quantile(p) * sigma0 / std::sqrt(n);
+    double interval = t.Quantile1m(halfAlpha) * sigma0 / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
-    ChiSquaredRand chi(nm1);
-    double numerator = nm1 * sigma0 * sigma0;
-    confidenceIntervalForVariance.first = numerator / chi.Quantile(p);
-    confidenceIntervalForVariance.second = numerator / chi.Quantile1m(p);
+    GammaRand gamma(0.5 * nm1, 0.5 * nm1);
+    double sigma0Sq = sigma0 * sigma0;
+    confidenceIntervalForVariance.first = sigma0Sq / gamma.Quantile1m(halfAlpha);
+    confidenceIntervalForVariance.second = sigma0Sq / gamma.Quantile(halfAlpha);
     return true;
 }
 

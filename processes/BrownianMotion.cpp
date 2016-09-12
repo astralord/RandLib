@@ -11,7 +11,7 @@ BrownianMotion::BrownianMotion(double drift, double volatility, double deltaT) :
 {
 }
 
-void BrownianMotion::nextImpl()
+void BrownianMotion::NextImpl()
 {
     currentValue += mu * dt + sigma * NormalRand::Variate(0, dtCoef);
 }
