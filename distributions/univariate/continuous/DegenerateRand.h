@@ -51,13 +51,13 @@ public:
      * @param sample
      * @return
      */
-    bool FitMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &sample);
     /**
      * @brief FitMM
      * @param sample
      * @return
      */
-    bool FitMM(const std::vector<double> &Sample);
+    bool FitMM(const std::vector<double> &sample);
 };
 
 #endif // DEGENERATERAND_H

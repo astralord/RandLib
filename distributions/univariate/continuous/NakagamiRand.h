@@ -138,8 +138,8 @@ private:
     double quantileImpl1m(double p) const override;
 
 public:
-    bool FitScaleMLE(const std::vector<double> &Sample);
-    bool FitScaleUMVU(const std::vector<double> &Sample);
+    bool FitScaleMLE(const std::vector<double> &sample);
+    bool FitScaleUMVU(const std::vector<double> &sample);
 };
 
 

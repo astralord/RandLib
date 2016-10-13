@@ -40,8 +40,8 @@ public:
     double ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
-    double Likelihood(const std::vector<int> &Sample) const override;
-    double LogLikelihood(const std::vector<int> &Sample) const override;
+    double Likelihood(const std::vector<int> &sample) const override;
+    double LogLikelihood(const std::vector<int> &sample) const override;
 };
 
 #endif // DISCRETE_DISTRIBUTION_H

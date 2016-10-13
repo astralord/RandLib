@@ -21,9 +21,7 @@ void GammaRand::SetConstantsForGenerator()
 
 void GammaRand::SetParameters(double shape, double rate)
 {
-    alpha = shape;
-    if (alpha <= 0)
-        alpha = 1.0;
+    alpha = shape > 0 ? shape : 1.0;
     alphaInv = 1.0 / alpha;
     
     beta = rate;

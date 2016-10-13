@@ -2,7 +2,7 @@
 #include "NormalRand.h"
 #include "CauchyRand.h"
 
-StudentTRand::StudentTRand(int degree, double location, double scale)
+StudentTRand::StudentTRand(double degree, double location, double scale)
 {
     SetDegree(degree);
     SetLocation(location);
@@ -18,15 +18,17 @@ std::string StudentTRand::Name() const
                           + toStringWithPrecision(GetScale()) + ")";
 }
 
-void StudentTRand::SetDegree(int degree)
+void StudentTRand::SetDegree(double degree)
 {
-    v = std::max(degree, 1);
-    Y.SetDegree(v);
+    v = degree > 0 ? degree : 1;
+    Y.SetParameters(0.5 * v, 0.5);
 
     vp1Half = 0.5 * (v + 1);
     pdfCoef = std::lgamma(vp1Half);
-    pdfCoef -= 0.5 * std::log(M_PI * v);
+    pdfCoef -= 0.5 * M_LNPI;
     pdfCoef -= Y.GetLogGammaFunction();
+    betaInv = std::exp(pdfCoef);
+    pdfCoef -= 0.5 * std::log(v);
 }
 
 void StudentTRand::SetLocation(double location)
@@ -36,13 +38,12 @@ void StudentTRand::SetLocation(double location)
 
 void StudentTRand::SetScale(double scale)
 {
-    sigma = scale;
-    if (sigma <= 0)
-        sigma = 1.0;
+    sigma = scale > 0 ? scale : 1.0;
 }
 
 double StudentTRand::f(double x) const
 {
+    // TODO: consider special cases
     /// adjustment
     x -= mu;
     x /= sigma;
@@ -54,27 +55,20 @@ double StudentTRand::f(double x) const
 
 double StudentTRand::F(double x) const
 {
+    x -= mu;
+    x /= sigma;
+    if (x == 0.0)
+        return 0.5;
+
     // TODO: consider v == 3 and v == 4
     if (v == 1)
-        return 0.5 + std::atan((x - mu) / sigma) / M_PI;
-    if (v == 2) {
-        x -= mu;
-        x /= sigma;
+        return 0.5 + std::atan(x) / M_PI;
+    if (v == 2)
         return 0.5 * (1.0 + x / std::sqrt(2 + x * x));
-    }
 
-    if (x < mu) {
-        return 0.5 - RandMath::integral([this] (double t)
-        {
-            return f(t);
-        },
-        x, mu);
-    }
-    return 0.5 + RandMath::integral([this] (double t)
-    {
-        return f(t);
-    },
-    mu, x);
+    double t = v / (x * x + v);
+    double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * v, 0.5) * betaInv;
+    return (x > 0.0) ? (1 - y) : y;
 }
 
 double StudentTRand::Variate() const

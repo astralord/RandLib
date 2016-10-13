@@ -22,10 +22,8 @@ std::string NormalRand::Name() const
 
 void NormalRand::SetScale(double scale)
 {
-    sigma0 = scale;
-    if (sigma0 <= 0.0)
-        sigma0 = 1.0;
-    StableRand::SetScale(scale * M_SQRT1_2);
+    sigma0 = scale > 0 ? scale : 1.0;
+    StableRand::SetScale(sigma0 * M_SQRT1_2);
 }
 
 bool NormalRand::SetupTables()
@@ -216,17 +214,19 @@ bool NormalRand::FitMeanUMVU(const std::vector<double> &sample)
 
 bool NormalRand::FitVarianceUMVU(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 1)
-        return false;
-    double s = sampleVariance(sample, mu);
-    SetVariance(n * s / (n - 1));
-    return true;
+    return FitVarianceMLE(sample);
 }
 
 bool NormalRand::FitUMVU(const std::vector<double> &sample)
 {
-    return FitMeanMLE(sample) ? FitVarianceUMVU(sample) : false;
+    int n = sample.size();
+    if (n <= 1)
+        return false;
+    if (!FitMeanMLE(sample))
+        return false;
+    double s = sampleVariance(sample, mu);
+    SetVariance(n * s / (n - 1));
+    return true;
 }
 
 bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)

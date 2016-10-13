@@ -81,7 +81,8 @@ SOURCES += \
     processes/CauchyProcess.cpp \
     processes/CoxIngersollRossProcess.cpp \
     processes/HestonProcess.cpp \
-    distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp
+    distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp \
+    processes/StudentTProcess.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -162,7 +163,8 @@ HEADERS +=\
     processes/CauchyProcess.h \
     processes/CoxIngersollRossProcess.h \
     processes/HestonProcess.h \
-    distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h
+    distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h \
+    processes/StudentTProcess.h
 
 unix {
     target.path = /usr/lib

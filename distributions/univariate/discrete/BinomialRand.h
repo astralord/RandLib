@@ -86,17 +86,25 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    bool FitProbabilityMLE(const std::vector<int> &Sample);
-    bool FitProbabilityMM(const std::vector<int> &Sample);
+    bool FitProbabilityMLE(const std::vector<int> &sample);
+    bool FitProbabilityMM(const std::vector<int> &sample);
 
     /**
      * @brief FitProbability_Bayes
-     * Fit probability p with assumption p ~ Beta(α, β)
+     * Fit probability p with prior assumption p ~ Beta(α, β)
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
      */
-    bool FitProbabilityBayes(const std::vector<int> &Sample, BetaRand &priorDistribution);
+    bool FitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
+
+    /**
+     * @brief FitProbabilityMinimax
+     * Fit probability p with minimax estimator
+     * @param sample
+     * @return
+     */
+    bool FitProbabilityMinimax(const std::vector<int> &sample);
 };
 
 

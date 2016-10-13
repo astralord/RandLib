@@ -54,7 +54,7 @@ private:
 public:
     inline double Entropy() const;
 
-    bool FitMLE(const std::vector<double> &Sample);
+    bool FitMLE(const std::vector<double> &sample);
 };
 
 #endif // PARETORAND_H

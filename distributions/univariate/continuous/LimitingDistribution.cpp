@@ -41,9 +41,7 @@ void LimitingDistribution::SetLocation(double location)
 
 void LimitingDistribution::SetScale(double scale)
 {
-    sigma = scale;
-    if (sigma <= 0)
-        sigma = 1.0;
+    sigma = scale > 0 ? scale : 1.0;
     if (alpha == 1)
         logSigma = std::log(sigma);
 }

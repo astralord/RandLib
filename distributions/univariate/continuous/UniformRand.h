@@ -59,19 +59,19 @@ public:
     inline double Entropy() const;
 
     /// Maximum likelihood estimation
-    bool FitMinimumMLE(const std::vector<double> &Sample);
-    bool FitMaximumMLE(const std::vector<double> &Sample);
-    bool FitMLE(const std::vector<double> &Sample);
+    bool FitMinimumMLE(const std::vector<double> &sample);
+    bool FitMaximumMLE(const std::vector<double> &sample);
+    bool FitMLE(const std::vector<double> &sample);
     
     /// Method of moments
-    bool FitMinimumMM(const std::vector<double> &Sample);
-    bool FitMaximumMM(const std::vector<double> &Sample);
-    bool FitMM(const std::vector<double> &Sample);
+    bool FitMinimumMM(const std::vector<double> &sample);
+    bool FitMaximumMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &sample);
     
     /// Minimum-variance unbiased estimator
-    bool FitMinimumUMVU(const std::vector<double> &Sample);
-    bool FitMaximumUMVU(const std::vector<double> &Sample);
-    bool FitUMVU(const std::vector<double> &Sample);
+    bool FitMinimumUMVU(const std::vector<double> &sample);
+    bool FitMaximumUMVU(const std::vector<double> &sample);
+    bool FitUMVU(const std::vector<double> &sample);
 };
 
 #endif // UNIFORMRAND_H

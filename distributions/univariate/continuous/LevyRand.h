@@ -41,7 +41,7 @@ private:
 
 public:
     /// Maximum likelihood estimators
-    bool FitScaleMLE(const std::vector<double> &Sample);
+    bool FitScaleMLE(const std::vector<double> &sample);
 };
 
 #endif // LEVYRAND_H

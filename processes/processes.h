@@ -13,6 +13,7 @@
 #include "CauchyProcess.h"
 #include "CoxIngersollRossProcess.h"
 #include "HestonProcess.h"
+#include "StudentTProcess.h"
 
 #endif // PROCESSES
 

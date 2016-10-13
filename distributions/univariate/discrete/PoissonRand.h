@@ -43,9 +43,9 @@ public:
 
     std::complex<double> CF(double t) const override;
 
-    bool FitMLE(const std::vector<int> &Sample);
-    bool FitMM(const std::vector<int> &Sample);
-    bool FitBayes(const std::vector<int> &Sample, GammaRand & priorDistribution);
+    bool FitMLE(const std::vector<int> &sample);
+    bool FitMM(const std::vector<int> &sample);
+    bool FitBayes(const std::vector<int> &sample, GammaRand & priorDistribution);
 };
 
 #endif // POISSONRAND_H

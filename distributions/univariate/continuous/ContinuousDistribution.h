@@ -52,8 +52,8 @@ public:
     double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
-    double Likelihood(const std::vector<double> &Sample) const override;
-    double LogLikelihood(const std::vector<double> &Sample) const override;
+    double Likelihood(const std::vector<double> &sample) const override;
+    double LogLikelihood(const std::vector<double> &sample) const override;
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H

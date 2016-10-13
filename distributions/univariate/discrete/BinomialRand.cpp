@@ -357,3 +357,10 @@ bool BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, BetaRand 
     SetParameters(n, priorDistribution.Mean());
     return true;
 }
+
+bool BinomialRand::FitProbabilityMinimax(const std::vector<int> &sample)
+{
+    double shape = 0.5 * std::sqrt(n);
+    BetaRand B(shape, shape);
+    return FitProbabilityBayes(sample, B);
+}

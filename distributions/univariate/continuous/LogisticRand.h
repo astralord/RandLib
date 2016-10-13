@@ -42,12 +42,12 @@ private:
 
 public:
     /// Method of moments
-    bool FitLocationMM(const std::vector<double> &Sample);
-    bool FitScaleMM(const std::vector<double> &Sample);
-    bool FitMM(const std::vector<double> &Sample);
+    bool FitLocationMM(const std::vector<double> &sample);
+    bool FitScaleMM(const std::vector<double> &sample);
+    bool FitMM(const std::vector<double> &sample);
 
     /// Maximum-likelihood
-    bool FitLocationMLE(const std::vector<double> &Sample);
+    bool FitLocationMLE(const std::vector<double> &sample);
 };
 
 #endif // LOGISTICRAND_H
