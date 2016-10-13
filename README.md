@@ -28,28 +28,30 @@ Skewness = 6.18488 and Excess Kurtosis = 110.936
 ```
 * Fitting parameters:
 ```c++
+using std::cout;
+
 NormalRand X(0, 1);
 std::vector<double> data(10);
 X.Sample(data);
-std::cout << "True distribution: " << X.Name() << "\n";
-std::cout << "Sample: ";
+cout << "True distribution: " << X.Name() << "\n";
+cout << "Sample: ";
 for (double var : data)
-    std::cout << var << "  ";
-std::cout << "\n";
+    cout << var << "  ";
+cout << "\n";
 
 /// Bayesian
 NormalInverseGammaRand prior(0, 1, 1, 1);
 X.FitBayes(data, prior);
-std::cout << "Bayesian estimator: " << X.Name() << "\n";
-std::cout << "(Posterior distribution: " << prior.Name() << ")\n";
+cout << "Bayesian estimator: " << X.Name() << "\n";
+cout << "(Posterior distribution: " << prior.Name() << ")\n";
 
 /// UMVU
 X.FitUMVU(data);
-std::cout << "UMVU estimator: " << X.Name() << "\n";
+cout << "UMVU estimator: " << X.Name() << "\n";
 
 /// Maximum-likelihood
 X.FitMLE(data);
-std::cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
+cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
 ```
