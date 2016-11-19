@@ -55,6 +55,16 @@ double NoncentralChiSquared::F(double x) const
 {
     if (x <= 0)
         return 0.0;
+
+    /// for k == 2 https://pdfs.semanticscholar.org/e410/e73d7a92d3869205e347add025f1bda666ac.pdf
+    /// also look http://www.tlc.unipr.it/ferrari/Publications/Journals/CoFe02.pdf
+
+    if (x == lambda && k == 2) {
+        double y = RandMath::modifiedBesselFirstKind(x, 0);
+        y *= std::exp(-x);
+        return 0.5 * (1 - y);
+    }
+
     if (k >= 2) {
         return RandMath::integral([this] (double t)
         {
@@ -63,7 +73,7 @@ double NoncentralChiSquared::F(double x) const
     }
 
     /// in this case we have singularity point at 0,
-    /// so we Get rid of it by subtracting the function
+    /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
     double y = std::log(x) * halfK;
     y -= cdfCoef;
@@ -160,8 +170,9 @@ std::complex<double> NoncentralChiSquared::CF(double t) const
 double NoncentralChiSquared::Skewness() const
 {
     double y = k + 2 * lambda;
-    y = std::pow(2.0 / y, 1.5);
-    return y * (k + 3 * lambda);
+    y = 2.0 / y;
+    double z = y * std::sqrt(y);
+    return z * (k + 3 * lambda);
 }
 
 double NoncentralChiSquared::ExcessKurtosis() const
