@@ -50,9 +50,7 @@ bool NormalRand::SetupTables()
 
 void NormalRand::SetVariance(double var)
 {
-    if (var <= 0)
-        var = 1.0;
-    SetScale(std::sqrt(var));
+    SetScale(var > 0 ? std::sqrt(var) : 1.0);
 }
 
 double NormalRand::f(double x) const

@@ -17,13 +17,8 @@ std::string NegativeBinomialRand<T>::Name() const
 template< typename T >
 void NegativeBinomialRand<T>::SetValidParameters(T number, double probability)
 {
-    r = number;
-    if (r <= 0.0)
-        r = 1;
-
-    p = probability;
-    if (p > 1.0 || p < 0.0)
-        p = 0.5;
+    r = (number > 0) ? number : 1;
+    p = (probability > 1.0 || probability < 0.0) ? 0.5 : probability;
 }
 
 template< typename T >
