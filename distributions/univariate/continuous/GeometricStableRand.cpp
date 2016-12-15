@@ -87,25 +87,26 @@ double GeometricStableRand::pdfByLevy(double x) const
         return 0.0;
     if (c < 0.5) {
         double h = std::sqrt(1 - 2 * c);
-        double K = 1 - c - h;
-        K *= a / (c * c);
-        K = std::exp(K);
-        K /= 2 * sigma * c * h;
-        double p =  std::exp(a * h / (c * c));
+        double h0 = 1 + h;
+        double h1 = 1 - h;
+        double cSq = c * c;
+        double r = a / cSq;
         if (a < 0 && c < 0)
-            return -2 * K * (1 + h) * p * p;
-        double sqrtHalfA = std::sqrt(0.5 * a);
-        double g = (1 + h) / c;
-        g *= sqrtHalfA;
-        double q = (1 - h) / c;
-        q *= sqrtHalfA;
+            return -2 / (sigma * h * h1) * std::exp(2 * r * (1 - 2 * c));
+        double K = h1 - c;
+        K = std::exp(r * K);
+        K /= 2 * sigma * c * h;
+        double p =  std::exp(r * h);
+        double gamma = std::sqrt(0.5 * a) / c;
+        double g = h0 * gamma;
+        double q = h1 * gamma;
         double y = p;
         if (c > 0) /// c is in (0, 0.5)
             y *= std::erfc(g); /// g can be too small while p is too big
         else
             y *= -std::erfc(-g);
-        y *= (1 + h) * p;
-        y -= (1 - h) * std::erfc(q);
+        y *= h0 * p;
+        y -= h1 * std::erfc(q);
         y *= K;
         return y;
     }

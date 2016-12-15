@@ -11,12 +11,12 @@
  */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
-    double v;
+    double nu;
     double mu, sigma;
     GammaRand Y;
     double pdfCoef;
-    double vp1Half; /// 0.5 * (v + 1)
-    double betaInv; /// 1.0 / beta(0.5 * v, 0.5)
+    double nup1Half; /// 0.5 * (nu + 1)
+    double betaInv; /// 1.0 / beta(0.5 * nu, 0.5)
 
 public:
     explicit StudentTRand(double degree, double location = 0.0, double scale = 1.0);
@@ -29,7 +29,7 @@ public:
     void SetDegree(double degree);
     void SetLocation(double location);
     void SetScale(double scale);
-    inline double GetDegree() const { return v; }
+    inline double GetDegree() const { return nu; }
     inline double GetLocation() const { return mu; }
     inline double GetScale() const { return sigma; }
 

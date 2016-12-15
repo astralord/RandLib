@@ -6,12 +6,14 @@
 
 /**
  * @brief The HyperGeometricRand class
- * Hyper-geometric distribution
+ * Hypergeometric distribution
+ *
+ * X ~ HG(N, K, n)
  */
 class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 {
     int N, K, n;
-    double pdfDenominator; /// C(N, n)
+    double pmfDenominator; /// C(N, n)
     double p0;
 
 public:

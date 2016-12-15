@@ -82,7 +82,8 @@ SOURCES += \
     processes/CoxIngersollRossProcess.cpp \
     processes/HestonProcess.cpp \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp \
-    processes/StudentTProcess.cpp
+    processes/StudentTProcess.cpp \
+    distributions/univariate/discrete/NegativeHyperGeometricRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -164,7 +165,8 @@ HEADERS +=\
     processes/CoxIngersollRossProcess.h \
     processes/HestonProcess.h \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h \
-    processes/StudentTProcess.h
+    processes/StudentTProcess.h \
+    distributions/univariate/discrete/NegativeHyperGeometricRand.h
 
 unix {
     target.path = /usr/lib

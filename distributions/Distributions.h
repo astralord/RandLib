@@ -12,6 +12,7 @@
 #include "univariate/discrete/GeometricRand.h"
 #include "univariate/discrete/HyperGeometricRand.h"
 #include "univariate/discrete/NegativeBinomialRand.h"
+#include "univariate/discrete/NegativeHyperGeometricRand.h"
 #include "univariate/discrete/LogarithmicRand.h"
 #include "univariate/discrete/PoissonRand.h"
 #include "univariate/discrete/RademacherRand.h"

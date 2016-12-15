@@ -7,41 +7,50 @@ HyperGeometricRand::HyperGeometricRand(int totalSize, int drawsNum, int successe
 
 std::string HyperGeometricRand::Name() const
 {
-    return "HyperGeometric(" + toStringWithPrecision(N) + ", "
+    return "Hypergeometric(" + toStringWithPrecision(N) + ", "
                              + toStringWithPrecision(n) + ", "
                              + toStringWithPrecision(K) + ")";
 }
 
 void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successesNum)
 {
-    N = std::max(totalSize, 1);
+    N = std::max(totalSize, 0);
 
-    n = std::max(drawsNum, 1);
+    n = std::max(drawsNum, 0);
     n = std::min(N, n);
 
-    K = std::max(successesNum, 1);
+    K = std::max(successesNum, 0);
     K = std::min(N, K);
 
     p0 = static_cast<double>(K) / N;
-    pdfDenominator = 1.0 / RandMath::binomialCoef(N, n);
+    pmfDenominator = 1.0 / RandMath::binomialCoef(N, n);
 }
 
 double HyperGeometricRand::P(int k) const
 {
-    if (k < 0 || k > n || k > K || n - k > N - K)
-        return 0;
-    return RandMath::binomialCoef(K, k) * RandMath::binomialCoef(N - K, n - k) * pdfDenominator;
+    if (k < MinValue() || k > MaxValue())
+        return 0.0;
+    return RandMath::binomialCoef(K, k) * RandMath::binomialCoef(N - K, n - k) * pmfDenominator;
 }
 
 double HyperGeometricRand::F(int k) const
 {
-    if (k < 0 || n - k > N - K)
+    if (k < MinValue())
         return 0.0;
-    if (k > n || k > K)
+    int maxVal = MaxValue();
+    if (k >= maxVal)
         return 1.0;
-    double sum = 0;
-    for (int i = 0; i <= k; ++i)
-        sum += P(i);
+    if (k <= 0.5 * maxVal) {
+        /// sum P(X = i) going forward until k
+        double sum = 0;
+        for (int i = 0; i <= k; ++i)
+            sum += P(i);
+        return sum;
+    }
+    /// going backwards is faster
+    double sum = 1.0;
+    for (int i = k + 1; i <= maxVal; ++i)
+        sum -= P(i);
     return sum;
 }
 
@@ -53,8 +62,8 @@ int HyperGeometricRand::Variate() const
     {
         if (BernoulliRand::Variate(p) && ++sum >= K)
             return sum;
-        p = (K - sum);
-        p /= (N - i);
+        p = K - sum;
+        p /= N - i;
     }
     return sum;
 }
