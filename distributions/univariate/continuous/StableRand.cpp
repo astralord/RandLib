@@ -98,6 +98,13 @@ double StableRand::pdfLevy(double x) const
     return pdfCoef * y;
 }
 
+double StableRand::fastpdfExponentiation(double u)
+{
+    if (u > 5 || u < -100)
+        return 0.0;
+    return (u < -50) ? std::exp(u) : std::exp(u - std::exp(u));
+}
+
 double StableRand::integrandAuxForUnityExponent(double theta, double xAdj) const
 {
     if (theta > M_PI_2 || RandMath::areClose(theta, M_PI_2))
@@ -124,26 +131,20 @@ double StableRand::integrandForUnityExponent(double theta, double xAdj) const
     if (std::fabs(theta) >= M_PI_2)
         return 0.0;
     double u = integrandAuxForUnityExponent(theta, xAdj);
-    if (std::fabs(u) >= BIG_NUMBER)
-        return 0.0;
-    u = std::exp(u);
-    u *= std::exp(-u);
-    if (std::isinf(u) || std::isnan(u))
-        return 0.0;
-    return u;
+    return fastpdfExponentiation(u);
 }
 
 double StableRand::pdfForUnityExponent(double x) const
 {
-    x = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
+    double xSt = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
 
-    if (std::fabs(x) > pdfXLimit) {
-        double y = 1.0 / (M_PI * x * x);
-        y *= (x > 0) ? (1 + beta) : (1 - beta);
+    if (std::fabs(xSt) > pdfXLimit) {
+        double y = 1.0 / (M_PI * xSt * xSt);
+        y *= (xSt > 0) ? (1 + beta) : (1 - beta);
         return y;
     }
 
-    double xAdj = -M_PI * x * pdfCoef;
+    double xAdj = -M_PI * xSt * pdfCoef;
 
     /// Find peak of the integrand
     double theta0 = 0;
@@ -156,8 +157,8 @@ double StableRand::pdfForUnityExponent(double x) const
 
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
 
-    /// If theta0 is too close to +/- pi/2 then we can still underestimate the integral
-    int maxRecursionDepth = 10;
+    /// If theta0 is too close to +/-π/2 then we can still underestimate the integral
+    int maxRecursionDepth = 11;
     double closeness = M_PI_2 - std::fabs(theta0);
     if (closeness < 0.1)
         maxRecursionDepth = 20;
@@ -178,10 +179,11 @@ double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, doub
         return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
     double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = std::sin(thetaAdj);
-    double cosTheta = std::cos(theta);
-    double y = std::cos(thetaAdj - theta) / cosTheta;
-    y = std::log(y);
-    y += alpha_alpham1 * std::log(cosTheta / sinThetaAdj);
+    double logCosTheta = std::log(std::cos(theta));
+    double y = logCosTheta;
+    y -= alpha * std::log(sinThetaAdj);
+    y *= alpham1Inv;
+    y += std::log(std::cos(thetaAdj - theta));
     if (std::isinf(y) || std::isnan(y))
     {
         /// We got numerical error, need to investigate to which extreme point we are closer
@@ -194,35 +196,32 @@ double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, doub
 
 double StableRand::integrandForCommonExponent(double theta, double xAdj, double xiAdj) const
 {
+    if (std::fabs(theta) >= M_PI_2)
+        return 0.0;
+    if (theta <= -xiAdj)
+        return 0.0;
     double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
-    if (std::fabs(u) >= BIG_NUMBER)
-        return 0.0;
-    u = std::exp(u);
-    u *= std::exp(-u);
-    if (std::isinf(u) || std::isnan(u))
-        return 0.0;
-    return u;
+    return fastpdfExponentiation(u);
 }
 
 double StableRand::pdfForCommonExponent(double x) const
 {
-    x = (x - mu) / sigma; /// Standardize
-
-    double absX = x;
+    double xSt = (x - mu) / sigma; /// Standardize
+    double absXSt = xSt;
     double xiAdj = xi; /// +- xi
-    if (x > 0) {
+    if (xSt > 0) {
         if (alpha < 1 && beta == -1)
             return 0.0;
     }
     else {
         if (alpha < 1 && beta == 1)
             return 0.0;
-        absX = -x;
+        absXSt = -xSt;
         xiAdj = -xi;
     }
 
-    /// If x is too close to 0, we do interpolation avoiding dangerous variates
-    if (absX < 1e-4)
+    /// If x is too close to 0, we do interpolation avoiding numerical problems
+    if (absXSt < 1e-4)
     {
         double y0 = std::lgamma(1 + alphaInv);
         y0 -= 0.5 * alphaInv * std::log1p(zeta * zeta);
@@ -230,40 +229,49 @@ double StableRand::pdfForCommonExponent(double x) const
         y0 *= std::cos(xi);
         y0 /= (M_PI * sigma);
         /// Now y0 = f(0)
-        if (std::fabs(x) < MIN_POSITIVE)
+        if (std::fabs(xSt) < MIN_POSITIVE)
             return y0;
-        double b = (x > 0) ? 1.1e-4 : -1.1e-4;
+        double b = (xSt > 0) ? 1.1e-4 : -1.1e-4;
         double y1 = pdfForCommonExponent(mu + sigma * b);
-        return RandMath::linearInterpolation(0, b, y0, y1, x);
+        return RandMath::linearInterpolation(0, b, y0, y1, xSt);
     }
 
-    double logAbsX = std::log(absX);
+    if (-xiAdj >= M_PI_2)
+        return 0.0;
 
-    /// If x is quite large we use tail approximation
-    if (absX > pdfXLimit) {
+    double logAbsX = std::log(absXSt);
+
+    /// If x is large enough we use tail approximation
+    if (absXSt > pdfXLimit) {
         double y = lgammaExponent;
         y -= (alpha + 1) * logAbsX;
         y = std::exp(y);
         y *= pdfCoefLimit;
-        y *= (x > 0) ? (1 + beta) : (1 - beta);
+        y *= (xSt > 0) ? (1 + beta) : (1 - beta);
         return y;
     }
 
     double xAdj = alpha_alpham1 * logAbsX;
 
     /// Search for the peak of the integrand
-    double theta0 = 0.5 * (M_PI_2 - xiAdj);
-    if (-xiAdj < M_PI_2)
-    {
-        std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
-        RandMath::findRoot(funPtr, -xiAdj, M_PI_2, theta0);
-    }
+    double theta0;
+    std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
+    RandMath::findRoot(funPtr, -xiAdj, M_PI_2, theta0);
+
+    /// If theta0 is too close to π/2 or -xiAdj then we can still underestimate the integral
+    int maxRecursionDepth = 11;
+    double closeness = M_PI_2 - theta0;
+    closeness = std::min(closeness, theta0 + xiAdj);
+    if (closeness < 0.1)
+        maxRecursionDepth = 20;
+    else if (closeness < 0.2)
+        maxRecursionDepth = 15;
 
     /// Calculate sum of two integrals
     std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
-    double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0);
-    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2);
-    return pdfCoef * (int1 + int2) / absX;
+    double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0, 1e-11, maxRecursionDepth);
+    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2, 1e-11, maxRecursionDepth);
+    return pdfCoef * (int1 + int2) / absXSt;
 }
 
 double StableRand::f(double x) const
@@ -293,11 +301,17 @@ double StableRand::cdfNormal(double x) const
 
 double StableRand::cdfCauchy(double x) const
 {
-    double y = x - mu;
-    y /= sigma;
-    y = std::atan(y);
-    y *= M_1_PI;
-    return y + 0.5;
+    double x0 = x - mu;
+    x0 /= sigma;
+    /// for small absolute values we use standard technique
+    if (std::fabs(x0 < 1.0)) {
+        double y = std::atan(x0);
+        y *= M_1_PI;
+        return y + 0.5;
+    }
+    /// otherwise we use this trick to avoid numeric problems
+    double y = -std::atan(1.0 / x0) * M_1_PI;
+    return (x0 < 0) ? y : 1.0 + y;
 }
 
 double StableRand::cdfLevy(double x) const
@@ -309,6 +323,16 @@ double StableRand::cdfLevy(double x) const
     y = sigma / y;
     y = std::sqrt(y);
     return std::erfc(y);
+}
+
+double StableRand::fastcdfExponentiation(double u)
+{
+    if (u > 5.0)
+        return 0.0;
+    else if (u < -150)
+        return 1.0;
+    double y = std::exp(u);
+    return std::exp(-y);
 }
 
 double StableRand::cdfForCommonExponent(double x) const
@@ -344,12 +368,7 @@ double StableRand::cdfForCommonExponent(double x) const
     double y = RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
         double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
-        if (u >= BIG_NUMBER)
-            return 0.0;
-        else if (u <= -BIG_NUMBER)
-            return 1.0;
-        u = std::exp(u);
-        return std::exp(-u);
+        return fastcdfExponentiation(u);
     },
     -xiAdj, M_PI_2);
 
@@ -368,12 +387,7 @@ double StableRand::cdfForUnityExponent(double x) const
     double y = RandMath::integral([this, xAdj] (double theta)
     {
         double u = integrandAuxForUnityExponent(theta, xAdj);
-        if (u >= BIG_NUMBER)
-            return 0.0;
-        else if (u <= -BIG_NUMBER)
-            return 1.0;
-        u = std::exp(u);
-        return std::exp(-u);
+        return fastcdfExponentiation(u);
     },
     -M_PI_2, M_PI_2);
     y *= M_1_PI;

@@ -7,7 +7,7 @@
  * @brief The CauchyRand class
  * Cauchy distribution
  *
- * f(x|μ, σ) = σ / [π (σ^2 + (x - μ)^2)]
+ * f(x | μ, σ) = σ / [π (σ^2 + (x - μ)^2)]
  *
  * Notation: X ~ Cauchy(μ, σ)
  *

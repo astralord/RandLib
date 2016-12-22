@@ -266,8 +266,6 @@ bool RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
     if (!checkValidity(sample))
         return false;
     size_t n = sample.size();
-    if (n == 0)
-        return false;
 
     double sigmaSq = 0.5 * rawMoment(sample, 2);
 

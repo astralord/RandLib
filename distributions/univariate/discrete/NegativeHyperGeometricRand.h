@@ -8,7 +8,7 @@
  * @brief The NegativeHyperGeometricRand class
  * Negative hypergeometric distribution
  *
- * X ~ NHG(N, M, m)
+ * Notation: X ~ NHG(N, M, m)
  */
 class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribution
 {

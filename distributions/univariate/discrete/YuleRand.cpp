@@ -13,9 +13,7 @@ std::string YuleRand::Name() const
 
 void YuleRand::SetShape(double shape)
 {
-    ro = shape;
-    if (ro <= 0)
-        ro = 1.0;
+    ro = (shape <= 0.0) ? 1.0 : shape;
     lgamma1pRo = std::lgamma(ro + 1);
     X.SetShape(ro);
 }
@@ -35,7 +33,6 @@ double YuleRand::F(int k) const
 {
     if (k < 1)
         return 0;
-
     double y = lgamma1pRo;
     y += std::lgamma(k);
     y -= std::lgamma(k + ro + 1);

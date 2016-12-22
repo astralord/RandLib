@@ -9,20 +9,24 @@
 /**
  * @brief The NegativeBinomialRand class
  * Negative binomial distribution
- * X ~ NB(r, p)
  *
- * P(X = k) = binom(k + r - 1, k) p^r (1-p)^k
+ * P(X = k) = C(k + r - 1, k) p^r (1-p)^k
+ *
+ * Notation: X ~ NB(r, p)
+ *
+ * Related distributions:
+ * If X ~ NB(1, p), then X ~ Geometric(p)
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution
 {
 protected:
     double p, q;
+    double logP, logQ; /// log(p) and log(q)
 
 private:
     T r;
     double pdfCoef;
-    double logQ; /// log(q)
     double qDivP; /// q / p
     static constexpr int tableSize = 16;
     double table[tableSize];

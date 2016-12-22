@@ -7,11 +7,12 @@
 /**
  * @brief The SkellamRand class
  * Skellam distribution
- * X ~ Skellam(μ_1, μ_2)
  *
+ * Notation: X ~ Skellam(μ_1, μ_2)
+ *
+ * Related distributions:
  * If Y ~ Poisson(μ_1) and Z ~ Poisson(μ_2) then Y - Z ~ Skellam(μ_1, μ_2)
  */
-// TODO: define it as a compound distribution
 class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 {
     double mu1, mu2;

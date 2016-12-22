@@ -64,9 +64,7 @@ double GeometricStableRand::pdfByLevy(double x) const
 {
     if (mu == 0) {
         /// Invert parameter for case of -Levy
-        if (beta < 0) {
-            x = -x;
-        }
+        x *= beta;
         double halfSigmaInv = 0.5 / sigma;
         double z = halfSigmaInv * x;
         double sqrtZ = std::sqrt(z);
@@ -89,10 +87,9 @@ double GeometricStableRand::pdfByLevy(double x) const
         double h = std::sqrt(1 - 2 * c);
         double h0 = 1 + h;
         double h1 = 1 - h;
-        double cSq = c * c;
-        double r = a / cSq;
+        double r = x / (mu * c);
         if (a < 0 && c < 0)
-            return -2 / (sigma * h * h1) * std::exp(2 * r * (1 - 2 * c));
+            return -2 / (sigma * h * h1) * std::exp(r * (h0 - c));
         double K = h1 - c;
         K = std::exp(r * K);
         K /= 2 * sigma * c * h;
@@ -110,39 +107,44 @@ double GeometricStableRand::pdfByLevy(double x) const
         y *= K;
         return y;
     }
-    else {
-        /// we do numerical integration in this case
-        // (as I wasn't able to handle complex integrals)
-        double adivc = a / c;
-        double y = RandMath::integral([this, a, c, adivc] (double t)
-        {
-            if (t <= 0 || t >= adivc)
-                return 0.0;
-            double amct = a - c * t;
-            double integrand = 0.5 * t / amct;
-            ++integrand;
-            integrand *= t;
-            integrand = std::exp(-integrand);
-            integrand *= t;
-            integrand /= amct * std::sqrt(amct);
-            return integrand;
-        }, 0, adivc);
-        return y / (sigma * M_SQRT2PI);
-    }
 
-    // TODO: beta == -1
-    return 0.0;
+    /// we do numerical integration in this case
+    // (as I wasn't able to handle complex integrals)
+    double adivc = a / c;
+    double y = RandMath::integral([this, a, c, adivc] (double t)
+    {
+        if (t <= 0 || t >= adivc)
+            return 0.0;
+        double amct = a - c * t;
+        double integrand = 0.5 * t / amct;
+        ++integrand;
+        integrand *= t;
+        integrand = std::exp(-integrand);
+        integrand *= t;
+        integrand /= amct * std::sqrt(amct);
+        return integrand;
+    }, 0, adivc);
+    return y / (sigma * M_SQRT2PI);
 }
 
 double GeometricStableRand::pdfByCauchy(double x) const
 {
-    double muSqpSigmaSq = mu * mu + sigma * sigma;
-    double temp = sigma * x / muSqpSigmaSq;
-    double y = sigma * std::sin(temp);
-    y += mu * std::cos(temp);
-    y /= muSqpSigmaSq;
-    y *= std::exp(-mu * x / muSqpSigmaSq);
-    return -y;
+    // TODO: find analytical solution, maybe using residue technique
+    // otherwise, use peak, which is t = exp(x / sqrt(mu^2 + sigma^2))
+    // to split the integral on two
+    if (x == 0)
+        return INFINITY;
+    return -sigma * M_1_PI * RandMath::integral([this, x] (double t)
+    {
+        if (t <= 0.0 || t >= 1.0)
+            return 0.0;
+        double logt = std::log(t);
+        double a = sigma * logt;
+        a *= a;
+        double b = x + mu * logt;
+        b *= b;
+        return logt / (a + b);
+    }, 0, 1);
 }
 
 double GeometricStableRand::f(double x) const
@@ -210,12 +212,10 @@ double GeometricStableRand::f(double x) const
     {
         if (z <= 0 || z >= 1)
             return 0.0;
-        double denominator = 1.0 - z;
-        double t = z / denominator;
-        double temp = sigma * std::pow(t, alphaInv);
-        double par = (x - mu * t) / temp;
-        double y = std::exp(-t) / temp * Z.f(par);
-        return y / (denominator * denominator);
+        double logz = std::log(z);
+        double tau = 1.0 / (sigma * std::pow(-logz, alphaInv));
+        double par = tau * (x + mu * logz);
+        return tau * Z.f(par);
     },
     0, 1);
 }
@@ -375,6 +375,7 @@ double GeometricStableRand::Median() const
 
 double GeometricStableRand::Mode() const
 {
+    // TODO: calculate mode for more cases
     if (alpha == 1 || alpha == 2)
         return 0.0;
     return ContinuousDistribution::Mode();

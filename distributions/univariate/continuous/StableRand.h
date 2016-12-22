@@ -9,6 +9,12 @@
  * Stable distribution
  *
  * X ~ Stable(α, β, σ, μ)
+ *
+ * Related distributions:
+ * If X ~ Normal(μ, σ), then X ~ Stable(2, 0, σ, μ)
+ * If X ~ Cauchy(μ, σ), then X ~ Stable(1, 0, σ / 2^(1/2), μ)
+ * If X ~ Levy(μ, σ), then X ~ Stable(0.5, 1, σ, μ)
+ * If -X ~ Levy(μ, σ), then X ~ Stable(0.5, -1, σ, μ)
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
@@ -31,7 +37,7 @@ protected:
     double pdfCoef;
     double lgammaExponent; /// log(gamma(α))
     double pdfCoefLimit; /// coefficient for tail approximation
-    double pdfXLimit; /// boundary k for such that for |x| > k we use tail approximation
+    double pdfXLimit; /// boundary k such that for |x| > k we can use tail approximation
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
@@ -52,13 +58,15 @@ public:
 
     void SetParameters(double exponent, double skewness);
     void SetScale(double scale);
-    
-protected:
+
     /// Probability distribution functions
+protected:
     double pdfNormal(double x) const;
     double pdfCauchy(double x) const;
     double pdfLevy(double x) const;
 private:
+    static double fastpdfExponentiation(double u);
+
     double integrandAuxForUnityExponent(double theta, double xAdj) const;
     double integrandForUnityExponent(double theta, double xAdj) const;
     double pdfForUnityExponent(double x) const;
@@ -68,20 +76,22 @@ private:
     double pdfForCommonExponent(double x) const;
 public:    
     double f(double x) const override;
-    
-protected:
+
     /// Cumulative distribution functions
+protected:
     double cdfNormal(double x) const;
     double cdfCauchy(double x) const;
     double cdfLevy(double x) const;
 private:
+    static double fastcdfExponentiation(double u);
+
     double cdfForCommonExponent(double x) const;
     double cdfForUnityExponent(double x) const;
 public:
     double F(double x) const override;
-    
+
+    /// Variates
 private:
-    /// variate
     double variateForCommonExponent() const;
     double variateForUnityExponent() const;
 public:
@@ -103,6 +113,8 @@ public:
  * @brief The HoltsmarkRand class
  *
  * X ~ Holtsmark(σ, μ)
+ *
+ * Related distributions:
  * X ~ Stable(1.5, 0, σ, μ)
  */
 class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
@@ -116,6 +128,8 @@ public:
  * @brief The LandauRand class
  *
  * X ~ Landau(σ, μ)
+ *
+ * Related distributions:
  * X ~ Stable(1, 1, σ, μ)
  */
 class RANDLIBSHARED_EXPORT LandauRand : public StableRand

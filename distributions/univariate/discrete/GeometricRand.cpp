@@ -17,12 +17,12 @@ void GeometricRand::SetProbability(double probability)
 
 double GeometricRand::P(int k) const
 {
-    return (k < 0) ? 0 : p * std::pow(q, k);
+    return (k < 0) ? 0 : p * std::exp(k * logQ);
 }
 
 double GeometricRand::F(int k) const
 {
-    return (k < 0) ? 0 : 1 - std::pow(q, k + 1);
+    return (k < 0) ? 0 : 1 - std::exp((k + 1) * logQ);
 }
 
 int GeometricRand::Variate() const
@@ -37,7 +37,7 @@ int GeometricRand::Variate() const
 
 int GeometricRand::Variate(double probability)
 {
-    /// here we use 0.05 instead of 0.08 because log(1-p) wasn't hashed
+    /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05)
         return std::floor(ExponentialRand::Variate(-std::log1p(-probability)));
 
@@ -67,13 +67,13 @@ void GeometricRand::Sample(std::vector<int> &outputData) const
 
 double GeometricRand::Median() const
 {
-    return std::floor(-M_LN2 / std::log(q));
+    return std::floor(-M_LN2 / logQ);
 }
 
 double GeometricRand::Entropy() const
 {
-    double a = -q * std::log(q);
-    double b = -p * std::log(p);
+    double a = -q * logQ;
+    double b = -p * logP;
     return (a + b) / (M_LN2 * p);
 }
 

@@ -222,12 +222,14 @@ public:
      * @return sum of all elements in a sample
      */
     static double sampleSum(const std::vector<T> &sample);
+
     /**
      * @brief sampleMean
      * @param sample
      * @return arithmetic average
      */
     static double sampleMean(const std::vector<T> &sample);
+
     /**
      * @brief sampleVariance
      * @param sample
@@ -236,6 +238,7 @@ public:
      */
     static double sampleVariance(const std::vector<T> &sample, double mean);
     static double sampleVariance(const std::vector<T> &sample);
+
     /**
      * @brief sampleSkewness
      * @param sample
@@ -246,12 +249,14 @@ public:
     static double sampleSkewness(const std::vector<T> &sample, double mean, double stdev);
     static double sampleSkewness(const std::vector<T> &sample, double mean);
     static double sampleSkewness(const std::vector<T> &sample);
+
     /**
      * @brief rawMoment
      * @param sample
      * @return k-th raw moment
      */
     static double rawMoment(const std::vector<T> &sample, int k);
+
     /**
      * @brief centralMoment
      * @param sample
@@ -260,6 +265,7 @@ public:
      */
     static double centralMoment(const std::vector<T> &sample, int k, double mean);
     static double centralMoment(const std::vector<T> &sample, int k);
+
     /**
      * @brief normalisedMoment
      * @param sample

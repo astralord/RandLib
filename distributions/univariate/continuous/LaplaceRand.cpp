@@ -293,7 +293,8 @@ double LaplaceRand::GetAsymmetryFromSkewness(double skewness)
     {
         /// f(x)
         double x2 = x * x, x3 = x2 * x, x4 = x2 * x2;
-        double aux = std::pow(x4 + 1, 1.5);
+        double x4p1 = x4 + 1.0;
+        double aux = x4p1 * std::sqrt(x4p1);
         double f1 = 2 * (1 - x4 * x2) / aux - skewness;
         /// f'(x)
         double y = (1 + x4) * aux;

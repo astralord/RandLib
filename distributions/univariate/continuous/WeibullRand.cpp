@@ -13,13 +13,8 @@ std::string WeibullRand::Name() const
 
 void WeibullRand::SetParameters(double scale, double shape)
 {
-    lambda = scale;
-    if (lambda <= 0)
-        lambda = 1.0;
-    
-    k = shape;
-    if (k <= 0)
-        k = 1.0;
+    lambda = (scale <= 0.0) ? 1.0 : scale;
+    k = (shape <= 0.0) ? 1.0 : shape;
     kInv = 1.0 / k;
 }
 

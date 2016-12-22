@@ -6,12 +6,14 @@
 /**
  * @brief The BernoulliRand class
  * Bernoulli distribution
- * X ~ Bernoulli(p)
  *
- * P(X = 0) = 1 - p
- * P(X = 1) = p
+ * P(X = k) = p * 1_{k = 1} + (1 - p) * 1_{k = 0}
  *
+ * Notation: X ~ Bernoulli(p)
+ *
+ * Related distributions:
  * X ~ Binomial(1, p)
+ * 2X - 1 ~ Rademacher
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialRand
 {

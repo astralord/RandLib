@@ -14,10 +14,7 @@ std::string ZetaRand::Name() const
 
 void ZetaRand::SetExponent(double exponent)
 {
-    s = exponent;
-    /// sanity check
-    if (s <= 1.0)
-        s = 2.0; /// default value
+    s = exponent <= 1.0 ? 2.0 : exponent;
     sm1 = s - 1.0;
     zetaSInv = 1.0 / RandMath::zetaRiemann(s);
     b = 1.0 - std::pow(2.0, -sm1);
@@ -46,11 +43,11 @@ int ZetaRand::Variate() const
         double X = std::floor(ParetoRand::StandardVariate(sm1));
         double T = std::pow(1.0 + 1.0 / X, sm1);
         double V = UniformRand::StandardVariate();
-        /// there was typo in the book - '<=' instead of '>'
+        /// there was a typo in the book - '<=' instead of '>'
         if (V * X * (T - 1) <= b * T )
             return X;
     } while (++iter <= MAX_ITER_REJECTION);
-    return -1; /// doesn't work
+    return -1; /// return if algorithm doesn't work
 }
 
 double ZetaRand::Mean() const

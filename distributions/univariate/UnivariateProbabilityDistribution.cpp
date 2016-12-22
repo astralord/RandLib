@@ -199,16 +199,18 @@ double UnivariateProbabilityDistribution<T>::FourthMoment() const
 template< typename T >
 bool UnivariateProbabilityDistribution<T>::checkValidity(const std::vector<T> &sample) const
 {
+    if (sample.size() == 0)
+        return false; // EMPTY_SAMPLE
     if (isLeftBounded()) {
         for (T var : sample) {
             if (var < MinValue())
-                return false;
+                return false; // MIN_BOUND_VIOLATION
         }
     }
     if (isRightBounded()) {
         for (T var : sample) {
-            if (var > MinValue())
-                return false;
+            if (var > MaxValue())
+                return false; // MAX_BOUND_VIOLATION
         }
     }
     return true;

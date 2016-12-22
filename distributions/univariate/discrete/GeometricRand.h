@@ -9,9 +9,9 @@
  * @brief The GeometricRand class
  * Geometric distribution
  *
- * Notation: X ~ Geometric(p)
- *
  * P(X = k) = p (1 - p)^k
+ *
+ * Notation: X ~ Geometric(p)
  *
  * Related distributions:
  * X ~ NB(1, p)

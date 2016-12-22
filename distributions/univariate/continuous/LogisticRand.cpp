@@ -18,9 +18,7 @@ void LogisticRand::SetLocation(double location)
 
 void LogisticRand::SetScale(double scale)
 {
-    s = scale;
-    if (s <= 0)
-        s = 1.0;
+    s = (scale <= 0.0) ? 1.0 : scale;
 }
 
 double LogisticRand::f(double x) const
@@ -117,6 +115,7 @@ bool LogisticRand::FitMM(const std::vector<double> &sample)
     return FitLocationMM(sample) ? FitScaleMM(sample) : false;
 }
 
+/// Maximum-likelihood
 bool LogisticRand::FitLocationMLE(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();

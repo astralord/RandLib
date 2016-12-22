@@ -8,6 +8,8 @@
  * @brief The PoissonRand class
  *
  * P(X = k) = λ^k * e^(-λ) / k!
+ *
+ * Notation: X ~ Po(λ)
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
@@ -32,7 +34,6 @@ public:
     double F(int k) const override;
     int Variate() const override;
     static int Variate(double rate);
-    void Sample(std::vector<int> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

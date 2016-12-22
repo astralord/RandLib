@@ -12,9 +12,7 @@ std::string RademacherRand::Name() const
 
 double RademacherRand::P(int k) const
 {
-    if (k == -1 || k == 1)
-        return 0.5;
-    return 0;
+    return std::abs(k) == 1 ? 0.5 : 0.0;
 }
 
 double RademacherRand::F(int k) const

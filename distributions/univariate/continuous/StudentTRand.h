@@ -7,7 +7,7 @@
  * @brief The StudentTRand class
  * Student's t-distribution
  *
- * Notation: X ~ t(v)
+ * Notation: X ~ t(nu)
  */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {

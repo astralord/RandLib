@@ -132,10 +132,12 @@ bool ExponentialRand::FitMLE(const std::vector<double> &sample)
 }
 
 bool ExponentialRand::FitUMVU(const std::vector<double> &sample)
-{   
-    int n = sample.size();
-    if (n <= 1 || !checkValidity(sample))
+{
+    if (!checkValidity(sample))
         return false;
+    int n = sample.size();
+    if (n <= 1)
+        return false; // TOO_FEW_SAMPLINGS
     double mean = sampleMean(sample);
     SetRate((n - 1) * mean / n);
     return true;

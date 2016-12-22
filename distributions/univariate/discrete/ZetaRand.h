@@ -6,9 +6,10 @@
 /**
  * @brief The ZetaRand class
  * Zeta distribution
- * X ~ Zeta(s)
  *
  * P(X = k) = 1 / (k^s * zeta(s))
+ *
+ * Notation: X ~ Zeta(s)
  */
 class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 {

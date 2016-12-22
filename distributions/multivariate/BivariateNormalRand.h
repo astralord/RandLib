@@ -6,6 +6,9 @@
 
 /**
  * @brief The BivariateNormalRand class
+ * Bivariate Gaussian (normal) distribution
+ *
+ * Notation: X ~ N(μ_1, μ_2, σ_1, σ_2, ρ)
  */
 class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<double, double>
 {

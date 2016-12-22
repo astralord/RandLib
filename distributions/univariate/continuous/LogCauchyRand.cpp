@@ -41,7 +41,7 @@ double LogCauchyRand::Variate() const
 
 double LogCauchyRand::Mean() const
 {
-    return NAN;
+    return INFINITY;
 }
 
 double LogCauchyRand::Variance() const

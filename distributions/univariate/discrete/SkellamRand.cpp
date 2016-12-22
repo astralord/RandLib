@@ -33,6 +33,7 @@ double SkellamRand::P(int k) const
 
 double SkellamRand::F(int k) const
 {
+    // TODO: find better realisation
     int i = std::max(0, -k);
     double sum = 0, summand = 0.0, xCDF = 0;
     do {

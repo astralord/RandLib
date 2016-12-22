@@ -6,9 +6,10 @@
 /**
  * @brief The LogarithmicRand class
  * Logarithmic distribution
- * X ~ Logarithmic(p)
  *
- * P(X = k) = -p^k / [k \log(1 - p)];
+ * P(X = k) = -p^k / [k log(1 - p)]
+ *
+ * X ~ Logarithmic(p)
  */
 class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
 {

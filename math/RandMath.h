@@ -12,6 +12,8 @@
 
 #include "randlib_global.h"
 
+#include <QDebug>
+
 constexpr double MIN_POSITIVE = 1e-21;
 
 typedef std::pair <double, double> DoublePair;
@@ -162,49 +164,60 @@ long double integral(const std::function<double (double)> &funPtr, double a, dou
 
 /**
  * @brief findRoot
- * Newton's root-finding procedure
- * @param funPtr
- * @param root
- * @param epsilon
+ * Newton's root-finding procedure,
+ * using first and second derivatives
+ * @param funPtr mapping x |-> (f(x), f'(x), f''(x))
+ * @param root starting point and such x that f(x) = 0
+ * @param epsilon tolerance
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double epsilon = 1e-10);
+bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double epsilon = 1e-8);
 
 /**
  * @brief findRoot
- * Newton's root-finding procedure
- * @param funPtr
- * @param root starting point
- * @param epsilon
+ * Newton's root-finding procedure,
+ * using first derivative
+ * @param funPtr mapping x |-> (f(x), f'(x))
+ * @param root starting point and such x that f(x) = 0
+ * @param epsilon tolerance
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double epsilon = 1e-10);
+bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double epsilon = 1e-8);
 
 /**
  * @brief findRoot
  * Brent's root-finding procedure
- * @param funPtr
+ * @param funPtr mapping x |-> f(x)
  * @param a lower boundary
  * @param b upper boundary
- * @param root such x that funPtr(x) = 0
+ * @param root starting point and such x that f(x) = 0
  * @param epsilon tolerance
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double & root,
-                     double epsilon = 1e-10);
+bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double & root, double epsilon = 1e-8);
 
 /**
  * @brief findMin
  * Combined Brent's method
  * @param funPtr
  * @param a lower boundary
- * @param b upper boundary
+ * @param c upper boundary
  * @param root such x that funPtr(x) is min
  * @param epsilon tolerance
  * @return
  */
-bool findMin(const std::function<double (double)> &funPtr, double a, double b, double & root,
-                    double epsilon = 1e-10);
+bool findMin(const std::function<double (double)> &funPtr, DoubleTriplet abc, DoubleTriplet fabc, double &root, double epsilon = 1e-8);
+
+/**
+ * @brief findMin
+ * Combined Brent's method
+ * @param funPtr
+ * @param closePoint point that is nearby minimum
+ * @param root such x that funPtr(x) is min
+ * @param epsilon tolerance
+ * @return
+ */
+bool findMin(const std::function<double (double)> &funPtr, double closePoint, double &root, double epsilon = 1e-8);
 
 /**
  * @brief linearInterpolation
@@ -240,13 +253,6 @@ double modifiedBesselFirstKind(double x, double n);
  * @return K_n(x)
  */
 double modifiedBesselSecondKind(double x, double n);
-
-/**
- * @brief BernoulliNumber
- * @param n
- * @return Bernoulli number, calculated by Akiyama–Tanigawa algorithm
- */
-double BernoulliNumber(int n);
 
 /**
  * @brief zetaRiemann

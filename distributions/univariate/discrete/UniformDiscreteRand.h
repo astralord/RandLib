@@ -7,9 +7,10 @@
 /**
  * @brief The UniformDiscreteRand class
  * Uniform discrete distribution
- * X ~ U(a, b)
  *
- * P(X = k) = 1_{x \in [a, b]} / (b - a + 1)
+ *  X ~ U(a, b)
+ *
+ * P(X = k) = 1_{k \in [a, b]} / (b - a + 1)
  */
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {

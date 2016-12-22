@@ -7,7 +7,7 @@
  * @brief The GammaRand class
  * Gamma distribution
  *
- * Notation X ~ Gamma(k, β)
+ * Notation X ~ Gamma(α, β)
  *
  * Related distributions:
  * If X ~ Gamma(1, β), then X ~ Exp(β)

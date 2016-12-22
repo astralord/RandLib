@@ -13,14 +13,10 @@ std::string NoncentralChiSquared::Name() const
 
 void NoncentralChiSquared::SetParameters(double degree, double noncentrality)
 {
-    k = degree;
-    if (k <= 0)
-        k = 1;
+    k = (degree <= 0.0) ? 1.0 : degree;
     halfK = 0.5 * k;
 
-    lambda = noncentrality;
-    if (lambda <= 0)
-        lambda = 1;
+    lambda = (noncentrality <= 0.0) ? 1.0 : noncentrality;
     sqrtLambda = std::sqrt(lambda);
     logLambda = std::log(lambda);
 

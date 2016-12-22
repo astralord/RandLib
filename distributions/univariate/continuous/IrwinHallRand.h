@@ -7,7 +7,7 @@
  * @brief The IrwinHallRand class
  * Irwin-Hall distribution
  *
- * f(x | n) = 0.5 / (n - 1)! * sum_{k=0}^n (-1)^k * C(n,k) * (x - k) ^ (n - 1) * sgn(x - k)
+ * f(x | n) = 0.5 / (n - 1)! * sum_{k=0}^n (-1)^k * C(n,k) * (x - k) ^ (n - 1) * sign(x - k)
  *
  * Notation: X ~ IH(n)
  *

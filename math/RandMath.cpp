@@ -59,7 +59,7 @@ constexpr long double factorialTable[] =
  * @brief factorialForSmallValue
  * Get n! using product method with table
  * @param n non-negative integer number
- * @return
+ * @return n!
  */
 long double factorialForSmallValue(int n)
 {
@@ -453,6 +453,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
         do {
             root = oldRoot - alpha * step;
             y = funPtr(root);
+            // TODO: make bounds for fx and fxx
             std::tie(f, fx, fxx) = y;
             if (std::fabs(f) < epsilon)
                 return true;
@@ -467,11 +468,13 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
 {
     /// Sanity check
     epsilon = std::max(epsilon, MIN_POSITIVE);
-    static constexpr int maxIter = 1e5;
+    static constexpr int MAX_ITER = 1e5;
+    static constexpr double MAX_GRAD = 1e4;
     int iter = 0;
     double step = epsilon + 1;
     DoublePair y = funPtr(root);
-    double fun = y.first, grad = y.second;
+    double fun = y.first;
+    double grad = std::min(MAX_GRAD, std::max(-MAX_GRAD, y.second));
     if (std::fabs(fun) < epsilon)
         return root;
     do {
@@ -482,14 +485,15 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
         do {
             root = oldRoot - alpha * step;
             y = funPtr(root);
-            fun = y.first, grad = y.second;
+            fun = y.first;
+            grad = std::min(MAX_GRAD, std::max(-MAX_GRAD, y.second));
             if (std::fabs(fun) < epsilon)
                 return true;
             alpha *= 0.5;
         } while ((std::fabs(grad) <= epsilon || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
-    } while (std::fabs(step) > epsilon && ++iter < maxIter);
+    } while (std::fabs(step) > epsilon && ++iter < MAX_ITER);
 
-    return (iter == maxIter) ? false : true;
+    return (iter == MAX_ITER) ? false : true;
 }
 
 bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
@@ -498,29 +502,29 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
     epsilon = std::max(epsilon, MIN_POSITIVE);
 
     double fa = funPtr(a);
-    if (fa == 0)
-    {
+    if (fa == 0) {
         root = a;
         return true;
     }
+
     double fb = funPtr(b);
-    if (fb == 0)
-    {
+    if (fb == 0) {
         root = b;
         return true;
     }
-    if (fa * fb > 0)
-        return false; /// error - the root is not bracketed
-    if (std::fabs(fa) < std::fabs(fb))
-    {
+
+    if (fa * fb > 0) {
+        /// error - the root is not bracketed
+        return false;
+    }
+    if (std::fabs(fa) < std::fabs(fb)) {
         std::swap(a, b);
         std::swap(fa, fb);
     }
     double c = a, fc = fa;
     bool mflag = true;
     double s = b, fs = 1, d = 0;
-    while (std::fabs(b - a) > epsilon)
-    {
+    while (std::fabs(b - a) > epsilon) {
         if (!areClose(fc, fa) && !areClose(fb, fc))
         {
             /// inverse quadratic interpolation
@@ -555,12 +559,12 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
             s = 0.5 * (a + b);
             mflag = true;
         }
-        else
+        else {
             mflag = false;
+        }
 
         fs = funPtr(s);
-        if (std::fabs(fs) < epsilon)
-        {
+        if (std::fabs(fs) < epsilon) {
             root = s;
             return true;
         }
@@ -569,19 +573,16 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
         c = b;
         fc = fb;
 
-        if (fa * fs < 0)
-        {
+        if (fa * fs < 0) {
             b = s;
             fb = fs;
         }
-        else
-        {
+        else {
             a = s;
             fa = fs;
         }
 
-        if (std::fabs(fa) < std::fabs(fb))
-        {
+        if (std::fabs(fa) < std::fabs(fb)) {
             std::swap(a, b);
             std::swap(fa, fb);
         }
@@ -591,46 +592,231 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
     return true;
 }
 
-bool findMin(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
+/**
+ * @brief parabolicMinimum
+ * @param a < b < c
+ * @param fa f(a)
+ * @param fb f(b)
+ * @param fc f(c)
+ * @return minimum of interpolated parabola
+ */
+double parabolicMinimum(double a, double b, double c, double fa, double fb, double fc)
 {
-    if (a > b)
-        std::swap(a, b);
-    /// golden ratio procedure
-    static constexpr double K = 0.5 * (M_SQRT5 - 1);
-    double I0 = b - a, I1 = K * I0;
-    double xb = a + I1, xa = b - I1;
-    double fa = funPtr(xa), fb = funPtr(xb);
-    int iter = 0;
-    while (++iter < 1e5)
-    {
-        I1 *= K;
-        if (fa >= fb)
-        {
-            a = xa; xa = xb; xb = a + I1;
-            fa = fb; fb = funPtr(xb);
+    double bma = b - a, cmb = c - b;
+    double aux1 = bma * (fb - fc);
+    double aux2 = cmb * (fb - fa);
+    double numerator = bma * aux1 - cmb * aux2;
+    double denominator = aux1 + aux2;
+    return b - 0.5 * numerator / denominator;
+}
+
+/**
+ * @brief findBounds
+ * Search of segment containing minimum of function
+ * @param funPtr mapping x |-> f(x)
+ * @param abc such points, that a < b < c, f(a) > f(b) and f(c) > f(b)
+ * @param fabc values of a, b and c
+ * @param startPoint
+ * @return true when segment is found
+ */
+bool findBounds(const std::function<double (double)> &funPtr, DoubleTriplet &abc, DoubleTriplet &fabc, double startPoint)
+{
+    static constexpr double K = 0.5 * (M_SQRT5 + 1);
+    static constexpr int L = 100;
+    double a = startPoint, fa = funPtr(a);
+    double b = a + 1.0, fb = funPtr(b);
+    double c, fc;
+    if (fb < fa) {
+        c = b + K * (b - a);
+        fc = funPtr(c);
+        /// we go to the right
+        while (fc < fb) {
+            /// parabolic interpolation
+            double u = parabolicMinimum(a, b, c, fa, fb, fc);
+            double cmb = c - b;
+            double fu, uLim = c + L * cmb;
+            if (u < c && u > b) {
+                fu = funPtr(u);
+                if (fu < fc) {
+                    abc = std::make_tuple(b, u, c);
+                    fabc = std::make_tuple(fb, fu, fc);
+                    return true;
+                }
+                if (fu > fb) {
+                    abc = std::make_tuple(a, b, u);
+                    fabc = std::make_tuple(fa, fb, fu);
+                    return true;
+                }
+                u = c + K * cmb;
+                fu = funPtr(u);
+            }
+            else if (u > c && u < uLim) {
+                fu = funPtr(u);
+                if (fu < fc) {
+                    b = c; c = u; u = c + K * cmb;
+                    fb = fc, fc = fu, fu = funPtr(u);
+                }
+            }
+            else if (u > uLim) {
+                u = uLim;
+                fu = funPtr(u);
+            }
+            else {
+                u = c + K * cmb;
+                fu = funPtr(u);
+            }
+            a = b; b = c; c = u;
+            fa = fb; fb = fc; fc = fu;
         }
-        else
-        {
-            b = xb; xb = xa; xa = b - I1;
-            fb = fa; fa = funPtr(xa);
-        }
-        if (I1 < epsilon)
-        {
-            if (fa < fb)
-                root = xa;
-            else
-                root = xb;
-            return true;
-        }
+        abc = std::make_tuple(a, b, c);
+        fabc = std::make_tuple(fa, fb, fc);
+        return true;
     }
+    else {
+        c = b; fc = fb;
+        b = a; fb = fa;
+        a = b - K * (c - b);
+        fa = funPtr(a);
+        /// go to the left
+        while (fa < fb) {
+            /// parabolic interpolation
+            double u = parabolicMinimum(a, b, c, fa, fb, fc);
+            double bma = b - a;
+            double fu, uLim = a - L * bma;
+            if (u < b && u > a) {
+                fu = funPtr(u);
+                if (fu < fa) {
+                    abc = std::make_tuple(a, u, b);
+                    fabc = std::make_tuple(fa, fu, fb);
+                    return true;
+                }
+                if (fu > fb) {
+                    abc = std::make_tuple(u, b, c);
+                    fabc = std::make_tuple(fu, fb, fc);
+                    return true;
+                }
+                u = a - K * bma;
+                fu = funPtr(u);
+            }
+            else if (u < a && u > uLim) {
+                fu = funPtr(u);
+                if (fu < fa) {
+                    b = a; a = u; u = a - K * bma;
+                    fb = fa, fa = fu, fu = funPtr(u);
+                }
+            }
+            else if (u < uLim) {
+                u = uLim;
+                fu = funPtr(u);
+            }
+            else {
+                u = a - K * bma;
+                fu = funPtr(u);
+            }
+            c = b; b = a; a = u;
+            fc = fb; fb = fa; fa = fu;
+        }
+        abc = std::make_tuple(a, b, c);
+        fabc = std::make_tuple(fa, fb, fc);
+        return true;
+    }
+}
+
+bool findMin(const std::function<double (double)> &funPtr, DoubleTriplet abc, DoubleTriplet fabc, double &root, double epsilon)
+{
+    static constexpr double K = 0.5 * (3 - M_SQRT5);
+    double a, x, c;
+    std::tie(a, x, c) = abc;
+    double fa, fx, fc;
+    std::tie(fa, fx, fc) = fabc;
+    double w = x, v = x, fw = fx, fv = fx;
+    double d = c - a, e = d;
+    double u = a - 1;
+    do {
+        double g = e;
+        e = d;
+        bool acceptParabolicU = false;
+        if (x != w && x != v && w != v &&
+            fx != fw && fx != fv && fw != fv) {
+            if (v < w) {
+                if (x < v)
+                    u = parabolicMinimum(x, v, w, fx, fv, fw);
+                else if (x < w)
+                    u = parabolicMinimum(v, x, w, fv, fx, fw);
+                else
+                    u = parabolicMinimum(v, w, x, fv, fw, fx);
+            }
+            else {
+                if (x < w)
+                    u = parabolicMinimum(x, w, v, fx, fv, fw);
+                else if (x < v)
+                    u = parabolicMinimum(w, x, v, fw, fx, fv);
+                else
+                    u = parabolicMinimum(w, v, x, fw, fv, fx);
+            }
+            double absumx = std::fabs(u - x);
+            if (u >= a + epsilon && u <= c - epsilon && absumx < 0.5 * g) {
+                acceptParabolicU = true; /// accept u
+                d = absumx;
+            }
+        }
+
+        if (!acceptParabolicU) {
+            /// use golden ratio instead of parabolic approximation
+            if (x < 0.5 * (c + a)) {
+                d = c - x;
+                u = x + K * d; /// golden ratio [x, c]
+            }
+            else {
+                d = x - a;
+                u = x - K * d; /// golden ratio [a, x]
+            }
+        }
+
+        if (std::fabs(u - x) < epsilon) {
+            u = x + epsilon * sign(u - x); /// setting the closest distance between u and x
+        }
+
+        double fu = funPtr(u);
+        if (fu <= fx) {
+            if (u >= x)
+                a = x;
+            else
+                c = x;
+            v = w; w = x; x = u;
+            fv = fw; fw = fx; fx = fu;
+        }
+        else {
+            if (u >= x)
+                c = u;
+            else
+                a = u;
+            if (fu <= fw || w == x) {
+                v = w; w = u;
+                fv = fw; fw = fu;
+            }
+            else if (fu <= fv || v == x || v == w) {
+                v = u;
+                fv = fu;
+            }
+        }
+    } while (0.49 * (c - a) > epsilon);
+    root = x;
     return true;
+}
+
+bool findMin(const std::function<double (double)> &funPtr, double closePoint, double &root, double epsilon)
+{
+    DoubleTriplet abc, fabc;
+    if (!findBounds(funPtr, abc, fabc, closePoint))
+        return false;
+    return findMin(funPtr, abc, fabc, root, epsilon);
 }
 
 double linearInterpolation(double a, double b, double fa, double fb, double x)
 {
     if (b == a)
         return fa;
-
     double fx = x - a;
     fx /= (b - a);
     fx *= (fb - fa);
@@ -727,21 +913,6 @@ double modifiedBesselSecondKind(double x, double n)
     return 0.5 * M_PI * y;
 }
 
-double BernoulliNumber(int n)
-{
-    std::vector<double> A(n);
-    for (int i = 0; i < n; ++i)
-    {
-        A[i] = 1.0 / (i + 1);
-        for (int j = i; j > 1; --j)
-        {
-            A[j - 1] -= A[j];
-            A[j - 1] *= j;
-        }
-    }
-    return A[0];
-}
-
 double zetaRiemann(double s)
 {
     if (s == 1)
@@ -799,7 +970,6 @@ double Wm1Lambert(double x, double epsilon)
     }
     return WLambert(x, w, epsilon);
 }
-
 
 }
 

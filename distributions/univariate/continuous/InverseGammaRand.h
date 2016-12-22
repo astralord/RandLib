@@ -6,8 +6,10 @@
 /**
  * @brief The InverseGammaRand class
  * Inverse-Gamma distribution
+ *
  * X ~ Inv-Gamma(α, β)
  *
+ * Related distributions:
  * X = 1 / Y, where Y ~ Gamma(α, β)
  */
 class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution

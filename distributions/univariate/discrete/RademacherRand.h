@@ -6,6 +6,13 @@
 
 /**
  * @brief The RademacherRand class
+ *
+ * P(X = k) = 0.5 * 1_{|k| = 1}
+ *
+ * Notation: X ~ Rademacher
+ *
+ * Related distributions:
+ * If Y ~ Bernoulli(0.5), then 2Y - 1 ~ Rademacher
  */
 class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteDistribution
 {

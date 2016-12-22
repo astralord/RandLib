@@ -32,12 +32,10 @@ double FrechetRand::f(double x) const
     if (x <= m)
         return 0.0;
     double xAdj = (x - m) / s;
-    double xPow = std::pow(xAdj, -alpha);
-    double y = std::exp(-xPow);
-    y /= xAdj;
-    y *= xPow;
-    y *= alpha;
-    return y / s;
+    double a = -alpha * std::log(xAdj);
+    double expA = std::exp(a);
+    double y = std::exp(a - expA);
+    return alpha * y / (s * xAdj);
 }
 
 double FrechetRand::F(double x) const

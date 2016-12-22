@@ -26,10 +26,11 @@ void NegativeBinomialRand<T>::SetParameters(T number, double probability)
 {
     SetValidParameters(number, probability);
     q = 1.0 - p;
+    logP = std::log(p);
     logQ = std::log1p(-p);
     GammaRV.SetParameters(r, p / q);
     qDivP = GammaRV.GetScale();
-    pdfCoef = r * std::log(p);
+    pdfCoef = r * logP;
     pdfCoef -= GammaRV.GetLogGammaFunction();
 
     if (GetIdOfUsedGenerator() == TABLE) {
@@ -49,7 +50,6 @@ double NegativeBinomialRand<T>::P(int k) const
 {
     if (k < 0)
         return 0.0;
-
     double y = std::lgamma(r + k);
     y -= std::lgamma(k + 1);
     y += k * logQ;

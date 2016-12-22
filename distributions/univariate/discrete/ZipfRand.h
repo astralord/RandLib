@@ -7,14 +7,14 @@
 /**
  * @brief The ZipfRand class
  * Zipf distribution
- * X ~ Zipf(s, n)
+ *
+ * Notation: X ~ Zipf(s, n)
  */
 class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
 {
     double s;
     int n;
-
-    double invHarmonicNumber; /// 1 / harmonic_number
+    double invHarmonicNumber;
 
     static constexpr int tableSize = 16;
     int hashedVarNum;

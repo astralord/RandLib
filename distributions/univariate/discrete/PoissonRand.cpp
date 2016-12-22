@@ -14,9 +14,7 @@ std::string PoissonRand::Name() const
 
 void PoissonRand::SetRate(double rate)
 {
-    lambda = rate;
-    if (lambda <= 0)
-        lambda = 1.0;
+    lambda = (rate <= 0.0) ? 1.0 : rate;
 
     expmLambda = std::exp(-lambda);
     logLambda = std::log(lambda);
@@ -74,12 +72,6 @@ int PoissonRand::Variate(double rate)
     return k;
 }
 
-void PoissonRand::Sample(std::vector<int> &outputData) const
-{
-    for (int & var : outputData)
-        var = Variate();
-}
-
 double PoissonRand::Mean() const
 {
     return lambda;
@@ -134,12 +126,11 @@ bool PoissonRand::FitMM(const std::vector<int> &sample)
 
 bool PoissonRand::FitBayes(const std::vector<int> &sample, GammaRand &priorDistribution)
 {
-    int n = sample.size();
-    if (n <= 0 || !checkValidity(sample))
+    if (!checkValidity(sample))
         return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
-    priorDistribution.SetParameters(alpha + sampleSum(sample), beta + n);
+    priorDistribution.SetParameters(alpha + sampleSum(sample), beta + sample.size());
     SetRate(priorDistribution.Mean());
     return true;
 }

@@ -406,7 +406,6 @@ double GammaRand::quantileImpl1m(double p) const
                 return root;
             /// if we can't find quantile, then probably something bad has happened
             return NAN;
-
         }
     }
     /// in this case p is not small enough
@@ -438,17 +437,16 @@ bool GammaRand::FitScaleMLE(const std::vector<double> &sample)
 
 bool GammaRand::FitMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0 || !checkValidity(sample))
+    if (!checkValidity(sample))
         return false;
 
-    /// Calculate averages
+    /// Calculate average and log-average
     double average = sampleMean(sample);
     long double logAverage = 0.0L;
     for (double var : sample) {
         logAverage += std::log(var);
     }
-    logAverage /= n;
+    logAverage /= sample.size();
 
     /// Calculate initial guess for shape
     double s = std::log(average) - logAverage;
@@ -498,12 +496,11 @@ bool GammaRand::FitMM(const std::vector<double> &sample)
 
 bool GammaRand::FitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
 {
-    int n = sample.size();
-    if (n <= 0 || !checkValidity(sample))
+    if (!checkValidity(sample))
         return false;
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();
-    double newAlpha = alpha * n + alpha0;
+    double newAlpha = alpha * sample.size() + alpha0;
     double newBeta = sampleSum(sample) + beta0;
     priorDistribution.SetParameters(newAlpha, newBeta);
     SetParameters(alpha, priorDistribution.Mean());

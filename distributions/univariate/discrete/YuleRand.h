@@ -9,7 +9,8 @@
 /**
  * @brief The YuleRand class
  * Yule distribution
- * X ~ Yule(ρ)
+ *
+ * Notation: X ~ Yule(ρ)
  */
 class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 {

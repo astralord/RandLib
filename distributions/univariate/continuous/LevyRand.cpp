@@ -65,12 +65,12 @@ double LevyRand::quantileImpl1m(double p) const
 
 bool LevyRand::FitScaleMLE(const std::vector<double> &sample)
 {
-    double n = sample.size();
-    if (n <= 0 || !checkValidity(sample))
+    if (!checkValidity(sample))
         return false;
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);
-    SetScale(n / invSum);
+    invSum = 1.0 / invSum;
+    SetScale(sample.size() * invSum);
     return true;
 }

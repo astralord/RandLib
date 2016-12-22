@@ -34,6 +34,9 @@ double ContinuousDistribution::quantileImpl(double p) const
             while(f(root) <= MIN_POSITIVE)
                 --root;
         }
+        else {
+            root = 0.0;
+        }
     }
     else {
         root = mean;
@@ -74,6 +77,9 @@ double ContinuousDistribution::quantileImpl1m(double p) const
             while(f(root) <= MIN_POSITIVE)
                 --root;
         }
+        else {
+            root = 0.0;
+        }
     }
     else {
         root = mean;
@@ -97,38 +103,14 @@ double ContinuousDistribution::Hazard(double x) const
 
 double ContinuousDistribution::Mode() const
 {
-    // use only for unimodal distributions!
-
     double mu = Mean(); /// good starting point
     if (!std::isfinite(mu))
         mu = Median(); /// this shouldn't be nan or inf
-    double step = 10 * Variance();
-    if (!std::isfinite(step))
-        step = 100; // dirty hack
-
-    /// localization
-    double a = mu - step;
-    double b = mu + step;
-    double fa = f(a), fb = f(b), fmu = f(mu);
-    while (fa > fmu)
-    {
-       b = mu; fb = fmu;
-       mu = a; fmu = fa;
-       a -= step; fa = f(a);
-    }
-    while (fb > fmu)
-    {
-       a = mu;
-       mu = b; fmu = fb;
-       b += step; fb = f(b);
-    }
-
     double root = 0;
     RandMath::findMin([this] (double x)
     {
         return -f(x);
-    }, a, b, root);
-
+    }, mu, root);
     return root;
 }
 

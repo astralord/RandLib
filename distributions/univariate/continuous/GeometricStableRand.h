@@ -23,9 +23,28 @@ public:
     virtual ~GeometricStableRand() {}
 
     std::string Name() const override;
-    SUPPORT_TYPE SupportType() const override { return (alpha < 1 && beta == 1) ? RIGHTSEMIFINITE_T : INFINITE_T; }
-    double MinValue() const override { return (alpha < 1 && beta == 1) ? 0 : -INFINITY; }
-    double MaxValue() const override { return INFINITY; }
+
+    SUPPORT_TYPE SupportType() const override {
+        if (alpha < 1) {
+            if (beta == 1 && mu >= 0)
+                return RIGHTSEMIFINITE_T;
+            if (beta == -1 && mu <= 0)
+                return LEFTSEMIFINITE_T;
+        }
+        return INFINITE_T;
+    }
+
+    double MinValue() const override {
+        if (alpha < 1 && beta == 1 && mu >= 0)
+            return 0;
+        return -INFINITY;
+    }
+
+    double MaxValue() const override {
+        if (alpha < 1 && beta == -1 && mu <= 0)
+            return 0;
+        return INFINITY;
+    }
 
 public:
     void SetParameters(double exponent, double skewness, double scale, double location);

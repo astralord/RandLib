@@ -28,8 +28,7 @@ double InverseGammaRand::F(double x) const
 {
     if (x <= 0)
         return 0.0;
-    double y = RandMath::logUpperIncGamma(alpha, beta / x);
-    return std::exp(y - GetLogGammaFunction());
+    return 1.0 - X.F(1.0 / x);
 }
 
 double InverseGammaRand::Variate() const

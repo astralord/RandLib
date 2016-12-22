@@ -8,7 +8,11 @@
 /**
  * @brief The BinomialRand class
  * Binomial distribution
- * X ~ Bin(n, p)
+ *
+ * Notation: X ~ Bin(n, p)
+ *
+ * Related distributions:
+ * if X ~ Bin(1, p), then X ~ Bernoulli(p)
  */
 class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteDistribution
 {

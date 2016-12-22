@@ -87,6 +87,7 @@ public:
  *
  * Related distributions:
  * X ~ Chi(3, σ)
+ * X ~ Nakagami(1.5, 1.5σ^2)
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ChiRand
 {
@@ -113,7 +114,7 @@ public:
  *
  * Related distributions:
  * X ~ Chi(2, σ)
- *
+ * X ~ Nakagami(1, 2σ^2)
  */
 class RANDLIBSHARED_EXPORT RayleighRand : public ChiRand
 {

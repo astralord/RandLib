@@ -47,9 +47,8 @@ double SumRand<T1, T2>::Convolution(const std::function<double (T1)> &funPtrX, c
             }
         }
 
-        if (minPoint > maxPoint) {
+        if (minPoint > maxPoint)
             return 0.0;
-        }
 
         if (integrandIsLeftBounded && integrandIsRightBounded) {
             return Y.ExpectedValue([this, x, funPtrX](double t)
