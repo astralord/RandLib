@@ -116,8 +116,11 @@ long double binomialCoef(int n, int k)
 double digamma(double x)
 {
     /// Negative argument
-    if (x < 0.0)
-        return digamma(1.0 - x) + M_PI / std::tan(M_PI * (1.0 - x));
+    if (x < 0.0) {
+        double y = 1.0 - x;
+        double z = M_PI / std::tan(M_PI * y);
+        return digamma(y) + z;
+    }
 
     /// Large argument
     if (x > 1000.0)
@@ -154,8 +157,9 @@ double trigamma(double x)
     /// Negative argument
     if (x < 0.0)
     {
-        double z = M_PI / std::sin(M_PI * (1.0 - x));
-        return z - digamma(1.0 - x);
+        double y = 1.0 - x;
+        double z = M_PI / std::sin(M_PI * y);
+        return z - digamma(y);
     }
 
     /// Large argument
@@ -421,6 +425,7 @@ long double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, do
 long double integral(const std::function<double (double)> &funPtr,
                                double a, double b, double epsilon, int maxRecursionDepth)
 {
+    // TODO: redo to adaptive Gauss-Kronrod quadrature
     if (a > b)
         std::swap(a, b);
     if (a == b)

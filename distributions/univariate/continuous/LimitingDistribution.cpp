@@ -9,21 +9,11 @@ LimitingDistribution::LimitingDistribution(double exponent, double skewness, dou
 
 void LimitingDistribution::SetParameters(double exponent, double skewness)
 {
-    alpha = std::min(exponent, 2.0);
-    if (alpha <= 0)
-        alpha = 2.0;
+    alpha = std::min(std::max(exponent, 0.1), 2.0);
     alphaInv = 1.0 / alpha;
 
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
-
-    /// Should be cautious, known distributions in priority
-    if (RandMath::areClose(alpha, 2))
-        alpha = 2;
-    else if (RandMath::areClose(alpha, 1))
-        alpha = 1;
-    else if (RandMath::areClose(alpha, 0.5))
-        alpha = 0.5;
 
     if (alpha != 1 && alpha != 2) /// Common case
     {   // TODO: don't do also for Levy

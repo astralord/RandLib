@@ -5,6 +5,7 @@
 
 /**
  * @brief The WeibullRand class
+ * Weibull distribution
  */
 class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
 {

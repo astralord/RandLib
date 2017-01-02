@@ -5,6 +5,12 @@
 
 /**
  * @brief The WignerSemicircleRand class
+ * Wigner-Semicircle distribution
+ *
+ * Notation: X ~ Wigner-Sc(R)
+ *
+ * Related distributions:
+ * If Y ~ Beta(1.5, 1.5), then R*(2Y-1) ~ Wigner-Sc(R)
  */
 class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
 {

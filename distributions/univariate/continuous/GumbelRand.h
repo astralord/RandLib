@@ -5,6 +5,7 @@
 
 /**
  * @brief The GumbelRand class
+ * Gumbel distribution
  */
 class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {

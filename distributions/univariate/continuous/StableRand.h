@@ -22,21 +22,20 @@ class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
     double xi, integrandCoef;
 
     static constexpr double BIG_NUMBER = 1e6; /// aka infinity for pdf and cdf calculations
+    static constexpr double ALMOST_TWO = 1.99999;
 
     enum DISTRIBUTION_ID {
-        NORMAL,
-        LEVY,
-        CAUCHY,
-        UNITY_EXPONENT,
-        COMMON
+        NORMAL, /// α = 2
+        LEVY, /// α = 0.5, |β| = 1
+        CAUCHY, /// α = 1, β = 0
+        UNITY_EXPONENT, /// α = 1
+        COMMON /// the rest
     };
 
     DISTRIBUTION_ID distributionId;
 
 protected:
     double pdfCoef;
-    double lgammaExponent; /// log(gamma(α))
-    double pdfCoefLimit; /// coefficient for tail approximation
     double pdfXLimit; /// boundary k such that for |x| > k we can use tail approximation
 
 public:
@@ -65,6 +64,11 @@ protected:
     double pdfCauchy(double x) const;
     double pdfLevy(double x) const;
 private:
+    DoublePair seriesZeroParams;
+    double pdfSeriesExpansionAtZero(double x, int k) const;
+    double pdfSeriesExpansionAtInf(double x, int k) const;
+    double pdfTaylorExpansionTailNearCauchy(double x) const; /// ~ f(x, α) - f(x, 1)
+
     static double fastpdfExponentiation(double u);
 
     double integrandAuxForUnityExponent(double theta, double xAdj) const;

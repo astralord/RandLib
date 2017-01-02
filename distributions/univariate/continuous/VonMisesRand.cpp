@@ -42,11 +42,37 @@ double VonMisesRand::F(double x) const
         return 0;
     if (x >= mu + M_PI)
         return 1;
-    return RandMath::integral([this] (double t)
+
+    double lowerBound, upperBound, shift, direction;
+    if (x <= mu - M_PI_2) {
+        lowerBound = mu - M_PI;
+        upperBound = x;
+        shift = 0.0;
+        direction = 1.0;
+    }
+    else if (x <= mu) {
+        lowerBound = x;
+        upperBound = mu;
+        shift = 0.5;
+        direction = -1.0;
+    }
+    else if (x <= mu + M_PI_2) {
+        lowerBound = mu;
+        upperBound = x;
+        shift = 0.5;
+        direction = 1.0;
+    }
+    else {
+        lowerBound = x;
+        upperBound = mu + M_PI;
+        shift = 1.0;
+        direction = -1.0;
+    }
+    return shift + direction * RandMath::integral([this] (double t)
     {
         return VonMisesRand::f(t);
     },
-    mu - M_PI, x);
+    lowerBound, upperBound);
 }
 
 double VonMisesRand::Variate() const

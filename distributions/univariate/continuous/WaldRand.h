@@ -6,7 +6,8 @@
 /**
  * @brief The WaldRand class
  * Wald (Inverse Gaussian) distribution
- * X ~ IG(μ, λ)
+ *
+ * Notation: X ~ IG(μ, λ)
  */
 class RANDLIBSHARED_EXPORT WaldRand : public ContinuousDistribution
 {
