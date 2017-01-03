@@ -15,11 +15,13 @@ void LimitingDistribution::SetParameters(double exponent, double skewness)
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
 
+    lambda = std::pow(sigma, alpha);
+
     if (alpha != 1 && alpha != 2) /// Common case
     {   // TODO: don't do also for Levy
         B = beta * std::tan(M_PI_2 * alpha);
         zeta = -B;
-        S = 0.5 * alphaInv * std::log1p(B * B);
+        S = 0.5 * alphaInv * std::log1p(zeta * zeta);
         B = std::atan(B);
     }
 }
@@ -34,6 +36,7 @@ void LimitingDistribution::SetScale(double scale)
     sigma = scale > 0 ? scale : 1.0;
     if (alpha == 1)
         logSigma = std::log(sigma);
+    lambda = std::pow(sigma, alpha);
 }
 
 double LimitingDistribution::Mean() const

@@ -28,7 +28,7 @@ class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
         NORMAL, /// α = 2
         LEVY, /// α = 0.5, |β| = 1
         CAUCHY, /// α = 1, β = 0
-        UNITY_EXPONENT, /// α = 1
+        UNITY_EXPONENT, /// α = 1, β != 0
         COMMON /// the rest
     };
 
@@ -89,15 +89,18 @@ protected:
 private:
     static double fastcdfExponentiation(double u);
 
-    double cdfForCommonExponent(double x) const;
     double cdfForUnityExponent(double x) const;
+    double cdfForCommonExponent(double x) const;
 public:
     double F(double x) const override;
 
     /// Variates
 private:
-    double variateForCommonExponent() const;
+    double standardVariateForUnityExponentFormA() const;
+    double standardVariateForUnityExponentFormB() const;
+
     double variateForUnityExponent() const;
+    double variateForCommonExponent() const;
 public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;

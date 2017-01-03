@@ -41,9 +41,10 @@ void StableRand::SetParameters(double exponent, double skewness)
     alpham1Inv = alpha_alpham1 - 1.0;
 
     if (distributionId == UNITY_EXPONENT) {
-        pdfCoef = 0.5 / beta;
+        pdfCoef = M_1_PI / (sigma * std::fabs(beta));
         /// pdfXLimit is such k that f(x) < 1e-4 for |x| > k
         pdfXLimit = std::sqrt(2e4 / M_PI * M_E);
+        delta = M_2_PI * alpha * std::atan(mu / std::pow(sigma, alpha));
     }
     else if (distributionId == COMMON) {
         xi = alphaInv * B;
@@ -53,6 +54,7 @@ void StableRand::SetParameters(double exponent, double skewness)
         /// pdfXLimit is such k that for x > k we use asymptotic expansion
         pdfXLimit = std::pow(10.0, 3.0 / (1.0 + alpha));
 
+        /// define boundaries of region near 0, where we use series expansion
         if (alpha < 0.2) {
             seriesZeroParams.first = 1;
             seriesZeroParams.second = 1e-16;
@@ -73,6 +75,8 @@ void StableRand::SetParameters(double exponent, double skewness)
             seriesZeroParams.first = 85;
             seriesZeroParams.second = 7;
         }
+
+        delta = M_2_PI * B;
     }
 }
 
@@ -85,6 +89,7 @@ void StableRand::SetScale(double scale)
         pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
     else if (distributionId == COMMON)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
+    lambda = std::pow(sigma, alpha);
 }
 
 double StableRand::pdfNormal(double x) const
@@ -119,33 +124,57 @@ double StableRand::pdfLevy(double x) const
 
 double StableRand::pdfSeriesExpansionAtZero(double x, int k) const
 {
-    // WARNING! This is only for symmetric distributions
-    if (x == 0) {
-        double y0 = std::lgamma(1 + alphaInv);
-        y0 -= 0.5 * alphaInv * std::log1p(zeta * zeta);
+    double y0 = 0.0;
+    if (x == 0.0) {
+        /// Only the first term of series is non-zero
+        if (beta == 0.0)
+            y0 = std::tgamma(alphaInv);
+        else {
+            y0 = std::lgamma(alphaInv);
+            y0 -= S;
+            y0 = std::exp(y0);
+            y0 *= std::cos(xi);
+        }
+    }
+    else if (beta != 0.0) {
+        /// Asymmetric distribution
+        double rho = 0.5 * (delta + alpha);
+        double coef = rho * M_PI / alpha;
+        y0 = std::lgamma(alphaInv);
+        y0 -= S;
         y0 = std::exp(y0);
         y0 *= std::cos(xi);
-        y0 /= (M_PI * sigma);
-        return y0;
+        double logiFact = 0.0;
+        double logX = std::log(x);
+        for (int i = 1; i <= k; ++i)
+        {
+            int ip1 = i + 1;
+            double term = std::lgamma(ip1 * alphaInv);
+            term += i * logX;
+            logiFact += std::log(i);
+            term -= logiFact;
+            term = std::exp(term);
+            term *= std::sin(ip1 * coef);
+            y0 += (i & 1) ? -term : term;
+        }
     }
-    double sum = std::tgamma(alphaInv);
-    if (k >= 1) {
-        double log2iFact = M_LN2;
-        double term = std::lgamma(3.0 / alpha);
-        term += 2 * std::log(x);
-        sum -= std::exp(term - log2iFact);
-        for (int i = 2; i <= k; ++i)
+    else {
+        /// Symmetric distribution
+        y0 = std::tgamma(alphaInv);
+        double log2iFact = 0;
+        double logX = std::log(x);
+        for (int i = 1; i <= k; ++i)
         {
             int i2 = i + i;
-            term = std::lgamma((i2 + 1) / alpha);
-            term += i2 * std::log(x);
+            double term = std::lgamma((i2 + 1) / alpha);
+            term += i2 * logX;
             log2iFact += std::log(i2 * i2 - i2);
             term -= log2iFact;
             term = std::exp(term);
-            sum += (i & 1) ? -term : term;
+            y0 += (i & 1) ? -term : term;
         }
     }
-    return sum / (M_PI * alpha * sigma);
+    return y0 / (M_PI * alpha * sigma);
 }
 
 double StableRand::pdfSeriesExpansionAtInf(double x, int k) const
@@ -217,10 +246,9 @@ double StableRand::integrandAuxForUnityExponent(double theta, double xAdj) const
     if (theta <= -M_PI_2)
         return (beta > 0) ? -BIG_NUMBER : BIG_NUMBER;
     if (theta == 0.0)
-        return xAdj;
-    double cosTheta = std::cos(theta);
-    double thetaAdj = (M_PI_2 + beta * theta) / cosTheta;
-    double u = std::log(M_2_PI * thetaAdj);
+        return xAdj + M_LNPI - M_LN2;
+    double thetaAdj = (M_PI_2 + beta * theta) / std::cos(theta);
+    double u = std::log(thetaAdj);
     u += thetaAdj * std::sin(theta) / beta;
     if (std::isinf(u) || std::isnan(u))
     {
@@ -242,6 +270,7 @@ double StableRand::integrandForUnityExponent(double theta, double xAdj) const
 double StableRand::pdfForUnityExponent(double x) const
 {
     double xSt = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
+    xSt = M_PI_2 * xSt + beta * (M_LNPI - M_LN2); /// Change to form A
 
     if (std::fabs(xSt) > pdfXLimit) {
         double y = 1.0 / (M_PI * xSt * xSt);
@@ -249,7 +278,7 @@ double StableRand::pdfForUnityExponent(double x) const
         return y;
     }
 
-    double xAdj = -M_PI * xSt * pdfCoef;
+    double xAdj = -xSt / beta;
 
     /// Find peak of the integrand
     double theta0 = 0;
@@ -272,8 +301,7 @@ double StableRand::pdfForUnityExponent(double x) const
 
     double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0, 1e-11, maxRecursionDepth);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2, 1e-11, maxRecursionDepth);
-
-    return std::fabs(pdfCoef) * (int1 + int2) / sigma;
+    return M_PI_2 * pdfCoef * (int1 + int2);
 }
 
 double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const
@@ -437,6 +465,21 @@ double StableRand::fastcdfExponentiation(double u)
     return std::exp(-y);
 }
 
+double StableRand::cdfForUnityExponent(double x) const
+{
+    double xSt = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
+    xSt = M_PI_2 * xSt + beta * (M_LNPI - M_LN2); /// Change to form A
+    double xAdj = -xSt / beta;
+    double y = RandMath::integral([this, xAdj] (double theta)
+    {
+        double u = integrandAuxForUnityExponent(theta, xAdj);
+        return fastcdfExponentiation(u);
+    },
+    -M_PI_2, M_PI_2);
+    y *= M_1_PI;
+    return (beta > 0) ? y : 1.0 - y;
+}
+
 double StableRand::cdfForCommonExponent(double x) const
 {
     double xSt = (x - mu) / sigma; /// Standardize
@@ -481,20 +524,6 @@ double StableRand::cdfForCommonExponent(double x) const
 
     return (xSt > 0) ? y : 1 - y;
 }
-    
-double StableRand::cdfForUnityExponent(double x) const
-{
-    double xSt = (x - mu) / sigma - M_2_PI * beta * logSigma; /// Standardize
-    double xAdj = -M_PI * xSt * pdfCoef;
-    double y = RandMath::integral([this, xAdj] (double theta)
-    {
-        double u = integrandAuxForUnityExponent(theta, xAdj);
-        return fastcdfExponentiation(u);
-    },
-    -M_PI_2, M_PI_2);
-    y *= M_1_PI;
-    return (beta > 0) ? y : 1.0 - y;
-}
 
 double StableRand::F(double x) const
 {
@@ -514,6 +543,32 @@ double StableRand::F(double x) const
     }
 }
 
+double StableRand::standardVariateForUnityExponentFormA() const
+{
+    double X = standardVariateForUnityExponentFormB();
+    X -= beta * (M_LNPI - M_LN2);
+    X *= M_2_PI;
+    return X;
+}
+
+double StableRand::standardVariateForUnityExponentFormB() const
+{
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
+    double W = ExponentialRand::StandardVariate();
+    double pi_2pBetaU = M_PI_2 + beta * U;
+    double X = W * std::cos(U) / pi_2pBetaU;
+    X = -beta * std::log(X);
+    X += pi_2pBetaU * std::tan(U);
+    return X;
+}
+
+double StableRand::variateForUnityExponent() const
+{
+    double X = standardVariateForUnityExponentFormA();
+    X += M_2_PI * beta * logSigma;
+    return mu + sigma * X;
+}
+
 double StableRand::variateForCommonExponent() const
 {
     double U = UniformRand::Variate(-M_PI_2, M_PI_2);
@@ -527,19 +582,6 @@ double StableRand::variateForCommonExponent() const
     return mu + sigma * X;
 }
 
-double StableRand::variateForUnityExponent() const
-{
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::StandardVariate();
-    double pi_2pBetaU = M_PI_2 + beta * U;
-    double X = logSigma;
-    X -= std::log(M_PI_2 * W * std::cos(U) / pi_2pBetaU);
-    X *= beta;
-    X += pi_2pBetaU * std::tan(U);
-    X *= M_2_PI;
-    return mu + sigma * X;
-}
-
 double StableRand::Variate() const
 {
     switch (distributionId) {
@@ -548,7 +590,7 @@ double StableRand::Variate() const
     case CAUCHY:
         return CauchyRand::Variate(mu, sigma);
     case LEVY:
-        return RandMath::sign(beta) * LevyRand::Variate(mu, sigma);
+        return mu + RandMath::sign(beta) * LevyRand::Variate(0, sigma);
     case UNITY_EXPONENT:
         return variateForUnityExponent();
     case COMMON:
