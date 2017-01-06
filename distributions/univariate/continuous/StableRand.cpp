@@ -399,7 +399,7 @@ double StableRand::f(double x) const
     case CAUCHY:
         return pdfCauchy(x);
     case LEVY:
-        return (beta > 0) ? pdfLevy(x) : pdfLevy(-x);
+        return (beta > 0) ? pdfLevy(x) : pdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
         return pdfForUnityExponent(x);
     case COMMON:
@@ -514,7 +514,7 @@ double StableRand::F(double x) const
     case CAUCHY:
         return cdfCauchy(x);
     case LEVY:
-        return (beta > 0) ? cdfLevy(x) : 1.0 - cdfLevy(-x);
+        return (beta > 0) ? cdfLevy(x) : 1.0 - cdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
         return cdfForUnityExponent(x);
     case COMMON:
@@ -590,7 +590,7 @@ void StableRand::Sample(std::vector<double> &outputData) const
         }
         else {
             for (double &var : outputData)
-                var = -LevyRand::Variate(mu, sigma);
+                var = mu - sigma * LevyRand::StandardVariate();
         }
     }
         break;
