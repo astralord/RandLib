@@ -29,6 +29,10 @@ constexpr long double M_LOG10E    = 0.43429448190325182765;
 constexpr long double M_LN2       = 0.69314718055994530942;
 #endif
 
+#ifndef M_LN3
+constexpr long double M_LN3       = 1.09861228866810969139;
+#endif
+
 #ifndef M_LN10
 constexpr long double M_LN10      = 2.30258509299404568402;
 #endif

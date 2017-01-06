@@ -19,9 +19,8 @@
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
     double alpham1Inv, alpha_alpham1; /// 1 / (α - 1) and α / (α - 1)
-    double xi, integrandCoef;
 
-    static constexpr double BIG_NUMBER = 1e6; /// aka infinity for pdf and cdf calculations
+    static constexpr double BIG_NUMBER = 1e9; /// aka infinity for pdf and cdf calculations
     static constexpr double ALMOST_TWO = 1.99999;
 
     enum DISTRIBUTION_ID {
@@ -65,8 +64,9 @@ protected:
     double pdfLevy(double x) const;
 private:
     DoublePair seriesZeroParams;
-    double pdfSeriesExpansionAtZero(double x, int k) const;
-    double pdfSeriesExpansionAtInf(double x, int k) const;
+    double pdfAtZero() const; /// f(0)
+    double pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
+    double pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
     double pdfTaylorExpansionTailNearCauchy(double x) const; /// ~ f(x, α) - f(x, 1)
 
     static double fastpdfExponentiation(double u);
@@ -90,15 +90,13 @@ private:
     static double fastcdfExponentiation(double u);
 
     double cdfForUnityExponent(double x) const;
+    double cdfIntegralRepresentation(double absXSt, double xiAdj) const;
     double cdfForCommonExponent(double x) const;
 public:
     double F(double x) const override;
 
     /// Variates
 private:
-    double standardVariateForUnityExponentFormA() const;
-    double standardVariateForUnityExponentFormB() const;
-
     double variateForUnityExponent() const;
     double variateForCommonExponent() const;
 public:

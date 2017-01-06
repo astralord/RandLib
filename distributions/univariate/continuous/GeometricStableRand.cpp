@@ -252,7 +252,7 @@ double GeometricStableRand::variateForUnityExponent() const
     double W1 = ExponentialRand::StandardVariate();
     double W2 = ExponentialRand::StandardVariate();
     double pi_2BetaU = M_PI_2 + beta * U;
-    double X = logSigma;
+    double X = logsigmaPi_2;
     X += std::log(sigma * W2 * pi_2BetaU / (M_PI_2 * W1 * std::cos(U)));
     X *= beta;
     X += pi_2BetaU * std::tan(U);
@@ -266,7 +266,7 @@ double GeometricStableRand::variateForCommonExponent() const
 {
     double U = UniformRand::Variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::StandardVariate();
-    double alphaUB = alpha * U + B;
+    double alphaUB = alpha * (U + xi);
     double X = std::sin(alphaUB);
     double W_adj = W / std::cos(U - alphaUB);
     X *= W_adj;
