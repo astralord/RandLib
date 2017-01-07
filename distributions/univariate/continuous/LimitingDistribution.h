@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT LimitingDistribution : public ContinuousDistribution
 {
 protected:
     double alpha, beta, mu, sigma;
-    double xi, S, alphaInv, zeta; /// coefficients for common α
+    double alphaInv;
     double logsigmaPi_2; /// log(σπ/2)
 
 public:

@@ -40,12 +40,23 @@ void StableRand::SetParameters(double exponent, double skewness)
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
 
-    if (distributionId == UNITY_EXPONENT) {
+    if (distributionId == NORMAL) {
+        pdfCoef = 0.5 / sigma;
+    }
+    else if (distributionId == LEVY) {
+        pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
+    }
+    else if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (sigma * std::fabs(beta));
         /// pdfXLimit is such k that f(x) < 1e-4 for |x| > k
         pdfXLimit = std::sqrt(2e4 / M_PI * M_E);
     }
     else if (distributionId == COMMON) {
+        xi = beta * std::tan(M_PI_2 * alpha);
+        zeta = -xi;
+        S = 0.5 * alphaInv * std::log1p(zeta * zeta);
+        xi = alphaInv * std::atan(xi);
+
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
 
         /// pdfXLimit is such k that for x > k we use asymptotic expansion

@@ -14,14 +14,6 @@ void LimitingDistribution::SetParameters(double exponent, double skewness)
 
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
-
-    if (alpha != 1 && alpha != 2) /// Common case
-    {   // TODO: don't do also for Levy
-        xi = beta * std::tan(M_PI_2 * alpha);
-        zeta = -xi;
-        S = 0.5 * alphaInv * std::log1p(zeta * zeta);
-        xi = alphaInv * std::atan(xi);
-    }
 }
 
 void LimitingDistribution::SetLocation(double location)
@@ -48,7 +40,8 @@ double LimitingDistribution::Mean() const
 std::complex<double> LimitingDistribution::psi(double t) const
 {
     double fabsT = std::fabs(t);
-    double x = (alpha == 1) ? beta * M_2_PI * log(fabsT) : zeta;
+    double x = (alpha == 1) ? M_2_PI * log(fabsT) : std::tan(M_PI_2 * alpha); // second term can be replaced on zeta / beta
+    x *= beta;
     if (t < 0)
         x = -x;
     double re = std::pow(sigma * fabsT, alpha);

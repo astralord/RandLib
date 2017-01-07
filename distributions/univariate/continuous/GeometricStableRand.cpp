@@ -248,34 +248,16 @@ double GeometricStableRand::F(double x) const
 
 double GeometricStableRand::variateForUnityExponent() const
 {
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
-    double W1 = ExponentialRand::StandardVariate();
-    double W2 = ExponentialRand::StandardVariate();
-    double pi_2BetaU = M_PI_2 + beta * U;
-    double X = logsigmaPi_2;
-    X += std::log(sigma * W2 * pi_2BetaU / (M_PI_2 * W1 * std::cos(U)));
-    X *= beta;
-    X += pi_2BetaU * std::tan(U);
-    X *= M_2_PI * sigma;
-    X += mu;
-    X *= W2;
-    return X;
+    double W = ExponentialRand::StandardVariate();
+    double X = Z.Variate();
+    return W * (mu + sigma * X + 2 * sigma * std::log(sigma * W) / M_PI);
 }
 
 double GeometricStableRand::variateForCommonExponent() const
 {
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::StandardVariate();
-    double alphaUB = alpha * (U + xi);
-    double X = std::sin(alphaUB);
-    double W_adj = W / std::cos(U - alphaUB);
-    X *= W_adj;
-    double Y = ExponentialRand::StandardVariate();
-    W_adj *= std::cos(U);
-    W_adj = Y / W_adj;
-    double R = S + alphaInv * std::log(W_adj);
-    X *= std::exp(R);
-    return X * sigma + mu * Y;
+    double X = Z.Variate();
+    return mu * W + std::pow(W, alphaInv) * sigma * X;
 }
 
 double GeometricStableRand::variateByLevy(bool positive) const

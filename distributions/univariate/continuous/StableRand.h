@@ -18,6 +18,7 @@
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
+    double xi, S, zeta; /// coefficients for common α
     double alpham1Inv, alpha_alpham1; /// 1 / (α - 1) and α / (α - 1)
 
     static constexpr double BIG_NUMBER = 1e9; /// aka infinity for pdf and cdf calculations
