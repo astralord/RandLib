@@ -42,7 +42,7 @@ int sign(double x);
 /**
  * @brief factorial
  * Calculate n! using table values for small n <= 255
- * and Moivre-Stirling formula for large n > 255
+ * and built-in gamma function for large n > 255
  * @param n non-negative integer number
  * @return n!
  */

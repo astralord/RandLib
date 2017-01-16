@@ -459,11 +459,11 @@ double BetaRand::quantileImpl1m(double p) const
     if (alpha == beta)
     {
         if (alpha == 0.5) {
-            double x = std::sin(0.5 * M_PI * p);
+            double x = std::cos(0.5 * M_PI * p);
             return a + bma * x * x;
         }
         if (alpha == 1)
-            return a + bma * p;
+            return b - bma * p;
     }
     return ContinuousDistribution::quantileImpl1m(p);
 }
