@@ -121,35 +121,39 @@ double digamma(double x)
         double z = M_PI / std::tan(M_PI * y);
         return digamma(y) + z;
     }
+    /// set up tables
+    static constexpr long double taylorCoef[] = {
+         0.00833333333333333333l,
+        -0.00396825396825396825l,
+         0.00416666666666666666l,
+        -0.00757575757575757576l,
+         0.02115090296908478727l,
+        -0.08333333333333333333l
+    };
+    static constexpr int bounds[] = {
+        6000, 320, 75, 30, 20, 10, 7
+    };
 
-    /// Large argument
-    if (x > 1000.0)
-        return std::log(x) - 0.5 / x;
-
-    /// Value at zero is undefined
-    if (x == 0.0)
-        return NAN; /// +/- INFINITY
-
-    double y;
-    if (x == 1.0)
-        y = 0;
-    else if (x == 0.5)
-        y = 2 * M_LN2;
-    else if (x == 0.25)
-        y = -0.5 * M_PI - 3 * M_LN2;
-    else {
-        /// Use property: digamma(x) = digamma(x + 1) - 1 / x
-        /// and integral representation
-        y = integral([x] (double t)
-        {
-            if (t >= 1)
-                return x;
-            if (t <= 0)
-                return 0.0;
-            return (1.0 - std::pow(t, x)) / (1.0 - t);
-        }, 0, 1) - 1.0 / x;
+    /// shift to minimum value,
+    /// for which series expansion is applicable
+    double y = 0;
+    while (x < 7.0) {
+        y -= 1.0 / x;
+        ++x;
     }
-    return y - M_EULER;
+
+    /// choose the amount of terms in series
+    int degree = 0;
+    while (x < bounds[degree])
+        ++degree;
+
+    /// apply
+    double firstTerm = taylorCoef[5] / x - 0.5;
+    y += firstTerm / x;
+    for (int i = 0; i < degree; ++i)
+        y += taylorCoef[i] / std::pow(x, 2 * i + 4);
+    y += std::log(x);
+    return y;
 }
 
 double trigamma(double x)
@@ -157,43 +161,43 @@ double trigamma(double x)
     /// Negative argument
     if (x < 0.0)
     {
-        double y = 1.0 - x;
-        double z = M_PI / std::sin(M_PI * y);
-        return z - digamma(y);
+        double z = M_PI / std::sin(M_PI * x);
+        return z * z - trigamma(1.0 - x);
+    }
+    /// set up tables
+    static constexpr long double taylorCoef[] = {
+         0.16666666666666666666l,
+        -0.03333333333333333333l,
+         0.02380952380952380952l,
+        -0.03333333333333333333l,
+         0.07575757575757575757l,
+        -0.25311355311355311355l
+    };
+    static constexpr int bounds[] = {
+        1000, 140, 47, 25, 15, 10
+    };
+
+    /// shift to minimum value,
+    /// for which series expansion is applicable
+    double y = 0;
+    while (x < 10.0) {
+        y += 1.0 / (x * x);
+        ++x;
     }
 
-    /// Large argument
-    if (x > 200.0)
-        return (x + 0.5) / (x * x);
+    /// choose the amount of terms in series
+    int degree = 1;
+    while (x < bounds[degree - 1])
+        ++degree;
 
-    /// Special values
-    if (x == 0.0)
-        return INFINITY;
-    if (x == 0.25)
-        return M_PI_SQ + 8 * M_CATALAN;
-    if (x == 0.5)
-        return 0.5 * M_PI_SQ;
-    if (x == 1.0)
-        return M_PI_SQ / 6.0;
-    if (x == 1.5)
-        return 0.5 * M_PI_SQ - 4.0;
-    if (x == 2.0)
-        return M_PI_SQ / 6.0 - 1.0;
-
-    /// Use integral representation
-    return -integral([x] (double t)
-    {
-        if (t >= 1)
-            return -1.0;
-        if (t <= 0)
-            return 0.0;
-        double logT = std::log(t);
-        double y = x * logT;
-        y = std::exp(y);
-        y *= logT;
-        y /= (1.0 - t);
-        return y;
-    }, 0, 1) + 1.0 / (x * x);
+    /// apply
+    double firstTerm = 1.0 / x;
+    firstTerm += 0.5 / (x * x);
+    firstTerm += taylorCoef[0] / std::pow(x, 3);
+    y += firstTerm;
+    for (int i = 1; i < degree; ++i)
+        y += taylorCoef[i] / std::pow(x, 2 * i + 3);
+    return y;
 }
 
 long double lowerIncGamma(double a, double x)
@@ -463,7 +467,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
             if (std::fabs(f) < epsilon)
                 return true;
             alpha *= 0.5;
-        } while ((std::fabs(fx) <= epsilon || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
+        } while ((std::fabs(fx) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
     } while (std::fabs(step) > epsilon && ++iter < maxIter);
 
     return (iter == maxIter) ? false : true;
@@ -474,30 +478,29 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
     /// Sanity check
     epsilon = std::max(epsilon, MIN_POSITIVE);
     static constexpr int MAX_ITER = 1e5;
-    static constexpr double MAX_GRAD = 1e4;
+    static constexpr double MAX_STEP = 10;
     int iter = 0;
     double step = epsilon + 1;
     DoublePair y = funPtr(root);
     double fun = y.first;
-    double grad = std::min(MAX_GRAD, std::max(-MAX_GRAD, y.second));
+    double grad = y.second;
     if (std::fabs(fun) < epsilon)
         return true;
     do {
         double alpha = 1.0;
         double oldRoot = root;
         double oldFun = fun;
-        step = fun / grad;
+        step = std::min(MAX_STEP, std::max(-MAX_STEP, fun / grad));
         do {
             root = oldRoot - alpha * step;
             y = funPtr(root);
             fun = y.first;
-            grad = std::min(MAX_GRAD, std::max(-MAX_GRAD, y.second));
+            grad = y.second;
             if (std::fabs(fun) < epsilon)
                 return true;
             alpha *= 0.5;
-        } while ((std::fabs(grad) <= epsilon || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
+        } while ((std::fabs(grad) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
     } while (std::fabs(step) > epsilon && ++iter < MAX_ITER);
-
     return (iter == MAX_ITER) ? false : true;
 }
 
@@ -505,19 +508,16 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
 {
     /// Sanity check
     epsilon = std::max(epsilon, MIN_POSITIVE);
-
     double fa = funPtr(a);
     if (fa == 0) {
         root = a;
         return true;
     }
-
     double fb = funPtr(b);
     if (fb == 0) {
         root = b;
         return true;
     }
-
     if (fa * fb > 0) {
         /// error - the root is not bracketed
         return false;
@@ -536,21 +536,17 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
             double numerator = a * fb * fc;
             double denominator = (fa - fb) * (fa - fc);
             s = numerator / denominator;
-
             numerator = b * fa * fc;
             denominator = (fb - fa) * (fb - fc);
             s += numerator / denominator;
-
             numerator = c * fa * fb;
             denominator = (fc - fa) * (fc - fb);
             s += numerator / denominator;
         }
-        else
-        {
+        else {
             /// secant method
             s = b - fb * (b - a) / (fb - fa);
         }
-
         double absDiffSB2 = std::fabs(s - b);
         absDiffSB2 += absDiffSB2;
         double absDiffBC = std::fabs(b - c);
@@ -567,17 +563,14 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
         else {
             mflag = false;
         }
-
         fs = funPtr(s);
         if (std::fabs(fs) < epsilon) {
             root = s;
             return true;
         }
-
         d = c;
         c = b;
         fc = fb;
-
         if (fa * fs < 0) {
             b = s;
             fb = fs;
@@ -586,13 +579,11 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
             a = s;
             fa = fs;
         }
-
         if (std::fabs(fa) < std::fabs(fb)) {
             std::swap(a, b);
             std::swap(fa, fb);
         }
     }
-
     root = (std::fabs(fs) < std::fabs(fb)) ? s : b;
     return true;
 }
@@ -975,6 +966,7 @@ double Wm1Lambert(double x, double epsilon)
     }
     return WLambert(x, w, epsilon);
 }
+
 
 }
 

@@ -12,18 +12,15 @@ std::string PlanckRand::Name() const
 
 void PlanckRand::SetParameters(double shape, double scale)
 {
-    a = shape;
-    if (a <= 0)
-        a = 1.0;
-    b = scale;
-    if (b <= 0)
-        b = 1.0;
+    a = (shape > 0) ? shape : 1.0;
+    b = (scale > 0) ? scale : 1.0;
 
-    Z.SetExponent(a + 1);
-    G.SetParameters(a + 1, b);
+    double ap1 = a + 1;
+    Z.SetExponent(ap1);
+    G.SetParameters(ap1, b);
 
     pdfCoef = std::log(Z.GetInverseZetaFunction());
-    pdfCoef += (a + 1) * std::log(b);
+    pdfCoef += ap1 * std::log(b);
     pdfCoef -= G.GetLogGammaFunction();
 }
 
@@ -57,20 +54,18 @@ double PlanckRand::F(double x) const
     }
 
     /// split F(x) on two integrals
-    double y = pdfCoef + a * std::log(x);
-    double integral1 = std::exp(y) / (b * a);
+    double aux = pdfCoef + a * std::log(x);
+    double integral1 = std::exp(aux) / (b * a);
     double integral2 = RandMath::integral([this] (double t)
     {
         if (t <= 0)
             return 0.0;
         double logT = std::log(t);
         double y = pdfCoef + a * logT;
-        double z = y - logT;
-        y = std::exp(y);
-        y /= std::expm1(b * t);
-        z = std::exp(z);
-        z /= b;
-        return y - z;
+        double expY = std::exp(y);
+        double bt = b * t;
+        double z = 1.0 / std::expm1(bt) - 1.0 / bt;
+        return expY * z;
     },
     0, x);
     return integral1 + integral2;
@@ -90,37 +85,26 @@ void PlanckRand::Sample(std::vector<double> &outputData) const
 
 double PlanckRand::Mean() const
 {
-    return RandMath::integral([this] (double t)
-    {
-        if (t <= 0 || t >= 1)
-            return 0.0;
-        double denom = 1.0 / (1.0 - t);
-        double p = t * denom;
-        double y = p * f(p);
-        denom *= denom;
-        return y * denom;
-    },
-    0, 1);
+    double y = (a + 1) / b;
+    y *= RandMath::zetaRiemann(a + 2);
+    return Z.GetInverseZetaFunction() * y;
 }
 
 double PlanckRand::Variance() const
 {
     double mean = Mean();
-    double secondMoment = RandMath::integral([this] (double t)
-    {
-        if (t <= 0 || t >= 1)
-            return 0.0;
-        double denom = 1.0 / (1.0 - t);
-        double p = t * denom;
-        double y = p * p * f(p);
-        denom *= denom;
-        return y * denom;
-    },
-    0, 1);
-    return secondMoment - mean * mean;
+    double y = (a + 1) * (a + 2);
+    y /= (b * b);
+    y *= RandMath::zetaRiemann(a + 3);
+    y *= Z.GetInverseZetaFunction();
+    return y - mean * mean;
 }
 
 double PlanckRand::Mode() const
 {
-    return a / b;
+    if (a < 1)
+        return 0.0;
+    double y = -a * std::exp(-a);
+    y = RandMath::W0Lambert(y);
+    return (y + a) / b;
 }

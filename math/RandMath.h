@@ -282,7 +282,7 @@ double W0Lambert(double x, double epsilon = 1e-11);
  * @brief W1Lambert
  * @param x
  * @param epsilon
- * @return
+ * @return W1 branch of Lambert W function
  */
 double Wm1Lambert(double x, double epsilon = 1e-11);
 }

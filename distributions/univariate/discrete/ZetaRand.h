@@ -35,7 +35,7 @@ public:
     int Mode() const override;
     double Skewness() const override;
 
-    inline double GetInverseZetaFunction() { return zetaSInv; }
+    inline double GetInverseZetaFunction() const { return zetaSInv; }
 };
 
 #endif // ZETARAND_H

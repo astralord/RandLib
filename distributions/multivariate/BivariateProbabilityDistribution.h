@@ -19,12 +19,11 @@ public:
 
     virtual double f(Pair point) const = 0;
 
-    virtual Pair Mean() const = 0;
-    virtual void Covariance(SquareMatrix<2> &matrix) const = 0;
+    virtual DoublePair Mean() const = 0;
+    virtual DoubleTriplet Covariance() const = 0;
     virtual double Correlation() const = 0;
 
-    virtual void GetFirstMarginalDistribution(UnivariateProbabilityDistribution<T1> &distribution) const = 0;
-    virtual void GetSecondMarginalDistribution(UnivariateProbabilityDistribution<T2> &distribution) const = 0;
+    virtual void GetMarginalDistributions(UnivariateProbabilityDistribution<T1> &distribution1, UnivariateProbabilityDistribution<T2> &distribution2) const = 0;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H

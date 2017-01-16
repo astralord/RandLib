@@ -64,18 +64,21 @@ protected:
     double pdfCauchy(double x) const;
     double pdfLevy(double x) const;
 private:
+    static double fastpdfExponentiation(double u);
+
+    /// functions for pdf calculation for α = 1
+    double limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const;
+    double integrandAuxForUnityExponent(double theta, double xAdj) const;
+    double integrandForUnityExponent(double theta, double xAdj) const;
+    double pdfForUnityExponent(double x) const;
+
+    /// functions for pdf calculation for α != 1
     DoublePair seriesZeroParams;
     double pdfAtZero() const; /// f(0)
     double pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
     double pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
     double pdfTaylorExpansionTailNearCauchy(double x) const; /// ~ f(x, α) - f(x, 1)
-
-    static double fastpdfExponentiation(double u);
-
-    double integrandAuxForUnityExponent(double theta, double xAdj) const;
-    double integrandForUnityExponent(double theta, double xAdj) const;
-    double pdfForUnityExponent(double x) const;
-
+    double limitCaseForIntegrandAuxForCommonExponent(double theta, double xiAdj) const;
     double integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const;
     double integrandForCommonExponent(double theta, double xAdj, double xiAdj) const;
     double pdfForCommonExponent(double x) const;

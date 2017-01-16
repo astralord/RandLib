@@ -33,11 +33,11 @@ public:
     DoublePair Variate() const override;
 
     DoublePair Mean() const override;
-    void Covariance(SquareMatrix<2> &matrix) const override;
+    DoubleTriplet Covariance() const override;
     double Correlation() const override;
 
-    void GetFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const override;
-    void GetSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const override;
+    // TODO: change Univariate... to Continuous...
+    void GetMarginalDistributions(UnivariateProbabilityDistribution<double> &distribution1, UnivariateProbabilityDistribution<double> &distribution2) const override;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

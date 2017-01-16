@@ -11,79 +11,57 @@ void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double
 
 double ContinuousDistribution::quantileImpl(double p) const
 {
-    double root = 0.0;
+    double guess = 0.0;
     SUPPORT_TYPE supp = SupportType();
     if (supp == FINITE_T) {
         if (RandMath::findRoot([this, p] (double x)
         {
             return F(x) - p;
-        }, MinValue(), MaxValue(), root))
-            return root;
+        }, MinValue(), MaxValue(), guess))
+            return guess;
         return NAN;
     }
-    double mean = Mean();
-    if (!std::isfinite(mean))
-    {
-        if (isLeftBounded()) {
-            root = MinValue() + 1;
-            while(f(root) <= MIN_POSITIVE)
-                ++root;
-        }
-        else if (isRightBounded()) {
-            root = MaxValue() - 1;
-            while(f(root) <= MIN_POSITIVE)
-                --root;
-        }
-        else {
-            root = 0.0;
-        }
-    }
-    else {
-        root = mean;
-    }
+
+    /// We use quantile from sample as an initial guess
+    static constexpr int SAMPLE_SIZE = 100;
+    std::vector<double> sample(SAMPLE_SIZE);
+    this->Sample(sample);
+    std::sort(sample.begin(), sample.end());
+    guess = sample[p * SAMPLE_SIZE];
+
+    // TODO: use tail for heavy-tailed distributions
 
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = F(x) - p;
         double second = f(x);
         return DoublePair(first, second);
-    }, root))
-        return root;
+    }, guess))
+        return guess;
     return NAN;
 }
 
 double ContinuousDistribution::quantileImpl1m(double p) const
 {
-    double root = 0.0;
+    double guess = 0.0;
     SUPPORT_TYPE supp = SupportType();
     if (supp == FINITE_T) {
         if (RandMath::findRoot([this, p] (double x)
         {
-            return F(x) - p;
-        }, MinValue(), MaxValue(), root))
-            return root;
+            double y = F(x) - 1.0;
+            return y + p;
+        }, MinValue(), MaxValue(), guess))
+            return guess;
         return NAN;
     }
-    double mean = Mean();
-    if (!std::isfinite(mean))
-    {
-        if (isLeftBounded()) {
-            root = MinValue() + 1;
-            while(f(root) <= MIN_POSITIVE)
-                ++root;
-        }
-        else if (isRightBounded()) {
-            root = MaxValue() - 1;
-            while(f(root) <= MIN_POSITIVE)
-                --root;
-        }
-        else {
-            root = 0.0;
-        }
-    }
-    else {
-        root = mean;
-    }
+
+    /// We use quantile from sample as an initial guess
+    static constexpr int SAMPLE_SIZE = 100;
+    std::vector<double> sample(SAMPLE_SIZE);
+    this->Sample(sample);
+    /// Sort in desceding order
+    std::sort(sample.begin(), sample.end(), std::greater<>());
+    guess = sample[p * SAMPLE_SIZE];
 
     if (RandMath::findRoot([this, p] (double x)
     {
@@ -91,8 +69,8 @@ double ContinuousDistribution::quantileImpl1m(double p) const
         first += p;
         double second = f(x);
         return DoublePair(first, second);
-    }, root))
-        return root;
+    }, guess))
+        return guess;
     return NAN;
 }
 
@@ -103,14 +81,14 @@ double ContinuousDistribution::Hazard(double x) const
 
 double ContinuousDistribution::Mode() const
 {
-    double mu = Mean(); /// good starting point
-    if (!std::isfinite(mu))
-        mu = Median(); /// this shouldn't be nan or inf
+    double guess = Mean(); /// good starting point
+    if (!std::isfinite(guess))
+        guess = Median(); /// this shouldn't be nan or inf
     double root = 0;
     RandMath::findMin([this] (double x)
     {
         return -f(x);
-    }, mu, root);
+    }, guess, root);
     return root;
 }
 

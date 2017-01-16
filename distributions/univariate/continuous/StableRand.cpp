@@ -64,21 +64,9 @@ void StableRand::SetParameters(double exponent, double skewness)
         pdfXLimit = 3.0 / (1.0 + alpha) * M_LN10;
 
         /// define boundaries of region near 0, where we use series expansion
-        if (alpha < 0.2) {
-            seriesZeroParams.first = 1;
-            seriesZeroParams.second = -16 * M_LN10; /// corresponds to 1e-16
-        }
-        else if (alpha < 0.5) {
-            seriesZeroParams.first = 5;
-            seriesZeroParams.second = -8 * M_LN10; /// corresponds to 1e-8
-        }
-        else if (alpha < 1.0) {
-            seriesZeroParams.first = 10;
-            seriesZeroParams.second = -3 * M_LN10; /// corresponds to 0.001
-        }
-        else if (alpha <= ALMOST_TWO) {
-            seriesZeroParams.first = 10;
-            seriesZeroParams.second = -2 * M_LN10; /// corresponds to 0.01
+        if (alpha <= ALMOST_TWO) {
+            seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
+            seriesZeroParams.second = -0.5 * (3.0 / alpha + 1.0) * M_LN10; /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
         }
         else {
             seriesZeroParams.first = 85;
@@ -126,6 +114,89 @@ double StableRand::pdfLevy(double x) const
     y *= xInv;
     y *= std::sqrt(xInv);
     return pdfCoef * y;
+}
+
+double StableRand::fastpdfExponentiation(double u)
+{
+    if (u > 5 || u < -150)
+        return 0.0;
+    return (u < -50) ? std::exp(u) : std::exp(u - std::exp(u));
+}
+
+double StableRand::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
+{
+    /// We got numerical error, need to investigate to which extreme point we are closer
+    if (theta > 0.0) {
+        if (beta > 0.0)
+            return BIG_NUMBER;
+        return (beta == -1) ? xAdj - 1.0 : -BIG_NUMBER;
+    }
+    if (beta < 0.0)
+        return BIG_NUMBER;
+    return (beta == 1) ? xAdj - 1.0 : -BIG_NUMBER;
+}
+
+double StableRand::integrandAuxForUnityExponent(double theta, double xAdj) const
+{
+    if (std::fabs(theta) >= M_PI_2)
+        return limitCaseForIntegrandAuxForUnityExponent(theta, xAdj);
+    if (theta == 0.0)
+        return xAdj + M_LNPI - M_LN2;
+    double thetaAdj = (M_PI_2 + beta * theta) / std::cos(theta);
+    double u = std::log(thetaAdj);
+    u += thetaAdj * std::sin(theta) / beta;
+    return std::isfinite(u) ? u + xAdj : limitCaseForIntegrandAuxForUnityExponent(theta, xAdj);
+}
+
+double StableRand::integrandForUnityExponent(double theta, double xAdj) const
+{
+    if (std::fabs(theta) >= M_PI_2)
+        return 0.0;
+    double u = integrandAuxForUnityExponent(theta, xAdj);
+    return fastpdfExponentiation(u);
+}
+
+double StableRand::pdfForUnityExponent(double x) const
+{
+    double xSt = (x - mu) / sigma;
+    double xAdj = -M_PI_2 * xSt / beta - logsigmaPi_2;
+
+    // TODO: this limit is not available anymore, re-check
+    if (std::fabs(xSt) > pdfXLimit) {
+        double y = 1.0 / (M_PI * xSt * xSt);
+        y *= (xSt > 0) ? (1 + beta) : (1 - beta);
+        return y;
+    }
+
+    /// We squize boudaries for too peaked integrands
+    // TODO: find how to restrict more from the other side
+    double upperBoundary = (beta > 0.0) ? std::atan(M_2_PI * beta * (5.0 - xAdj)) : M_PI_2;
+    double lowerBoundary = (beta < 0.0) ? std::atan(M_2_PI * beta * (5.0 - xAdj)) : -M_PI_2;
+
+    /// Find peak of the integrand
+    double theta0 = 0;
+    std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
+    RandMath::findRoot(funPtr, lowerBoundary, upperBoundary, theta0);
+
+    /// Sanity check
+    /// if we failed while looking for the peak position
+    /// we set it in the middle between boundaries
+    if (theta0 >= upperBoundary || theta0 <= lowerBoundary)
+        theta0 = 0.5 * (upperBoundary + lowerBoundary);
+
+    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
+
+    /// If theta0 is too close to +/-π/2 then we can still underestimate the integral
+    int maxRecursionDepth = 11;
+    double closeness = M_PI_2 - std::fabs(theta0);
+    if (closeness < 0.1)
+        maxRecursionDepth = 20;
+    else if (closeness < 0.2)
+        maxRecursionDepth = 15;
+
+    double int1 = RandMath::integral(integrandPtr, lowerBoundary, theta0, 1e-11, maxRecursionDepth);
+    double int2 = RandMath::integral(integrandPtr, theta0, upperBoundary, 1e-11, maxRecursionDepth);
+    return pdfCoef * (int1 + int2);
 }
 
 double StableRand::pdfAtZero() const
@@ -230,97 +301,25 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     return tail;
 }
 
-double StableRand::fastpdfExponentiation(double u)
+double StableRand::limitCaseForIntegrandAuxForCommonExponent(double theta, double xiAdj) const
 {
-    if (u > 5 || u < -150)
-        return 0.0;
-    return (u < -50) ? std::exp(u) : std::exp(u - std::exp(u));
-}
-
-double StableRand::integrandAuxForUnityExponent(double theta, double xAdj) const
-{
-    if (theta >= M_PI_2)
-        return (beta > 0) ? BIG_NUMBER : -BIG_NUMBER;
-    if (theta <= -M_PI_2)
-        return (beta > 0) ? -BIG_NUMBER : BIG_NUMBER;
-    if (theta == 0.0)
-        return xAdj + M_LNPI - M_LN2;
-    double thetaAdj = (M_PI_2 + beta * theta) / std::cos(theta);
-    double u = std::log(thetaAdj);
-    u += thetaAdj * std::sin(theta) / beta;
-    if (!std::isfinite(u))
-    {
-        if (theta < 0.0)
-            return (beta > 0) ? -BIG_NUMBER : BIG_NUMBER;
-        return (beta > 0) ? BIG_NUMBER : -BIG_NUMBER;
-    }
-    return u + xAdj;
-}
-
-double StableRand::integrandForUnityExponent(double theta, double xAdj) const
-{
-    if (std::fabs(theta) >= M_PI_2)
-        return 0.0;
-    double u = integrandAuxForUnityExponent(theta, xAdj);
-    return fastpdfExponentiation(u);
-}
-
-double StableRand::pdfForUnityExponent(double x) const
-{
-    double xSt = (x - mu) / sigma;
-    double xAdj = -M_PI_2 * xSt / beta - logsigmaPi_2;
-
-    // TODO: this limit is not available anymore, re-check
-    if (std::fabs(xSt) > pdfXLimit) {
-        double y = 1.0 / (M_PI * xSt * xSt);
-        y *= (xSt > 0) ? (1 + beta) : (1 - beta);
-        return y;
-    }
-
-    /// Find peak of the integrand
-    double theta0 = 0;
-    std::function<double (double)> funPtr = std::bind(&StableRand::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
-    RandMath::findRoot(funPtr, -M_PI_2, M_PI_2, theta0);
-
-    /// Sanity check
-    if (std::fabs(theta0) >= M_PI_2)
-        theta0 = 0.0;
-
-    std::function<double (double)> integrandPtr = std::bind(&StableRand::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
-
-    /// If theta0 is too close to +/-π/2 then we can still underestimate the integral
-    int maxRecursionDepth = 11;
-    double closeness = M_PI_2 - std::fabs(theta0);
-    if (closeness < 0.1)
-        maxRecursionDepth = 20;
-    else if (closeness < 0.2)
-        maxRecursionDepth = 15;
-
-    double int1 = RandMath::integral(integrandPtr, -M_PI_2, theta0, 1e-11, maxRecursionDepth);
-    double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2, 1e-11, maxRecursionDepth);
-    return pdfCoef * (int1 + int2);
+    /// We got numerical error, need to investigate to which extreme point we are closer
+    if (theta < 0.5 * (M_PI_2 - xiAdj))
+        return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
+    return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
 }
 
 double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const
 {
-    if (theta >= M_PI_2)
-        return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
-    if (theta <= -xiAdj || theta <= -M_PI_2)
-        return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
+    if (std::fabs(theta) >= M_PI_2 || theta <= -xiAdj)
+        return limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
     double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = std::sin(thetaAdj);
     double y = std::log(std::cos(theta));
     y -= alpha * std::log(sinThetaAdj);
     y *= alpham1Inv;
     y += std::log(std::cos(thetaAdj - theta));
-    if (!std::isfinite(y))
-    {
-        /// We got numerical error, need to investigate to which extreme point we are closer
-        if (theta < 0.5 * (M_PI_2 - xiAdj))
-            return alpha < 1 ? -BIG_NUMBER : BIG_NUMBER;
-        return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
-    }
-    return y + xAdj;
+    return std::isfinite(y) ? y + xAdj : limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
 }
 
 double StableRand::integrandForCommonExponent(double theta, double xAdj, double xiAdj) const

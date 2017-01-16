@@ -22,7 +22,7 @@ bool ExponentialRand::SetupTables()
     static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = 0.00045413435384149675; /// std::exp(-x1);
+    stairHeight[0] = 0.00045413435384149675; /// exp(-x1);
     stairWidth[0] = 8.697117470131049720307; /// A / stairHeight[0];
     /// implicit value for the top layer
     stairWidth[256] = 0;

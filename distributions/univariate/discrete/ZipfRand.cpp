@@ -56,8 +56,7 @@ int ZipfRand::Variate() const
     int k = 1;
 
     /// if we didn't manage to hash values for such U
-    if (U > table[hashedVarNum - 1])
-    {
+    if (U > table[hashedVarNum - 1]) {
         k = hashedVarNum;
         double sum = table[hashedVarNum - 1];
         do {
@@ -65,8 +64,7 @@ int ZipfRand::Variate() const
             sum += std::pow(k, -s) * invHarmonicNumber;
         } while (sum < U);
     }
-    else
-    {
+    else {
         while (k <= hashedVarNum && table[k - 1] < U)
             ++k;
     }

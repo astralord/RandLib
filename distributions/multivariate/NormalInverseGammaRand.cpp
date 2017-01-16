@@ -80,16 +80,17 @@ DoublePair NormalInverseGammaRand::Mean() const
     return mean;
 }
 
-void NormalInverseGammaRand::Covariance(SquareMatrix<2> &matrix) const
+DoubleTriplet NormalInverseGammaRand::Covariance() const
 {
+    double var1;
     if (alpha <= 0.5)
-        matrix(0, 0) = NAN;
+        var1 = NAN;
     else if (alpha <= 1)
-        matrix(0, 0) = INFINITY;
+        var1 = INFINITY;
     else
-        matrix(0, 0) = alpha * alpha * lambda / (beta * (alpha - 1));
-    matrix(0, 1) = matrix(1, 0) = 0;
-    matrix(1, 1) = Y.Variance();
+        var1 = alpha * alpha * lambda / (beta * (alpha - 1));
+    double var2 = Y.Variance();
+    return std::make_tuple(var1, 0, var2);
 }
 
 double NormalInverseGammaRand::Correlation() const
@@ -97,14 +98,9 @@ double NormalInverseGammaRand::Correlation() const
     return 0.0;
 }
 
-void NormalInverseGammaRand::GetFirstMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
+void NormalInverseGammaRand::GetMarginalDistributions(UnivariateProbabilityDistribution<double> &distribution1, UnivariateProbabilityDistribution<double> &distribution2) const
 {
     StudentTRand X(2 * Y.GetShape(), mu, std::sqrt(alpha * lambda / beta));
-    distribution = X;
+    distribution1 = X;
+    distribution2 = Y;
 }
-
-void NormalInverseGammaRand::GetSecondMarginalDistribution(UnivariateProbabilityDistribution<double> &distribution) const
-{
-    distribution = Y;
-}
-

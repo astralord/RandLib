@@ -456,7 +456,6 @@ bool GammaRand::FitMLE(const std::vector<double> &sample)
     shape -= sm3;
     shape /= sp12;
 
-
     if (!RandMath::findRoot([s] (double x)
     {
         double first = std::log(x) - RandMath::digamma(x) - s;
