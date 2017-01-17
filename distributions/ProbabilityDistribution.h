@@ -47,13 +47,13 @@ public:
     virtual T MaxValue() const = 0;
 
     /**
-     * @brief variate()
+     * @brief Variate()
      * @return random variable
      */
     virtual T Variate() const = 0;
 
     /**
-     * @brief sample
+     * @brief Sample
      * @param outputData
      */
     virtual void Sample(std::vector<T> &outputData) const;
