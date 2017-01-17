@@ -169,9 +169,9 @@ double StableRand::pdfForUnityExponent(double x) const
     }
 
     /// We squize boudaries for too peaked integrands
-    // TODO: find how to restrict more from the other side
-    double upperBoundary = (beta > 0.0) ? std::atan(M_2_PI * beta * (5.0 - xAdj)) : M_PI_2;
-    double lowerBoundary = (beta < 0.0) ? std::atan(M_2_PI * beta * (5.0 - xAdj)) : -M_PI_2;
+    double boundary = std::atan(M_2_PI * beta * (5.0 - xAdj));
+    double upperBoundary = (beta > 0.0) ? boundary : M_PI_2;
+    double lowerBoundary = (beta < 0.0) ? boundary : -M_PI_2;
 
     /// Find peak of the integrand
     double theta0 = 0;
@@ -266,10 +266,12 @@ double StableRand::pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) con
 
 double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
 {
+    // TODO: recheck derivatives (there are some typos in the paper)
     double xSq = x * x;
     double y = 1.0 + xSq;
     double ySq = y * y;
     double z = std::atan(x);
+    double zSq = z * z;
     double logY = std::log(y);
     double alpham1 = alpha - 1.0;
     double temp = 1.0 - M_EULER - 0.5 * logY;
@@ -280,8 +282,9 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     f_a += 2 * x * z;
     f_a /= ySq;
 
+    static constexpr long double M_PI_SQ_6 = 1.64493406684822643647l; /// pi^2 / 6
     /// second derivative
-    double f_aa1 = M_PI_SQ / 6.0;
+    double f_aa1 = M_PI_SQ_6;
     f_aa1 += temp * temp;
     f_aa1 -= 1.0 + z * z;
     f_aa1 *= xSq * xSq - 6.0 * xSq + 1.0;
@@ -292,11 +295,57 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     f_aa3 -= x * y * z;
     f_aa3 += f_aa3;
     double f_aa = f_aa1 + f_aa2 + f_aa3;
-    f_aa /= y * ySq;
+    f_aa /= std::pow(y, 3);
 
-    // TODO: add third derivative
+    /// Hashed values of special functions for x = 2, 3, 4
+    /// Gamma(x)
+    static constexpr int gammaTable[] = {1, 2, 6};
+    /// Gamma'(x)
+    static constexpr long double gammaDerTable[] = {1.0 - M_EULER, 3.0 - 2.0 * M_EULER, 11.0 - 6.0 * M_EULER};
+    /// Gamma''(x)
+    static constexpr long double gammaSecDerTable[] = {0.82368066085287938958l,
+                                                       2.49292999190269305794l,
+                                                       11.1699273161019477314l};
+    /// Digamma(x)
+    static constexpr long double digammaTable[] = {1.0 - M_EULER, 1.5 - M_EULER, 11.0 / 6 - M_EULER};
+    /// Digamma'(x)
+    static constexpr long double digammaDerTable[] = {M_PI_SQ_6 - 1.0, M_PI_SQ_6 - 1.25, M_PI_SQ_6 - 49.0 / 36};
+    /// Digamma''(x)
+    static constexpr long double digammaSecDerTable[] = {-0.40411380631918857080l,
+                                                         -0.15411380631918857080l,
+                                                         -0.08003973224511449673l};
+    /// third derivative
+    double gTable[] = {0, 0, 0};
+    for (int i = 0; i < 3; ++i) {
+        double g_11 = 0.25 * gammaTable[i] * logY * logY;
+        g_11 -= gammaDerTable[i] * logY;
+        g_11 += gammaSecDerTable[i];
+        double aux = digammaTable[i] - 0.5 * logY;
+        double g_12 = aux;
+        double cosZNu = std::cos(z * (i + 2)), zSinZNu = z * std::sin(z * (i + 2));
+        g_12 *= cosZNu;
+        g_12 -= zSinZNu;
+        double g_1 = g_11 * g_12;
+        double g_21 = -gammaTable[i] * logY + 2 * gammaDerTable[i];
+        double g_22 = -zSinZNu * aux;
+        g_22 -= zSq * cosZNu;
+        g_22 += cosZNu * digammaDerTable[i];
+        double g_2 = g_21 * g_22;
+        double g_3 = -zSq * cosZNu * aux;
+        g_3 -= 2 * zSinZNu * digammaDerTable[i];
+        g_3 += zSq * zSinZNu;
+        g_3 += cosZNu * digammaSecDerTable[i];
+        g_3 *= gammaTable[i];
+        double g = g_1 + g_2 + g_3;
+        g *= std::pow(y, -0.5 * i - 1);
+        gTable[i] = g;
+    }
+    double f_aaa = -gTable[0] + 3 * gTable[1] - gTable[2];
+
+    /// summarize all three derivatives
     double tail = f_a * alpham1;
     tail += 0.5 * f_aa * alpham1 * alpham1;
+    tail += std::pow(alpham1, 3) * f_aaa / 6.0;
     tail /= M_PI;
     return tail;
 }

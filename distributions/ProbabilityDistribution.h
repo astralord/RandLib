@@ -63,6 +63,7 @@ public:
      * @param x
      * @return P(X < x)
      */
+     // TODO: make T to const T &
     virtual double F(T x) const = 0;
 
     /**

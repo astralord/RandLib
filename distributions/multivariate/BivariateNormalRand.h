@@ -8,7 +8,7 @@
  * @brief The BivariateNormalRand class
  * Bivariate Gaussian (normal) distribution
  *
- * Notation: X ~ N(μ_1, μ_2, σ_1, σ_2, ρ)
+ * Notation: X ~ N(μ_1, μ_2, σ_1, ρ, σ_2)
  */
 class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<double, double>
 {
@@ -19,16 +19,16 @@ class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDist
     double pdfCoef, sqrt1mroSq;
 
 public:
-    BivariateNormalRand(DoublePair location, const SquareMatrix<2> &rootCovariance);
-    BivariateNormalRand(double mu1, double mu2, double sigma1, double sigma2, double correlation);
+    BivariateNormalRand(const DoublePair &location, const DoubleTriplet &covariance);
+    BivariateNormalRand(double location1, double location2, double scale1, double correlation, double scale2);
     std::string Name() const override;
     DoublePair MinValue() const { return DoublePair(-INFINITY, -INFINITY); }
     DoublePair MaxValue() const { return DoublePair(INFINITY, INFINITY); }
 
-    void SetLocation(DoublePair location);
+    void SetLocation(const DoublePair &location);
     void SetLocation(double location1, double location2);
-    void SetScale(const SquareMatrix<2> &rootCovariance);
-    void SetScale(double scale1, double scale2, double correlation);
+    void SetScale(const DoubleTriplet &covariance);
+    void SetScale(double scale1, double correlation, double scale2);
     inline DoublePair GetLocation() { return Mean(); }
     inline double GetFirstLocation() const { return mu1; }
     inline double GetSecondLocation() const { return mu2; }

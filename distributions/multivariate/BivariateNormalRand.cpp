@@ -1,16 +1,16 @@
 #include "BivariateNormalRand.h"
 
 
-BivariateNormalRand::BivariateNormalRand(DoublePair location, const SquareMatrix<2> &rootCovariance)
+BivariateNormalRand::BivariateNormalRand(const DoublePair &location, const DoubleTriplet &covariance)
 {
     SetLocation(location);
-    SetScale(rootCovariance);
+    SetScale(covariance);
 }
 
-BivariateNormalRand::BivariateNormalRand(double mu1, double mu2, double sigma1, double sigma2, double correlation)
+BivariateNormalRand::BivariateNormalRand(double location1, double location2, double scale1, double correlation, double scale2)
 {
-    SetLocation(mu1, mu2);
-    SetScale(sigma1, sigma2, correlation);
+    SetLocation(location1, location2);
+    SetScale(scale1, correlation, scale2);
 }
 
 std::string BivariateNormalRand::Name() const
@@ -22,7 +22,7 @@ std::string BivariateNormalRand::Name() const
                                + toStringWithPrecision(GetCorrelation()) + ") )";
 }
 
-void BivariateNormalRand::SetLocation(DoublePair location)
+void BivariateNormalRand::SetLocation(const DoublePair &location)
 {
     mu1 = location.first;
     mu2 = location.second;
@@ -38,7 +38,7 @@ void BivariateNormalRand::SetLocation(double location1, double location2)
     Y.SetLocation(mu2);
 }
 
-void BivariateNormalRand::SetScale(double scale1, double scale2, double correlation)
+void BivariateNormalRand::SetScale(double scale1, double correlation, double scale2)
 {
     sigma1 = scale1 > 0 ? scale1 : 1.0;
     sigma2 = scale2 > 0 ? scale2 : 1.0;
@@ -53,9 +53,14 @@ void BivariateNormalRand::SetScale(double scale1, double scale2, double correlat
     pdfCoef = 0.5 * M_1_PI / (sigma1 * sigma2 * sqrt1mroSq);
 }
 
-void BivariateNormalRand::SetScale(const SquareMatrix<2> &rootCovariance)
+void BivariateNormalRand::SetScale(const DoubleTriplet &covariance)
 {
-    SetScale(rootCovariance(0, 0), rootCovariance(1, 1), rootCovariance(1, 0));
+    double var1, cov, var2;
+    std::tie(var1, cov, var2) = covariance;
+    double scale1 = std::sqrt(var1);
+    double scale2 = std::sqrt(var2);
+    double corr = cov * scale1 * scale2;
+    SetScale(std::sqrt(var1), corr, std::sqrt(var2));
 }
 
 double BivariateNormalRand::f(DoublePair point) const

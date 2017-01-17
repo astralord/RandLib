@@ -68,14 +68,14 @@ int sign(double x);
 /**
  * @brief digamma
  * @param x
- * @return psi(x) = d(ln(Gamma(x)))/dx = d(Gamma(x))/Gamma(x)
+ * @return digamma(x) = d(ln(Gamma(x)))/dx = d(Gamma(x))/Gamma(x)
  */
  double digamma(double x);
 
 /**
  * @brief trigamma
  * @param x
- * @return psi'(x) = d(psi(x))/dx
+ * @return trigamma(x) = digamma'(x)
  */
  double trigamma(double x);
 
@@ -206,7 +206,7 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
  * @param epsilon tolerance
  * @return
  */
-bool findMin(const std::function<double (double)> &funPtr, DoubleTriplet abc, DoubleTriplet fabc, double &root, double epsilon = 1e-8);
+bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet &abc, const DoubleTriplet &fabc, double &root, double epsilon = 1e-8);
 
 /**
  * @brief findMin
@@ -282,7 +282,7 @@ double W0Lambert(double x, double epsilon = 1e-11);
  * @brief W1Lambert
  * @param x
  * @param epsilon
- * @return W1 branch of Lambert W function
+ * @return W-1 branch of Lambert W function
  */
 double Wm1Lambert(double x, double epsilon = 1e-11);
 }

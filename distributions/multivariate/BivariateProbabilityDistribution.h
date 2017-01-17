@@ -16,7 +16,7 @@ class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public Probability
 public:
     BivariateProbabilityDistribution();
     virtual ~BivariateProbabilityDistribution() {}
-
+    // TODO: make Pair to const Pair &
     virtual double f(Pair point) const = 0;
 
     virtual DoublePair Mean() const = 0;

@@ -718,7 +718,7 @@ bool findBounds(const std::function<double (double)> &funPtr, DoubleTriplet &abc
     }
 }
 
-bool findMin(const std::function<double (double)> &funPtr, DoubleTriplet abc, DoubleTriplet fabc, double &root, double epsilon)
+bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet & abc, const DoubleTriplet & fabc, double &root, double epsilon)
 {
     static constexpr double K = 0.5 * (3 - M_SQRT5);
     double a, x, c;
