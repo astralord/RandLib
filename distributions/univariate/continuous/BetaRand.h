@@ -153,7 +153,7 @@ protected:
 
 public:
     /**
-     * @brief GetInvBetaFunction
+     * @brief GetInverseBetaFunction
      * @return 1 / Beta(α, β)
      */
     inline double GetInverseBetaFunction() const { return betaFunInv; }
@@ -167,7 +167,12 @@ public:
 
 
 /**
- * @brief The ArcsineRand class
+ * @brief The ArcsineRand class 
+ *
+ * X ~ Arcsine(α)
+ * 
+ * Related distributions
+ * X ~ Beta(1 - α, α)
  */
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
 {
