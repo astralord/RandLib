@@ -136,7 +136,7 @@ double digamma(double x)
 
     /// shift to minimum value,
     /// for which series expansion is applicable
-    double y = 0;
+    long double y = 0;
     while (x < 7.0) {
         y -= 1.0 / x;
         ++x;
@@ -148,7 +148,7 @@ double digamma(double x)
         ++degree;
 
     /// apply
-    double firstTerm = taylorCoef[5] / x - 0.5;
+    long double firstTerm = taylorCoef[5] / x - 0.5;
     y += firstTerm / x;
     for (int i = 0; i < degree; ++i)
         y += taylorCoef[i] / std::pow(x, 2 * i + 4);
@@ -179,7 +179,7 @@ double trigamma(double x)
 
     /// shift to minimum value,
     /// for which series expansion is applicable
-    double y = 0;
+    long double y = 0;
     while (x < 10.0) {
         y += 1.0 / (x * x);
         ++x;
@@ -191,7 +191,7 @@ double trigamma(double x)
         ++degree;
 
     /// apply
-    double firstTerm = 1.0 / x;
+    long double firstTerm = 1.0 / x;
     firstTerm += 0.5 / (x * x);
     firstTerm += taylorCoef[0] / std::pow(x, 3);
     y += firstTerm;
