@@ -97,13 +97,11 @@ double BetaPrimeRand::ExcessKurtosis() const
     return 6 * numerator / denominator;
 }
 
-std::complex<double> BetaPrimeRand::CF(double t) const
+std::complex<double> BetaPrimeRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     /// if no singularity - simple numeric integration
     if (alpha > 1)
-        return UnivariateProbabilityDistribution::CF(t);
+        return UnivariateProbabilityDistribution::CFImpl(t);
 
     double re = RandMath::integral([this, t] (double x) {
         if (x <= 0)

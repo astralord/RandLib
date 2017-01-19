@@ -398,13 +398,11 @@ double BetaRand::ExcessKurtosis() const
     return 6 * kurtosis;
 }
 
-std::complex<double> BetaRand::CF(double t) const
+std::complex<double> BetaRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     /// if we don't have singularity points, we can use direct integration
     if (alpha >= 1 && beta >= 1)
-        return UnivariateProbabilityDistribution::CF(t);
+        return UnivariateProbabilityDistribution::CFImpl(t);
 
     double z = bma * t;
     double sinZ = std::sin(z);

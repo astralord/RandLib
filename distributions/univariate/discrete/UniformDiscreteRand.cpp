@@ -77,10 +77,8 @@ double UniformDiscreteRand::ExcessKurtosis() const
     return -1.2 * res;
 }
 
-std::complex<double> UniformDiscreteRand::CF(double t) const
+std::complex<double> UniformDiscreteRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double at = a * t;
     double bp1t = (b + 1) * t;
     double reNum = std::cos(at) - std::cos(bp1t);

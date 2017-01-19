@@ -72,9 +72,9 @@ double IrwinHallRand::Variance() const
     return static_cast<double>(n) / 12;
 }
 
-std::complex<double> IrwinHallRand::CF(double t) const
+std::complex<double> IrwinHallRand::CFImpl(double t) const
 {
-    return std::pow(U.CF(t), n);
+    return std::pow(U.CFImpl(t), n);
 }
 
 double IrwinHallRand::Median() const

@@ -116,10 +116,8 @@ double NormalRand::StandardVariate()
     return NAN; /// fail due to some error
 }
 
-std::complex<double> NormalRand::CF(double t) const
+std::complex<double> NormalRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double sigma0T = sigma0 * t;
     return std::exp(std::complex<double>(-0.5 * sigma0T * sigma0T, mu * t));
 }

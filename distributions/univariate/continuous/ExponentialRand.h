@@ -44,7 +44,7 @@ public:
     double Median() const override;
     static double StandardVariate();
 
-    std::complex<double> CF(double t) const override;
+    std::complex<double> CFImpl(double t) const override;
 
 private:
     double quantileImpl(double p) const override;

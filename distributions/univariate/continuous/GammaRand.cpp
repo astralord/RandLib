@@ -261,7 +261,7 @@ double GammaRand::Variance() const
     return alpha * theta * theta;
 }
 
-std::complex<double> GammaRand::CF(double t) const
+std::complex<double> GammaRand::CFImpl(double t) const
 {
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }

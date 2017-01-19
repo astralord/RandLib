@@ -340,9 +340,9 @@ double GeometricStableRand::Variance() const
     return INFINITY;
 }
 
-std::complex<double> GeometricStableRand::CF(double t) const
+std::complex<double> GeometricStableRand::CFImpl(double t) const
 {
-    return (t == 0) ? 1.0 : 1.0 / (1.0 + psi(t));
+    return 1.0 / (1.0 + psi(t));
 }
 
 double GeometricStableRand::Median() const

@@ -40,7 +40,7 @@ double DegenerateRand::Variance() const
     return 0.0;
 }
 
-std::complex<double> DegenerateRand::CF(double t) const
+std::complex<double> DegenerateRand::CFImpl(double t) const
 {
     double re = std::cos(a * t);
     double im = std::sin(a * t);

@@ -87,7 +87,7 @@ double ExponentialRand::StandardVariate()
     return NAN; /// fail due to some error
 }
 
-std::complex<double> ExponentialRand::CF(double t) const
+std::complex<double> ExponentialRand::CFImpl(double t) const
 {
     return 1.0 / std::complex<double>(1.0, -theta * t);
 }

@@ -37,7 +37,7 @@ double RademacherRand::Variance() const
     return 1;
 }
 
-std::complex<double> RademacherRand::CF(double t) const
+std::complex<double> RademacherRand::CFImpl(double t) const
 {
     return std::cos(t);
 }

@@ -181,10 +181,8 @@ double NegativeBinomialRand<T>::Variance() const
 }
 
 template< typename T >
-std::complex<double> NegativeBinomialRand<T>::CF(double t) const
+std::complex<double> NegativeBinomialRand<T>::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     std::complex<double> denominator(1.0 - q * std::cos(t), -q * std::sin(t));
     return std::pow(p / denominator, r);
 }

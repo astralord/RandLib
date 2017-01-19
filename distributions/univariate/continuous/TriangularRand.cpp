@@ -77,10 +77,8 @@ double TriangularRand::Variance() const
     return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }
 
-std::complex<double> TriangularRand::CF(double t) const
+std::complex<double> TriangularRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double bmc = b - c, bma = b - a, cma = c - a;
     double at = a * t, bt = b * t, ct = c * t;
     std::complex<double> x(bmc * std::cos(at), bmc * std::sin(at));

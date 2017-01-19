@@ -38,7 +38,7 @@ double SechRand::Variance() const
     return 1.0;
 }
 
-std::complex<double> SechRand::CF(double t) const
+std::complex<double> SechRand::CFImpl(double t) const
 {
     return 1.0 / std::cosh(t);
 }

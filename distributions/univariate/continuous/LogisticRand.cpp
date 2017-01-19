@@ -54,10 +54,8 @@ double LogisticRand::Variance() const
     return sPi * sPi / 3;
 }
 
-std::complex<double> LogisticRand::CF(double t) const
+std::complex<double> LogisticRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double pist = M_PI * s * t;
     std::complex<double> y(0.0, t * mu);
     y = std::exp(y);

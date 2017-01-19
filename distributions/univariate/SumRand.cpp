@@ -145,7 +145,7 @@ double SumRand<T1, T2>::Variance() const
 }
 
 template <typename T1, typename T2>
-std::complex<double> SumRand<T1, T2>::CF(double t) const
+std::complex<double> SumRand<T1, T2>::CFImpl(double t) const
 {
     return X.CF(t) * Y.CF(t);
 }

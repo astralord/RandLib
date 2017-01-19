@@ -34,7 +34,7 @@ public:
     double Median() const override;
     double Mode() const override;
 
-    std::complex<double> CF(double t) const override;
+    std::complex<double> CFImpl(double t) const override;
 };
 
 #endif // VONMISESRAND_H

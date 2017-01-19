@@ -45,7 +45,7 @@ public:
     static double Variate(double mean, double rootVar);
     static double StandardVariate();
 
-    std::complex<double> CF(double t) const override;
+    std::complex<double> CFImpl(double t) const override;
     static double standardQuantile(double p);
     static double quantile(double p, double mean, double scale);
 

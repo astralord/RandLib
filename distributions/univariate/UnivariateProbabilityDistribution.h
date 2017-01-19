@@ -77,6 +77,13 @@ private:
      */
     virtual double quantileImpl1m(double p) const = 0;
 
+protected:
+    /**
+     * @brief CFimpl
+     * @param t
+     * @return Characteristic function (inverse Fourier transform of pdf)
+     */
+    virtual std::complex<double> CFImpl(double t) const;
 public:
     /**
      * @brief Quantile
@@ -101,10 +108,10 @@ public:
 
     /**
      * @brief CF
-     * @param x
-     * @return Characteristic function (inverse Fourier transform of probability function)
+     * @param t
+     * @return CFImpl for t != 0 and 1 otherwise
      */
-    virtual std::complex<double> CF(double t) const;
+    std::complex<double> CF(double t) const;
 
     /**
      * @brief CharacteristicFunction

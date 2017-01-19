@@ -41,7 +41,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    std::complex<double> CF(double t) const override;
+    std::complex<double> CFImpl(double t) const override;
 };
 
 #endif // ZIPFRAND_H

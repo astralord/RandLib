@@ -67,10 +67,8 @@ double SkellamRand::Variance() const
     return mu1 + mu2;
 }
 
-std::complex<double> SkellamRand::CF(double t) const
+std::complex<double> SkellamRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     std::complex<double> x(0, t);
     x = std::exp(x);
     x *= mu1;

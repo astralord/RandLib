@@ -700,9 +700,9 @@ double StableRand::ExcessKurtosis() const
     return (distributionId == NORMAL)  ? 0 : NAN;
 }
 
-std::complex<double> StableRand::CF(double t) const
+std::complex<double> StableRand::CFImpl(double t) const
 {
-    return (t == 0) ? 1.0 : std::exp(-psi(t));
+    return std::exp(-psi(t));
 }
 
 std::string HoltsmarkRand::Name() const

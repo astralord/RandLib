@@ -79,10 +79,8 @@ double LaplaceRand::Mean() const
     return m + GeometricStableRand::Mean();
 }
 
-std::complex<double> LaplaceRand::CF(double t) const
+std::complex<double> LaplaceRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double bt = sigma * t;
     double btSq = bt * bt;
     double denominator = (1 + kSq * btSq) * (1 + btSq / kSq);

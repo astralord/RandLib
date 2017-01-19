@@ -83,10 +83,8 @@ double UniformRand::Variance() const
     return bma * bma / 12;
 }
 
-std::complex<double> UniformRand::CF(double t) const
+std::complex<double> UniformRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double cosX = std::cos(t * b), sinX = std::sin(t * b);
     double cosY = std::cos(t * a), sinY = std::sin(t * a);
     std::complex<double> numerator(cosX - cosY, sinX - sinY);

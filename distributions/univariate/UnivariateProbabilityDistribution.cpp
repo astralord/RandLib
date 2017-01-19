@@ -54,6 +54,14 @@ void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<do
 template< typename T >
 std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
+    if (t == 0.0)
+        return 1.0;
+    return this->CFImpl(t);
+}
+
+template< typename T >
+std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) const
+{
     if (t == 0)
         return 1;
 

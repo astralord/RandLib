@@ -71,10 +71,8 @@ double InverseGaussianRand::Variance() const
     return mu * mu * mu / lambda;
 }
 
-std::complex<double> InverseGaussianRand::CF(double t) const
+std::complex<double> InverseGaussianRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     double im = mu * mu;
     im *= t / lambda;
     std::complex<double> y(1, -im - im);

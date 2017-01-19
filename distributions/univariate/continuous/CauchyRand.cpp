@@ -41,7 +41,7 @@ double CauchyRand::StandardVariate()
     return x / y;
 }
     
-std::complex<double> CauchyRand::CF(double t) const
+std::complex<double> CauchyRand::CFImpl(double t) const
 {
     std::complex<double> x(-sigma * std::fabs(t), mu * t);
     return std::exp(x);

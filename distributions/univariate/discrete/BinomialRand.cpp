@@ -306,7 +306,7 @@ double BinomialRand::Variance() const
     return np * q;
 }
 
-std::complex<double> BinomialRand::CF(double t) const
+std::complex<double> BinomialRand::CFImpl(double t) const
 {
     std::complex<double> y(q + p * std::cos(t), p * std::sin(t));
     return std::pow(y, n);

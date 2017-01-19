@@ -59,10 +59,8 @@ double LogarithmicRand::Variance() const
     return -var / (q * q);
 }
 
-std::complex<double> LogarithmicRand::CF(double t) const
+std::complex<double> LogarithmicRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     std::complex<double> y(std::cos(t), std::sin(t));
     y = std::log(1.0 - p * y);
     return y * logQInv;

@@ -82,10 +82,8 @@ double PoissonRand::Variance() const
     return lambda;
 }
 
-std::complex<double> PoissonRand::CF(double t) const
+std::complex<double> PoissonRand::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
     std::complex<double> y(std::cos(t) - 1.0, std::sin(t));
     return std::exp(lambda * y);
 }
