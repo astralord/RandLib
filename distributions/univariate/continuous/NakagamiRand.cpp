@@ -1,4 +1,6 @@
 #include "NakagamiRand.h"
+#include "ExponentialRand.h"
+#include "NormalRand.h"
 
 NakagamiRand::NakagamiRand(double shape, double spread)
 {
@@ -13,12 +15,8 @@ std::string NakagamiRand::Name() const
 void NakagamiRand::SetParameters(double shape, double spread)
 {
     m = std::max(shape, 0.5);
-    w = spread;
-    if (w <= 0)
-        w = 1.0;
-
-    sigma = m / w;
-    Y.SetParameters(m, sigma);
+    w = (spread > 0.0) ? spread : 1.0;
+    Y.SetParameters(m, m / w);
 }
 
 double NakagamiRand::f(double x) const
@@ -51,7 +49,7 @@ double NakagamiRand::Mean() const
 {
     double y = std::lgamma(m + 0.5);
     y -= Y.GetLogGammaFunction();
-    y -= 0.5 * std::log(sigma);
+    y += 0.5 * std::log(w / m);
     return std::exp(y);
 }
 
@@ -69,58 +67,60 @@ double NakagamiRand::Mode() const
     return std::sqrt(w - mode);
 }
 
+double NakagamiRand::quantileImpl(double p) const
+{
+    return std::sqrt(Y.Quantile(p));
+}
+
+double NakagamiRand::quantileImpl1m(double p) const
+{
+    return std::sqrt(Y.Quantile1m(p));
+}
+
 
 /// CHI
-ChiRand::ChiRand(int degree, double scale)
+ChiRand::ChiRand(int degree)
 {
-    SetParameters(degree, scale);
+    SetParameters(degree);
 }
 
 std::string ChiRand::Name() const
 {
-    return "Chi(" + toStringWithPrecision(GetDegree()) + ", " + toStringWithPrecision(GetScale()) +  ")";
+    return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
 }
 
-void ChiRand::SetParameters(int degree, double scale)
+void ChiRand::SetParameters(int degree)
 {
-    sigma = scale;
-    if (sigma <= 0)
-        sigma = 1.0;
-    sigmaSqInv = 1.0 / (sigma * sigma);
-
-    NakagamiRand::SetParameters(0.5 * degree, degree * sigma * sigma);
-}
-
-double ChiRand::skewnessImpl(double mean, double sigma) const
-{
-    double variance = sigma * sigma;
-    double y = mean * (1 - 2 * variance);
-    return y / (sigma * variance);
+    NakagamiRand::SetParameters(0.5 * degree, degree);
 }
 
 double ChiRand::Skewness() const
 {
-    double mean = Mean();
-    return skewnessImpl(mean, std::sqrt(Variance()));
+    double mu = Mean();
+    double sigmaSq = Variance();
+    double skew = mu * (1 - 2 * sigmaSq);
+    skew /= std::pow(sigmaSq, 1.5);
+    return skew;
 }
 
 double ChiRand::ExcessKurtosis() const
 {
-    double mean = Mean();
-    double variance = Variance();
-    double sigma = std::sqrt(variance);
-    double skewness = skewnessImpl(mean, sigma);
-    double y = 1 - mean * sigma * skewness;
-    y /= variance;
-    --y;
-    return y + y;
+    double mu = Mean();
+    double sigmaSq = Variance();
+    double sigma = std::sqrt(sigmaSq);
+    double skew = Skewness();
+    double kurt = 1.0 - mu * sigma * skew;
+    kurt /= sigmaSq;
+    --kurt;
+    return 2 * kurt;
 }
 
 
 /// MAXWELL-BOLTZMANN
 MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale) :
-    ChiRand(3, scale)
+    ChiRand(3)
 {
+    SetScale(scale);
 }
 
 std::string MaxwellBoltzmannRand::Name() const
@@ -128,13 +128,19 @@ std::string MaxwellBoltzmannRand::Name() const
     return "Maxwell-Boltzmann(" + toStringWithPrecision(GetScale()) + ")";
 }
 
+void MaxwellBoltzmannRand::SetScale(double scale)
+{
+    sigma = (scale > 0.0) ? scale : 1.0;
+}
+
 double MaxwellBoltzmannRand::f(double x) const
 {
     if (x <= 0)
         return 0;
-    double x2 = x * x;
-    double y = std::exp(-.5 * x2 * sigmaSqInv);
-    return M_SQRT2 * M_1_SQRTPI * x2 * y * sigmaSqInv / sigma;
+    double xAdj = x / sigma;
+    double xAdjSq = xAdj * xAdj;
+    double y = std::exp(-0.5 * xAdjSq);
+    return M_SQRT2 * M_1_SQRTPI * xAdjSq * y / sigma;
 }
 
 double MaxwellBoltzmannRand::F(double x) const
@@ -143,8 +149,21 @@ double MaxwellBoltzmannRand::F(double x) const
         return 0;
     double xAdj = M_SQRT1_2 * x / sigma;
     double y = std::exp(-xAdj * xAdj);
-    y *= M_SQRT2 * M_1_SQRTPI * x / sigma;
+    y *= 2 * xAdj * M_1_SQRTPI;
     return std::erf(xAdj) - y;
+}
+
+double MaxwellBoltzmannRand::Variate() const
+{
+    double W = ExponentialRand::StandardVariate();
+    double N = NormalRand::StandardVariate();
+    return sigma * std::sqrt(2 * W + N * N);
+}
+
+void MaxwellBoltzmannRand::Sample(std::vector<double> &outputData) const
+{
+    for (double & var : outputData)
+        var = this->Variate();
 }
 
 double MaxwellBoltzmannRand::Mean() const
@@ -154,7 +173,7 @@ double MaxwellBoltzmannRand::Mean() const
 
 double MaxwellBoltzmannRand::Variance() const
 {
-    return (3 - 8.0 * M_1_PI) / sigmaSqInv;
+    return (3 - 8.0 * M_1_PI) * sigma * sigma;
 }
 
 double MaxwellBoltzmannRand::Mode() const
@@ -180,11 +199,22 @@ double MaxwellBoltzmannRand::ExcessKurtosis() const
     return 4 * numerator / denominator;
 }
 
+double MaxwellBoltzmannRand::quantileImpl(double p) const
+{
+    return sigma * ChiRand::quantileImpl(p);
+}
+
+double MaxwellBoltzmannRand::quantileImpl1m(double p) const
+{
+    return sigma * ChiRand::quantileImpl1m(p);
+}
+
 
 /// RAYLEIGH
 RayleighRand::RayleighRand(double scale) :
-    ChiRand(2, scale)
+    ChiRand(2)
 {
+    SetScale(scale);
 }
 
 std::string RayleighRand::Name() const
@@ -194,14 +224,14 @@ std::string RayleighRand::Name() const
 
 void RayleighRand::SetScale(double scale)
 {
-    ChiRand::SetParameters(2, scale);
+    sigma = (scale > 0.0) ? scale : 1.0;
 }
 
 double RayleighRand::f(double x) const
 {
     if (x <= 0)
         return 0.0;
-    double y = x * sigmaSqInv;
+    double y = x / (sigma * sigma);
     return y * std::exp(-0.5 * x * y);
 }
 
@@ -209,7 +239,20 @@ double RayleighRand::F(double x) const
 {
     if (x <= 0)
         return 0.0;
-    return 1.0 - std::exp(-0.5 * x * x * sigmaSqInv);
+    double xAdj = x / sigma;
+    return 1.0 - std::exp(-0.5 * xAdj * xAdj);
+}
+
+double RayleighRand::Variate() const
+{
+    double W = ExponentialRand::StandardVariate();
+    return sigma * std::sqrt(2 * W);
+}
+
+void RayleighRand::Sample(std::vector<double> &outputData) const
+{
+    for (double & var : outputData)
+        var = this->Variate();
 }
 
 double RayleighRand::Mean() const
@@ -219,7 +262,7 @@ double RayleighRand::Mean() const
 
 double RayleighRand::Variance() const
 {
-    return (2.0 - M_PI_2) / sigmaSqInv;
+    return (2.0 - M_PI_2) * sigma * sigma;
 }
 
 double RayleighRand::quantileImpl(double p) const

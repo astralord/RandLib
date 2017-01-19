@@ -12,8 +12,6 @@
 class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
     double m, w;
-    double sigma; /// w / m
-
     GammaRand Y;
 
 public:
@@ -36,6 +34,10 @@ public:
     double Mean() const override;
     double Variance() const override;
     double Mode() const override;
+
+protected:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 };
 
 
@@ -43,21 +45,18 @@ public:
  * @brief The ChiRand class
  * Chi distribution
  *
- * Notation: X ~ Chi(n, σ)
+ * Notation: X ~ Chi(k)
  *
  * Related distributions:
- * X ~ Nakagami(n/2, nσ^2)
- *
- * @todo figure out the difference between chi-sigma and nakagami-sigma
+ * X ~ Nakagami(k/2, k)
+ * X^2 ~ Chi-Squared(k)
+ * X^2 ~ Gamma(k/2, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiRand : public NakagamiRand
 {
-protected:
-    double sigma;
-    double sigmaSqInv; /// 1.0 / sigma^2
 
 public:
-    explicit ChiRand(int degree, double scale = 1.0);
+    explicit ChiRand(int degree);
     std::string Name() const override;
 
 private:
@@ -66,14 +65,9 @@ private:
     using NakagamiRand::GetSpread;
 
 public:
-    void SetParameters(int degree, double scale = 1.0);
+    void SetParameters(int degree);
     inline int GetDegree() const { return 2 * NakagamiRand::GetShape(); }
-    inline double GetScale() const { return sigma; }
 
-private:
-    double skewnessImpl(double mean, double sigma) const;
-
-public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 };
@@ -86,23 +80,32 @@ public:
  * Notation: X ~ MB(σ)
  *
  * Related distributions:
- * X ~ Chi(3, σ)
- * X ~ Nakagami(1.5, 1.5σ^2)
+ * X / σ ~ Chi(3)
+ * X / σ ~ Nakagami(1.5, 3)
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ChiRand
 {
+    double sigma;
 public:
     explicit MaxwellBoltzmannRand(double scale);
     std::string Name() const override;
+    void SetScale(double scale);
+    double GetScale() const { return sigma; }
 
     double f(double x) const override;
     double F(double x) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 };
 
 
@@ -113,19 +116,22 @@ public:
  * Notation: X ~ Rayleigh(σ)
  *
  * Related distributions:
- * X ~ Chi(2, σ)
- * X ~ Nakagami(1, 2σ^2)
+ * X / σ ~ Chi(2)
+ * X / σ ~ Nakagami(1, 2)
  */
 class RANDLIBSHARED_EXPORT RayleighRand : public ChiRand
 {
+    double sigma;
 public:
     explicit RayleighRand(double scale = 1);
     std::string Name() const override;
-
     void SetScale(double scale);
+    double GetScale() const { return sigma; }
 
     double f(double x) const override;
     double F(double x) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

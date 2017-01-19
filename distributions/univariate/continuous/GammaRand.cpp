@@ -24,9 +24,7 @@ void GammaRand::SetParameters(double shape, double rate)
     alpha = shape > 0 ? shape : 1.0;
     alphaInv = 1.0 / alpha;
     
-    beta = rate;
-    if (beta <= 0)
-        beta = 1.0;
+    beta = (rate > 0.0) ? rate : 1.0;
     theta = 1.0 / beta;
 
     mLgammaShape = -std::lgamma(alpha);
