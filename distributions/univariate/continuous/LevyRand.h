@@ -12,8 +12,9 @@
  * Notation: X ~ Levy(μ, σ)
  *
  * Related distributions:
+ * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ)
  * X ~ Stable(0.5, 1, σ, μ)
- * If Y ~ Normal(0, 1), then μ + σ / X^2 ~ Levy(μ, σ)
+ * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public StableRand
 {

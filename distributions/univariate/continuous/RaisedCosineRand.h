@@ -42,7 +42,7 @@ public:
 
 /**
  * @brief The RaabGreenRand class
- * X ~ Raised cosine (0.0, M_PI)
+ * X ~ Raised cosine (0.0, π)
  */
 class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineRand
 {

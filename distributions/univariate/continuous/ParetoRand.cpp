@@ -111,18 +111,6 @@ double ParetoRand::Variance() const
     return (alpha > 1) ? INFINITY : NAN;
 }
 
-double ParetoRand::quantileImpl(double p) const
-{
-    double y = alphaLogXm - std::log1p(-p);
-    return std::exp(alphaInv * y);
-}
-
-double ParetoRand::quantileImpl1m(double p) const
-{
-    double y = alphaLogXm - std::log(p);
-    return std::exp(alphaInv * y);
-}
-
 double ParetoRand::Median() const
 {
     double y = alphaLogXm + M_LN2;
@@ -155,6 +143,18 @@ double ParetoRand::ExcessKurtosis() const
     numerator -= 2;
     double denominator = alpha * (alpha - 3) * (alpha - 4);
     return 6.0 * numerator / denominator;
+}
+
+double ParetoRand::quantileImpl(double p) const
+{
+    double y = alphaLogXm - std::log1p(-p);
+    return std::exp(alphaInv * y);
+}
+
+double ParetoRand::quantileImpl1m(double p) const
+{
+    double y = alphaLogXm - std::log(p);
+    return std::exp(alphaInv * y);
 }
 
 double ParetoRand::Entropy() const
