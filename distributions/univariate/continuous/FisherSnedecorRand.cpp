@@ -50,11 +50,6 @@ double FisherSnedecorRand::Variate() const
     return d2_d1 * B.Variate();
 }
 
-std::complex<double> FisherSnedecorRand::CF(double t) const
-{
-    return B.CF(d2_d1 * t);
-}
-
 void FisherSnedecorRand::Sample(std::vector<double> &outputData) const
 {
     B.Sample(outputData);
@@ -124,4 +119,9 @@ double FisherSnedecorRand::ExcessKurtosis() const
     kurtosis += 5 * d2 - 22;
     kurtosis /= (d2 - 6) * (d2 - 8);
     return 12.0 * kurtosis;
+}
+
+std::complex<double> FisherSnedecorRand::CF(double t) const
+{
+    return B.CF(d2_d1 * t);
 }
