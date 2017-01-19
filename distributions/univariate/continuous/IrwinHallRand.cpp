@@ -74,7 +74,7 @@ double IrwinHallRand::Variance() const
 
 std::complex<double> IrwinHallRand::CFImpl(double t) const
 {
-    return std::pow(U.CFImpl(t), n);
+    return std::pow(U.CF(t), n);
 }
 
 double IrwinHallRand::Median() const

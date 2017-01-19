@@ -33,6 +33,7 @@ public:
     double Variance() const override;
     int Mode() const override;
 
+private:
     std::complex<double> CFImpl(double t) const override;
 };
 

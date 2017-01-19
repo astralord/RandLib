@@ -67,16 +67,14 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
 
     if (std::fabs(t) < 1e-4)
     {
-        double mean4 = FourthMoment();
-        if (std::isfinite(mean4)) {
-            double mean3 = ThirdMoment();
-            double mean2 = SecondMoment();
-            double mean1 = Mean();
+        double mom4 = FourthMoment();
+        if (std::isfinite(mom4)) {
+            double mom1 = Mean();
+            double mom2 = SecondMoment();
+            double mom3 = ThirdMoment();
 
-            double tSq = t * t;
-            double re = 1 - 0.5 * mean2 * tSq + mean4 * tSq * tSq / 24;
-            double im = mean1 - mean3 * tSq / 6;
-            im *= t;
+            double re = 1 - 0.5 * mom2 * t * t + mom4 * std::pow(t, 4) / 24;
+            double im = mom1 * t - mom3 * std::pow(t, 3) / 6;
             return std::complex<double>(re, im);
         }
     }
@@ -89,8 +87,6 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
             startPoint = MaxValue();
         else {
             startPoint = Median();
-            if (!std::isfinite(startPoint))
-                startPoint = 0.0;
         }
     }
     double re = ExpectedValue([this, t] (double x)
@@ -130,13 +126,10 @@ double UnivariateProbabilityDistribution<T>::Median() const
 template< typename T >
 double UnivariateProbabilityDistribution<T>::Skewness() const
 {
-    double mu = Mean();
-    if (!std::isfinite(mu))
-        return NAN;
-
     double var = Variance();
     if (!std::isfinite(var))
         return NAN;
+    double mu = Mean(); /// var is finite, so is mu
 
     double sum = ExpectedValue([this, mu] (double x)
     {
@@ -150,13 +143,10 @@ double UnivariateProbabilityDistribution<T>::Skewness() const
 template< typename T >
 double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
 {
-    double mu = Mean();
-    if (!std::isfinite(mu))
-        return NAN;
-
     double var = Variance();
     if (!std::isfinite(var))
         return NAN;
+    double mu = Mean(); /// var is finite, so is mu
 
     double sum = ExpectedValue([this, mu] (double x)
     {

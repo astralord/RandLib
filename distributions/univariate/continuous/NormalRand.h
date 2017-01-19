@@ -45,13 +45,14 @@ public:
     static double Variate(double mean, double rootVar);
     static double StandardVariate();
 
-    std::complex<double> CFImpl(double t) const override;
     static double standardQuantile(double p);
     static double quantile(double p, double mean, double scale);
 
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     double Moment(int n) const;

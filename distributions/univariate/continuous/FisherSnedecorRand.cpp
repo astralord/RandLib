@@ -50,11 +50,6 @@ double FisherSnedecorRand::Variate() const
     return d2_d1 * B.Variate();
 }
 
-std::complex<double> FisherSnedecorRand::CFImpl(double t) const
-{
-    return B.CFImpl(d2_d1 * t);
-}
-
 void FisherSnedecorRand::Sample(std::vector<double> &outputData) const
 {
     B.Sample(outputData);
@@ -76,16 +71,6 @@ double FisherSnedecorRand::Variance() const
     denominator *= denominator;
     denominator *= d1 * (d2 - 4);
     return numerator / denominator;
-}
-
-double FisherSnedecorRand::quantileImpl(double p) const
-{
-    return d2_d1 * B.Quantile(p);
-}
-
-double FisherSnedecorRand::quantileImpl1m(double p) const
-{
-    return d2_d1 * B.Quantile1m(p);
 }
 
 double FisherSnedecorRand::Median() const
@@ -124,4 +109,19 @@ double FisherSnedecorRand::ExcessKurtosis() const
     kurtosis += 5 * d2 - 22;
     kurtosis /= (d2 - 6) * (d2 - 8);
     return 12.0 * kurtosis;
+}
+
+double FisherSnedecorRand::quantileImpl(double p) const
+{
+  return d2_d1 * B.Quantile(p);
+}
+
+double FisherSnedecorRand::quantileImpl1m(double p) const
+{
+  return d2_d1 * B.Quantile1m(p);
+}
+
+std::complex<double> FisherSnedecorRand::CFImpl(double t) const
+{
+  return B.CF(d2_d1 * t);
 }

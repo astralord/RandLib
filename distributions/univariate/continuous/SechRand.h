@@ -25,12 +25,12 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double Kurtosis() const override;
-    std::complex<double> CFImpl(double t) const override;
 
 private:
     double quantileImpl(double p) const;
     double quantileImpl1m(double p) const;
 
+    std::complex<double> CFImpl(double t) const override;
 public:
     double Entropy() const;
 };

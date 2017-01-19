@@ -33,11 +33,11 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    std::complex<double> CFImpl(double t) const override;
-
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+
+    std::complex<double> CFImpl(double t) const override;
 };
 
 #endif // CANTORRAND_H

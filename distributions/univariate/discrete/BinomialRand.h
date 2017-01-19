@@ -88,9 +88,24 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+private:
     std::complex<double> CFImpl(double t) const override;
 
+public:
+    /**
+     * @brief FitProbabilityMLE
+     * Fit probability p with maximum-likelihood estimation
+     * @param sample
+     * @return
+     */
     bool FitProbabilityMLE(const std::vector<int> &sample);
+
+    /**
+     * @brief FitProbabilityMM
+     * Fit probability p, using method of moments
+     * @param sample
+     * @return
+     */
     bool FitProbabilityMM(const std::vector<int> &sample);
 
     /**

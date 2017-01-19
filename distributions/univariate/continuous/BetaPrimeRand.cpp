@@ -97,6 +97,18 @@ double BetaPrimeRand::ExcessKurtosis() const
     return 6 * numerator / denominator;
 }
 
+double BetaPrimeRand::quantileImpl(double p) const
+{
+    double x = B.Quantile(p);
+    return x / (1.0 - x);
+}
+
+double BetaPrimeRand::quantileImpl1m(double p) const
+{
+    double x = B.Quantile1m(p);
+    return x / (1.0 - x);
+}
+
 std::complex<double> BetaPrimeRand::CFImpl(double t) const
 {
     /// if no singularity - simple numeric integration
@@ -131,16 +143,4 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
         return std::sin(t * x);
     }, 0.0);
     return std::complex<double>(re, im);
-}
-
-double BetaPrimeRand::quantileImpl(double p) const
-{
-    double x = B.Quantile(p);
-    return x / (1.0 - x);
-}
-
-double BetaPrimeRand::quantileImpl1m(double p) const
-{
-    double x = B.Quantile1m(p);
-    return x / (1.0 - x);
 }

@@ -74,7 +74,7 @@ double ExponentiallyModifiedGaussianRand::Variance() const
 
 std::complex<double> ExponentiallyModifiedGaussianRand::CFImpl(double t) const
 {
-    return X.CFImpl(t) * Y.CFImpl(t);
+    return X.CF(t) * Y.CF(t);
 }
 
 double ExponentiallyModifiedGaussianRand::Skewness() const

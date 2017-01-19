@@ -261,9 +261,19 @@ double GammaRand::Variance() const
     return alpha * theta * theta;
 }
 
-std::complex<double> GammaRand::CFImpl(double t) const
+double GammaRand::Mode() const
 {
-    return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
+    return (alpha <= 1) ? 0 : (alpha - 1) * theta;
+}
+
+double GammaRand::Skewness() const
+{
+    return 2.0 / std::sqrt(alpha);
+}
+
+double GammaRand::ExcessKurtosis() const
+{
+    return 6.0 / alpha;
 }
 
 double GammaRand::initRootForSmallP(double r) const
@@ -410,19 +420,9 @@ double GammaRand::quantileImpl1m(double p) const
     return quantileImpl(1.0 - p);
 }
 
-double GammaRand::Mode() const
+std::complex<double> GammaRand::CFImpl(double t) const
 {
-    return (alpha <= 1) ? 0 : (alpha - 1) * theta;
-}
-
-double GammaRand::Skewness() const
-{
-    return 2.0 / std::sqrt(alpha);
-}
-
-double GammaRand::ExcessKurtosis() const
-{
-    return 6.0 / alpha;
+    return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
 bool GammaRand::FitScaleMLE(const std::vector<double> &sample)

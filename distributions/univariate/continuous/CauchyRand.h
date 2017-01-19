@@ -38,11 +38,11 @@ public:
     static double Variate(double location, double scale);
     static double StandardVariate();
 
-    std::complex<double> CFImpl(double t) const override;
-
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     double Entropy() const;

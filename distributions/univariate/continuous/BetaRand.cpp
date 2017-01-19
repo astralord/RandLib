@@ -398,6 +398,34 @@ double BetaRand::ExcessKurtosis() const
     return 6 * kurtosis;
 }
 
+double BetaRand::quantileImpl(double p) const
+{
+    if (alpha == beta)
+    {
+        if (alpha == 0.5) {
+            double x = std::sin(0.5 * M_PI * p);
+            return a + bma * x * x;
+        }
+        if (alpha == 1)
+            return a + bma * p;
+    }
+    return ContinuousDistribution::quantileImpl(p);
+}
+
+double BetaRand::quantileImpl1m(double p) const
+{
+    if (alpha == beta)
+    {
+        if (alpha == 0.5) {
+            double x = std::cos(0.5 * M_PI * p);
+            return a + bma * x * x;
+        }
+        if (alpha == 1)
+            return b - bma * p;
+    }
+    return ContinuousDistribution::quantileImpl1m(p);
+}
+
 std::complex<double> BetaRand::CFImpl(double t) const
 {
     /// if we don't have singularity points, we can use direct integration
@@ -437,35 +465,6 @@ std::complex<double> BetaRand::CFImpl(double t) const
     y *= std::exp(std::complex<double>(0, t * a));
     return betaFunInv * y;
 }
-
-double BetaRand::quantileImpl(double p) const
-{
-    if (alpha == beta)
-    {
-        if (alpha == 0.5) {
-            double x = std::sin(0.5 * M_PI * p);
-            return a + bma * x * x;
-        }
-        if (alpha == 1)
-            return a + bma * p;
-    }
-    return ContinuousDistribution::quantileImpl(p);
-}
-
-double BetaRand::quantileImpl1m(double p) const
-{
-    if (alpha == beta)
-    {
-        if (alpha == 0.5) {
-            double x = std::cos(0.5 * M_PI * p);
-            return a + bma * x * x;
-        }
-        if (alpha == 1)
-            return b - bma * p;
-    }
-    return ContinuousDistribution::quantileImpl1m(p);
-}
-
 
 ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
 {

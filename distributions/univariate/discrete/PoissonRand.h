@@ -42,8 +42,10 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+private:
     std::complex<double> CFImpl(double t) const override;
 
+public:
     bool FitMLE(const std::vector<int> &sample);
     bool FitMM(const std::vector<int> &sample);
     bool FitBayes(const std::vector<int> &sample, GammaRand & priorDistribution);

@@ -34,6 +34,7 @@ public:
     double Median() const override;
     double Mode() const override;
 
+private:
     std::complex<double> CFImpl(double t) const override;
 };
 

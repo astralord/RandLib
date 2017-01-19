@@ -71,8 +71,6 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    std::complex<double> CFImpl(double t) const override;
-
 private:
     double initRootForSmallP(double r) const;
     double initRootForLargeP(double logQ) const;
@@ -81,6 +79,8 @@ private:
     double df(double x) const;
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     /// Maximum-likelihood estimation

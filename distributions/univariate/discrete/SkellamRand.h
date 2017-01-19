@@ -44,6 +44,7 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+private:
     std::complex<double> CFImpl(double t) const override;
 };
 
