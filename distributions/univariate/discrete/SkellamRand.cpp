@@ -1,4 +1,5 @@
 #include "SkellamRand.h"
+#include "../continuous/NoncentralChiSquared.h"
 
 SkellamRand::SkellamRand(double mean1, double mean2)
 {
@@ -33,16 +34,15 @@ double SkellamRand::P(int k) const
 
 double SkellamRand::F(int k) const
 {
-    // TODO: find better realisation
-    int i = std::max(0, -k);
-    double sum = 0, summand = 0.0, xCDF = 0;
-    do {
-        xCDF = X.F(k + i);
-        summand = xCDF * Y.P(i);
-        sum += summand;
-        ++i;
-    } while (summand > MIN_POSITIVE || xCDF < 0.9);
-    return sum;
+    // TODO: implement marcum q-function
+    // and use it instead of creating Y
+    NoncentralChiSquared Y;
+    if (k <= 0) {
+        Y.SetParameters(-2 * k, 2 * mu1);
+        return Y.F(2 * mu2);
+    }
+    Y.SetParameters(2 * k + 2, 2 * mu2);
+    return 1.0 - Y.F(2 * mu1);
 }
 
 int SkellamRand::Variate() const

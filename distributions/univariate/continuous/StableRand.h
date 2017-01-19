@@ -13,8 +13,7 @@
  * Related distributions:
  * If X ~ Normal(μ, σ), then X ~ Stable(2, 0, σ, μ)
  * If X ~ Cauchy(μ, σ), then X ~ Stable(1, 0, σ / 2^(1/2), μ)
- * If X ~ Levy(μ, σ), then X ~ Stable(0.5, 1, σ, μ)
- * If -X ~ Levy(μ, σ), then X ~ Stable(0.5, -1, σ, μ)
+ * If +/-X ~ Levy(μ, σ), then X ~ Stable(0.5, +/-1, σ, μ)
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {

@@ -97,12 +97,11 @@ double VonMisesRand::Mean() const
 
 double VonMisesRand::Variance() const
 {
-    double m2 = RandMath::integral([this] (double t)
+    return 2 * RandMath::integral([this] (double t)
     {
-        return t * t * VonMisesRand::f(t);
+        return t * t * VonMisesRand::f(t + mu);
     },
-    mu - M_PI, mu + M_PI);
-    return m2 - mu * mu;
+    0, M_PI);
 }
 
 std::complex<double> VonMisesRand::CF(double t) const

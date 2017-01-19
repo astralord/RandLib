@@ -159,8 +159,9 @@ std::complex<double> NoncentralChiSquared::CF(double t) const
         return 1;
     std::complex<double> aux(1, -2 * t);
     std::complex<double> y(0, lambda * t);
-    y = std::exp(y / aux);
-    return y / std::pow(aux, halfK);
+    y /= aux;
+    y -= halfK * std::log(aux);
+    return std::exp(y);
 }
 
 double NoncentralChiSquared::Skewness() const

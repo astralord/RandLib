@@ -1,22 +1,22 @@
-#ifndef WALDRAND_H
-#define WALDRAND_H
+#ifndef INVERSEGAUSSIANRAND_H
+#define INVERSEGAUSSIANRAND_H
 
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The WaldRand class
- * Wald (Inverse Gaussian) distribution
+ * @brief The InverseGaussianRand class
+ * Inverse Gaussian (Wald) distribution
  *
  * Notation: X ~ IG(μ, λ)
  */
-class RANDLIBSHARED_EXPORT WaldRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution
 {
     double mu, lambda;
 
     double pdfCoef; /// (λ/(2π))^(1/2)
     double cdfCoef; /// exp(2λ/μ)
 public:
-    WaldRand(double mean = 1, double shape = 1);
+    InverseGaussianRand(double mean = 1, double shape = 1);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
@@ -41,4 +41,4 @@ public:
 };
 
 
-#endif // WALDRAND_H
+#endif // INVERSEGAUSSIANRAND_H

@@ -60,13 +60,12 @@ void StableRand::SetParameters(double exponent, double skewness)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
 
         /// pdfXLimit is such k that for x > k we use asymptotic expansion
-        // TODO: pdfXLimit should also depend on beta
         pdfXLimit = 3.0 / (1.0 + alpha) * M_LN10;
 
         /// define boundaries of region near 0, where we use series expansion
         if (alpha <= ALMOST_TWO) {
             seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
-            seriesZeroParams.second = -0.5 * (3.0 / alpha + 1.0) * M_LN10; /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
+            seriesZeroParams.second = -(1.5 / alpha + 0.5) * M_LN10; /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
         }
         else {
             seriesZeroParams.first = 85;
@@ -322,7 +321,8 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
         g_11 += gammaSecDerTable[i];
         double aux = digammaTable[i] - 0.5 * logY;
         double g_12 = aux;
-        double cosZNu = std::cos(z * (i + 2)), zSinZNu = z * std::sin(z * (i + 2));
+        double zip2 = z * (i + 2);
+        double cosZNu = std::cos(zip2), zSinZNu = z * std::sin(zip2);
         g_12 *= cosZNu;
         g_12 -= zSinZNu;
         double g_1 = g_11 * g_12;
@@ -398,7 +398,7 @@ double StableRand::pdfForCommonExponent(double x) const
         xiAdj = -xi;
     }
 
-    /// If α is too close to 0 and distribution is symmetric, then we approximate using Taylor series
+    /// If α is too close to 1 and distribution is symmetric, then we approximate using Taylor series
     if (beta == 0.0 && alpha > 0.99 && alpha < 1.01)
         return pdfCauchy(x) + pdfTaylorExpansionTailNearCauchy(absXSt) / sigma;
 
@@ -441,7 +441,9 @@ double StableRand::pdfForCommonExponent(double x) const
     /// Finally we check if α is not too close to 2
     if (alpha <= ALMOST_TWO)
         return res;
-    // WARNING: this works only for symmetric distributions
+
+    /// If α is near 2, we use tail aprroximation for large x
+    /// and compare it with integral representation
     double alphap1 = alpha + 1.0;
     double tail = std::lgamma(alphap1);
     tail -= alphap1 * logAbsX;
@@ -675,7 +677,7 @@ double StableRand::Variance() const
 
 double StableRand::Mode() const
 {
-    /// For symmetric distributions mode is μ (see Wintner(1936))
+    /// For symmetric distributions mode is μ
     if (beta == 0)
         return mu;
     if (distributionId == LEVY)

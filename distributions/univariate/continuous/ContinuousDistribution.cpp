@@ -29,8 +29,6 @@ double ContinuousDistribution::quantileImpl(double p) const
     std::sort(sample.begin(), sample.end());
     guess = sample[p * SAMPLE_SIZE];
 
-    // TODO: use tail for heavy-tailed distributions
-
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = F(x) - p;

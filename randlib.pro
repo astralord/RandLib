@@ -30,7 +30,6 @@ SOURCES += \
     distributions/univariate/discrete/UniformDiscreteRand.cpp \
     distributions/univariate/discrete/PoissonRand.cpp \
     distributions/univariate/continuous/NakagamiRand.cpp \
-    distributions/univariate/continuous/WaldRand.cpp \
     distributions/univariate/continuous/WeibullRand.cpp \
     distributions/univariate/discrete/RademacherRand.cpp \
     math/RandMath.cpp \
@@ -83,7 +82,8 @@ SOURCES += \
     processes/HestonProcess.cpp \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp \
     processes/StudentTProcess.cpp \
-    distributions/univariate/discrete/NegativeHyperGeometricRand.cpp
+    distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
+    distributions/univariate/continuous/InverseGaussianRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -109,7 +109,6 @@ HEADERS +=\
     distributions/univariate/discrete/UniformDiscreteRand.h \
     distributions/univariate/discrete/PoissonRand.h \
     distributions/univariate/continuous/NakagamiRand.h \
-    distributions/univariate/continuous/WaldRand.h \
     distributions/univariate/continuous/WeibullRand.h \
     distributions/univariate/discrete/RademacherRand.h \
     math/RandMath.h \
@@ -166,7 +165,8 @@ HEADERS +=\
     processes/HestonProcess.h \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h \
     processes/StudentTProcess.h \
-    distributions/univariate/discrete/NegativeHyperGeometricRand.h
+    distributions/univariate/discrete/NegativeHyperGeometricRand.h \
+    distributions/univariate/continuous/InverseGaussianRand.h
 
 unix {
     target.path = /usr/lib

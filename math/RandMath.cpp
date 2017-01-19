@@ -444,7 +444,8 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
 {
     /// Sanity check
     epsilon = std::max(epsilon, MIN_POSITIVE);
-    static constexpr int maxIter = 1e5;
+    static constexpr int MAX_ITER = 1e5;
+    static constexpr double MAX_STEP = 10;
     int iter = 0;
     double step = epsilon + 1;
     DoubleTriplet y = funPtr(root);
@@ -458,19 +459,18 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
         double oldFun = f;
         double numerator = 2 * f * fx;
         double denominator = 2 * fx * fx - f * fxx;
-        step = numerator / denominator;
+        step = std::min(MAX_STEP, std::max(-MAX_STEP, numerator / denominator));
         do {
             root = oldRoot - alpha * step;
             y = funPtr(root);
-            // TODO: make bounds for fx and fxx
             std::tie(f, fx, fxx) = y;
             if (std::fabs(f) < epsilon)
                 return true;
             alpha *= 0.5;
         } while ((std::fabs(fx) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
-    } while (std::fabs(step) > epsilon && ++iter < maxIter);
+    } while (std::fabs(step) > epsilon && ++iter < MAX_ITER);
 
-    return (iter == maxIter) ? false : true;
+    return (iter == MAX_ITER) ? false : true;
 }
 
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, double epsilon)
@@ -823,6 +823,10 @@ double harmonicNumber(double exponent, int number)
 {
     if (number < 1)
         return 0;
+    if (exponent == 1)
+        return M_EULER + digamma(number + 1);
+    if (exponent == 2)
+        return M_PI_SQ / 6.0 - trigamma(number + 1);
     double res = 1.0;
     for (int i = 2; i <= number; ++i)
         res += std::pow(i, -exponent);
@@ -913,7 +917,6 @@ double zetaRiemann(double s)
 {
     if (s == 1)
         return INFINITY;
-    // TODO!! http://numbers.computation.free.fr/Constants/Miscellaneous/zetaevaluations.pdf
     if (s < 1)
         return NAN;
     int N = 100;

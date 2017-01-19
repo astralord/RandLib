@@ -14,9 +14,7 @@ std::string ZipfRand::Name() const
 
 void ZipfRand::SetParameters(double exponent, int number)
 {
-    s = exponent;
-    if (s <= 1.0)
-        s = 2.0;
+    s = exponent <= 1.0 ? 2.0 : exponent;
     n = number < 1 ? 1 : number;
 
     invHarmonicNumber = 1.0 / RandMath::harmonicNumber(s, n);

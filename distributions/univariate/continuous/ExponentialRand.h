@@ -16,7 +16,6 @@
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
 {
-    //TODO: find a way to initialize them without dummy
     /// Tables for ziggurat
     static double stairWidth[257], stairHeight[256];
     static double constexpr x1 = 7.69711747013104972;

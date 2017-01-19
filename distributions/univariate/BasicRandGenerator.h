@@ -5,17 +5,14 @@
 
 enum GeneratorType {
     JKISS, // 2 ^ 1271
-    JLKISS64, // 2 ^ 250
-    /*MWC256, // 2 ^ 8222
-    CMWC4096, // 2 ^ 131086
-    SUPERKISS // 54767 * 2 ^ 1337279*/
+    JLKISS64 // 2 ^ 250
 };
 
 
 /**
  * @brief The BasicRandGenerator class
  */
-template < char Generator = JKISS >
+template < char Generator >
 class RANDLIBSHARED_EXPORT BasicRandGenerator
 {
 
@@ -33,7 +30,7 @@ public:
 #ifdef JLKISS64RAND
 typedef BasicRandGenerator<JLKISS64RAND> RandGenerator;
 #else
-typedef BasicRandGenerator<> RandGenerator;
+typedef BasicRandGenerator<JKISS> RandGenerator;
 #endif
 
 

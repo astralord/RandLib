@@ -36,6 +36,7 @@
 #include "univariate/continuous/GeometricStableRand.h"
 #include "univariate/continuous/GumbelRand.h"
 #include "univariate/continuous/InverseGammaRand.h"
+#include "univariate/continuous/InverseGaussianRand.h"
 #include "univariate/continuous/IrwinHallRand.h"
 #include "univariate/continuous/LaplaceRand.h"
 #include "univariate/continuous/LevyRand.h"
@@ -55,7 +56,6 @@
 #include "univariate/continuous/UniformRand.h"
 #include "univariate/continuous/TriangularRand.h"
 #include "univariate/continuous/VonMisesRand.h"
-#include "univariate/continuous/WaldRand.h"
 #include "univariate/continuous/WeibullRand.h"
 #include "univariate/continuous/WignerSemicircleRand.h"
 

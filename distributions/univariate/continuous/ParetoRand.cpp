@@ -13,37 +13,31 @@ std::string ParetoRand::Name() const
 
 void ParetoRand::SetParameters(double shape, double scale)
 {
-    alpha = shape;
-    if (alpha <= 0)
-        alpha = 1.0;
+    alpha = (shape > 0.0) ? shape : 1.0;
     alphaInv = 1.0 / alpha;
-    
-    xm = scale;
-    if (xm <= 0)
-        xm = 1.0;
-    pdfCoef = alpha * std::pow(xm, alpha);
+    xm = (scale > 0.0) ? scale : 1.0;
+    alphaLogXm = alpha * std::log(xm);
 }
 
 void ParetoRand::SetShape(double shape)
 {
-    alpha = shape;
-    if (alpha <= 0)
-        alpha = 1.0;
+    alpha = (shape > 0.0) ? shape : 1.0;
     alphaInv = 1.0 / alpha;
-    pdfCoef = alpha * std::pow(xm, alpha);
+    alphaLogXm = alpha * std::log(xm);
 }
 
 void ParetoRand::SetScale(double scale)
 {
-    xm = scale;
-    if (xm <= 0)
-        xm = 1.0;
-    pdfCoef = alpha * std::pow(xm, alpha);
+    xm = (scale > 0.0) ? scale : 1.0;
+    alphaLogXm = alpha * std::log(xm);
 }
 
 double ParetoRand::f(double x) const
 {
-    return (x >= xm) ? pdfCoef / std::pow(x, alpha + 1) : 0;
+    if (x < xm)
+        return 0.0;
+    double y = alphaLogXm - (alpha + 1) * std::log(x);
+    return alpha * std::exp(y);
 }
 
 double ParetoRand::F(double x) const
@@ -119,17 +113,20 @@ double ParetoRand::Variance() const
 
 double ParetoRand::quantileImpl(double p) const
 {
-    return xm / std::pow(1 - p, alphaInv);
+    double y = alphaLogXm - std::log1p(-p);
+    return std::exp(alphaInv * y);
 }
 
 double ParetoRand::quantileImpl1m(double p) const
 {
-    return xm / std::pow(p, alphaInv);
+    double y = alphaLogXm - std::log(p);
+    return std::exp(alphaInv * y);
 }
 
 double ParetoRand::Median() const
 {
-    return xm * std::pow(2.0, alphaInv);
+    double y = alphaLogXm + M_LN2;
+    return std::exp(alphaInv * y);
 }
 
 double ParetoRand::Mode() const

@@ -10,7 +10,7 @@ class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
     double xm, alpha;
     double alphaInv;
-    double pdfCoef;
+    double alphaLogXm;
 
 public:
     ParetoRand(double shape = 1, double scale = 1);
