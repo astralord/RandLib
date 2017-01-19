@@ -348,9 +348,16 @@ std::complex<double> GeometricStableRand::CF(double t) const
 double GeometricStableRand::Median() const
 {
     if (alpha == 2) {
-        double y = 0.5 * (1.0 / kSq + 1.0);
-        y = std::log(y);
-        return sigma * k * y;
+        if (k > 1) {
+            double y = 0.5 / kSq + 0.5;
+            y = std::log(y);
+            return sigma * k * y;
+        }
+        else {
+            double y = 0.5 + 0.5 * kSq;
+            y = std::log(y);
+            return -sigma / k * y;
+        }
     }
     return ContinuousDistribution::Median();
 }
