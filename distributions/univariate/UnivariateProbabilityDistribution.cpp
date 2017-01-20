@@ -137,7 +137,7 @@ double UnivariateProbabilityDistribution<T>::Skewness() const
         return skew * skew * skew;
     }, mu);
 
-    return sum / (var * std::sqrt(var));
+    return sum / std::pow(var, 1.5);
 }
 
 template< typename T >

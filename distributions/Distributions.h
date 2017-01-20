@@ -4,24 +4,6 @@
 #include "ProbabilityDistribution.h"
 #include "univariate/BasicRandGenerator.h"
 
-/// DISCRETE
-#include "univariate/discrete/DiscreteDistribution.h"
-#include "univariate/discrete/BernoulliRand.h"
-#include "univariate/discrete/BetaBinomialRand.h"
-#include "univariate/discrete/BinomialRand.h"
-#include "univariate/discrete/GeometricRand.h"
-#include "univariate/discrete/HyperGeometricRand.h"
-#include "univariate/discrete/NegativeBinomialRand.h"
-#include "univariate/discrete/NegativeHyperGeometricRand.h"
-#include "univariate/discrete/LogarithmicRand.h"
-#include "univariate/discrete/PoissonRand.h"
-#include "univariate/discrete/RademacherRand.h"
-#include "univariate/discrete/SkellamRand.h"
-#include "univariate/discrete/UniformDiscreteRand.h"
-#include "univariate/discrete/YuleRand.h"
-#include "univariate/discrete/ZetaRand.h"
-#include "univariate/discrete/ZipfRand.h"
-
 /// CONTINUOUS
 #include "univariate/continuous/ContinuousDistribution.h"
 #include "univariate/continuous/BetaPrimeRand.h"
@@ -58,6 +40,26 @@
 #include "univariate/continuous/VonMisesRand.h"
 #include "univariate/continuous/WeibullRand.h"
 #include "univariate/continuous/WignerSemicircleRand.h"
+
+/// DISCRETE
+#include "univariate/discrete/DiscreteDistribution.h"
+#include "univariate/discrete/BernoulliRand.h"
+#include "univariate/discrete/BetaBinomialRand.h"
+#include "univariate/discrete/BinomialRand.h"
+#include "univariate/discrete/CategoricalRand.h"
+#include "univariate/discrete/GeometricRand.h"
+#include "univariate/discrete/HyperGeometricRand.h"
+#include "univariate/discrete/NegativeBinomialRand.h"
+#include "univariate/discrete/NegativeHyperGeometricRand.h"
+#include "univariate/discrete/LogarithmicRand.h"
+#include "univariate/discrete/PoissonRand.h"
+#include "univariate/discrete/RademacherRand.h"
+#include "univariate/discrete/SkellamRand.h"
+#include "univariate/discrete/UniformDiscreteRand.h"
+#include "univariate/discrete/YuleRand.h"
+#include "univariate/discrete/ZetaRand.h"
+#include "univariate/discrete/ZipfRand.h"
+
 
 /// SINGULAR
 #include "univariate/singular/SingularDistribution.h"

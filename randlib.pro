@@ -79,7 +79,8 @@ SOURCES += \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp \
     processes/StudentTProcess.cpp \
     distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
-    distributions/univariate/continuous/InverseGaussianRand.cpp
+    distributions/univariate/continuous/InverseGaussianRand.cpp \
+    distributions/univariate/discrete/CategoricalRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -158,7 +159,8 @@ HEADERS +=\
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h \
     processes/StudentTProcess.h \
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \
-    distributions/univariate/continuous/InverseGaussianRand.h
+    distributions/univariate/continuous/InverseGaussianRand.h \
+    distributions/univariate/discrete/CategoricalRand.h
 
 unix {
     target.path = /usr/lib

@@ -34,6 +34,7 @@ int DiscreteDistribution::Mode() const
 
 double DiscreteDistribution::quantileImpl(double p) const
 {
+    // TODO: make sample quantile as starting point
     double mean = Mean();
     int down = static_cast<int>(std::floor(mean)), up = down + 1;
     double fu = F(up), fd = F(down);
