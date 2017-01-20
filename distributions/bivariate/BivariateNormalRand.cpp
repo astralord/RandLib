@@ -40,11 +40,9 @@ void BivariateNormalRand::SetLocation(double location1, double location2)
 
 void BivariateNormalRand::SetScale(double scale1, double correlation, double scale2)
 {
-    sigma1 = scale1 > 0 ? scale1 : 1.0;
-    sigma2 = scale2 > 0 ? scale2 : 1.0;
-    rho = correlation;
-    if (rho < 0 || rho > 1)
-        rho = 0.0;
+    sigma1 = scale1 > 0.0 ? scale1 : 1.0;
+    sigma2 = scale2 > 0.0 ? scale2 : 1.0;
+    rho = (correlation >= 0.0 && correlation <= 1.0) ? correlation : 0.0;
 
     X.SetScale(sigma1);
     Y.SetScale(sigma2);
@@ -136,7 +134,7 @@ double BivariateNormalRand::Correlation() const
     return rho;
 }
 
-void BivariateNormalRand::GetMarginalDistributions(UnivariateProbabilityDistribution<double> &distribution1, UnivariateProbabilityDistribution<double> &distribution2) const
+void BivariateNormalRand::GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const
 {
     distribution1 = X;
     distribution2 = Y;

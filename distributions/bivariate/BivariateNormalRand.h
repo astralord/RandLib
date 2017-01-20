@@ -10,7 +10,7 @@
  *
  * Notation: X ~ N(μ_1, μ_2, σ_1, ρ, σ_2)
  */
-class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<double, double>
+class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution
 {
     double mu1, mu2;
     double sigma1, sigma2, rho;
@@ -44,7 +44,7 @@ public:
     DoubleTriplet Covariance() const override;
     double Correlation() const override;
 
-    void GetMarginalDistributions(UnivariateProbabilityDistribution<double> &distribution1, UnivariateProbabilityDistribution<double> &distribution2) const override;
+    void GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const override;
 };
 
 #endif // BIVARIATENORMALRAND_H

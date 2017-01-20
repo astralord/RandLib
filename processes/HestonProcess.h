@@ -2,7 +2,7 @@
 #define HESTONPROCESS_H
 
 #include "CoxIngersollRossProcess.h"
-#include "../distributions/multivariate/BivariateNormalRand.h"
+#include "../distributions/bivariate/BivariateNormalRand.h"
 
 /**
  * @brief The HestonProcess class

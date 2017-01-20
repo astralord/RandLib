@@ -9,7 +9,7 @@
  *
  * X ~ NIG(μ, λ, α, β)
  */
-class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution<double, double>
+class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution
 {
     double mu, lambda;
     double alpha, beta;
@@ -36,8 +36,7 @@ public:
     DoubleTriplet Covariance() const override;
     double Correlation() const override;
 
-    // TODO: change Univariate... to Continuous...
-    void GetMarginalDistributions(UnivariateProbabilityDistribution<double> &distribution1, UnivariateProbabilityDistribution<double> &distribution2) const override;
+    void GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const override;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

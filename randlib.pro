@@ -57,15 +57,12 @@ SOURCES += \
     distributions/univariate/continuous/IrwinHallRand.cpp \
     distributions/univariate/continuous/InverseGammaRand.cpp \
     distributions/univariate/UnivariateProbabilityDistribution.cpp \
-    distributions/multivariate/BivariateProbabilityDistribution.cpp \
-    distributions/multivariate/NormalInverseGammaRand.cpp \
+    distributions/bivariate/BivariateProbabilityDistribution.cpp \
+    distributions/bivariate/NormalInverseGammaRand.cpp \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
-    math/Matrix.cpp \
-    distributions/multivariate/MultivariateProbabilityDistribution.cpp \
     distributions/univariate/continuous/LogCauchyRand.cpp \
     distributions/univariate/continuous/LimitingDistribution.cpp \
-    distributions/multivariate/BivariateNormalRand.cpp \
-    math/SquareMatrix.cpp \
+    distributions/bivariate/BivariateNormalRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquared.cpp \
     distributions/univariate/continuous/DegenerateRand.cpp \
     distributions/univariate/SumRand.cpp \
@@ -137,15 +134,12 @@ HEADERS +=\
     distributions/univariate/continuous/IrwinHallRand.h \
     distributions/univariate/continuous/InverseGammaRand.h \
     distributions/univariate/UnivariateProbabilityDistribution.h \
-    distributions/multivariate/BivariateProbabilityDistribution.h \
-    distributions/multivariate/NormalInverseGammaRand.h \
+    distributions/bivariate/BivariateProbabilityDistribution.h \
+    distributions/bivariate/NormalInverseGammaRand.h \
     distributions/univariate/discrete/BetaBinomialRand.h \
-    math/Matrix.h \
-    distributions/multivariate/MultivariateProbabilityDistribution.h \
     distributions/univariate/continuous/LogCauchyRand.h \
     distributions/univariate/continuous/LimitingDistribution.h \
-    distributions/multivariate/BivariateNormalRand.h \
-    math/SquareMatrix.h \
+    distributions/bivariate/BivariateNormalRand.h \
     distributions/univariate/continuous/NoncentralChiSquared.h \
     distributions/univariate/continuous/DegenerateRand.h \
     distributions/univariate/SumRand.h \

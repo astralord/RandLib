@@ -3,7 +3,7 @@
 
 #include "StableRand.h"
 #include "InverseGammaRand.h"
-#include "../../multivariate/NormalInverseGammaRand.h"
+#include "../../bivariate/NormalInverseGammaRand.h"
 
 /**
  * @brief The NormalRand class
