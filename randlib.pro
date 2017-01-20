@@ -65,7 +65,6 @@ SOURCES += \
     distributions/bivariate/BivariateNormalRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquared.cpp \
     distributions/univariate/continuous/DegenerateRand.cpp \
-    distributions/univariate/SumRand.cpp \
     processes/StochasticProcess.cpp \
     processes/BrownianMotion.cpp \
     processes/GeometricBrownianMotion.cpp \
@@ -142,7 +141,6 @@ HEADERS +=\
     distributions/bivariate/BivariateNormalRand.h \
     distributions/univariate/continuous/NoncentralChiSquared.h \
     distributions/univariate/continuous/DegenerateRand.h \
-    distributions/univariate/SumRand.h \
     processes/StochasticProcess.h \
     processes/BrownianMotion.h \
     processes/GeometricBrownianMotion.h \

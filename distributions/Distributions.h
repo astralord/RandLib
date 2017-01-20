@@ -68,7 +68,4 @@
 #include "bivariate/NormalInverseGammaRand.h"
 #include "bivariate/BivariateNormalRand.h"
 
-/// SUM
-#include "univariate/SumRand.h"
-
 #endif // RANDLIB_H
