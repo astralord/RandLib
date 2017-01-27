@@ -236,7 +236,7 @@ double harmonicNumber(double exponent, int number);
  * @param n
  * @return I_n(x)
  */
-double logModifiedBesselFirstKind(double x, double n);
+double logModifiedBesselFirstKind(double x, double nu);
 
 /**
  * @brief modifiedBesselSecondKind
@@ -244,7 +244,7 @@ double logModifiedBesselFirstKind(double x, double n);
  * @param n
  * @return K_n(x)
  */
-double logModifiedBesselSecondKind(double x, double n);
+double logModifiedBesselSecondKind(double x, double nu);
 
 /**
  * @brief zetaRiemann

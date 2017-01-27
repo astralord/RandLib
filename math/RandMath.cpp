@@ -820,62 +820,62 @@ double harmonicNumber(double exponent, int number)
     return res;
 }
 
-double logModifiedBesselFirstKind(double x, double n)
+double logModifiedBesselFirstKind(double x, double nu)
 {
+    // TODO: in c++17, use implemented series for too small and too large x
+    // otherwise, it is better to use log(besseli(x, n))
     if (x < 0) {
-        double roundN = std::round(n);
-        bool nIsInt = areClose(n, roundN);
-        if (nIsInt) {
-            int nInt = roundN;
-            return (nInt % 2) ? NAN : logModifiedBesselFirstKind(-x, n);
+        double roundNu = std::round(nu);
+        bool nuIsInt = areClose(nu, roundNu);
+        if (nuIsInt) {
+            int nInt = roundNu;
+            return (nInt % 2) ? NAN : logModifiedBesselFirstKind(-x, nu);
         }
         return -INFINITY;
     }
 
     if (x == 0) {
-        if (n == 0)
+        if (nu == 0)
             return 1.0;
-        double roundN = std::round(n);
-        bool nIsInt = areClose(n, roundN);
-        return (n > 0 || nIsInt) ? -INFINITY : INFINITY;
+        double roundNu = std::round(nu);
+        bool nuIsInt = areClose(nu, roundNu);
+        return (nu > 0 || nuIsInt) ? -INFINITY : INFINITY;
     }
 
-    if (std::fabs(n) == 0.5) {
+    if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
         double y = 0.5 * std::log(M_2_PI / x);
         y -= M_LN2;
         y += x;
-        y += std::log1p(sign(n) * std::exp(-2 * x));
+        y += std::log1p(sign(nu) * std::exp(-2 * x));
         return y;
     }
 
     /// small x
-    if (x < 10)
+    if (x < 2 * nu)
     {
-        double halfX = 0.5 * x;
-        double halfXSq = halfX * halfX;
-        double addon = 1.0;
-        double sum = 1.0;
-        double i = 1.0;
+        double addon = 1.0, sum = 0.0;
+        int i = 1;
+        double logHalfx = std::log(0.5 * x);
         while (std::fabs(addon) > MIN_POSITIVE) {
-            addon *= halfXSq;
-            addon /= i * (i + n);
-            ++i;
+            addon = 2 * i * logHalfx;
+            addon -= std::lgamma(nu + i + 1);
+            addon = std::exp(addon) / factorial(i);
             sum += addon;
+            ++i;
         }
-        double y = std::log(sum);
-        y += n * std::log(halfX);
-        y -= std::lgamma(n + 1);
+        double y = std::log(sum + 1.0 / std::tgamma(nu + 1));
+        y += nu * logHalfx;
         return y;
     }
 
-    // large x - divergent sequence!!
     double addon = 1.0;
     double sum = addon;
     double denominator = 0.125 / x;
-    double n2Sq = 4.0 * n * n;
+    double n2Sq = 4.0 * nu * nu;
     double i = 1.0, j = 1.0;
     while (std::fabs(addon) > MIN_POSITIVE) {
+        // TODO: use pow or exp(...log(x)) instead, due to accuracy
         double numerator = j * j - n2Sq;
         double frac = numerator * denominator / i;
         if (frac > 1)
@@ -891,14 +891,14 @@ double logModifiedBesselFirstKind(double x, double n)
     return y;
 }
 
-double logModifiedBesselSecondKind(double x, double n)
+double logModifiedBesselSecondKind(double x, double nu)
 {
-    if (n == 0.5)
+    if (nu == 0.5)
         return 0.5 * std::log(M_PI_2 / x) - x;
 
-    double y = std::exp(logModifiedBesselFirstKind(x, -n)); // besseli
-    y -= std::exp(logModifiedBesselFirstKind(x, n)); // besseli
-    y /= std::sin(n * M_PI);
+    double y = std::exp(logModifiedBesselFirstKind(x, -nu)); // besseli
+    y -= std::exp(logModifiedBesselFirstKind(x, nu)); // besseli
+    y /= std::sin(nu * M_PI);
     y *= M_PI_2;
     return std::log(y);
 }
