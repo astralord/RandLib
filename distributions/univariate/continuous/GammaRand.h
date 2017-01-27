@@ -110,7 +110,7 @@ public:
  * Notation: X ~ Chi^2(n)
  *
  * Related distributions:
- * X ~ Gamma(0.5 * n, 2)
+ * X ~ Gamma(0.5 * n, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
 {
@@ -137,7 +137,7 @@ protected:
  *
  * Related distributions:
  * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(l)
- * X ~ Gamma(k, 1/l)
+ * X ~ Gamma(k, l)
  */
 class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
 {

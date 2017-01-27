@@ -22,7 +22,7 @@ void VonMisesRand::SetConcentration(double concentration)
     k = concentration;
     if (k <= 0)
         k = 1.0;
-    I0kInv = 1.0 / RandMath::modifiedBesselFirstKind(k, 0);
+    logI0k = RandMath::logModifiedBesselFirstKind(k, 0);
     if (k > 1.3)
         s = 1.0 / std::sqrt(k);
     else
@@ -33,7 +33,7 @@ double VonMisesRand::f(double x) const
 {
     if (x < mu - M_PI || x > mu + M_PI)
         return 0.0;
-    return 0.5 * M_1_PI * I0kInv * std::exp(k * std::cos(x - mu));
+    return 0.5 * M_1_PI * std::exp(k * std::cos(x - mu) - logI0k);
 }
 
 double VonMisesRand::F(double x) const
@@ -106,9 +106,11 @@ double VonMisesRand::Variance() const
 
 std::complex<double> VonMisesRand::CFImpl(double t) const
 {
-    std::complex<double> y(0.0, t * mu);
-    y = std::exp(y);
-    return I0kInv * y * RandMath::modifiedBesselFirstKind(k, std::fabs(t));
+    double tmu = t * mu;
+    double cosTmu = std::cos(tmu), sinTmu = std::sin(tmu);
+    std::complex<double> y(cosTmu, sinTmu);
+    double z = RandMath::logModifiedBesselFirstKind(k, std::fabs(t)) - logI0k;
+    return y * std::exp(z);
 }
 
 double VonMisesRand::Median() const

@@ -143,14 +143,6 @@ double regularizedBetaFun(double x, double a, double b);
 double incompleteBetaFun(double x, double a, double b);
 
 /**
- * @brief gammaHalf
- * Calculate Gamma function of half integer: gamma(k/2)
- * @param k
- * @return
- */
-long double gammaHalf(size_t k);
-
-/**
  * @brief integral
  * @param funPtr integrand
  * @param a lower boundary
@@ -244,7 +236,7 @@ double harmonicNumber(double exponent, int number);
  * @param n
  * @return I_n(x)
  */
-double modifiedBesselFirstKind(double x, double n);
+double logModifiedBesselFirstKind(double x, double n);
 
 /**
  * @brief modifiedBesselSecondKind
@@ -252,7 +244,7 @@ double modifiedBesselFirstKind(double x, double n);
  * @param n
  * @return K_n(x)
  */
-double modifiedBesselSecondKind(double x, double n);
+double logModifiedBesselSecondKind(double x, double n);
 
 /**
  * @brief zetaRiemann
@@ -260,15 +252,6 @@ double modifiedBesselSecondKind(double x, double n);
  * @return Riemann zeta function
  */
 double zetaRiemann(double s);
-
-/**
- * @brief WLambert
- * @param x
- * @param w
- * @param epsilon
- * @return
- */
-double WLambert(double x, double w0, double epsilon = 1e-11);
 
 /**
  * @brief W0Lambert
@@ -285,6 +268,24 @@ double W0Lambert(double x, double epsilon = 1e-11);
  * @return W-1 branch of Lambert W function
  */
 double Wm1Lambert(double x, double epsilon = 1e-11);
+
+/**
+ * @brief MarcumP
+ * @param mu
+ * @param x
+ * @param y
+ * @return 1 - Marcum Q-function
+ */
+double MarcumP(double mu, double x, double y);
+
+/**
+ * @brief MarcumQ
+ * @param mu
+ * @param x
+ * @param y
+ * @return Marcum Q-function
+ */
+double MarcumQ(double mu, double x, double y);
 }
 
 #endif // RANDMATH_H

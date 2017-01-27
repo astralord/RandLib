@@ -381,19 +381,6 @@ double incompleteBetaFun(double x, double a, double b)
     return (invert) ? betaFun(a, b) - y : y;
 }
 
-long double gammaHalf(size_t k)
-{
-    if (k & 1)
-    {
-        size_t n = (k - 1) >> 1;
-        long double res = factorial(k - 1);
-        res /= (factorial(n) * (1 << (n << 1)));
-        return res * M_SQRTPI;
-    }
-
-    return factorial((k >> 1) - 1);
-}
-
 /**
  * @brief adaptiveSimpsonsAux
  * auxiliary function for calculation of integral
@@ -833,32 +820,34 @@ double harmonicNumber(double exponent, int number)
     return res;
 }
 
-double modifiedBesselFirstKind(double x, double n)
+double logModifiedBesselFirstKind(double x, double n)
 {
-    double roundN = std::round(n);
-    bool nIsInt = areClose(n, roundN);
-
     if (x < 0) {
-        if (nIsInt)
-        {
+        double roundN = std::round(n);
+        bool nIsInt = areClose(n, roundN);
+        if (nIsInt) {
             int nInt = roundN;
-            return (nInt % 2) ? -modifiedBesselFirstKind(-x, n) : modifiedBesselFirstKind(-x, n);
+            return (nInt % 2) ? NAN : logModifiedBesselFirstKind(-x, n);
         }
-        else
-            return 0.0;
+        return -INFINITY;
     }
 
     if (x == 0) {
         if (n == 0)
             return 1.0;
-        return (n > 0 || nIsInt) ? 0.0 : INFINITY;
+        double roundN = std::round(n);
+        bool nIsInt = areClose(n, roundN);
+        return (n > 0 || nIsInt) ? -INFINITY : INFINITY;
     }
 
-    if (n == 0.5)
-        return std::sqrt(M_2_PI / x) * std::sinh(x);
-
-    if (n == -0.5)
-        return std::sqrt(M_2_PI / x) * std::cosh(x);
+    if (std::fabs(n) == 0.5) {
+        /// log(sinh(x)) or log(cosh(x))
+        double y = 0.5 * std::log(M_2_PI / x);
+        y -= M_LN2;
+        y += x;
+        y += std::log1p(sign(n) * std::exp(-2 * x));
+        return y;
+    }
 
     /// small x
     if (x < 10)
@@ -877,7 +866,7 @@ double modifiedBesselFirstKind(double x, double n)
         double y = std::log(sum);
         y += n * std::log(halfX);
         y -= std::lgamma(n + 1);
-        return std::exp(y);
+        return y;
     }
 
     // large x - divergent sequence!!
@@ -896,21 +885,22 @@ double modifiedBesselFirstKind(double x, double n)
         ++i;
         j += 2;
     }
-    double y = M_PI * x;
-    y = std::sqrt(y + y);
-    y = std::exp(x) / y;
-    return y * sum;
+    double y = x;
+    y -= 0.5 * std::log(2 * M_PI * x);
+    y += std::log(sum);
+    return y;
 }
 
-double modifiedBesselSecondKind(double x, double n)
+double logModifiedBesselSecondKind(double x, double n)
 {
     if (n == 0.5)
-        return M_SQRTPI * M_SQRT1_2 * std::exp(-x) / std::sqrt(x);
+        return 0.5 * std::log(M_PI_2 / x) - x;
 
-    double y = modifiedBesselFirstKind(x, -n);
-    y -= modifiedBesselFirstKind(x, n);
+    double y = std::exp(logModifiedBesselFirstKind(x, -n)); // besseli
+    y -= std::exp(logModifiedBesselFirstKind(x, n)); // besseli
     y /= std::sin(n * M_PI);
-    return 0.5 * M_PI * y;
+    y *= M_PI_2;
+    return std::log(y);
 }
 
 double zetaRiemann(double s)
@@ -925,6 +915,13 @@ double zetaRiemann(double s)
     return y + N * NS / (s - 1) + 0.5 * NS;
 }
 
+/**
+ * @brief WLambert
+ * @param x
+ * @param w0
+ * @param epsilon
+ * @return
+ */
 double WLambert(double x, double w0, double epsilon)
 {
     double w = w0;
@@ -968,6 +965,180 @@ double Wm1Lambert(double x, double epsilon)
         w = logmX - logmlogmX;
     }
     return WLambert(x, w, epsilon);
+}
+
+/**
+ * @brief MarcumPSeries
+ * @param mu
+ * @param x
+ * @param y
+ * @return series expansion for Marcum-P function
+ */
+double MarcumPSeries(double mu, double x, double y)
+{
+    static constexpr double ln2piEps = -35.0; /// ~log(2πε) for ε = 1e-16
+    double lgammamu = std::lgamma(mu);
+    double C = lgammamu - ln2piEps + mu;
+    double logx = std::log(x), logy = std::log(y);
+
+    /// solving equation f(n) = 0
+    /// to specify first negleted term
+    double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
+    double logxy = logx + logy;
+    if (!RandMath::findRoot([C, mu, logxy] (double n)
+    {
+        double npmu = n + mu;
+        double logn = std::log(n), lognpmu = std::log(npmu);
+        double first = logn - 2 - logxy;
+        first *= n;
+        first += npmu * lognpmu;
+        first -= C;
+        double second = logn + lognpmu - logxy;
+        double third = 2.0 / n;
+        return DoubleTriplet(first, second, third);
+    }, root))
+        return NAN; /// unexpected return
+
+    /// series expansion
+    double sum = 0.0;
+    int n0 = std::max(std::ceil(root), 5.0); /// sanity check
+    double P = std::exp(logLowerIncGamma(mu + n0, y) - std::lgamma(mu + n0));
+    for (int n = n0; n > 0; --n) {
+        double term = n * logx - x;
+        term = std::exp(term) * P / factorial(n);
+        sum += term;
+        double diffP = (mu + n - 1) * logy - y - std::lgamma(mu + n);
+        P += std::exp(diffP);
+    }
+    sum += std::exp(-x) * P;
+    return sum;
+}
+
+/**
+ * @brief MarcumPAsymptoticForLargeXY
+ * @param mu
+ * @param x
+ * @param y
+ * @param sqrtX
+ * @param sqrtY
+ * @return asymptotic expansion for Marcum-P function for large x*y
+ */
+double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, double sqrtY)
+{
+    double xi = 2 * sqrtX * sqrtY;
+    double sigma = (y + x) / xi - 1;
+    double sigmaXi = sigma * xi;
+    double rho = sqrtY / sqrtX;
+    double aux = std::erfc(sqrtX - sqrtY);
+    double Phi = (sigma == 0) ? 0.0 : sign(x - y) * std::sqrt(M_PI / sigma) * aux;
+    double Psi0 = aux / std::sqrt(rho);
+    double logXi = M_LN2 + 0.5 * std::log(x * y);
+    int n0 = std::max(std::ceil(sigmaXi), 7.0); /// sanity check
+    double sum = 0.0;
+    double A1 = 1.0, A2 = 1.0;
+    for (int n = 1; n <= n0; ++n) {
+        /// change φ
+        double nmHalf = n - 0.5;
+        Phi *= -sigma;
+        double temp = -sigmaXi - nmHalf * logXi;
+        Phi += std::exp(temp);
+        Phi /= nmHalf;
+        /// calculate A(μ-1) and A(μ)
+        double coef1 = (nmHalf - mu) * (nmHalf + mu);
+        double coef2 = (nmHalf - mu + 1) * (nmHalf + mu - 1);
+        double denom = -2 * n;
+        A1 *= coef1 / denom;
+        A2 *= coef2 / denom;
+        /// compute term ψ and add it to the sum
+        double Psi = Phi * (A2 - A1 / rho);
+        sum += (n & 1) ? Psi : -Psi;
+    }
+    sum /= M_SQRT2PI;
+    sum += Psi0;
+    sum *= 0.5 * std::pow(rho, mu);
+    return sum;
+}
+
+/**
+ * @brief MarcumPForMuLessThanOne
+ * @param mu
+ * @param x
+ * @param y
+ * @return
+ */
+double MarcumPForMuLessThanOne(double mu, double x, double y)
+{
+    /// in this case we use numerical integration,
+    /// however we have singularity point at 0,
+    /// so we get rid of it by subtracting the function
+    /// which has the same behaviour at this point
+    double aux = x + mu * M_LN2 + std::lgamma(mu);
+    double log2x = std::log(2 * x);
+    double I = std::log(2 * y) * mu - aux;
+    I = std::exp(I) / mu;
+
+    double mum1 = mu - 1.0;
+    I += RandMath::integral([x, log2x, mum1, aux] (double t)
+    {
+        if (t <= 0)
+            return 0.0;
+        /// Calculate log of leveling factor
+        double log2T = std::log(2 * t);
+        double exponent = mum1 * log2T;
+        exponent -= aux;
+
+        /// Calculate log(2f(t))
+        double logBessel = RandMath::logModifiedBesselFirstKind(2 * std::sqrt(x * t), mum1);
+        double z = mum1 * (log2T - log2x);
+        double log2F = 0.5 * z - t - x + logBessel;
+
+        /// Return difference f(t) - factor
+        return std::exp(log2F) - 2 * std::exp(exponent);
+    }, 0, y);
+    return I;
+}
+
+/**
+ * @brief MarcumPRecurrence
+ * @param mu
+ * @param x
+ * @param y
+ * @return
+ */
+double MarcumPRecurrence(double mu, double x, double y)
+{
+    return 1.0;
+}
+
+double MarcumP(double mu, double x, double y)
+{
+    if (x < 0.0 || y <= 0.0)
+        return 0.0;
+
+    if (mu < 1.0)
+        return MarcumPForMuLessThanOne(mu, x, y);
+
+    if (x < 30)
+        return MarcumPSeries(mu, x, y);
+
+    double sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
+    double xi = 2 * sqrtX * sqrtY;
+    if (xi > 30 && mu * mu < 2 * xi)
+        return MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
+
+    double temp = std::sqrt(4 * x + 2 * mu);
+    double f1 = x + mu - temp, f2 = x + mu + temp;
+    if (f1 < y && y < f2) {
+        return (mu < 135) ? MarcumPRecurrence(mu, x, y) : 0.0; //MarcumPAsymptoticForLargeMu
+    }
+
+    return 0.0;
+}
+
+double MarcumQ(double mu, double x, double y)
+{
+    // TODO: implement and use, when mu + x > y
+    return 1.0 - MarcumP(mu, x, y);
 }
 
 

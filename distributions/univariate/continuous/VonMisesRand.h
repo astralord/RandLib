@@ -9,7 +9,7 @@
 class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
 {
     double mu, k;
-    double I0kInv; /// 1.0 / I_0(k)
+    double logI0k; /// log(I_0(k))
     double s; /// generator coefficient
 
 public:

@@ -14,7 +14,7 @@ public:
 
     /**
      * @brief P
-     * probability to Get x
+     * probability to get x
      * @param x
      * @return
      */
@@ -22,7 +22,7 @@ public:
 
     /**
      * @brief ProbabilityMassFunction
-     * fill vector y by P(x)
+     * fill vector y with P(x)
      * @param x
      * @param y
      */

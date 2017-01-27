@@ -111,10 +111,10 @@ std::complex<double> StudentTRand::CFImpl(double t) const
     double y = vHalf * std::log(x);
     y -= Y.GetLogGammaFunction();
     y -= (vHalf - 1) * M_LN2;
-    std::complex<double> cf(y, t * mu);
-    cf = std::exp(cf);
-    cf *= RandMath::modifiedBesselSecondKind(x, vHalf);
-    return cf;
+    y += RandMath::logModifiedBesselSecondKind(x, vHalf);
+    double costmu = std::cos(t * mu), sintmu = std::sin(t * mu);
+    std::complex<double> cf(costmu, sintmu);
+    return std::exp(y) * cf;
 }
 
 double StudentTRand::quantileImpl(double p) const

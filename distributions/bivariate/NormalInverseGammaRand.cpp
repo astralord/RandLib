@@ -39,8 +39,8 @@ double NormalInverseGammaRand::f(DoublePair point) const
     double degree = (x - mu);
     degree *= degree;
     degree *= lambda;
-    degree += beta + beta;
-    degree /= (sigmaSq + sigmaSq);
+    degree += 2 * beta;
+    degree *= 0.5 / sigmaSq;
     y -= degree;
     y = std::exp(pdfCoef + y);
     y /= sigma;
@@ -54,12 +54,12 @@ double NormalInverseGammaRand::F(DoublePair point) const
         return 0.0;
     double sigma = std::sqrt(sigmaSq);
     double y = 0.5 * lambda;
-    y *= (x - mu) / sigma;
-    y = std::erfc(-y);
+    y *= (mu - x) / sigma;
+    y = std::erfc(y);
     double z = beta /sigmaSq;
     double temp = alpha * std::log(z) - z;
     y *= std::exp(temp - Y.GetLogGammaFunction());
-    y /= (sigmaSq + sigmaSq);
+    y *= 0.5 / sigmaSq;
     return y;
 }
 

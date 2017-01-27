@@ -136,6 +136,7 @@ double BivariateNormalRand::Correlation() const
 
 void BivariateNormalRand::GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const
 {
+    //TODO: what if user changes smth in X or Y?
     distribution1 = X;
     distribution2 = Y;
 }
