@@ -828,15 +828,15 @@ double logModifiedBesselFirstKind(double x, double nu)
         double roundNu = std::round(nu);
         bool nuIsInt = areClose(nu, roundNu);
         if (nuIsInt) {
-            int nInt = roundNu;
-            return (nInt % 2) ? NAN : logModifiedBesselFirstKind(-x, nu);
+            int nuInt = roundNu;
+            return (nuInt % 2) ? NAN : logModifiedBesselFirstKind(-x, nu);
         }
         return -INFINITY;
     }
 
     if (x == 0) {
         if (nu == 0)
-            return 1.0;
+            return 0.0;
         double roundNu = std::round(nu);
         bool nuIsInt = areClose(nu, roundNu);
         return (nu > 0 || nuIsInt) ? -INFINITY : INFINITY;
