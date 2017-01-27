@@ -822,7 +822,7 @@ double harmonicNumber(double exponent, int number)
 
 double logModifiedBesselFirstKind(double x, double nu)
 {
-    // TODO: in c++17, use implemented series for too small and too large x
+    // TODO: in c++17, use implemented series for too small (x~<nu) and too large x > ?
     // otherwise, it is better to use log(besseli(x, n))
     if (x < 0) {
         double roundNu = std::round(nu);
