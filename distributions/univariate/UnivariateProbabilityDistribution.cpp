@@ -25,10 +25,10 @@ double UnivariateProbabilityDistribution<T>::Quantile(double p) const
     if (p < 0 || p > 1)
         return NAN;
     if (p == 0)
-        return MinValue();
+        return this->MinValue();
     if (p == 1)
-        return MaxValue();
-    return quantileImpl(p);
+        return this->MaxValue();
+    return this->quantileImpl(p);
 }
 
 template< typename T >
@@ -37,10 +37,10 @@ double UnivariateProbabilityDistribution<T>::Quantile1m(double p) const
     if (p < 0 || p > 1)
         return NAN;
     if (p == 0)
-        return MaxValue();
+        return this->MaxValue();
     if (p == 1)
-        return MinValue();
-    return quantileImpl1m(p);
+        return this->MinValue();
+    return this->quantileImpl1m(p);
 }
 
 template< typename T >

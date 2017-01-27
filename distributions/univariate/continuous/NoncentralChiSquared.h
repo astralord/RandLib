@@ -17,8 +17,6 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
 
     PoissonRand Y;
 
-    double cdfCoef;
-
 public:
     explicit NoncentralChiSquared(double degree = 1, double noncentrality = 0);
 

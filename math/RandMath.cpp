@@ -875,7 +875,6 @@ double logModifiedBesselFirstKind(double x, double nu)
     double n2Sq = 4.0 * nu * nu;
     double i = 1.0, j = 1.0;
     while (std::fabs(addon) > MIN_POSITIVE) {
-        // TODO: use pow or exp(...log(x)) instead, due to accuracy
         double numerator = j * j - n2Sq;
         double frac = numerator * denominator / i;
         if (frac > 1)
@@ -1098,18 +1097,6 @@ double MarcumPForMuLessThanOne(double mu, double x, double y)
     return I;
 }
 
-/**
- * @brief MarcumPRecurrence
- * @param mu
- * @param x
- * @param y
- * @return
- */
-double MarcumPRecurrence(double mu, double x, double y)
-{
-    return 1.0;
-}
-
 double MarcumP(double mu, double x, double y)
 {
     if (x < 0.0 || y <= 0.0)
@@ -1126,13 +1113,20 @@ double MarcumP(double mu, double x, double y)
     if (xi > 30 && mu * mu < 2 * xi)
         return MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
 
-    double temp = std::sqrt(4 * x + 2 * mu);
-    double f1 = x + mu - temp, f2 = x + mu + temp;
-    if (f1 < y && y < f2) {
-        return (mu < 135) ? MarcumPRecurrence(mu, x, y) : 0.0; //MarcumPAsymptoticForLargeMu
-    }
+    // TODO: implement the rest techniques
 
-    return 0.0;
+    double mum1 = mu - 1;
+    double logX = std::log(x);
+    return RandMath::integral([mum1, logX, x](double t){
+        if (t < 0.0)
+            return 0.0;
+        if (t == 0.0)
+            return (mum1 == 0) ? 0.5 * std::exp(-x) : 0.0;
+        double y = RandMath::logModifiedBesselFirstKind(2 * std::sqrt(x * t), mum1);
+        double z = 0.5 * mum1 * (std::log(t) - logX);
+        double h = t + x;
+        return std::exp(y + z - h);
+    }, 0, y);
 }
 
 double MarcumQ(double mu, double x, double y)

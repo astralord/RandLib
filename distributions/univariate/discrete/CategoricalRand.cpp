@@ -29,6 +29,7 @@ void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
     else {
         prob = std::move(probabilities);
     }
+
     K = prob.size();
     q = 1.0 - sum;
 }
@@ -61,7 +62,7 @@ int CategoricalRand::Variate() const
 
 double CategoricalRand::Mean() const
 {
-    double sum;
+    double sum = 0.0;
     for (int i = 0; i != K; ++i)
         sum += (i + 1) * prob[i];
     return sum;
@@ -69,7 +70,7 @@ double CategoricalRand::Mean() const
 
 double CategoricalRand::Variance() const
 {
-    double mean, secMom;
+    double mean = 0.0, secMom = 0.0;
     for (int i = 0; i != K; ++i) {
         double ip1 = i + 1;
         double aux = ip1 * prob[i];
