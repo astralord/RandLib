@@ -80,7 +80,8 @@ SOURCES += \
     processes/StudentTProcess.cpp \
     distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
     distributions/univariate/continuous/InverseGaussianRand.cpp \
-    distributions/univariate/discrete/CategoricalRand.cpp
+    distributions/univariate/discrete/CategoricalRand.cpp \
+    distributions/univariate/continuous/KumaraswamyRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -160,7 +161,8 @@ HEADERS +=\
     processes/StudentTProcess.h \
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \
     distributions/univariate/continuous/InverseGaussianRand.h \
-    distributions/univariate/discrete/CategoricalRand.h
+    distributions/univariate/discrete/CategoricalRand.h \
+    distributions/univariate/continuous/KumaraswamyRand.h
 
 unix {
     target.path = /usr/lib

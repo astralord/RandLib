@@ -235,12 +235,12 @@ long double logLowerIncGamma(double a, double x)
     long double sum = 0;
     long double term = 1.0 / a;
     double n = a + 1;
-    while (std::fabs(term) > MIN_POSITIVE)
+    do
     {
         sum = sum + term;
         term *= x / n;
         ++n;
-    }
+    } while (std::fabs(term) > MIN_POSITIVE * std::fabs(sum));
     return a * std::log(x) - x + std::log(sum);
 }
 
@@ -343,7 +343,7 @@ double incompleteBetaFun(double x, double a, double b)
                 numen *= x;
                 add = numen / (++denom);
                 sum += add;
-            } while (add > MIN_POSITIVE);
+            } while (add > MIN_POSITIVE * sum);
             return std::pow(x, a) * sum;
         }
         double y = incompleteBetaFun(x, a, b + 1) * (a + b);
@@ -430,7 +430,7 @@ long double integral(const std::function<double (double)> &funPtr,
 bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root, double epsilon)
 {
     /// Sanity check
-    epsilon = std::max(epsilon, MIN_POSITIVE);
+    epsilon = epsilon > MIN_POSITIVE ? epsilon : MIN_POSITIVE;
     static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
@@ -463,7 +463,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, double epsilon)
 {
     /// Sanity check
-    epsilon = std::max(epsilon, MIN_POSITIVE);
+    epsilon = epsilon > MIN_POSITIVE ? epsilon : MIN_POSITIVE;
     static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
@@ -494,7 +494,7 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
 bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
 {
     /// Sanity check
-    epsilon = std::max(epsilon, MIN_POSITIVE);
+    epsilon = epsilon > MIN_POSITIVE ? epsilon : MIN_POSITIVE;
     double fa = funPtr(a);
     if (fa == 0) {
         root = a;
@@ -857,24 +857,24 @@ double logModifiedBesselFirstKind(double x, double nu)
         double addon = 1.0, sum = 0.0;
         int i = 1;
         double logHalfx = std::log(0.5 * x);
-        while (std::fabs(addon) > MIN_POSITIVE) {
+        do {
             addon = 2 * i * logHalfx;
             addon -= std::lgamma(nu + i + 1);
             addon = std::exp(addon) / factorial(i);
             sum += addon;
             ++i;
-        }
+        } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
         double y = std::log(sum + 1.0 / std::tgamma(nu + 1));
         y += nu * logHalfx;
         return y;
     }
 
     double addon = 1.0;
-    double sum = addon;
+    double sum = 1.0;
     double denominator = 0.125 / x;
     double n2Sq = 4.0 * nu * nu;
     double i = 1.0, j = 1.0;
-    while (std::fabs(addon) > MIN_POSITIVE) {
+    do {
         double numerator = j * j - n2Sq;
         double frac = numerator * denominator / i;
         if (frac > 1)
@@ -883,7 +883,7 @@ double logModifiedBesselFirstKind(double x, double nu)
         sum += addon;
         ++i;
         j += 2;
-    }
+    } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
     double y = x;
     y -= 0.5 * std::log(2 * M_PI * x);
     y += std::log(sum);

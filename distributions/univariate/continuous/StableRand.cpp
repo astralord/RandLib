@@ -281,7 +281,7 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     f_a += 2 * x * z;
     f_a /= ySq;
 
-    static constexpr long double M_PI_SQ_6 = 1.64493406684822643647l; /// pi^2 / 6
+    static constexpr long double M_PI_SQ_6 = 1.64493406684822643647l; /// π^2 / 6
     /// second derivative
     double f_aa1 = M_PI_SQ_6;
     f_aa1 += temp * temp;
@@ -678,7 +678,7 @@ double StableRand::Variance() const
 double StableRand::Mode() const
 {
     /// For symmetric distributions mode is μ
-    if (beta == 0)
+    if (beta == 0 || alpha == 2)
         return mu;
     if (distributionId == LEVY)
         return mu + beta * sigma / 3.0;

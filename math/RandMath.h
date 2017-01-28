@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-constexpr double MIN_POSITIVE = 1e-21;
+constexpr long double MIN_POSITIVE = 1e-21l;
 
 typedef std::pair <double, double> DoublePair;
 typedef std::pair <int, int> IntPair;
