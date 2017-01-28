@@ -78,12 +78,11 @@ double BetaRand::F(double x) const
         return 1;
 
     /// Standardize
-    x -= a;
-    x /= bma;
-
+    double xSt = (x - a) / bma;
+    /// Workaround known case
     if (alpha == beta && beta == 0.5)
-        return M_2_PI * std::asin(std::sqrt(x));
-    return betaFunInv * RandMath::incompleteBetaFun(x, alpha, beta);
+        return M_2_PI * std::asin(std::sqrt(xSt));
+    return betaFunInv * RandMath::incompleteBetaFun(xSt, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const

@@ -26,9 +26,12 @@ double InverseGammaRand::f(double x) const
 
 double InverseGammaRand::F(double x) const
 {
-    if (x <= 0)
-        return 0.0;
-    return 1.0 - X.F(1.0 / x);
+    return (x > 0.0) ? X.S(1.0 / x) : 0.0;
+}
+
+double InverseGammaRand::S(double x) const
+{
+    return (x > 0.0) ? X.F(1.0 / x) : 1.0;
 }
 
 double InverseGammaRand::Variate() const

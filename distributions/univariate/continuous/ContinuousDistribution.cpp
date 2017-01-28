@@ -74,7 +74,11 @@ double ContinuousDistribution::quantileImpl1m(double p) const
 
 double ContinuousDistribution::Hazard(double x) const
 {
-    return f(x) / (1.0 - F(x));
+    if (x < MinValue())
+        return 0.0; /// 0/1
+    if (x > MaxValue())
+        return NAN; /// 0/0
+    return f(x) / S(x);
 }
 
 double ContinuousDistribution::Mode() const

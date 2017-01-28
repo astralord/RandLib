@@ -55,8 +55,17 @@ double KumaraswamyRand::F(double x) const
     if (x >= 1.0)
         return 1.0;
     double y = 1.0 - std::pow(x, a);
-    y = std::pow(y, b);
-    return 1.0 - y;
+    return 1.0 - std::pow(y, b);
+}
+
+double KumaraswamyRand::S(double x) const
+{
+    if (x <= 0.0)
+        return 1.0;
+    if (x >= 1.0)
+        return 0.0;
+    double y = 1.0 - std::pow(x, a);
+    return std::pow(y, b);
 }
 
 double KumaraswamyRand::Variate() const

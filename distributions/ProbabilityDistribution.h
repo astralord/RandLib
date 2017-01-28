@@ -72,6 +72,20 @@ public:
      * @param y output vector: y = P(X < x)
      */
     void CumulativeDistributionFunction(const std::vector<T> &x, std::vector<double> &y) const;
+
+    /**
+     * @brief S
+     * @param x
+     * @return 1 - P(X < x)
+     */
+    virtual double S(T x) const;
+
+    /**
+     * @brief SurvivalFunction
+     * @param x input vector
+     * @param y output vector: y = 1 - P(X < x)
+     */
+    void SurvivalFunction(const std::vector<T> &x, std::vector<double> &y) const;
 };
 
 #endif // PROBABILITY_DISTRIBUTION_H

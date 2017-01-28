@@ -30,7 +30,12 @@ double NakagamiRand::f(double x) const
 
 double NakagamiRand::F(double x) const
 {
-    return (x <= 0) ? 0.0 : Y.F(x * x);
+    return (x > 0.0) ? Y.F(x * x) : 0.0;
+}
+
+double NakagamiRand::S(double x) const
+{
+    return (x > 0.0) ? Y.S(x * x) : 1.0;
 }
 
 double NakagamiRand::Variate() const
@@ -241,6 +246,14 @@ double RayleighRand::F(double x) const
         return 0.0;
     double xAdj = x / sigma;
     return 1.0 - std::exp(-0.5 * xAdj * xAdj);
+}
+
+double RayleighRand::S(double x) const
+{
+    if (x <= 0)
+        return 1.0;
+    double xAdj = x / sigma;
+    return std::exp(-0.5 * xAdj * xAdj);
 }
 
 double RayleighRand::Variate() const

@@ -32,6 +32,7 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
     double Variate() const override;
 
 public:

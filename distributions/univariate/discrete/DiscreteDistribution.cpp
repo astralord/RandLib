@@ -97,7 +97,11 @@ double DiscreteDistribution::quantileImpl1m(double p) const
 
 double DiscreteDistribution::Hazard(double x) const
 {
-    return P(x) / (1.0 - F(x));
+    if (x < MinValue())
+        return 0.0; /// 0/1
+    if (x > MaxValue())
+        return NAN; /// 0/0
+    return P(x) / S(x);
 }
 
 double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const

@@ -6,8 +6,9 @@
 
 /**
  * @brief The NormalInverseGammaRand class
+ * Normal-inverse-gamma distribution
  *
- * X ~ NIG(μ, λ, α, β)
+ * Notation: X ~ NIG(μ, λ, α, β)
  */
 class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution
 {

@@ -59,6 +59,17 @@ double TriangularRand::F(double x) const
     return 1.0;
 }
 
+double TriangularRand::S(double x) const
+{
+    if (x <= a)
+        return 1.0;
+    if (x <= c)
+        return 1.0 - (x - a) * (x - a) / ((b - a) * (c - a));
+    if (x < b)
+        return (b - x) * (b - x) / ((b - a) * (b - c));
+    return 0.0;
+}
+
 double TriangularRand::Variate() const
 {
     double u = UniformRand::StandardVariate();

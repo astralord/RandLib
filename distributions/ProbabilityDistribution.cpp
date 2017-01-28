@@ -19,7 +19,7 @@ template < typename T >
 void ProbabilityDistribution<T>::Sample(std::vector<T> &outputData) const
 {
     for (T &var : outputData)
-        var = Variate();
+        var = this->Variate();
 }
 
 template < typename T >
@@ -32,14 +32,25 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(const std::vecto
         y[i] = F(x[i]);
 }
 
+template < typename T >
+double ProbabilityDistribution<T>::S(T x) const
+{
+    return 1.0 - F(x);
+}
+
+template < typename T >
+void ProbabilityDistribution<T>::SurvivalFunction(const std::vector<T> &x, std::vector<double> &y) const
+{
+    size_t size = x.size();
+    if (size > y.size())
+        return;
+    for (size_t i = 0; i != size; ++i)
+        y[i] = this->S(x[i]);
+}
+
 /// Univariate
 template class ProbabilityDistribution<double>;
 template class ProbabilityDistribution<int>;
 
 /// Bivariate
 template class ProbabilityDistribution<DoublePair>;
-template class ProbabilityDistribution<IntPair>;
-
-/// Multivariate
-template class ProbabilityDistribution< std::vector<double> >;
-template class ProbabilityDistribution< std::vector<int> >;

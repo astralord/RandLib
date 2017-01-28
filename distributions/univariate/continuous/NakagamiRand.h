@@ -28,6 +28,7 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 
@@ -130,6 +131,7 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 

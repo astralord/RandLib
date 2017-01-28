@@ -34,9 +34,12 @@ double WeibullRand::f(double x) const
 
 double WeibullRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-    return 1 - std::exp(-std::pow(x / lambda, k));
+    return (x > 0.0) ? 1.0 - std::exp(-std::pow(x / lambda, k)) : 0.0;
+}
+
+double WeibullRand::S(double x) const
+{
+    return (x > 0.0) ? std::exp(-std::pow(x / lambda, k)) : 1.0;
 }
 
 double WeibullRand::Variate() const
