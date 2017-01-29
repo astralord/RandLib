@@ -45,6 +45,11 @@ double NoncentralChiSquared::F(double x) const
     return (x > 0) ? RandMath::MarcumP(halfK, 0.5 * lambda, 0.5 * x) : 0.0;
 }
 
+double NoncentralChiSquared::S(double x) const
+{
+    return (x > 0) ? RandMath::MarcumQ(halfK, 0.5 * lambda, 0.5 * x) : 1.0;
+}
+
 double NoncentralChiSquared::variateForDegreeEqualOne() const
 {
     double y = sqrtLambda + NormalRand::StandardVariate();

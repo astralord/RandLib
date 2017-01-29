@@ -105,7 +105,7 @@ int NegativeBinomialRand<int>::variateGeometricByTable() const
 template<>
 int NegativeBinomialRand<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(ExponentialRand::Variate(-logQ));
+    return std::floor(-ExponentialRand::StandardVariate() / logQ);
 }
 
 template<>

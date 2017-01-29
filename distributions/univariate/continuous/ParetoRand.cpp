@@ -57,7 +57,7 @@ double ParetoRand::variateForAlphaTwo()
 
 double ParetoRand::variateForCommonAlpha(double shape)
 {
-    return std::exp(ExponentialRand::Variate(shape));
+    return std::exp(ExponentialRand::StandardVariate() / shape);
 }
 
 double ParetoRand::StandardVariate(double shape)

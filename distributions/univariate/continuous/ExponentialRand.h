@@ -39,10 +39,9 @@ public:
     double f(double x) const override;
     double F(double x) const override;
     double Variate() const override;
-
-    static double Variate(double rate);
-    double Median() const override;
     static double StandardVariate();
+
+    double Median() const override;
 
 private:
     double quantileImpl(double p) const override;

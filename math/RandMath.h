@@ -163,7 +163,7 @@ long double integral(const std::function<double (double)> &funPtr, double a, dou
  * @param epsilon tolerance
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double epsilon = 1e-8);
+bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double funTol = 1e-10, double stepTol = 1e-6);
 
 /**
  * @brief findRoot
@@ -174,7 +174,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root
  * @param epsilon tolerance
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double epsilon = 1e-8);
+bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double funTol = 1e-10, double stepTol = 1e-6);
 
 /**
  * @brief findRoot

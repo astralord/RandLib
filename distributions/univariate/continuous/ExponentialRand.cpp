@@ -59,11 +59,6 @@ double ExponentialRand::Variate() const
     return theta * StandardVariate();
 }
 
-double ExponentialRand::Variate(double rate)
-{
-    return StandardVariate() / rate;
-}
-
 double ExponentialRand::StandardVariate()
 {
     /// Ziggurat algorithm
@@ -87,9 +82,9 @@ double ExponentialRand::StandardVariate()
     return NAN; /// fail due to some error
 }
 
-std::complex<double> ExponentialRand::CFImpl(double t) const
+double ExponentialRand::Median() const
 {
-    return 1.0 / std::complex<double>(1.0, -theta * t);
+    return theta * M_LN2;
 }
 
 double ExponentialRand::quantileImpl(double p) const
@@ -102,9 +97,9 @@ double ExponentialRand::quantileImpl1m(double p) const
     return -theta * std::log(p);
 }
 
-double ExponentialRand::Median() const
+std::complex<double> ExponentialRand::CFImpl(double t) const
 {
-    return theta * M_LN2;
+    return 1.0 / std::complex<double>(1.0, -theta * t);
 }
 
 double ExponentialRand::Entropy() const

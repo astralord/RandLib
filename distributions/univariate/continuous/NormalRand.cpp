@@ -68,11 +68,6 @@ double NormalRand::Variate() const
     return mu + sigma0 * StandardVariate();
 }
 
-double NormalRand::Variate(double mean, double rootVar)
-{
-    return mean + rootVar * StandardVariate();
-}
-
 double NormalRand::StandardVariate()
 {
     /// Ziggurat algorithm by George Marsaglia using 256 strips
@@ -91,14 +86,14 @@ double NormalRand::StandardVariate()
 
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::Variate(x1);
+                x = ExponentialRand::StandardVariate() / x1;
                 z -= 0.5 * x * x;
             }
 
             if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
-                    x = ExponentialRand::Variate(x1);
+                    x = ExponentialRand::StandardVariate() / x1;
                     z = ExponentialRand::StandardVariate() - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }

@@ -57,9 +57,9 @@ double ExponentiallyModifiedGaussianRand::Variate() const
     return X.Variate() + Y.Variate();
 }
 
-double ExponentiallyModifiedGaussianRand::Variate(double location, double rootVar, double rate)
+double ExponentiallyModifiedGaussianRand::StandardVariate()
 {
-    return NormalRand::Variate(location, rootVar) + ExponentialRand::Variate(rate);
+    return NormalRand::StandardVariate() + ExponentialRand::StandardVariate();
 }
 
 double ExponentiallyModifiedGaussianRand::Mean() const

@@ -616,7 +616,7 @@ double StableRand::Variate() const
 {
     switch (distributionId) {
     case NORMAL:
-        return NormalRand::Variate(mu, M_SQRT2 * sigma);
+        return mu + M_SQRT2 * sigma* NormalRand::StandardVariate();
     case CAUCHY:
         return CauchyRand::Variate(mu, sigma);
     case LEVY:
@@ -636,7 +636,7 @@ void StableRand::Sample(std::vector<double> &outputData) const
     case NORMAL: {
         double stdev = M_SQRT2 * sigma;
         for (double &var : outputData)
-            var = NormalRand::Variate(mu, stdev);
+            var = mu + stdev * NormalRand::StandardVariate();
     }
         break;
     case CAUCHY: {

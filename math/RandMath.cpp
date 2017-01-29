@@ -427,18 +427,19 @@ long double integral(const std::function<double (double)> &funPtr,
     return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
 
-bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root, double epsilon)
+bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root, double funTol, double stepTol)
 {
     /// Sanity check
-    epsilon = epsilon > MIN_POSITIVE ? epsilon : MIN_POSITIVE;
-    static constexpr int MAX_ITER = 1e5;
+    funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
+    stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
+    static constexpr int MAX_ITER = 1e4;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
-    double step = epsilon + 1;
+    double step = stepTol + 1;
     DoubleTriplet y = funPtr(root);
     double f, fx, fxx;
     std::tie(f, fx, fxx) = y;
-    if (std::fabs(f) < epsilon)
+    if (std::fabs(f) < MIN_POSITIVE)
         return true;
     do {
         double alpha = 1.0;
@@ -451,27 +452,36 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
             root = oldRoot - alpha * step;
             y = funPtr(root);
             std::tie(f, fx, fxx) = y;
-            if (std::fabs(f) < epsilon)
+            if (std::fabs(f) < MIN_POSITIVE)
                 return true;
             alpha *= 0.5;
         } while ((std::fabs(fx) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
-    } while (std::fabs(step) > epsilon && ++iter < MAX_ITER);
-
-    return (iter == MAX_ITER) ? false : true;
+        /// Check convergence criteria
+        double diffX = std::fabs(root - oldRoot);
+        double relDiffX = std::fabs(diffX / oldRoot);
+        if (std::min(diffX, relDiffX) < stepTol) {
+            double diffY = f - oldFun;
+            double relDiffY = std::fabs(diffY / oldFun);
+            if (std::min(std::fabs(f), relDiffY) < funTol)
+                return true;
+        }
+    } while (++iter < MAX_ITER);
+    return false;
 }
 
-bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, double epsilon)
+bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, double funTol, double stepTol)
 {
     /// Sanity check
-    epsilon = epsilon > MIN_POSITIVE ? epsilon : MIN_POSITIVE;
-    static constexpr int MAX_ITER = 1e5;
+    funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
+    stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
+    static constexpr int MAX_ITER = 1e4;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
-    double step = epsilon + 1;
+    double step = stepTol + 1;
     DoublePair y = funPtr(root);
     double fun = y.first;
     double grad = y.second;
-    if (std::fabs(fun) < epsilon)
+    if (std::fabs(fun) < MIN_POSITIVE)
         return true;
     do {
         double alpha = 1.0;
@@ -483,12 +493,24 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
             y = funPtr(root);
             fun = y.first;
             grad = y.second;
-            if (std::fabs(fun) < epsilon)
+            if (std::fabs(fun) < MIN_POSITIVE)
                 return true;
             alpha *= 0.5;
         } while ((std::fabs(grad) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
-    } while (std::fabs(step) > epsilon && ++iter < MAX_ITER);
-    return (iter == MAX_ITER) ? false : true;
+        /// Check convergence criteria
+        double diffX = std::fabs(root - oldRoot);
+        double relDiffX = std::fabs(diffX / oldRoot);
+        if (std::min(diffX, relDiffX) < stepTol) {
+            double diffY = fun - oldFun;
+            double relDiffY = std::fabs(diffY / oldFun);
+            if (std::min(std::fabs(fun), relDiffY) < funTol)
+                return true;
+        }
+        if (iter == MAX_ITER - 1)
+            qDebug() << diffX << relDiffX << root << oldRoot;
+    } while (++iter < MAX_ITER);
+    qDebug() << "FUN: " << fun;
+    return false;
 }
 
 bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double &root, double epsilon)
@@ -822,7 +844,7 @@ double harmonicNumber(double exponent, int number)
 
 double logModifiedBesselFirstKind(double x, double nu)
 {
-    // TODO: in c++17, use implemented series for too small (x~<nu) and too large x > ?
+    // TODO: in c++17, use implemented series for too small (x ~< nu / 2) and too large x > ?
     // otherwise, it is better to use log(besseli(x, n))
     if (x < 0) {
         double roundNu = std::round(nu);

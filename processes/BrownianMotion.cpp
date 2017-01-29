@@ -13,7 +13,7 @@ BrownianMotion::BrownianMotion(double drift, double volatility, double deltaT) :
 
 void BrownianMotion::NextImpl()
 {
-    currentValue += mu * dt + sigma * NormalRand::Variate(0, dtCoef);
+    currentValue += mu * dt + sigma * dtCoef * NormalRand::StandardVariate();
 }
 
 void BrownianMotion::ProbabilityDensityFunction(double t, const std::vector<double> &x, std::vector<double> &y) const

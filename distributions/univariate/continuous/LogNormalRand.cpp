@@ -40,7 +40,7 @@ double LogNormalRand::StandardVariate()
 
 double LogNormalRand::Variate(double location, double scale)
 {
-    return std::exp(NormalRand::Variate(location, scale));
+    return std::exp(location + scale * NormalRand::StandardVariate());
 }
 
 double LogNormalRand::Variate() const
