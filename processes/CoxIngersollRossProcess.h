@@ -2,7 +2,7 @@
 #define COXINGERSOLLROSSPROCESS_H
 
 #include "BrownianMotion.h"
-#include "../distributions/univariate/continuous/NoncentralChiSquared.h"
+#include "../distributions/univariate/continuous/NoncentralChiSquaredRand.h"
 
 /**
  * @brief The CoxIngersollRossProcess class

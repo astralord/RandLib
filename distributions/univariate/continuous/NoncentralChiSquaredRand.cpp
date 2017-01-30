@@ -1,17 +1,17 @@
-#include "NoncentralChiSquared.h"
+#include "NoncentralChiSquaredRand.h"
 
-NoncentralChiSquared::NoncentralChiSquared(double degree, double noncentrality)
+NoncentralChiSquaredRand::NoncentralChiSquaredRand(double degree, double noncentrality)
 {
     SetParameters(degree, noncentrality);
 }
 
-std::string NoncentralChiSquared::Name() const
+std::string NoncentralChiSquaredRand::Name() const
 {
     return "Noncentral Chi-Squared(" + toStringWithPrecision(GetDegree()) + ", "
             + toStringWithPrecision(GetNoncentrality()) + ")";
 }
 
-void NoncentralChiSquared::SetParameters(double degree, double noncentrality)
+void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality)
 {
     k = (degree <= 0.0) ? 1.0 : degree;
     halfK = 0.5 * k;
@@ -24,7 +24,7 @@ void NoncentralChiSquared::SetParameters(double degree, double noncentrality)
         Y.SetRate(0.5 * lambda);
 }
 
-double NoncentralChiSquared::f(double x) const
+double NoncentralChiSquaredRand::f(double x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -40,23 +40,23 @@ double NoncentralChiSquared::f(double x) const
     return 0.5 * std::exp(y + 0.5 * z);
 }
 
-double NoncentralChiSquared::F(double x) const
+double NoncentralChiSquaredRand::F(double x) const
 {
     return (x > 0) ? RandMath::MarcumP(halfK, 0.5 * lambda, 0.5 * x) : 0.0;
 }
 
-double NoncentralChiSquared::S(double x) const
+double NoncentralChiSquaredRand::S(double x) const
 {
     return (x > 0) ? RandMath::MarcumQ(halfK, 0.5 * lambda, 0.5 * x) : 1.0;
 }
 
-double NoncentralChiSquared::variateForDegreeEqualOne() const
+double NoncentralChiSquaredRand::variateForDegreeEqualOne() const
 {
     double y = sqrtLambda + NormalRand::StandardVariate();
     return y * y;
 }
 
-double NoncentralChiSquared::Variate(double degree, double noncentrality)
+double NoncentralChiSquaredRand::Variate(double degree, double noncentrality)
 {
     if (degree <= 0 || noncentrality < 0)
         return NAN; /// wrong parameters
@@ -69,7 +69,7 @@ double NoncentralChiSquared::Variate(double degree, double noncentrality)
     return 2 * GammaRand::StandardVariate(0.5 * degree + PoissonRand::Variate(0.5 * noncentrality));
 }
 
-double NoncentralChiSquared::Variate() const
+double NoncentralChiSquaredRand::Variate() const
 {
     if (k == 1)
         return variateForDegreeEqualOne();
@@ -78,7 +78,7 @@ double NoncentralChiSquared::Variate() const
     return 2 * GammaRand::StandardVariate(halfK + Y.Variate());
 }
 
-void NoncentralChiSquared::Sample(std::vector<double> &outputData) const
+void NoncentralChiSquaredRand::Sample(std::vector<double> &outputData) const
 {
     if (k >= 1) {
         for (double & var : outputData)
@@ -95,22 +95,22 @@ void NoncentralChiSquared::Sample(std::vector<double> &outputData) const
     }
 }
 
-double NoncentralChiSquared::Mean() const
+double NoncentralChiSquaredRand::Mean() const
 {
     return k + lambda;
 }
 
-double NoncentralChiSquared::Variance() const
+double NoncentralChiSquaredRand::Variance() const
 {
     return 2 * (k + 2 * lambda);
 }
 
-double NoncentralChiSquared::Mode() const
+double NoncentralChiSquaredRand::Mode() const
 {
     return (k < 2) ? 0.0 : ContinuousDistribution::Mode();
 }
 
-std::complex<double> NoncentralChiSquared::CFImpl(double t) const
+std::complex<double> NoncentralChiSquaredRand::CFImpl(double t) const
 {
     std::complex<double> aux(1, -2 * t);
     std::complex<double> y(0, lambda * t);
@@ -119,7 +119,7 @@ std::complex<double> NoncentralChiSquared::CFImpl(double t) const
     return std::exp(y);
 }
 
-double NoncentralChiSquared::Skewness() const
+double NoncentralChiSquaredRand::Skewness() const
 {
     double y = k + 2 * lambda;
     y = 2.0 / y;
@@ -127,7 +127,7 @@ double NoncentralChiSquared::Skewness() const
     return z * (k + 3 * lambda);
 }
 
-double NoncentralChiSquared::ExcessKurtosis() const
+double NoncentralChiSquaredRand::ExcessKurtosis() const
 {
     double y = k + 2 * lambda;
     return 12 * (k + 4 * lambda) / (y * y);

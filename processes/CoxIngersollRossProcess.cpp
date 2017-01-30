@@ -14,7 +14,7 @@ CoxIngersollRossProcess::CoxIngersollRossProcess(double mean, double reversionSp
 
 void CoxIngersollRossProcess::NextImpl()
 {
-    currentValue = NoncentralChiSquared::Variate(degree, c * currentValue * expmBetaDt) / c;
+    currentValue = NoncentralChiSquaredRand::Variate(degree, c * currentValue * expmBetaDt) / c;
 }
 
 double CoxIngersollRossProcess::MeanImpl(double t) const

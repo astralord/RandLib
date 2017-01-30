@@ -1,5 +1,5 @@
-#ifndef NONCENTRALCHISQUARED_H
-#define NONCENTRALCHISQUARED_H
+#ifndef NONCENTRALCHISQUAREDRAND_H
+#define NONCENTRALCHISQUAREDRAND_H
 
 #include "ContinuousDistribution.h"
 #include "GammaRand.h"
@@ -7,9 +7,9 @@
 #include "../discrete/PoissonRand.h"
 
 /**
- * @brief The NoncentralChiSquared class
+ * @brief The NoncentralChiSquaredRand class
  */
-class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
 {
     double k, lambda;
     double halfK; /// 0.5 * k
@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquared : public ContinuousDistribution
     PoissonRand Y;
 
 public:
-    explicit NoncentralChiSquared(double degree = 1, double noncentrality = 0);
+    explicit NoncentralChiSquaredRand(double degree = 1, double noncentrality = 0);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
@@ -51,4 +51,4 @@ private:
     std::complex<double> CFImpl(double t) const override;
 };
 
-#endif // NONCENTRALCHISQUARED_H
+#endif // NONCENTRALCHISQUAREDRAND_H

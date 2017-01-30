@@ -63,7 +63,6 @@ SOURCES += \
     distributions/univariate/continuous/LogCauchyRand.cpp \
     distributions/univariate/continuous/LimitingDistribution.cpp \
     distributions/bivariate/BivariateNormalRand.cpp \
-    distributions/univariate/continuous/NoncentralChiSquared.cpp \
     distributions/univariate/continuous/DegenerateRand.cpp \
     processes/StochasticProcess.cpp \
     processes/BrownianMotion.cpp \
@@ -81,7 +80,8 @@ SOURCES += \
     distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
     distributions/univariate/continuous/InverseGaussianRand.cpp \
     distributions/univariate/discrete/CategoricalRand.cpp \
-    distributions/univariate/continuous/KumaraswamyRand.cpp
+    distributions/univariate/continuous/KumaraswamyRand.cpp \
+    distributions/univariate/continuous/NoncentralChiSquaredRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -141,7 +141,6 @@ HEADERS +=\
     distributions/univariate/continuous/LogCauchyRand.h \
     distributions/univariate/continuous/LimitingDistribution.h \
     distributions/bivariate/BivariateNormalRand.h \
-    distributions/univariate/continuous/NoncentralChiSquared.h \
     distributions/univariate/continuous/DegenerateRand.h \
     processes/StochasticProcess.h \
     processes/BrownianMotion.h \
@@ -162,7 +161,8 @@ HEADERS +=\
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \
     distributions/univariate/continuous/InverseGaussianRand.h \
     distributions/univariate/discrete/CategoricalRand.h \
-    distributions/univariate/continuous/KumaraswamyRand.h
+    distributions/univariate/continuous/KumaraswamyRand.h \
+    distributions/univariate/continuous/NoncentralChiSquaredRand.h
 
 unix {
     target.path = /usr/lib

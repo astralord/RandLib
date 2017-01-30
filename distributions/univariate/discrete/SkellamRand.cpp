@@ -1,5 +1,5 @@
 #include "SkellamRand.h"
-#include "../continuous/NoncentralChiSquared.h"
+#include "../continuous/NoncentralChiSquaredRand.h"
 
 SkellamRand::SkellamRand(double mean1, double mean2)
 {
