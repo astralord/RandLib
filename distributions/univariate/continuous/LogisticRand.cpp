@@ -66,12 +66,12 @@ std::complex<double> LogisticRand::CFImpl(double t) const
 
 double LogisticRand::quantileImpl(double p) const
 {
-    return mu - s * std::log(1.0 / p - 1);
+    return mu - s * (std::log1p(-p) - std::log(p));
 }
 
 double LogisticRand::quantileImpl1m(double p) const
 {
-    return mu - s * std::log(p / (1.0 - p));
+    return mu - s * (std::log(p) - std::log1p(-p));
 }
 
 double LogisticRand::Median() const

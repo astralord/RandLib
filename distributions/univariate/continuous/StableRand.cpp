@@ -271,7 +271,7 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     double ySq = y * y;
     double z = std::atan(x);
     double zSq = z * z;
-    double logY = std::log(y);
+    double logY = std::log1p(xSq);
     double alpham1 = alpha - 1.0;
     double temp = 1.0 - M_EULER - 0.5 * logY;
 

@@ -349,13 +349,11 @@ double GeometricStableRand::Median() const
 {
     if (alpha == 2) {
         if (k > 1) {
-            double y = 0.5 / kSq + 0.5;
-            y = std::log(y);
+            double y = std::log1p(1.0 / kSq) - M_LN2;
             return sigma * k * y;
         }
         else {
-            double y = 0.5 + 0.5 * kSq;
-            y = std::log(y);
+            double y = std::log1p(kSq) - M_LN2;
             return -sigma / k * y;
         }
     }
