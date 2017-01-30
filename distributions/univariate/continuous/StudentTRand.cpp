@@ -48,8 +48,8 @@ double StudentTRand::f(double x) const
     x -= mu;
     x /= sigma;
 
-    double y = 1 + x * x / nu;
-    y = -nup1Half * std::log(y);
+    double y = x * x / nu;
+    y = -nup1Half * std::log1p(y);
     return std::exp(pdfCoef + y) / sigma;
 }
 
