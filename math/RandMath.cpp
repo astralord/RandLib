@@ -221,6 +221,7 @@ REGULARISED_GAMMA_METHOD_ID getRegularizedGammaMethodId(double a, double x)
 {
     if (x < 0.0 || a < 0.0)
         return UNDEFINED;
+    // TODO: use precalculated here log(x) further
     double alpha = (x < 0.5) ? -M_LN2 / std::log(0.5 * x) : x;
     if ((a <= 12 && a >= alpha) || 0.3 * a >= x)
         return PT;
