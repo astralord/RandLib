@@ -245,7 +245,7 @@ double RayleighRand::F(double x) const
     if (x <= 0)
         return 0.0;
     double xAdj = x / sigma;
-    return 1.0 - std::exp(-0.5 * xAdj * xAdj);
+    return -std::expm1(-0.5 * xAdj * xAdj);
 }
 
 double RayleighRand::S(double x) const

@@ -34,7 +34,7 @@ double WeibullRand::f(double x) const
 
 double WeibullRand::F(double x) const
 {
-    return (x > 0.0) ? 1.0 - std::exp(-std::pow(x / lambda, k)) : 0.0;
+    return (x > 0.0) ? -std::expm1(-std::pow(x / lambda, k)) : 0.0;
 }
 
 double WeibullRand::S(double x) const

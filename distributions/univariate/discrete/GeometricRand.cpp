@@ -22,7 +22,7 @@ double GeometricRand::P(int k) const
 
 double GeometricRand::F(int k) const
 {
-    return (k < 0) ? 0 : 1 - std::exp((k + 1) * logQ);
+    return (k < 0) ? 0 : -std::expm1((k + 1) * logQ);
 }
 
 int GeometricRand::Variate() const

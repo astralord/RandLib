@@ -96,7 +96,7 @@ double KumaraswamyRand::Variance() const
 
 double KumaraswamyRand::Median() const
 {
-    return std::pow(1.0 - std::exp(-M_LN2 / b), 1.0 / a);
+    return std::pow(-std::expm1(-M_LN2 / b), 1.0 / a);
 }
 
 double KumaraswamyRand::Mode() const

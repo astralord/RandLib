@@ -38,7 +38,7 @@ int LogarithmicRand::Variate() const
     if (V >= p)
         return 1.0;
     double U = UniformRand::StandardVariate();
-    double y = 1.0 - std::exp(U / logQInv);
+    double y = -std::expm1(U / logQInv);
     if (V > y)
         return 1.0;
     if (V > y * y)

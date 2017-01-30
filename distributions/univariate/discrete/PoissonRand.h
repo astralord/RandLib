@@ -14,7 +14,6 @@
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
     double lambda;
-    double expmLambda; /// exp(-λ)
     double logLambda; /// ln(λ)
     int floorLambda; /// [λ]
     double FFloorLambda; /// P(X < [λ])
@@ -32,6 +31,7 @@ public:
 
     double P(int k) const override;
     double F(int k) const override;
+    double S(int k) const override;
     int Variate() const override;
     static int Variate(double rate);
 

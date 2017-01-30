@@ -200,103 +200,207 @@ double trigamma(double x)
     return y;
 }
 
-long double lowerIncGamma(double a, double x)
+
+/// INCOMPLETE GAMMA FUNCTIONS
+
+enum REGULARISED_GAMMA_METHOD_ID {
+    PT,
+    QT,
+    PUA,
+    QUA,
+    CF,
+    UNDEFINED
+};
+
+double pgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId);
+double lpgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId);
+double qgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId);
+double lqgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId);
+
+REGULARISED_GAMMA_METHOD_ID getRegularizedGammaMethodId(double a, double x)
 {
-    if (x < 0)
-        return NAN;
-    if (x == 0)
-        return 0.0;
-    if (a == 1)
-        return 1.0 - std::exp(-x);
-    if (a == 0.5)
-        return M_SQRTPI * std::erf(std::sqrt(x));
-    if (x > 1.1 && x > a) {
-        return std::tgamma(a) - upperIncGamma(a, x);
-    }
-    return std::exp(logLowerIncGamma(a, x));
+    if (x < 0.0 || a < 0.0)
+        return UNDEFINED;
+    double alpha = (x < 0.5) ? -M_LN2 / std::log(0.5 * x) : x;
+    if ((a <= 12 && a >= alpha) || 0.3 * a >= x)
+        return PT;
+    if (x <= 1.5 && a <= alpha)
+        return QT;
+    if (a <= 12 || 2.35 * a <= x)
+        return CF;
+    return (a > alpha) ? PUA : QUA;
 }
 
-long double logLowerIncGamma(double a, double x)
+double incompleteGammaUniformExpansion(double a, double x, bool isP)
 {
-    if (x < 0)
-        return NAN;
-    if (x == 0)
-        return -INFINITY;
-    if (a == 1)
-        return std::log1p(-std::exp(-x));
-    if (a == 0.5)
-        return 0.5 * M_LNPI + std::log(std::erf(std::sqrt(x)));
-
-    if (x > 1.1 && x > a) {
-        double y = std::tgamma(a) - upperIncGamma(a, x);
-        return std::log(y);
+    /// Uniform asymptotic expansion for P(a, x) if isP == true, or Q(a, x) otherwise
+    static constexpr long double d[] = {-0.33333333333333333333l, -0.08333333333333333333l, -0.01481481481481481481l, 0.00115740740740740741l,
+                                         0.00035273368606701940l, -0.000178755144032922l, 0.0000391926317852244l, -0.00000218544851067999l,
+                                        -0.00000185406221071516l, 0.829671134095309e-6l, -0.176659527368261e-6l, 0.670785354340150e-8l,
+                                         0.102618097842403e-7l, -0.438203601845335e-8l};
+    static constexpr int N = 13;
+    double lambda = x / a;
+    double logLambda = std::log(lambda);
+    double aux = x - a - a * logLambda;
+    double eta = 0.0, base = 0.5;
+    if (aux > 0.0) { /// otherwise, x ~ a and aux ~ 0.0
+        eta = std::sqrt(2 * (lambda - 1.0 - logLambda));
+        base = 0.5 * std::erfc(std::sqrt(aux));
     }
+    long double sum = 0.0l;
+    double betanp2 = d[N], betanp1 = d[N - 1];
+    for (int n = N - 2; n >= 0; --n) {
+        double beta = (n + 2) * betanp2 / a + d[n];
+        sum += beta * std::pow(eta, n);
+        betanp2 = betanp1;
+        betanp1 = beta;
+    }
+    sum *= a / (a + betanp2);
+    double z = a + logLambda * a - x;
+    z -= 0.5 * std::log(2 * M_PI * a);
+    double y = std::exp(z) * sum;
+    return base + (isP ? -y : y);
+}
 
-    long double sum = 0;
-    long double term = 1.0 / a;
-    double n = a + 1;
-    do
+double lpgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId)
+{
+    if (mId == PT)
     {
-        sum = sum + term;
-        term *= x / n;
-        ++n;
-    } while (std::fabs(term) > MIN_POSITIVE * std::fabs(sum));
-    return a * std::log(x) - x + std::log(sum);
-}
-
-long double upperIncGamma(double a, double x)
-{
-    if (x < 0)
-        return NAN;
-    if (x == 0)
-        return std::tgamma(x);
-    if (a == 0.5)
-        return M_SQRTPI * std::erfc(std::sqrt(x));
-    if (a == 1)
-        return std::exp(-x);
-    if (x <= 1.1 || x <= a) {
-        return std::tgamma(a) - lowerIncGamma(a, x);
+        /// Taylor expansion of P(a,x)
+        double logX = std::log(x);
+        int n0 = 70.0 * x / a + 7; /// ~ from 7 to 28
+        long double sum = 0.0;
+        double lgammaAp1 = std::lgamma(a + 1);
+        for (int n = n0; n > 0; --n) {
+            double addon = n * logX - std::lgamma(a + n + 1) + lgammaAp1;
+            addon = std::exp(addon);
+            sum += addon;
+        }
+        return a * std::log(x) - x + std::log1p(sum) - lgammaAp1;
     }
-    return std::exp(logUpperIncGamma(a, x));
+    return (mId == PUA) ? std::log(pgammaRaw(a, x, mId)) : std::log1p(-qgammaRaw(a, x, mId));
 }
 
-long double logUpperIncGamma(double a, double x)
+double lpgamma(double a, double x)
 {
-    if (x < 0)
+    if (x < 0.0 || a < 0.0)
         return NAN;
-    if (x == 0)
+    if (x == 0.0)
+        return -INFINITY;
+    if (a == 1.0)
+        return std::log1p(-std::exp(-x));
+    return lpgammaRaw(a, x, getRegularizedGammaMethodId(a, x));
+}
+
+double pgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId)
+{
+    if (mId == PT)
+        return std::exp(lpgammaRaw(a, x, mId));
+    if (mId == PUA)
+        return incompleteGammaUniformExpansion(a, x, true);
+    return (mId == QUA) ? 1.0 - qgammaRaw(a, x, mId) : -std::expm1(lqgammaRaw(a, x, mId));
+}
+
+double pgamma(double a, double x)
+{
+    if (x < 0.0 || a < 0.0)
+        return NAN;
+    if (x == 0.0)
+        return 0.0;
+    if (a == 1.0)
+        return -std::expm1(-x);
+    return pgammaRaw(a, x, getRegularizedGammaMethodId(a, x));
+}
+
+double qtGammaExpansionAux(double a, double x)
+{
+    /// auxilary function for Taylor expansion of Q(a, x)
+    double logX = std::log(x);
+    long double sum = 0.0;
+    for (int n = 1; n != 20; ++n) {
+        double addon = n * logX - std::lgamma(n + 1);
+        addon = std::exp(addon);
+        addon /= (a + n);
+        sum += (n & 1) ? -addon : addon;
+    }
+    sum *= a;
+    double y = std::log1p(sum);
+    y += a * logX;
+    y -= std::lgamma(a + 1);
+    return y;
+}
+
+double lqgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId)
+{
+    if (mId == QT)
+    {
+        double y = qtGammaExpansionAux(a, x);
+        y = -std::exp(y);
+        return std::log1p(y);
+    }
+    if (mId == CF)
+    {
+        /// Continued fraction
+        int k0 = std::min(40.0 / (x - 1) + 5.0, 60.0);
+        long double sum = 0.0;
+        double rhok = 0.0, tk = 1.0;
+        for (int k = 1; k <= k0; ++k) {
+            /// Calculate a(k)
+            double ak = k * (a - k);
+            double temp = x + 2 * k - a;
+            ak /= temp * temp - 1;
+            /// Calculate rho(k)
+            ++rhok;
+            rhok *= ak;
+            rhok /= -(1 + rhok);
+            /// Calculate t(k) and add it to the sum
+            tk *= rhok;
+            sum += tk;
+        }
+        double y = std::log1p(sum);
+        y += a * std::log(x);
+        y -= x + std::lgamma(a);
+        y -= std::log1p(x - a);
+        return y;
+    }
+    return (mId == QUA) ? std::log(qgammaRaw(a, x, mId)) : std::log1p(-pgammaRaw(a, x, mId));
+}
+
+double lqgamma(double a, double x)
+{
+    if (x < 0.0 || a < 0.0)
+        return NAN;
+    if (x == 0.0)
         return std::lgamma(x);
-    if (a == 1)
+    if (a == 1.0)
         return -x;
-    if (a == 0.5)
-        return 0.5 * M_LNPI + std::log(std::erfc(std::sqrt(x)));
-    if (std::max(a, x) < 1e-5)
-        return a * std::log(x);
-    if (x > 1e4) {
-        return (a - 1) * std::log(x) - x;
-    }
-
-    if (x <= 1.1 || x <= a) {
-        double y = std::tgamma(a) - lowerIncGamma(a, x);
-        return std::log(y);
-    }
-
-    /// the modified Lentz's method
-    double fraction = 1.0 + x - a;
-    double C = fraction, D = 0, mult = 1;
-    double xmap1 = x - a + 1.0;
-    int i = 1;
-    do {
-        double s = i * (a - i);
-        double b = (i << 1) + xmap1;
-        D = b + s * D;
-        C = b + s / C;
-        D = 1.0 / D;
-        mult = C * D;
-        fraction *= mult;
-    } while (std::fabs(mult - 1.0) > MIN_POSITIVE && ++i < 10000);
-    return a * std::log(x) - x - std::log(fraction);
+    return lqgammaRaw(a, x, getRegularizedGammaMethodId(a, x));
 }
+
+double qgammaRaw(double a, double x, REGULARISED_GAMMA_METHOD_ID mId)
+{
+    if (mId == CF)
+        return std::exp(lqgammaRaw(a, x, mId));
+    if (mId == QT)
+        return -std::expm1(qtGammaExpansionAux(a, x));
+    if (mId == QUA)
+        return incompleteGammaUniformExpansion(a, x, false);
+    return (mId == PUA) ? 1.0 - pgammaRaw(a, x, mId) : -std::expm1(lpgammaRaw(a, x, mId));
+}
+
+double qgamma(double a, double x)
+{
+    if (x < 0.0 || a < 0.0)
+        return NAN;
+    if (x == 0.0)
+        return std::tgamma(x);
+    if (a == 1.0)
+        return std::exp(-x);
+    return qgammaRaw(a, x, getRegularizedGammaMethodId(a, x));
+}
+
+
+/// INCOMPLETE BETA FUNCTIONS
 
 double betaFun(double a, double b)
 {
@@ -413,8 +517,7 @@ long double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, do
            adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
-long double integral(const std::function<double (double)> &funPtr,
-                               double a, double b, double epsilon, int maxRecursionDepth)
+long double integral(const std::function<double (double)> &funPtr, double a, double b, double epsilon, int maxRecursionDepth)
 {
     // TODO: redo to adaptive Gauss-Kronrod quadrature
     if (a > b)
@@ -506,10 +609,7 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
             if (std::min(std::fabs(fun), relDiffY) < funTol)
                 return true;
         }
-        if (iter == MAX_ITER - 1)
-            qDebug() << diffX << relDiffX << root << oldRoot;
     } while (++iter < MAX_ITER);
-    qDebug() << "FUN: " << fun;
     return false;
 }
 
@@ -1023,7 +1123,7 @@ double MarcumPSeries(double mu, double x, double y)
     /// series expansion
     double sum = 0.0;
     int n0 = std::max(std::ceil(root), 5.0); /// sanity check
-    double P = std::exp(logLowerIncGamma(mu + n0, y) - std::lgamma(mu + n0));
+    double P = pgamma(mu + n0, y);
     for (int n = n0; n > 0; --n) {
         double term = n * logx - x;
         term = std::exp(term) * P / factorial(n);

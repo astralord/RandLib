@@ -1,7 +1,8 @@
 #include "CategoricalRand.h"
 #include "../continuous/UniformRand.h"
 
-CategoricalRand::CategoricalRand(std::vector<double>&& probabilities)
+CategoricalRand::CategoricalRand(std::vector<double>&& probabilities) :
+    K(1), q(0.5)
 {
     SetProbabilities(std::move(probabilities));
 }

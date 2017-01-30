@@ -80,22 +80,31 @@ int sign(double x);
  double trigamma(double x);
 
 /**
- * @brief lowerIncGamma
- * Calculate lower incomplete gamma function
+ * @brief lpgamma
+ * Calculate logarithm of lower regularised incomplete gamma function log(P(a, x))
  * @param a
  * @param x
  * @return
  */
- long double lowerIncGamma(double a, double x);
+ double lpgamma(double a, double x);
 
-/**
- * @brief logLowerIncGamma
- * Calculate logarithm of lower incomplete gamma function
+ /**
+ * @brief lowerIncGamma
+ * Calculate lower regularised incomplete gamma function P(a, x)
  * @param a
  * @param x
  * @return
  */
- long double logLowerIncGamma(double a, double x);
+ double pgamma(double a, double x);
+
+ /**
+ * @brief upperIncGamma
+ * Calculate logarithm of upper incomplete gamma function
+ * @param a
+ * @param x
+ * @return
+ */
+ double lqgamma(double a, double x);
 
 /**
  * @brief upperIncGamma
@@ -104,16 +113,7 @@ int sign(double x);
  * @param x
  * @return
  */
- long double upperIncGamma(double a, double x);
-
-/**
- * @brief upperIncGamma
- * Calculate logarithm of upper incomplete gamma function
- * @param a
- * @param x
- * @return
- */
-long double logUpperIncGamma(double a, double x);
+ double qgamma(double a, double x);
 
 /**
  * @brief betaFun

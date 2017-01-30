@@ -16,7 +16,6 @@ void PoissonRand::SetRate(double rate)
 {
     lambda = (rate <= 0.0) ? 1.0 : rate;
 
-    expmLambda = std::exp(-lambda);
     logLambda = std::log(lambda);
 
     floorLambda = std::floor(lambda);
@@ -26,14 +25,17 @@ void PoissonRand::SetRate(double rate)
 
 double PoissonRand::P(int k) const
 {
-    if (k < 0)
-        return 0;
-    return (k < 20) ? expmLambda * std::pow(lambda, k) / RandMath::factorial(k) : std::exp(k * logLambda - lambda - std::lgamma(k + 1));
+    return (k >= 0) ? std::exp(k * logLambda - lambda - std::lgamma(k + 1)) : 0.0;
 }
 
 double PoissonRand::F(int k) const
 {
-    return (k < 0) ? 0 : RandMath::upperIncGamma(k + 1, lambda) / RandMath::factorial(k);
+    return (k >= 0.0) ? RandMath::qgamma(k + 1, lambda) : 0.0;
+}
+
+double PoissonRand::S(int k) const
+{
+    return (k >= 0.0) ? RandMath::pgamma(k + 1, lambda) : 1.0;
 }
 
 int PoissonRand::Variate() const

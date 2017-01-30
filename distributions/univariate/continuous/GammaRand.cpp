@@ -36,15 +36,15 @@ void GammaRand::SetParameters(double shape, double rate)
 
 double GammaRand::f(double x) const
 {
-    if (x < 0)
-        return 0;
-    if (x == 0)
+    if (x < 0.0)
+        return 0.0;
+    if (x == 0.0)
     {
-        if (alpha > 1)
+        if (alpha > 1.0)
             return 0.0;
-        return (alpha == 1) ? beta : INFINITY;
+        return (alpha == 1.0) ? beta : INFINITY;
     }
-    double y = (alpha - 1) * std::log(x);
+    double y = (alpha - 1.0) * std::log(x);
     y -= x * beta;
     y += pdfCoef;
     return std::exp(y);
@@ -52,28 +52,30 @@ double GammaRand::f(double x) const
 
 double GammaRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-    double y = mLgammaShape + RandMath::logLowerIncGamma(alpha, x * beta);
-    return std::exp(y);
+    return (x > 0.0) ? RandMath::pgamma(alpha, x * beta) : 0.0;
+}
+
+double GammaRand::S(double x) const
+{
+    return (x > 0.0) ? RandMath::qgamma(alpha, x * beta) : 1.0;
 }
 
 GammaRand::GENERATOR_ID GammaRand::GetIdOfUsedGenerator(double shape)
 {
     if (shape < 0.34)
         return SMALL_SHAPE;
-    if (shape <= 3 && RandMath::areClose(shape, std::round(shape)))
+    if (shape <= 3.0 && RandMath::areClose(shape, std::round(shape)))
         return INTEGER_SHAPE;
     if (RandMath::areClose(shape, 1.5))
         return ONE_AND_A_HALF_SHAPE;
-    if (shape > 1 && shape < 1.2)
+    if (shape > 1.0 && shape < 1.2)
         return FISHMAN;
     return MARSAGLIA_TSANG;
 }
 
 double GammaRand::variateThroughExponentialSum(int shape)
 {
-    double X = 0;
+    double X = 0.0;
     for (int i = 0; i < shape; ++i)
         X += ExponentialRand::StandardVariate();
     return X;
@@ -324,10 +326,10 @@ double GammaRand::initRootForLargeShape(double p) const
 {
     if (p == 0.5)
         return alpha;
-    double nu0 = NormalRand::standardQuantile(p) / std::sqrt(alpha);
-    double lambda = 0.5 * nu0 * nu0 + 1;
+    double x = NormalRand::standardQuantile(p);
+    double lambda = 0.5 * x * x / alpha + 1;
     lambda = -std::exp(-lambda);
-    if (nu0 > 0)
+    if (x > 0)
         lambda = -RandMath::Wm1Lambert(lambda);
     else
         lambda = -RandMath::W0Lambert(lambda);
@@ -346,17 +348,18 @@ double GammaRand::df(double x) const
 double GammaRand::quantileImpl(double p) const
 {
     /// Method is taken from
-    /// EFFICIENT AND ACCURATE ALGORITHMS FOR THE
-    /// COMPUTATION AND INVERSION OF THE INCOMPLETE
-    /// GAMMA FUNCTION RATIOS
-    /// (AMPARO GIL, JAVIER SEGURA, AND NICO M. TEMME)
+    /// "Efficient and accurate algorithms
+    /// for the computation and inversion
+    /// of the incomplete gamma function ratios"
+    /// (Amparo Gil, Javier Segura and Nico M. Temme)
     double root = 0;
     double r = std::log(p * alpha) - mLgammaShape;
     r = std::exp(r * alphaInv);
     if (alpha < 10) {
         /// if p -> 0
-        if (r < 0.2 * (alpha + 1))
+        if (r < 0.2 * (alpha + 1)) {
             root = initRootForSmallP(r);
+        }
         else {
             double logQ = std::log1p(-p);
             double logAlpha = std::log(alpha); // can be hashed
@@ -398,8 +401,9 @@ double GammaRand::quantileImpl1m(double p) const
         double logAlpha = std::log(alpha); // can be hashed
         double maxBoundary1 = -0.5 * alpha - logAlpha + mLgammaShape; /// boundary adviced in a paper
         double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
-        /// if p -> 1
-        if (logQ < std::min(maxBoundary1, maxBoundary2)) {
+        /// if p -> 0
+        if (logQ < std::min(maxBoundary1, maxBoundary2))
+        {
             double root = initRootForLargeP(logQ) / beta;
             if (RandMath::findRoot([this, p] (double x)
             {
