@@ -49,6 +49,8 @@ private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
     std::complex<double> CFImpl(double t) const override;
+
+    friend class NoncentralTRand;
 };
 
 #endif // STUDENTTRAND_H

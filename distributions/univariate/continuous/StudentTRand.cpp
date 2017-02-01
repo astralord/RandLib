@@ -43,32 +43,61 @@ void StudentTRand::SetScale(double scale)
 
 double StudentTRand::f(double x) const
 {
-    // TODO: consider special cases
     /// adjustment
-    x -= mu;
-    x /= sigma;
+    double x0 = x - mu;
+    x0 /= sigma;
+    double xSq = x0 * x0;
 
-    double y = x * x / nu;
-    y = -nup1Half * std::log1p(y);
+    if (nu == 1) /// Cauchy distribution
+        return M_1_PI / (sigma * (1 + xSq));
+    if (nu == 2)
+        return 1.0 / (sigma * std::pow(2.0 + xSq, 1.5));
+    if (nu == 3) {
+        double y = 3 + xSq;
+        return 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
+    }
+
+    double y = -nup1Half * std::log1p(xSq / nu);
     return std::exp(pdfCoef + y) / sigma;
 }
 
 double StudentTRand::F(double x) const
 {
-    x -= mu;
-    x /= sigma;
-    if (x == 0.0)
+    double x0 = x - mu;
+    x0 /= sigma;
+    if (x0 == 0.0)
         return 0.5;
 
-    // TODO: consider nu == 3 and nu == 4
-    if (nu == 1)
-        return 0.5 + std::atan(x) / M_PI;
-    if (nu == 2)
-        return 0.5 * (1.0 + x / std::sqrt(2 + x * x));
+    if (nu == 1) {
+        /// Cauchy distribution
+        /// For small absolute values we use standard technique
+        if (std::fabs(x0 < 1.0)) {
+            double y = std::atan(x0);
+            y *= M_1_PI;
+            return y + 0.5;
+        }
+        /// Otherwise we use this trick to avoid numeric problems
+        double y = -std::atan(1.0 / x0) * M_1_PI;
+        return (x0 < 0.0) ? y : 1.0 + y;
+    }
 
-    double t = nu / (x * x + nu);
+    if (nu == 2)
+        return 0.5 * (1.0 + x0 / std::sqrt(2 + x0 * x0));
+
+    if (nu == 3) {
+        double y = M_SQRT3 * x0 / (x0 * x0 + 3);
+        if (std::fabs(x0 < M_SQRT3)) {
+            y += std::atan(x0 / M_SQRT3);
+            return 0.5 + M_1_PI * y;
+        }
+        y -= std::atan(M_SQRT3 / x0);
+        y *= M_1_PI;
+        return (x < 0.0) ? y : 1.0 + y;
+    }
+
+    double t = nu / (x0 * x0 + nu);
     double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5) * betaInv;
-    return (x > 0.0) ? (1 - y) : y;
+    return (x0 > 0.0) ? (1 - y) : y;
 }
 
 double StudentTRand::Variate() const
@@ -119,7 +148,6 @@ std::complex<double> StudentTRand::CFImpl(double t) const
 
 double StudentTRand::quantileImpl(double p) const
 {
-    // TODO: consider nu == 3
     double temp = p - 0.5;
     if (nu == 1)
         return std::tan(M_PI * temp) * sigma + mu;
@@ -137,7 +165,6 @@ double StudentTRand::quantileImpl(double p) const
 
 double StudentTRand::quantileImpl1m(double p) const
 {
-    // TODO: consider nu == 3
     double temp = 0.5 - p;
     if (nu == 1)
         return std::tan(M_PI * temp) * sigma + mu;

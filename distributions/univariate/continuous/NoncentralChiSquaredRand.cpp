@@ -58,7 +58,7 @@ double NoncentralChiSquaredRand::variateForDegreeEqualOne() const
 
 double NoncentralChiSquaredRand::Variate(double degree, double noncentrality)
 {
-    if (degree <= 0 || noncentrality < 0)
+    if (degree <= 0 || noncentrality <= 0)
         return NAN; /// wrong parameters
 
     if (degree >= 1) {

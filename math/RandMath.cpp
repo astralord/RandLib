@@ -450,10 +450,12 @@ double incompleteBetaFun(double x, double a, double b)
         {
             double denom = a, numen = 1;
             double sum = 1.0 / a, add = 1;
+            int i = 1;
             do {
-                numen *= x;
+                numen = std::pow(x, i);
                 add = numen / (++denom);
                 sum += add;
+                ++i;
             } while (add > MIN_POSITIVE * sum);
             return std::pow(x, a) * sum;
         }
@@ -471,21 +473,22 @@ double incompleteBetaFun(double x, double a, double b)
         minBound = x;
         invert = true;
     }
-    double y = 0;
 
+    double y = 0;
+    double am1 = a - 1.0, bm1 = b - 1.0;
     if (a != b)
     {
-        y = integral([a, b] (double t)
+        y = integral([am1, bm1] (double t)
         {
-            double z = (a - 1) * std::log(t) + (b - 1) * std::log1p(-t);
+            double z = am1 * std::log(t) + bm1 * std::log1p(-t);
             return std::exp(z);
         },
         minBound, maxBound);
     }
     else {
-        y = integral([a, b] (double t)
+        y = integral([am1] (double t)
         {
-            return std::pow(t - t * t, a - 1);
+            return std::pow(t - t * t, am1);
         },
         minBound, maxBound);
     }
