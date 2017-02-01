@@ -154,10 +154,34 @@ double NoncentralTRand::Variance() const
 
 double NoncentralTRand::Skewness() const
 {
-    return (nu > 3) ? ContinuousDistribution::Skewness() : NAN;
+    if (nu <= 3)
+        return NAN;
+    double mean = Mean();
+    double var = nu * (1.0 + mu * mu) / (nu - 2) + mean * mean;
+    double thirdMoment = std::lgamma(0.5 * nu - 1.5);
+    thirdMoment -= T.Y.GetLogGammaFunction();
+    thirdMoment += 1.5 * logNu + 0.5 * M_LN2;
+    thirdMoment = 0.25 * std::exp(thirdMoment);
+    thirdMoment *= mu * (3.0 + mu * mu);
+    double denominator = std::pow(var, 1.5);
+    return (thirdMoment - 3 * mean * var - std::pow(mean, 3)) / denominator;
 }
 
 double NoncentralTRand::ExcessKurtosis() const
 {
-    return (nu > 4) ? ContinuousDistribution::ExcessKurtosis() : NAN;
+    if (nu <= 4)
+        return (nu > 2) ? INFINITY : NAN;
+    double fourthMoment = nu * nu / ((nu - 2) * (nu - 4));
+    fourthMoment *= (std::pow(mu, 4) + 6 * mu * mu + 3);
+    double thirdMoment = std::lgamma(0.5 * nu - 1.5);
+    thirdMoment -= T.Y.GetLogGammaFunction();
+    thirdMoment += 1.5 * logNu + 0.5 * M_LN2;
+    thirdMoment = 0.25 * std::exp(thirdMoment);
+    thirdMoment *= mu * (3.0 + mu * mu);
+    double mean = Mean();
+    double kurtosis = fourthMoment - 4 * mean * thirdMoment;
+    kurtosis += 6 * mean * mean * nu * (1.0 + mu * mu) / (nu - 2);
+    kurtosis -= 3 * std::pow(mean, 4);
+    double var = Variance();
+    return kurtosis / (var * var);
 }

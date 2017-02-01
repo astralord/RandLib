@@ -79,26 +79,36 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
         }
     }
 
-    double startPoint = Mean();
-    if (!std::isfinite(startPoint)) {
-        if (isLeftBounded())
-            startPoint = MinValue();
-        else if (isRightBounded())
-            startPoint = MaxValue();
-        else {
-            startPoint = Median();
-        }
-    }
-    double re = ExpectedValue([this, t] (double x)
+    SUPPORT_TYPE suppType = this->SupportType();
+    double leftBound, rightBound;
+    if (suppType == FINITE_T || suppType == RIGHTSEMIFINITE_T)
+        leftBound = this->MinValue();
+    else
+        leftBound = Quantile(1e-6);
+    if (suppType == FINITE_T || suppType == LEFTSEMIFINITE_T)
+        rightBound = this->MaxValue();
+    else
+        rightBound = Quantile1m(1e-6);
+
+    double mode = this->Mode();
+
+    double I1Re = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
-    }, startPoint);
-    double im = ExpectedValue([this, t] (double x)
+    }, leftBound, mode);
+    double I2Re = ExpectedValue([this, t] (double x)
+    {
+        return std::cos(t * x);
+    }, mode, rightBound);
+    double I1Im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, startPoint);
-
-    return std::complex<double>(re, im);
+    }, leftBound, mode);
+    double I2Im = ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    }, mode, rightBound);
+    return std::complex<double>(I1Re + I2Re, I1Im + I2Im);
 }
 
 template< typename T >

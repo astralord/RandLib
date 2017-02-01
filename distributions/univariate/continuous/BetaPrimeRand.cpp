@@ -141,6 +141,6 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
     double im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, 0.0);
+    }, 0.0, Quantile1m(1e-6));
     return std::complex<double>(re, im);
 }

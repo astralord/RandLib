@@ -118,6 +118,8 @@ double ContinuousDistribution::GetRightLimit(double value, double epsilon) const
 
 double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const
 {
+    /// attempt to calculate expected value by numerical method
+    /// use for distributions w/o explicit formula
     static constexpr double epsilon = 1e-10;
     double lowerBoundary = minPoint, upperBoundary = maxPoint;
     if (isRightBounded()) {
@@ -132,22 +134,63 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     if (lowerBoundary >= upperBoundary)
         return 0.0;
 
+    bool leftBounded = std::isfinite(lowerBoundary), rightBounded = std::isfinite(upperBoundary);
+
+    if (leftBounded && rightBounded) {
+        return RandMath::integral([this, funPtr] (double x)
+        {
+            return funPtr(x) * f(x);
+        },
+        lowerBoundary, upperBoundary);
+    }
+
+    if (leftBounded) {
+        return RandMath::integral([this, funPtr, lowerBoundary] (double x)
+        {
+            if (x >= 1.0)
+                return 0.0;
+            double denom = 1.0 - x;
+            double t = lowerBoundary + x / denom;
+            double y = funPtr(t) * f(t);
+            denom *= denom;
+            return y / denom;
+        },
+        0.0, 1.0);
+    }
+
+    if (rightBounded) {
+        return RandMath::integral([this, funPtr, upperBoundary] (double x)
+        {
+            if (x <= 0.0)
+                return 0.0;
+            double t = upperBoundary - (1.0 - x) / x;
+            double y = funPtr(t) * f(t);
+            return y / (x * x);
+        },
+        0.0, 1.0);
+    }
+
+    /// Infinite case
     return RandMath::integral([this, funPtr] (double x)
     {
-        return funPtr(x) * f(x);
+        if (std::fabs(x) >= 1.0)
+            return 0.0;
+        double x2 = x * x;
+        double denom = 1.0 - x2;
+        double t = x / denom;
+        double y = funPtr(t) * f(t);
+        denom *= denom;
+        return y * (1.0 + x2) / denom;
     },
-    lowerBoundary, upperBoundary);
+    -1.0, 1.0);
 }
 
 
 double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
 {
-    /// attempt to calculate expected value by numerical method
-    /// use for distributions w/o explicit formula
-    /// works good for unimodal distributions
+    // TODO: Get rid of this function
     static constexpr double epsilon = 1e-10;
 
-    // TODO: Get rid of startpoint
     double lowerBoundary = startPoint, upperBoundary = startPoint;
     SUPPORT_TYPE suppType = SupportType();
     if (suppType == FINITE_T)
@@ -199,7 +242,6 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         return y * (1.0 + x2) / denom;
     },
     -1.0, 1.0);
-
 }
 
 double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const

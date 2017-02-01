@@ -461,8 +461,8 @@ std::complex<double> BetaRand::CFImpl(double t) const
     im += sinZ / beta;
 
     std::complex<double> y(re, im);
-    y *= std::exp(std::complex<double>(0, t * a));
-    return betaFunInv * y;
+    double cosTA = std::cos(t * a), sinTA = std::sin(t * a);
+    return betaFunInv * y * std::complex<double>(cosTA, sinTA);
 }
 
 ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)

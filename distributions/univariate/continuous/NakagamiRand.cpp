@@ -322,25 +322,34 @@ bool RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
     if (!checkValidity(sample))
         return false;
     size_t n = sample.size();
-
-    double sigmaSq = 0.5 * rawMoment(sample, 2);
-
+    double sigmaBiasedSq = 0.5 * rawMoment(sample, 2);
     /// Calculate unbiased sigma
-    double sigmaEst = std::sqrt(sigmaSq);
-
-    if (n > 30)
-        SetScale((1 + 0.1252 / n) * sigmaEst); /// err < 1e-6
+    if (n > 100) {
+        double coef = 0.125 * n;
+        coef -= 1.0 / (192 * std::pow(n, 3));
+        coef += 1.0 / (640 * std::pow(n, 5));
+        SetScale((1.0 + coef) * std::sqrt(sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
+    }
+    else if (n > 15) {
+        double coef = std::lgamma(n + 1) + std::lgamma(n);
+        coef += 2 * n * M_LN2;
+        coef += 0.5 * std::log(n);
+        coef -= std::lgamma(2 * n + 1);
+        coef -= 0.5 * M_LNPI;
+        coef += 0.5 * std::log(sigmaBiasedSq);
+        SetScale(std::exp(coef));
+    }
     else
     {
-        double coef = RandMath::factorial(n - 1);
-        coef *= n * coef;
-        coef *= M_1_SQRTPI * std::sqrt(static_cast<double>(n));
+        /// works faster for small n
+        double factNm1 = RandMath::factorial(n - 1);
+        double factN = n * factNm1;
+        int pow2n = 1 << n; /// < 2^15
+        double coef = factNm1 * factN;
+        coef *= M_1_SQRTPI * std::sqrt(n);
         coef /= RandMath::factorial(n << 1);
-        int pow2n = 1 << n; /// < 2^31
-        coef *= pow2n;
-        coef *= pow2n;
-
-        SetScale(coef * sigmaEst);
+        coef *= pow2n * pow2n;
+        SetScale(coef * std::sqrt(sigmaBiasedSq));
     }
     return true;
 }

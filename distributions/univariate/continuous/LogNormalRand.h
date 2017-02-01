@@ -10,7 +10,6 @@
  */
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 {
-    double expMu, expVar;
     NormalRand X;
 
 public:
