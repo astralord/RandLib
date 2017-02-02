@@ -9,7 +9,6 @@
  */
 class RANDLIBSHARED_EXPORT LogCauchyRand : public ContinuousDistribution
 {
-    double expMu;
     CauchyRand X;
 
 public:

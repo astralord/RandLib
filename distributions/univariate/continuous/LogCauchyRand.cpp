@@ -14,7 +14,6 @@ std::string LogCauchyRand::Name() const
 void LogCauchyRand::SetLocation(double location)
 {
     X.SetLocation(location);
-    expMu = std::exp(X.GetLocation());
 }
 
 void LogCauchyRand::SetScale(double scale)
@@ -61,7 +60,7 @@ double LogCauchyRand::quantileImpl1m(double p) const
 
 double LogCauchyRand::Median() const
 {
-    return expMu;
+    return std::exp(X.GetLocation());
 }
 
 double LogCauchyRand::Mode() const

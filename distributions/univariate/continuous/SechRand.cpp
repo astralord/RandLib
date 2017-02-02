@@ -19,7 +19,7 @@ double SechRand::f(double x) const
 double SechRand::F(double x) const
 {
     double y = std::exp(M_PI_2 * x);
-    return M_2_PI * std::atan(y);
+    return M_2_PI * RandMath::atan(y);
 }
 
 double SechRand::Variate() const

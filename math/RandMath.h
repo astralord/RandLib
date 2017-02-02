@@ -40,13 +40,20 @@ bool areClose(double a, double b, double eps = 1e-6);
 int sign(double x);
 
 /**
+ * @brief atan
+ * @param x
+ * @return safe atan(x)
+ */
+double atan(double x);
+
+/**
  * @brief factorial
  * Calculate n! using table values for small n <= 255
  * and built-in gamma function for large n > 255
  * @param n non-negative integer number
  * @return n!
  */
- long double factorial(double n);
+long double factorial(double n);
 
 /**
  * @brief doubleFactorial
@@ -54,7 +61,7 @@ int sign(double x);
  * @param n
  * @return
  */
- long double doubleFactorial(int n);
+long double doubleFactorial(int n);
 
 /**
  * @brief binomialCoef
@@ -63,21 +70,21 @@ int sign(double x);
  * @param k
  * @return C(n,k) = n! / (k! * (n - k)!)
  */
- long double binomialCoef(int n, int k);
+long double binomialCoef(int n, int k);
 
 /**
  * @brief digamma
  * @param x
  * @return digamma(x) = d(ln(Gamma(x)))/dx = d(Gamma(x))/Gamma(x)
  */
- double digamma(double x);
+double digamma(double x);
 
 /**
  * @brief trigamma
  * @param x
  * @return trigamma(x) = digamma'(x)
  */
- double trigamma(double x);
+double trigamma(double x);
 
 /**
  * @brief lpgamma
@@ -86,7 +93,7 @@ int sign(double x);
  * @param x
  * @return log(P(a, x))
  */
- double lpgamma(double a, double x);
+double lpgamma(double a, double x);
 
  /**
  * @brief pgamma
@@ -95,7 +102,7 @@ int sign(double x);
  * @param x
  * @return P(a, x)
  */
- double pgamma(double a, double x);
+double pgamma(double a, double x);
 
  /**
  * @brief lqgamma
@@ -104,7 +111,7 @@ int sign(double x);
  * @param x
  * @return log(Q(a, x))
  */
- double lqgamma(double a, double x);
+double lqgamma(double a, double x);
 
 /**
  * @brief qgamma
@@ -113,7 +120,7 @@ int sign(double x);
  * @param x
  * @return Q(a, x)
  */
- double qgamma(double a, double x);
+double qgamma(double a, double x);
 
 /**
  * @brief betaFun

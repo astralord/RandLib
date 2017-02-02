@@ -70,29 +70,17 @@ double StudentTRand::F(double x) const
 
     if (nu == 1) {
         /// Cauchy distribution
-        /// For small absolute values we use standard technique
-        if (std::fabs(x0 < 1.0)) {
-            double y = std::atan(x0);
-            y *= M_1_PI;
-            return y + 0.5;
-        }
-        /// Otherwise we use this trick to avoid numeric problems
-        double y = -std::atan(1.0 / x0) * M_1_PI;
-        return (x0 < 0.0) ? y : 1.0 + y;
+        return 0.5 * M_1_PI * RandMath::atan(x);
     }
 
-    if (nu == 2)
+    if (nu == 2) {
         return 0.5 * (1.0 + x0 / std::sqrt(2 + x0 * x0));
+    }
 
     if (nu == 3) {
         double y = M_SQRT3 * x0 / (x0 * x0 + 3);
-        if (std::fabs(x0 < M_SQRT3)) {
-            y += std::atan(x0 / M_SQRT3);
-            return 0.5 + M_1_PI * y;
-        }
-        y -= std::atan(M_SQRT3 / x0);
-        y *= M_1_PI;
-        return (x < 0.0) ? y : 1.0 + y;
+        y += RandMath::atan(x0 / M_SQRT3);
+        return 0.5 + M_1_PI * y;
     }
 
     double t = nu / (x0 * x0 + nu);

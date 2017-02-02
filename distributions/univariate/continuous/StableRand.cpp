@@ -55,7 +55,7 @@ void StableRand::SetParameters(double exponent, double skewness)
         xi = beta * std::tan(M_PI_2 * alpha);
         zeta = -xi;
         S = 0.5 * alphaInv * std::log1p(zeta * zeta);
-        xi = alphaInv * std::atan(xi);
+        xi = alphaInv * RandMath::atan(xi);
 
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
 
@@ -168,7 +168,7 @@ double StableRand::pdfForUnityExponent(double x) const
     }
 
     /// We squize boudaries for too peaked integrands
-    double boundary = std::atan(M_2_PI * beta * (5.0 - xAdj));
+    double boundary = RandMath::atan(M_2_PI * beta * (5.0 - xAdj));
     double upperBoundary = (beta > 0.0) ? boundary : M_PI_2;
     double lowerBoundary = (beta < 0.0) ? boundary : -M_PI_2;
 
@@ -269,7 +269,7 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     double xSq = x * x;
     double y = 1.0 + xSq;
     double ySq = y * y;
-    double z = std::atan(x);
+    double z = RandMath::atan(x);
     double zSq = z * z;
     double logY = std::log1p(xSq);
     double alpham1 = alpha - 1.0;
@@ -302,17 +302,13 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     /// Gamma'(x)
     static constexpr long double gammaDerTable[] = {1.0 - M_EULER, 3.0 - 2.0 * M_EULER, 11.0 - 6.0 * M_EULER};
     /// Gamma''(x)
-    static constexpr long double gammaSecDerTable[] = {0.82368066085287938958l,
-                                                       2.49292999190269305794l,
-                                                       11.1699273161019477314l};
+    static constexpr long double gammaSecDerTable[] = {0.82368066085287938958l, 2.49292999190269305794l, 11.1699273161019477314l};
     /// Digamma(x)
     static constexpr long double digammaTable[] = {1.0 - M_EULER, 1.5 - M_EULER, 11.0 / 6 - M_EULER};
     /// Digamma'(x)
     static constexpr long double digammaDerTable[] = {M_PI_SQ_6 - 1.0, M_PI_SQ_6 - 1.25, M_PI_SQ_6 - 49.0 / 36};
     /// Digamma''(x)
-    static constexpr long double digammaSecDerTable[] = {-0.40411380631918857080l,
-                                                         -0.15411380631918857080l,
-                                                         -0.08003973224511449673l};
+    static constexpr long double digammaSecDerTable[] = {-0.40411380631918857080l, -0.15411380631918857080l, -0.08003973224511449673l};
     /// third derivative
     double gTable[] = {0, 0, 0};
     for (int i = 0; i < 3; ++i) {
@@ -481,15 +477,7 @@ double StableRand::cdfCauchy(double x) const
 {
     double x0 = x - mu;
     x0 /= sigma;
-    /// For small absolute values we use standard technique
-    if (std::fabs(x0 < 1.0)) {
-        double y = std::atan(x0);
-        y *= M_1_PI;
-        return y + 0.5;
-    }
-    /// Otherwise we use this trick to avoid numeric problems
-    double y = -std::atan(1.0 / x0) * M_1_PI;
-    return (x0 < 0) ? y : 1.0 + y;
+    return 0.5 + M_1_PI * RandMath::atan(x0);
 }
 
 double StableRand::cdfLevy(double x) const
@@ -677,8 +665,8 @@ double StableRand::Variance() const
 
 double StableRand::Mode() const
 {
-    /// For symmetric distributions mode is μ
-    if (beta == 0 || alpha == 2)
+    /// For symmetric and normal distributions mode is μ
+    if (beta == 0 || distributionId == NORMAL)
         return mu;
     if (distributionId == LEVY)
         return mu + beta * sigma / 3.0;

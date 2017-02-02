@@ -17,6 +17,19 @@ int sign(double x)
     return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
 
+double atan(double x)
+{
+    /// For small absolute values we use standard technique
+    /// Otherwise we use relation
+    /// atan(x) = +/-π/2 - atan(1/x)
+    /// to avoid numeric problems
+    if (x == 0.0)
+        return 0.0;
+    if (x > 0.0)
+        return (x > 1.0) ? M_PI_2 - std::atan(1.0 / x) : std::atan(x);
+    return (x < -1.0) ? -M_PI_2 - std::atan(1.0 / x) : std::atan(x);
+}
+
 /**
  * @brief maxFactorialTableValue maximum value for input parameter to use table methods
  */
@@ -103,6 +116,8 @@ long double binomialCoef(int n, int k)
 {
     if (k > n)
         return 0;
+    if (n > 20) /// to avoid overflow
+        return 1.0 / ((n + 1) * betaFun(n - k + 1, k + 1));
     long double n_fact = factorial(n);
     long double k_fact = factorial(k);
     long double n_k_fact;
