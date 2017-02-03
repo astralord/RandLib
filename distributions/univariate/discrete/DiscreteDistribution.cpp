@@ -68,14 +68,14 @@ double DiscreteDistribution::quantileImpl1m(double p) const
 {
     double mean = Mean();
     int down = static_cast<int>(std::floor(mean)), up = down + 1;
-    double fu = F(up), fd = F(down);
+    double su = S(up), sd = S(down);
     int iter = 0;
     static constexpr int maxIter = 1e4;
     /// go up
-    while (1.0 - fu > p)
+    while (su > p)
     {
-        fd = fu;
-        fu = F(++up);
+        sd = su;
+        su = S(++up);
         if (++iter > maxIter)
             return NAN;
     }
@@ -83,16 +83,16 @@ double DiscreteDistribution::quantileImpl1m(double p) const
 
     iter = 0;
     /// go down
-    while (1.0 - fd < p)
+    while (sd < p)
     {
-        fd = F(--down);
+        sd = S(--down);
         if (++iter > maxIter)
             return NAN;
     }
     up = down + 1;
 
     /// if lower quantile is not equal probability, we return upper quantile
-    return (1.0 - fd > p) ? up : down;
+    return (sd > p) ? up : down;
 }
 
 double DiscreteDistribution::Hazard(double x) const
@@ -111,8 +111,14 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     if (suppType == FINITE_T || suppType == RIGHTSEMIFINITE_T) {
         k = std::max(k, static_cast<int>(std::floor(MinValue())));
     }
+    else if (k == INT_MIN) { /// neither function nor distribution are bounded from the left
+        k = Quantile(1e-6);
+    }
     if (suppType == FINITE_T || suppType == LEFTSEMIFINITE_T) {
         upperBoundary = std::min(upperBoundary, static_cast<int>(std::ceil(MaxValue())));
+    }
+    else if (upperBoundary == INT_MAX) { /// neither function nor distribution are bounded from the right
+        upperBoundary = Quantile1m(1e-6);
     }
 
     double sum = 0;
@@ -124,111 +130,6 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
         }
         ++k;
     } while (k <= upperBoundary);
-    return sum;
-}
-
-double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
-{
-    SUPPORT_TYPE suppType = SupportType();
-    double sum = 0, addon = 0, prob = 0;
-    if (suppType == FINITE_T) {
-        int k = std::floor(MinValue());
-        int upperBoundary = std::ceil(MaxValue());
-        do {
-            addon = funPtr(k);
-            if (addon != 0.0) {
-                prob = P(k);
-                if (prob > 0.0) {
-                    addon *= prob;
-                    sum += addon;
-                }
-            }
-            ++k;
-        } while (k <= upperBoundary);
-        return sum;
-    }
-
-    static constexpr double epsilon = 1e-12;
-    static constexpr int maxIter = 1e4;
-    int iter = 0;
-
-    if (suppType == RIGHTSEMIFINITE_T) {
-        int k = std::floor(MinValue());
-        do {
-            addon = funPtr(k);
-            if (addon != 0.0) {
-                prob = P(k);
-                if (prob > 0.0) {
-                    addon *= prob;
-                    sum += addon;
-                }
-            }
-            ++k;
-            if (++iter > maxIter) /// can't take sum, addon decreases too slow
-                return INFINITY;
-        } while (prob > epsilon || std::fabs(addon) > epsilon || F(k) < 0.999);
-        return sum;
-    }
-
-    if (suppType == LEFTSEMIFINITE_T) {
-        int k = std::floor(MaxValue());
-        do {
-            addon = funPtr(k);
-            if (addon != 0.0) {
-                prob = P(k);
-                if (prob > 0.0) {
-                    addon *= prob;
-                    sum += addon;
-                }
-            }
-            --k;
-            if (++iter > maxIter) /// can't take sum, addon decreases too slow
-                return INFINITY;
-        } while (prob > epsilon || std::fabs(addon) > epsilon || F(k) > 0.001);
-        return sum;
-    }
-
-    // TODO: transform all this spaGetti code into good one
-
-    double x = std::floor(startPoint);
-    if (RandMath::areClose(x, startPoint, epsilon))
-        --x;
-    int k = x;
-
-    do {
-        addon = funPtr(k);
-        if (addon != 0.0) {
-            prob = P(k);
-            if (prob > 0.0) {
-                addon *= prob;
-                sum += addon;
-            }
-        }
-        --k;
-        if (++iter > maxIter) /// can't take sum, addon decreases too slow
-            return INFINITY;
-    } while (prob > epsilon || std::fabs(addon) > epsilon || F(k) < 0.999);
-
-    iter = 0;
-    prob = 0;
-    x = std::ceil(startPoint);
-    if (RandMath::areClose(x, startPoint, epsilon))
-        ++x;
-    k = x;
-    do {
-        addon = funPtr(k);
-        if (addon != 0.0) {
-            prob = P(k);
-            if (prob > 0.0) {
-                addon *= prob;
-                sum += addon;
-            }
-        }
-        ++k;
-        if (++iter > maxIter) /// can't take sum, addon decreases too slow
-            return INFINITY;
-    } while (prob > epsilon || std::fabs(addon) > epsilon || F(k) > 0.001);
-
     return sum;
 }
 

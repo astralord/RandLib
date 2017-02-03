@@ -150,12 +150,22 @@ double MaxwellBoltzmannRand::f(double x) const
 
 double MaxwellBoltzmannRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-    double xAdj = M_SQRT1_2 * x / sigma;
-    double y = std::exp(-xAdj * xAdj);
+    if (x <= 0.0)
+        return 0.0;
+    double xAdj = x / sigma;
+    double y = std::exp(-0.5 * xAdj * xAdj);
     y *= 2 * xAdj * M_1_SQRTPI;
     return std::erf(xAdj) - y;
+}
+
+double MaxwellBoltzmannRand::S(double x) const
+{
+    if (x <= 0.0)
+        return 1.0;
+    double xAdj = x / sigma;
+    double y = std::exp(-0.5 * xAdj * xAdj);
+    y *= 2 * xAdj * M_1_SQRTPI;
+    return std::erfc(xAdj) + y;
 }
 
 double MaxwellBoltzmannRand::Variate() const

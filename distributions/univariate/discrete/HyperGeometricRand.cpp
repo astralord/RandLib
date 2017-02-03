@@ -30,6 +30,7 @@ double HyperGeometricRand::P(int k) const
 {
     if (k < MinValue() || k > MaxValue())
         return 0.0;
+    // TODO: implement in terms of log(Gammma(x))
     return RandMath::binomialCoef(K, k) * RandMath::binomialCoef(N - K, n - k) * pmfDenominator;
 }
 

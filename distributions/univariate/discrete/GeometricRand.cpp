@@ -25,6 +25,11 @@ double GeometricRand::F(int k) const
     return (k < 0) ? 0 : -std::expm1((k + 1) * logQ);
 }
 
+double GeometricRand::S(int k) const
+{
+    return (k < 0) ? 1 : std::exp((k + 1) * logQ);
+}
+
 int GeometricRand::Variate() const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();

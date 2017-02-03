@@ -48,8 +48,9 @@ public:
 
     double P(int k) const override;
     double F(int k) const override;
-protected:
+    double S(int k) const override;
 
+protected:
     enum GENERATOR_ID {
         TABLE,
         EXPONENTIAL,

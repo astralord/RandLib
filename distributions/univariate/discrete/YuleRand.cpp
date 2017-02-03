@@ -32,12 +32,23 @@ double YuleRand::P(int k) const
 double YuleRand::F(int k) const
 {
     if (k < 1)
-        return 0;
+        return 0.0;
     double y = lgamma1pRo;
     y += std::lgamma(k);
     y -= std::lgamma(k + ro + 1);
     y = std::exp(y);
-    return 1 - k * y;
+    return 1.0 - k * y;
+}
+
+double YuleRand::S(int k) const
+{
+    if (k < 1)
+        return 1.0;
+    double y = lgamma1pRo;
+    y += std::lgamma(k);
+    y -= std::lgamma(k + ro + 1);
+    y = std::exp(y);
+    return k * y;
 }
 
 int YuleRand::Variate() const

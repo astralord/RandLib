@@ -35,22 +35,8 @@ protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 
-    /**
-     * @brief GetLeftLimit
-     * @param epsilon
-     * @return value or its left limit if f(value) is not finite
-     */
-    double GetLeftLimit(double value, double epsilon) const;
-    /**
-     * @brief GetRightLimit
-     * @param epsilon
-     * @return value or its right limit if f(value) is not finite
-     */
-    double GetRightLimit(double value, double epsilon) const;
-
 public:
     double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
-    double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const override;
 
     double Likelihood(const std::vector<double> &sample) const override;
     double LogLikelihood(const std::vector<double> &sample) const override;

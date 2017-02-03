@@ -36,6 +36,11 @@ double SkellamRand::F(int k) const
     return (k < 0) ? RandMath::MarcumP(-k, mu1, mu2) : RandMath::MarcumQ(k + 1, mu2, mu1);
 }
 
+double SkellamRand::S(int k) const
+{
+    return (k < 0) ? RandMath::MarcumQ(-k, mu1, mu2) : RandMath::MarcumP(k + 1, mu2, mu1);
+}
+
 int SkellamRand::Variate() const
 {
     return X.Variate() - Y.Variate();

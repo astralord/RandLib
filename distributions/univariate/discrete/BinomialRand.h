@@ -62,6 +62,7 @@ private:
 public:
     double P(int k) const override;
     double F(int k) const override;
+    double S(int k) const override;
 
 private:
     enum GENERATOR_ID {

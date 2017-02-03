@@ -46,8 +46,7 @@ double ContinuousDistribution::quantileImpl1m(double p) const
     if (supp == FINITE_T) {
         if (RandMath::findRoot([this, p] (double x)
         {
-            double y = F(x) - 1.0;
-            return y + p;
+            return S(x) - p;
         }, MinValue(), MaxValue(), guess))
             return guess;
         return NAN;
@@ -63,8 +62,7 @@ double ContinuousDistribution::quantileImpl1m(double p) const
 
     if (RandMath::findRoot([this, p] (double x)
     {
-        double first = F(x) - 1;
-        first += p;
+        double first = p - S(x);
         double second = f(x);
         return DoublePair(first, second);
     }, guess))
@@ -94,49 +92,22 @@ double ContinuousDistribution::Mode() const
     return root;
 }
 
-double ContinuousDistribution::GetLeftLimit(double value, double epsilon) const
-{
-    if (!std::isfinite(f(value))) {
-        if (std::fabs(value) < 1)
-            value -= epsilon;
-        else
-            value *= 0.9999;
-    }
-    return value;
-}
-
-double ContinuousDistribution::GetRightLimit(double value, double epsilon) const
-{
-    if (!std::isfinite(f(value))) {
-        if (std::fabs(value) < 1)
-            value += epsilon;
-        else
-            value *= 1.0001;
-    }
-    return value;
-}
-
 double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
-    static constexpr double epsilon = 1e-10;
     double lowerBoundary = minPoint, upperBoundary = maxPoint;
-    if (isRightBounded()) {
+    if (isRightBounded())
         lowerBoundary = std::max(minPoint, lowerBoundary);
-        lowerBoundary = GetLeftLimit(lowerBoundary, epsilon);
-    }
-    if (isLeftBounded()) {
+    if (isLeftBounded())
         upperBoundary = std::min(maxPoint, upperBoundary);
-        upperBoundary = GetRightLimit(upperBoundary, epsilon);
-    }
 
     if (lowerBoundary >= upperBoundary)
         return 0.0;
 
-    bool leftBounded = std::isfinite(lowerBoundary), rightBounded = std::isfinite(upperBoundary);
+    bool isLeftBoundFinite = std::isfinite(lowerBoundary), isRightBoundFinite = std::isfinite(upperBoundary);
 
-    if (leftBounded && rightBounded) {
+    if (isLeftBoundFinite && isRightBoundFinite) {
         return RandMath::integral([this, funPtr] (double x)
         {
             return funPtr(x) * f(x);
@@ -144,7 +115,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         lowerBoundary, upperBoundary);
     }
 
-    if (leftBounded) {
+    if (isLeftBoundFinite) {
         return RandMath::integral([this, funPtr, lowerBoundary] (double x)
         {
             if (x >= 1.0)
@@ -158,7 +129,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         0.0, 1.0);
     }
 
-    if (rightBounded) {
+    if (isRightBoundFinite) {
         return RandMath::integral([this, funPtr, upperBoundary] (double x)
         {
             if (x <= 0.0)
@@ -170,65 +141,6 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
         0.0, 1.0);
     }
 
-    /// Infinite case
-    return RandMath::integral([this, funPtr] (double x)
-    {
-        if (std::fabs(x) >= 1.0)
-            return 0.0;
-        double x2 = x * x;
-        double denom = 1.0 - x2;
-        double t = x / denom;
-        double y = funPtr(t) * f(t);
-        denom *= denom;
-        return y * (1.0 + x2) / denom;
-    },
-    -1.0, 1.0);
-}
-
-
-double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const
-{
-    // TODO: Get rid of this function
-    static constexpr double epsilon = 1e-10;
-
-    double lowerBoundary = startPoint, upperBoundary = startPoint;
-    SUPPORT_TYPE suppType = SupportType();
-    if (suppType == FINITE_T)
-    {
-        lowerBoundary = GetLeftLimit(MinValue(), epsilon);
-        upperBoundary = GetRightLimit(MaxValue(), epsilon);
-
-        return RandMath::integral([this, funPtr] (double x)
-        {
-            return funPtr(x) * f(x);
-        },
-        lowerBoundary, upperBoundary);
-    }
-    else if (suppType == RIGHTSEMIFINITE_T) {
-        lowerBoundary = GetLeftLimit(MinValue(), epsilon);
-        return RandMath::integral([this, funPtr, lowerBoundary] (double x)
-        {
-            if (x >= 1.0)
-                return 0.0;
-            double denom = 1.0 - x;
-            double t = lowerBoundary + x / denom;
-            double y = funPtr(t) * f(t);
-            denom *= denom;
-            return y / denom;
-        },
-        0.0, 1.0);
-    } else if (suppType == LEFTSEMIFINITE_T) {
-        upperBoundary = GetRightLimit(MaxValue(), epsilon);
-        return RandMath::integral([this, funPtr, upperBoundary] (double x)
-        {
-            if (x <= 0.0)
-                return 0.0;
-            double t = upperBoundary - (1.0 - x) / x;
-            double y = funPtr(t) * f(t);
-            return y / (x * x);
-        },
-        0.0, 1.0);
-    }
     /// Infinite case
     return RandMath::integral([this, funPtr] (double x)
     {

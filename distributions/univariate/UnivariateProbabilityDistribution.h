@@ -136,14 +136,6 @@ public:
 
     /**
      * @brief ExpectedValue
-     * @param funPtr pointer on function g(x) which expected value should be returned
-     * @param startPoint argument in which vicinity value of g(x) definitely wouldn't be zero
-     * @return E[g(x)]
-     */
-    virtual double ExpectedValue(const std::function<double (double)> &funPtr, double startPoint) const = 0;
-
-    /**
-     * @brief ExpectedValue
      * @param funPtr pointer on function g(x) with finite support which expected value should be returned
      * @param minPoint min{x | g(x) != 0}
      * @param maxPoint max{x | g(x) != 0}

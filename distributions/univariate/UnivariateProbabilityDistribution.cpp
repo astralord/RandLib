@@ -79,35 +79,23 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
         }
     }
 
-    SUPPORT_TYPE suppType = this->SupportType();
-    double leftBound, rightBound;
-    if (suppType == FINITE_T || suppType == RIGHTSEMIFINITE_T)
-        leftBound = this->MinValue();
-    else
-        leftBound = Quantile(1e-6);
-    if (suppType == FINITE_T || suppType == LEFTSEMIFINITE_T)
-        rightBound = this->MaxValue();
-    else
-        rightBound = Quantile1m(1e-6);
-
     double mode = this->Mode();
-
     double I1Re = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
-    }, leftBound, mode);
+    }, this->MinValue(), mode);
     double I2Re = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
-    }, mode, rightBound);
+    }, mode, this->MaxValue());
     double I1Im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, leftBound, mode);
+    }, this->MinValue(), mode);
     double I2Im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, mode, rightBound);
+    }, mode, this->MaxValue());
     return std::complex<double>(I1Re + I2Re, I1Im + I2Im);
 }
 
@@ -145,7 +133,7 @@ double UnivariateProbabilityDistribution<T>::Skewness() const
     {
         double skew = x - mu;
         return skew * skew * skew;
-    }, mu);
+    }, this->MinValue(), this->MaxValue());
 
     return sum / std::pow(var, 1.5);
 }
@@ -163,7 +151,7 @@ double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
         double kurtosis = x - mu;
         kurtosis *= kurtosis;
         return kurtosis * kurtosis;
-    }, mu);
+    }, this->MinValue(), this->MaxValue());
 
     return sum / (var * var) - 3;
 }

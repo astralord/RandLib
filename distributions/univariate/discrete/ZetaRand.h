@@ -34,6 +34,7 @@ public:
     double Variance() const override;
     int Mode() const override;
     double Skewness() const override;
+    double ExcessKurtosis() const override;
 
     inline double GetInverseZetaFunction() const { return zetaSInv; }
 };

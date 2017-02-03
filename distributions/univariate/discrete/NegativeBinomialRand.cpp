@@ -60,7 +60,13 @@ double NegativeBinomialRand<T>::P(int k) const
 template< typename T >
 double NegativeBinomialRand<T>::F(int k) const
 {
-    return (k < 0) ? 0.0 : 1.0 - RandMath::regularizedBetaFun(q, k + 1, r);
+    return (k < 0) ? 0.0 : RandMath::regularizedBetaFun(p, r, k + 1);
+}
+
+template< typename T >
+double NegativeBinomialRand<T>::S(int k) const
+{
+    return (k < 0) ? 0.0 : RandMath::regularizedBetaFun(q, k + 1, r);
 }
 
 template< >

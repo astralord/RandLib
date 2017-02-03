@@ -92,3 +92,10 @@ double ZetaRand::Skewness() const
     return numerator / denominator;
 }
 
+double ZetaRand::ExcessKurtosis() const
+{
+    if (s <= 5)
+        return INFINITY;
+    return DiscreteDistribution::ExcessKurtosis(); // TODO: implement
+}
+

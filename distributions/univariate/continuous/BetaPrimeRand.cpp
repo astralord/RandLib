@@ -138,9 +138,14 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
     },
     0.0, 1.0);
 
+    double mode = Mode();
     double im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, 0.0, Quantile1m(1e-6));
+    }, 0.0, mode);
+    im += ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    }, mode, INFINITY);
     return std::complex<double>(re, im);
 }
