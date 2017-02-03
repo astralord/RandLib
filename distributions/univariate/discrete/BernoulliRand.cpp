@@ -25,7 +25,12 @@ double BernoulliRand::P(int k) const
 
 double BernoulliRand::F(int k) const
 {
-    return (k < 0) ? 0 : ((k < 1) ? q : 1);
+    return (k < 0) ? 0.0 : ((k < 1) ? q : 1);
+}
+
+double BernoulliRand::S(int k) const
+{
+    return (k < 0) ? 1.0 : ((k < 1) ? p : 0.0);
 }
 
 int BernoulliRand::Variate() const

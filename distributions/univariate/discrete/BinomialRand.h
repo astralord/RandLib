@@ -55,7 +55,7 @@ private:
     /**
      * @brief logProbFloor
      * @param k
-     * @return logarithm of probability to Get k if p = pFloor
+     * @return logarithm of probability to get k if p = pFloor
      */
     double logProbFloor(int k) const;
 

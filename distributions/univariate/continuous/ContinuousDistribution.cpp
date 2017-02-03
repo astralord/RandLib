@@ -105,55 +105,52 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     if (lowerBoundary >= upperBoundary)
         return 0.0;
 
+    double mode = this->Mode();
     bool isLeftBoundFinite = std::isfinite(lowerBoundary), isRightBoundFinite = std::isfinite(upperBoundary);
 
-    if (isLeftBoundFinite && isRightBoundFinite) {
-        return RandMath::integral([this, funPtr] (double x)
+    double res = 0.0;
+    /// Integrate from left boundary to mode
+    if (isLeftBoundFinite) {
+        res += RandMath::integral([this, funPtr] (double x)
         {
             return funPtr(x) * f(x);
         },
-        lowerBoundary, upperBoundary);
+        lowerBoundary, mode);
     }
-
-    if (isLeftBoundFinite) {
-        return RandMath::integral([this, funPtr, lowerBoundary] (double x)
-        {
-            if (x >= 1.0)
-                return 0.0;
-            double denom = 1.0 - x;
-            double t = lowerBoundary + x / denom;
-            double y = funPtr(t) * f(t);
-            denom *= denom;
-            return y / denom;
-        },
-        0.0, 1.0);
-    }
-
-    if (isRightBoundFinite) {
-        return RandMath::integral([this, funPtr, upperBoundary] (double x)
+    else {
+        res += RandMath::integral([this, funPtr, mode] (double x)
         {
             if (x <= 0.0)
                 return 0.0;
-            double t = upperBoundary - (1.0 - x) / x;
+            double t = mode - (1.0 - x) / x;
             double y = funPtr(t) * f(t);
             return y / (x * x);
         },
         0.0, 1.0);
     }
 
-    /// Infinite case
-    return RandMath::integral([this, funPtr] (double x)
-    {
-        if (std::fabs(x) >= 1.0)
-            return 0.0;
-        double x2 = x * x;
-        double denom = 1.0 - x2;
-        double t = x / denom;
-        double y = funPtr(t) * f(t);
-        denom *= denom;
-        return y * (1.0 + x2) / denom;
-    },
-    -1.0, 1.0);
+    /// Integrate from mode to right boundary
+    if (isRightBoundFinite) {
+        res += RandMath::integral([this, funPtr] (double x)
+        {
+            return funPtr(x) * f(x);
+        },
+        mode, upperBoundary);
+    }
+    else {
+        res += RandMath::integral([this, funPtr, mode] (double x)
+        {
+            if (x >= 1.0)
+                return 0.0;
+            double denom = 1.0 - x;
+            double t = mode + x / denom;
+            double y = funPtr(t) * f(t);
+            denom *= denom;
+            return y / denom;
+        },
+        0.0, 1.0);
+    }
+    return res;
 }
 
 double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const

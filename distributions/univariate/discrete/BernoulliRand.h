@@ -31,6 +31,7 @@ public:
 
     double P(int k) const override;
     double F(int k) const override;
+    double S(int k) const override;
     int Variate() const override;
     static int Variate(double p);
     static int StandardVariate();

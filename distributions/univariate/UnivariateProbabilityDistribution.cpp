@@ -68,7 +68,7 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
     if (std::fabs(t) < 1e-4)
     {
         double mom4 = FourthMoment();
-        if (std::isfinite(mom4)) {
+        if (std::isfinite(mom4) && mom4 < 1e3) {
             double mom1 = Mean();
             double mom2 = SecondMoment();
             double mom3 = ThirdMoment();
@@ -79,24 +79,21 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
         }
     }
 
-    double mode = this->Mode();
-    double I1Re = ExpectedValue([this, t] (double x)
+    T leftBound = this->MinValue(), rightBound = this->MaxValue();
+    if (leftBound == rightBound)
+        return std::complex<double>(std::cos(t * leftBound), std::sin(t * leftBound));
+
+    double re = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
-    }, this->MinValue(), mode);
-    double I2Re = ExpectedValue([this, t] (double x)
-    {
-        return std::cos(t * x);
-    }, mode, this->MaxValue());
-    double I1Im = ExpectedValue([this, t] (double x)
+    }, leftBound, rightBound);
+
+    double im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, this->MinValue(), mode);
-    double I2Im = ExpectedValue([this, t] (double x)
-    {
-        return std::sin(t * x);
-    }, mode, this->MaxValue());
-    return std::complex<double>(I1Re + I2Re, I1Im + I2Im);
+    }, leftBound, rightBound);
+
+    return std::complex<double>(re, im);
 }
 
 template< typename T >
