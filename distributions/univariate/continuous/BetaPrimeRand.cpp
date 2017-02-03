@@ -36,6 +36,11 @@ double BetaPrimeRand::F(double x) const
     return (x > 0) ? B.F(x / (1.0 + x)) : 0;
 }
 
+double BetaPrimeRand::S(double x) const
+{
+    return (x > 0) ? B.S(x / (1.0 + x)) : 1;
+}
+
 double BetaPrimeRand::Variate() const
 {
     double x = B.Variate();
