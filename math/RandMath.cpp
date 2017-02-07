@@ -1,4 +1,4 @@
-#include "RandMath.h"
+﻿#include "RandMath.h"
 
 namespace RandMath
 {
@@ -463,12 +463,11 @@ double incompleteBetaFun(double x, double a, double b)
     {
         if (b == 0) /// series expansion
         {
-            double denom = a, numen = 1;
+            double denom = a;
             double sum = 1.0 / a, add = 1;
             int i = 1;
             do {
-                numen = std::pow(x, i);
-                add = numen / (++denom);
+                add = std::pow(x, i) / (++denom);
                 sum += add;
                 ++i;
             } while (add > MIN_POSITIVE * sum);

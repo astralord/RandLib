@@ -28,16 +28,15 @@ public:
      */
     void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
-    double Hazard(double x) const override;
     double Mode() const override;
 
 protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
-
-public:
     double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
 
+public:
+    double Hazard(double x) const override;
     double Likelihood(const std::vector<double> &sample) const override;
     double LogLikelihood(const std::vector<double> &sample) const override;
 };

@@ -70,15 +70,6 @@ double ContinuousDistribution::quantileImpl1m(double p) const
     return NAN;
 }
 
-double ContinuousDistribution::Hazard(double x) const
-{
-    if (x < MinValue())
-        return 0.0; /// 0/1
-    if (x > MaxValue())
-        return NAN; /// 0/0
-    return f(x) / S(x);
-}
-
 double ContinuousDistribution::Mode() const
 {
     double guess = Mean(); /// good starting point
@@ -105,52 +96,76 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     if (lowerBoundary >= upperBoundary)
         return 0.0;
 
-    double mode = this->Mode();
     bool isLeftBoundFinite = std::isfinite(lowerBoundary), isRightBoundFinite = std::isfinite(upperBoundary);
 
-    double res = 0.0;
-    /// Integrate from left boundary to mode
-    if (isLeftBoundFinite) {
-        res += RandMath::integral([this, funPtr] (double x)
+    /// Integrate on finite interval [a, b]
+    if (isLeftBoundFinite && isRightBoundFinite) {
+        return RandMath::integral([this, funPtr] (double x)
         {
-            return funPtr(x) * f(x);
+            double y = funPtr(x);
+            return (y == 0.0) ? 0.0 : y * f(x);
         },
-        lowerBoundary, mode);
-    }
-    else {
-        res += RandMath::integral([this, funPtr, mode] (double x)
-        {
-            if (x <= 0.0)
-                return 0.0;
-            double t = mode - (1.0 - x) / x;
-            double y = funPtr(t) * f(t);
-            return y / (x * x);
-        },
-        0.0, 1.0);
+        lowerBoundary, upperBoundary);
     }
 
-    /// Integrate from mode to right boundary
-    if (isRightBoundFinite) {
-        res += RandMath::integral([this, funPtr] (double x)
-        {
-            return funPtr(x) * f(x);
-        },
-        mode, upperBoundary);
-    }
-    else {
-        res += RandMath::integral([this, funPtr, mode] (double x)
+    /// Integrate on semifinite interval [a, inf)
+    if (isLeftBoundFinite) {
+        return RandMath::integral([this, funPtr, lowerBoundary] (double x)
         {
             if (x >= 1.0)
                 return 0.0;
             double denom = 1.0 - x;
-            double t = mode + x / denom;
-            double y = funPtr(t) * f(t);
+            double t = lowerBoundary + x / denom;
+            double y = funPtr(t);
+            if (y == 0.0)
+                return 0.0;
+            y *= f(t);
             denom *= denom;
             return y / denom;
         },
         0.0, 1.0);
     }
-    return res;
+
+    /// Integrate on semifinite intervale (-inf, b]
+    if (isRightBoundFinite) {
+        return RandMath::integral([this, funPtr, upperBoundary] (double x)
+        {
+            if (x <= 0.0)
+                return 0.0;
+            double t = upperBoundary - (1.0 - x) / x;
+            double y = funPtr(t);
+            if (y == 0.0)
+                return 0.0;
+            y *= f(t);
+            return y / (x * x);
+        },
+        0.0, 1.0);
+    }
+
+    /// Infinite case
+    return RandMath::integral([this, funPtr] (double x)
+    {
+        if (std::fabs(x) >= 1.0)
+            return 0.0;
+        double x2 = x * x;
+        double denom = 1.0 - x2;
+        double t = x / denom;
+        double y = funPtr(t);
+        if (y == 0.0)
+            return 0.0;
+        y *= f(t);
+        denom *= denom;
+        return y * (1.0 + x2) / denom;
+    }, -1.0, 1.0);
+}
+
+double ContinuousDistribution::Hazard(double x) const
+{
+    if (x < MinValue())
+        return 0.0; /// 0/1
+    if (x > MaxValue())
+        return NAN; /// 0/0
+    return f(x) / S(x);
 }
 
 double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const

@@ -409,8 +409,7 @@ double GammaRand::quantileImpl1m(double p) const
             {
                 if (x <= 0)
                     return DoubleTriplet(-p, 0, 0);
-                double first = F(x) - 1;
-                first += p;
+                double first = p - S(x);
                 double second = f(x);
                 double third = df(x);
                 return DoubleTriplet(first, second, third);
@@ -420,6 +419,7 @@ double GammaRand::quantileImpl1m(double p) const
             return NAN;
         }
     }
+    // TODO: recheck this!
     /// in this case p is not small enough
     return quantileImpl(1.0 - p);
 }

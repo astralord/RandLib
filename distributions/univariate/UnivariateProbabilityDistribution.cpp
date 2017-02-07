@@ -56,28 +56,14 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 {
     if (t == 0.0)
         return 1.0;
-    return this->CFImpl(t);
+    return (t > 0.0) ? this->CFImpl(t) : std::conj(this->CFImpl(-t));
 }
 
 template< typename T >
 std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) const
 {
-    if (t == 0)
-        return 1;
-
-    if (std::fabs(t) < 1e-4)
-    {
-        double mom4 = FourthMoment();
-        if (std::isfinite(mom4) && mom4 < 1e3) {
-            double mom1 = Mean();
-            double mom2 = SecondMoment();
-            double mom3 = ThirdMoment();
-
-            double re = 1 - 0.5 * mom2 * t * t + mom4 * std::pow(t, 4) / 24;
-            double im = mom1 * t - mom3 * std::pow(t, 3) / 6;
-            return std::complex<double>(re, im);
-        }
-    }
+    if (t == 0.0)
+        return 1.0;
 
     T leftBound = this->MinValue(), rightBound = this->MaxValue();
     if (leftBound == rightBound)

@@ -33,12 +33,10 @@ public:
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+    double ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const override;
 
 public:
     double Hazard(double x) const override;
-
-    double ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const override;
-
     double Likelihood(const std::vector<int> &sample) const override;
     double LogLikelihood(const std::vector<int> &sample) const override;
 };

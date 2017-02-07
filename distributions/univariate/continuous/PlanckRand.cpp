@@ -24,6 +24,17 @@ void PlanckRand::SetParameters(double shape, double scale)
     pdfCoef -= G.GetLogGammaFunction();
 }
 
+double PlanckRand::leveledPdf(double t) const
+{
+    if (t <= 0)
+        return 0.0;
+    double y = pdfCoef + a * std::log(t);
+    double expY = std::exp(y);
+    double bt = b * t;
+    double z = 1.0 / std::expm1(bt) - 1.0 / bt;
+    return expY * z;
+}
+
 double PlanckRand::f(double x) const
 {
     if (x < 0)
@@ -58,14 +69,7 @@ double PlanckRand::F(double x) const
     double integral1 = std::exp(aux) / (b * a);
     double integral2 = RandMath::integral([this] (double t)
     {
-        if (t <= 0)
-            return 0.0;
-        double logT = std::log(t);
-        double y = pdfCoef + a * logT;
-        double expY = std::exp(y);
-        double bt = b * t;
-        double z = 1.0 / std::expm1(bt) - 1.0 / bt;
-        return expY * z;
+        return leveledPdf(t);
     },
     0, x);
     return integral1 + integral2;
@@ -102,9 +106,43 @@ double PlanckRand::Variance() const
 
 double PlanckRand::Mode() const
 {
-    if (a < 1)
+    if (a <= 1)
         return 0.0;
     double y = -a * std::exp(-a);
     y = RandMath::W0Lambert(y);
     return (y + a) / b;
+}
+
+std::complex<double> PlanckRand::CFImpl(double t) const
+{
+    if (a >= 1)
+        return ContinuousDistribution::CFImpl(t);
+
+    /// We have singularity point at 0 for real part,
+    /// so we split the integral on two intervals:
+    /// first one from 0 to 1, on which we integrate
+    /// numerically leveled pdf and add known solution for level
+    /// second one from 1 to infinity, on which we use
+    /// simple expected value for the rest of the function
+    double integral1Re = RandMath::integral([this, t] (double x)
+    {
+        return std::cos(t * x) * leveledPdf(x);
+    },
+    0.0, 1.0);
+
+    double integral2Re = ExpectedValue([this, t] (double x)
+    {
+        return std::cos(t * x);
+    },
+    1.0, INFINITY);
+
+    double integralIm = ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    },
+    0.0, INFINITY);
+
+    // TODO:
+    // + int(cos(t*x)*x^(a-1), 0, 1) = hypergeom([a/2], [1/2, a/2 + 1], -t^2/4)/a
+    return std::complex<double>(integral1Re + integral2Re, integralIm);
 }

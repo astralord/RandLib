@@ -27,6 +27,10 @@ public:
     inline double GetShape() const { return a; }
     inline double GetScale() const { return b; }
 
+private:
+    double leveledPdf(double t) const;
+
+public:
     double f(double x) const override;
     double F(double x) const override;
     double Variate() const override;
@@ -35,6 +39,9 @@ public:
     double Mean() const override;
     double Variance() const override;
     double Mode() const override;
+
+private:
+    std::complex<double> CFImpl(double t) const override;
 };
 
 #endif // PLANCKRAND_H

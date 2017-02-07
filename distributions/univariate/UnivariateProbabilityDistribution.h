@@ -84,6 +84,15 @@ protected:
      * @return Characteristic function (inverse Fourier transform of pdf)
      */
     virtual std::complex<double> CFImpl(double t) const;
+
+    /**
+     * @brief ExpectedValue
+     * @param funPtr pointer on function g(x) with finite support which expected value should be returned
+     * @param minPoint min{x | g(x) != 0}
+     * @param maxPoint max{x | g(x) != 0}
+     * @return E[g(x)]
+     */
+    virtual double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
 public:
     /**
      * @brief Quantile
@@ -133,15 +142,6 @@ public:
      * @param y output vector: y = Hazard(x)
      */
     void HazardFunction(const std::vector<double> &x, std::vector<double> &y) const;
-
-    /**
-     * @brief ExpectedValue
-     * @param funPtr pointer on function g(x) with finite support which expected value should be returned
-     * @param minPoint min{x | g(x) != 0}
-     * @param maxPoint max{x | g(x) != 0}
-     * @return E[g(x)]
-     */
-    virtual double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
 
     /**
      * @brief Median
