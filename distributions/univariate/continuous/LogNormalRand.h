@@ -11,6 +11,7 @@
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 {
     NormalRand X;
+    double expMu, expHalfSigmaSq;
 
 public:
     LogNormalRand(double location = 0, double squaredScale = 1);

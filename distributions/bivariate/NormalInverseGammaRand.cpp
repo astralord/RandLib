@@ -18,9 +18,8 @@ std::string NormalInverseGammaRand::Name() const
 void NormalInverseGammaRand::SetParameters(double location, double precision, double shape, double rate)
 {
     mu = location;
-    lambda = precision;
-    if (lambda <= 0)
-        lambda = 1.0;
+    lambda = (precision > 0.0) ? precision : 1.0;
+
     Y.SetParameters(shape, rate);
     alpha = Y.GetShape();
     beta = Y.GetRate();
@@ -34,8 +33,7 @@ double NormalInverseGammaRand::f(DoublePair point) const
     double x = point.first, sigmaSq = point.second;
     if (sigmaSq <= 0)
         return 0.0;
-    double sigma = std::sqrt(sigmaSq);
-    double y = (alpha + 1) - std::log(sigmaSq);
+    double y = alpha + 1 - 1.5 * std::log(sigmaSq);
     double degree = (x - mu);
     degree *= degree;
     degree *= lambda;
@@ -43,7 +41,6 @@ double NormalInverseGammaRand::f(DoublePair point) const
     degree *= 0.5 / sigmaSq;
     y -= degree;
     y = std::exp(pdfCoef + y);
-    y /= sigma;
     return y;
 }
 
@@ -56,7 +53,7 @@ double NormalInverseGammaRand::F(DoublePair point) const
     double y = 0.5 * lambda;
     y *= (mu - x) / sigma;
     y = std::erfc(y);
-    double z = beta /sigmaSq;
+    double z = beta / sigmaSq;
     double temp = alpha * std::log(z) - z;
     y *= std::exp(temp - Y.GetLogGammaFunction());
     y *= 0.5 / sigmaSq;

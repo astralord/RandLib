@@ -120,9 +120,9 @@ std::complex<double> PlanckRand::CFImpl(double t) const
 
     /// We have singularity point at 0 for real part,
     /// so we split the integral on two intervals:
-    /// first one from 0 to 1, on which we integrate
-    /// numerically leveled pdf and add known solution for level
-    /// second one from 1 to infinity, on which we use
+    /// First one from 0 to 1, for which we integrate
+    /// numerically leveled pdf and add known solution for level.
+    /// Second one from 1 to infinity, for which we use
     /// simple expected value for the rest of the function
     double integral1Re = RandMath::integral([this, t] (double x)
     {
@@ -136,7 +136,7 @@ std::complex<double> PlanckRand::CFImpl(double t) const
     },
     1.0, INFINITY);
 
-    double integralIm = ExpectedValue([this, t] (double x)
+    double im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
     },
@@ -144,5 +144,7 @@ std::complex<double> PlanckRand::CFImpl(double t) const
 
     // TODO:
     // + int(cos(t*x)*x^(a-1), 0, 1) = hypergeom([a/2], [1/2, a/2 + 1], -t^2/4)/a
-    return std::complex<double>(integral1Re + integral2Re, integralIm);
+    double re = integral1Re + integral2Re;
+
+    return std::complex<double>(re, im);
 }

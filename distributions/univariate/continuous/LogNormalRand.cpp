@@ -14,11 +14,13 @@ std::string LogNormalRand::Name() const
 void LogNormalRand::SetLocation(double location)
 {
     X.SetLocation(location);
+    expMu = std::exp(X.GetLocation());
 }
 
 void LogNormalRand::SetScale(double scale)
 {
     X.SetScale(scale);
+    expHalfSigmaSq = std::exp(0.5 * X.Variance());
 }
 
 double LogNormalRand::f(double x) const
@@ -48,17 +50,13 @@ double LogNormalRand::Variate() const
 
 double LogNormalRand::Mean() const
 {
-    double mu = X.Mean();
-    double var = X.Variance();
-    double y = mu + 0.5 * var;
-    return std::exp(y);
+    return expMu * expHalfSigmaSq;
 }
 
 double LogNormalRand::Variance() const
 {
-    double mu = X.Mean();
-    double var = X.Variance();
-    return std::exp(2 * mu + var) * std::expm1(var);
+    double y = expMu * expHalfSigmaSq;
+    return y * y * std::expm1(X.Variance());
 }
 
 double LogNormalRand::quantileImpl(double p) const
@@ -73,28 +71,26 @@ double LogNormalRand::quantileImpl1m(double p) const
 
 double LogNormalRand::Median() const
 {
-    return std::exp(X.Mean());
+    return expMu;
 }
 
 double LogNormalRand::Mode() const
 {
-    return std::exp(X.Mean() - X.Variance());
+    return expMu / (expHalfSigmaSq * expHalfSigmaSq);
 }
 
 double LogNormalRand::Skewness() const
 {
     double y = std::expm1(X.Variance());
-    return (y + 3) * std::sqrt(y);
+    return (expHalfSigmaSq * expHalfSigmaSq + 2) * std::sqrt(y);
 }
 
 double LogNormalRand::ExcessKurtosis() const
 {
-    double expVar = std::exp(X.Variance());
-    double expVarSq = expVar * expVar;
-    double res = expVarSq; /// exp(2s^2)
-    res += 2 * expVar + 3; /// exp(2s^2) + 2exp(s^2) + 3
-    res *= expVarSq; /// exp(4s^2) + 2exp(3s^2) + 3exp(2s^2)
-    return res - 6;
+    double a = std::pow(expHalfSigmaSq, 8);
+    double b = 2 * std::pow(expHalfSigmaSq, 6);
+    double c = 3 * std::pow(expHalfSigmaSq, 4);
+    return a + b + c - 6;
 }
 
 double LogNormalRand::logAverage(const std::vector<double> &sample)

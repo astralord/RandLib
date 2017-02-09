@@ -8,7 +8,7 @@ WeibullRand::WeibullRand(double scale, double shape)
 
 std::string WeibullRand::Name() const
 {
-    return "Weibull(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Weibull(" + toStringWithPrecision(GetScale()) + ", " + toStringWithPrecision(GetShape()) + ")";
 }
 
 void WeibullRand::SetParameters(double scale, double shape)
@@ -60,20 +60,6 @@ double WeibullRand::Variance() const
     return lambda * lambda * res;
 }
 
-double WeibullRand::quantileImpl(double p) const
-{
-    double x = -std::log1p(-p);
-    x = std::pow(x, kInv);
-    return lambda * x;
-}
-
-double WeibullRand::quantileImpl1m(double p) const
-{
-    double x = -std::log(p);
-    x = std::pow(x, kInv);
-    return lambda * x;
-}
-
 double WeibullRand::Median() const
 {
     return lambda * std::pow(M_LN2, kInv);
@@ -114,6 +100,85 @@ double WeibullRand::ExcessKurtosis() const
     numerator -= mu2 * mu2;
     double kurtosis = numerator / (var * var);
     return kurtosis - 3;
+}
+
+double WeibullRand::quantileImpl(double p) const
+{
+    double x = -std::log1p(-p);
+    x = std::pow(x, kInv);
+    return lambda * x;
+}
+
+double WeibullRand::quantileImpl1m(double p) const
+{
+    double x = -std::log(p);
+    x = std::pow(x, kInv);
+    return lambda * x;
+}
+
+std::complex<double> WeibullRand::CFImpl(double t) const
+{
+    double lambdaT = lambda * t;
+    if (k >= 1) {
+        if (lambdaT > 0.5)
+            return ContinuousDistribution::CFImpl(t);
+        /// for λt < 0.5, the worst case scenario for series expansion is n ~ 70
+        double re = 0.0, im = 0.0;
+        double addon = 0.0;
+        double logLambdaT = std::log(lambdaT);
+        /// Series representation for real part
+        int n = 0;
+        do {
+            int n2 = n + n;
+            addon = n2 * logLambdaT;
+            addon += std::lgamma(1.0 + n2 / k);
+            addon -= std::lgamma(1.0 + n2);
+            addon = std::exp(addon);
+            re += (n & 1) ? -addon : addon;
+            ++n;
+        } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(re));
+        /// Series representation for imaginary part
+        n = 0;
+        do {
+            int n2p1 = n + n + 1;
+            addon = n2p1 * logLambdaT;
+            addon += std::lgamma(1.0 + n2p1 / k);
+            addon -= std::lgamma(1.0 + n2p1);
+            addon = std::exp(addon);
+            im += (n & 1) ? -addon : addon;
+            ++n;
+        } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(im));
+        return std::complex<double>(re, im);
+    }
+
+    /// For real part with k < 1 we split the integral on two intervals
+    double re = RandMath::integral([this, t] (double x)
+    {
+        if (x <= 0.0 || x > 1.0)
+            return 0.0;
+        double xAdj = x / lambda;
+        double xAdjPow = std::pow(xAdj, k - 1);
+        double y = k / lambda * xAdjPow * std::expm1(-xAdj * xAdjPow);
+        return std::cos(t * x) * y;
+    },
+    0.0, 1.0);
+
+    re += ExpectedValue([this, t] (double x)
+    {
+        return std::cos(t * x);
+    },
+    1.0, INFINITY);
+
+    // TODO:
+    // + int(cos(t*x)*x^(a-1), 0, 1) = hypergeom([a/2], [1/2, a/2 + 1], -t^2/4)/a
+
+    double im = ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    },
+    0.0, INFINITY);
+
+    return std::complex<double>(re, im);
 }
 
 double WeibullRand::Entropy() const
