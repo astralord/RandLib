@@ -44,7 +44,7 @@ X.FitBayes(data, prior);
 cout << "Bayesian estimator: " << X.Name() << "\n";
 cout << "(Posterior distribution: " << prior.Name() << ")\n";
 
-/// UMVU
+/// Uniformly minimum variance unbiased
 X.FitUMVU(data);
 cout << "UMVU estimator: " << X.Name() << "\n";
 
