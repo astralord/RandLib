@@ -25,7 +25,7 @@ Mean = 4.48169 and Variance = 34.5126
 Median = 2.71828 and Mode = 1
 Skewness = 6.18488 and Excess Kurtosis = 110.936
 ```
-* Fitting parameters:
+* Fitting parameters using different estimators:
 ```c++
 using std::cout;
 
