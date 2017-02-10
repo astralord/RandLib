@@ -104,6 +104,8 @@ double PlanckRand::Variance() const
     return y - mean * mean;
 }
 
+// TODO: implement also skewness and kurtosis, as analytical solution is known
+
 double PlanckRand::Mode() const
 {
     if (a <= 1)
@@ -124,17 +126,28 @@ std::complex<double> PlanckRand::CFImpl(double t) const
     /// numerically leveled pdf and add known solution for level.
     /// Second one from 1 to infinity, for which we use
     /// simple expected value for the rest of the function
-    double integral1Re = RandMath::integral([this, t] (double x)
+    double re1 = RandMath::integral([this, t] (double x)
     {
         return std::cos(t * x) * leveledPdf(x);
     },
     0.0, 1.0);
 
-    double integral2Re = ExpectedValue([this, t] (double x)
+    double re2 = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
     },
     1.0, INFINITY);
+
+    double re3 = t * RandMath::integral([this, t] (double x)
+    {
+        if (x <= 0.0)
+            return 0.0;
+        return std::sin(t * x) * std::pow(x, a);
+    },
+    0.0, 1.0);
+
+    re3 += std::cos(t);
+    re3 *= std::exp(pdfCoef) / (b * a);
 
     double im = ExpectedValue([this, t] (double x)
     {
@@ -142,9 +155,6 @@ std::complex<double> PlanckRand::CFImpl(double t) const
     },
     0.0, INFINITY);
 
-    // TODO:
-    // + int(cos(t*x)*x^(a-1), 0, 1) = hypergeom([a/2], [1/2, a/2 + 1], -t^2/4)/a
-    double re = integral1Re + integral2Re;
-
+    double re = re1 + re2 + re3;
     return std::complex<double>(re, im);
 }

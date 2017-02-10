@@ -69,7 +69,9 @@ double WeibullRand::Mode() const
 {
     if (k <= 1)
         return 0;
-    return lambda * std::pow(1 - kInv, kInv);
+    double y = std::log1p(-kInv);
+    y = std::exp(kInv * y);
+    return lambda * y;
 }
 
 double WeibullRand::Skewness() const
@@ -152,7 +154,7 @@ std::complex<double> WeibullRand::CFImpl(double t) const
     }
 
     /// For real part with k < 1 we split the integral on two intervals
-    double re = RandMath::integral([this, t] (double x)
+    double re1 = RandMath::integral([this, t] (double x)
     {
         if (x <= 0.0 || x > 1.0)
             return 0.0;
@@ -163,14 +165,23 @@ std::complex<double> WeibullRand::CFImpl(double t) const
     },
     0.0, 1.0);
 
-    re += ExpectedValue([this, t] (double x)
+    double re2 = ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
     },
     1.0, INFINITY);
 
-    // TODO:
-    // + int(cos(t*x)*x^(a-1), 0, 1) = hypergeom([a/2], [1/2, a/2 + 1], -t^2/4)/a
+    double re3 = t * RandMath::integral([this, t] (double x)
+    {
+        if (x <= 0.0)
+            return 0.0;
+        return std::sin(t * x) * std::pow(x, k);
+    },
+    0.0, 1.0);
+    re3 += std::cos(t);
+    re3 /= std::pow(lambda, k);
+
+    double re = re1 + re2 + re3;
 
     double im = ExpectedValue([this, t] (double x)
     {
