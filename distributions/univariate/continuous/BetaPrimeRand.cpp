@@ -120,37 +120,26 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
     if (alpha > 1)
         return UnivariateProbabilityDistribution::CFImpl(t);
 
-    double re = RandMath::integral([this, t] (double x) {
+    double re = RandMath::integral([this, t] (double x)
+    {
         if (x <= 0)
             return 0.0;
         double y = std::pow(1 + x, -alpha - beta) - 1.0;
         y *= std::pow(x, alpha - 1);
         return y;
-    }, 0, 1);
+    }, 0.0, 1.0);
 
     re += 1.0 / alpha;
     re *= GetInverseBetaFunction();
 
-    re += RandMath::integral([this, t] (double x)
+    re += ExpectedValue([this, t] (double x)
     {
-        if (x >= 1.0)
-            return 0.0;
-        double denom = 1.0 - x;
-        double p = 1.0 + x / denom;
-        double y = std::cos(p * t) * f(p);
-        denom *= denom;
-        return y / denom;
-    },
-    0.0, 1.0);
+        return std::cos(t * x);
+    }, 1.0, INFINITY);
 
-    double mode = Mode();
     double im = ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
-    }, 0.0, mode);
-    im += ExpectedValue([this, t] (double x)
-    {
-        return std::sin(t * x);
-    }, mode, INFINITY);
+    }, 0.0, INFINITY);
     return std::complex<double>(re, im);
 }

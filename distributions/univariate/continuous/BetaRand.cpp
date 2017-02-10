@@ -73,9 +73,9 @@ double BetaRand::f(double x) const
 double BetaRand::F(double x) const
 {
     if (x <= a)
-        return 0;
+        return 0.0;
     if (x >= b)
-        return 1;
+        return 1.0;
 
     /// Standardize
     double xSt = (x - a) / bma;
@@ -83,6 +83,21 @@ double BetaRand::F(double x) const
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(xSt));
     return betaFunInv * RandMath::incompleteBetaFun(xSt, alpha, beta);
+}
+
+double BetaRand::S(double x) const
+{
+    if (x <= a)
+        return 1.0;
+    if (x >= b)
+        return 0.0;
+
+    /// Standardize
+    double xSt = (x - a) / bma;
+    /// Workaround known case
+    if (alpha == beta && beta == 0.5)
+        return M_2_PI * std::acos(std::sqrt(xSt));
+    return betaFunInv * RandMath::incompleteBetaFun(1.0 - xSt, alpha, beta);
 }
 
 double BetaRand::variateArcsine() const

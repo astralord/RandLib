@@ -106,18 +106,18 @@ double UniformRand::quantileImpl(double p) const
 
 double UniformRand::quantileImpl1m(double p) const
 {
-    return a + bma - bma * p;
+    return b - bma * p;
 }
 
 double UniformRand::Median() const
 {
-    return .5 * (b + a);
+    return 0.5 * (b + a);
 }
 
 double UniformRand::Mode() const
 {
     /// this can be any value in [a, b]
-    return Variate();
+    return 0.5 * (b + a);
 }
 
 double UniformRand::Skewness() const

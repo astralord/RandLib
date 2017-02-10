@@ -45,6 +45,11 @@ double FisherSnedecorRand::F(double x) const
     return B.F(d1_d2 * x);
 }
 
+double FisherSnedecorRand::S(double x) const
+{
+    return B.S(d1_d1 * x);
+}
+
 double FisherSnedecorRand::Variate() const
 {
     return d2_d1 * B.Variate();
