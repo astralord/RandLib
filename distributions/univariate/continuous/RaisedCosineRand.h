@@ -5,6 +5,8 @@
 
 /**
  * @brief The RaisedCosineRand class
+ *
+ * X ~ Raised-cosine(μ, s)
  */
 class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 {
@@ -43,7 +45,11 @@ private:
 
 /**
  * @brief The RaabGreenRand class
- * X ~ Raised cosine (0.0, π)
+ *
+ * X ~ Raab-Green()
+ *
+ * Related distributions:
+ * X ~ Raised-cosine(0.0, π)
  */
 class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineRand
 {

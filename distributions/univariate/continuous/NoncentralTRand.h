@@ -33,7 +33,6 @@ private:
 public:
     double f(double x) const override;
     double F(double x) const override;
-
     double Variate() const override;
 
     double Mean() const override;

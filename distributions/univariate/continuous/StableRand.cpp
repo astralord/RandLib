@@ -54,7 +54,7 @@ void StableRand::SetParameters(double exponent, double skewness)
     else if (distributionId == COMMON) {
         xi = beta * std::tan(M_PI_2 * alpha);
         zeta = -xi;
-        S = 0.5 * alphaInv * std::log1p(zeta * zeta);
+        omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
         xi = alphaInv * RandMath::atan(xi);
 
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
@@ -204,7 +204,7 @@ double StableRand::pdfAtZero() const
     if (beta == 0.0)
         y0 = std::tgamma(alphaInv);
     else {
-        y0 = std::lgamma(alphaInv) - S;
+        y0 = std::lgamma(alphaInv) - omega;
         y0 = std::exp(y0) * std::cos(xi);
     }
     return y0 * M_1_PI / alpha;
@@ -235,7 +235,7 @@ double StableRand::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) co
             int ip1 = i + 1;
             double term = std::lgamma(ip1 * alphaInv);
             term += i * logX;
-            term = std::exp(term - S);
+            term = std::exp(term - omega);
             term /= RandMath::factorial(i);
             term *= std::sin(ip1 * coef);
             sum += (i & 1) ? -term : term;
@@ -255,7 +255,7 @@ double StableRand::pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) con
         double aux = i * alpha + 1.0;
         double term = std::lgamma(aux);
         term -= aux * logX;
-        term = std::exp(term - S);
+        term = std::exp(term - omega);
         term /= RandMath::factorial(i);
         term *= std::sin(coef * i);
         sum += (i & 1) ? term : -term;
@@ -402,7 +402,7 @@ double StableRand::pdfForCommonExponent(double x) const
     if (xSt == 0.0)
         return pdfAtZero() / sigma;
 
-    double logAbsX = std::log(absXSt) - S;
+    double logAbsX = std::log(absXSt) - omega;
 
     /// If x is too close to 0, we do series expansion avoiding numerical problems
     if (logAbsX < seriesZeroParams.second)
@@ -473,6 +473,13 @@ double StableRand::cdfNormal(double x) const
     return 0.5 * std::erfc(y);
 }
 
+double StableRand::cdfNormalCompl(double x) const
+{
+    double y = x - mu;
+    y *= pdfCoef;
+    return 0.5 * std::erfc(y);
+}
+
 double StableRand::cdfCauchy(double x) const
 {
     double x0 = x - mu;
@@ -489,6 +496,17 @@ double StableRand::cdfLevy(double x) const
     y = sigma / y;
     y = std::sqrt(y);
     return std::erfc(y);
+}
+
+double StableRand::cdfLevyCompl(double x) const
+{
+    if (x <= mu)
+        return 1.0;
+    double y = x - mu;
+    y += y;
+    y = sigma / y;
+    y = std::sqrt(y);
+    return std::erf(y);
 }
 
 double StableRand::fastcdfExponentiation(double u)
@@ -517,7 +535,7 @@ double StableRand::cdfForUnityExponent(double x) const
 double StableRand::cdfIntegralRepresentation(double absXSt, double xiAdj) const
 {
     /// Here we assume that absXSt > 0
-    double xAdj = alpha_alpham1 * (std::log(absXSt) - S);
+    double xAdj = alpha_alpham1 * (std::log(absXSt) - omega);
     return M_1_PI * RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
         double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
@@ -563,11 +581,29 @@ double StableRand::F(double x) const
     case CAUCHY:
         return cdfCauchy(x);
     case LEVY:
-        return (beta > 0) ? cdfLevy(x) : 1.0 - cdfLevy(2 * mu - x);
+        return (beta > 0) ? cdfLevy(x) : cdfLevyCompl(2 * mu - x);
     case UNITY_EXPONENT:
         return cdfForUnityExponent(x);
     case COMMON:
         return cdfForCommonExponent(x);
+    default:
+        return NAN; /// unexpected return
+    }
+}
+
+double StableRand::S(double x) const
+{
+    switch (distributionId) {
+    case NORMAL:
+        return cdfNormalCompl(x);
+    case CAUCHY:
+        return 1.0 - cdfCauchy(x);
+    case LEVY:
+        return (beta > 0) ? cdfLevyCompl(x) : cdfLevy(2 * mu - x);
+    case UNITY_EXPONENT:
+        return 1.0 - cdfForUnityExponent(x); // TODO: implement
+    case COMMON:
+        return 1.0 - cdfForCommonExponent(x); // TODO: implement
     default:
         return NAN; /// unexpected return
     }
@@ -595,7 +631,7 @@ double StableRand::variateForCommonExponent() const
     double X = std::sin(alphaUpxi);
     double W_adj = W / std::cos(U - alphaUpxi);
     X *= W_adj;
-    double R = S - alphaInv * std::log(W_adj * std::cos(U));
+    double R = omega - alphaInv * std::log(W_adj * std::cos(U));
     X *= std::exp(R);
     return mu + sigma * X;
 }

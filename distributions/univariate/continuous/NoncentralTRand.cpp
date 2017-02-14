@@ -109,10 +109,11 @@ double NoncentralTRand::f(double x) const
         return std::exp(y - 0.5 * z);
     }
     double y = 0.0;
-    if (x > 0.0)
-        y = Faux(x * std::sqrt(1.0 + 2.0 / nu), nu + 2.0, mu) - Faux(x, nu, mu);
-    else
-        y = -Faux(x * std::sqrt(1.0 + 2.0 / nu), nu + 2.0, -mu) + Faux(x, nu, -mu);
+    int signX = RandMath::sign(x);
+    double muAdj = signX * mu;
+    y = Faux(x * std::sqrt(1.0 + 2.0 / nu), nu + 2.0, muAdj);
+    y -= Faux(x, nu, muAdj);
+    y *= signX;
     return nu * y / x;
 }
 

@@ -5,8 +5,8 @@
 #include "GammaRand.h"
 #include "StudentTRand.h"
 
-double NormalRand::stairWidth[257] = {0};
-double NormalRand::stairHeight[256] = {0};
+long double NormalRand::stairWidth[257] = {0};
+long double NormalRand::stairHeight[256] = {0};
 const bool NormalRand::dummy = NormalRand::SetupTables();
 
 NormalRand::NormalRand(double mean, double var)
@@ -29,18 +29,14 @@ void NormalRand::SetScale(double scale)
 bool NormalRand::SetupTables()
 {
     static constexpr long double A = 4.92867323399e-3l; /// area under rectangle
-
     /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = 0.001260285930498597; /// exp(-0.5 * x1 * x1);
-    stairWidth[0] = 3.9107579595370918075; /// A / stairHeight[0];
+    stairHeight[0] = 0.001260285930498597l; /// exp(-0.5 * x1 * x1);
+    stairWidth[0] = 3.9107579595370918075l; /// A / stairHeight[0];
     /// implicit value for the top layer
-    stairWidth[256] = 0;
-
+    stairWidth[256] = 0.0l;
     stairWidth[1] = x1;
-    stairHeight[1] = 0.002609072746106362;
-
-    for (size_t i = 2; i <= 255; ++i)
-    {
+    stairHeight[1] = 0.002609072746106362l;
+    for (size_t i = 2; i <= 255; ++i) {
         /// such y_i that f(x_{i+1}) = y_i
         stairWidth[i] = std::sqrt(-2 * std::log(stairHeight[i - 1]));
         stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
@@ -63,6 +59,11 @@ double NormalRand::F(double x) const
     return StableRand::cdfNormal(x);
 }
 
+double NormalRand::S(double x) const
+{
+    return StableRand::cdfNormalCompl(x);
+}
+
 double NormalRand::Variate() const
 {
     return mu + sigma0 * StandardVariate();
@@ -76,20 +77,16 @@ double NormalRand::StandardVariate()
         unsigned long long B = RandGenerator::variate();
         int stairId = B & 255;
         double x = UniformRand::StandardVariate() * stairWidth[stairId]; /// Get horizontal coordinate
-
         if (x < stairWidth[stairId + 1])
             return ((signed)B > 0) ? x : -x;
-
         if (stairId == 0) /// handle the base layer
         {
             static double z = -1;
-
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
                 x = ExponentialRand::StandardVariate() / x1;
                 z -= 0.5 * x * x;
             }
-
             if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
@@ -97,16 +94,12 @@ double NormalRand::StandardVariate()
                     z = ExponentialRand::StandardVariate() - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
-
             x += x1;
             return ((signed)B > 0) ? x : -x;
         }
-
-
         /// handle the wedges of other stairs
         if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
-
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
 }
@@ -228,16 +221,16 @@ bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confiden
     if (!FitUMVU(sample))
         return false;
     double halfAlpha = 0.5 * alpha;
-    size_t nm1 = n - 1;
 
     /// calculate confidence interval for mean
-    StudentTRand t(nm1);
+    StudentTRand t(n - 1);
     double interval = t.Quantile1m(halfAlpha) * sigma0 / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
-    GammaRand gamma(0.5 * nm1, 0.5 * nm1);
+    double shape = 0.5 * n - 0.5;
+    GammaRand gamma(shape, shape);
     double sigma0Sq = sigma0 * sigma0;
     confidenceIntervalForVariance.first = sigma0Sq / gamma.Quantile1m(halfAlpha);
     confidenceIntervalForVariance.second = sigma0Sq / gamma.Quantile(halfAlpha);
@@ -262,13 +255,13 @@ bool NormalRand::FitMeanBayes(const std::vector<double> &sample, NormalRand &pri
 
 bool NormalRand::FitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
 {
-    size_t n = sample.size();
-    if (n == 0)
+    double halfN = 0.5 * sample.size();
+    if (halfN == 0)
         return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
-    double newAlpha = alpha + 0.5 * n;
-    double newBeta = beta + 0.5 * n * sampleVariance(sample, mu);
+    double newAlpha = alpha + halfN;
+    double newBeta = beta + halfN * sampleVariance(sample, mu);
     priorDistribution.SetParameters(newAlpha, newBeta);
     SetVariance(priorDistribution.Mean());
     return true;
@@ -286,10 +279,11 @@ bool NormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGammaR
     double sum = sampleSum(sample), average = sum / n;
     double newLambda = lambda + n;
     double newMu0 = (lambda * mu0 + sum) / newLambda;
-    double newAlpha = alpha + 0.5 * n;
+    double halfN = 0.5 * n;
+    double newAlpha = alpha + halfN;
     double variance = sampleVariance(sample, average);
     double aux = mu0 - average;
-    double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
+    double newBeta = beta + halfN * (variance + lambda / newLambda * aux * aux);
     priorDistribution.SetParameters(newMu0, newLambda, newAlpha, newBeta);
     DoublePair mean = priorDistribution.Mean();
     SetLocation(mean.first);

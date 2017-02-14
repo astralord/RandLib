@@ -33,6 +33,7 @@ public:
     double Variance() const override;
     double Median() const override;
     double Mode() const override;
+    double Skewness() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

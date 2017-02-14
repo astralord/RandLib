@@ -18,8 +18,8 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableRand
     double sigma0;
 
     /// Tables for ziggurat
-    static double stairWidth[257], stairHeight[256];
-    static constexpr double x1 = 3.6541528853610088;
+    static long double stairWidth[257], stairHeight[256];
+    static constexpr long double x1 = 3.6541528853610088l;
     static const bool dummy;
     static bool SetupTables();
 
@@ -40,6 +40,7 @@ public:
 
     double f(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
     double Variate() const override;
     static double StandardVariate();
 

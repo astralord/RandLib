@@ -2,8 +2,8 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
-double ExponentialRand::stairWidth[257] = {0};
-double ExponentialRand::stairHeight[256] = {0};
+long double ExponentialRand::stairWidth[257] = {0};
+long double ExponentialRand::stairHeight[256] = {0};
 bool ExponentialRand::dummy = ExponentialRand::SetupTables();
 
 ExponentialRand::ExponentialRand(double rate) : GammaRand()
@@ -22,13 +22,13 @@ bool ExponentialRand::SetupTables()
     static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
 
     /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = 0.00045413435384149675; /// exp(-x1);
-    stairWidth[0] = 8.697117470131049720307; /// A / stairHeight[0];
+    stairHeight[0] = 0.00045413435384149675l; /// exp(-x1);
+    stairWidth[0] = 8.697117470131049720307l; /// A / stairHeight[0];
     /// implicit value for the top layer
     stairWidth[256] = 0;
 
     stairWidth[1] = x1;
-    stairHeight[1] = 0.0009672692823271745203;
+    stairHeight[1] = 0.0009672692823271745203l;
 
     for (size_t i = 2; i < 256; ++i)
     {
@@ -66,18 +66,13 @@ double ExponentialRand::StandardVariate()
     do {
         int stairId = RandGenerator::variate() & 255;
         double x = UniformRand::StandardVariate() * stairWidth[stairId]; /// Get horizontal coordinate
-
         if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
             return x;
-
         if (stairId == 0) /// if we catch the tail
             return x1 + StandardVariate();
-
         if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-x)) /// if we are under the curve - accept
             return x;
-
         /// rejection - go back
-
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
 }

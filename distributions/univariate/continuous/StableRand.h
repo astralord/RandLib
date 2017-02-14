@@ -17,7 +17,7 @@
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
-    double xi, S, zeta; /// coefficients for common α
+    double xi, omega, zeta; /// coefficients for common α
     double alpham1Inv, alpha_alpham1; /// 1 / (α - 1) and α / (α - 1)
 
     static constexpr double BIG_NUMBER = 1e9; /// aka infinity for pdf and cdf calculations
@@ -87,8 +87,10 @@ public:
     /// Cumulative distribution functions
 protected:
     double cdfNormal(double x) const;
+    double cdfNormalCompl(double x) const;
     double cdfCauchy(double x) const;
     double cdfLevy(double x) const;
+    double cdfLevyCompl(double x) const;
 private:
     static double fastcdfExponentiation(double u);
 
@@ -97,6 +99,7 @@ private:
     double cdfForCommonExponent(double x) const;
 public:
     double F(double x) const override;
+    double S(double x) const override;
 
     /// Variates
 private:

@@ -19,9 +19,7 @@ void RaisedCosineRand::SetLocation(double location)
 
 void RaisedCosineRand::SetScale(double scale)
 {
-    s = scale;
-    if (s <= 0)
-        s = M_PI;
+    s = scale > 0.0 ? scale : M_PI;
     s_pi = s * M_1_PI;
 }
 
@@ -30,8 +28,7 @@ double RaisedCosineRand::f(double x) const
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
         return 0.0;
-    double y = std::cos(xAdj);
-    ++y;
+    double y = std::cos(xAdj) + 1.0;
     return y / (s + s);
 }
 
@@ -65,7 +62,6 @@ double RaisedCosineRand::StandardVariate()
         W += V;
         if (U >= W)
             return X;
-
         a += 2;
         b += 2;
         V *= XSq / (a * b);

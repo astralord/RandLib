@@ -123,3 +123,8 @@ double VonMisesRand::Mode() const
     return mu;
 }
 
+double VonMisesRand::Skewness() const
+{
+    return 0.0;
+}
+

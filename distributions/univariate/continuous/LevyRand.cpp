@@ -21,6 +21,11 @@ double LevyRand::F(double x) const
     return StableRand::cdfLevy(x);
 }
 
+double LevyRand::S(double x) const
+{
+    return StableRand::cdfLevyCompl(x);
+}
+
 double LevyRand::Variate() const
 {
     double rv = NormalRand::StandardVariate();
