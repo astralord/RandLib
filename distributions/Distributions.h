@@ -20,6 +20,7 @@
 #include "univariate/continuous/InverseGammaRand.h"
 #include "univariate/continuous/InverseGaussianRand.h"
 #include "univariate/continuous/IrwinHallRand.h"
+#include "univariate/continuous/KolmogorovSmirnovRand.h"
 #include "univariate/continuous/KumaraswamyRand.h"
 #include "univariate/continuous/LaplaceRand.h"
 #include "univariate/continuous/LevyRand.h"

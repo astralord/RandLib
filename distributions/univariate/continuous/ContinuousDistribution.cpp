@@ -1,4 +1,5 @@
 #include "ContinuousDistribution.h"
+#include "KolmogorovSmirnovRand.h"
 
 void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const
 {
@@ -182,4 +183,20 @@ double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) 
     for (const double & var : sample )
         res += std::log(f(var));
     return res;
+}
+
+bool ContinuousDistribution::KolmogorovSmirnovTest(const std::vector<double> &orderStatistic, double alpha) const
+{
+    double K = KolmogorovSmirnovRand::Quantile1m(alpha);
+    size_t n = orderStatistic.size();
+    double border = K / std::sqrt(n);
+    double nInv = 1.0 / n;
+    for (size_t i = 0; i != n; ++i) {
+        double Fn = i * nInv;
+        double FReal = this->F(orderStatistic[i]);
+        double D = std::fabs(Fn - FReal);
+        if (D > border)
+            return false;
+    }
+    return true;
 }

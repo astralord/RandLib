@@ -82,7 +82,8 @@ SOURCES += \
     distributions/univariate/discrete/CategoricalRand.cpp \
     distributions/univariate/continuous/KumaraswamyRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquaredRand.cpp \
-    distributions/univariate/continuous/NoncentralTRand.cpp
+    distributions/univariate/continuous/NoncentralTRand.cpp \
+    distributions/univariate/continuous/KolmogorovSmirnovRand.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -164,7 +165,8 @@ HEADERS +=\
     distributions/univariate/discrete/CategoricalRand.h \
     distributions/univariate/continuous/KumaraswamyRand.h \
     distributions/univariate/continuous/NoncentralChiSquaredRand.h \
-    distributions/univariate/continuous/NoncentralTRand.h
+    distributions/univariate/continuous/NoncentralTRand.h \
+    distributions/univariate/continuous/KolmogorovSmirnovRand.h
 
 unix {
     target.path = /usr/lib

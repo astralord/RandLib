@@ -39,6 +39,14 @@ public:
     double Hazard(double x) const override;
     double Likelihood(const std::vector<double> &sample) const override;
     double LogLikelihood(const std::vector<double> &sample) const override;
+
+    /**
+     * @brief KolmogorovSmirnovTest
+     * @param orderStatistic sorted sample
+     * @param alpha level of test
+     * @return true if sample is from this distribution according to asymptotic KS-test
+     */
+    bool KolmogorovSmirnovTest(const std::vector<double> &orderStatistic, double alpha) const;
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H
