@@ -191,12 +191,15 @@ bool ContinuousDistribution::KolmogorovSmirnovTest(const std::vector<double> &or
     size_t n = orderStatistic.size();
     double border = K / std::sqrt(n);
     double nInv = 1.0 / n;
-    for (size_t i = 0; i != n; ++i) {
+    for (size_t i = 1; i != n; ++i) {
+        double x = orderStatistic[i - 1];
+        if (x > orderStatistic[i])
+            return false; // SAMPLE_IS_NOT_SORTED
         double Fn = i * nInv;
-        double FReal = this->F(orderStatistic[i]);
+        double FReal = this->F(x);
         double D = std::fabs(Fn - FReal);
         if (D > border)
             return false;
     }
-    return true;
+    return (this->S(orderStatistic[n - 1]) > border) ? false : true;
 }
