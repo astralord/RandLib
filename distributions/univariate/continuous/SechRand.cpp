@@ -54,8 +54,8 @@ double SechRand::quantileImpl(double p) const
 double SechRand::quantileImpl1m(double p) const
 {
     double x = M_PI_2 * p;
-    x = 1.0 / std::tan(x);
-    x = std::log(x);
+    x = std::tan(x);
+    x = -std::log(x);
     return M_2_PI * x;
 }
 

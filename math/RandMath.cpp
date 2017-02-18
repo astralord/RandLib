@@ -249,32 +249,35 @@ REGULARISED_GAMMA_METHOD_ID getRegularizedGammaMethodId(double a, double x, doub
 double incompleteGammaUniformExpansion(double a, double x, double logX, bool isP)
 {
     /// Uniform asymptotic expansion for P(a, x) if isP == true, or Q(a, x) otherwise
-    static constexpr long double d[] = {-0.33333333333333333333l, -0.08333333333333333333l, -0.01481481481481481481l, 0.00115740740740740741l,
+    static constexpr long double d[] = {-0.33333333333333333333l, 0.08333333333333333333l, -0.01481481481481481481l, 0.00115740740740740741l,
                                          0.00035273368606701940l, -0.000178755144032922l, 0.0000391926317852244l, -0.00000218544851067999l,
                                         -0.00000185406221071516l, 0.829671134095309e-6l, -0.176659527368261e-6l, 0.670785354340150e-8l,
-                                         0.102618097842403e-7l, -0.438203601845335e-8l};
-    static constexpr int N = 13;
+                                         0.102618097842403e-7l, -0.438203601845335e-8l, 0.914769958223678e-9l, -0.255141939949460e-10l,
+                                        -0.583077213255043e-10l, 0.243619480206674e-10l, -0.502766928011417e-11l, 0.110043920319559e-12l,
+                                         0.337176326240099e-12l, -0.139238872241816e-12l, 0.285348938070474e-13l, -0.513911183424242e-15l,
+                                        -0.197522882943494428e-16l, 0.809952115670456133e-17};
+    static constexpr int N = 25;
     double lambda = x / a;
     double logA = std::log(a);
     double logLambda = logX - logA;
     double aux = x - a - a * logLambda;
-    double eta = 0.0, base = 0.5;
+    double etaSq = 0.0, base = 0.5;
     if (aux > 0.0) { /// otherwise, x ~ a and aux ~ 0.0
-        eta = std::sqrt(2 * (lambda - 1.0 - logLambda));
+        etaSq = 2 * (lambda - 1.0 - logLambda);
         base = 0.5 * std::erfc(std::sqrt(aux));
     }
     long double sum = 0.0l;
     double betanp2 = d[N], betanp1 = d[N - 1];
     for (int n = N - 2; n >= 0; --n) {
-        double beta = (n + 2) * betanp2 / a + d[n];
-        sum += beta * std::pow(eta, n);
+        double beta = (n + 2) * betanp2 / a;
+        beta += (x < a && (n & 1)) ? -d[n] : d[n];
+        sum += beta * std::pow(etaSq, 0.5 * n);
         betanp2 = betanp1;
         betanp1 = beta;
     }
     sum *= a / (a + betanp2);
-    double z = a + logLambda * a - x;
-    z -= 0.5 * (M_LN2 + M_LNPI + logA);
-    double y = std::exp(z) * sum;
+    double z = aux + 0.5 * (M_LN2 + M_LNPI + logA);
+    double y = std::exp(-z) * sum;
     return base + (isP ? -y : y);
 }
 

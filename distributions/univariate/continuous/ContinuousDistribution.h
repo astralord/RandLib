@@ -42,9 +42,9 @@ public:
 
     /**
      * @brief KolmogorovSmirnovTest
-     * @param orderStatistic sorted sample
+     * @param orderStatistic sample sorted in ascending order
      * @param alpha level of test
-     * @return true if sample is from this distribution according to asymptotic KS-test
+     * @return true if sample is from this distribution according to asymptotic KS-test, false otherwise
      */
     bool KolmogorovSmirnovTest(const std::vector<double> &orderStatistic, double alpha) const;
 };

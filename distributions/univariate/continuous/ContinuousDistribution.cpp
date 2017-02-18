@@ -24,7 +24,7 @@ double ContinuousDistribution::quantileImpl(double p) const
     }
 
     /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 100;
+    static constexpr int SAMPLE_SIZE = 128;
     std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
     std::sort(sample.begin(), sample.end());
@@ -54,7 +54,7 @@ double ContinuousDistribution::quantileImpl1m(double p) const
     }
 
     /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 100;
+    static constexpr int SAMPLE_SIZE = 128;
     std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
     /// Sort in desceding order
@@ -172,7 +172,7 @@ double ContinuousDistribution::Hazard(double x) const
 double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const
 {
     double res = 1.0;
-    for (const double & var : sample )
+    for (const double & var : sample)
         res *= f(var);
     return res;
 }
@@ -180,7 +180,7 @@ double ContinuousDistribution::Likelihood(const std::vector<double> &sample) con
 double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) const
 {
     double res = 0.0;
-    for (const double & var : sample )
+    for (const double & var : sample)
         res += std::log(f(var));
     return res;
 }
@@ -189,17 +189,20 @@ bool ContinuousDistribution::KolmogorovSmirnovTest(const std::vector<double> &or
 {
     double K = KolmogorovSmirnovRand::Quantile1m(alpha);
     size_t n = orderStatistic.size();
-    double border = K / std::sqrt(n);
+    double interval = K / std::sqrt(n);
     double nInv = 1.0 / n;
+    double Fn = 0.0;
     for (size_t i = 1; i != n; ++i) {
         double x = orderStatistic[i - 1];
         if (x > orderStatistic[i])
             return false; // SAMPLE_IS_NOT_SORTED
-        double Fn = i * nInv;
+        double upperBound = Fn + interval;
+        Fn = i * nInv;
+        double lowerBound = Fn - interval;
         double FReal = this->F(x);
-        double D = std::fabs(Fn - FReal);
-        if (D > border)
+        if (FReal < lowerBound || FReal > upperBound)
             return false;
     }
-    return (this->S(orderStatistic[n - 1]) > border) ? false : true;
+    double SReal = this->S(orderStatistic[n - 1]);
+    return (SReal > interval || SReal < nInv - interval) ? false : true;
 }

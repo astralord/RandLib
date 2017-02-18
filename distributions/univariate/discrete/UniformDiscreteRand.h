@@ -25,8 +25,6 @@ public:
     int MaxValue() const override { return b; }
 
     void SetBoundaries(int minValue, int maxValue);
-    inline int GetMinValue() const { return a; }
-    inline int GetMaxValue() const { return b; }
 
     double P(int k) const override;
     double F(int k) const override;
