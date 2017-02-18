@@ -31,7 +31,11 @@ double OrnsteinUhlenbeckProcess::VarianceImpl(double t) const
 
 double OrnsteinUhlenbeckProcess::Quantile(double t, double p) const
 {
+    if (p < 0 || p > 1)
+        return NAN;
     double expmBetaDeltaT = std::exp(-beta * (t - currentTime));
-    return NormalRand::quantile(p, expmBetaDeltaT * currentValue + alpha * (1 - expmBetaDeltaT), sigma * std::sqrt(0.5 / beta * (1 - expmBetaDeltaT * expmBetaDeltaT)));
+    double mean = expmBetaDeltaT * currentValue + alpha * (1 - expmBetaDeltaT);
+    double scale = sigma * std::sqrt(0.5 / beta * (1 - expmBetaDeltaT * expmBetaDeltaT));
+    return mean - scale * M_SQRT2 * RandMath::erfcinv(2 * p);
 }
 

@@ -326,10 +326,10 @@ double GammaRand::initRootForLargeShape(double p) const
 {
     if (p == 0.5)
         return alpha;
-    double x = NormalRand::standardQuantile(p);
-    double lambda = 0.5 * x * x / alpha + 1;
+    double x = RandMath::erfcinv(2 * p);
+    double lambda = x * x / alpha + 1;
     lambda = -std::exp(-lambda);
-    if (x > 0)
+    if (x < 0)
         lambda = -RandMath::Wm1Lambert(lambda);
     else
         lambda = -RandMath::W0Lambert(lambda);
@@ -345,20 +345,20 @@ double GammaRand::df(double x) const
     return z * std::exp(y);
 }
 
-double GammaRand::quantileImpl(double p) const
+double GammaRand::quantileInitialGuess(double p) const
 {
     /// Method is taken from
     /// "Efficient and accurate algorithms
     /// for the computation and inversion
     /// of the incomplete gamma function ratios"
     /// (Amparo Gil, Javier Segura and Nico M. Temme)
-    double root = 0;
+    double guess = 0;
     double r = std::log(p * alpha) - mLgammaShape;
     r = std::exp(r * alphaInv);
     if (alpha < 10) {
         /// if p -> 0
         if (r < 0.2 * (alpha + 1)) {
-            root = initRootForSmallP(r);
+            guess = initRootForSmallP(r);
         }
         else {
             double logQ = std::log1p(-p);
@@ -367,34 +367,19 @@ double GammaRand::quantileImpl(double p) const
             double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
             /// if p -> 1
             if (logQ < std::min(maxBoundary1, maxBoundary2))
-                root = initRootForLargeP(logQ);
+                guess = initRootForLargeP(logQ);
             else if (alpha < 1)
-                root = r;
+                guess = r;
             else
-                root = initRootForLargeShape(p);
+                guess = initRootForLargeShape(p);
         }
     }
-    else {
-        root = initRootForLargeShape(p);
-    }
-
-    root /= beta;
-
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        if (x <= 0)
-            return DoubleTriplet(-p, 0, 0);
-        double first = F(x) - p;
-        double second = f(x);
-        double third = df(x);
-        return DoubleTriplet(first, second, third);
-    }, root))
-        return root;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    else
+        guess = initRootForLargeShape(p);
+    return guess / beta;
 }
 
-double GammaRand::quantileImpl1m(double p) const
+double GammaRand::quantileInitialGuess1m(double p) const
 {
     if (alpha < 10) {
         double logQ = std::log(p);
@@ -403,25 +388,43 @@ double GammaRand::quantileImpl1m(double p) const
         double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
         /// if p -> 0
         if (logQ < std::min(maxBoundary1, maxBoundary2))
-        {
-            double root = initRootForLargeP(logQ) / beta;
-            if (RandMath::findRoot([this, p] (double x)
-            {
-                if (x <= 0)
-                    return DoubleTriplet(-p, 0, 0);
-                double first = p - S(x);
-                double second = f(x);
-                double third = df(x);
-                return DoubleTriplet(first, second, third);
-            }, root))
-                return root;
-            /// if we can't find quantile, then probably something bad has happened
-            return NAN;
-        }
+            return initRootForLargeP(logQ) / beta;
     }
-    // TODO: recheck this!
-    /// in this case p is not small enough
-    return quantileImpl(1.0 - p);
+    return quantileInitialGuess(1.0 - p);
+}
+
+double GammaRand::quantileImpl(double p) const
+{
+    double guess = quantileInitialGuess(p);
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        if (x <= 0)
+            return DoubleTriplet(-p, 0, 0);
+        double first = F(x) - p;
+        double second = f(x);
+        double third = df(x);
+        return DoubleTriplet(first, second, third);
+    }, guess))
+        return guess;
+    /// if we can't find quantile, then probably something bad has happened
+    return NAN;
+}
+
+double GammaRand::quantileImpl1m(double p) const
+{
+    double guess = quantileInitialGuess1m(p);
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        if (x <= 0)
+            return DoubleTriplet(p - 1.0, 0, 0);
+        double first = p - S(x);
+        double second = f(x);
+        double third = df(x);
+        return DoubleTriplet(first, second, third);
+    }, guess))
+        return guess;
+    /// if we can't find quantile, then probably something bad has happened
+    return NAN;
 }
 
 std::complex<double> GammaRand::CFImpl(double t) const

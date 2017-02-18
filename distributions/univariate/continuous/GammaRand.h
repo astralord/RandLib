@@ -78,6 +78,8 @@ private:
     double initRootForSmallShape(double p) const;
     double initRootForLargeShape(double p) const;
     double df(double x) const;
+    double quantileInitialGuess(double p) const;
+    double quantileInitialGuess1m(double p) const;
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 

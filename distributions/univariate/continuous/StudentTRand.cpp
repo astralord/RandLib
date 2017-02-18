@@ -148,6 +148,7 @@ double StudentTRand::quantileImpl(double p) const
         double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
         return mu + sigma * 2 * RandMath::sign(temp) * std::sqrt(beta);
     }
+    // TODO: implement inverse of beta function
     return ContinuousDistribution::quantileImpl(p);
 }
 

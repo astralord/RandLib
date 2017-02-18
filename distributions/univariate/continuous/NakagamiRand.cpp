@@ -335,9 +335,9 @@ bool RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
     double sigmaBiasedSq = 0.5 * rawMoment(sample, 2);
     /// Calculate unbiased sigma
     if (n > 100) {
-        double coef = 0.125 * n;
+        double coef = 1.0 / (640 * std::pow(n, 5));
         coef -= 1.0 / (192 * std::pow(n, 3));
-        coef += 1.0 / (640 * std::pow(n, 5));
+        coef += 0.125 / n;
         SetScale((1.0 + coef) * std::sqrt(sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
     }
     else if (n > 15) {

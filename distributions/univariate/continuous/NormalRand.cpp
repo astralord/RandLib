@@ -110,44 +110,32 @@ std::complex<double> NormalRand::CFImpl(double t) const
     return std::exp(std::complex<double>(-0.5 * sigma0T * sigma0T, mu * t));
 }
 
-double NormalRand::standardQuantile(double p)
-{
-    // TODO: redo by erfinv
-    /// Abramowitz and Stegun improved approximation
-    long double t = (p < 0.5) ? -std::log(p) : -std::log1p(-p);
-    t = std::sqrt(t + t);
-    static constexpr long double c[] = {2.653962002601684482l, 1.561533700212080345l, 0.061146735765196993l};
-    static constexpr long double d[] = {1.904875182836498708l, 0.454055536444233510l, 0.009547745327068945l};
-    long double numerator = c[2] * t;
-    numerator += c[1];
-    numerator *= t;
-    numerator += c[0];
-    long double denominator = d[2] * t;
-    denominator += d[1];
-    denominator *= t;
-    denominator += d[0];
-    denominator *= t;
-    denominator += 1.0;
-    double y = numerator / denominator - t;
-    return (p < 0.5) ? y : -y;
-}
-
-double NormalRand::quantile(double p, double mean, double scale)
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    return mean + scale * standardQuantile(p);
-}
-
 double NormalRand::quantileImpl(double p) const
 {
-    return mu + sigma0 * standardQuantile(p);
+    double guess = mu - sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        double first = F(x) - p;
+        double second = f(x);
+        return DoublePair(first, second);
+    }, guess))
+        return guess;
+    /// if we can't find quantile, then probably something bad has happened
+    return NAN;
 }
 
 double NormalRand::quantileImpl1m(double p) const
 {
-    // TODO: redo by erfcinv
-    return mu + sigma0 * standardQuantile(1.0 - p);
+    double guess = mu + sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        double first = p - S(x);
+        double second = f(x);
+        return DoublePair(first, second);
+    }, guess))
+        return guess;
+    /// if we can't find quantile, then probably something bad has happened
+    return NAN;
 }
 
 double NormalRand::Moment(int n) const

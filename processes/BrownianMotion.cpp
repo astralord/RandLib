@@ -36,6 +36,10 @@ void BrownianMotion::CumulativeDistributionFunction(double t, const std::vector<
 
 double BrownianMotion::Quantile(double t, double p) const
 {
+    if (p < 0 || p > 1)
+        return NAN;
     double tau = t - currentTime;
-    return NormalRand::quantile(p, currentValue + mu * tau, sigma * std::sqrt(tau));
+    double mean = currentValue + mu * tau;
+    double scale = sigma * std::sqrt(tau);
+    return mean - scale * M_SQRT2 * RandMath::erfcinv(2 * p);
 }

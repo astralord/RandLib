@@ -92,10 +92,8 @@ std::complex<double> ZipfRand::CFImpl(double t) const
     std::complex<double> sum(0.0, 0.0);
     for (int i = 1; i <= n; ++i)
     {
-        std::complex<double> numerator(0, i * t);
-        numerator = std::exp(numerator);
-        double denominator = std::pow(i, s);
-        sum += numerator / denominator;
+        std::complex<double> addon(-s * std::log(i), i * t);
+        sum += std::exp(addon);
     }
     return invHarmonicNumber * sum;
 }

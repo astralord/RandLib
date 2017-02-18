@@ -128,6 +128,52 @@ long double binomialCoef(int n, int k)
     return n_fact / (k_fact * n_k_fact);
 }
 
+double erfinv(double p)
+{
+    if (p < 0.0)
+        return -erfinv(-p);
+    if (p > 0.1)
+        return erfcinv(1.0 - p);
+    double guess = 0.0;
+    double t = 0.5 * M_SQRTPI * p;
+    guess = 34807.0 * std::pow(t, 11) / 178200.0;
+    guess += 4369.0 * std::pow(t, 9) / 22680.0;
+    guess += 127.0 * std::pow(t, 7) / 630.0;
+    guess += 7.0 * std::pow(t, 5) / 30.0;
+    guess += std::pow(t, 3) / 3.0;
+    guess += t;
+    return guess;
+}
+
+double erfcinvAux(double tSq) {
+    /// Abramowitz and Stegun improved approximation
+    static constexpr long double c[] = {2.653962002601684482l, 1.561533700212080345l, 0.061146735765196993l};
+    static constexpr long double d[] = {1.904875182836498708l, 0.454055536444233510l, 0.009547745327068945l};
+    double t = std::sqrt(tSq);
+    double numerator = c[2] * tSq;
+    numerator += t * c[1];
+    numerator += c[0];
+    double denominator = d[2] * std::pow(t, 3);
+    denominator += d[1] * tSq;
+    denominator += d[0] * t;
+    ++denominator;
+    double y = numerator / denominator - t;
+    return M_SQRT1_2 * y;
+}
+
+double erfcinv(double p)
+{
+    if (p < 0.0 || p > 2.0)
+        return NAN;
+    if (p == 0.0)
+        return INFINITY;
+    if (p == 2.0)
+        return -INFINITY;
+    if (p == 1.0)
+        return 0.0;
+    return (p < 1.0) ? -erfcinvAux(-2 * std::log(0.5 * p)) : erfcinvAux(-2 * std::log1p(-0.5 * p));
+}
+
 double digamma(double x)
 {
     /// Negative argument

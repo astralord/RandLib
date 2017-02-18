@@ -44,9 +44,6 @@ public:
     double Variate() const override;
     static double StandardVariate();
 
-    static double standardQuantile(double p);
-    static double quantile(double p, double mean, double scale);
-
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;

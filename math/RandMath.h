@@ -73,6 +73,20 @@ long double doubleFactorial(int n);
 long double binomialCoef(int n, int k);
 
 /**
+ * @brief erfinv
+ * @param p
+ * @return
+ */
+double erfinv(double p);
+
+/**
+ * @brief erfcinv
+ * @param p
+ * @return
+ */
+double erfcinv(double p);
+
+/**
  * @brief digamma
  * @param x
  * @return digamma(x) = d(ln(Gamma(x)))/dx = d(Gamma(x))/Gamma(x)

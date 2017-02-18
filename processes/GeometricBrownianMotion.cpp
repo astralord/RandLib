@@ -47,6 +47,11 @@ void GeometricBrownianMotion::CumulativeDistributionFunction(double t, const std
 
 double GeometricBrownianMotion::Quantile(double t, double p) const
 {
+    if (p < 0 || p > 1)
+        return NAN;
     double tau = t - currentTime;
-    return currentValue * std::exp(NormalRand::quantile(p, mumSigma2_2 * tau, sigma * std::sqrt(tau)));
+    double mean = mumSigma2_2 * tau;
+    double scale = sigma * std::sqrt(tau);
+    double quantile = mean - scale * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return currentValue * std::exp(quantile);
 }
