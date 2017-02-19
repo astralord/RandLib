@@ -56,31 +56,13 @@ std::complex<double> LevyRand::CFImpl(double t) const
 double LevyRand::quantileImpl(double p) const
 {
     double y = pdfCoef / RandMath::erfcinv(p);
-    double guess = mu + M_PI * y * y;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double first = F(x) - p;
-        double second = f(x);
-        return DoublePair(first, second);
-    }, guess))
-        return guess;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    return mu + M_PI * y * y;
 }
 
 double LevyRand::quantileImpl1m(double p) const
 {
     double y = pdfCoef / RandMath::erfinv(p);
-    double guess = mu + M_PI * y * y;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double first = p - S(x);
-        double second = f(x);
-        return DoublePair(first, second);
-    }, guess))
-        return guess;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    return mu + M_PI * y * y;
 }
 
 bool LevyRand::FitScaleMLE(const std::vector<double> &sample)

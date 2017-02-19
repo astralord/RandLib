@@ -128,50 +128,115 @@ long double binomialCoef(int n, int k)
     return n_fact / (k_fact * n_k_fact);
 }
 
-double erfinv(double p)
+double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
 {
-    if (p < 0.0)
-        return -erfinv(-p);
-    if (p > 0.1)
-        return erfcinv(1.0 - p);
-    double guess = 0.0;
-    double t = 0.5 * M_SQRTPI * p;
-    guess = 34807.0 * std::pow(t, 11) / 178200.0;
-    guess += 4369.0 * std::pow(t, 9) / 22680.0;
-    guess += 127.0 * std::pow(t, 7) / 630.0;
-    guess += 7.0 * std::pow(t, 5) / 30.0;
-    guess += std::pow(t, 3) / 3.0;
-    guess += t;
-    return guess;
+    /// We approximate inverse erf via Chebyshev polynomials
+    long double Tn = t, Tnm1 = 1, addon = 0.0, sum = 0.0;
+    for (int i = 1; i != size; ++i) {
+        addon = array[i] * Tn;
+        sum += addon;
+        /// calculate next Chebyshev polynomial
+        double temp = Tn;
+        Tn *= 2 * t;
+        Tn -= Tnm1;
+        Tnm1 = temp;
+    }
+    return x * (array[0] + sum);
 }
 
-double erfcinvAux(double tSq) {
-    /// Abramowitz and Stegun improved approximation
-    static constexpr long double c[] = {2.653962002601684482l, 1.561533700212080345l, 0.061146735765196993l};
-    static constexpr long double d[] = {1.904875182836498708l, 0.454055536444233510l, 0.009547745327068945l};
-    double t = std::sqrt(tSq);
-    double numerator = c[2] * tSq;
-    numerator += t * c[1];
-    numerator += c[0];
-    double denominator = d[2] * std::pow(t, 3);
-    denominator += d[1] * tSq;
-    denominator += d[0] * t;
-    ++denominator;
-    double y = numerator / denominator - t;
-    return M_SQRT1_2 * y;
+double erfinvAux1(double beta)
+{
+    /// |1 - p| < 5e-16
+    static constexpr long double D5 = -9.199992358830151031278420l, D6 = 2.794990820124599493768426l;
+    static constexpr int muSize = 26;
+    static constexpr long double mu[muSize] = {.9885750640661893136460358l, .0108577051845994776160281l, -.0017511651027627952594825l, .0000211969932065633437984l,
+                                               .0000156648714042435087911l, -.05190416869103124261e-5l, -.00371357897426717780e-5l, .00012174308662357429e-5l,
+                                              -.00001768115526613442e-5l, -.119372182556161e-10l, .003802505358299e-10l, -.000660188322362e-10l, -.000087917055170e-10l,
+                                              -.3506869329e-15l, -.0697221497e-15l, -.0109567941e-15l, -.0011536390e-15l, -.0000263938e-15l, .05341e-20l, -.22610e-20l,
+                                               .09552e-20l, -.05250e-20l, .02487e-20l, -.01134e-20l, .00420e-20l};
+    return erfinvChebyshevSeries(beta, D5 / std::sqrt(beta) + D6, mu, muSize);
+}
+
+double erfinvAux2(double beta)
+{
+    /// 5e-16 < |1 - p| < 0.025
+    static constexpr long double D3 = -0.5594576313298323225436913l, D4 = 2.287915716263357638965891l;
+    static constexpr int deltaSize = 38;
+    static constexpr long double delta[deltaSize] = {.9566797090204925274526373l, -.0231070043090649036999908l, -.0043742360975084077333218l, -.0005765034226511854809364l,
+                                                    -.0000109610223070923931242l, .0000251085470246442787982l, .0000105623360679477511955l, .27544123300306391503e-5l,
+                                                     .04324844983283380689e-5l, -.00205303366552086916e-5l, -.00438915366654316784e-5l, -.00176840095080881795e-5l,
+                                                    -.00039912890280463420e-5l, -.00001869324124559212e-5l, .00002729227396746077e-5l, .00001328172131565497e-5l,
+                                                     .318342484482286e-10l, .016700607751926e-10l, -.020364649611537e-10l, -.009648468127965e-10l, -.002195672778128e-10l,
+                                                    -.000095689813014e-10l, .000137032572230e-10l, .000062538505417e-10l, .000014584615266e-10l, .1078123993e-15l,
+                                                    -.0709229988e-15l, -.0391411775e-15l, -.0111659209e-15l, -.0015770366e-15l, .0002853149e-15l, .0002716662e-15l,
+                                                     .0000176835e-15l, .09828e-20l, .20464e-20l, .08020e-20l, .01650e-20l};
+    return erfinvChebyshevSeries(beta, D3 * beta + D4, delta, deltaSize);
+}
+
+double erfinvAux3(double beta)
+{
+    /// 0.8 < p < 0.975
+    static constexpr long double D1 = -1.548813042373261659512742l, D2 = 2.565490123147816151928163l;
+    static constexpr int lambdaSize = 27;
+    static constexpr long double lambda[lambdaSize] = {.9121588034175537733059200l, -.0162662818676636958546661l, .0004335564729494453650589l, .0002144385700744592065205l,
+                                                       .26257510757648130176e-5l, -.30210910501037969912e-5l, -.00124060618367572157e-5l, .00624066092999917380e-5l,
+                                                      -.00005401247900957858e-5l, -.00014232078975315910e-5l, .343840281955305e-10l, .335848703900138e-10l, -.014584288516512e-10l,
+                                                      -.008102174258833e-10l, .000525324085874e-10l, .000197115408612e-10l, -.000017494333828e-10l, -.4800596619e-15l, .0557302987e-15l,
+                                                       .0116326054e-15l, -.0017262489e-15l, -.0002784973e-15l, .0000524481e-15l, .65270e-20l, -.15707e-20l, -.01475e-20l, .00450e-20l};
+    return erfinvChebyshevSeries(beta, D1 * beta + D2, lambda, lambdaSize);
+}
+
+double erfinvAux4(double p)
+{
+    /// 0 < p < 0.8
+    static constexpr int xiSize = 39;
+    static constexpr long double xi[xiSize] = {.9928853766189408231495800l, .1204675161431044864647846l, .0160781993420999447267039l, .0026867044371623158279591l,
+                                               .0004996347302357262947170l, .0000988982185991204409911l, .0000203918127639944337340l, .43272716177354218758e-5l,
+                                               .09380814128593406758e-5l, .02067347208683427411e-5l, .00461596991054300078e-5l, .00104166797027146217e-5l,
+                                               .00023715009995921222e-5l, .00005439284068471390e-5l, .00001255489864097987e-5l, .291381803663201e-10l,
+                                               .067949421808797e-10l, .015912343331569e-10l, .003740250585245e-10l, .000882087762421e-10l, .000208650897725e-10l,
+                                               .000049488041039e-10l, .000011766394740e-10l, .2803855725e-15l, .0669506638e-15l, .0160165495e-15l, .0038382583e-15l,
+                                               .0009212851e-15l, .0002214615e-15l, .0000533091e-15l, .0000128488e-15l, .31006e-20l, .07491e-20l, .01812e-20l,
+                                               .00439e-20l, .00106e-20l, .00026e-20l, .00006e-20l, .00002e-20l};
+    return erfinvChebyshevSeries(p, p * p / 0.32 - 1.0, xi, xiSize);
+}
+
+double erfinv(double p)
+{
+    /// Consider special cases
+    if (p < 0.0)
+        return -erfinv(-p);
+    if (p > 1.0)
+        return NAN;
+    if (p == 1.0)
+        return INFINITY;
+    if (p == 0.0)
+        return 0.0;
+    if (p < 0.8)
+        return erfinvAux4(p);
+    /// Handle tails
+    double beta = std::sqrt(-std::log1p(-p * p));
+    if (p < 0.9975)
+        return erfinvAux3(beta);
+    return (1.0 - p < 5e-16) ? erfinvAux1(beta) : erfinvAux2(beta);
 }
 
 double erfcinv(double p)
 {
-    if (p < 0.0 || p > 2.0)
-        return NAN;
+    /// Consider special cases
+    if (p > 1.0)
+        return -erfcinv(2.0 - p);
     if (p == 0.0)
         return INFINITY;
-    if (p == 2.0)
-        return -INFINITY;
     if (p == 1.0)
         return 0.0;
-    return (p < 1.0) ? -erfcinvAux(-2 * std::log(0.5 * p)) : erfcinvAux(-2 * std::log1p(-0.5 * p));
+    if (p > 0.2)
+        return erfinvAux4(1.0 - p);
+    double pSq = p * p, p2 = 2 * p;
+    double beta = std::sqrt(-std::log(p2 - pSq));
+    if (p > 0.0025)
+        return erfinvAux3(beta);
+    return (p > 5e-16) ? erfinvAux2(beta) : erfinvAux1(beta);
 }
 
 double digamma(double x)

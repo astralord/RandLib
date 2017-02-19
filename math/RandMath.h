@@ -75,14 +75,14 @@ long double binomialCoef(int n, int k);
 /**
  * @brief erfinv
  * @param p
- * @return
+ * @return inverse error function: such x that erf(x) = p
  */
 double erfinv(double p);
 
 /**
  * @brief erfcinv
  * @param p
- * @return
+ * @return inverse complementary error function: such x that erfc(x) = p
  */
 double erfcinv(double p);
 

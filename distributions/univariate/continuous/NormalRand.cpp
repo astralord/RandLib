@@ -112,30 +112,12 @@ std::complex<double> NormalRand::CFImpl(double t) const
 
 double NormalRand::quantileImpl(double p) const
 {
-    double guess = mu - sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double first = F(x) - p;
-        double second = f(x);
-        return DoublePair(first, second);
-    }, guess))
-        return guess;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    return mu - sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
 }
 
 double NormalRand::quantileImpl1m(double p) const
 {
-    double guess = mu + sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double first = p - S(x);
-        double second = f(x);
-        return DoublePair(first, second);
-    }, guess))
-        return guess;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    return mu + sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
 }
 
 double NormalRand::Moment(int n) const
