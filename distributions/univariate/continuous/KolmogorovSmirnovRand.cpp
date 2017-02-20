@@ -1,4 +1,5 @@
 #include "KolmogorovSmirnovRand.h"
+#include "ExponentialRand.h"
 #include "UniformRand.h"
 
 KolmogorovSmirnovRand::KolmogorovSmirnovRand()
@@ -98,9 +99,79 @@ double KolmogorovSmirnovRand::S(double x) const
     return CDFCompl(x);
 }
 
+double KolmogorovSmirnovRand::truncatedGammaVariate() const
+{
+    /// Generator for truncated gamma distribution with shape = 1.5
+    static constexpr long double tp = 2.193245422464302l; /// π^2 / (8 * 0.75^2)
+    int iter = 0;
+    do {
+        double E0 = 1.2952909208355123l * ExponentialRand::StandardVariate();
+        double E1 = 2 * ExponentialRand::StandardVariate();
+        double G = tp + E0;
+        if (E0 * E0 <= tp * E1 * (G + tp))
+            return G;
+        double Wp = E0 / tp;
+        if (Wp - std::log1p(Wp) <= E1)
+            return G;
+    } while (++iter <= MAX_ITER_REJECTION);
+    return NAN;
+}
+
+double KolmogorovSmirnovRand::variateForTheLeftMostInterval() const
+{
+    int iter1 = 0;
+    do {
+        double G = truncatedGammaVariate();
+        double X = M_PI / std::sqrt(8 * G);
+        double W = 0.0;
+        double Z = 0.5 / G;
+        int n = 1, iter2 = 0;
+        double Q = 1.0;
+        double U = UniformRand::StandardVariate();
+        while (U >= W && ++iter2 <= MAX_ITER_REJECTION) {
+            W += Z * Q;
+            if (U >= W)
+                return X;
+            n += 2;
+            int nSq = n * n;
+            Q = std::exp(G - G * nSq);
+            W -= nSq * Q;
+        }
+    } while (++iter1 <= MAX_ITER_REJECTION);
+    return NAN;
+}
+
+double KolmogorovSmirnovRand::variateForTheRightMostInterval() const
+{
+    static constexpr double tSq = 0.5625; /// square of parameter t suggested in the book
+    int iter1 = 0;
+    do {
+        double E = ExponentialRand::StandardVariate();
+        double U = UniformRand::StandardVariate();
+        double X = std::sqrt(tSq + 0.5 * E);
+        double W = 0.0;
+        int n = 1, iter2 = 0;
+        double Z = -2 * X * X;
+        while (U > W && ++iter2 < MAX_ITER_REJECTION) {
+            ++n;
+            int nSq = n * n;
+            W += nSq * std::exp(Z * (nSq - 1));
+            if (U >= W)
+                return X;
+            ++n;
+            nSq = n * n;
+            W -= nSq * std::exp(Z * (nSq - 1));
+        }
+    } while (++iter1 <= MAX_ITER_REJECTION);
+    return NAN;
+}
+
 double KolmogorovSmirnovRand::Variate() const
 {
-    return KolmogorovSmirnovRand::Quantile(UniformRand::StandardVariate());
+    /// Luc Devroye, pp. 163-165
+    /// alternating series method
+    bool isLeft = UniformRand::StandardVariate() < 0.3728329582237386; /// F(0.75)
+    return isLeft ? variateForTheLeftMostInterval() : variateForTheRightMostInterval();
 }
 
 double KolmogorovSmirnovRand::Mean() const

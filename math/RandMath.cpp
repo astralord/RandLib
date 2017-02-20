@@ -291,6 +291,10 @@ double digamma(double x)
 
 double digammamLog(double x)
 {
+    if (x < 0.0)
+        return NAN;
+    if (x == 0.0)
+        return -INFINITY;
     return (x < 7.0) ? digamma(x) - std::log(x) : digammamLogForLargeX(x);
 }
 
