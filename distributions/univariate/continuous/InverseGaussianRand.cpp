@@ -36,21 +36,24 @@ double InverseGaussianRand::f(double x) const
 
 double InverseGaussianRand::F(double x) const
 {
-    if (x <= 0)
-        return 0;
-    double a = std::sqrt(0.5 * lambda / x);
-    double b = a * x / mu;
-    if (b > a) {
-        double y = std::erfc(b - a);
-        double z = std::erfc(b + a);
-        double res = cdfCoef * z - y;
-        return 1 + 0.5 * res;
-    }
-    double y = std::erf(b - a);
-    double z = std::erfc(b + a);
-    double res = y + cdfCoef * z;
-    ++res;
-    return 0.5 * res;
+    if (x <= 0.0)
+        return 0.0;
+    double b = std::sqrt(0.5 * lambda / x);
+    double a = b * x / mu;
+    double y = std::erfc(b - a);
+    y += cdfCoef * std::erfc(a + b);
+    return 0.5 * y;
+}
+
+double InverseGaussianRand::S(double x) const
+{
+    if (x <= 0.0)
+        return 1.0;
+    double b = std::sqrt(0.5 * lambda / x);
+    double a = b * x / mu;
+    double y = std::erfc(a - b);
+    y -= cdfCoef * std::erfc(a + b);
+    return 0.5 * y;
 }
 
 double InverseGaussianRand::Variate() const
