@@ -353,9 +353,9 @@ double GammaRand::quantileInitialGuess(double p) const
     /// of the incomplete gamma function ratios"
     /// (Amparo Gil, Javier Segura and Nico M. Temme)
     double guess = 0;
-    double r = std::log(p * alpha) - mLgammaShape;
-    r = std::exp(r * alphaInv);
     if (alpha < 10) {
+        double r = std::log(p * alpha) - mLgammaShape;
+        r = std::exp(r * alphaInv);
         /// if p -> 0
         if (r < 0.2 * (alpha + 1)) {
             guess = initRootForSmallP(r);
@@ -464,7 +464,7 @@ bool GammaRand::FitMLE(const std::vector<double> &sample)
     if (!RandMath::findRoot([s] (double x)
     {
         double first = std::log(x) - RandMath::digamma(x) - s;
-        double second = 1.0 / x - RandMath::trigamma(x);
+        double second = RandMath::trigamma(x) - 1.0 / x;
         return DoublePair(first, second);
     }, shape))
         return false;

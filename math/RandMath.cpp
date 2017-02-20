@@ -131,10 +131,9 @@ long double binomialCoef(int n, int k)
 double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
 {
     /// We approximate inverse erf via Chebyshev polynomials
-    long double Tn = t, Tnm1 = 1, addon = 0.0, sum = 0.0;
+    long double Tn = t, Tnm1 = 1, sum = 0.0;
     for (int i = 1; i != size; ++i) {
-        addon = array[i] * Tn;
-        sum += addon;
+        sum += array[i] * Tn;
         /// calculate next Chebyshev polynomial
         double temp = Tn;
         Tn *= 2 * t;
@@ -239,14 +238,13 @@ double erfcinv(double p)
     return (p > 5e-16) ? erfinvAux2(beta) : erfinvAux1(beta);
 }
 
-double digamma(double x)
+/**
+ * @brief digammamLogForLargeX
+ * @param x
+ * @return digamma(x) - log(x) for x > 7
+ */
+double digammamLogForLargeX(double x)
 {
-    /// Negative argument
-    if (x < 0.0) {
-        double y = 1.0 - x;
-        double z = M_PI / std::tan(M_PI * y);
-        return digamma(y) + z;
-    }
     /// set up tables
     static constexpr long double taylorCoef[] = {
          0.00833333333333333333l,
@@ -260,14 +258,6 @@ double digamma(double x)
         6000, 320, 75, 30, 20, 10, 7
     };
 
-    /// shift to minimum value,
-    /// for which series expansion is applicable
-    long double y = 0;
-    while (x < 7.0) {
-        y -= 1.0 / x;
-        ++x;
-    }
-
     /// choose the amount of terms in series
     int degree = 0;
     while (x < bounds[degree])
@@ -275,11 +265,33 @@ double digamma(double x)
 
     /// apply
     long double firstTerm = taylorCoef[5] / x - 0.5;
-    y += firstTerm / x;
+    long double y = firstTerm / x;
     for (int i = 0; i < degree; ++i)
         y += taylorCoef[i] / std::pow(x, 2 * i + 4);
-    y += std::log(x);
     return y;
+}
+
+double digamma(double x)
+{
+    /// Negative argument
+    if (x < 0.0) {
+        double y = 1.0 - x;
+        double z = M_PI / std::tan(M_PI * y);
+        return digamma(y) + z;
+    }
+    /// shift to minimum value,
+    /// for which series expansion is applicable
+    long double sum = 0;
+    while (x < 7.0) {
+        sum -= 1.0 / x;
+        ++x;
+    }
+    return sum + digammamLogForLargeX(x) + std::log(x);
+}
+
+double digammamLog(double x)
+{
+    return (x < 7.0) ? digamma(x) - std::log(x) : digammamLogForLargeX(x);
 }
 
 double trigamma(double x)
@@ -325,7 +337,6 @@ double trigamma(double x)
         y += taylorCoef[i] / std::pow(x, 2 * i + 3);
     return y;
 }
-
 
 /// INCOMPLETE GAMMA FUNCTIONS
 
@@ -1392,7 +1403,6 @@ double MarcumQ(double mu, double x, double y)
     // TODO: implement and use, when mu + x > y
     return 1.0 - MarcumP(mu, x, y);
 }
-
 
 }
 

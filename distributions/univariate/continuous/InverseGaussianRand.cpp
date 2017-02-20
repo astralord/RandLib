@@ -40,16 +40,14 @@ double InverseGaussianRand::F(double x) const
         return 0;
     double a = std::sqrt(0.5 * lambda / x);
     double b = a * x / mu;
-
     if (b > a) {
-        double y = std::erfc(b - a); /// -> 0
-        double z = std::erfc(b + a); /// -> 0
+        double y = std::erfc(b - a);
+        double z = std::erfc(b + a);
         double res = cdfCoef * z - y;
         return 1 + 0.5 * res;
     }
-
-    double y = std::erf(b - a); /// -> -1
-    double z = std::erfc(b + a); /// -> 2
+    double y = std::erf(b - a);
+    double z = std::erfc(b + a);
     double res = y + cdfCoef * z;
     ++res;
     return 0.5 * res;

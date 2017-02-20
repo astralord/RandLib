@@ -39,6 +39,9 @@ public:
 protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+
+public:
+    double GetLogGammaFunction() const { return Y.GetLogGammaFunction(); }
 };
 
 

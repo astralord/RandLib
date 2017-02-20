@@ -108,10 +108,9 @@ double NoncentralTRand::f(double x) const
         y -= T.Y.GetLogGammaFunction();
         return std::exp(y - 0.5 * z);
     }
-    double y = 0.0;
     int signX = RandMath::sign(x);
     double muAdj = signX * mu;
-    y = Faux(x * std::sqrt(1.0 + 2.0 / nu), nu + 2.0, muAdj);
+    double y = Faux(x * std::sqrt(1.0 + 2.0 / nu), nu + 2.0, muAdj);
     y -= Faux(x, nu, muAdj);
     y *= signX;
     return nu * y / x;
@@ -128,9 +127,18 @@ double NoncentralTRand::F(double x) const
 double NoncentralTRand::Variate() const
 {
     double X = NormalRand::StandardVariate() + mu;
-    X /= std::sqrt(T.Y.Variate() / nu);
-    // TODO: investigate if we can use Nakagami distribution instead
+    X /= T.Y.Variate();
     return X;
+}
+
+void NoncentralTRand::Sample(std::vector<double> &outputData) const
+{
+    if (mu == 0.0)
+        return T.Sample(outputData);
+    T.Y.Sample(outputData);
+    for (double &var : outputData) {
+        var = (mu + NormalRand::StandardVariate()) / var;
+    }
 }
 
 double NoncentralTRand::Mean() const

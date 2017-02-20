@@ -94,6 +94,13 @@ double erfcinv(double p);
 double digamma(double x);
 
 /**
+ * @brief logmdigamma
+ * @param x
+ * @return digamma(x) - log(x)
+ */
+double digammamLog(double x);
+
+/**
  * @brief trigamma
  * @param x
  * @return trigamma(x) = digamma'(x)

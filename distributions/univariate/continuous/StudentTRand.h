@@ -1,7 +1,7 @@
 #ifndef STUDENTTRAND_H
 #define STUDENTTRAND_H
 
-#include "GammaRand.h"
+#include "NakagamiRand.h"
 
 /**
  * @brief The StudentTRand class
@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
     double nu;
     double mu, sigma;
-    GammaRand Y;
+    NakagamiRand Y;
     double pdfCoef;
     double nup1Half; /// 0.5 * (nu + 1)
     double betaInv; /// 1.0 / beta(0.5 * nu, 0.5)

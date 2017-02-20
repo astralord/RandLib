@@ -21,7 +21,7 @@ std::string StudentTRand::Name() const
 void StudentTRand::SetDegree(double degree)
 {
     nu = degree > 0 ? degree : 1;
-    Y.SetParameters(0.5 * nu, 0.5);
+    Y.SetParameters(0.5 * nu, 1.0);
 
     nup1Half = 0.5 * (nu + 1);
     pdfCoef = std::lgamma(nup1Half);
@@ -92,8 +92,7 @@ double StudentTRand::Variate() const
 {
     if (nu == 1)
         return CauchyRand::Variate(mu, sigma);
-    // TODO: do we need to divide on nu and make sqrt? can we use nakagami distribution?
-    return mu + sigma * NormalRand::StandardVariate() / std::sqrt(Y.Variate() / nu);
+    return mu + sigma * NormalRand::StandardVariate() / Y.Variate();
 }
 
 void StudentTRand::Sample(std::vector<double> &outputData) const
@@ -105,7 +104,7 @@ void StudentTRand::Sample(std::vector<double> &outputData) const
     else {
         Y.Sample(outputData);
         for (double &var : outputData)
-            var = mu + sigma * NormalRand::StandardVariate() / std::sqrt(var / nu);
+            var = mu + sigma * NormalRand::StandardVariate() / var;
     }
 }
 
