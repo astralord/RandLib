@@ -89,6 +89,7 @@ protected:
     double cdfNormal(double x) const;
     double cdfNormalCompl(double x) const;
     double cdfCauchy(double x) const;
+    double cdfCauchyCompl(double x) const;
     double cdfLevy(double x) const;
     double cdfLevyCompl(double x) const;
 private:

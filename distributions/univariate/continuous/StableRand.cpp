@@ -487,6 +487,13 @@ double StableRand::cdfCauchy(double x) const
     return 0.5 + M_1_PI * RandMath::atan(x0);
 }
 
+double StableRand::cdfCauchyCompl(double x) const
+{
+    double x0 = mu - x;
+    x0 /= sigma;
+    return 0.5 + M_1_PI * RandMath::atan(x0);
+}
+
 double StableRand::cdfLevy(double x) const
 {
     if (x <= mu)
@@ -597,7 +604,7 @@ double StableRand::S(double x) const
     case NORMAL:
         return cdfNormalCompl(x);
     case CAUCHY:
-        return 1.0 - cdfCauchy(x);
+        return cdfCauchyCompl(x);
     case LEVY:
         return (beta > 0) ? cdfLevyCompl(x) : cdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
