@@ -25,8 +25,8 @@ double atan(double x)
     /// to avoid numeric problems
     if (x == 0.0)
         return 0.0;
-    if (x > 0.0)
-        return (x > 1.0) ? M_PI_2 - std::atan(1.0 / x) : std::atan(x);
+    if (x > 1.0)
+        return M_PI_2 - std::atan(1.0 / x);
     return (x < -1.0) ? -M_PI_2 - std::atan(1.0 / x) : std::atan(x);
 }
 
