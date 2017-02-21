@@ -76,12 +76,12 @@ double KolmogorovSmirnovRand::K(double x)
 
 double KolmogorovSmirnovRand::CDF(double x)
 {
-    return (x < 1.0) ? 1.0 - K(x) : L(x);
+    return (x > 1.0) ? 1.0 - K(x) : L(x);
 }
 
 double KolmogorovSmirnovRand::CDFCompl(double x)
 {
-    return (x < 1.0) ? K(x) : 1.0 - L(x);
+    return (x > 1.0) ? K(x) : 1.0 - L(x);
 }
 
 double KolmogorovSmirnovRand::f(double x) const
