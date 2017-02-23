@@ -14,11 +14,17 @@ public:
 
     /**
      * @brief f
-     * probability density function
      * @param x
-     * @return
+     * @return probability density function
      */
     virtual double f(double x) const = 0;
+
+    /**
+     * @brief logpdf
+     * @param x
+     * @return logarithm of probability density function
+     */
+    virtual double logf(double x) const = 0;
 
     /**
      * @brief ProbabilityDensityFunction

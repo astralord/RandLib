@@ -41,10 +41,10 @@ void StableRand::SetParameters(double exponent, double skewness)
     alpham1Inv = alpha_alpham1 - 1.0;
 
     if (distributionId == NORMAL) {
-        pdfCoef = 0.5 / sigma;
+        pdfCoef = std::log(2 * sigma) + 0.5 * M_LNPI;
     }
     else if (distributionId == LEVY) {
-        pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
+        pdfCoef = std::log(sigma) - M_LN2 - M_LNPI;
     }
     else if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (sigma * std::fabs(beta));
@@ -56,12 +56,9 @@ void StableRand::SetParameters(double exponent, double skewness)
         zeta = -xi;
         omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
         xi = alphaInv * RandMath::atan(xi);
-
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
-
         /// pdfXLimit is such k that for x > k we use asymptotic expansion
         pdfXLimit = 3.0 / (1.0 + alpha) * M_LN10;
-
         /// define boundaries of region near 0, where we use series expansion
         if (alpha <= ALMOST_TWO) {
             seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
@@ -78,20 +75,25 @@ void StableRand::SetScale(double scale)
 {
     LimitingDistribution::SetScale(scale);
     if (distributionId == NORMAL)
-        pdfCoef = 0.5 / sigma;
+        pdfCoef = std::log(2 * sigma) + 0.5 * M_LNPI;
     else if (distributionId == LEVY)
-        pdfCoef = M_1_SQRT2PI * std::sqrt(sigma);
+        pdfCoef = std::log(sigma) - M_LN2 - M_LNPI;
     else if (distributionId == COMMON)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
 }
 
 double StableRand::pdfNormal(double x) const
 {
+    return std::exp(logpdfNormal(x));
+}
+
+double StableRand::logpdfNormal(double x) const
+{
     double y = x - mu;
-    y *= pdfCoef;
+    y *= 0.5 / sigma;
     y *= y;
-    y = std::exp(-y);
-    return M_1_SQRTPI * pdfCoef * y;
+    y += pdfCoef;
+    return -y;
 }
 
 double StableRand::pdfCauchy(double x) const
@@ -103,16 +105,25 @@ double StableRand::pdfCauchy(double x) const
     return M_1_PI / y;
 }
 
+double StableRand::logpdfCauchy(double x) const
+{
+    return std::log(pdfCauchy(x));
+}
+
 double StableRand::pdfLevy(double x) const
 {
-    if (x <= mu)
-        return 0;
-    double xInv = 1.0 / (x - mu);
-    double y = -0.5 * sigma * xInv;
-    y = std::exp(y);
-    y *= xInv;
-    y *= std::sqrt(xInv);
-    return pdfCoef * y;
+    return (x <= mu) ? 0.0 : std::exp(logpdfLevy(x));
+}
+
+double StableRand::logpdfLevy(double x) const
+{
+    double x0 = x - mu;
+    if (x0 <= 0.0)
+        return -INFINITY;
+    double y = sigma / x0;
+    y += 3 * std::log(x0);
+    y -= pdfCoef;
+    return -0.5 * y;
 }
 
 double StableRand::fastpdfExponentiation(double u)
@@ -274,13 +285,11 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     double logY = std::log1p(xSq);
     double alpham1 = alpha - 1.0;
     double temp = 1.0 - M_EULER - 0.5 * logY;
-
     /// first derivative
     double f_a = temp;
     f_a *= xSq - 1.0;
     f_a += 2 * x * z;
     f_a /= ySq;
-
     static constexpr long double M_PI_SQ_6 = 1.64493406684822643647l; /// π^2 / 6
     /// second derivative
     double f_aa1 = M_PI_SQ_6;
@@ -295,7 +304,6 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
     f_aa3 += f_aa3;
     double f_aa = f_aa1 + f_aa2 + f_aa3;
     f_aa /= std::pow(y, 3);
-
     /// Hashed values of special functions for x = 2, 3, 4
     /// Gamma(x)
     static constexpr int gammaTable[] = {1, 2, 6};
@@ -337,7 +345,6 @@ double StableRand::pdfTaylorExpansionTailNearCauchy(double x) const
         gTable[i] = g;
     }
     double f_aaa = -gTable[0] + 3 * gTable[1] - gTable[2];
-
     /// summarize all three derivatives
     double tail = f_a * alpham1;
     tail += 0.5 * f_aa * alpham1 * alpham1;
@@ -466,17 +473,35 @@ double StableRand::f(double x) const
     }
 }
 
+double StableRand::logf(double x) const
+{
+    switch (distributionId) {
+    case NORMAL:
+        return logpdfNormal(x);
+    case CAUCHY:
+        return logpdfCauchy(x);
+    case LEVY:
+        return (beta > 0) ? logpdfLevy(x) : logpdfLevy(2 * mu - x);
+    case UNITY_EXPONENT:
+        return std::log(pdfForUnityExponent(x));
+    case COMMON:
+        return std::log(pdfForCommonExponent(x));
+    default:
+        return NAN; /// unexpected return
+    }
+}
+
 double StableRand::cdfNormal(double x) const
 {
     double y = mu - x;
-    y *= pdfCoef;
+    y *= 0.5 / sigma;
     return 0.5 * std::erfc(y);
 }
 
 double StableRand::cdfNormalCompl(double x) const
 {
     double y = x - mu;
-    y *= pdfCoef;
+    y *= 0.5 / sigma;
     return 0.5 * std::erfc(y);
 }
 

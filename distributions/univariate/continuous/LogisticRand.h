@@ -10,6 +10,7 @@
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {
     double mu, s;
+    double logS;
 
 public:
     LogisticRand(double location = 0, double scale = 1);
@@ -25,7 +26,9 @@ public:
     inline double GetScale() const { return s; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
     double Variate() const override;
 
     double Mean() const override;
@@ -41,6 +44,8 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
+    double Entropy() const;
+
     /// Method of moments
     bool FitLocationMM(const std::vector<double> &sample);
     bool FitScaleMM(const std::vector<double> &sample);

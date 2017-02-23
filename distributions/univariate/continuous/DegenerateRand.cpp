@@ -20,6 +20,11 @@ double DegenerateRand::f(double x) const
     return (x == a) ? INFINITY : 0.0;
 }
 
+double DegenerateRand::logf(double x) const
+{
+    return (x == a) ? INFINITY : -INFINITY;
+}
+
 double DegenerateRand::F(double x) const
 {
     return (x < a) ? 0.0 : 1.0;

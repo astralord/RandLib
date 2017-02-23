@@ -19,16 +19,28 @@ void BetaPrimeRand::SetParameters(double shape1, double shape2)
 
 double BetaPrimeRand::f(double x) const
 {
-    if (x < 0)
-        return 0;
-    if (x == 0) {
-        if (alpha == 1)
+    if (x < 0.0)
+        return 0.0;
+    if (x == 0.0) {
+        if (alpha == 1.0)
             return GetInverseBetaFunction();
         return (alpha > 1) ? 0.0 : INFINITY;
     }
+    return std::exp(logf(x));
+}
+
+double BetaPrimeRand::logf(double x) const
+{
+    if (x < 0.0)
+        return -INFINITY;
+    if (x == 0.0) {
+        if (alpha == 1.0)
+            return -GetLogBetaFunction();
+        return (alpha > 1) ? -INFINITY : INFINITY;
+    }
     double y = (alpha - 1) * std::log(x);
     y -= (alpha + beta) * std::log1p(x);
-    return std::exp(y - GetLogBetaFunction());
+    return y - GetLogBetaFunction();
 }
 
 double BetaPrimeRand::F(double x) const

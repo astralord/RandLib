@@ -15,27 +15,27 @@ std::string FrechetRand::Name() const
 
 void FrechetRand::SetParameters(double shape, double scale, double location)
 {
-    alpha = shape;
-    if (alpha <= 0)
-        alpha = 1.0;
+    alpha = shape > 0.0 ? shape : 1.0;
     alphaInv = 1.0 / alpha;
-
-    s = scale;
-    if (s <= 0)
-        s = 1.0;
-
+    s = scale > 0.0 ? scale : 1.0;
+    pdfCoef = std::log(alpha / s);
     m = location;
 }
 
 double FrechetRand::f(double x) const
 {
+    return (x <= m) ? 0.0 : std::exp(logf(x));
+}
+
+double FrechetRand::logf(double x) const
+{
     if (x <= m)
-        return 0.0;
+        return -INFINITY;
     double xAdj = (x - m) / s;
-    double a = -alpha * std::log(xAdj);
-    double expA = std::exp(a);
-    double y = std::exp(a - expA);
-    return alpha * y / (s * xAdj);
+    double logxAdj = std::log(xAdj);
+    double a = alpha * logxAdj;
+    double expA = std::exp(-a);
+    return pdfCoef - a - expA - logxAdj;
 }
 
 double FrechetRand::F(double x) const
@@ -45,6 +45,15 @@ double FrechetRand::F(double x) const
     double xAdj = (x - m) / s;
     double xPow = std::pow(xAdj, -alpha);
     return std::exp(-xPow);
+}
+
+double FrechetRand::S(double x) const
+{
+    if (x <= m)
+        return 1.0;
+    double xAdj = (x - m) / s;
+    double xPow = std::pow(xAdj, -alpha);
+    return -std::expm1(-xPow);
 }
 
 double FrechetRand::Variate() const

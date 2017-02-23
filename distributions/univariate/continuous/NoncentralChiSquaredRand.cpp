@@ -33,11 +33,23 @@ double NoncentralChiSquaredRand::f(double x) const
             return 0.5 * std::exp(-0.5 * lambda);
         return (k > 2) ? 0.0 : INFINITY;
     }
+    return std::exp(logf(x));
+}
+
+double NoncentralChiSquaredRand::logf(double x) const
+{
+    if (x < 0.0)
+        return -INFINITY;
+    if (x == 0.0) {
+        if (k == 2)
+            return -0.5 * lambda - M_LN2;
+        return (k > 2) ? -INFINITY : INFINITY;
+    }
     double halfKm1 = halfK - 1;
     double y = RandMath::logModifiedBesselFirstKind(std::sqrt(lambda * x), halfKm1);
     double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
-    return 0.5 * std::exp(y + 0.5 * z);
+    return y + 0.5 * z - M_LN2;
 }
 
 double NoncentralChiSquaredRand::F(double x) const

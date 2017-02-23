@@ -30,6 +30,7 @@ public:
     inline int GetSecondDegree() const { return d2; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double S(double x) const override;
     double Variate() const override;

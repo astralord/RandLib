@@ -28,7 +28,7 @@ void LaplaceRand::SetAsymmetry(double asymmetry)
         k = 1.0;
     kInv = 1.0 / k;
     kSq = k * k;
-    pdfCoef = 1.0 / (sigma * (k + kInv));
+    pdfCoef = std::log(sigma * (k + kInv));
     cdfCoef = -std::log1p(kSq);
     mu = (1.0 - kSq) * sigma * kInv;
 }
@@ -38,9 +38,19 @@ double LaplaceRand::f(double x) const
     return pdfLaplace(x - m);
 }
 
+double LaplaceRand::logf(double x) const
+{
+    return logpdfLaplace(x - m);
+}
+
 double LaplaceRand::F(double x) const
 {
     return cdfLaplace(x - m);
+}
+
+double LaplaceRand::S(double x) const
+{
+    return cdfLaplaceCompl(x - m);
 }
 
 double LaplaceRand::Variate() const

@@ -30,6 +30,7 @@ public:
     inline double GetNoncentrality() const { return lambda; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double S(double x) const override;
 

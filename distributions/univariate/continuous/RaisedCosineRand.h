@@ -12,6 +12,7 @@ class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 {
     double mu, s;
     double s_pi;
+    double log2S;
 public:
     RaisedCosineRand(double location, double scale);
 
@@ -26,7 +27,9 @@ public:
     inline double GetScale() const { return s; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
 
     static double StandardVariate();
     double Variate() const override;

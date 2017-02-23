@@ -24,8 +24,17 @@ double NakagamiRand::f(double x) const
     if (x < 0.0)
         return 0.0;
     if (x == 0)
-        return (m > 0.5) ? 0.0 : M_SQRT2 / M_SQRTPI / std::sqrt(w);
-    return (x < 0) ? 0.0 : 2 * x * Y.f(x * x);
+        return (m > 0.5) ? 0.0 : std::sqrt(M_2_PI / w);
+    return 2 * x * Y.f(x * x);
+}
+
+double NakagamiRand::logf(double x) const
+{
+    if (x < 0.0)
+        return -INFINITY;
+    if (x == 0)
+        return (m > 0.5) ? -INFINITY : 0.5 * std::log(M_2_PI / w);
+    return std::log(2 * x) + Y.logf(x * x);
 }
 
 double NakagamiRand::F(double x) const

@@ -28,7 +28,9 @@ public:
     inline double GetAsymmetry() const { return k; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
 
     double Variate() const override;
     static double Variate(double location, double scale);

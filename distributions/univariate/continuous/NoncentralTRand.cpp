@@ -116,6 +116,11 @@ double NoncentralTRand::f(double x) const
     return nu * y / x;
 }
 
+double NoncentralTRand::logf(double x) const
+{
+    return std::log(f(x));
+}
+
 double NoncentralTRand::F(double x) const
 {
     if (mu == 0.0)

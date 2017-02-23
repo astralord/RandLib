@@ -25,12 +25,26 @@ void LogNormalRand::SetScale(double scale)
 
 double LogNormalRand::f(double x) const
 {
-    return (x > 0) ? X.f(std::log(x)) / x : 0;
+    return (x > 0.0) ? std::exp(logf(x)) : 0.0;
+}
+
+double LogNormalRand::logf(double x) const
+{
+    if (x <= 0.0)
+        return -INFINITY;
+    double logX = std::log(x);
+    double y = X.logf(logX);
+    return y - logX;
 }
 
 double LogNormalRand::F(double x) const
 {
-    return (x > 0) ? X.F(std::log(x)) : 0;
+    return (x > 0.0) ? X.F(std::log(x)) : 0.0;
+}
+
+double LogNormalRand::S(double x) const
+{
+    return (x > 0.0) ? X.S(std::log(x)) : 1.0;
 }
 
 double LogNormalRand::StandardVariate()

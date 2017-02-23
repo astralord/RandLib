@@ -14,6 +14,8 @@
 class RANDLIBSHARED_EXPORT KumaraswamyRand : public ContinuousDistribution
 {
     double a, b;
+    double aInv; /// 1/a
+    double logA, logB; /// log(a), log(b)
 
 public:
     explicit KumaraswamyRand(double shape1, double shape2);
@@ -27,6 +29,7 @@ public:
     inline double GetB() const { return b; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double S(double x) const override;
     double Variate() const override;

@@ -12,9 +12,8 @@ std::string WignerSemicircleRand::Name() const
 
 void WignerSemicircleRand::SetRadius(double radius)
 {
-    R = radius;
-    if (R <= 0)
-        R = 1.0;
+    R = (radius > 0.0) ? radius : 1.0;
+    logRSq = std::log(R * R);
     RSq = R * R;
     X.SetParameters(1.5, 1.5);
 }
@@ -27,7 +26,15 @@ double WignerSemicircleRand::f(double x) const
     double y = RSq - xSq;
     y = std::sqrt(y);
     y *= M_1_PI / RSq;
-    return y + y;
+    return 2 * y;
+}
+
+double WignerSemicircleRand::logf(double x) const
+{
+    double xSq = x * x;
+    if (xSq >= RSq)
+        return -INFINITY;
+    return M_LN2 + 0.5 * std::log(RSq - xSq) - M_LNPI - logRSq;
 }
 
 double WignerSemicircleRand::F(double x) const
@@ -81,6 +88,6 @@ double WignerSemicircleRand::ExcessKurtosis() const
 
 double WignerSemicircleRand::Entropy() const
 {
-    return std::log(M_PI * R) - 0.5;
+    return M_LNPI + 0.5 * logRSq - 0.5;
 }
 

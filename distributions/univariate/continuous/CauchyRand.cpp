@@ -13,12 +13,17 @@ std::string CauchyRand::Name() const
 
 double CauchyRand::f(double x) const
 {
-    return StableRand::pdfCauchy(x);
+    return pdfCauchy(x);
 }
 
 double CauchyRand::F(double x) const
 {
-    return StableRand::cdfCauchy(x);
+    return cdfCauchy(x);
+}
+
+double CauchyRand::S(double x) const
+{
+    return cdfCauchyCompl(x);
 }
 
 double CauchyRand::Variate() const

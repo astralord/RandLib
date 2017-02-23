@@ -9,8 +9,7 @@
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
     double xm, alpha;
-    double alphaInv;
-    double alphaLogXm;
+    double logAlpha, logXm;
 
 public:
     ParetoRand(double shape = 1, double scale = 1);
@@ -20,14 +19,15 @@ public:
     double MinValue() const override { return xm; }
     double MaxValue() const override { return INFINITY; }
 
-    void SetParameters(double shape, double scale);
     void SetShape(double shape);
     void SetScale(double scale);
     inline double GetShape() const { return alpha; }
     inline double GetScale() const { return xm; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
 
 private:
     static double variateForAlphaOne();

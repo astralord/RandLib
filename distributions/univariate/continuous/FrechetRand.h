@@ -9,7 +9,8 @@
 class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 {
     double alpha, s, m;
-    double alphaInv; /// 1.0 / alpha
+    double alphaInv; /// 1/α
+    double pdfCoef; /// log(α/s)
 
 public:
     FrechetRand(double shape, double scale, double location);
@@ -25,7 +26,9 @@ public:
     inline double GetLocation() const { return m; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
     double Variate() const override;
 
     double Mean() const override;

@@ -34,6 +34,11 @@ double IrwinHallRand::f(double x) const
     return pdfCoef * sum;
 }
 
+double IrwinHallRand::logf(double x) const
+{
+    return std::log(f(x));
+}
+
 double IrwinHallRand::F(double x) const
 {
     if (x <= 0)

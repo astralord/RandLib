@@ -3,7 +3,8 @@
 
 ParetoRand::ParetoRand(double shape, double scale)
 {
-    SetParameters(shape, scale);
+    SetShape(shape);
+    SetScale(scale);
 }
 
 std::string ParetoRand::Name() const
@@ -11,38 +12,43 @@ std::string ParetoRand::Name() const
     return "Pareto(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-void ParetoRand::SetParameters(double shape, double scale)
-{
-    alpha = (shape > 0.0) ? shape : 1.0;
-    alphaInv = 1.0 / alpha;
-    xm = (scale > 0.0) ? scale : 1.0;
-    alphaLogXm = alpha * std::log(xm);
-}
-
 void ParetoRand::SetShape(double shape)
 {
     alpha = (shape > 0.0) ? shape : 1.0;
-    alphaInv = 1.0 / alpha;
-    alphaLogXm = alpha * std::log(xm);
+    logAlpha = std::log(alpha);
 }
 
 void ParetoRand::SetScale(double scale)
 {
     xm = (scale > 0.0) ? scale : 1.0;
-    alphaLogXm = alpha * std::log(xm);
+    logXm = std::log(xm);
 }
 
 double ParetoRand::f(double x) const
 {
+    return (x < xm) ? 0.0 : std::exp(logf(x));
+}
+
+double ParetoRand::logf(double x) const
+{
     if (x < xm)
-        return 0.0;
-    double y = alphaLogXm - (alpha + 1) * std::log(x);
-    return alpha * std::exp(y);
+        return -INFINITY;
+    double logX = std::log(x);
+    double y = logXm - logX;
+    y *= alpha;
+    y -= logX;
+    y += logAlpha;
+    return y;
 }
 
 double ParetoRand::F(double x) const
 {
-    return (x > xm) ? 1 - std::pow(xm / x, alpha) : 0;
+    return (x > xm) ? -std::expm1(alpha * std::log(xm / x)) : 0.0;
+}
+
+double ParetoRand::S(double x) const
+{
+    return (x > xm) ? std::pow(xm / x, alpha) : 1.0;
 }
 
 double ParetoRand::variateForAlphaOne()
@@ -113,8 +119,8 @@ double ParetoRand::Variance() const
 
 double ParetoRand::Median() const
 {
-    double y = alphaLogXm + M_LN2;
-    return std::exp(alphaInv * y);
+    double y = alpha * logXm + M_LN2;
+    return std::exp(y / alpha);
 }
 
 double ParetoRand::Mode() const
@@ -147,19 +153,19 @@ double ParetoRand::ExcessKurtosis() const
 
 double ParetoRand::quantileImpl(double p) const
 {
-    double y = alphaLogXm - std::log1p(-p);
-    return std::exp(alphaInv * y);
+    double y = alpha * logXm - std::log1p(-p);
+    return std::exp(y / alpha);
 }
 
 double ParetoRand::quantileImpl1m(double p) const
 {
-    double y = alphaLogXm - std::log(p);
-    return std::exp(alphaInv * y);
+    double y = alpha * logXm - std::log(p);
+    return std::exp(y / alpha);
 }
 
 double ParetoRand::Entropy() const
 {
-    return std::log(xm * alphaInv) + alphaInv + 1;
+    return logXm - logAlpha + 1.0 / alpha + 1;
 }
 
 bool ParetoRand::FitMLE(const std::vector<double> &sample)
@@ -188,6 +194,7 @@ bool ParetoRand::FitMLE(const std::vector<double> &sample)
         logAverage += std::log(var / minVar);
     logAverage = n / logAverage;
 
-    SetParameters(logAverage, minVar);
+    SetShape(logAverage);
+    SetScale(minVar);
     return true;
 }

@@ -15,6 +15,7 @@
 class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
 {
     double R, RSq;
+    double logRSq; /// log(R^2)
     BetaRand X; /// for generator
     
 public:
@@ -30,6 +31,7 @@ public:
     
 public:
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double Variate() const override;
 

@@ -89,6 +89,11 @@ double KolmogorovSmirnovRand::f(double x) const
     return PDF(x);
 }
 
+double KolmogorovSmirnovRand::logf(double x) const
+{
+    return std::log(f(x));
+}
+
 double KolmogorovSmirnovRand::F(double x) const
 {
     return CDF(x);

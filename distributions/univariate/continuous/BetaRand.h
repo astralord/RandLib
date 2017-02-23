@@ -24,7 +24,7 @@ class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
 protected:
     /// parameters of distribution
     double alpha, beta;
-    double a, b, bma;
+    double a, b, bma, bmaInv, logBma;
 
     GammaRand GammaRV1, GammaRV2;
 
@@ -43,19 +43,6 @@ public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
-
-    void SetParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
-    inline double GetAlpha() const { return alpha; }
-    inline double GetBeta() const { return beta; }
-    inline double GetMin() const { return a; }
-    inline double GetMax() const { return b; }
-
-    double f(double x) const override;
-    double F(double x) const override;
-    double S(double x) const override;
-    double Variate() const override;
-
-    void Sample(std::vector<double> &outputData) const override;
 
 private:
 
@@ -82,6 +69,20 @@ private:
      */
     void SetCoefficientsForGenerator();
 
+public:
+    void SetParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
+    void SetSupport(double minValue, double maxValue);
+    inline double GetAlpha() const { return alpha; }
+    inline double GetBeta() const { return beta; }
+
+    double f(double x) const override;
+    double logf(double x) const override;
+    double F(double x) const override;
+    double S(double x) const override;
+    double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
+
+private:
     /**
      * @brief variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
@@ -185,7 +186,7 @@ public:
     inline double GetShape() const { return beta; }
 
 protected:
-    /// prohibit to use beta's Getters and Setters
+    /// prohibit to use beta's setters
     using BetaRand::SetParameters;
 };
 

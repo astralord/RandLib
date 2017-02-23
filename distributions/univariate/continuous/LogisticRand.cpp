@@ -19,6 +19,7 @@ void LogisticRand::SetLocation(double location)
 void LogisticRand::SetScale(double scale)
 {
     s = (scale <= 0.0) ? 1.0 : scale;
+    logS = std::log(s);
 }
 
 double LogisticRand::f(double x) const
@@ -30,10 +31,25 @@ double LogisticRand::f(double x) const
     return numerator / denominator;
 }
 
+double LogisticRand::logf(double x) const
+{
+    double x0 = (mu - x) / s;
+    double y = std::exp(x0);
+    y = 2 * std::log1p(y);
+    y += logS;
+    return x0 - y;
+}
+
 double LogisticRand::F(double x) const
 {
     double expX = std::exp((mu - x) / s);
     return 1.0 / (1 + expX);
+}
+
+double LogisticRand::S(double x) const
+{
+    double expX = std::exp((mu - x) / s);
+    return expX / (1 + expX);
 }
 
 double LogisticRand::Variate() const
@@ -62,6 +78,11 @@ std::complex<double> LogisticRand::CFImpl(double t) const
     y *= pist;
     y /= std::sinh(pist);
     return y;
+}
+
+double LogisticRand::Entropy() const
+{
+    return 2 + logS;
 }
 
 double LogisticRand::quantileImpl(double p) const

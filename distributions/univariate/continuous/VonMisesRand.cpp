@@ -33,7 +33,16 @@ double VonMisesRand::f(double x) const
 {
     if (x < mu - M_PI || x > mu + M_PI)
         return 0.0;
-    return 0.5 * M_1_PI * std::exp(k * std::cos(x - mu) - logI0k);
+    return std::exp(logf(x));
+}
+
+double VonMisesRand::logf(double x) const
+{
+    if (x < mu - M_PI || x > mu + M_PI)
+        return -INFINITY;
+    double y = k * std::cos(x - mu) - logI0k;
+    y -= M_LNPI + M_LN2;
+    return y;
 }
 
 double VonMisesRand::F(double x) const

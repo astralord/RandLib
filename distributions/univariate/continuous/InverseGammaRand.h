@@ -16,6 +16,7 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution
 {
     GammaRand X;
     double alpha, beta;
+    double pdfCoef;
 public:
     InverseGammaRand(double shape = 1, double rate = 1);
 
@@ -28,6 +29,7 @@ public:
     inline double GetRate() const { return beta; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double S(double x) const override;
     double Variate() const override;

@@ -1,25 +1,24 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
-UniformRand::UniformRand(double minValue, double maxValue)
+UniformRand::UniformRand(double minValue, double maxValue) :
+    BetaRand(1, 1, minValue, maxValue)
 {
-    SetSupport(minValue, maxValue);
 }
 
 std::string UniformRand::Name() const
 {
-    return "Uniform(" + toStringWithPrecision(GetMinValue()) + ", " + toStringWithPrecision(GetMaxValue()) + ")";
-}
-
-void UniformRand::SetSupport(double minValue, double maxValue)
-{
-    BetaRand::SetParameters(1, 1, minValue, maxValue);
-    bmaInv = 1.0 / (b - a);
+    return "Uniform(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
 }
 
 double UniformRand::f(double x) const
 {
     return (x < a || x > b) ? 0.0 : bmaInv;
+}
+
+double UniformRand::logf(double x) const
+{
+    return (x < a || x > b) ? -INFINITY : -logBma;
 }
 
 double UniformRand::F(double x) const

@@ -48,6 +48,11 @@ double TriangularRand::f(double x) const
     return 0;
 }
 
+double TriangularRand::logf(double x) const
+{
+    return std::log(f(x));
+}
+
 double TriangularRand::F(double x) const
 {
     if (x <= a)

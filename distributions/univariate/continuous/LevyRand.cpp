@@ -13,17 +13,22 @@ std::string LevyRand::Name() const
 
 double LevyRand::f(double x) const
 {
-    return StableRand::pdfLevy(x);
+    return pdfLevy(x);
+}
+
+double LevyRand::logf(double x) const
+{
+    return logpdfLevy(x);
 }
 
 double LevyRand::F(double x) const
 {
-    return StableRand::cdfLevy(x);
+    return cdfLevy(x);
 }
 
 double LevyRand::S(double x) const
 {
-    return StableRand::cdfLevyCompl(x);
+    return cdfLevyCompl(x);
 }
 
 double LevyRand::Variate() const
@@ -55,14 +60,14 @@ std::complex<double> LevyRand::CFImpl(double t) const
 
 double LevyRand::quantileImpl(double p) const
 {
-    double y = pdfCoef / RandMath::erfcinv(p);
-    return mu + M_PI * y * y;
+    double y = RandMath::erfcinv(p);
+    return mu + 0.5 * sigma / (y * y);
 }
 
 double LevyRand::quantileImpl1m(double p) const
 {
-    double y = pdfCoef / RandMath::erfinv(p);
-    return mu + M_PI * y * y;
+    double y = RandMath::erfinv(p);
+    return mu + 0.5 * sigma / (y * y);
 }
 
 bool LevyRand::FitScaleMLE(const std::vector<double> &sample)

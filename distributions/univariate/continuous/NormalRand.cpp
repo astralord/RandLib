@@ -51,7 +51,12 @@ void NormalRand::SetVariance(double var)
 
 double NormalRand::f(double x) const
 {
-    return StableRand::pdfNormal(x);
+    return pdfNormal(x);
+}
+
+double NormalRand::logf(double x) const
+{
+    return logpdfNormal(x);
 }
 
 double NormalRand::F(double x) const

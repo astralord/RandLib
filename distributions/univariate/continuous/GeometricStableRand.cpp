@@ -35,17 +35,21 @@ void GeometricStableRand::SetParameters(double exponent, double skewness, double
         k /= sigma2;
         kInv = 1.0 / k;
         kSq = k * k;
-        pdfCoef = 1.0 / (sigma * (k + kInv));
+        pdfCoef = std::log(sigma * (k + kInv));
         cdfCoef = -std::log1p(kSq);
     }
 }
 
 double GeometricStableRand::pdfLaplace(double x) const
 {
+    return std::exp(logpdfLaplace(x));
+}
+
+double GeometricStableRand::logpdfLaplace(double x) const
+{
     double y = x / sigma;
     y *= (x < 0) ? kInv : -k;
-    y = std::exp(y);
-    return pdfCoef * y;
+    return y - pdfCoef;
 }
 
 double GeometricStableRand::cdfLaplace(double x) const
@@ -56,8 +60,18 @@ double GeometricStableRand::cdfLaplace(double x) const
         y = std::exp(cdfCoef + y);
         return kSq * y;
     }
-    y = std::exp(cdfCoef - k * y);
-    return 1.0 - y;
+    return -std::expm1(cdfCoef - k * y);
+}
+
+double GeometricStableRand::cdfLaplaceCompl(double x) const
+{
+    double y = x / sigma;
+    if (x < 0) {
+        y *= kInv;
+        y = std::exp(cdfCoef + y);
+        return 1.0 - kSq * y;
+    }
+    return std::exp(cdfCoef - k * y);
 }
 
 double GeometricStableRand::pdfByLevy(double x) const
@@ -218,6 +232,11 @@ double GeometricStableRand::f(double x) const
         return tau * Z.f(par);
     },
     0, 1);
+}
+
+double GeometricStableRand::logf(double x) const
+{
+    return std::log(f(x));
 }
 
 double GeometricStableRand::F(double x) const

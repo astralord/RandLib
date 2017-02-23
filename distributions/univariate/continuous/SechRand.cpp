@@ -3,7 +3,6 @@
 
 SechRand::SechRand()
 {
-
 }
 
 std::string SechRand::Name() const
@@ -14,6 +13,11 @@ std::string SechRand::Name() const
 double SechRand::f(double x) const
 {
     return 0.5 / std::cosh(M_PI_2 * x);
+}
+
+double SechRand::logf(double x) const
+{
+    return M_PI_2 * x - std::log1p(std::exp(M_PI * x));
 }
 
 double SechRand::F(double x) const

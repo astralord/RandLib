@@ -60,8 +60,11 @@ public:
     /// Probability distribution functions
 protected:
     double pdfNormal(double x) const;
+    double logpdfNormal(double x) const;
     double pdfCauchy(double x) const;
+    double logpdfCauchy(double x) const;
     double pdfLevy(double x) const;
+    double logpdfLevy(double x) const;
 private:
     static double fastpdfExponentiation(double u);
 
@@ -83,6 +86,7 @@ private:
     double pdfForCommonExponent(double x) const;
 public:    
     double f(double x) const override;
+    double logf(double x) const override;
 
     /// Cumulative distribution functions
 protected:

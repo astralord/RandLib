@@ -11,55 +11,114 @@ std::string BetaRand::Name() const
 {
     return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
                    + toStringWithPrecision(GetBeta()) + ", "
-                   + toStringWithPrecision(GetMin()) + ", "
-                   + toStringWithPrecision(GetMax()) + ")";
+                   + toStringWithPrecision(MinValue()) + ", "
+                   + toStringWithPrecision(MaxValue()) + ")";
+}
+
+BetaRand::GENERATOR_ID BetaRand::GetIdOfUsedGenerator() const
+{
+    if (alpha < 1 && beta < 1 && alpha + beta > 1)
+        return ATKINSON_WHITTAKER;
+
+    if (RandMath::areClose(alpha, beta)) {
+        /// Generators for symmetric density
+        if (RandMath::areClose(alpha, 1.0))
+            return UNIFORM; /// Standard uniform variate
+        else if (RandMath::areClose(alpha, 0.5))
+            return ARCSINE; /// Arcsine method
+        else if (RandMath::areClose(alpha, 1.5))
+            return REJECTION_UNIFORM; /// Rejection method from uniform distribution
+        else if (alpha > 1)
+            /// Rejection from uniform or normal distribution
+            return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;
+    }
+    if (std::min(alpha, beta) > 0.5 && std::max(alpha, beta) > 1)
+        return CHENG;
+    return (alpha + beta < 2) ? JOHNK : GAMMA_RATIO;
+}
+
+void BetaRand::SetCoefficientsForGenerator()
+{
+    GENERATOR_ID id = GetIdOfUsedGenerator();
+    if (id == REJECTION_NORMAL) {
+        double alpham1 = alpha - 1;
+        s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
+        t = 1.0 / std::sqrt(8 * alpha - 4);
+    }
+    else if (id == CHENG) {
+        s = alpha + beta;
+        t = std::min(alpha, beta);
+        if (t > 1)
+            t = std::sqrt((2 * alpha * beta - s) / (s - 2));
+        u = alpha + t;
+    }
+    else if (id == ATKINSON_WHITTAKER) {
+        t = std::sqrt(alpha * (1 - alpha));
+        t /= (t + std::sqrt(beta * (1 - beta)));
+        s = beta * t;
+        s /= (s + alpha * (1 - t));
+    }
 }
 
 void BetaRand::SetParameters(double shape1, double shape2, double minValue, double maxValue)
 {
-    a = minValue;
-    b = maxValue;
-
-    if (a >= b)
-        b = a + 1.0;
-
-    bma = b - a;
-
+    SetSupport(minValue, maxValue);
     GammaRV1.SetParameters(shape1, 1);
     GammaRV2.SetParameters(shape2, 1);
-
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
-
     /// we use log(Gamma(x)) in order to avoid too big numbers
-    betaFunInv = std::lgamma(alpha + beta) - GammaRV1.GetLogGammaFunction() - GammaRV2.GetLogGammaFunction();
-    mLogBetaFun = betaFunInv - std::log(bma);
-    betaFunInv = std::exp(betaFunInv);
-
+    mLogBetaFun = std::lgamma(alpha + beta) - GammaRV1.GetLogGammaFunction() - GammaRV2.GetLogGammaFunction();
+    betaFunInv = std::exp(mLogBetaFun);
     SetCoefficientsForGenerator();
+}
+
+void BetaRand::SetSupport(double minValue, double maxValue)
+{
+    a = minValue;
+    b = maxValue;
+    /// Sanity check
+    if (a >= b)
+        b = a + 1.0;
+    bma = b - a;
+    bmaInv = 1.0 / bma;
+    logBma = std::log(bma);
 }
 
 double BetaRand::f(double x) const
 {
     if (x < a || x > b)
-        return 0;
-
+        return 0.0;
     if (x == a) {
         if (alpha == 1)
             return beta / bma;
         return (alpha > 1) ? 0 : INFINITY;
     }
-
     if (x == b) {
         if (beta == 1)
             return alpha / bma;
         return (beta > 1) ? 0 : INFINITY;
     }
+    return std::exp(logf(x));
+}
 
+double BetaRand::logf(double x) const
+{
+    if (x < a || x > b)
+        return -INFINITY;
+    if (x == a) {
+        if (alpha == 1)
+            return std::log(beta / bma);
+        return (alpha > 1) ? -INFINITY : INFINITY;
+    }
+    if (x == b) {
+        if (beta == 1)
+            return std::log(alpha / bma);
+        return (beta > 1) ? -INFINITY : INFINITY;
+    }
     /// Standardize
     x -= a;
     x /= bma;
-
     double y = 0.0;
     if (alpha == beta)
         y = (alpha - 1) * std::log(x - x * x);
@@ -67,7 +126,7 @@ double BetaRand::f(double x) const
         y = (alpha - 1) * std::log(x);
         y += (beta - 1) * std::log1p(-x);
     }
-    return std::exp(mLogBetaFun + y);
+    return mLogBetaFun - logBma + y;
 }
 
 double BetaRand::F(double x) const
@@ -76,7 +135,6 @@ double BetaRand::F(double x) const
         return 0.0;
     if (x >= b)
         return 1.0;
-
     /// Standardize
     double xSt = (x - a) / bma;
     /// Workaround known case
@@ -91,7 +149,6 @@ double BetaRand::S(double x) const
         return 1.0;
     if (x >= b)
         return 0.0;
-
     /// Standardize
     double xSt = (x - a) / bma;
     /// Workaround known case
@@ -317,51 +374,6 @@ void BetaRand::Sample(std::vector<double> &outputData) const
         var = a + bma * var;
 }
 
-BetaRand::GENERATOR_ID BetaRand::GetIdOfUsedGenerator() const
-{
-    if (alpha < 1 && beta < 1 && alpha + beta > 1)
-        return ATKINSON_WHITTAKER;
-
-    if (RandMath::areClose(alpha, beta)) {
-        /// Generators for symmetric density
-        if (RandMath::areClose(alpha, 1.0))
-            return UNIFORM; /// Standard uniform variate
-        else if (RandMath::areClose(alpha, 0.5))
-            return ARCSINE; /// Arcsine method
-        else if (RandMath::areClose(alpha, 1.5))
-            return REJECTION_UNIFORM; /// Rejection method from uniform distribution
-        else if (alpha > 1)
-            /// Rejection from uniform or normal distribution
-            return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;
-    }
-    if (std::min(alpha, beta) > 0.5 && std::max(alpha, beta) > 1)
-        return CHENG;
-    return (alpha + beta < 2) ? JOHNK : GAMMA_RATIO;
-}
-
-void BetaRand::SetCoefficientsForGenerator()
-{
-    GENERATOR_ID id = GetIdOfUsedGenerator();
-    if (id == REJECTION_NORMAL) {
-        double alpham1 = alpha - 1;
-        s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
-        t = 1.0 / std::sqrt(8 * alpha - 4);
-    }
-    else if (id == CHENG) {
-        s = alpha + beta;
-        t = std::min(alpha, beta);
-        if (t > 1)
-            t = std::sqrt((2 * alpha * beta - s) / (s - 2));
-        u = alpha + t;
-    }
-    else if (id == ATKINSON_WHITTAKER) {
-        t = std::sqrt(alpha * (1 - alpha));
-        t /= (t + std::sqrt(beta * (1 - beta)));
-        s = beta * t;
-        s /= (s + alpha * (1 - t));
-    }
-}
-
 double BetaRand::Mean() const
 {
     double mean = alpha / (alpha + beta);
@@ -488,8 +500,8 @@ ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
 std::string ArcsineRand::Name() const
 {
     return "Arcsine(" + toStringWithPrecision(GetShape()) + ", "
-                      + toStringWithPrecision(GetMin()) + ", "
-                      + toStringWithPrecision(GetMax()) + ")";
+                      + toStringWithPrecision(MinValue()) + ", "
+                      + toStringWithPrecision(MaxValue()) + ")";
 }
 
 void ArcsineRand::SetShape(double shape)

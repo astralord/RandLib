@@ -15,8 +15,8 @@ protected:
     /// parameters for α = 2
     double k; /// asymmetry coefficient
     double kInv, kSq; /// 1 / k and k * k
-    double pdfCoef; /// 1 / (σ * (k + 1 / k))
-    double cdfCoef; /// 1 / (1 + k * k)
+    double pdfCoef; /// log(σ * (k + 1 / k))
+    double cdfCoef; /// log(1 + k * k)
 
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
@@ -51,7 +51,9 @@ public:
 
 protected:
     double pdfLaplace(double x) const;
+    double logpdfLaplace(double x) const;
     double cdfLaplace(double x) const;
+    double cdfLaplaceCompl(double x) const;
 
 private:
     double pdfByLevy(double x) const;
@@ -59,6 +61,7 @@ private:
 
 public:
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
 
 private:

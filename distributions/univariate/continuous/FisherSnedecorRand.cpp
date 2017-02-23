@@ -15,11 +15,11 @@ void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
     d1 = std::max(degree1, 1);
     d2 = std::max(degree2, 1);
 
-    B.SetParameters(.5 * d1, .5 * d2);
+    B.SetParameters(0.5 * d1, 0.5 * d2);
 
-    a = .5 * d1 - 1;
+    a = 0.5 * d1 - 1;
     d1_d2 = static_cast<double>(d1) / d2;
-    c = -.5 * (d1 + d2);
+    c = -0.5 * (d1 + d2);
     d2_d1 = 1.0 / d1_d2;
 
     pdfCoef = (a + 1) * std::log(d1_d2);
@@ -28,16 +28,28 @@ void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
 
 double FisherSnedecorRand::f(double x) const
 {
-    if (x < 0)
+    if (x < 0.0)
         return 0.0;
-    if (x == 0) {
-        if (a == 0)
+    if (x == 0.0) {
+        if (a == 0.0)
             return std::exp(pdfCoef);
         return (a > 0) ? 0.0 : INFINITY;
     }
+    return std::exp(logf(x));
+}
+
+double FisherSnedecorRand::logf(double x) const
+{
+    if (x < 0.0)
+        return -INFINITY;
+    if (x == 0.0) {
+        if (a == 0.0)
+            return pdfCoef;
+        return (a > 0) ? -INFINITY : INFINITY;
+    }
     double y = a * std::log(x);
     y += c * std::log1p(d1_d2 * x);
-    return std::exp(pdfCoef + y);
+    return pdfCoef + y;
 }
 
 double FisherSnedecorRand::F(double x) const

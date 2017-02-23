@@ -16,6 +16,7 @@ public:
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double Variate() const override;
 

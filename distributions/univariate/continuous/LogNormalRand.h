@@ -27,7 +27,9 @@ public:
     inline double GetScale() const { return X.GetScale(); }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
+    double S(double x) const override;
 
     static double StandardVariate();
     static double Variate(double location, double scale);

@@ -20,18 +20,14 @@ bool ExponentialRand::SetupTables()
 {
     /// Set up ziggurat tables
     static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
-
     /// coordinates of the implicit rectangle in base layer
     stairHeight[0] = 0.00045413435384149675l; /// exp(-x1);
     stairWidth[0] = 8.697117470131049720307l; /// A / stairHeight[0];
     /// implicit value for the top layer
     stairWidth[256] = 0;
-
     stairWidth[1] = x1;
     stairHeight[1] = 0.0009672692823271745203l;
-
-    for (size_t i = 2; i < 256; ++i)
-    {
+    for (size_t i = 2; i < 256; ++i) {
         /// such y_i that f(x_{i+1}) = y_i
         stairWidth[i] = -std::log(stairHeight[i - 1]);
         stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
@@ -46,12 +42,22 @@ void ExponentialRand::SetRate(double rate)
 
 double ExponentialRand::f(double x) const
 {
-    return (x >= 0) ? beta * std::exp(-beta * x) : 0;
+    return (x < 0.0) ? 0.0 : beta * std::exp(-beta * x);
+}
+
+double ExponentialRand::logf(double x) const
+{
+    return (x < 0.0) ? -INFINITY : logBeta - beta * x;
 }
 
 double ExponentialRand::F(double x) const
 {
-    return (x > 0) ? -std::expm1(-beta * x) : 0;
+    return (x > 0.0) ? -std::expm1(-beta * x) : 0.0;
+}
+
+double ExponentialRand::S(double x) const
+{
+    return (x > 0.0) ? std::exp(-beta * x) : 1.0;
 }
 
 double ExponentialRand::Variate() const

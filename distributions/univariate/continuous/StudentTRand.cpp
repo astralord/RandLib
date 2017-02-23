@@ -39,6 +39,7 @@ void StudentTRand::SetLocation(double location)
 void StudentTRand::SetScale(double scale)
 {
     sigma = scale > 0 ? scale : 1.0;
+    logSigma = std::log(sigma);
 }
 
 double StudentTRand::f(double x) const
@@ -47,7 +48,6 @@ double StudentTRand::f(double x) const
     double x0 = x - mu;
     x0 /= sigma;
     double xSq = x0 * x0;
-
     if (nu == 1) /// Cauchy distribution
         return M_1_PI / (sigma * (1 + xSq));
     if (nu == 2)
@@ -56,9 +56,28 @@ double StudentTRand::f(double x) const
         double y = 3 + xSq;
         return 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
     }
-
     double y = -nup1Half * std::log1p(xSq / nu);
     return std::exp(pdfCoef + y) / sigma;
+}
+
+double StudentTRand::logf(double x) const
+{
+    /// adjustment
+    double x0 = x - mu;
+    x0 /= sigma;
+    double xSq = x0 * x0;
+    if (nu == 1) /// Cauchy distribution
+        return std::log(M_1_PI / (sigma * (1 + xSq)));
+    if (nu == 2) {
+        return -logSigma - 1.5 * std::log(2.0 + xSq);
+    }
+    if (nu == 3) {
+        double y = 3 + xSq;
+        y = 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
+        return std::log(y);
+    }
+    double y = -nup1Half * std::log1p(xSq / nu);
+    return pdfCoef + y - logSigma;
 }
 
 double StudentTRand::F(double x) const
@@ -67,25 +86,44 @@ double StudentTRand::F(double x) const
     x0 /= sigma;
     if (x0 == 0.0)
         return 0.5;
-
     if (nu == 1) {
         /// Cauchy distribution
         return 0.5 * M_1_PI * RandMath::atan(x);
     }
-
     if (nu == 2) {
-        return 0.5 * (1.0 + x0 / std::sqrt(2 + x0 * x0));
+        return 0.5 + 0.5 * x0 / std::sqrt(2 + x0 * x0);
     }
-
     if (nu == 3) {
         double y = M_SQRT3 * x0 / (x0 * x0 + 3);
         y += RandMath::atan(x0 / M_SQRT3);
         return 0.5 + M_1_PI * y;
     }
-
     double t = nu / (x0 * x0 + nu);
     double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5) * betaInv;
     return (x0 > 0.0) ? (1 - y) : y;
+}
+
+double StudentTRand::S(double x) const
+{
+    double x0 = x - mu;
+    x0 /= sigma;
+    if (x0 == 0.0)
+        return 0.5;
+    if (nu == 1) {
+        /// Cauchy distribution
+        return 0.5 + M_1_PI * RandMath::atan(-x);
+    }
+    if (nu == 2) {
+        return 0.5 - 0.5 * x0 / std::sqrt(2 + x0 * x0);
+    }
+    if (nu == 3) {
+        double y = M_SQRT3 * x0 / (x0 * x0 + 3);
+        y += RandMath::atan(x0 / M_SQRT3);
+        return 0.5 - M_1_PI * y;
+    }
+    double t = nu / (x0 * x0 + nu);
+    double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5) * betaInv;
+    return (x0 > 0.0) ? y : 1.0 - y;
 }
 
 double StudentTRand::Variate() const

@@ -23,15 +23,21 @@ void InverseGaussianRand::SetParameters(double mean, double shape)
 
 double InverseGaussianRand::f(double x) const
 {
-    if (x <= 0)
-        return 0;
-    double xInv = 1.0 / x;
-    double y = xInv * std::sqrt(xInv);
+    if (x <= 0.0)
+        return 0.0;
+    return std::exp(logf(x));
+}
+
+double InverseGaussianRand::logf(double x) const
+{
+    if (x <= 0.0)
+        return -INFINITY;
+    double y = -1.5 * std::log(x);
     double z = (x - mu);
     z *= z;
-    z *= -.5 * lambda * xInv / (mu * mu);
-    z = std::exp(z + pdfCoef);
-    return y * z;
+    z *= -0.5 * lambda / (x * mu * mu);
+    z += pdfCoef;
+    return y + z;
 }
 
 double InverseGaussianRand::F(double x) const

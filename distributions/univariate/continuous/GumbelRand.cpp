@@ -19,25 +19,34 @@ void GumbelRand::SetLocation(double location)
 
 void GumbelRand::SetScale(double scale)
 {
-    beta = scale;
-    if (beta <= 0)
-        beta = 1.0;
-    betaInv = 1.0 / beta;
+    beta = scale > 0.0 ? scale : 1.0;
+    logBeta = std::log(beta);
 }
 
 double GumbelRand::f(double x) const
 {
-    double z = betaInv * (x - mu);
-    double y = std::exp(-z);
-    y = std::exp(-z - y);
-    return betaInv * y;
+    return std::exp(logf(x));
+}
+
+double GumbelRand::logf(double x) const
+{
+    double z = (mu - x) / beta;
+    double y = std::exp(z);
+    return z - y - logBeta;
 }
 
 double GumbelRand::F(double x) const
 {
-    double y = betaInv * (x - mu);
-    y = std::exp(-y);
+    double y = (mu - x) / beta;
+    y = std::exp(y);
     return std::exp(-y);
+}
+
+double GumbelRand::S(double x) const
+{
+    double y = (mu - x) / beta;
+    y = std::exp(y);
+    return -std::expm1(-y);
 }
 
 double GumbelRand::Variate() const
@@ -96,5 +105,5 @@ double GumbelRand::ExcessKurtosis() const
 
 double GumbelRand::Entropy() const
 {
-    return std::log(beta) + M_EULER + 1.0;
+    return logBeta + M_EULER + 1.0;
 }

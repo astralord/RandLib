@@ -51,6 +51,22 @@ double PlanckRand::f(double x) const
     return std::exp(y) / std::expm1(b * x);
 }
 
+double PlanckRand::logf(double x) const
+{
+    if (x < 0.0)
+        return -INFINITY;
+    if (x == 0)
+    {
+        if (a > 1)
+            return -INFINITY;
+        if (a == 1)
+            return pdfCoef - G.GetLogRate();
+        return INFINITY;
+    }
+    double y = pdfCoef + a * std::log(x);
+    return y - std::log(std::expm1(b * x));
+}
+
 double PlanckRand::F(double x) const
 {
     if (x <= 0)

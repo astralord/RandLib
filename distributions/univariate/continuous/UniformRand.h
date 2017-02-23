@@ -17,11 +17,8 @@
  */
 class RANDLIBSHARED_EXPORT UniformRand : public BetaRand
 {
-    double bmaInv; /// 1 / (b - a)
-
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
-
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
@@ -31,11 +28,8 @@ private:
     using BetaRand::SetParameters;
 
 public:
-    void SetSupport(double minValue, double maxValue);
-    inline double GetMinValue() const { return a; }
-    inline double GetMaxValue() const { return b; }
-
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double S(double x) const override;
     double Variate() const override;

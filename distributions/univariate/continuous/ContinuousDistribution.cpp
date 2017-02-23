@@ -181,7 +181,7 @@ double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) 
 {
     double res = 0.0;
     for (const double & var : sample)
-        res += std::log(f(var));
+        res += logf(var);
     return res;
 }
 

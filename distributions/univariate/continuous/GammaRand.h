@@ -18,6 +18,7 @@ protected:
     double alpha, theta, beta;
     double mLgammaShape; /// -lgamma(α)
     double pdfCoef; ///  -lgamma(α) - α * log(θ)
+    double logBeta; /// log(β)
 
 private:
     double t, b, alphaInv; /// constants for sampling
@@ -37,6 +38,7 @@ public:
     inline double GetRate() const { return beta; }
 
     double f(double x) const override;
+    double logf(double x) const override;
     double F(double x) const override;
     double S(double x) const override;
     
@@ -103,6 +105,11 @@ public:
      * @return log(Gamma(α))
      */
     inline double GetLogGammaFunction() const { return -mLgammaShape; }
+    /**
+     * @brief GetLogRate
+     * @return log(β)
+     */
+    inline double GetLogRate() const { return logBeta; }
 };
 
 

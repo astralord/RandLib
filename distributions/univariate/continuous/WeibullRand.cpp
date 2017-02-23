@@ -32,6 +32,19 @@ double WeibullRand::f(double x) const
     return k / lambda * xAdjPow * std::exp(-xAdj * xAdjPow);
 }
 
+double WeibullRand::logf(double x) const
+{
+    if (x < 0)
+        return -INFINITY;
+    if (x == 0) {
+        if (k == 1)
+            return -std::log(lambda); // hash
+        return (k > 1) ? -INFINITY : INFINITY;
+    }
+    // TODO: replace and merge with frechet
+    return std::log(f(x));
+}
+
 double WeibullRand::F(double x) const
 {
     return (x > 0.0) ? -std::expm1(-std::pow(x / lambda, k)) : 0.0;
