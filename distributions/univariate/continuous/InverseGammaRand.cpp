@@ -20,9 +20,7 @@ void InverseGammaRand::SetParameters(double shape, double rate)
 
 double InverseGammaRand::f(double x) const
 {
-    if (x <= 0.0)
-        return 0.0;
-    return std::exp(logf(x));
+    return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
 double InverseGammaRand::logf(double x) const

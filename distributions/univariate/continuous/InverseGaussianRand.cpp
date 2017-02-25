@@ -23,9 +23,7 @@ void InverseGaussianRand::SetParameters(double mean, double shape)
 
 double InverseGaussianRand::f(double x) const
 {
-    if (x <= 0.0)
-        return 0.0;
-    return std::exp(logf(x));
+    return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
 double InverseGaussianRand::logf(double x) const

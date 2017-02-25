@@ -410,6 +410,19 @@ double GammaRand::quantileInitialGuess1m(double p) const
 double GammaRand::quantileImpl(double p) const
 {
     double guess = quantileInitialGuess(p);
+    if (p < 1e-5) { /// too small p
+        if (RandMath::findRoot([this, p] (double x)
+        {
+            double cdf = F(x), pdf = f(x);
+            double first = std::log(cdf / p);
+            double second = pdf / cdf;
+            double third = (df(x) * cdf - pdf * pdf) / (cdf * cdf);
+            return DoubleTriplet(first, second, third);
+        }, guess))
+            return guess;
+        /// if we can't find quantile, then probably something bad has happened
+        return NAN;
+    }
     if (RandMath::findRoot([this, p] (double x)
     {
         if (x <= 0)
@@ -427,6 +440,19 @@ double GammaRand::quantileImpl(double p) const
 double GammaRand::quantileImpl1m(double p) const
 {
     double guess = quantileInitialGuess1m(p);
+    if (p < 1e-5) { /// too small p
+        if (RandMath::findRoot([this, p] (double x)
+        {
+            double ccdf = S(x), pdf = f(x);
+            double first = std::log(ccdf / p);
+            double second = -pdf / ccdf;
+            double third = (-df(x) * ccdf - pdf * pdf) / (ccdf * ccdf);
+            return DoubleTriplet(first, second, third);
+        }, guess))
+            return guess;
+        /// if we can't find quantile, then probably something bad has happened
+        return NAN;
+    }
     if (RandMath::findRoot([this, p] (double x)
     {
         if (x <= 0)

@@ -27,8 +27,22 @@ double ContinuousDistribution::quantileImpl(double p) const
     static constexpr int SAMPLE_SIZE = 128;
     std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
+    int index = p * SAMPLE_SIZE;
+    if (index == 0) { /// if p is too small
+        guess = *std::min_element(sample.begin(), sample.end());
+        if (RandMath::findRoot([this, p] (double x)
+        {
+            double cdf = F(x);
+            double first = std::log(cdf / p);
+            double second = f(x) / cdf;
+            return DoublePair(first, second);
+        }, guess))
+            return guess;
+        return NAN;
+    }
+
     std::sort(sample.begin(), sample.end());
-    guess = sample[p * SAMPLE_SIZE];
+    guess = sample[index];
 
     if (RandMath::findRoot([this, p] (double x)
     {
@@ -57,9 +71,22 @@ double ContinuousDistribution::quantileImpl1m(double p) const
     static constexpr int SAMPLE_SIZE = 128;
     std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
+    int index = p * SAMPLE_SIZE;
+    if (index == 0) { /// if p is too small
+        guess = *std::max_element(sample.begin(), sample.end());
+        if (RandMath::findRoot([this, p] (double x)
+        {
+            double ccdf = S(x);
+            double first = std::log(ccdf / p);
+            double second = -f(x) / ccdf;
+            return DoublePair(first, second);
+        }, guess))
+            return guess;
+        return NAN;
+    }
     /// Sort in desceding order
     std::sort(sample.begin(), sample.end(), std::greater<>());
-    guess = sample[p * SAMPLE_SIZE];
+    guess = sample[index];
 
     if (RandMath::findRoot([this, p] (double x)
     {
