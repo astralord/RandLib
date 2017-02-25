@@ -11,6 +11,8 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
     double mu, k;
     double logI0k; /// log(I_0(k))
     double s; /// generator coefficient
+    int p; /// cdf coefficient
+    static constexpr double CK = 10.5;
 
 public:
     VonMisesRand(double location, double concentration);
@@ -25,6 +27,11 @@ public:
     inline double GetLocation() const { return mu; }
     inline double GetConcentration() const { return k; }
 
+private:
+    double cdfSeries(double x) const;
+    double cdfErfc(double x) const;
+
+public:
     double f(double x) const override;
     double logf(double x) const override;
     double F(double x) const override;

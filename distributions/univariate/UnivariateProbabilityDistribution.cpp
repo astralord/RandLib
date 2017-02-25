@@ -22,25 +22,35 @@ bool UnivariateProbabilityDistribution<T>::isRightBounded() const
 template< typename T >
 double UnivariateProbabilityDistribution<T>::Quantile(double p) const
 {
-    if (p < 0 || p > 1)
+    if (p < 0.0 || p > 1.0)
         return NAN;
-    if (p == 0)
-        return this->MinValue();
-    if (p == 1)
-        return this->MaxValue();
-    return this->quantileImpl(p);
+    double minVal = this->MinValue();
+    if (p == 0.0)
+        return minVal;
+    double maxVal = this->MaxValue();
+    if (p == 1.0)
+        return maxVal;
+    double x = this->quantileImpl(p);
+    if (x < minVal)
+        return minVal;
+    return (x > maxVal) ? maxVal : x;
 }
 
 template< typename T >
 double UnivariateProbabilityDistribution<T>::Quantile1m(double p) const
 {
-    if (p < 0 || p > 1)
+    if (p < 0.0 || p > 1.0)
         return NAN;
-    if (p == 0)
-        return this->MaxValue();
-    if (p == 1)
-        return this->MinValue();
-    return this->quantileImpl1m(p);
+    double minVal = this->MinValue();
+    if (p == 1.0)
+        return minVal;
+    double maxVal = this->MaxValue();
+    if (p == 0.0)
+        return maxVal;
+    double x = this->quantileImpl1m(p);
+    if (x < minVal)
+        return minVal;
+    return (x > maxVal) ? maxVal : x;
 }
 
 template< typename T >

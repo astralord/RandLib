@@ -19,21 +19,58 @@ void VonMisesRand::SetLocation(double location)
 
 void VonMisesRand::SetConcentration(double concentration)
 {
-    k = concentration;
-    if (k <= 0)
-        k = 1.0;
+    k = (concentration > 0.0) ? concentration : 1.0;
     logI0k = RandMath::logModifiedBesselFirstKind(k, 0);
-    if (k > 1.3)
-        s = 1.0 / std::sqrt(k);
-    else
-        s = M_PI * std::exp(-k);
+    s = (k > 1.3) ? 1.0 / std::sqrt(k) : M_PI * std::exp(-k);
+    /// set coefficients for cdf
+    static constexpr double a[] = {28.0, 0.5, 100.0, 5.0};
+    if (k < CK)
+        p = std::ceil(a[0] + a[1] * k - a[2] / (k + a[3]));
+}
+
+double VonMisesRand::cdfSeries(double x) const
+{
+    /// backwards recursion
+    double sinX = std::sin(x), cosX = std::cos(x);
+    double px = p * x;
+    double sn = std::sin(px), cn = std::cos(px);
+    double R = 0, V = 0;
+    for (int n = p - 1; n > 0; --n) {
+        double temp = sn;
+        sn *= cosX;
+        sn -= cn * sinX;
+        cn *= cosX;
+        cn += temp * sinX;
+        R += 2 * n / k;
+        R = 1.0 / R;
+        V += sn / n;
+        V *= R;
+    }
+    V /= M_PI;
+    V += 0.5 * x / M_PI;
+    V += 0.5;
+    return V;
+}
+
+double VonMisesRand::cdfErfc(double x) const
+{
+    /// Normal cdf approximation
+    double c = 24.0 * k;
+    double v = c - 56.0;
+    double r = std::sqrt((54.0 / (347.0 / v + 26.0 - c) - 6.0 + c) / 12.0);
+    double z = -std::sin(0.5 * x) * r;
+    double twoZSq = 2.0 * z * z;
+    v -= twoZSq - 3.0;
+    double y = (c - 2 * twoZSq - 16.0) / 3.0;
+    y = ((twoZSq + 1.75) * twoZSq + 83.5) / v - y;
+    y *= y;
+    double arg = z * (1.0 - twoZSq / y);
+    return 0.5 * std::erfc(arg);
 }
 
 double VonMisesRand::f(double x) const
 {
-    if (x < mu - M_PI || x > mu + M_PI)
-        return 0.0;
-    return std::exp(logf(x));
+    return (x < mu - M_PI || x > mu + M_PI) ? 0.0 : std::exp(logf(x));
 }
 
 double VonMisesRand::logf(double x) const
@@ -48,40 +85,12 @@ double VonMisesRand::logf(double x) const
 double VonMisesRand::F(double x) const
 {
     if (x <= mu - M_PI)
-        return 0;
+        return 0.0;
     if (x >= mu + M_PI)
-        return 1;
-
-    double lowerBound, upperBound, shift, direction;
-    if (x <= mu - M_PI_2) {
-        lowerBound = mu - M_PI;
-        upperBound = x;
-        shift = 0.0;
-        direction = 1.0;
-    }
-    else if (x <= mu) {
-        lowerBound = x;
-        upperBound = mu;
-        shift = 0.5;
-        direction = -1.0;
-    }
-    else if (x <= mu + M_PI_2) {
-        lowerBound = mu;
-        upperBound = x;
-        shift = 0.5;
-        direction = 1.0;
-    }
-    else {
-        lowerBound = x;
-        upperBound = mu + M_PI;
-        shift = 1.0;
-        direction = -1.0;
-    }
-    return shift + direction * RandMath::integral([this] (double t)
-    {
-        return VonMisesRand::f(t);
-    },
-    lowerBound, upperBound);
+        return 1.0;
+    double xAdj = x - mu;
+    xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
+    return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
 }
 
 double VonMisesRand::Variate() const
