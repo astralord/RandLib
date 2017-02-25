@@ -16,13 +16,17 @@ void LogarithmicRand::SetProbability(double probability)
     p = probability;
     if (p <= 0 || p >= 1)
         p = 0.5;
-    q = 1.0 - p;
     logQInv = 1.0 / std::log1p(-p);
 }
 
 double LogarithmicRand::P(int k) const
 {
     return (k < 1) ? 0.0 : -logQInv * std::pow(p, k) / k;
+}
+
+double LogarithmicRand::logP(int k) const
+{
+    return (k < 1) ? -INFINITY : std::log(P(k));
 }
 
 double LogarithmicRand::F(int k) const
@@ -53,7 +57,7 @@ int LogarithmicRand::Variate() const
 
 double LogarithmicRand::Mean() const
 {
-    return -logQInv * p / q;
+    return -logQInv * p / (1.0 - p);
 }
 
 double LogarithmicRand::Variance() const
@@ -61,6 +65,7 @@ double LogarithmicRand::Variance() const
     double var = p * logQInv + 1;
     var *= logQInv;
     var *= p;
+    double q = 1.0 - p;
     return -var / (q * q);
 }
 

@@ -20,13 +20,17 @@ void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
 
     n = b - a + 1;
     nInv = 1.0 / n;
+    logN = std::log(n);
 }
 
 double UniformDiscreteRand::P(int k) const
 {
-    if (k < a || k > b)
-        return 0;
-    return nInv;
+    return (k < a || k > b) ? 0.0 : nInv;
+}
+
+double UniformDiscreteRand::logP(int k) const
+{
+    return (k < a || k > b) ? -INFINITY : -logN;
 }
 
 double UniformDiscreteRand::F(int k) const
@@ -46,23 +50,22 @@ int UniformDiscreteRand::Variate() const
 
 double UniformDiscreteRand::Mean() const
 {
-    return .5 * (b + a);
+    return 0.5 * (b + a);
 }
 
 double UniformDiscreteRand::Variance() const
 {
-    return (n * n - 1) / 12;
+    return (n * n - 1.0) / 12;
 }
 
 double UniformDiscreteRand::Median() const
 {
-    return .5 * (b + a);
+    return 0.5 * (b + a);
 }
 
 int UniformDiscreteRand::Mode() const
 {
-    /// any from {a, ..., b}
-    return Variate();
+    return 0.5;
 }
 
 double UniformDiscreteRand::Skewness() const
@@ -84,6 +87,29 @@ std::complex<double> UniformDiscreteRand::CFImpl(double t) const
     double reNum = std::cos(at) - std::cos(bp1t);
     double imNum = std::sin(at) - std::sin(bp1t);
     std::complex<double> numen(reNum, imNum);
-    std::complex<double>denom(1 - std::cos(t), -std::sin(t));
+    std::complex<double>denom(1.0 - std::cos(t), -std::sin(t));
     return nInv * numen / denom;
+}
+
+double UniformDiscreteRand::Entropy() const
+{
+    return logN;
+}
+
+double UniformDiscreteRand::Likelihood(const std::vector<int> &sample) const
+{
+    for (const int & var : sample) {
+        if (var < a || var > b)
+            return 0.0;
+    }
+    return std::pow(n, -sample.size());
+}
+
+double UniformDiscreteRand::LogLikelihood(const std::vector<int> &sample) const
+{
+    for (const int & var : sample) {
+        if (var < a || var > b)
+            return -INFINITY;
+    }
+    return -sample.size() * logN;
 }

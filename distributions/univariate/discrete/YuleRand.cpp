@@ -20,13 +20,18 @@ void YuleRand::SetShape(double shape)
 
 double YuleRand::P(int k) const
 {
+    return (k < 1) ? 0.0 : std::exp(logP(k));
+}
+
+double YuleRand::logP(int k) const
+{
     if (k < 1)
-        return 0;
+        return -INFINITY;
     double y = lgamma1pRo;
     y += std::lgamma(k);
     y -= std::lgamma(k + ro + 1);
-    y = std::exp(y);
-    return ro * y;
+    y += X.GetLogShape();
+    return y;
 }
 
 double YuleRand::F(int k) const

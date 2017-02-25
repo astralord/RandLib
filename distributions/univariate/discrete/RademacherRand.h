@@ -24,6 +24,7 @@ public:
     int MaxValue() const override { return 1; }
 
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     int Variate() const override;
 

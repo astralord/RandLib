@@ -25,10 +25,15 @@ void SkellamRand::SetMeans(double mean1, double mean2)
 
 double SkellamRand::P(int k) const
 {
+    return std::exp(logP(k));
+}
+
+double SkellamRand::logP(int k) const
+{
     double y = RandMath::logModifiedBesselFirstKind(pmfCoef1, k);
     y += 0.5 * k * pmfCoef2;
     y -= mu1 + mu2;
-    return std::exp(y);
+    return y;
 }
 
 double SkellamRand::F(int k) const

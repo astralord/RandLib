@@ -86,12 +86,17 @@ void BinomialRand::SetParameters(int number, double probability)
     p = std::max(p, 0.0);
     q = 1.0 - p;
     np = n * p;
+    lgammaNp1 = std::lgamma(n + 1);
+    logProb = std::log(p);
+    log1mProb = std::log1p(-p);
     SetGeneratorConstants();
 }
 
 double BinomialRand::logProbFloor(int k) const
 {
-    double y = std::log(RandMath::binomialCoef(n, k));
+    double y = lgammaNp1;
+    y -= std::lgamma(n - k);
+    y -= std::lgamma(k);
     y += k * logPFloor;
     y += (n - k) * logQFloor;
     return y;
@@ -99,12 +104,19 @@ double BinomialRand::logProbFloor(int k) const
 
 double BinomialRand::P(int k) const
 {
+    return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
+}
+
+double BinomialRand::logP(int k) const
+{
     if (k < 0 || k > n)
-        return 0;
-    // TODO: implement in terms of log(Gamma(x))
-    if (k == n - k)
-        return RandMath::binomialCoef(n, k) * std::pow(p * q, k);
-    return RandMath::binomialCoef(n, k) * std::pow(p, k) * std::pow(q, n - k);
+        return -INFINITY;
+    double y = lgammaNp1;
+    y -= std::lgamma(n - k + 1);
+    y -= std::lgamma(k + 1);
+    y += k * logProb;
+    y += (n - k) * log1mProb;
+    return y;
 }
 
 double BinomialRand::F(int k) const

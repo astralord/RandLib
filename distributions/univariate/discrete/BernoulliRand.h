@@ -30,6 +30,7 @@ public:
     void SetProbability(double probability);
 
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     double S(int k) const override;
     int Variate() const override;

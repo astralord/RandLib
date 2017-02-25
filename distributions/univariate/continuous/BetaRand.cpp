@@ -407,9 +407,9 @@ double BetaRand::Skewness() const
 {
     double skewness = (alpha + beta + 1) / (alpha * beta);
     skewness = std::sqrt(skewness);
-    skewness *= (alpha - beta);
-    skewness /= (alpha + beta + 2);
-    return skewness + skewness;
+    skewness *= beta - alpha;
+    skewness /= alpha + beta + 2;
+    return 2 * skewness;
 }
 
 double BetaRand::ExcessKurtosis() const

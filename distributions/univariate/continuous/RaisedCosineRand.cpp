@@ -112,11 +112,8 @@ double RaisedCosineRand::Mean() const
 
 double RaisedCosineRand::Variance() const
 {
-    double y = M_1_PI;
-    y *= y;
-    y += y;
-    y += 1.0 / 3;
-    return s * s * y;
+    static constexpr double coef = 1.0 / 3 - 2.0 / M_PI_SQ;
+    return s * s * coef;
 }
 
 std::complex<double> RaisedCosineRand::CFImpl(double t) const

@@ -22,16 +22,17 @@ void ZetaRand::SetExponent(double exponent)
 
 double ZetaRand::P(int k) const
 {
-    if (k < 1)
-        return 0.0;
-    return zetaSInv / std::pow(k, s);
+    return (k < 1) ? 0.0 : zetaSInv / std::pow(k, s);
+}
+
+double ZetaRand::logP(int k) const
+{
+    return (k < 1) ? -INFINITY : std::log(zetaSInv) - s * std::log(k); // log(1/zeta(s)) can be hashed
 }
 
 double ZetaRand::F(int k) const
 {
-    if (k < 1.0)
-        return 0.0;
-    return zetaSInv * RandMath::harmonicNumber(s, k);
+    return (k < 1) ? 0.0 : zetaSInv * RandMath::harmonicNumber(s, k);
 }
 
 int ZetaRand::Variate() const
@@ -52,9 +53,7 @@ int ZetaRand::Variate() const
 
 double ZetaRand::Mean() const
 {
-    if (s <= 2)
-        return INFINITY;
-    return zetaSInv * RandMath::zetaRiemann(sm1);
+    return (s > 2) ? zetaSInv * RandMath::zetaRiemann(sm1) : INFINITY;
 }
 
 double ZetaRand::Variance() const
@@ -75,20 +74,16 @@ double ZetaRand::Skewness() const
 {
     if (s <= 4)
         return INFINITY;
-
     double z1 = RandMath::zetaRiemann(sm1), z1Sq = z1 * z1;
     double z2 = RandMath::zetaRiemann(s - 2);
     double z3 = RandMath::zetaRiemann(s - 3);
     double z = 1.0 / zetaSInv, zSq = z * z;
-
     double numerator = zSq * z3;
     numerator -= 3 * z2 * z1 * z;
     numerator += 2 * z1 * z1Sq;
-
     double denominator = z * z2 - z1Sq;
     denominator = std::pow(denominator, 1.5);
     denominator *= zSq;
-
     return numerator / denominator;
 }
 

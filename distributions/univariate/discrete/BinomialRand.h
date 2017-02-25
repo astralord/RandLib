@@ -18,10 +18,12 @@ class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteDistribution
 {
 protected:
     double p, q;
+    double logProb, log1mProb;
 
 private:
     int n;
     double np;
+    double lgammaNp1; /// log((n + 1)!)
 
     double delta1, delta2;
     double sigma1, sigma2, c;
@@ -61,6 +63,7 @@ private:
 
 public:
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     double S(int k) const override;
 
@@ -88,6 +91,8 @@ public:
     int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+    inline double GetLogFactorialN() const { return lgammaNp1; }
 
 private:
     std::complex<double> CFImpl(double t) const override;

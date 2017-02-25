@@ -16,6 +16,7 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
     int n, a, b;
     double nInv; /// 1.0 / n
+    double logN; /// log(n)
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
@@ -27,6 +28,7 @@ public:
     void SetBoundaries(int minValue, int maxValue);
 
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     int Variate() const override;
 
@@ -41,7 +43,9 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    inline double Entropy() { return std::log(n); }
+    double Entropy() const;
+    double Likelihood(const std::vector<int> &sample) const override;
+    double LogLikelihood(const std::vector<int> &sample) const override;
 };
 
 #endif // UNIFORM_DISCRETE_RAND_H

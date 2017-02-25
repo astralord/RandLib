@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution
 {
 protected:
     double p, q;
-    double logP, logQ; /// log(p) and log(q)
+    double logProb, log1mProb; /// log(p) and log(q)
 
 private:
     T r;
@@ -47,6 +47,7 @@ public:
     inline T GetNumber() const { return r; }
 
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     double S(int k) const override;
 

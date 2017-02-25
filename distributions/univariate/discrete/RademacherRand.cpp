@@ -12,7 +12,12 @@ std::string RademacherRand::Name() const
 
 double RademacherRand::P(int k) const
 {
-    return std::abs(k) == 1 ? 0.5 : 0.0;
+    return (k == 1 || k == -1) ? 0.5 : 0.0;
+}
+
+double RademacherRand::logP(int k) const
+{
+    return (k == 1 || k == -1) ? -M_LN2 : -INFINITY;
 }
 
 double RademacherRand::F(int k) const

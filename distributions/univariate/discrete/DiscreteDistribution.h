@@ -14,11 +14,17 @@ public:
 
     /**
      * @brief P
-     * probability to get x
      * @param x
-     * @return
+     * @return probability to get x
      */
     virtual double P(int x) const = 0;
+
+    /**
+     * @brief logP
+     * @param x
+     * @return logarithm of probability to get x
+     */
+    virtual double logP(int x) const = 0;
 
     /**
      * @brief ProbabilityMassFunction

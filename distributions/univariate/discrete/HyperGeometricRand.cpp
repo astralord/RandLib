@@ -23,15 +23,27 @@ void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successe
     K = std::min(N, K);
 
     p0 = static_cast<double>(K) / N;
-    pmfDenominator = 1.0 / RandMath::binomialCoef(N, n);
+    pmfCoef = std::lgamma(K + 1);
+    pmfCoef += std::lgamma(N - K + 1);
+    pmfCoef += std::lgamma(N - n + 1);
+    pmfCoef += std::lgamma(n + 1);
+    pmfCoef -= std::lgamma(N + 1);
 }
 
 double HyperGeometricRand::P(int k) const
 {
+    return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
+}
+
+double HyperGeometricRand::logP(int k) const
+{
     if (k < MinValue() || k > MaxValue())
-        return 0.0;
-    // TODO: implement in terms of log(Gammma(x))
-    return RandMath::binomialCoef(K, k) * RandMath::binomialCoef(N - K, n - k) * pmfDenominator;
+        return -INFINITY;
+    double y = std::lgamma(k + 1);
+    y += std::lgamma(K - k + 1);
+    y += std::lgamma(n - k + 1);
+    y += std::lgamma(N - K - n + k + 1);
+    return pmfCoef - y;
 }
 
 double HyperGeometricRand::F(int k) const

@@ -145,6 +145,6 @@ double DiscreteDistribution::LogLikelihood(const std::vector<int> &sample) const
 {
     double res = 0.0;
     for (const int & var : sample )
-        res += std::log(P(var));
+        res += logP(var);
     return res;
 }

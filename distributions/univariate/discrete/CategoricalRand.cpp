@@ -42,6 +42,11 @@ double CategoricalRand::P(int k) const
     return (k == 0) ? q : prob[k - 1];
 }
 
+double CategoricalRand::logP(int k) const
+{
+    return std::log(P(k));
+}
+
 double CategoricalRand::F(int k) const
 {
     if (k < 0)

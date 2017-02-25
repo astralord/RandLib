@@ -23,6 +23,8 @@ public:
     void SetScale(double scale);
     inline double GetShape() const { return alpha; }
     inline double GetScale() const { return xm; }
+    inline double GetLogShape() const { return logAlpha; }
+    inline double GetLogScale() const { return logXm; }
 
     double f(double x) const override;
     double logf(double x) const override;

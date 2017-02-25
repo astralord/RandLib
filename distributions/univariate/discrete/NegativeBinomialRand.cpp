@@ -26,11 +26,11 @@ void NegativeBinomialRand<T>::SetParameters(T number, double probability)
 {
     SetValidParameters(number, probability);
     q = 1.0 - p;
-    logP = std::log(p);
-    logQ = std::log1p(-p);
+    logProb = std::log(p);
+    log1mProb = std::log1p(-p);
     GammaRV.SetParameters(r, p / q);
     qDivP = GammaRV.GetScale();
-    pdfCoef = r * logP;
+    pdfCoef = r * logProb;
     pdfCoef -= GammaRV.GetLogGammaFunction();
 
     if (GetIdOfUsedGenerator() == TABLE) {
@@ -48,13 +48,19 @@ void NegativeBinomialRand<T>::SetParameters(T number, double probability)
 template< typename T >
 double NegativeBinomialRand<T>::P(int k) const
 {
+    return (k < 0) ? 0.0 : std::exp(logP(k));
+}
+
+template< typename T >
+double NegativeBinomialRand<T>::logP(int k) const
+{
     if (k < 0)
-        return 0.0;
+        return -INFINITY;
     double y = std::lgamma(r + k);
     y -= std::lgamma(k + 1);
-    y += k * logQ;
+    y += k * log1mProb;
     y += pdfCoef;
-    return std::exp(y);
+    return y;
 }
 
 template< typename T >
@@ -111,7 +117,7 @@ int NegativeBinomialRand<int>::variateGeometricByTable() const
 template<>
 int NegativeBinomialRand<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(-ExponentialRand::StandardVariate() / logQ);
+    return std::floor(-ExponentialRand::StandardVariate() / log1mProb);
 }
 
 template<>

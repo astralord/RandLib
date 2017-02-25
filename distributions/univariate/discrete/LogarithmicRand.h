@@ -13,7 +13,7 @@
  */
 class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
 {
-    double p, q;
+    double p;
     double logQInv; /// 1 / log(q)
 public:
     explicit LogarithmicRand(double probability);
@@ -26,6 +26,7 @@ public:
     inline double GetProbability() const { return p; }
 
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     double S(int k) const override;
     int Variate() const override;

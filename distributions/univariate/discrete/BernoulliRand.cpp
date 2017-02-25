@@ -23,6 +23,11 @@ double BernoulliRand::P(int k) const
     return (k == 0) ? q : ((k == 1) ? p : 0);
 }
 
+double BernoulliRand::logP(int k) const
+{
+    return (k == 0) ? log1mProb : ((k == 1) ? logProb : 0);
+}
+
 double BernoulliRand::F(int k) const
 {
     return (k < 0) ? 0.0 : ((k < 1) ? q : 1);
@@ -64,7 +69,7 @@ int BernoulliRand::StandardVariate()
 
 double BernoulliRand::Entropy()
 {
-    return -(p * std::log(p) + q * std::log(q));
+    return -(p * logProb + q * log1mProb);
 }
 
 bool BernoulliRand::FitMLE(const std::vector<int> &sample)

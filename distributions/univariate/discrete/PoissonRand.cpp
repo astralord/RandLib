@@ -34,6 +34,14 @@ double PoissonRand::P(int k) const
     return std::exp(y);
 }
 
+double PoissonRand::logP(int k) const
+{
+    if (k < 0)
+        return -INFINITY;
+    double y = k * logLambda - lambda;
+    return y - std::lgamma(k + 1);
+}
+
 double PoissonRand::F(int k) const
 {
     return (k >= 0.0) ? RandMath::qgamma(k + 1, lambda) : 0.0;

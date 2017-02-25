@@ -34,9 +34,12 @@ void ZipfRand::SetParameters(double exponent, int number)
 
 double ZipfRand::P(int k) const
 {
-    if (k < 1 || k > n)
-        return 0.0;
-    return std::pow(k, -s) * invHarmonicNumber;
+    return (k < 1 || k > n) ? 0.0 : std::pow(k, -s) * invHarmonicNumber;
+}
+
+double ZipfRand::logP(int k) const
+{
+    return (k < 1 || k > n) ? -INFINITY : -s * std::log(k) + std::log(invHarmonicNumber); // can be hashed
 }
 
 double ZipfRand::F(int k) const
@@ -52,7 +55,6 @@ int ZipfRand::Variate() const
 {
     double U = UniformRand::StandardVariate();
     int k = 1;
-
     /// if we didn't manage to hash values for such U
     if (U > table[hashedVarNum - 1]) {
         k = hashedVarNum;
@@ -104,18 +106,14 @@ double ZipfRand::Skewness() const
     double harmonic1 = RandMath::harmonicNumber(s - 1, n);
     double harmonic2 = RandMath::harmonicNumber(s - 2, n);
     double harmonic3 = RandMath::harmonicNumber(s - 3, n);
-
     double first = harmonic3 * harmonic0 * harmonic0;
     double harmonic2prod0 = harmonic2 * harmonic0;
-    double second = -3 * harmonic2 * harmonic2prod0;
+    double second = -3 * harmonic1 * harmonic2prod0;
     double harmonic1Sq = harmonic1 * harmonic1;
-    double third = harmonic1 * harmonic1Sq;
-    third += third;
-
+    double third = 2 * harmonic1 * harmonic1Sq;
     double numerator = first + second + third;
     double denominator = harmonic2prod0 - harmonic1Sq;
     denominator *= std::sqrt(denominator);
-
     return numerator / denominator;
 }
 
@@ -126,18 +124,14 @@ double ZipfRand::ExcessKurtosis() const
     double harmonic2 = RandMath::harmonicNumber(s - 2, n);
     double harmonic3 = RandMath::harmonicNumber(s - 3, n);
     double harmonic4 = RandMath::harmonicNumber(s - 4, n);
-
     double harmonic2prod0 = harmonic2 * harmonic0;
     double harmonic0Sq = harmonic0 * harmonic0;
     double harmonic1Sq = harmonic1 * harmonic1;
-
     double denominator = harmonic2prod0 - harmonic1Sq;
     denominator *= denominator;
-
     double numerator = harmonic0Sq * harmonic0 * harmonic4;
     numerator -= 4 * harmonic0Sq * harmonic1 * harmonic3;
     numerator += 6 * harmonic2prod0 * harmonic1Sq;
     numerator -= 3 * harmonic1Sq * harmonic1Sq;
-
     return numerator / denominator - 3;
 }

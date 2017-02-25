@@ -23,16 +23,27 @@ void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccesses
     m = std::min(M, m);
 
     p0 = static_cast<double>(M) / N;
-    pmfDenominator = 1.0 / RandMath::binomialCoef(N, M);
+    pmfCoef = std::lgamma(M + 1);
+    pmfCoef += std::lgamma(N - M + 1);
+    pmfCoef -= std::lgamma(m);
+    pmfCoef -= std::lgamma(M - m + 1);
+    pmfCoef -= std::lgamma(N + 1);
 }
 
 double NegativeHyperGeometricRand::P(int k) const
 {
+    return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
+}
+
+double NegativeHyperGeometricRand::logP(int k) const
+{
     if (k < MinValue() || k > MaxValue())
-        return 0.0;
-    double p = RandMath::binomialCoef(k + m - 1, k);
-    p *= RandMath::binomialCoef(N - m - k, M - m);
-    return p * pmfDenominator;
+        return -INFINITY;
+    double p = std::lgamma(k + m);
+    p += std::lgamma(N - m - k + 1);
+    p -= std::lgamma(k + 1);
+    p -= std::lgamma(N - M - k + 1);
+    return p + pmfCoef;
 }
 
 double NegativeHyperGeometricRand::F(int k) const

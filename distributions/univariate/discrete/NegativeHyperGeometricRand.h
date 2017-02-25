@@ -13,7 +13,7 @@
 class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribution
 {
     int N, M, m;
-    double pmfDenominator; /// C(N, M)
+    double pmfCoef; /// C(N, M)
     double p0;
 
 public:
@@ -29,6 +29,7 @@ public:
     inline int GetLimitSuccessesNum() { return m; }
 
     double P(int k) const override;
+    double logP(int k) const override;
     double F(int k) const override;
     int Variate() const override;
 
