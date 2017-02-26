@@ -77,11 +77,10 @@ double CategoricalRand::Mean() const
 double CategoricalRand::Variance() const
 {
     double mean = 0.0, secMom = 0.0;
-    for (int i = 0; i != K; ++i) {
-        double ip1 = i + 1;
-        double aux = ip1 * prob[i];
+    for (int i = 1; i <= K; ++i) {
+        double aux = i * prob[i - 1];
         mean += aux;
-        secMom += ip1 * aux;
+        secMom += i * aux;
     }
     return secMom - mean * mean;
 }

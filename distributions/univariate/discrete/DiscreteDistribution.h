@@ -43,8 +43,22 @@ private:
 
 public:
     double Hazard(double x) const override;
+
     double Likelihood(const std::vector<int> &sample) const override;
     double LogLikelihood(const std::vector<int> &sample) const override;
+
+    /**
+     * @brief PearsonChiSquaredTest
+     * @param orderStatistic sample sorted in ascending order
+     * @param alpha level of test
+     * @param numberOfEstimatedParameters zero by default
+     * @param lowerBoundary setting of the left most interval (-infinity, lowerBoundary]
+     * @param upperBoundary setting of the right most interval [upperBoundary, infinity)
+     * @param numberOfEstimatedParameters
+     * @return true if sample is from this distribution according to Pearson's chi-squared test, false otherwise
+     */
+    bool PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, int lowerBoundary, int upperBoundary, size_t numberOfEstimatedParameters = 0) const;
+    bool PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, size_t numberOfEstimatedParameters = 0) const;
 };
 
 #endif // DISCRETE_DISTRIBUTION_H

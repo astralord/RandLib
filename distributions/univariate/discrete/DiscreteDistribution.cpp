@@ -1,4 +1,5 @@
 #include "DiscreteDistribution.h"
+#include "../continuous/GammaRand.h"
 
 void DiscreteDistribution::ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const
 {
@@ -147,4 +148,83 @@ double DiscreteDistribution::LogLikelihood(const std::vector<int> &sample) const
     for (const int & var : sample )
         res += logP(var);
     return res;
+}
+
+bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, int lowerBoundary, int upperBoundary, size_t numberOfEstimatedParameters) const
+{
+    /// We wrote chi-squared test only for discrete distribution,
+    /// as this is much more complicated for continuous one.
+    /// The problem is ambiguity of grouping sample into intervals.
+    /// In the case when parameters are estimated by maximum-likelihood
+    /// estimator, using original observations, statistics might not
+    /// follow asymptotic chi-square distribution and that leads to
+    /// serious underestimate of the error of the first kind.
+    /// For more details look: "The use of MLE in chi-square tests for goodness of fit"
+    /// by Herman Chernoff and E.L. L/ehmann
+
+    size_t n = orderStatistic.size(), i = 0, k = 0;
+    double nInv = 1.0 / n, sum = 0.0;
+
+    /// Sanity checks
+    if (lowerBoundary >= upperBoundary)
+        return false; // WRONG_PARAMETERS
+    for (size_t i = 1; i != n; ++i) {
+        if (orderStatistic[i] < orderStatistic[i - 1])
+            return false; // SAMPLE_IS_NOT_SORTED
+    }
+    if (orderStatistic[0] < this->MinValue())
+        return false; // TOO_SMALL_VALUES
+    if (orderStatistic[n - 1] > this->MaxValue())
+        return false; // TOO_LARGE_VALUES
+
+    /// Lower interval
+    int x = orderStatistic[0];
+    if (lowerBoundary > this->MinValue()) {
+        // TODO: use binary search here
+        while (i < n && x <= lowerBoundary)
+            x = orderStatistic[++i];
+        double prob = nInv * i, expectedProb = this->F(lowerBoundary);
+        double addon = prob - expectedProb;
+        addon *= addon;
+        addon /= expectedProb;
+        sum += addon;
+        ++k;
+    }
+    /// Middle intervals
+    while (i < n && x < upperBoundary) {
+        size_t count = 1;
+        x = orderStatistic[i];
+        while (i + count < n && x == orderStatistic[i + count])
+            ++count;
+        double prob = nInv * count, expectedProb = this->P(x);
+        double addon = prob - expectedProb;
+        addon *= addon;
+        addon /= expectedProb;
+        sum += addon;
+        i += count;
+        ++k;
+    }
+    /// Upper interval
+    if (upperBoundary < this->MaxValue()) {
+        double prob = nInv * (n - i), expectedProb = this->S(upperBoundary);
+        double addon = prob - expectedProb;
+        addon *= addon;
+        addon /= expectedProb;
+        sum += addon;
+        ++k;
+    }
+
+    if (k <= numberOfEstimatedParameters + 1)
+        return false; // TOO_FEW_VALUES
+    double statistic = n * sum;
+    ChiSquaredRand X(k - 1);
+    double q = X.Quantile1m(alpha);
+    return (statistic <= q);
+}
+
+bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, size_t numberOfEstimatedParameters) const
+{
+    /// In this function user won't set upper and lower intervals for tails.
+    /// However it might be useful to group rare events for chi-squared test to give better results
+    return PearsonChiSquaredTest(orderStatistic, alpha, this->MinValue(), this->MaxValue(), numberOfEstimatedParameters);
 }
