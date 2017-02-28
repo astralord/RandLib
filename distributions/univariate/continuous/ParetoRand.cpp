@@ -175,18 +175,9 @@ bool ParetoRand::FitMLE(const std::vector<double> &sample)
         return false;
 
     /// Calculate xm
-    double minVar = sample.at(0);
+    double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
         return false;
-    for (double var : sample)
-    {
-        if (minVar < var)
-        {
-            if (minVar <= 0)
-                return false;
-            minVar = var;
-        }
-    }
 
     /// Calculate alpha
     double logAverage = 0.0;

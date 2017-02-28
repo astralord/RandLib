@@ -89,9 +89,10 @@ double DegenerateRand::Entropy() const
 
 bool DegenerateRand::FitMLE(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
+    auto minIt = std::min_element(sample.begin(), sample.end()), maxIt = std::max_element(sample.begin(), sample.end());
+    if (*minIt != *maxIt)
         return false;
-    SetValue(sample.at(0));
+    SetValue(*minIt);
     return true;
 }
 

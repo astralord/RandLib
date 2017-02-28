@@ -358,8 +358,11 @@ double BinomialRand::ExcessKurtosis() const
 
 bool BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const int & var : sample) {
+        if (var < 0 || var > n)
+            return false;
+    }
     SetParameters(n, sampleMean(sample) / n);
     return true;
 }
@@ -371,6 +374,11 @@ bool BinomialRand::FitProbabilityMM(const std::vector<int> &sample)
 
 bool BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
 {
+    /// Sanity check
+    for (const int & var : sample) {
+        if (var < 0 || var > n)
+            return false;
+    }
     int N = sample.size();
     double sum = sampleSum(sample);
     double alpha = priorDistribution.GetAlpha();

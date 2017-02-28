@@ -474,16 +474,22 @@ std::complex<double> GammaRand::CFImpl(double t) const
 
 bool GammaRand::FitScaleMLE(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     SetParameters(alpha, alpha / sampleMean(sample));
     return true;
 }
 
 bool GammaRand::FitMLE(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
 
     /// Calculate average and log-average
     double average = sampleMean(sample);
@@ -508,15 +514,17 @@ bool GammaRand::FitMLE(const std::vector<double> &sample)
         return DoublePair(first, second);
     }, shape))
         return false;
-
     SetParameters(shape, shape / average);
     return true;
 }
 
 bool GammaRand::FitShapeMM(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     SetParameters(sampleMean(sample) * beta, beta);
     return true;
 }
@@ -527,21 +535,26 @@ bool GammaRand::FitScaleMM(const std::vector<double> &sample)
 }
 
 bool GammaRand::FitMM(const std::vector<double> &sample)
-{  
-    if (!checkValidity(sample))
-        return false;
+{
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     double mu1 = sampleMean(sample);
     double var = sampleVariance(sample, mu1);
     double shape = mu1 * mu1 / var;
-    
     SetParameters(shape, shape / mu1);
     return true;
 }
 
 bool GammaRand::FitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();
     double newAlpha = alpha * sample.size() + alpha0;

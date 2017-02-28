@@ -186,26 +186,6 @@ double UnivariateProbabilityDistribution<T>::FourthMoment() const
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::checkValidity(const std::vector<T> &sample) const
-{
-    if (sample.size() == 0)
-        return false; // EMPTY_SAMPLE
-    if (isLeftBounded()) {
-        for (T var : sample) {
-            if (var < MinValue())
-                return false; // MIN_BOUND_VIOLATION
-        }
-    }
-    if (isRightBounded()) {
-        for (T var : sample) {
-            if (var > MaxValue())
-                return false; // MAX_BOUND_VIOLATION
-        }
-    }
-    return true;
-}
-
-template< typename T >
 double UnivariateProbabilityDistribution<T>::Kurtosis() const
 {
     return ExcessKurtosis() + 3.0;
@@ -214,24 +194,25 @@ double UnivariateProbabilityDistribution<T>::Kurtosis() const
 template< typename T >
 double UnivariateProbabilityDistribution<T>::sampleSum(const std::vector<T> &sample)
 {
-    long double sum = 0.0L;
-    for (double var : sample) {
-        sum += var;
-    }
-    return sum;
+    return std::accumulate(sample.begin(), sample.end(), 0.0);
 }
 
 template< typename T >
 double UnivariateProbabilityDistribution<T>::sampleMean(const std::vector<T> &sample)
 {
     size_t n = sample.size();
-    return (n > 0) ? sampleSum(sample) / n : 0;
+    return (n > 0) ? sampleSum(sample) / n : 0.0;
 }
 
 template< typename T >
 double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T> &sample, double mean)
 {
-    return rawMoment(sample, 2) - mean * mean;
+    long double sum = 0.0l;
+    for (const double & var : sample) {
+        double temp = var - mean;
+        sum += temp * temp;
+    }
+    return sum / sample.size();
 }
 
 template< typename T >
@@ -264,16 +245,14 @@ double UnivariateProbabilityDistribution<T>::rawMoment(const std::vector<T> &sam
     int n = sample.size();
     if (n <= 0 || k < 0)
         return 0.0;
-    long double sum = 0.0L;
+    long double sum = 0.0l;
     switch(k) {
         case 0:
             return n;
         case 1:
             return sampleMean(sample);
         case 2:
-            for (double var : sample)
-                sum += var * var;
-            break;
+            return std::inner_product(sample.begin(), sample.end(), sample.begin(), 0.0);
         default:
             for (double var : sample)
                 sum += std::pow(var, k);
@@ -289,7 +268,7 @@ double UnivariateProbabilityDistribution<T>::centralMoment(const std::vector<T> 
         return 0.0;
     if (k == 2)
         return sampleVariance(sample, mean);
-    long double sum = 0.0L;
+    long double sum = 0.0l;
     for (double var : sample)
         sum += std::pow(var - mean, k);
     return sum / n;

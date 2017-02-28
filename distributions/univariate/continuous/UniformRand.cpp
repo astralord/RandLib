@@ -136,14 +136,10 @@ double UniformRand::Entropy() const
 
 bool UniformRand::FitMinimumMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-    double minVar = sample.at(0);
-    for (double var : sample) {
+    double minVar = *std::min_element(sample.begin(), sample.end());
+    for (const double & var : sample) {
         if (var > b)
             return false;
-        minVar = std::min(var, minVar);
     }
     SetSupport(minVar, b);
     return true;
@@ -151,14 +147,10 @@ bool UniformRand::FitMinimumMLE(const std::vector<double> &sample)
 
 bool UniformRand::FitMaximumMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-    double maxVar = sample.at(0);
-    for (double var : sample) {
+    double maxVar = *std::max_element(sample.begin(), sample.end());
+    for (const double & var : sample) {
         if (var < a)
             return false;
-        maxVar = std::max(var, maxVar);
     }
     SetSupport(a, maxVar);
     return true;
@@ -166,14 +158,8 @@ bool UniformRand::FitMaximumMLE(const std::vector<double> &sample)
 
 bool UniformRand::FitMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-    double maxVar = sample.at(0), minVar = maxVar;
-    for (double var : sample) {
-        maxVar = std::max(var, maxVar);
-        minVar = std::min(var, minVar);
-    }
+    double minVar = *std::min_element(sample.begin(), sample.end());
+    double maxVar = *std::max_element(sample.begin(), sample.end());
     SetSupport(minVar, maxVar);
     return true;
 }
@@ -181,14 +167,24 @@ bool UniformRand::FitMLE(const std::vector<double> &sample)
 bool UniformRand::FitMinimumMM(const std::vector<double> &sample)
 {
     double m = sampleMean(sample);
-    SetSupport(m + m - b, b);
+    double leftBound = 2 * m - b;
+    for (const double & var : sample) {
+        if (var < leftBound || var > b)
+            return false;
+    }
+    SetSupport(leftBound, b);
     return true;
 }
 
 bool UniformRand::FitMaximumMM(const std::vector<double> &sample)
 {
     double m = sampleMean(sample);
-    SetSupport(a, m + m - a);
+    double rightBound = 2 * m - a;
+    for (const double & var : sample) {
+        if (var > rightBound || var < a)
+            return false;
+    }
+    SetSupport(a, rightBound);
     return true;
 }
 
@@ -197,63 +193,59 @@ bool UniformRand::FitMM(const std::vector<double> &sample)
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
     double s = std::sqrt(3 * var);
-    SetSupport(mean - s, mean + s);
+    double leftBound = mean - s, rightBound = mean + s;
+    for (const double & var : sample) {
+        if (var > rightBound || var < leftBound)
+            return false;
+    }
+    SetSupport(leftBound, rightBound);
     return true;
 }
 
 bool UniformRand::FitMinimumUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
-    if (n <= 0)
-        return false;
-    double minVar = sample.at(0);
-    for (double var : sample) {
-        if (var < a)
-            return false;
-        minVar = std::min(var, minVar);
-    }
+    double minVar = *std::min_element(sample.begin(), sample.end());
     
     /// E[min] = b - n / (n + 1) * (b - a)
-    minVar = (minVar * (n + 1) - b) / n;
-    SetSupport(minVar, b);
+    double minVarAdj = (minVar * (n + 1) - b) / n;
+    for (const double & var : sample) {
+        if (var > b || var < minVarAdj)
+            return false;
+    }
+    SetSupport(minVarAdj, b);
     return true;
 }
 
 bool UniformRand::FitMaximumUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
-    if (n <= 0)
-        return false;
-    double maxVar = sample.at(0);
-    for (double var : sample) {
-        if (var < a)
-            return false;
-        maxVar = std::max(var, maxVar);
-    }
-    
+    double maxVar = *std::max_element(sample.begin(), sample.end());
+
     /// E[max] = (b - a) * n / (n + 1) + a
-    maxVar = (maxVar * (n + 1) - a) / n;
-    SetSupport(a, maxVar);
+    double maxVarAdj = (maxVar * (n + 1) - a) / n;
+    for (const double & var : sample) {
+        if (var > maxVarAdj || var < a)
+            return false;
+    }
+    SetSupport(a, maxVarAdj);
     return true;
 }
 
 bool UniformRand::FitUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
-    if (n <= 0)
-        return false;
-    double maxVar = sample.at(0), minVar = maxVar;
-    for (double var : sample) {
-        maxVar = std::max(var, maxVar);
-        minVar = std::min(var, minVar);
-    }
+    double minVar = *std::min_element(sample.begin(), sample.end());
+    double maxVar = *std::max_element(sample.begin(), sample.end());
 
     /// E[min] = b - n / (n + 1) * (b - a)
+    double minVarAdj = (minVar * n - maxVar) / (n - 1);
     /// E[max] = (b - a) * n / (n + 1) + a
-
-    minVar = (minVar * n - maxVar) / (n - 1);
-    maxVar = (maxVar * (n + 1) - minVar) / n;
-
-    SetSupport(minVar, maxVar);
+    double maxVarAdj = (maxVar * n - minVar) / (n - 1);
+    for (const double & var : sample) {
+        if (var > maxVarAdj || var < minVarAdj)
+            return false;
+    }
+    SetSupport(minVarAdj, maxVarAdj);
     return true;
 }

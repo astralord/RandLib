@@ -208,14 +208,6 @@ public:
     virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
 
     /**
-     * @brief checkValidity
-     * @param sample
-     * verify if sample can be returned from such distribution
-     * @return true if yes
-     */
-    bool checkValidity(const std::vector<T> &sample) const;
-
-    /**
      * @brief sum
      * @param sample
      * @return sum of all elements in a sample

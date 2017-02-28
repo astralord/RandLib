@@ -134,8 +134,11 @@ double LogNormalRand::logSecondMoment(const std::vector<double> &sample)
 
 bool LogNormalRand::FitLocationMM(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     double average = sampleMean(sample);
     double var = X.Variance();
     SetLocation(std::log(average) - 0.5 * var);
@@ -144,8 +147,11 @@ bool LogNormalRand::FitLocationMM(const std::vector<double> &sample)
 
 bool LogNormalRand::FitScaleMM(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     double average = sampleMean(sample);
     double mu = X.GetLocation();
     double aux = std::log(average) - mu;
@@ -155,8 +161,11 @@ bool LogNormalRand::FitScaleMM(const std::vector<double> &sample)
 
 bool LogNormalRand::FitMM(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     double average = sampleMean(sample);
     double secondMoment = rawMoment(sample, 2);
     double averageSq = average * average;
@@ -167,16 +176,22 @@ bool LogNormalRand::FitMM(const std::vector<double> &sample)
 
 bool LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     SetLocation(logAverage(sample));
     return true;
 }
 
 bool LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     double mu = X.GetLocation();
     double logVariance = logSecondMoment(sample) - mu * mu;
     SetScale(std::sqrt(logVariance));
@@ -185,9 +200,11 @@ bool LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
 
 bool LogNormalRand::FitMLE(const std::vector<double> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
-
+    /// Sanity check
+    for (const double & var : sample) {
+        if (var < 0)
+            return false;
+    }
     size_t n = sample.size();
     long double logMean = 0.0L;
     long double logVariance = 0.0L;

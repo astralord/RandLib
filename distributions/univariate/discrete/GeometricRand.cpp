@@ -92,8 +92,11 @@ double GeometricRand::Entropy() const
 
 bool GeometricRand::FitMLE(const std::vector<int> &sample)
 {
-    if (!checkValidity(sample))
-        return false;
+    /// Sanity check
+    for (const int & var : sample) {
+        if (var < 0)
+            return false;
+    }
     SetProbability(1.0 / (sampleMean(sample) + 1));
     return true;
 }
@@ -105,9 +108,12 @@ bool GeometricRand::FitMM(const std::vector<int> &sample)
 
 bool GeometricRand::FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
 {
+    /// Sanity check
+    for (const int & var : sample) {
+        if (var < 0)
+            return false;
+    }
     int n = sample.size();
-    if (!checkValidity(sample))
-        return false;
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
     priorDistribution.SetParameters(alpha + n, beta + sampleSum(sample));
