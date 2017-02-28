@@ -562,25 +562,19 @@ double betaFun(double a, double b)
     return std::exp(lgammaA + lgammaB - std::lgamma(a + b));
 }
 
-double regularizedBetaFun(double x, double a, double b)
+double incompleteBetaFun(double x, double a, double b)
 {
-    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0)
-        return NAN;
-    if (b == 0.0 || x == 0.0)
-        return 0.0;
-    if (x == 1.0)
-        return 1.0;
-    return incompleteBetaFun(x, a, b) / betaFun(a, b);
+    return incompleteBetaFun(x, a, b, betaFun(a, b));
 }
 
-double incompleteBetaFun(double x, double a, double b)
+double incompleteBetaFun(double x, double a, double b, double beta)
 {
     if (a <= 0 || b < 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
         return NAN;
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)
-        return (b == 0) ? NAN : betaFun(a, b);
+        return (b == 0) ? NAN : beta;
     if (a < 1)
     {
         double y = incompleteBetaFun(x, a + 1, b) * (a + b);
@@ -609,16 +603,15 @@ double incompleteBetaFun(double x, double a, double b)
     }
 
     double minBound = 0, maxBound = x;
+    double am1 = a - 1.0, bm1 = b - 1.0;
     bool invert = false;
     /// if x > mode
-    if (x > (a - 1) / (a + b - 2)) {
+    if (x > am1 / (am1 + bm1)) {
         maxBound = 1;
         minBound = x;
         invert = true;
     }
-
     double y = 0;
-    double am1 = a - 1.0, bm1 = b - 1.0;
     if (a != b)
     {
         y = integral([am1, bm1] (double t)
@@ -635,7 +628,19 @@ double incompleteBetaFun(double x, double a, double b)
         },
         minBound, maxBound);
     }
-    return (invert) ? betaFun(a, b) - y : y;
+    return invert ? beta - y : y;
+}
+
+double regularizedBetaFun(double x, double a, double b)
+{
+    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0)
+        return NAN;
+    if (b == 0.0 || x == 0.0)
+        return 0.0;
+    if (x == 1.0)
+        return 1.0;
+    double beta = betaFun(a, b);
+    return incompleteBetaFun(x, a, b, beta) / beta;
 }
 
 /**

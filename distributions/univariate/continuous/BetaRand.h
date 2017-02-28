@@ -158,7 +158,7 @@ public:
      * @brief GetInverseBetaFunction
      * @return 1 / Beta(α, β)
      */
-    inline double GetInverseBetaFunction() const { return betaFunInv; }
+    inline double GetInverseBetaFunction() const { return betaFunInv; } // TODO: hash beta, not betainv
 
     /**
      * @brief GetLogBetaFunction

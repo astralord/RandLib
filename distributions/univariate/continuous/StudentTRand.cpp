@@ -99,7 +99,7 @@ double StudentTRand::F(double x) const
         return 0.5 + M_1_PI * y;
     }
     double t = nu / (x0 * x0 + nu);
-    double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5) * betaInv;
+    double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5, 1.0 / betaInv) * betaInv;
     return (x0 > 0.0) ? (1 - y) : y;
 }
 
@@ -122,7 +122,7 @@ double StudentTRand::S(double x) const
         return 0.5 - M_1_PI * y;
     }
     double t = nu / (x0 * x0 + nu);
-    double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5) * betaInv;
+    double y = 0.5 * RandMath::incompleteBetaFun(t, 0.5 * nu, 0.5, betaInv) * betaInv;
     return (x0 > 0.0) ? y : 1.0 - y;
 }
 

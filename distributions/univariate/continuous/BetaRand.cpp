@@ -140,7 +140,7 @@ double BetaRand::F(double x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(xSt));
-    return betaFunInv * RandMath::incompleteBetaFun(xSt, alpha, beta);
+    return betaFunInv * RandMath::incompleteBetaFun(xSt, alpha, beta, 1.0 / betaFunInv);
 }
 
 double BetaRand::S(double x) const
@@ -154,7 +154,7 @@ double BetaRand::S(double x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::acos(std::sqrt(xSt));
-    return betaFunInv * RandMath::incompleteBetaFun(1.0 - xSt, alpha, beta);
+    return betaFunInv * RandMath::incompleteBetaFun(1.0 - xSt, alpha, beta, 1.0 / betaFunInv);
 }
 
 double BetaRand::variateArcsine() const

@@ -130,10 +130,8 @@ bool ExponentialRand::FitMLE(const std::vector<double> &sample)
 bool ExponentialRand::FitUMVU(const std::vector<double> &sample)
 {
     /// Sanity check
-    for (const double & var : sample) {
-        if (var < 0)
-            return false;
-    }
+    if (!allElementsAreNonNegative(sample))
+        return false;
     int n = sample.size();
     if (n <= 1)
         return false; // TOO_FEW_SAMPLINGS

@@ -186,6 +186,32 @@ double UnivariateProbabilityDistribution<T>::FourthMoment() const
 }
 
 template< typename T >
+bool UnivariateProbabilityDistribution<T>::allElementsAreNotBiggerThen(T value, const std::vector<T> &sample)
+{
+    for (const double & var : sample) {
+        if (var > value)
+            return false;
+    }
+    return true;
+}
+
+template< typename T >
+bool UnivariateProbabilityDistribution<T>::allElementsAreNotLessThen(T value, const std::vector<T> &sample)
+{
+    for (const double & var : sample) {
+        if (var < value)
+            return false;
+    }
+    return true;
+}
+
+template< typename T >
+bool UnivariateProbabilityDistribution<T>::allElementsAreNonNegative(const std::vector<T> &sample)
+{
+    return allElementsAreNotLessThen(0, sample);
+}
+
+template< typename T >
 double UnivariateProbabilityDistribution<T>::Kurtosis() const
 {
     return ExcessKurtosis() + 3.0;

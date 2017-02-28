@@ -208,6 +208,29 @@ public:
     virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
 
     /**
+     * @brief allElementsAreNotBiggerThen
+     * @param value
+     * @param sample
+     * @return true if all elements in sample are not bigger than value
+     */
+    static bool allElementsAreNotBiggerThen(T value, const std::vector<T> &sample);
+
+    /**
+     * @brief allElementsAreNotLessThen
+     * @param value
+     * @param sample
+     * @return true if all elements in sample are not less than value
+     */
+    static bool allElementsAreNotLessThen(T value, const std::vector<T> &sample);
+
+    /**
+     * @brief allElementsAreNonNegative
+     * @param sample
+     * @return true if all elements in sample are non-negative
+     */
+    static bool allElementsAreNonNegative(const std::vector<T> &sample);
+
+    /**
      * @brief sum
      * @param sample
      * @return sum of all elements in a sample

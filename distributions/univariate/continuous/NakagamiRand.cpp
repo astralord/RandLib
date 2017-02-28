@@ -330,10 +330,8 @@ double RayleighRand::ExcessKurtosis() const
 bool RayleighRand::FitScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    for (const double & var : sample) {
-        if (var < 0)
-            return false;
-    }
+    if (!allElementsAreNonNegative(sample))
+        return false;
     double sigmaSq = 0.5 * rawMoment(sample, 2);
     SetScale(std::sqrt(sigmaSq));
     return true;
@@ -342,10 +340,8 @@ bool RayleighRand::FitScaleMLE(const std::vector<double> &sample)
 bool RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
 {
     /// Sanity check
-    for (const double & var : sample) {
-        if (var < 0)
-            return false;
-    }
+    if (!allElementsAreNonNegative(sample))
+        return false;
     size_t n = sample.size();
     double sigmaBiasedSq = 0.5 * rawMoment(sample, 2);
     /// Calculate unbiased sigma

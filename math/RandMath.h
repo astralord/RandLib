@@ -153,13 +153,13 @@ double qgamma(double a, double x);
 double betaFun(double a, double b);
 
 /**
- * @brief regularizedBetaFun
+ * @brief incompleteBetaFun
  * @param x
  * @param a
  * @param b
  * @return
  */
-double regularizedBetaFun(double x, double a, double b);
+double incompleteBetaFun(double x, double a, double b);
 
 /**
  * @brief incompleteBetaFun
@@ -168,7 +168,17 @@ double regularizedBetaFun(double x, double a, double b);
  * @param b
  * @return
  */
-double incompleteBetaFun(double x, double a, double b);
+double incompleteBetaFun(double x, double a, double b, double beta);
+
+/**
+ * @brief regularizedBetaFun
+ * @param x
+ * @param a
+ * @param b
+ * @return
+ */
+double regularizedBetaFun(double x, double a, double b);
+
 
 /**
  * @brief integral

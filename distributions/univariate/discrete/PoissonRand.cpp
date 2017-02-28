@@ -127,11 +127,8 @@ double PoissonRand::ExcessKurtosis() const
 
 bool PoissonRand::FitMLE(const std::vector<int> &sample)
 {
-    /// Sanity check
-    for (const int & var : sample) {
-        if (var < 0)
-            return false;
-    }
+    if (!allElementsAreNonNegative(sample))
+        return false;
     SetRate(sampleMean(sample));
     return true;
 }
@@ -143,11 +140,8 @@ bool PoissonRand::FitMM(const std::vector<int> &sample)
 
 bool PoissonRand::FitBayes(const std::vector<int> &sample, GammaRand &priorDistribution)
 {
-    /// Sanity check
-    for (const int & var : sample) {
-        if (var < 0)
-            return false;
-    }
+    if (!allElementsAreNonNegative(sample))
+        return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     priorDistribution.SetParameters(alpha + sampleSum(sample), beta + sample.size());

@@ -200,6 +200,65 @@ std::complex<double> NegativeBinomialRand<T>::CFImpl(double t) const
 }
 
 template< typename T >
+bool NegativeBinomialRand<T>::FitNumberMM(const std::vector<int> &sample)
+{
+    if (!allElementsAreNonNegative(sample))
+        return false;
+    double mean = sampleMean(sample);
+    SetParameters(mean * p / q, p);
+    return true;
+}
+
+template< typename T >
+bool NegativeBinomialRand<T>::FitProbabilityMM(const std::vector<int> &sample)
+{
+    if (!allElementsAreNonNegative(sample))
+        return false;
+    double mean = sampleMean(sample);
+    SetParameters(r, r / (r + mean));
+    return true;
+}
+
+template< typename T >
+bool NegativeBinomialRand<T>::FitMM(const std::vector<int> &sample)
+{
+    if (!allElementsAreNonNegative(sample))
+        return false;
+    double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
+    if (variance <= mean)
+        return false; // CAN'T_RETURN_VALID_PARAMETERS
+    SetParameters(mean * mean / (variance - mean), mean / variance);
+    return true;
+}
+
+template<>
+bool NegativeBinomialRand<double>::FitMLE(const std::vector<int> &sample)
+{
+    if (!allElementsAreNonNegative(sample))
+        return false;
+    /// initial guess by method of moments
+    double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
+    double guess = (variance > mean) ? mean * mean / (variance - mean) : mean; // TODO: is it possible to return valid parameters when mean > variance?
+    size_t n = sample.size();
+    if (!RandMath::findRoot([sample, mean, n] (double x)
+    {
+        double first = 0.0, second = 0.0;
+        for (const double & var : sample) {
+            first += RandMath::digamma(var + x);
+            second += RandMath::trigamma(var + x);
+        }
+        first -= n * (RandMath::digamma(x) - std::log(x / (x + mean)));
+        second -= n * (RandMath::trigamma(x) - mean / (x * (mean + x)));
+        return DoublePair(first, second);
+    }, guess))
+        return false; /// error in root-finding algorithm
+    if (guess <= 0.0)
+        return false; /// r should be positive
+    SetParameters(guess, guess / (guess + mean));
+    return true;
+}
+
+template< typename T >
 int NegativeBinomialRand<T>::Mode() const
 {
     return (r > 1) ? std::floor((r - 1) * qDivP) : 0;

@@ -25,6 +25,9 @@ public:
 
 protected:
     using BinomialRand::SetParameters;
+    using BinomialRand::FitProbabilityMLE;
+    using BinomialRand::FitProbabilityMM;
+    using BinomialRand::FitProbabilityBayes;
 
 public:
     void SetProbability(double probability);

@@ -174,7 +174,6 @@ bool ParetoRand::FitMLE(const std::vector<double> &sample)
     if (n <= 0)
         return false;
 
-    /// Calculate xm
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
         return false;

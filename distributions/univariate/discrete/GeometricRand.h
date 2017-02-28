@@ -24,6 +24,8 @@ public:
 
 protected:
     using NegativeBinomialRand::SetParameters;
+    using NegativeBinomialRand::FitMM;
+    using NegativeBinomialRand::FitNumberMM;
 
 public:
     void SetProbability(double probability);

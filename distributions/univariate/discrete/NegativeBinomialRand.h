@@ -79,6 +79,15 @@ public:
 
 private:
     std::complex<double> CFImpl(double t) const override;
+
+public:
+    /// Method of moments
+    bool FitNumberMM(const std::vector<int> &sample);
+    bool FitProbabilityMM(const std::vector<int> & sample);
+    bool FitMM(const std::vector<int> & sample);
+
+    /// Maximum likelihood
+    bool FitMLE(const std::vector<int> &sample);
 };
 
 
