@@ -38,17 +38,17 @@ for (double var : data)
     cout << var << "  ";
 cout << "\n";
 
-/// Bayesian
+/// Bayesian estimation
 NormalInverseGammaRand prior(0, 1, 1, 1);
-X.FitBayes(data, prior);
+NormalInverseGammaRand posterior = X.FitBayes(data, prior);
 cout << "Bayesian estimator: " << X.Name() << "\n";
-cout << "(Posterior distribution: " << prior.Name() << ")\n";
+cout << "(Posterior distribution: " << posterior.Name() << ")\n";
 
-/// Uniformly minimum variance unbiased
+/// Uniformly minimum variance unbiased estimator
 X.FitUMVU(data);
 cout << "UMVU estimator: " << X.Name() << "\n";
 
-/// Maximum-likelihood
+/// Maximum-likelihood estimator
 X.FitMLE(data);
 cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
 ```
