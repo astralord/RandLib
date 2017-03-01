@@ -29,7 +29,7 @@ void ExponentiallyModifiedGaussianRand::SetParameters(double location, double va
     v = lambda * sigma;
 }
 
-double ExponentiallyModifiedGaussianRand::f(double x) const
+double ExponentiallyModifiedGaussianRand::f(const double & x) const
 {
     double lambda = Y.GetRate();
     double y = a - x;
@@ -42,7 +42,7 @@ double ExponentiallyModifiedGaussianRand::f(double x) const
     return y * exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::logf(double x) const
+double ExponentiallyModifiedGaussianRand::logf(const double & x) const
 {
     double lambda = Y.GetRate();
     double y = a - x;
@@ -54,7 +54,7 @@ double ExponentiallyModifiedGaussianRand::logf(double x) const
     return std::log(y) + exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::F(double x) const
+double ExponentiallyModifiedGaussianRand::F(const double & x) const
 {
     double u = Y.GetRate() * (x - X.GetLocation());
     double y = X.F(x);
@@ -64,7 +64,7 @@ double ExponentiallyModifiedGaussianRand::F(double x) const
     return y - exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::S(double x) const
+double ExponentiallyModifiedGaussianRand::S(const double & x) const
 {
     double u = Y.GetRate() * (x - X.GetLocation());
     double y = X.S(x);

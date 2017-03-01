@@ -18,7 +18,7 @@ void WignerSemicircleRand::SetRadius(double radius)
     X.SetParameters(1.5, 1.5);
 }
 
-double WignerSemicircleRand::f(double x) const
+double WignerSemicircleRand::f(const double & x) const
 {
     double xSq = x * x;
     if (xSq >= RSq)
@@ -29,7 +29,7 @@ double WignerSemicircleRand::f(double x) const
     return 2 * y;
 }
 
-double WignerSemicircleRand::logf(double x) const
+double WignerSemicircleRand::logf(const double & x) const
 {
     double xSq = x * x;
     if (xSq >= RSq)
@@ -37,7 +37,7 @@ double WignerSemicircleRand::logf(double x) const
     return M_LN2 + 0.5 * std::log(RSq - xSq) - M_LNPI - logRSq;
 }
 
-double WignerSemicircleRand::F(double x) const
+double WignerSemicircleRand::F(const double & x) const
 {
     if (x <= -R)
         return 0.0;

@@ -102,12 +102,12 @@ double BinomialRand::logProbFloor(int k) const
     return y;
 }
 
-double BinomialRand::P(int k) const
+double BinomialRand::P(const int & k) const
 {
     return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
-double BinomialRand::logP(int k) const
+double BinomialRand::logP(const int & k) const
 {
     if (k < 0 || k > n)
         return -INFINITY;
@@ -119,7 +119,7 @@ double BinomialRand::logP(int k) const
     return y;
 }
 
-double BinomialRand::F(int k) const
+double BinomialRand::F(const int & k) const
 {
     if (k < 0)
         return 0.0;
@@ -128,7 +128,7 @@ double BinomialRand::F(int k) const
     return RandMath::regularizedBetaFun(q, n - k, 1 + k);
 }
 
-double BinomialRand::S(int k) const
+double BinomialRand::S(const int & k) const
 {
     if (k < 0)
         return 1.0;

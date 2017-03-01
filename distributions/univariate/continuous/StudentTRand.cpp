@@ -42,7 +42,7 @@ void StudentTRand::SetScale(double scale)
     logSigma = std::log(sigma);
 }
 
-double StudentTRand::f(double x) const
+double StudentTRand::f(const double & x) const
 {
     /// adjustment
     double x0 = x - mu;
@@ -60,7 +60,7 @@ double StudentTRand::f(double x) const
     return std::exp(pdfCoef + y) / sigma;
 }
 
-double StudentTRand::logf(double x) const
+double StudentTRand::logf(const double & x) const
 {
     /// adjustment
     double x0 = x - mu;
@@ -80,7 +80,7 @@ double StudentTRand::logf(double x) const
     return pdfCoef + y - logSigma;
 }
 
-double StudentTRand::F(double x) const
+double StudentTRand::F(const double & x) const
 {
     double x0 = x - mu;
     x0 /= sigma;
@@ -103,7 +103,7 @@ double StudentTRand::F(double x) const
     return (x0 > 0.0) ? (1 - y) : y;
 }
 
-double StudentTRand::S(double x) const
+double StudentTRand::S(const double & x) const
 {
     double x0 = x - mu;
     x0 /= sigma;

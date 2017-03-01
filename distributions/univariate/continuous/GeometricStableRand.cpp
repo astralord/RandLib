@@ -161,7 +161,7 @@ double GeometricStableRand::pdfByCauchy(double x) const
     }, 0, 1);
 }
 
-double GeometricStableRand::f(double x) const
+double GeometricStableRand::f(const double & x) const
 {
     /// Laplace case
     if (alpha == 2)
@@ -234,12 +234,12 @@ double GeometricStableRand::f(double x) const
     0, 1);
 }
 
-double GeometricStableRand::logf(double x) const
+double GeometricStableRand::logf(const double & x) const
 {
     return std::log(f(x));
 }
 
-double GeometricStableRand::F(double x) const
+double GeometricStableRand::F(const double & x) const
 {
     if (alpha == 2)
         return cdfLaplace(x);

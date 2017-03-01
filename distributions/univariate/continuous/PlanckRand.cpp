@@ -35,7 +35,7 @@ double PlanckRand::leveledPdf(double t) const
     return expY * z;
 }
 
-double PlanckRand::f(double x) const
+double PlanckRand::f(const double & x) const
 {
     if (x < 0)
         return 0;
@@ -51,7 +51,7 @@ double PlanckRand::f(double x) const
     return std::exp(y) / std::expm1(b * x);
 }
 
-double PlanckRand::logf(double x) const
+double PlanckRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -67,7 +67,7 @@ double PlanckRand::logf(double x) const
     return y - std::log(std::expm1(b * x));
 }
 
-double PlanckRand::F(double x) const
+double PlanckRand::F(const double & x) const
 {
     if (x <= 0)
         return 0.0;

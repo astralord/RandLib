@@ -24,12 +24,12 @@ void ParetoRand::SetScale(double scale)
     logXm = std::log(xm);
 }
 
-double ParetoRand::f(double x) const
+double ParetoRand::f(const double & x) const
 {
     return (x < xm) ? 0.0 : std::exp(logf(x));
 }
 
-double ParetoRand::logf(double x) const
+double ParetoRand::logf(const double & x) const
 {
     if (x < xm)
         return -INFINITY;
@@ -41,12 +41,12 @@ double ParetoRand::logf(double x) const
     return y;
 }
 
-double ParetoRand::F(double x) const
+double ParetoRand::F(const double & x) const
 {
     return (x > xm) ? -std::expm1(alpha * std::log(xm / x)) : 0.0;
 }
 
-double ParetoRand::S(double x) const
+double ParetoRand::S(const double & x) const
 {
     return (x > xm) ? std::pow(xm / x, alpha) : 1.0;
 }

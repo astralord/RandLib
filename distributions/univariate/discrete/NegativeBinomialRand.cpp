@@ -46,13 +46,13 @@ void NegativeBinomialRand<T>::SetParameters(T number, double probability)
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::P(int k) const
+double NegativeBinomialRand<T>::P(const int & k) const
 {
     return (k < 0) ? 0.0 : std::exp(logP(k));
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::logP(int k) const
+double NegativeBinomialRand<T>::logP(const int & k) const
 {
     if (k < 0)
         return -INFINITY;
@@ -64,13 +64,13 @@ double NegativeBinomialRand<T>::logP(int k) const
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::F(int k) const
+double NegativeBinomialRand<T>::F(const int & k) const
 {
     return (k < 0) ? 0.0 : RandMath::regularizedBetaFun(p, r, k + 1);
 }
 
 template< typename T >
-double NegativeBinomialRand<T>::S(int k) const
+double NegativeBinomialRand<T>::S(const int & k) const
 {
     return (k < 0) ? 0.0 : RandMath::regularizedBetaFun(q, k + 1, r);
 }

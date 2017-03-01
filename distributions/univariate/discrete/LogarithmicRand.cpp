@@ -19,22 +19,22 @@ void LogarithmicRand::SetProbability(double probability)
     logQInv = 1.0 / std::log1p(-p);
 }
 
-double LogarithmicRand::P(int k) const
+double LogarithmicRand::P(const int & k) const
 {
     return (k < 1) ? 0.0 : -logQInv * std::pow(p, k) / k;
 }
 
-double LogarithmicRand::logP(int k) const
+double LogarithmicRand::logP(const int & k) const
 {
     return (k < 1) ? -INFINITY : std::log(P(k));
 }
 
-double LogarithmicRand::F(int k) const
+double LogarithmicRand::F(const int & k) const
 {
     return (k < 1) ? 0.0 : 1 + logQInv * RandMath::incompleteBetaFun(p, k + 1, 0);
 }
 
-double LogarithmicRand::S(int k) const
+double LogarithmicRand::S(const int & k) const
 {
     return (k < 1) ? 1.0 : -logQInv * RandMath::incompleteBetaFun(p, k + 1, 0);
 }

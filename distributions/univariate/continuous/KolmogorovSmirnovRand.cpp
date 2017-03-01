@@ -84,22 +84,22 @@ double KolmogorovSmirnovRand::CDFCompl(double x)
     return (x > 1.0) ? K(x) : 1.0 - L(x);
 }
 
-double KolmogorovSmirnovRand::f(double x) const
+double KolmogorovSmirnovRand::f(const double & x) const
 {
     return PDF(x);
 }
 
-double KolmogorovSmirnovRand::logf(double x) const
+double KolmogorovSmirnovRand::logf(const double & x) const
 {
     return std::log(f(x));
 }
 
-double KolmogorovSmirnovRand::F(double x) const
+double KolmogorovSmirnovRand::F(const double & x) const
 {
     return CDF(x);
 }
 
-double KolmogorovSmirnovRand::S(double x) const
+double KolmogorovSmirnovRand::S(const double & x) const
 {
     return CDFCompl(x);
 }

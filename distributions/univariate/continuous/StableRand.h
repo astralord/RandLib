@@ -85,8 +85,8 @@ private:
     double integrandForCommonExponent(double theta, double xAdj, double xiAdj) const;
     double pdfForCommonExponent(double x) const;
 public:    
-    double f(double x) const override;
-    double logf(double x) const override;
+    double f(const double & x) const override;
+    double logf(const double & x) const override;
 
     /// Cumulative distribution functions
 protected:
@@ -103,8 +103,8 @@ private:
     double cdfIntegralRepresentation(double absXSt, double xiAdj) const;
     double cdfForCommonExponent(double x) const;
 public:
-    double F(double x) const override;
-    double S(double x) const override;
+    double F(const double & x) const override;
+    double S(const double & x) const override;
 
     /// Variates
 private:

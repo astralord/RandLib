@@ -11,24 +11,24 @@ std::string UniformRand::Name() const
     return "Uniform(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
 }
 
-double UniformRand::f(double x) const
+double UniformRand::f(const double & x) const
 {
     return (x < a || x > b) ? 0.0 : bmaInv;
 }
 
-double UniformRand::logf(double x) const
+double UniformRand::logf(const double & x) const
 {
     return (x < a || x > b) ? -INFINITY : -logBma;
 }
 
-double UniformRand::F(double x) const
+double UniformRand::F(const double & x) const
 {
     if (x < a)
         return 0.0;
     return (x > b) ? 1.0 : bmaInv * (x - a);
 }
 
-double UniformRand::S(double x) const
+double UniformRand::S(const double & x) const
 {
     if (x < a)
         return 1.0;

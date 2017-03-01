@@ -20,17 +20,17 @@ void ZetaRand::SetExponent(double exponent)
     b = 1.0 - std::pow(2.0, -sm1);
 }
 
-double ZetaRand::P(int k) const
+double ZetaRand::P(const int & k) const
 {
     return (k < 1) ? 0.0 : zetaSInv / std::pow(k, s);
 }
 
-double ZetaRand::logP(int k) const
+double ZetaRand::logP(const int & k) const
 {
     return (k < 1) ? -INFINITY : std::log(zetaSInv) - s * std::log(k); // log(1/zeta(s)) can be hashed
 }
 
-double ZetaRand::F(int k) const
+double ZetaRand::F(const int & k) const
 {
     return (k < 1) ? 0.0 : zetaSInv * RandMath::harmonicNumber(s, k);
 }

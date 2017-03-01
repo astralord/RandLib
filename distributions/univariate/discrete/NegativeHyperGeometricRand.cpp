@@ -30,12 +30,12 @@ void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccesses
     pmfCoef -= std::lgamma(N + 1);
 }
 
-double NegativeHyperGeometricRand::P(int k) const
+double NegativeHyperGeometricRand::P(const int & k) const
 {
     return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
 }
 
-double NegativeHyperGeometricRand::logP(int k) const
+double NegativeHyperGeometricRand::logP(const int & k) const
 {
     if (k < MinValue() || k > MaxValue())
         return -INFINITY;
@@ -46,7 +46,7 @@ double NegativeHyperGeometricRand::logP(int k) const
     return p + pmfCoef;
 }
 
-double NegativeHyperGeometricRand::F(int k) const
+double NegativeHyperGeometricRand::F(const int & k) const
 {
     // relation with hypergeometric distribution can be used here instead
     if (k < MinValue())

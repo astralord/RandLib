@@ -23,7 +23,7 @@ void PoissonRand::SetRate(double rate)
     PFloorLambda = P(floorLambda);
 }
 
-double PoissonRand::P(int k) const
+double PoissonRand::P(const int & k) const
 {
     if (k < 0)
         return 0.0;
@@ -34,7 +34,7 @@ double PoissonRand::P(int k) const
     return std::exp(y);
 }
 
-double PoissonRand::logP(int k) const
+double PoissonRand::logP(const int & k) const
 {
     if (k < 0)
         return -INFINITY;
@@ -42,12 +42,12 @@ double PoissonRand::logP(int k) const
     return y - std::lgamma(k + 1);
 }
 
-double PoissonRand::F(int k) const
+double PoissonRand::F(const int & k) const
 {
     return (k >= 0.0) ? RandMath::qgamma(k + 1, lambda) : 0.0;
 }
 
-double PoissonRand::S(int k) const
+double PoissonRand::S(const int & k) const
 {
     return (k >= 0.0) ? RandMath::pgamma(k + 1, lambda) : 1.0;
 }

@@ -25,10 +25,10 @@ public:
     void SetProbability(double probability);
     inline double GetProbability() const { return p; }
 
-    double P(int k) const override;
-    double logP(int k) const override;
-    double F(int k) const override;
-    double S(int k) const override;
+    double P(const int & k) const override;
+    double logP(const int & k) const override;
+    double F(const int & k) const override;
+    double S(const int & k) const override;
     int Variate() const override;
 
     double Mean() const override;

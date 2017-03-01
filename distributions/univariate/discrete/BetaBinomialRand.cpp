@@ -23,12 +23,12 @@ void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
     pmfCoef -= B.GetLogBetaFunction();
 }
 
-double BetaBinomialRand::P(int k) const
+double BetaBinomialRand::P(const int & k) const
 {
     return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
-double BetaBinomialRand::logP(int k) const
+double BetaBinomialRand::logP(const int & k) const
 {
     if (k < 0 || k > n)
         return 0.0;
@@ -39,7 +39,7 @@ double BetaBinomialRand::logP(int k) const
     return pmfCoef + y;
 }
 
-double BetaBinomialRand::F(int k) const
+double BetaBinomialRand::F(const int & k) const
 {
     if (k < 0)
         return 0.0;

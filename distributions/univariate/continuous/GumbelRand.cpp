@@ -23,26 +23,26 @@ void GumbelRand::SetScale(double scale)
     logBeta = std::log(beta);
 }
 
-double GumbelRand::f(double x) const
+double GumbelRand::f(const double & x) const
 {
     return std::exp(logf(x));
 }
 
-double GumbelRand::logf(double x) const
+double GumbelRand::logf(const double & x) const
 {
     double z = (mu - x) / beta;
     double y = std::exp(z);
     return z - y - logBeta;
 }
 
-double GumbelRand::F(double x) const
+double GumbelRand::F(const double & x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
     return std::exp(-y);
 }
 
-double GumbelRand::S(double x) const
+double GumbelRand::S(const double & x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);

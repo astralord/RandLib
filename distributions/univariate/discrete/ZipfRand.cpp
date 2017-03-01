@@ -32,17 +32,17 @@ void ZipfRand::SetParameters(double exponent, int number)
         table[i] *= invHarmonicNumber;
 }
 
-double ZipfRand::P(int k) const
+double ZipfRand::P(const int & k) const
 {
     return (k < 1 || k > n) ? 0.0 : std::pow(k, -s) * invHarmonicNumber;
 }
 
-double ZipfRand::logP(int k) const
+double ZipfRand::logP(const int & k) const
 {
     return (k < 1 || k > n) ? -INFINITY : -s * std::log(k) + std::log(invHarmonicNumber); // can be hashed
 }
 
-double ZipfRand::F(int k) const
+double ZipfRand::F(const int & k) const
 {
     if (k < 1.0)
         return 0.0;

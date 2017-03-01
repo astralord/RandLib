@@ -455,7 +455,7 @@ double StableRand::pdfForCommonExponent(double x) const
     return std::max(tail, res);
 }
 
-double StableRand::f(double x) const
+double StableRand::f(const double & x) const
 {
     switch (distributionId) {
     case NORMAL:
@@ -473,7 +473,7 @@ double StableRand::f(double x) const
     }
 }
 
-double StableRand::logf(double x) const
+double StableRand::logf(const double & x) const
 {
     switch (distributionId) {
     case NORMAL:
@@ -605,7 +605,7 @@ double StableRand::cdfForCommonExponent(double x) const
     return (beta == 1.0) ? 0.0 : temp - cdfIntegralRepresentation(-xSt, -xi);
 }
 
-double StableRand::F(double x) const
+double StableRand::F(const double & x) const
 {
     switch (distributionId) {
     case NORMAL:
@@ -623,7 +623,7 @@ double StableRand::F(double x) const
     }
 }
 
-double StableRand::S(double x) const
+double StableRand::S(const double & x) const
 {
     switch (distributionId) {
     case NORMAL:

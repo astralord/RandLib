@@ -33,22 +33,22 @@ void LaplaceRand::SetAsymmetry(double asymmetry)
     mu = (1.0 - kSq) * sigma * kInv;
 }
 
-double LaplaceRand::f(double x) const
+double LaplaceRand::f(const double & x) const
 {
     return pdfLaplace(x - m);
 }
 
-double LaplaceRand::logf(double x) const
+double LaplaceRand::logf(const double & x) const
 {
     return logpdfLaplace(x - m);
 }
 
-double LaplaceRand::F(double x) const
+double LaplaceRand::F(const double & x) const
 {
     return cdfLaplace(x - m);
 }
 
-double LaplaceRand::S(double x) const
+double LaplaceRand::S(const double & x) const
 {
     return cdfLaplaceCompl(x - m);
 }

@@ -24,7 +24,7 @@ public:
     double MinValue() const override { return 0; }
     double MaxValue() const override { return 1; }
 
-    double F(double x) const override;
+    double F(const double & x) const override;
     double Variate() const override;
 
     double Mean() const override;

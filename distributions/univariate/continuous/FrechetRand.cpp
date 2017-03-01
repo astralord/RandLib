@@ -22,12 +22,12 @@ void FrechetRand::SetParameters(double shape, double scale, double location)
     m = location;
 }
 
-double FrechetRand::f(double x) const
+double FrechetRand::f(const double & x) const
 {
     return (x <= m) ? 0.0 : std::exp(logf(x));
 }
 
-double FrechetRand::logf(double x) const
+double FrechetRand::logf(const double & x) const
 {
     if (x <= m)
         return -INFINITY;
@@ -38,7 +38,7 @@ double FrechetRand::logf(double x) const
     return pdfCoef - a - expA - logxAdj;
 }
 
-double FrechetRand::F(double x) const
+double FrechetRand::F(const double & x) const
 {
     if (x <= m)
         return 0.0;
@@ -47,7 +47,7 @@ double FrechetRand::F(double x) const
     return std::exp(-xPow);
 }
 
-double FrechetRand::S(double x) const
+double FrechetRand::S(const double & x) const
 {
     if (x <= m)
         return 1.0;

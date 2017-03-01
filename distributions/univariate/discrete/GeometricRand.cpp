@@ -15,22 +15,22 @@ void GeometricRand::SetProbability(double probability)
     SetParameters(1, probability);
 }
 
-double GeometricRand::P(int k) const
+double GeometricRand::P(const int & k) const
 {
     return (k < 0) ? 0 : p * std::exp(k * log1mProb);
 }
 
-double GeometricRand::logP(int k) const
+double GeometricRand::logP(const int & k) const
 {
     return (k < 0) ? -INFINITY : logProb + k * log1mProb;
 }
 
-double GeometricRand::F(int k) const
+double GeometricRand::F(const int & k) const
 {
     return (k < 0) ? 0 : -std::expm1((k + 1) * log1mProb);
 }
 
-double GeometricRand::S(int k) const
+double GeometricRand::S(const int & k) const
 {
     return (k < 0) ? 1 : std::exp((k + 1) * log1mProb);
 }

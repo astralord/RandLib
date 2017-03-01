@@ -49,22 +49,22 @@ void NormalRand::SetVariance(double var)
     SetScale(var > 0 ? std::sqrt(var) : 1.0);
 }
 
-double NormalRand::f(double x) const
+double NormalRand::f(const double & x) const
 {
     return pdfNormal(x);
 }
 
-double NormalRand::logf(double x) const
+double NormalRand::logf(const double & x) const
 {
     return logpdfNormal(x);
 }
 
-double NormalRand::F(double x) const
+double NormalRand::F(const double & x) const
 {
     return StableRand::cdfNormal(x);
 }
 
-double NormalRand::S(double x) const
+double NormalRand::S(const double & x) const
 {
     return StableRand::cdfNormalCompl(x);
 }

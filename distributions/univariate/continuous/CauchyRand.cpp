@@ -11,17 +11,17 @@ std::string CauchyRand::Name() const
     return "Cauchy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-double CauchyRand::f(double x) const
+double CauchyRand::f(const double & x) const
 {
     return pdfCauchy(x);
 }
 
-double CauchyRand::F(double x) const
+double CauchyRand::F(const double & x) const
 {
     return cdfCauchy(x);
 }
 
-double CauchyRand::S(double x) const
+double CauchyRand::S(const double & x) const
 {
     return cdfCauchyCompl(x);
 }

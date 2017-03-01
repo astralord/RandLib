@@ -18,12 +18,12 @@ void InverseGammaRand::SetParameters(double shape, double rate)
     pdfCoef = -X.GetLogGammaFunction() + alpha * X.GetLogRate();
 }
 
-double InverseGammaRand::f(double x) const
+double InverseGammaRand::f(const double & x) const
 {
     return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
-double InverseGammaRand::logf(double x) const
+double InverseGammaRand::logf(const double & x) const
 {
     if (x <= 0.0)
         return -INFINITY;
@@ -34,12 +34,12 @@ double InverseGammaRand::logf(double x) const
     return y - 2 * logX;
 }
 
-double InverseGammaRand::F(double x) const
+double InverseGammaRand::F(const double & x) const
 {
     return (x > 0.0) ? X.S(1.0 / x) : 0.0;
 }
 
-double InverseGammaRand::S(double x) const
+double InverseGammaRand::S(const double & x) const
 {
     return (x > 0.0) ? X.F(1.0 / x) : 1.0;
 }

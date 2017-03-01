@@ -62,8 +62,7 @@ public:
      * @param x
      * @return P(X < x)
      */
-     // TODO: make T to const T &
-    virtual double F(T x) const = 0;
+    virtual double F(const T & x) const = 0;
 
     /**
      * @brief CumulativeDistributionFunction
@@ -77,7 +76,7 @@ public:
      * @param x
      * @return 1 - P(X < x)
      */
-    virtual double S(T x) const;
+    virtual double S(const T & x) const;
 
     /**
      * @brief SurvivalFunction

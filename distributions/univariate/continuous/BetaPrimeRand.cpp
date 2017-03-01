@@ -17,7 +17,7 @@ void BetaPrimeRand::SetParameters(double shape1, double shape2)
     beta = B.GetBeta();
 }
 
-double BetaPrimeRand::f(double x) const
+double BetaPrimeRand::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -29,7 +29,7 @@ double BetaPrimeRand::f(double x) const
     return std::exp(logf(x));
 }
 
-double BetaPrimeRand::logf(double x) const
+double BetaPrimeRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -43,12 +43,12 @@ double BetaPrimeRand::logf(double x) const
     return y - GetLogBetaFunction();
 }
 
-double BetaPrimeRand::F(double x) const
+double BetaPrimeRand::F(const double & x) const
 {
     return (x > 0) ? B.F(x / (1.0 + x)) : 0;
 }
 
-double BetaPrimeRand::S(double x) const
+double BetaPrimeRand::S(const double & x) const
 {
     return (x > 0) ? B.S(x / (1.0 + x)) : 1;
 }

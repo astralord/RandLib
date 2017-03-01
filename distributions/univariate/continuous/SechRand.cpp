@@ -10,17 +10,17 @@ std::string SechRand::Name() const
     return "Hyperbolic secant";
 }
 
-double SechRand::f(double x) const
+double SechRand::f(const double & x) const
 {
     return 0.5 / std::cosh(M_PI_2 * x);
 }
 
-double SechRand::logf(double x) const
+double SechRand::logf(const double & x) const
 {
     return M_PI_2 * x - std::log1p(std::exp(M_PI * x));
 }
 
-double SechRand::F(double x) const
+double SechRand::F(const double & x) const
 {
     double y = std::exp(M_PI_2 * x);
     return M_2_PI * RandMath::atan(y);

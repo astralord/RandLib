@@ -11,22 +11,22 @@ std::string LevyRand::Name() const
     return "Levy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-double LevyRand::f(double x) const
+double LevyRand::f(const double & x) const
 {
     return pdfLevy(x);
 }
 
-double LevyRand::logf(double x) const
+double LevyRand::logf(const double & x) const
 {
     return logpdfLevy(x);
 }
 
-double LevyRand::F(double x) const
+double LevyRand::F(const double & x) const
 {
     return cdfLevy(x);
 }
 
-double LevyRand::S(double x) const
+double LevyRand::S(const double & x) const
 {
     return cdfLevyCompl(x);
 }

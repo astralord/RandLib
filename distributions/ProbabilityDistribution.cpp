@@ -33,7 +33,7 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(const std::vecto
 }
 
 template < typename T >
-double ProbabilityDistribution<T>::S(T x) const
+double ProbabilityDistribution<T>::S(const T &x) const
 {
     return 1.0 - F(x);
 }

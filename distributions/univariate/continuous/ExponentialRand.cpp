@@ -40,22 +40,22 @@ void ExponentialRand::SetRate(double rate)
     SetParameters(1, rate);
 }
 
-double ExponentialRand::f(double x) const
+double ExponentialRand::f(const double & x) const
 {
     return (x < 0.0) ? 0.0 : beta * std::exp(-beta * x);
 }
 
-double ExponentialRand::logf(double x) const
+double ExponentialRand::logf(const double & x) const
 {
     return (x < 0.0) ? -INFINITY : logBeta - beta * x;
 }
 
-double ExponentialRand::F(double x) const
+double ExponentialRand::F(const double & x) const
 {
     return (x > 0.0) ? -std::expm1(-beta * x) : 0.0;
 }
 
-double ExponentialRand::S(double x) const
+double ExponentialRand::S(const double & x) const
 {
     return (x > 0.0) ? std::exp(-beta * x) : 1.0;
 }

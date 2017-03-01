@@ -26,7 +26,7 @@ void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
     pdfCoef -= B.GetLogBetaFunction();
 }
 
-double FisherSnedecorRand::f(double x) const
+double FisherSnedecorRand::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -38,7 +38,7 @@ double FisherSnedecorRand::f(double x) const
     return std::exp(logf(x));
 }
 
-double FisherSnedecorRand::logf(double x) const
+double FisherSnedecorRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -52,12 +52,12 @@ double FisherSnedecorRand::logf(double x) const
     return pdfCoef + y;
 }
 
-double FisherSnedecorRand::F(double x) const
+double FisherSnedecorRand::F(const double & x) const
 {
     return B.F(d1_d2 * x);
 }
 
-double FisherSnedecorRand::S(double x) const
+double FisherSnedecorRand::S(const double & x) const
 {
     return B.S(d1_d2 * x);
 }

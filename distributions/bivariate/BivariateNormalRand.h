@@ -36,8 +36,8 @@ public:
     inline double GetSecondScale() const { return sigma2; }
     inline double GetCorrelation() const { return rho; }
 
-    double f(DoublePair point) const override;
-    double F(DoublePair point) const override;
+    double f(const DoublePair &point) const override;
+    double F(const DoublePair & point) const override;
     DoublePair Variate() const override;
 
     DoublePair Mean() const override;

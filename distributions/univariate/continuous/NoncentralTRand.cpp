@@ -98,7 +98,7 @@ double NoncentralTRand::Faux(double x, double nuAux, double muAux) const
     return (temp > 50 && sum > 0.0) ? std::exp(std::log(sum) - temp) : sum * std::exp(-temp);
 }
 
-double NoncentralTRand::f(double x) const
+double NoncentralTRand::f(const double & x) const
 {
     if (mu == 0.0)
         return T.f(x);
@@ -116,12 +116,12 @@ double NoncentralTRand::f(double x) const
     return nu * y / x;
 }
 
-double NoncentralTRand::logf(double x) const
+double NoncentralTRand::logf(const double & x) const
 {
     return std::log(f(x));
 }
 
-double NoncentralTRand::F(double x) const
+double NoncentralTRand::F(const double & x) const
 {
     if (mu == 0.0)
         return T.F(x);

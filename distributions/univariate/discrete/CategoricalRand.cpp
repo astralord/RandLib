@@ -35,19 +35,19 @@ void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
     q = 1.0 - sum;
 }
 
-double CategoricalRand::P(int k) const
+double CategoricalRand::P(const int & k) const
 {
     if (k < 0 || k > K)
         return 0.0;
     return (k == 0) ? q : prob[k - 1];
 }
 
-double CategoricalRand::logP(int k) const
+double CategoricalRand::logP(const int & k) const
 {
     return std::log(P(k));
 }
 
-double CategoricalRand::F(int k) const
+double CategoricalRand::F(const int & k) const
 {
     if (k < 0)
         return 0.0;

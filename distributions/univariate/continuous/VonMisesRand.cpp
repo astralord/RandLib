@@ -69,12 +69,12 @@ double VonMisesRand::cdfErfc(double x) const
     return 0.5 * std::erfc(arg);
 }
 
-double VonMisesRand::f(double x) const
+double VonMisesRand::f(const double & x) const
 {
     return (x < mu - M_PI || x > mu + M_PI) ? 0.0 : std::exp(logf(x));
 }
 
-double VonMisesRand::logf(double x) const
+double VonMisesRand::logf(const double & x) const
 {
     if (x < mu - M_PI || x > mu + M_PI)
         return -INFINITY;
@@ -83,7 +83,7 @@ double VonMisesRand::logf(double x) const
     return y;
 }
 
-double VonMisesRand::F(double x) const
+double VonMisesRand::F(const double & x) const
 {
     if (x <= mu - M_PI)
         return 0.0;

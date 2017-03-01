@@ -23,17 +23,17 @@ void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
     logN = std::log(n);
 }
 
-double UniformDiscreteRand::P(int k) const
+double UniformDiscreteRand::P(const int & k) const
 {
     return (k < a || k > b) ? 0.0 : nInv;
 }
 
-double UniformDiscreteRand::logP(int k) const
+double UniformDiscreteRand::logP(const int & k) const
 {
     return (k < a || k > b) ? -INFINITY : -logN;
 }
 
-double UniformDiscreteRand::F(int k) const
+double UniformDiscreteRand::F(const int & k) const
 {
     if (k < a)
         return 0.0;

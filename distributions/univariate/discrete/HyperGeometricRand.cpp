@@ -30,12 +30,12 @@ void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successe
     pmfCoef -= std::lgamma(N + 1);
 }
 
-double HyperGeometricRand::P(int k) const
+double HyperGeometricRand::P(const int & k) const
 {
     return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
 }
 
-double HyperGeometricRand::logP(int k) const
+double HyperGeometricRand::logP(const int & k) const
 {
     if (k < MinValue() || k > MaxValue())
         return -INFINITY;
@@ -46,7 +46,7 @@ double HyperGeometricRand::logP(int k) const
     return pmfCoef - y;
 }
 
-double HyperGeometricRand::F(int k) const
+double HyperGeometricRand::F(const int & k) const
 {
     if (k < MinValue())
         return 0.0;

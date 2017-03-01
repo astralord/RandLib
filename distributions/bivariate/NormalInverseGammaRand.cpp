@@ -28,7 +28,7 @@ void NormalInverseGammaRand::SetParameters(double location, double precision, do
     pdfCoef += alpha * std::log(beta) - Y.GetLogGammaFunction();
 }
 
-double NormalInverseGammaRand::f(DoublePair point) const
+double NormalInverseGammaRand::f(const DoublePair &point) const
 {
     double x = point.first, sigmaSq = point.second;
     if (sigmaSq <= 0)
@@ -44,7 +44,7 @@ double NormalInverseGammaRand::f(DoublePair point) const
     return y;
 }
 
-double NormalInverseGammaRand::F(DoublePair point) const
+double NormalInverseGammaRand::F(const DoublePair &point) const
 {
     double x = point.first, sigmaSq = point.second;
     if (sigmaSq <= 0)

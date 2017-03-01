@@ -29,8 +29,8 @@ public:
     inline double GetShape() const { return alpha; }
     inline double GetRate() const { return beta; }
 
-    double f(DoublePair point) const override;
-    double F(DoublePair point) const override;
+    double f(const DoublePair &point) const override;
+    double F(const DoublePair & point) const override;
     DoublePair Variate() const override;
 
     DoublePair Mean() const override;

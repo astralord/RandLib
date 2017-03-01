@@ -24,7 +24,7 @@ void RaisedCosineRand::SetScale(double scale)
     log2S = std::log(2 * s);
 }
 
-double RaisedCosineRand::f(double x) const
+double RaisedCosineRand::f(const double & x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
@@ -33,7 +33,7 @@ double RaisedCosineRand::f(double x) const
     return 0.5 * y / s;
 }
 
-double RaisedCosineRand::logf(double x) const
+double RaisedCosineRand::logf(const double & x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
@@ -43,7 +43,7 @@ double RaisedCosineRand::logf(double x) const
     return y - log2S;
 }
 
-double RaisedCosineRand::F(double x) const
+double RaisedCosineRand::F(const double & x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
@@ -56,7 +56,7 @@ double RaisedCosineRand::F(double x) const
     return 0.5 * y;
 }
 
-double RaisedCosineRand::S(double x) const
+double RaisedCosineRand::S(const double & x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)

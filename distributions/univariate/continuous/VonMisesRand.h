@@ -32,9 +32,9 @@ private:
     double cdfErfc(double x) const;
 
 public:
-    double f(double x) const override;
-    double logf(double x) const override;
-    double F(double x) const override;
+    double f(const double & x) const override;
+    double logf(const double & x) const override;
+    double F(const double & x) const override;
     double Variate() const override;
 
     double Mean() const override;

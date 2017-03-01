@@ -22,7 +22,7 @@ void LogisticRand::SetScale(double scale)
     logS = std::log(s);
 }
 
-double LogisticRand::f(double x) const
+double LogisticRand::f(const double & x) const
 {
     double numerator = std::exp((mu - x) / s);
     double denominator = (1 + numerator);
@@ -31,7 +31,7 @@ double LogisticRand::f(double x) const
     return numerator / denominator;
 }
 
-double LogisticRand::logf(double x) const
+double LogisticRand::logf(const double & x) const
 {
     double x0 = (mu - x) / s;
     double y = std::exp(x0);
@@ -40,13 +40,13 @@ double LogisticRand::logf(double x) const
     return x0 - y;
 }
 
-double LogisticRand::F(double x) const
+double LogisticRand::F(const double & x) const
 {
     double expX = std::exp((mu - x) / s);
     return 1.0 / (1 + expX);
 }
 
-double LogisticRand::S(double x) const
+double LogisticRand::S(const double & x) const
 {
     double expX = std::exp((mu - x) / s);
     return expX / (1 + expX);

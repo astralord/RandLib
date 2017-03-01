@@ -61,7 +61,7 @@ void BivariateNormalRand::SetScale(const DoubleTriplet &covariance)
     SetScale(std::sqrt(var1), corr, std::sqrt(var2));
 }
 
-double BivariateNormalRand::f(DoublePair point) const
+double BivariateNormalRand::f(const DoublePair &point) const
 {
     if (rho == 0.0) /// f(x, y) = f(x)f(y)
         return X.f(point.first) * Y.f(point.second);
@@ -74,7 +74,7 @@ double BivariateNormalRand::f(DoublePair point) const
     return pdfCoef * std::exp(-0.5 * z / (1 - rho * rho));
 }
 
-double BivariateNormalRand::F(DoublePair point) const
+double BivariateNormalRand::F(const DoublePair &point) const
 {
     if (rho == 0.0) /// F(x, y) = F(x)F(y)
         return X.F(point.first) * Y.F(point.second);

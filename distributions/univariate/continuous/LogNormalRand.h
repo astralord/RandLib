@@ -26,10 +26,10 @@ public:
     inline double GetLocation() const { return X.Mean(); }
     inline double GetScale() const { return X.GetScale(); }
 
-    double f(double x) const override;
-    double logf(double x) const override;
-    double F(double x) const override;
-    double S(double x) const override;
+    double f(const double & x) const override;
+    double logf(const double & x) const override;
+    double F(const double & x) const override;
+    double S(const double & x) const override;
 
     static double StandardVariate();
     static double Variate(double location, double scale);

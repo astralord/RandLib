@@ -35,7 +35,7 @@ void TriangularRand::SetConstantsForGenerator()
     coefGenerator2 = (b - a) * (b - c);
 }
 
-double TriangularRand::f(double x) const
+double TriangularRand::f(const double & x) const
 {
     if (x <= a)
         return 0;
@@ -48,12 +48,12 @@ double TriangularRand::f(double x) const
     return 0;
 }
 
-double TriangularRand::logf(double x) const
+double TriangularRand::logf(const double & x) const
 {
     return std::log(f(x));
 }
 
-double TriangularRand::F(double x) const
+double TriangularRand::F(const double & x) const
 {
     if (x <= a)
         return 0.0;
@@ -64,7 +64,7 @@ double TriangularRand::F(double x) const
     return 1.0;
 }
 
-double TriangularRand::S(double x) const
+double TriangularRand::S(const double & x) const
 {
     if (x <= a)
         return 1.0;

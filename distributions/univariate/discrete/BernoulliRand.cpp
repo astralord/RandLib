@@ -18,22 +18,22 @@ void BernoulliRand::SetProbability(double probability)
     boundary = q * RandGenerator::maxValue();
 }
 
-double BernoulliRand::P(int k) const
+double BernoulliRand::P(const int & k) const
 {
     return (k == 0) ? q : ((k == 1) ? p : 0);
 }
 
-double BernoulliRand::logP(int k) const
+double BernoulliRand::logP(const int & k) const
 {
     return (k == 0) ? log1mProb : ((k == 1) ? logProb : 0);
 }
 
-double BernoulliRand::F(int k) const
+double BernoulliRand::F(const int & k) const
 {
     return (k < 0) ? 0.0 : ((k < 1) ? q : 1);
 }
 
-double BernoulliRand::S(int k) const
+double BernoulliRand::S(const int & k) const
 {
     return (k < 0) ? 1.0 : ((k < 1) ? p : 0.0);
 }

@@ -22,7 +22,7 @@ std::string CantorRand::Name() const
     return "Cantor";
 }
 
-double CantorRand::F(double x) const
+double CantorRand::F(const double & x) const
 {
     if (x <= 0.0)
         return 0.0;

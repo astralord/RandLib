@@ -23,12 +23,12 @@ void LogNormalRand::SetScale(double scale)
     expHalfSigmaSq = std::exp(0.5 * X.Variance());
 }
 
-double LogNormalRand::f(double x) const
+double LogNormalRand::f(const double & x) const
 {
     return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
-double LogNormalRand::logf(double x) const
+double LogNormalRand::logf(const double & x) const
 {
     if (x <= 0.0)
         return -INFINITY;
@@ -37,12 +37,12 @@ double LogNormalRand::logf(double x) const
     return y - logX;
 }
 
-double LogNormalRand::F(double x) const
+double LogNormalRand::F(const double & x) const
 {
     return (x > 0.0) ? X.F(std::log(x)) : 0.0;
 }
 
-double LogNormalRand::S(double x) const
+double LogNormalRand::S(const double & x) const
 {
     return (x > 0.0) ? X.S(std::log(x)) : 1.0;
 }

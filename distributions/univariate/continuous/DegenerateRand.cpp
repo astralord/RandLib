@@ -15,17 +15,17 @@ void DegenerateRand::SetValue(double value)
     a = value;
 }
 
-double DegenerateRand::f(double x) const
+double DegenerateRand::f(const double & x) const
 {
     return (x == a) ? INFINITY : 0.0;
 }
 
-double DegenerateRand::logf(double x) const
+double DegenerateRand::logf(const double & x) const
 {
     return (x == a) ? INFINITY : -INFINITY;
 }
 
-double DegenerateRand::F(double x) const
+double DegenerateRand::F(const double & x) const
 {
     return (x < a) ? 0.0 : 1.0;
 }

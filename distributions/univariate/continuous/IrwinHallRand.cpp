@@ -17,7 +17,7 @@ void IrwinHallRand::SetNumber(int number)
     pdfCoef = n * cdfCoef;
 }
 
-double IrwinHallRand::f(double x) const
+double IrwinHallRand::f(const double & x) const
 {
     if (x < 0 || x > n)
         return 0.0;
@@ -34,12 +34,12 @@ double IrwinHallRand::f(double x) const
     return pdfCoef * sum;
 }
 
-double IrwinHallRand::logf(double x) const
+double IrwinHallRand::logf(const double & x) const
 {
     return std::log(f(x));
 }
 
-double IrwinHallRand::F(double x) const
+double IrwinHallRand::F(const double & x) const
 {
     if (x <= 0)
         return 0.0;

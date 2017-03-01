@@ -22,10 +22,10 @@ private:
     static double CDF(double x);
     static double CDFCompl(double x);
 public:
-    double f(double x) const override;
-    double logf(double x) const override;
-    double F(double x) const override;
-    double S(double x) const override;
+    double f(const double & x) const override;
+    double logf(const double & x) const override;
+    double F(const double & x) const override;
+    double S(const double & x) const override;
 
 private:
     double truncatedGammaVariate() const;

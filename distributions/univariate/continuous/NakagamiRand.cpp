@@ -19,7 +19,7 @@ void NakagamiRand::SetParameters(double shape, double spread)
     Y.SetParameters(m, m / w);
 }
 
-double NakagamiRand::f(double x) const
+double NakagamiRand::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -28,7 +28,7 @@ double NakagamiRand::f(double x) const
     return 2 * x * Y.f(x * x);
 }
 
-double NakagamiRand::logf(double x) const
+double NakagamiRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -37,12 +37,12 @@ double NakagamiRand::logf(double x) const
     return std::log(2 * x) + Y.logf(x * x);
 }
 
-double NakagamiRand::F(double x) const
+double NakagamiRand::F(const double & x) const
 {
     return (x > 0.0) ? Y.F(x * x) : 0.0;
 }
 
-double NakagamiRand::S(double x) const
+double NakagamiRand::S(const double & x) const
 {
     return (x > 0.0) ? Y.S(x * x) : 1.0;
 }
@@ -147,7 +147,7 @@ void MaxwellBoltzmannRand::SetScale(double scale)
     sigma = (scale > 0.0) ? scale : 1.0;
 }
 
-double MaxwellBoltzmannRand::f(double x) const
+double MaxwellBoltzmannRand::f(const double & x) const
 {
     if (x <= 0)
         return 0;
@@ -157,7 +157,7 @@ double MaxwellBoltzmannRand::f(double x) const
     return M_SQRT2 * M_1_SQRTPI * xAdjSq * y / sigma;
 }
 
-double MaxwellBoltzmannRand::F(double x) const
+double MaxwellBoltzmannRand::F(const double & x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -167,7 +167,7 @@ double MaxwellBoltzmannRand::F(double x) const
     return std::erf(xAdj) - y;
 }
 
-double MaxwellBoltzmannRand::S(double x) const
+double MaxwellBoltzmannRand::S(const double & x) const
 {
     if (x <= 0.0)
         return 1.0;
@@ -251,7 +251,7 @@ void RayleighRand::SetScale(double scale)
     sigma = (scale > 0.0) ? scale : 1.0;
 }
 
-double RayleighRand::f(double x) const
+double RayleighRand::f(const double & x) const
 {
     if (x <= 0)
         return 0.0;
@@ -259,7 +259,7 @@ double RayleighRand::f(double x) const
     return y * std::exp(-0.5 * x * y);
 }
 
-double RayleighRand::F(double x) const
+double RayleighRand::F(const double & x) const
 {
     if (x <= 0)
         return 0.0;
@@ -267,7 +267,7 @@ double RayleighRand::F(double x) const
     return -std::expm1(-0.5 * xAdj * xAdj);
 }
 
-double RayleighRand::S(double x) const
+double RayleighRand::S(const double & x) const
 {
     if (x <= 0)
         return 1.0;

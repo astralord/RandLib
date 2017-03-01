@@ -35,7 +35,7 @@ void GammaRand::SetParameters(double shape, double rate)
         SetConstantsForGenerator();
 }
 
-double GammaRand::f(double x) const
+double GammaRand::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -48,7 +48,7 @@ double GammaRand::f(double x) const
     return std::exp(logf(x));
 }
 
-double GammaRand::logf(double x) const
+double GammaRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -64,12 +64,12 @@ double GammaRand::logf(double x) const
     return y;
 }
 
-double GammaRand::F(double x) const
+double GammaRand::F(const double & x) const
 {
     return (x > 0.0) ? RandMath::pgamma(alpha, x * beta) : 0.0;
 }
 
-double GammaRand::S(double x) const
+double GammaRand::S(const double & x) const
 {
     return (x > 0.0) ? RandMath::qgamma(alpha, x * beta) : 1.0;
 }

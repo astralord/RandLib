@@ -85,7 +85,7 @@ void BetaRand::SetSupport(double minValue, double maxValue)
     logBma = std::log(bma);
 }
 
-double BetaRand::f(double x) const
+double BetaRand::f(const double & x) const
 {
     if (x < a || x > b)
         return 0.0;
@@ -102,7 +102,7 @@ double BetaRand::f(double x) const
     return std::exp(logf(x));
 }
 
-double BetaRand::logf(double x) const
+double BetaRand::logf(const double & x) const
 {
     if (x < a || x > b)
         return -INFINITY;
@@ -117,19 +117,18 @@ double BetaRand::logf(double x) const
         return (beta > 1) ? -INFINITY : INFINITY;
     }
     /// Standardize
-    x -= a;
-    x /= bma;
+    double xSt = (x - a) / bma;
     double y = 0.0;
     if (alpha == beta)
-        y = (alpha - 1) * std::log(x - x * x);
+        y = (alpha - 1) * std::log(xSt - xSt * xSt);
     else {
-        y = (alpha - 1) * std::log(x);
-        y += (beta - 1) * std::log1p(-x);
+        y = (alpha - 1) * std::log(xSt);
+        y += (beta - 1) * std::log1p(-xSt);
     }
     return mLogBetaFun - logBma + y;
 }
 
-double BetaRand::F(double x) const
+double BetaRand::F(const double & x) const
 {
     if (x <= a)
         return 0.0;
@@ -143,7 +142,7 @@ double BetaRand::F(double x) const
     return RandMath::incompleteBetaFun(xSt, alpha, beta, betaFun) / betaFun;
 }
 
-double BetaRand::S(double x) const
+double BetaRand::S(const double & x) const
 {
     if (x <= a)
         return 1.0;

@@ -10,17 +10,17 @@ std::string RademacherRand::Name() const
     return "Rademacher";
 }
 
-double RademacherRand::P(int k) const
+double RademacherRand::P(const int & k) const
 {
     return (k == 1 || k == -1) ? 0.5 : 0.0;
 }
 
-double RademacherRand::logP(int k) const
+double RademacherRand::logP(const int & k) const
 {
     return (k == 1 || k == -1) ? -M_LN2 : -INFINITY;
 }
 
-double RademacherRand::F(int k) const
+double RademacherRand::F(const int & k) const
 {
     if (k < -1)
         return 0;

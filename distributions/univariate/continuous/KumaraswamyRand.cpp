@@ -22,7 +22,7 @@ void KumaraswamyRand::SetShapes(double shape1, double shape2)
     logB = std::log(b);
 }
 
-double KumaraswamyRand::f(double x) const
+double KumaraswamyRand::f(const double & x) const
 {
     if (x < 0.0 || x > 1.0)
         return 0.0;
@@ -41,7 +41,7 @@ double KumaraswamyRand::f(double x) const
     return std::exp(logf(x));
 }
 
-double KumaraswamyRand::logf(double x) const
+double KumaraswamyRand::logf(const double & x) const
 {
     if (x < 0.0 || x > 1.0)
         return -INFINITY;
@@ -74,7 +74,7 @@ double KumaraswamyRand::logf(double x) const
     return logA + logB + y;
 }
 
-double KumaraswamyRand::F(double x) const
+double KumaraswamyRand::F(const double & x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -84,7 +84,7 @@ double KumaraswamyRand::F(double x) const
     return -std::expm1(b * std::log(y));
 }
 
-double KumaraswamyRand::S(double x) const
+double KumaraswamyRand::S(const double & x) const
 {
     if (x <= 0.0)
         return 1.0;

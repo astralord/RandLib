@@ -32,10 +32,10 @@ public:
     inline double GetFirstMean() const { return mu1; }
     inline double GetSecondMean() const { return mu2; }
 
-    double P(int k) const override;
-    double logP(int k) const override;
-    double F(int k) const override;
-    double S(int k) const override;
+    double P(const int & k) const override;
+    double logP(const int & k) const override;
+    double F(const int & k) const override;
+    double S(const int & k) const override;
     int Variate() const override;
     void Sample(std::vector<int> &outputData) const override;
 

@@ -18,12 +18,12 @@ void YuleRand::SetShape(double shape)
     X.SetShape(ro);
 }
 
-double YuleRand::P(int k) const
+double YuleRand::P(const int & k) const
 {
     return (k < 1) ? 0.0 : std::exp(logP(k));
 }
 
-double YuleRand::logP(int k) const
+double YuleRand::logP(const int & k) const
 {
     if (k < 1)
         return -INFINITY;
@@ -34,7 +34,7 @@ double YuleRand::logP(int k) const
     return y;
 }
 
-double YuleRand::F(int k) const
+double YuleRand::F(const int & k) const
 {
     if (k < 1)
         return 0.0;
@@ -45,7 +45,7 @@ double YuleRand::F(int k) const
     return 1.0 - k * y;
 }
 
-double YuleRand::S(int k) const
+double YuleRand::S(const int & k) const
 {
     if (k < 1)
         return 1.0;

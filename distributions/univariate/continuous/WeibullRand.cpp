@@ -18,7 +18,7 @@ void WeibullRand::SetParameters(double scale, double shape)
     kInv = 1.0 / k;
 }
 
-double WeibullRand::f(double x) const
+double WeibullRand::f(const double & x) const
 {
     if (x < 0)
         return 0;
@@ -32,7 +32,7 @@ double WeibullRand::f(double x) const
     return k / lambda * xAdjPow * std::exp(-xAdj * xAdjPow);
 }
 
-double WeibullRand::logf(double x) const
+double WeibullRand::logf(const double & x) const
 {
     if (x < 0)
         return -INFINITY;
@@ -45,12 +45,12 @@ double WeibullRand::logf(double x) const
     return std::log(f(x));
 }
 
-double WeibullRand::F(double x) const
+double WeibullRand::F(const double & x) const
 {
     return (x > 0.0) ? -std::expm1(-std::pow(x / lambda, k)) : 0.0;
 }
 
-double WeibullRand::S(double x) const
+double WeibullRand::S(const double & x) const
 {
     return (x > 0.0) ? std::exp(-std::pow(x / lambda, k)) : 1.0;
 }

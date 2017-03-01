@@ -23,12 +23,12 @@ void SkellamRand::SetMeans(double mean1, double mean2)
     pmfCoef1 = 2.0 * std::sqrt(mu1 * mu2);
 }
 
-double SkellamRand::P(int k) const
+double SkellamRand::P(const int & k) const
 {
     return std::exp(logP(k));
 }
 
-double SkellamRand::logP(int k) const
+double SkellamRand::logP(const int & k) const
 {
     double y = RandMath::logModifiedBesselFirstKind(pmfCoef1, k);
     y += 0.5 * k * pmfCoef2;
@@ -36,12 +36,12 @@ double SkellamRand::logP(int k) const
     return y;
 }
 
-double SkellamRand::F(int k) const
+double SkellamRand::F(const int & k) const
 {
     return (k < 0) ? RandMath::MarcumP(-k, mu1, mu2) : RandMath::MarcumQ(k + 1, mu2, mu1);
 }
 
-double SkellamRand::S(int k) const
+double SkellamRand::S(const int & k) const
 {
     return (k < 0) ? RandMath::MarcumQ(-k, mu1, mu2) : RandMath::MarcumP(k + 1, mu2, mu1);
 }
