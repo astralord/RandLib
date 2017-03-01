@@ -105,7 +105,7 @@ std::complex<double> ExponentialRand::CFImpl(double t) const
 
 double ExponentialRand::Entropy() const
 {
-    return 1 - std::log(beta);
+    return 1.0 - std::log(beta);
 }
 
 double ExponentialRand::Moment(int n) const
@@ -117,25 +117,24 @@ double ExponentialRand::Moment(int n) const
     return std::exp(std::lgamma(n + 1) - n * std::log(beta));
 }
 
-bool ExponentialRand::FitMM(const std::vector<double> &sample)
+void ExponentialRand::FitMM(const std::vector<double> &sample)
 {
-    return FitScaleMLE(sample);
+    FitScaleMLE(sample);
 }
 
-bool ExponentialRand::FitMLE(const std::vector<double> &sample)
+void ExponentialRand::FitMLE(const std::vector<double> &sample)
 {
-    return FitScaleMLE(sample);
+    FitScaleMLE(sample);
 }
 
-bool ExponentialRand::FitUMVU(const std::vector<double> &sample)
+void ExponentialRand::FitUMVU(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     int n = sample.size();
     if (n <= 1)
-        return false; // TOO_FEW_SAMPLINGS
+        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
     double mean = sampleMean(sample);
     SetRate((n - 1) * mean / n);
-    return true;
 }

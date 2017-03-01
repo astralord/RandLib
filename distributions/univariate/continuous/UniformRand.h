@@ -50,23 +50,25 @@ private:
 
     std::complex<double> CFImpl(double t) const override;
 
+    static constexpr char TOO_LARGE_A[] = "Minimum element of the sample is larger than lower boundary returned by method: ";
+    static constexpr char TOO_SMALL_B[] = "Maximum element of the sample is smaller than upper boundary returned by method: ";
 public:
     inline double Entropy() const;
 
     /// Maximum likelihood estimation
-    bool FitMinimumMLE(const std::vector<double> &sample);
-    bool FitMaximumMLE(const std::vector<double> &sample);
-    bool FitMLE(const std::vector<double> &sample);
+    void FitMinimumMLE(const std::vector<double> &sample);
+    void FitMaximumMLE(const std::vector<double> &sample);
+    void FitMLE(const std::vector<double> &sample);
     
     /// Method of moments
-    bool FitMinimumMM(const std::vector<double> &sample);
-    bool FitMaximumMM(const std::vector<double> &sample);
-    bool FitMM(const std::vector<double> &sample);
+    void FitMinimumMM(const std::vector<double> &sample);
+    void FitMaximumMM(const std::vector<double> &sample);
+    void FitMM(const std::vector<double> &sample);
     
     /// Minimum-variance unbiased estimator
-    bool FitMinimumUMVU(const std::vector<double> &sample);
-    bool FitMaximumUMVU(const std::vector<double> &sample);
-    bool FitUMVU(const std::vector<double> &sample);
+    void FitMinimumUMVU(const std::vector<double> &sample);
+    void FitMaximumUMVU(const std::vector<double> &sample);
+    void FitUMVU(const std::vector<double> &sample);
 };
 
 #endif // UNIFORMRAND_H

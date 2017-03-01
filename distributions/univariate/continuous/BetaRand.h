@@ -31,7 +31,7 @@ protected:
 private:
     static constexpr double edgeForGenerators = 8.0;
     double mLogBetaFun; /// log(Beta(α, β)
-    double betaFunInv; /// 1 / Beta(α, β)
+    double betaFun; /// Beta(α, β)
 
     /// coefficients for generators
     double s, t, u;
@@ -156,9 +156,9 @@ protected:
 public:
     /**
      * @brief GetInverseBetaFunction
-     * @return 1 / Beta(α, β)
+     * @return Beta(α, β)
      */
-    inline double GetInverseBetaFunction() const { return betaFunInv; } // TODO: hash beta, not betainv
+    inline double GetBetaFunction() const { return betaFun; }
 
     /**
      * @brief GetLogBetaFunction

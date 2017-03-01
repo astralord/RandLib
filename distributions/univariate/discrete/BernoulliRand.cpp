@@ -71,18 +71,3 @@ double BernoulliRand::Entropy()
 {
     return -(p * logProb + q * log1mProb);
 }
-
-bool BernoulliRand::FitMLE(const std::vector<int> &sample)
-{
-    return FitProbabilityMLE(sample);
-}
-
-bool BernoulliRand::FitMM(const std::vector<int> &sample)
-{
-    return FitProbabilityMM(sample);
-}
-
-bool BernoulliRand::FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
-{
-    return FitProbabilityBayes(sample, priorDistribution);
-}

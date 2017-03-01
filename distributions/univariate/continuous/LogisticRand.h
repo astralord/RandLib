@@ -47,12 +47,12 @@ public:
     double Entropy() const;
 
     /// Method of moments
-    bool FitLocationMM(const std::vector<double> &sample);
-    bool FitScaleMM(const std::vector<double> &sample);
-    bool FitMM(const std::vector<double> &sample);
+    void FitLocationMM(const std::vector<double> &sample);
+    void FitScaleMM(const std::vector<double> &sample);
+    void FitMM(const std::vector<double> &sample);
 
     /// Maximum-likelihood
-    bool FitLocationMLE(const std::vector<double> &sample);
+    void FitLocationMLE(const std::vector<double> &sample);
 };
 
 #endif // LOGISTICRAND_H

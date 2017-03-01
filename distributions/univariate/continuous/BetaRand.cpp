@@ -69,7 +69,7 @@ void BetaRand::SetParameters(double shape1, double shape2, double minValue, doub
     beta = GammaRV2.GetShape();
     /// we use log(Gamma(x)) in order to avoid too big numbers
     mLogBetaFun = std::lgamma(alpha + beta) - GammaRV1.GetLogGammaFunction() - GammaRV2.GetLogGammaFunction();
-    betaFunInv = std::exp(mLogBetaFun);
+    betaFun = std::exp(-mLogBetaFun);
     SetCoefficientsForGenerator();
 }
 
@@ -140,7 +140,7 @@ double BetaRand::F(double x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(xSt));
-    return betaFunInv * RandMath::incompleteBetaFun(xSt, alpha, beta, 1.0 / betaFunInv);
+    return RandMath::incompleteBetaFun(xSt, alpha, beta, betaFun) / betaFun;
 }
 
 double BetaRand::S(double x) const
@@ -154,7 +154,7 @@ double BetaRand::S(double x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::acos(std::sqrt(xSt));
-    return betaFunInv * RandMath::incompleteBetaFun(1.0 - xSt, alpha, beta, 1.0 / betaFunInv);
+    return RandMath::incompleteBetaFun(1.0 - xSt, alpha, beta, betaFun) / betaFun;
 }
 
 double BetaRand::variateArcsine() const
@@ -472,7 +472,7 @@ std::complex<double> BetaRand::CFImpl(double t) const
         f -= cosZm1;
         return std::pow(1.0 - x, beta - 1) * f;
     }, 0, 1);
-    re += 1.0 / betaFunInv;
+    re += betaFun;
     re += cosZm1 / beta;
 
     double im = RandMath::integral([this, z, sinZ](double x) {
@@ -489,7 +489,7 @@ std::complex<double> BetaRand::CFImpl(double t) const
 
     std::complex<double> y(re, im);
     double cosTA = std::cos(t * a), sinTA = std::sin(t * a);
-    return betaFunInv * y * std::complex<double>(cosTA, sinTA);
+    return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
 ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)

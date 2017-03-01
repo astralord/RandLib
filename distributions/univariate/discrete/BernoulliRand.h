@@ -25,9 +25,6 @@ public:
 
 protected:
     using BinomialRand::SetParameters;
-    using BinomialRand::FitProbabilityMLE;
-    using BinomialRand::FitProbabilityMM;
-    using BinomialRand::FitProbabilityBayes;
 
 public:
     void SetProbability(double probability);
@@ -41,10 +38,6 @@ public:
     static int StandardVariate();
 
     inline double Entropy();
-
-    bool FitMLE(const std::vector<int> &sample);
-    bool FitMM(const std::vector<int> &sample);
-    bool FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
 };
 
 #endif // BERNOULLIRAND_H

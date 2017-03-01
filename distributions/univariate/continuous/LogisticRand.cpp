@@ -116,35 +116,32 @@ double LogisticRand::ExcessKurtosis() const
 }
 
 /// Method of moments
-bool LogisticRand::FitLocationMM(const std::vector<double> &sample)
+void LogisticRand::FitLocationMM(const std::vector<double> &sample)
 {
     SetLocation(sampleMean(sample));
-    return true;
 }
 
-bool LogisticRand::FitScaleMM(const std::vector<double> &sample)
+void LogisticRand::FitScaleMM(const std::vector<double> &sample)
 {
     double var = sampleVariance(sample, mu);
     SetScale(std::sqrt(3 * var) / M_PI);
-    return true;
 }
 
-bool LogisticRand::FitMM(const std::vector<double> &sample)
+void LogisticRand::FitMM(const std::vector<double> &sample)
 {
-    return FitLocationMM(sample) ? FitScaleMM(sample) : false;
+    FitLocationMM(sample);
+    FitScaleMM(sample);
 }
 
 /// Maximum-likelihood
-bool LogisticRand::FitLocationMLE(const std::vector<double> &sample)
+void LogisticRand::FitLocationMLE(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();
-    if (nHalf <= 0)
-        return false;
     double root = 0;
     if (!RandMath::findRoot([this, sample, nHalf](double m)
     {
         double f1 = 0, f2 = 0;
-        for (double x : sample)
+        for (const double & x : sample)
         {
             double aux = std::exp((m - x) / s);
             double denom = 1.0 + aux;
@@ -155,8 +152,6 @@ bool LogisticRand::FitLocationMLE(const std::vector<double> &sample)
         f1 -= nHalf;
         return DoublePair(f1, f2);
     }, root))
-        return false;
-
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetLocation(root);
-    return true;
 }

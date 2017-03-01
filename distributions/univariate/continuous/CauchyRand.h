@@ -47,9 +47,6 @@ private:
 
 public:
     double Entropy() const;
-
-    /// Method of moments
-    bool FitMM(const std::vector<double> &) { return false; } // NOT_APPLICABLE
 };
 
 #endif // CAUCHYRAND_H

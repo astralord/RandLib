@@ -148,27 +148,18 @@ double LaplaceRand::Entropy() const
     return log1p(y);
 }
 
-bool LaplaceRand::FitLocationMLE(const std::vector<double> &sample)
+void LaplaceRand::FitLocationMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-
     /// Calculate median (considering asymmetry)
     /// we use root-finding algorithm for median search
-    double median = 0.0;
-    double minVar = sample[0], maxVar = minVar;
-    for (double var : sample) {
-        minVar = std::min(var, minVar);
-        maxVar = std::max(var, maxVar);
-        median += var;
-    }
-    median /= n; /// sample mean
+    double minVar = *std::min_element(sample.begin(), sample.end());
+    double maxVar = *std::max_element(sample.begin(), sample.end());
+    double median = sampleMean(sample);
 
     if (!RandMath::findRoot([this, sample] (double med)
     {
         double y = 0.0;
-        for (double x : sample) {
+        for (const double & x : sample) {
             if (x > med)
                 y -= kSq;
             else if (x < med)
@@ -178,36 +169,29 @@ bool LaplaceRand::FitLocationMLE(const std::vector<double> &sample)
     },
     minVar, maxVar, median
     ))
-        return false;
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetShift(median);
-    return true;
 }
 
-bool LaplaceRand::FitScaleMLE(const std::vector<double> &sample)
+void LaplaceRand::FitScaleMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
-    if (n <= 0)
-        return false;
-
     double deviation = 0.0;
-    for (double x : sample) {
+    for (const double & x : sample) {
         if (x > m)
             deviation += kSq * (x - m);
         else
             deviation -= (x - m);
     }
-    deviation /= (k * n);
+    deviation /= (k * sample.size());
 
     SetScale(deviation);
-    return true;
 }
 
-bool LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
+void LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
 {
-    int n = sample.size();
     double xPlus = 0.0, xMinus = 0.0;
-    for (double x : sample) {
+    for (const double & x : sample) {
         if (x < m)
             xMinus -= (x - m);
         else
@@ -216,10 +200,10 @@ bool LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
 
     if (xPlus == xMinus) {
         SetAsymmetry(1.0);
-        return true;
+        return;
     }
 
-    double sigmaN = sigma * n;
+    double sigmaN = sigma * sample.size();
     double root = 1.0;
     double minBound, maxBound;
     if (xPlus < -xMinus) {
@@ -240,27 +224,28 @@ bool LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
         y += xMinus / tSq - xPlus;
         return y;
     }, minBound, maxBound, root))
-        return false;
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetAsymmetry(root);
-    return true;
 }
 
-bool LaplaceRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
+void LaplaceRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
 {
-    return FitLocationMLE(sample) ? FitScaleMLE(sample) : false;
+    FitLocationMLE(sample);
+    FitScaleMLE(sample);
 }
 
-bool LaplaceRand::FitLocationAndAsymmetryMLE(const std::vector<double> &sample)
+void LaplaceRand::FitLocationAndAsymmetryMLE(const std::vector<double> &sample)
 {
-    return FitLocationMLE(sample) ? FitAsymmetryMLE(sample) : false;
+    FitLocationMLE(sample);
+    FitAsymmetryMLE(sample);
 }
 
-bool LaplaceRand::FitScaleAndAsymmetryMLE(const std::vector<double> &sample)
+void LaplaceRand::FitScaleAndAsymmetryMLE(const std::vector<double> &sample)
 {
     int n = sample.size();
     double xPlus = 0.0, xMinus = 0.0;
-    for (double x : sample) {
+    for (const double & x : sample) {
         if (x < m)
             xMinus -= (x - m);
         else
@@ -272,11 +257,11 @@ bool LaplaceRand::FitScaleAndAsymmetryMLE(const std::vector<double> &sample)
     // TODO: find workaround for those two cases (generalisation?)
     if (xMinus == 0) {
         /// X ~ Exp(1 / xPlus)
-        return false;
+        throw std::invalid_argument(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
     if (xPlus == 0) {
         /// -X ~ Exp(1 / xMinus)
-        return false;
+        throw std::invalid_argument(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
 
     double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);
@@ -285,13 +270,12 @@ bool LaplaceRand::FitScaleAndAsymmetryMLE(const std::vector<double> &sample)
 
     SetScale(scale);
     SetAsymmetry(std::pow(xMinus / xPlus, 0.25));
-
-    return true;
 }
 
-bool LaplaceRand::FitMLE(const std::vector<double> &sample)
+void LaplaceRand::FitMLE(const std::vector<double> &sample)
 {
-    return FitLocationMLE(sample) ? FitScaleAndAsymmetryMLE(sample) : false;
+    FitLocationMLE(sample);
+    FitScaleAndAsymmetryMLE(sample);
 }
 
 double LaplaceRand::GetAsymmetryFromSkewness(double skewness)
@@ -313,14 +297,13 @@ double LaplaceRand::GetAsymmetryFromSkewness(double skewness)
     return root;
 }
 
-bool LaplaceRand::FitLocationMM(const std::vector<double> &sample)
+void LaplaceRand::FitLocationMM(const std::vector<double> &sample)
 {
-    double y = sampleMean(sample);
-    SetShift(y - sigma * (1.0 / k - k));
-    return true;
+    double mean = sampleMean(sample);
+    SetShift(mean - sigma * (1.0 / k - k));
 }
 
-bool LaplaceRand::FitScaleMM(const std::vector<double> &sample)
+void LaplaceRand::FitScaleMM(const std::vector<double> &sample)
 {
     if (k == 1) {
         /// can't derive scale from mean
@@ -331,10 +314,9 @@ bool LaplaceRand::FitScaleMM(const std::vector<double> &sample)
         double y = sampleMean(sample);
         SetScale((y - m) * k / (1.0 - kSq));
     }
-    return true;
 }
 
-bool LaplaceRand::FitAsymmetryMM(const std::vector<double> &sample)
+void LaplaceRand::FitAsymmetryMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double aux = (m - mean) / sigma;
@@ -342,33 +324,30 @@ bool LaplaceRand::FitAsymmetryMM(const std::vector<double> &sample)
     asymmetry = std::sqrt(asymmetry);
     asymmetry += aux;
     SetAsymmetry(0.5 * asymmetry);
-    return true;
 }
 
-bool LaplaceRand::FitLocationAndScaleMM(const std::vector<double> &sample)
+void LaplaceRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
     double scale = (var * kSq) / (1 + kSq * kSq);
     SetScale(std::sqrt(scale));
     SetShift(mean - sigma * (1.0 / k - k));
-    return true;
 }
 
-bool LaplaceRand::FitLocationAndAsymmetryMM(const std::vector<double> &sample)
+void LaplaceRand::FitLocationAndAsymmetryMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double skewness = sampleSkewness(sample, mean);
     /// Getting asymmetry from skewness (because from variance result is ambiguous)
     double root = GetAsymmetryFromSkewness(skewness);
     if (!std::isfinite(root))
-        return false;
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetAsymmetry(root);
     SetShift(mean - sigma * (1.0 / k - k));
-    return true;
 }
 
-bool LaplaceRand::FitScaleAndAsymmetryMM(const std::vector<double> &sample)
+void LaplaceRand::FitScaleAndAsymmetryMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
@@ -378,18 +357,18 @@ bool LaplaceRand::FitScaleAndAsymmetryMM(const std::vector<double> &sample)
     double asymmetrySq = (a - std::sqrt(a + am1)) / am1;
     SetAsymmetry(std::sqrt(asymmetrySq));
     SetScale(z * k / (1.0 - kSq));
-    return true;
 }
 
-bool LaplaceRand::FitMM(const std::vector<double> &sample)
+void LaplaceRand::FitMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
     double skewness = sampleSkewness(sample, mean, std::sqrt(var));
     double root = GetAsymmetryFromSkewness(skewness);
+    if (!std::isfinite(root))
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetAsymmetry(root);
     double scale = (var * kSq) / (1 + kSq * kSq);
     SetScale(std::sqrt(scale));
     SetShift(mean - sigma * (1.0 / k - k));
-    return true;
 }

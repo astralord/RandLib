@@ -104,7 +104,7 @@ public:
      * @param sample
      * @return
      */
-    bool FitProbabilityMLE(const std::vector<int> &sample);
+    void FitProbabilityMLE(const std::vector<int> &sample);
 
     /**
      * @brief FitProbabilityMM
@@ -112,16 +112,16 @@ public:
      * @param sample
      * @return
      */
-    bool FitProbabilityMM(const std::vector<int> &sample);
+    void FitProbabilityMM(const std::vector<int> &sample);
 
     /**
-     * @brief FitProbability_Bayes
+     * @brief FitProbabilityBayes
      * Fit probability p with prior assumption p ~ Beta(α, β)
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
      */
-    bool FitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
+    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaRand & priorDistribution);
 
     /**
      * @brief FitProbabilityMinimax
@@ -129,7 +129,7 @@ public:
      * @param sample
      * @return
      */
-    bool FitProbabilityMinimax(const std::vector<int> &sample);
+    BetaRand FitProbabilityMinimax(const std::vector<int> &sample);
 };
 
 

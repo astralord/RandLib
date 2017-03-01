@@ -7,21 +7,20 @@
 #include "randlib_global.h"
 
 /**
- * @brief MAX_ITER_REJECTION
- * upper boundary for maximum amount of iterations in rejection methods
- * one hundred should be enough to be sure there is a bug
- * (or rejection method is too slow to be used)
- */
-constexpr double MAX_ITER_REJECTION = 100;
-
-/**
  * @brief The ProbabilityDistribution class
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
-
 protected:
+    /**
+     * @brief MAX_ITER_REJECTION
+     * upper boundary for maximum amount of iterations in rejection methods
+     * one hundred should be enough to be sure there is a bug
+     * (or rejection method is too slow to be used)
+     */
+    static constexpr double MAX_ITER_REJECTION = 100;
+
     std::string toStringWithPrecision(const double a_value, const int n = 6) const;
 
 public:
@@ -86,6 +85,22 @@ public:
      * @param y output vector: y = 1 - P(X < x)
      */
     void SurvivalFunction(const std::vector<T> &x, std::vector<double> &y) const;
+
+protected:
+    enum FIT_ERROR_TYPE {
+        WRONG_SAMPLE,
+        NOT_APPLICABLE,
+        WRONG_RETURN,
+        TOO_FEW_ELEMENTS,
+        WRONG_LEVEL,
+        UNDEFINED_ERROR
+    };
+
+    static constexpr char POSITIVITY_VIOLATION[] = "All elements should be positive";
+    static constexpr char UPPER_LIMIT_VIOLATION[] = "No element shouldn be bigger than ";
+    static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be less than ";
+
+    std::string fitError(FIT_ERROR_TYPE fet, const std::string &explanation);
 };
 
 #endif // PROBABILITY_DISTRIBUTION_H

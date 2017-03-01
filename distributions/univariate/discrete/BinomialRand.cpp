@@ -356,37 +356,36 @@ double BinomialRand::ExcessKurtosis() const
     return y / n;
 }
 
-bool BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
+void BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThen(n, sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     SetParameters(n, sampleMean(sample) / n);
-    return true;
 }
 
-bool BinomialRand::FitProbabilityMM(const std::vector<int> &sample)
+void BinomialRand::FitProbabilityMM(const std::vector<int> &sample)
 {
-    return FitProbabilityMLE(sample);
+    FitProbabilityMLE(sample);
 }
 
-bool BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
+BetaRand BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThen(n, sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();
     double sum = sampleSum(sample);
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
-    priorDistribution.SetParameters(sum + alpha, N * n - sum + beta);
-    SetParameters(n, priorDistribution.Mean());
-    return true;
+    BetaRand posteriorDistribution(sum + alpha, N * n - sum + beta);
+    SetParameters(n, posteriorDistribution.Mean());
+    return posteriorDistribution;
 }
 
-bool BinomialRand::FitProbabilityMinimax(const std::vector<int> &sample)
+BetaRand BinomialRand::FitProbabilityMinimax(const std::vector<int> &sample)
 {
     double shape = 0.5 * std::sqrt(n);
     BetaRand B(shape, shape);

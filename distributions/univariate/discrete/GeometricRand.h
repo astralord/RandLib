@@ -43,9 +43,9 @@ public:
 
     double Entropy() const;
 
-    bool FitMLE(const std::vector<int> &sample);
-    bool FitMM(const std::vector<int> &sample);
-    bool FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution);
+    void FitMLE(const std::vector<int> &sample);
+    void FitMM(const std::vector<int> &sample);
+    BetaRand FitBayes(const std::vector<int> &sample, const BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

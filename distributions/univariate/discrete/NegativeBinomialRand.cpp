@@ -200,45 +200,49 @@ std::complex<double> NegativeBinomialRand<T>::CFImpl(double t) const
 }
 
 template< typename T >
-bool NegativeBinomialRand<T>::FitNumberMM(const std::vector<int> &sample)
+void NegativeBinomialRand<T>::FitNumberMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mean = sampleMean(sample);
     SetParameters(mean * p / q, p);
-    return true;
 }
 
 template< typename T >
-bool NegativeBinomialRand<T>::FitProbabilityMM(const std::vector<int> &sample)
+void NegativeBinomialRand<T>::FitProbabilityMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mean = sampleMean(sample);
     SetParameters(r, r / (r + mean));
-    return true;
 }
 
 template< typename T >
-bool NegativeBinomialRand<T>::FitMM(const std::vector<int> &sample)
+constexpr char NegativeBinomialRand<T>::TOO_SMALL_VARIANCE[];
+
+template< typename T >
+void NegativeBinomialRand<T>::FitMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
     if (variance <= mean)
-        return false; // CAN'T_RETURN_VALID_PARAMETERS
+        throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
     SetParameters(mean * mean / (variance - mean), mean / variance);
-    return true;
 }
 
 template<>
-bool NegativeBinomialRand<double>::FitMLE(const std::vector<int> &sample)
+void NegativeBinomialRand<double>::FitMLE(const std::vector<int> &sample)
 {
+    /// Check positivity of sample
     if (!allElementsAreNonNegative(sample))
-        return false;
-    /// initial guess by method of moments
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    /// Initial guess by method of moments
     double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
-    double guess = (variance > mean) ? mean * mean / (variance - mean) : mean; // TODO: is it possible to return valid parameters when mean > variance?
+    /// Method can't be applied in the case of too small variance
+    if (variance <= mean)
+        throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
+    double guess = mean * mean / (variance - mean);
     size_t n = sample.size();
     if (!RandMath::findRoot([sample, mean, n] (double x)
     {
@@ -251,11 +255,10 @@ bool NegativeBinomialRand<double>::FitMLE(const std::vector<int> &sample)
         second -= n * (RandMath::trigamma(x) - mean / (x * (mean + x)));
         return DoublePair(first, second);
     }, guess))
-        return false; /// error in root-finding algorithm
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding algorithm"));
     if (guess <= 0.0)
-        return false; /// r should be positive
+        throw std::runtime_error(fitError(WRONG_RETURN, "Number should be positive, but returned value is " + toStringWithPrecision(guess)));
     SetParameters(guess, guess / (guess + mean));
-    return true;
 }
 
 template< typename T >

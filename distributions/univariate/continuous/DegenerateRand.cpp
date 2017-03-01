@@ -87,16 +87,15 @@ double DegenerateRand::Entropy() const
     return 0.0;
 }
 
-bool DegenerateRand::FitMLE(const std::vector<double> &sample)
+void DegenerateRand::FitMLE(const std::vector<double> &sample)
 {
     auto sampleBegin = sample.begin();
     if (!std::equal(sampleBegin, sample.end(), sampleBegin))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, "All elements should be equal to each other"));
     SetValue(*sampleBegin);
-    return true;
 }
 
-bool DegenerateRand::FitMM(const std::vector<double> &sample)
+void DegenerateRand::FitMM(const std::vector<double> &sample)
 {
-    return FitMLE(sample);
+    FitMLE(sample);
 }

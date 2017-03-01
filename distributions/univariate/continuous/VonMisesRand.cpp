@@ -22,10 +22,11 @@ void VonMisesRand::SetConcentration(double concentration)
     k = (concentration > 0.0) ? concentration : 1.0;
     logI0k = RandMath::logModifiedBesselFirstKind(k, 0);
     s = (k > 1.3) ? 1.0 / std::sqrt(k) : M_PI * std::exp(-k);
-    /// set coefficients for cdf
-    static constexpr double a[] = {28.0, 0.5, 100.0, 5.0};
-    if (k < CK)
+    if (k < CK) {
+        /// set coefficients for cdf
+        static constexpr double a[] = {28.0, 0.5, 100.0, 5.0};
         p = std::ceil(a[0] + a[1] * k - a[2] / (k + a[3]));
+    }
 }
 
 double VonMisesRand::cdfSeries(double x) const

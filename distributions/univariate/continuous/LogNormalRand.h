@@ -47,23 +47,23 @@ private:
     double quantileImpl1m(double p) const override;
 
     double logAverage(const std::vector<double> &sample);
-    double logSecondMoment(const std::vector<double> &sample);
+    double logVariance(const std::vector<double> &sample, double mu);
 
 public:
     /// Method of moments
-    bool FitLocationMM(const std::vector<double> &sample);
-    bool FitScaleMM(const std::vector<double> &sample);
-    bool FitMM(const std::vector<double> &sample);
+    void FitLocationMM(const std::vector<double> &sample);
+    void FitScaleMM(const std::vector<double> &sample);
+    void FitMM(const std::vector<double> &sample);
 
     /// Maximum-likelihod estimation
-    bool FitLocationMLE(const std::vector<double> &sample);
-    bool FitScaleMLE(const std::vector<double> &sample);
-    bool FitMLE(const std::vector<double> &sample);
+    void FitLocationMLE(const std::vector<double> &sample);
+    void FitScaleMLE(const std::vector<double> &sample);
+    void FitMLE(const std::vector<double> &sample);
 
     /// Bayesian estimation
-    bool FitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution);
-    bool FitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution);
-    bool FitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution);
+    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
+    InverseGammaRand FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
+    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // LOGNORMALRAND_H

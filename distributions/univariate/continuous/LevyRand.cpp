@@ -70,15 +70,14 @@ double LevyRand::quantileImpl1m(double p) const
     return mu + 0.5 * sigma / (y * y);
 }
 
-bool LevyRand::FitScaleMLE(const std::vector<double> &sample)
+void LevyRand::FitScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNotLessThen(mu, sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(mu)));
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);
     invSum = 1.0 / invSum;
     SetScale(sample.size() * invSum);
-    return true;
 }

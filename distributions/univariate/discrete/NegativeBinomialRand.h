@@ -80,14 +80,16 @@ public:
 private:
     std::complex<double> CFImpl(double t) const override;
 
+    /// Parameters estimation
+    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
 public:
     /// Method of moments
-    bool FitNumberMM(const std::vector<int> &sample);
-    bool FitProbabilityMM(const std::vector<int> & sample);
-    bool FitMM(const std::vector<int> & sample);
+    void FitNumberMM(const std::vector<int> &sample);
+    void FitProbabilityMM(const std::vector<int> & sample);
+    void FitMM(const std::vector<int> & sample);
 
     /// Maximum likelihood
-    bool FitMLE(const std::vector<int> &sample);
+    void FitMLE(const std::vector<int> &sample);
 };
 
 

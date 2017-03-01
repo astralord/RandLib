@@ -90,27 +90,26 @@ double GeometricRand::Entropy() const
     return (a + b) / (M_LN2 * p);
 }
 
-bool GeometricRand::FitMLE(const std::vector<int> &sample)
+void GeometricRand::FitMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetProbability(1.0 / (sampleMean(sample) + 1));
-    return true;
 }
 
-bool GeometricRand::FitMM(const std::vector<int> &sample)
+void GeometricRand::FitMM(const std::vector<int> &sample)
 {
-    return FitMLE(sample);
+    FitMLE(sample);
 }
 
-bool GeometricRand::FitBayes(const std::vector<int> &sample, BetaRand &priorDistribution)
+BetaRand GeometricRand::FitBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
-    priorDistribution.SetParameters(alpha + n, beta + sampleSum(sample));
-    SetProbability(priorDistribution.Mean());
-    return true;
+    BetaRand posteriorDistribution(alpha + n, beta + sampleSum(sample));
+    SetProbability(posteriorDistribution.Mean());
+    return posteriorDistribution;
 }

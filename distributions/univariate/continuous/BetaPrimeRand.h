@@ -57,7 +57,7 @@ public:
      * @brief GetInvBetaFunction
      * @return 1 / Beta(α, β)
      */
-    inline double GetInverseBetaFunction() const { return B.GetInverseBetaFunction(); }
+    inline double GetBetaFunction() const { return B.GetBetaFunction(); }
 
     /**
      * @brief GetLogBetaFunction

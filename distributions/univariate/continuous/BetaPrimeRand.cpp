@@ -23,7 +23,7 @@ double BetaPrimeRand::f(double x) const
         return 0.0;
     if (x == 0.0) {
         if (alpha == 1.0)
-            return GetInverseBetaFunction();
+            return 1.0 / GetBetaFunction();
         return (alpha > 1) ? 0.0 : INFINITY;
     }
     return std::exp(logf(x));
@@ -142,7 +142,7 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
     }, 0.0, 1.0);
 
     re += 1.0 / alpha;
-    re *= GetInverseBetaFunction();
+    re /= GetBetaFunction();
 
     re += ExpectedValue([this, t] (double x)
     {

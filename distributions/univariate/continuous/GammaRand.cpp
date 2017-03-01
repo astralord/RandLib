@@ -472,20 +472,19 @@ std::complex<double> GammaRand::CFImpl(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
-bool GammaRand::FitScaleMLE(const std::vector<double> &sample)
+void GammaRand::FitScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetParameters(alpha, alpha / sampleMean(sample));
-    return true;
 }
 
-bool GammaRand::FitMLE(const std::vector<double> &sample)
+void GammaRand::FitMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate average and log-average
     double average = sampleMean(sample);
@@ -509,49 +508,47 @@ bool GammaRand::FitMLE(const std::vector<double> &sample)
         double second = RandMath::trigamma(x) - 1.0 / x;
         return DoublePair(first, second);
     }, shape))
-        return false;
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+
     SetParameters(shape, shape / average);
-    return true;
 }
 
-bool GammaRand::FitShapeMM(const std::vector<double> &sample)
+void GammaRand::FitShapeMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetParameters(sampleMean(sample) * beta, beta);
-    return true;
 }
 
-bool GammaRand::FitScaleMM(const std::vector<double> &sample)
+void GammaRand::FitScaleMM(const std::vector<double> &sample)
 {
-    return FitScaleMLE(sample);
+    FitScaleMLE(sample);
 }
 
-bool GammaRand::FitMM(const std::vector<double> &sample)
+void GammaRand::FitMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mu1 = sampleMean(sample);
     double var = sampleVariance(sample, mu1);
     double shape = mu1 * mu1 / var;
     SetParameters(shape, shape / mu1);
-    return true;
 }
 
-bool GammaRand::FitRateBayes(const std::vector<double> &sample, GammaRand &priorDistribution)
+GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const GammaRand & priorDistribution)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();
     double newAlpha = alpha * sample.size() + alpha0;
     double newBeta = sampleSum(sample) + beta0;
-    priorDistribution.SetParameters(newAlpha, newBeta);
-    SetParameters(alpha, priorDistribution.Mean());
-    return true;
+    GammaRand posteriorDistribution(newAlpha, newBeta);
+    SetParameters(alpha, posteriorDistribution.Mean());
+    return posteriorDistribution;
 }
 
 

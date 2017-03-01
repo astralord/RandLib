@@ -52,15 +52,15 @@ public:
 
     /// Maximum likelihood estimation
     /// One parameter
-    bool FitLocationMLE(const std::vector<double> &sample);
-    bool FitScaleMLE(const std::vector<double> &sample);
-    bool FitAsymmetryMLE(const std::vector<double> &sample);
+    void FitLocationMLE(const std::vector<double> &sample);
+    void FitScaleMLE(const std::vector<double> &sample);
+    void FitAsymmetryMLE(const std::vector<double> &sample);
     /// Two parameters
-    bool FitLocationAndScaleMLE(const std::vector<double> &sample);
-    bool FitLocationAndAsymmetryMLE(const std::vector<double> &sample);
-    bool FitScaleAndAsymmetryMLE(const std::vector<double> &sample);
+    void FitLocationAndScaleMLE(const std::vector<double> &sample);
+    void FitLocationAndAsymmetryMLE(const std::vector<double> &sample);
+    void FitScaleAndAsymmetryMLE(const std::vector<double> &sample);
     /// All parameters
-    bool FitMLE(const std::vector<double> &sample);
+    void FitMLE(const std::vector<double> &sample);
 
 private:
     /**
@@ -72,15 +72,15 @@ private:
 public:
     /// Method of moments
     /// One parameter
-    bool FitLocationMM(const std::vector<double> &sample);
-    bool FitScaleMM(const std::vector<double> &sample);
-    bool FitAsymmetryMM(const std::vector<double> &sample);
+    void FitLocationMM(const std::vector<double> &sample);
+    void FitScaleMM(const std::vector<double> &sample);
+    void FitAsymmetryMM(const std::vector<double> &sample);
     /// Two parameters
-    bool FitLocationAndScaleMM(const std::vector<double> &sample);
-    bool FitLocationAndAsymmetryMM(const std::vector<double> &sample);
-    bool FitScaleAndAsymmetryMM(const std::vector<double> &sample);
+    void FitLocationAndScaleMM(const std::vector<double> &sample);
+    void FitLocationAndAsymmetryMM(const std::vector<double> &sample);
+    void FitScaleAndAsymmetryMM(const std::vector<double> &sample);
     /// All parameters
-    bool FitMM(const std::vector<double> &sample);
+    void FitMM(const std::vector<double> &sample);
 };
 
 #endif // LAPLACERAND_H

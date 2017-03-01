@@ -134,67 +134,66 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma0, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-bool NormalRand::FitMeanMLE(const std::vector<double> &sample)
+void NormalRand::FitMeanMLE(const std::vector<double> &sample)
 {
     SetLocation(sampleMean(sample));
-    return true;
 }
 
-bool NormalRand::FitVarianceMLE(const std::vector<double> &sample)
+void NormalRand::FitVarianceMLE(const std::vector<double> &sample)
 {
     SetVariance(sampleVariance(sample, mu));
-    return true;
 }
 
-bool NormalRand::FitMLE(const std::vector<double> &sample)
+void NormalRand::FitMLE(const std::vector<double> &sample)
 {
-    return FitMeanMLE(sample) ? FitVarianceMLE(sample) : false;
+    FitMeanMLE(sample);
+    FitVarianceMLE(sample);
 }
 
-bool NormalRand::FitMeanMM(const std::vector<double> &sample)
+void NormalRand::FitMeanMM(const std::vector<double> &sample)
 {
-    return FitMeanMLE(sample);
+    FitMeanMLE(sample);
 }
 
-bool NormalRand::FitVarianceMM(const std::vector<double> &sample)
+void NormalRand::FitVarianceMM(const std::vector<double> &sample)
 {
-    return FitVarianceMLE(sample);
+    FitVarianceMLE(sample);
 }
 
-bool NormalRand::FitMM(const std::vector<double> &sample)
+void NormalRand::FitMM(const std::vector<double> &sample)
 {
-    return FitMLE(sample);
+    FitMLE(sample);
 }
 
-bool NormalRand::FitMeanUMVU(const std::vector<double> &sample)
+void NormalRand::FitMeanUMVU(const std::vector<double> &sample)
 {
-    return FitMeanMLE(sample);
+    FitMeanMLE(sample);
 }
 
-bool NormalRand::FitVarianceUMVU(const std::vector<double> &sample)
+void NormalRand::FitVarianceUMVU(const std::vector<double> &sample)
 {
-    return FitVarianceMLE(sample);
+    FitVarianceMLE(sample);
 }
 
-bool NormalRand::FitUMVU(const std::vector<double> &sample)
+void NormalRand::FitUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 1)
-        return false;
-    if (!FitMeanMLE(sample))
-        return false;
+        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
+    FitMeanMLE(sample);
     double s = sampleVariance(sample, mu);
     SetVariance(n * s / (n - 1));
-    return true;
 }
 
-bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
+void NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
 {
     size_t n = sample.size();
-    if (n < 2 || alpha <= 0 || alpha > 1)
-        return false;
-    if (!FitUMVU(sample))
-        return false;
+
+    if (alpha <= 0 || alpha > 1)
+        throw std::invalid_argument(fitError(WRONG_LEVEL, "Alpha is equal to " + toStringWithPrecision(alpha)));
+
+    FitUMVU(sample);
+
     double halfAlpha = 0.5 * alpha;
 
     /// calculate confidence interval for mean
@@ -209,44 +208,35 @@ bool NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confiden
     double sigma0Sq = sigma0 * sigma0;
     confidenceIntervalForVariance.first = sigma0Sq / gamma.Quantile1m(halfAlpha);
     confidenceIntervalForVariance.second = sigma0Sq / gamma.Quantile(halfAlpha);
-    return true;
 }
 
-bool NormalRand::FitMeanBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
+NormalRand NormalRand::FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
 {
-    size_t n = sample.size();
-    if (n == 0)
-        return false;
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
     double tau = GetPrecision();
     double numerator = sampleSum(sample) * tau + tau0 * mu0;
-    double denominator = n * tau + tau0;
-    priorDistribution.SetLocation(numerator / denominator);
-    priorDistribution.SetVariance(1.0 / denominator);
-    SetLocation(priorDistribution.Mean());
-    return true;
+    double denominator = sample.size() * tau + tau0;
+    NormalRand posteriorDistribution(numerator / denominator, 1.0 / denominator);
+    SetLocation(posteriorDistribution.Mean());
+    return posteriorDistribution;
 }
 
-bool NormalRand::FitVarianceBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
+InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution)
 {
     double halfN = 0.5 * sample.size();
-    if (halfN == 0)
-        return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     double newAlpha = alpha + halfN;
     double newBeta = beta + halfN * sampleVariance(sample, mu);
-    priorDistribution.SetParameters(newAlpha, newBeta);
-    SetVariance(priorDistribution.Mean());
-    return true;
+    InverseGammaRand posteriorDistribution(newAlpha, newBeta);
+    SetVariance(posteriorDistribution.Mean());
+    return posteriorDistribution;
 }
 
-bool NormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
-    if (n == 0)
-        return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     double mu0 = priorDistribution.GetLocation();
@@ -259,9 +249,9 @@ bool NormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGammaR
     double variance = sampleVariance(sample, average);
     double aux = mu0 - average;
     double newBeta = beta + halfN * (variance + lambda / newLambda * aux * aux);
-    priorDistribution.SetParameters(newMu0, newLambda, newAlpha, newBeta);
-    DoublePair mean = priorDistribution.Mean();
+    NormalInverseGammaRand posteriorDistribution(newMu0, newLambda, newAlpha, newBeta);
+    DoublePair mean = posteriorDistribution.Mean();
     SetLocation(mean.first);
     SetVariance(mean.second);
-    return true;
+    return posteriorDistribution;
 }

@@ -168,23 +168,18 @@ double ParetoRand::Entropy() const
     return logXm - logAlpha + 1.0 / alpha + 1;
 }
 
-bool ParetoRand::FitMLE(const std::vector<double> &sample)
+void ParetoRand::FitMLE(const std::vector<double> &sample)
 {
-    double n = sample.size();
-    if (n <= 0)
-        return false;
-
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate alpha
     double logAverage = 0.0;
     for (double var : sample)
         logAverage += std::log(var / minVar);
-    logAverage = n / logAverage;
+    logAverage = sample.size() / logAverage;
 
     SetShape(logAverage);
     SetScale(minVar);
-    return true;
 }

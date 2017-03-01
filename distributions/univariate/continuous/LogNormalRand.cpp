@@ -110,8 +110,6 @@ double LogNormalRand::ExcessKurtosis() const
 double LogNormalRand::logAverage(const std::vector<double> &sample)
 {
     size_t n = sample.size();
-    if (n == 0)
-         return 0.0;
     long double logSum = 0.0L;
     for (double var : sample) {
         logSum += std::log(var);
@@ -119,80 +117,72 @@ double LogNormalRand::logAverage(const std::vector<double> &sample)
     return logSum / n;
 }
 
-double LogNormalRand::logSecondMoment(const std::vector<double> &sample)
+double LogNormalRand::logVariance(const std::vector<double> &sample, double mu)
 {
     size_t n = sample.size();
-    if (n == 0)
-         return 0.0;
     long double logSum = 0.0L;
     for (double var : sample) {
-        double logVar = std::log(var);
+        double logVar = std::log(var) - mu;
         logSum += logVar * logVar;
     }
     return logSum / n;
 }
 
-bool LogNormalRand::FitLocationMM(const std::vector<double> &sample)
+void LogNormalRand::FitLocationMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
     double var = X.Variance();
     SetLocation(std::log(average) - 0.5 * var);
-    return true;
 }
 
-bool LogNormalRand::FitScaleMM(const std::vector<double> &sample)
+void LogNormalRand::FitScaleMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
     double mu = X.GetLocation();
     double aux = std::log(average) - mu;
     SetScale(std::sqrt(aux + aux));
-    return true;
 }
 
-bool LogNormalRand::FitMM(const std::vector<double> &sample)
+void LogNormalRand::FitMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
     double secondMoment = rawMoment(sample, 2);
     double averageSq = average * average;
     SetLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
     SetScale(std::sqrt(std::log(secondMoment / averageSq)));
-    return true;
 }
 
-bool LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
+void LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetLocation(logAverage(sample));
-    return true;
 }
 
-bool LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
+void LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mu = X.GetLocation();
-    double logVariance = logSecondMoment(sample) - mu * mu;
-    SetScale(std::sqrt(logVariance));
-    return true;
+    SetScale(std::sqrt(logVariance(sample, mu)));
 }
 
-bool LogNormalRand::FitMLE(const std::vector<double> &sample)
+void LogNormalRand::FitMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
-        return false;
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     long double logMean = 0.0L;
     long double logVariance = 0.0L;
@@ -207,45 +197,46 @@ bool LogNormalRand::FitMLE(const std::vector<double> &sample)
 
     SetLocation(logMean);
     SetScale(std::sqrt(logVariance));
-    return true;
 }
 
-bool LogNormalRand::FitLocationBayes(const std::vector<double> &sample, NormalRand &priorDistribution)
+NormalRand LogNormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
 {
+    /// Sanity check
+    if (!allElementsAreNonNegative(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
-    if (n == 0)
-        return false;
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
     double tau = X.GetPrecision();
     double numerator = n * logAverage(sample) * tau + tau0 * mu0;
     double denominator = n * tau + tau0;
-    priorDistribution.SetLocation(numerator / denominator);
-    priorDistribution.SetVariance(1.0 / denominator);
-    SetLocation(priorDistribution.Mean());
-    return true;
+    NormalRand posteriorDistribution(numerator / denominator, 1.0 / denominator);
+    SetLocation(posteriorDistribution.Mean());
+    return posteriorDistribution;
 }
 
-bool LogNormalRand::FitScaleBayes(const std::vector<double> &sample, InverseGammaRand &priorDistribution)
+InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution)
 {
+    /// Sanity check
+    if (!allElementsAreNonNegative(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
-    if (n == 0)
-        return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     double newAlpha = alpha + 0.5 * n;
     double mu = X.GetLocation();
-    double newBeta = beta + 0.5 * n * (logSecondMoment(sample) - mu * mu);
-    priorDistribution.SetParameters(newAlpha, 1.0 / newBeta);
-    SetScale(std::sqrt(priorDistribution.Mean()));
-    return true;
+    double newBeta = beta + 0.5 * n * logVariance(sample, mu);
+    InverseGammaRand posteriorDistribution(newAlpha, newBeta);
+    SetScale(std::sqrt(posteriorDistribution.Mean()));
+    return posteriorDistribution;
 }
 
-bool LogNormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand LogNormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
+    /// Sanity check
+    if (!allElementsAreNonNegative(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
-    if (n == 0)
-        return false;
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     double mu0 = priorDistribution.GetLocation();
@@ -254,12 +245,12 @@ bool LogNormalRand::FitBayes(const std::vector<double> &sample, NormalInverseGam
     double newLambda = lambda + n;
     double newMu0 = (lambda * mu0 + sum) / newLambda;
     double newAlpha = alpha + 0.5 * n;
-    double variance = logSecondMoment(sample) - average * average;
+    double variance = logVariance(sample, average);
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
-    priorDistribution.SetParameters(newMu0, newLambda, newAlpha, newBeta);
-    DoublePair mean = priorDistribution.Mean();
+    NormalInverseGammaRand posteriorDistribution(newMu0, newLambda, newAlpha, newBeta);
+    DoublePair mean = posteriorDistribution.Mean();
     SetLocation(mean.first);
     SetScale(std::sqrt(mean.second));
-    return true;
+    return posteriorDistribution;
 }

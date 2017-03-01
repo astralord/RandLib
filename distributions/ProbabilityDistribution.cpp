@@ -48,6 +48,40 @@ void ProbabilityDistribution<T>::SurvivalFunction(const std::vector<T> &x, std::
         y[i] = this->S(x[i]);
 }
 
+template < typename T >
+constexpr char ProbabilityDistribution<T>::POSITIVITY_VIOLATION[];
+template < typename T >
+constexpr char ProbabilityDistribution<T>::UPPER_LIMIT_VIOLATION[];
+template < typename T >
+constexpr char ProbabilityDistribution<T>::LOWER_LIMIT_VIOLATION[];
+
+template < typename T >
+std::string ProbabilityDistribution<T>::fitError(ProbabilityDistribution::FIT_ERROR_TYPE fet, const std::string &explanation)
+{
+    std::string error = this->Name() + ": ";
+    switch (fet) {
+    case WRONG_SAMPLE:
+        error += "Sample can't be returned by this distribution. ";
+        break;
+    case NOT_APPLICABLE:
+        error += "Method can't be applied here. ";
+        break;
+    case WRONG_RETURN:
+        error += "Method returns invalid parameters. ";
+        break;
+    case TOO_FEW_ELEMENTS:
+        error += "Sample is too small. ";
+        break;
+    case WRONG_LEVEL:
+        error += "Level alpha should be positive and less than one. ";
+        break;
+    case UNDEFINED_ERROR:
+    default:
+        error += "Unknown type of error. ";
+    }
+    return error + explanation;
+}
+
 /// Univariate
 template class ProbabilityDistribution<double>;
 template class ProbabilityDistribution<int>;
