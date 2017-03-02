@@ -40,6 +40,12 @@ double UniformRand::Variate() const
     return a + StandardVariate() * bma;
 }
 
+void UniformRand::Sample(std::vector<double> &outputData) const
+{
+    for (double & var : outputData)
+        var = this->Variate();
+}
+
 double UniformRand::Variate(double minValue, double maxValue)
 {
     return minValue + StandardVariate() * (maxValue - minValue);

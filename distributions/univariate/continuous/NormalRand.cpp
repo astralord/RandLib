@@ -109,6 +109,12 @@ double NormalRand::StandardVariate()
     return NAN; /// fail due to some error
 }
 
+void NormalRand::Sample(std::vector<double> &outputData) const
+{
+    for (double & var : outputData)
+        var = this->Variate();
+}
+
 std::complex<double> NormalRand::CFImpl(double t) const
 {
     double sigma0T = sigma0 * t;

@@ -41,6 +41,7 @@ public:
     double F(const double & x) const override;
     double S(const double & x) const override;
     double Variate() const override;
+    void Sample(std::vector<double> &outputData) const override;
     static double StandardVariate();
 
     double Median() const override;

@@ -42,6 +42,7 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
     static double StandardVariate();
+    void Sample(std::vector<double> &outputData) const override;
 
 private:
     double quantileImpl(double p) const override;

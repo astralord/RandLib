@@ -36,6 +36,7 @@ public:
     int Variate() const override;
     static int Variate(double p);
     static int StandardVariate();
+    void Sample(std::vector<int> &outputData) const override;
 
     inline double Entropy();
 };

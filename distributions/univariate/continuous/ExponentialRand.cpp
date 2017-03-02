@@ -65,6 +65,12 @@ double ExponentialRand::Variate() const
     return theta * StandardVariate();
 }
 
+void ExponentialRand::Sample(std::vector<double> &outputData) const
+{
+    for (double & var : outputData)
+        var = this->Variate();
+}
+
 double ExponentialRand::StandardVariate()
 {
     /// Ziggurat algorithm

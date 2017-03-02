@@ -67,6 +67,18 @@ int BernoulliRand::StandardVariate()
     return X & 1;
 }
 
+void BernoulliRand::Sample(std::vector<int> &outputData) const
+{
+    if (p == 0.5) {
+        for (int & var : outputData)
+            var = StandardVariate();
+    }
+    else {
+        for (int & var : outputData)
+            var = this->Variate();
+    }
+}
+
 double BernoulliRand::Entropy()
 {
     return -(p * logProb + q * log1mProb);
