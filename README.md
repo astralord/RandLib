@@ -40,16 +40,16 @@ cout << "\n";
 
 /// Bayesian estimation
 NormalInverseGammaRand prior(0, 1, 1, 1);
-NormalInverseGammaRand posterior = X.FitBayes(data, prior);
+NormalInverseGammaRand posterior = X.FitMeanAndVarianceBayes(data, prior);
 cout << "Bayesian estimator: " << X.Name() << "\n";
 cout << "(Posterior distribution: " << posterior.Name() << ")\n";
 
 /// Uniformly minimum variance unbiased estimator
-X.FitUMVU(data);
+X.FitMeanAndVarianceUMVU(data);
 cout << "UMVU estimator: " << X.Name() << "\n";
 
 /// Maximum-likelihood estimator
-X.FitMLE(data);
+X.FitMeanAndVarianceMLE(data);
 cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
