@@ -504,8 +504,8 @@ void GammaRand::FitMLE(const std::vector<double> &sample)
 
     if (!RandMath::findRoot([s] (double x)
     {
-        double first = std::log(x) - RandMath::digamma(x) - s;
-        double second = RandMath::trigamma(x) - 1.0 / x;
+        double first = RandMath::digammamLog(x) + s;
+        double second = 1.0 / x - RandMath::trigamma(x);
         return DoublePair(first, second);
     }, shape))
         throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
@@ -578,14 +578,4 @@ ErlangRand::ErlangRand(int shape, double rate)
 std::string ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
-}
-
-int ErlangRand::GetShape() const
-{
-    return static_cast<int>(GammaRand::GetShape());
-}
-
-double ErlangRand::GetRate() const
-{
-    return 1.0 / GammaRand::GetScale();
 }
