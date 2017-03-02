@@ -11,6 +11,7 @@ class RANDLIBSHARED_EXPORT LimitingDistribution : public ContinuousDistribution
 protected:
     double alpha, beta, mu, sigma;
     double alphaInv;
+    double logSigma; /// log(σ)
     double logsigmaPi_2; /// log(σπ/2)
 
 public:
@@ -25,7 +26,7 @@ public:
     inline double GetSkewness() const { return beta; }
     inline double GetScale() const { return sigma; }
     inline double GetLocation() const { return mu; }
-    inline double GetInvExponent() const { return alphaInv; }
+    inline double GetLogScale() const { return logSigma; }
 
     double Mean() const override;
 

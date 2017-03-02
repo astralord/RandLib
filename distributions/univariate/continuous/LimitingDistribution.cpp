@@ -24,8 +24,9 @@ void LimitingDistribution::SetLocation(double location)
 void LimitingDistribution::SetScale(double scale)
 {
     sigma = scale > 0 ? scale : 1.0;
-    if (alpha == 1)
-        logsigmaPi_2 = std::log(M_PI_2 * sigma);
+    logSigma = std::log(sigma);
+    if (alpha == 1.0 && beta != 0.0)
+        logsigmaPi_2 = logSigma + M_LNPI - M_LN2;
 }
 
 double LimitingDistribution::Mean() const

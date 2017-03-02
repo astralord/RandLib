@@ -34,6 +34,7 @@ public:
     void SetScale(double scale);
     void SetVariance(double var);
     inline double GetScale() const { return sigma0; }
+    inline double GetLogScale() const { return logSigma - 0.5 * M_LN2; }
     inline double GetPrecision() const { return 1.0 / (sigma0 * sigma0); }
 
     double f(const double & x) const override;

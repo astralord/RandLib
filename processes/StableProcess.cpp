@@ -3,7 +3,7 @@
 StableProcess::StableProcess(double exponent, double skewness, double drift, double volatility, double deltaT) :
     StochasticProcess(deltaT),
     X(exponent, skewness, 1.0, 0.0),
-    dtCoef(std::pow(dt, X.GetInvExponent())),
+    dtCoef(std::pow(dt, 1.0 / X.GetExponent())),
     mu(drift),
     sigma(volatility)
 {
@@ -31,7 +31,7 @@ double StableProcess::Quantile(double t, double p) const
         return NAN;
     double q = X.Quantile(p);
     q *= sigma;
-    q *= std::pow(t - currentTime, X.GetInvExponent());
+    q *= std::pow(t - currentTime, 1.0 / X.GetExponent());
     q += mu * (t - currentTime);
     return currentValue + q;
 }
@@ -45,11 +45,11 @@ void StableProcess::Quantile(const std::vector<double> &t, std::vector<double> &
         return;
 
     double q = sigma * X.Quantile(p);
-    double alphaInv = X.GetInvExponent();
+    double alpha = X.GetExponent();
     for (size_t i = 0; i != t.size(); ++i)
     {
         outputData[i] = q;
-        outputData[i] *= std::pow(t[i] - currentTime, alphaInv);
+        outputData[i] *= std::pow(t[i] - currentTime, 1.0 / alpha);
         outputData[i] += mu * (t[i] - currentTime);
         outputData[i] += currentValue;
     }

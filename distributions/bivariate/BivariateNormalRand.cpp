@@ -34,7 +34,7 @@ void BivariateNormalRand::SetCovariance(double scale1, double correlation, doubl
     Y.SetScale(sigma2);
 
     sqrt1mroSq = 0.5 * std::log1p(-rho * rho);
-    pdfCoef = std::log(sigma1 * sigma2) + sqrt1mroSq + M_LN2 + M_LNPI;
+    pdfCoef = X.GetLogScale() + Y.GetLogScale() + sqrt1mroSq + M_LN2 + M_LNPI;
     sqrt1mroSq = std::exp(sqrt1mroSq);
 }
 

@@ -41,10 +41,10 @@ void StableRand::SetParameters(double exponent, double skewness)
     alpham1Inv = alpha_alpham1 - 1.0;
 
     if (distributionId == NORMAL) {
-        pdfCoef = std::log(2 * sigma) + 0.5 * M_LNPI;
+        pdfCoef = M_LN2 + logSigma + 0.5 * M_LNPI;
     }
     else if (distributionId == LEVY) {
-        pdfCoef = std::log(sigma) - M_LN2 - M_LNPI;
+        pdfCoef = logSigma - M_LN2 - M_LNPI;
     }
     else if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (sigma * std::fabs(beta));
@@ -75,9 +75,9 @@ void StableRand::SetScale(double scale)
 {
     LimitingDistribution::SetScale(scale);
     if (distributionId == NORMAL)
-        pdfCoef = std::log(2 * sigma) + 0.5 * M_LNPI;
+        pdfCoef = M_LN2 + logSigma + 0.5 * M_LNPI;
     else if (distributionId == LEVY)
-        pdfCoef = std::log(sigma) - M_LN2 - M_LNPI;
+        pdfCoef = logSigma - M_LN2 - M_LNPI;
     else if (distributionId == COMMON)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
 }
