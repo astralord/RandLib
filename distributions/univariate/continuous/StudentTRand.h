@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
     double betaInv; /// 1.0 / beta(0.5 * nu, 0.5)
 
 public:
-    explicit StudentTRand(double degree, double location = 0.0, double scale = 1.0);
+    explicit StudentTRand(double degree = 1.0, double location = 0.0, double scale = 1.0);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }

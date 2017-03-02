@@ -13,12 +13,6 @@ std::string GammaRand::Name() const
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
-void GammaRand::SetConstantsForGenerator()
-{
-    t = 0.07 + 0.75 * std::sqrt(1.0 - alpha);
-    b = 1.0 + std::exp(-t) * alpha / t;
-}
-
 void GammaRand::SetParameters(double shape, double rate)
 {
     alpha = shape > 0 ? shape : 1.0;
@@ -31,8 +25,12 @@ void GammaRand::SetParameters(double shape, double rate)
     logBeta = std::log(beta);
     pdfCoef = mLgammaShape + alpha * logBeta;
 
-    if (GetIdOfUsedGenerator(alpha) == SMALL_SHAPE)
-        SetConstantsForGenerator();
+    if (GetIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
+        /// set constants for generator
+        t = 0.5 * std::log1p(-alpha);
+        t = 0.07 + 0.75 * std::exp(t);
+        b = 1.0 + std::exp(-t) * alpha / t;
+    }
 }
 
 double GammaRand::f(const double & x) const

@@ -1,16 +1,10 @@
 #include "BivariateNormalRand.h"
 
 
-BivariateNormalRand::BivariateNormalRand(const DoublePair &location, const DoubleTriplet &covariance)
-{
-    SetLocation(location);
-    SetScale(covariance);
-}
-
 BivariateNormalRand::BivariateNormalRand(double location1, double location2, double scale1, double correlation, double scale2)
 {
-    SetLocation(location1, location2);
-    SetScale(scale1, correlation, scale2);
+    SetLocations(location1, location2);
+    SetCovariance(scale1, correlation, scale2);
 }
 
 std::string BivariateNormalRand::Name() const
@@ -22,15 +16,7 @@ std::string BivariateNormalRand::Name() const
                                + toStringWithPrecision(GetCorrelation()) + ") )";
 }
 
-void BivariateNormalRand::SetLocation(const DoublePair &location)
-{
-    mu1 = location.first;
-    mu2 = location.second;
-    X.SetLocation(mu1);
-    Y.SetLocation(mu2);
-}
-
-void BivariateNormalRand::SetLocation(double location1, double location2)
+void BivariateNormalRand::SetLocations(double location1, double location2)
 {
     mu1 = location1;
     mu2 = location2;
@@ -38,7 +24,7 @@ void BivariateNormalRand::SetLocation(double location1, double location2)
     Y.SetLocation(mu2);
 }
 
-void BivariateNormalRand::SetScale(double scale1, double correlation, double scale2)
+void BivariateNormalRand::SetCovariance(double scale1, double correlation, double scale2)
 {
     sigma1 = scale1 > 0.0 ? scale1 : 1.0;
     sigma2 = scale2 > 0.0 ? scale2 : 1.0;
@@ -47,18 +33,9 @@ void BivariateNormalRand::SetScale(double scale1, double correlation, double sca
     X.SetScale(sigma1);
     Y.SetScale(sigma2);
 
-    sqrt1mroSq = std::sqrt(1.0 - rho * rho);
-    pdfCoef = 0.5 * M_1_PI / (sigma1 * sigma2 * sqrt1mroSq);
-}
-
-void BivariateNormalRand::SetScale(const DoubleTriplet &covariance)
-{
-    double var1, cov, var2;
-    std::tie(var1, cov, var2) = covariance;
-    double scale1 = std::sqrt(var1);
-    double scale2 = std::sqrt(var2);
-    double corr = cov * scale1 * scale2;
-    SetScale(std::sqrt(var1), corr, std::sqrt(var2));
+    sqrt1mroSq = 0.5 * std::log1p(-rho * rho);
+    pdfCoef = std::log(sigma1 * sigma2) + sqrt1mroSq + M_LN2 + M_LNPI;
+    sqrt1mroSq = std::exp(sqrt1mroSq);
 }
 
 double BivariateNormalRand::f(const DoublePair &point) const
@@ -70,8 +47,20 @@ double BivariateNormalRand::f(const DoublePair &point) const
         return (xAdj - yAdj == 0) ? INFINITY : 0.0;
     if (rho == -1.0) /// f(x, y) = δ(xAdj + yAdj)
         return (xAdj + yAdj == 0) ? INFINITY : 0.0;
+    return std::exp(logf(point));
+}
+
+double BivariateNormalRand::logf(const DoublePair &point) const
+{
+    if (rho == 0.0) /// log(f(x, y)) = log(f(x)) + log(f(y))
+        return X.logf(point.first) + Y.logf(point.second);
+    double xAdj = (point.first - mu1) / sigma1, yAdj = (point.second - mu2) / sigma2;
+    if (rho == 1.0) /// log(f(x, y)) = log(δ(xAdj - yAdj))
+        return (xAdj - yAdj == 0) ? INFINITY : -INFINITY;
+    if (rho == -1.0) /// log(f(x, y)) = log(δ(xAdj + yAdj))
+        return (xAdj + yAdj == 0) ? INFINITY : -INFINITY;
     double z = xAdj * xAdj - 2 * rho * xAdj * yAdj + yAdj * yAdj;
-    return pdfCoef * std::exp(-0.5 * z / (1 - rho * rho));
+    return -(pdfCoef + 0.5 * z / (sqrt1mroSq * sqrt1mroSq));
 }
 
 double BivariateNormalRand::F(const DoublePair &point) const
@@ -121,22 +110,7 @@ DoublePair BivariateNormalRand::Mean() const
     return std::make_pair(mu1, mu2);
 }
 
-DoubleTriplet BivariateNormalRand::Covariance() const
-{
-    double var1 = sigma1 * sigma1;
-    double var2 = sigma2 * sigma2;
-    double corr = rho * sigma1 * sigma2;
-    return std::make_tuple(var1, corr, var2);
-}
-
 double BivariateNormalRand::Correlation() const
 {
     return rho;
-}
-
-void BivariateNormalRand::GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const
-{
-    //TODO: what if user changes smth in X or Y?
-    distribution1 = X;
-    distribution2 = Y;
 }

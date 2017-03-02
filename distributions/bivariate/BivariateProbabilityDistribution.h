@@ -7,19 +7,24 @@
 /**
  * @brief The BivariateProbabilityDistribution class
  */
+template < class T1, class T2 >
 class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public ProbabilityDistribution< DoublePair >
 {
-
+protected:
+    /// Marginal distributions
+    T1 X;
+    T2 Y;
 public:
     BivariateProbabilityDistribution() {}
     virtual ~BivariateProbabilityDistribution() {}
     virtual double f(const DoublePair &point) const = 0;
+    virtual double logf(const DoublePair &point) const = 0;
 
     virtual DoublePair Mean() const = 0;
-    virtual DoubleTriplet Covariance() const = 0;
+    virtual DoubleTriplet Covariance() const final;
     virtual double Correlation() const = 0;
 
-    virtual void GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const = 0;
+    std::pair<T1, T2> GetMarginalDistributions() const;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H

@@ -2,6 +2,7 @@
 #define NORMALINVERSEGAMMARAND_H
 
 #include "BivariateProbabilityDistribution.h"
+#include "../univariate/continuous/StudentTRand.h"
 #include "../univariate/continuous/InverseGammaRand.h"
 
 /**
@@ -10,11 +11,10 @@
  *
  * Notation: X ~ NIG(μ, λ, α, β)
  */
-class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution
+class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution<StudentTRand, InverseGammaRand>
 {
     double mu, lambda;
     double alpha, beta;
-    InverseGammaRand Y;
     double pdfCoef;
 
 public:
@@ -30,14 +30,12 @@ public:
     inline double GetRate() const { return beta; }
 
     double f(const DoublePair &point) const override;
+    double logf(const DoublePair &point) const override;
     double F(const DoublePair & point) const override;
     DoublePair Variate() const override;
 
     DoublePair Mean() const override;
-    DoubleTriplet Covariance() const override;
     double Correlation() const override;
-
-    void GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const override;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

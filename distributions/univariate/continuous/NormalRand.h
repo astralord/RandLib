@@ -55,7 +55,7 @@ public:
     /// Maximum likelihood estimators
     void FitMeanMLE(const std::vector<double> &sample);
     void FitVarianceMLE(const std::vector<double> &sample);
-    void FitMeanAndVariance(const std::vector<double> &sample);
+    void FitMeanAndVarianceMLE(const std::vector<double> &sample);
     
     /// Uniformly minimum variance unbiased (UMVU) estimators
     void FitMeanUMVU(const std::vector<double> &sample);

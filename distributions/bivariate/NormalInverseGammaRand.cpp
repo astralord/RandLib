@@ -1,5 +1,4 @@
 #include "NormalInverseGammaRand.h"
-#include "../univariate/continuous/StudentTRand.h"
 #include "../univariate/continuous/NormalRand.h"
 
 NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision, double shape, double rate)
@@ -20,6 +19,10 @@ void NormalInverseGammaRand::SetParameters(double location, double precision, do
     mu = location;
     lambda = (precision > 0.0) ? precision : 1.0;
 
+    //StudentTRand X(2 * Y.GetShape(), mu, std::sqrt(alpha * lambda / beta));
+    X.SetDegree(2 * shape);
+    X.SetLocation(mu);
+    X.SetScale(std::sqrt(alpha * lambda / beta));
     Y.SetParameters(shape, rate);
     alpha = Y.GetShape();
     beta = Y.GetRate();
@@ -30,25 +33,31 @@ void NormalInverseGammaRand::SetParameters(double location, double precision, do
 
 double NormalInverseGammaRand::f(const DoublePair &point) const
 {
-    double x = point.first, sigmaSq = point.second;
+    return (point.second > 0.0) ? std::exp(logf(point)) : 0.0;
+}
+
+double NormalInverseGammaRand::logf(const DoublePair &point) const
+{
+    double sigmaSq = point.second;
     if (sigmaSq <= 0)
-        return 0.0;
+        return -INFINITY;
+    double x = point.first;
     double y = alpha + 1 - 1.5 * std::log(sigmaSq);
-    double degree = (x - mu);
+    double degree = x - mu;
     degree *= degree;
     degree *= lambda;
     degree += 2 * beta;
     degree *= 0.5 / sigmaSq;
     y -= degree;
-    y = std::exp(pdfCoef + y);
-    return y;
+    return pdfCoef + y;
 }
 
 double NormalInverseGammaRand::F(const DoublePair &point) const
 {
-    double x = point.first, sigmaSq = point.second;
+    double sigmaSq = point.second;
     if (sigmaSq <= 0)
         return 0.0;
+    double x = point.first;
     double sigma = std::sqrt(sigmaSq);
     double y = 0.5 * lambda;
     y *= (mu - x) / sigma;
@@ -77,27 +86,7 @@ DoublePair NormalInverseGammaRand::Mean() const
     return mean;
 }
 
-DoubleTriplet NormalInverseGammaRand::Covariance() const
-{
-    double var1;
-    if (alpha <= 0.5)
-        var1 = NAN;
-    else if (alpha <= 1)
-        var1 = INFINITY;
-    else
-        var1 = alpha * alpha * lambda / (beta * (alpha - 1));
-    double var2 = Y.Variance();
-    return std::make_tuple(var1, 0, var2);
-}
-
 double NormalInverseGammaRand::Correlation() const
 {
     return 0.0;
-}
-
-void NormalInverseGammaRand::GetMarginalDistributions(ContinuousDistribution &distribution1, ContinuousDistribution &distribution2) const
-{
-    StudentTRand X(2 * Y.GetShape(), mu, std::sqrt(alpha * lambda / beta));
-    distribution1 = X;
-    distribution2 = Y;
 }

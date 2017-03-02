@@ -22,7 +22,6 @@ protected:
 
 private:
     double t, b, alphaInv; /// constants for sampling
-    void SetConstantsForGenerator();
 
 public:
     GammaRand(double shape = 1, double rate = 1);

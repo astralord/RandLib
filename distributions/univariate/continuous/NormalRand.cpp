@@ -144,7 +144,7 @@ void NormalRand::FitVarianceMLE(const std::vector<double> &sample)
     SetVariance(sampleVariance(sample, mu));
 }
 
-void NormalRand::FitMeanAndVariance(const std::vector<double> &sample)
+void NormalRand::FitMeanAndVarianceMLE(const std::vector<double> &sample)
 {
     FitMeanMLE(sample);
     FitVarianceMLE(sample);
