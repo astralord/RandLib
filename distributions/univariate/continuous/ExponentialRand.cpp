@@ -117,17 +117,7 @@ double ExponentialRand::Moment(int n) const
     return std::exp(std::lgamma(n + 1) - n * std::log(beta));
 }
 
-void ExponentialRand::FitMM(const std::vector<double> &sample)
-{
-    FitScaleMLE(sample);
-}
-
-void ExponentialRand::FitMLE(const std::vector<double> &sample)
-{
-    FitScaleMLE(sample);
-}
-
-void ExponentialRand::FitUMVU(const std::vector<double> &sample)
+void ExponentialRand::FitRateUMVU(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))

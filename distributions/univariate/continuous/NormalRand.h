@@ -29,8 +29,6 @@ public:
 
 private:
     using StableRand::SetParameters;
-    using StableRand::GetExponent;
-    using StableRand::GetSkewness;
 
 public:
     void SetScale(double scale);
@@ -57,23 +55,18 @@ public:
     /// Maximum likelihood estimators
     void FitMeanMLE(const std::vector<double> &sample);
     void FitVarianceMLE(const std::vector<double> &sample);
-    void FitMLE(const std::vector<double> &sample);
-
-    /// Method of moments (the same as MLE)
-    void FitMeanMM(const std::vector<double> &sample);
-    void FitVarianceMM(const std::vector<double> &sample);
-    void FitMM(const std::vector<double> &sample);
+    void FitMeanAndVariance(const std::vector<double> &sample);
     
     /// Uniformly minimum variance unbiased (UMVU) estimators
     void FitMeanUMVU(const std::vector<double> &sample);
     void FitVarianceUMVU(const std::vector<double> &sample);
-    void FitUMVU(const std::vector<double> &sample);
-    void FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
+    void FitMeanAndVarianceUMVU(const std::vector<double> &sample);
+    void FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
 
     /// Bayesian estimation
     NormalRand FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
     InverseGammaRand FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
-    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
+    NormalInverseGammaRand FitMeanAndVarianceBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

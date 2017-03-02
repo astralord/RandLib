@@ -60,7 +60,7 @@ public:
     void FitLocationAndAsymmetryMLE(const std::vector<double> &sample);
     void FitScaleAndAsymmetryMLE(const std::vector<double> &sample);
     /// All parameters
-    void FitMLE(const std::vector<double> &sample);
+    void FitLocationScaleAndAsymmetryMLE(const std::vector<double> &sample);
 
 private:
     /**
@@ -80,7 +80,7 @@ public:
     void FitLocationAndAsymmetryMM(const std::vector<double> &sample);
     void FitScaleAndAsymmetryMM(const std::vector<double> &sample);
     /// All parameters
-    void FitMM(const std::vector<double> &sample);
+    void FitLocationScaleAndAsymmetryMM(const std::vector<double> &sample);
 };
 
 #endif // LAPLACERAND_H

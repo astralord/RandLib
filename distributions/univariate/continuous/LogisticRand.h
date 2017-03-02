@@ -49,7 +49,7 @@ public:
     /// Method of moments
     void FitLocationMM(const std::vector<double> &sample);
     void FitScaleMM(const std::vector<double> &sample);
-    void FitMM(const std::vector<double> &sample);
+    void FitLocationAndScaleMM(const std::vector<double> &sample);
 
     /// Maximum-likelihood
     void FitLocationMLE(const std::vector<double> &sample);

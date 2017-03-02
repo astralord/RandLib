@@ -25,7 +25,7 @@ public:
     double MaxValue() const override { return b; }
 
 private:
-    using BetaRand::SetParameters;
+    void SetParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1) = delete;
 
 public:
     double f(const double & x) const override;
@@ -58,17 +58,17 @@ public:
     /// Maximum likelihood estimation
     void FitMinimumMLE(const std::vector<double> &sample);
     void FitMaximumMLE(const std::vector<double> &sample);
-    void FitMLE(const std::vector<double> &sample);
+    void FitSupportMLE(const std::vector<double> &sample);
     
     /// Method of moments
     void FitMinimumMM(const std::vector<double> &sample);
     void FitMaximumMM(const std::vector<double> &sample);
-    void FitMM(const std::vector<double> &sample);
+    void FitSupportMM(const std::vector<double> &sample);
     
     /// Minimum-variance unbiased estimator
     void FitMinimumUMVU(const std::vector<double> &sample);
     void FitMaximumUMVU(const std::vector<double> &sample);
-    void FitUMVU(const std::vector<double> &sample);
+    void FitSupportUMVU(const std::vector<double> &sample);
 };
 
 #endif // UNIFORMRAND_H

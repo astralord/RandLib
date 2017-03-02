@@ -127,7 +127,7 @@ void LogisticRand::FitScaleMM(const std::vector<double> &sample)
     SetScale(std::sqrt(3 * var) / M_PI);
 }
 
-void LogisticRand::FitMM(const std::vector<double> &sample)
+void LogisticRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 {
     FitLocationMM(sample);
     FitScaleMM(sample);

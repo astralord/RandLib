@@ -89,13 +89,13 @@ private:
 
 public:
     /// Maximum-likelihood estimation
-    void FitScaleMLE(const std::vector<double> &sample);
-    void FitMLE(const std::vector<double> &sample);
+    void FitRateMLE(const std::vector<double> &sample);
+    void FitShapeAndRateMLE(const std::vector<double> &sample);
     
     /// Method of moments
     void FitShapeMM(const std::vector<double> &sample);
-    void FitScaleMM(const std::vector<double> &sample);
-    void FitMM(const std::vector<double> &sample);
+    void FitRateMM(const std::vector<double> &sample);
+    void FitShapeAndRateMM(const std::vector<double> &sample);
 
     /// Bayes estimation
     GammaRand FitRateBayes(const std::vector<double> &sample, const GammaRand &priorDistribution);
@@ -131,9 +131,16 @@ public:
     void SetDegree(int degree);
     inline int GetDegree() const { return static_cast<int>(alpha + alpha); }
 
-protected:
+private:
     /// prohibit to use gamma's public setters
     using GammaRand::SetParameters;
+    /// and all estimators
+    void FitRateMLE(const std::vector<double> &sample) = delete;
+    void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
+    void FitShapeMM(const std::vector<double> &sample) = delete;
+    void FitRateMM(const std::vector<double> &sample) = delete;
+    void FitShapeAndRateMM(const std::vector<double> &sample) = delete;
+    GammaRand FitRateBayes(const std::vector<double> &sample, const GammaRand &priorDistribution) = delete;
 };
 
 
@@ -153,9 +160,13 @@ public:
     ErlangRand(int shape = 1, double rate = 1);
     std::string Name() const override;
 
-protected:
+private:
     /// prohibit to use gamma's public setters
     using GammaRand::SetParameters;
+    /// and estimators of shape
+    void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
+    void FitShapeMM(const std::vector<double> &sample) = delete;
+    void FitShapeAndRateMM(const std::vector<double> &sample) = delete;
 };
 
 

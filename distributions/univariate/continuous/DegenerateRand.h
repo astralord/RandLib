@@ -48,17 +48,17 @@ public:
     double Entropy() const;
 
     /**
-     * @brief FitMLE
+     * @brief FitValueMLE
      * @param sample
      * @return
      */
-    void FitMLE(const std::vector<double> &sample);
+    void FitValueMLE(const std::vector<double> &sample);
     /**
-     * @brief FitMM
+     * @brief FitValueMM
      * @param sample
      * @return
      */
-    void FitMM(const std::vector<double> &sample);
+    void FitValueMM(const std::vector<double> &sample);
 };
 
 #endif // DEGENERATERAND_H

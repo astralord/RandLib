@@ -86,10 +86,10 @@ public:
     /// Method of moments
     void FitNumberMM(const std::vector<int> &sample);
     void FitProbabilityMM(const std::vector<int> & sample);
-    void FitMM(const std::vector<int> & sample);
+    void FitNumberAndProbabilityMM(const std::vector<int> & sample);
 
     /// Maximum likelihood
-    void FitMLE(const std::vector<int> &sample);
+    void FitNumberAndProbabilityMLE(const std::vector<int> &sample);
 };
 
 

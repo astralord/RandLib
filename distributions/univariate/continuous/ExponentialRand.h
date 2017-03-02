@@ -56,12 +56,12 @@ public:
 
     double Moment(int n) const;
 
-    /// Maximum-likelihood estimation
-    void FitMLE(const std::vector<double> &sample);
-    /// Method of moments
-    void FitMM(const std::vector<double> &sample);
     /// Uniformly minimum variance unbiased estimator
-    void FitUMVU(const std::vector<double> &sample);
+    void FitRateUMVU(const std::vector<double> &sample);
+    /// Delete GammaRand estimators for shape
+    void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
+    void FitShapeMM(const std::vector<double> &sample) = delete;
+    void FitShapeAndRateMM(const std::vector<double> &sample) = delete;
 };
 
 #endif // EXPONENTIALRAND_H

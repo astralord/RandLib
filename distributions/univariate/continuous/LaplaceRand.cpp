@@ -272,7 +272,7 @@ void LaplaceRand::FitScaleAndAsymmetryMLE(const std::vector<double> &sample)
     SetAsymmetry(std::pow(xMinus / xPlus, 0.25));
 }
 
-void LaplaceRand::FitMLE(const std::vector<double> &sample)
+void LaplaceRand::FitLocationScaleAndAsymmetryMLE(const std::vector<double> &sample)
 {
     FitLocationMLE(sample);
     FitScaleAndAsymmetryMLE(sample);
@@ -359,7 +359,7 @@ void LaplaceRand::FitScaleAndAsymmetryMM(const std::vector<double> &sample)
     SetScale(z * k / (1.0 - kSq));
 }
 
-void LaplaceRand::FitMM(const std::vector<double> &sample)
+void LaplaceRand::FitLocationScaleAndAsymmetryMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);

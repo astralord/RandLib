@@ -221,7 +221,7 @@ template< typename T >
 constexpr char NegativeBinomialRand<T>::TOO_SMALL_VARIANCE[];
 
 template< typename T >
-void NegativeBinomialRand<T>::FitMM(const std::vector<int> &sample)
+void NegativeBinomialRand<T>::FitNumberAndProbabilityMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
@@ -232,7 +232,7 @@ void NegativeBinomialRand<T>::FitMM(const std::vector<int> &sample)
 }
 
 template<>
-void NegativeBinomialRand<double>::FitMLE(const std::vector<int> &sample)
+void NegativeBinomialRand<double>::FitNumberAndProbabilityMLE(const std::vector<int> &sample)
 {
     /// Check positivity of sample
     if (!allElementsAreNonNegative(sample))

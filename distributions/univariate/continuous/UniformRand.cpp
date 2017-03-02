@@ -150,7 +150,7 @@ void UniformRand::FitMaximumMLE(const std::vector<double> &sample)
     SetSupport(a, maxVar);
 }
 
-void UniformRand::FitMLE(const std::vector<double> &sample)
+void UniformRand::FitSupportMLE(const std::vector<double> &sample)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
     double maxVar = *std::max_element(sample.begin(), sample.end());
@@ -182,7 +182,7 @@ void UniformRand::FitMaximumMM(const std::vector<double> &sample)
     SetSupport(a, rightBound);
 }
 
-void UniformRand::FitMM(const std::vector<double> &sample)
+void UniformRand::FitSupportMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
@@ -223,7 +223,7 @@ void UniformRand::FitMaximumUMVU(const std::vector<double> &sample)
     SetSupport(a, maxVarAdj);
 }
 
-void UniformRand::FitUMVU(const std::vector<double> &sample)
+void UniformRand::FitSupportUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     double minVar = *std::min_element(sample.begin(), sample.end());

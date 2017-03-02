@@ -472,7 +472,7 @@ std::complex<double> GammaRand::CFImpl(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
-void GammaRand::FitScaleMLE(const std::vector<double> &sample)
+void GammaRand::FitRateMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
@@ -480,7 +480,7 @@ void GammaRand::FitScaleMLE(const std::vector<double> &sample)
     SetParameters(alpha, alpha / sampleMean(sample));
 }
 
-void GammaRand::FitMLE(const std::vector<double> &sample)
+void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
@@ -521,12 +521,12 @@ void GammaRand::FitShapeMM(const std::vector<double> &sample)
     SetParameters(sampleMean(sample) * beta, beta);
 }
 
-void GammaRand::FitScaleMM(const std::vector<double> &sample)
+void GammaRand::FitRateMM(const std::vector<double> &sample)
 {
-    FitScaleMLE(sample);
+    FitRateMLE(sample);
 }
 
-void GammaRand::FitMM(const std::vector<double> &sample)
+void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))

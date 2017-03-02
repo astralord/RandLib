@@ -22,10 +22,10 @@ public:
     explicit GeometricRand(double probability = 0.5);
     std::string Name() const override;
 
-protected:
+private:
     using NegativeBinomialRand::SetParameters;
-    using NegativeBinomialRand::FitMM;
-    using NegativeBinomialRand::FitNumberMM;
+    using NegativeBinomialRand::FitNumberAndProbabilityMM;
+    void FitNumberMM(const std::vector<int> &sample) = delete;
 
 public:
     void SetProbability(double probability);
@@ -43,9 +43,7 @@ public:
 
     double Entropy() const;
 
-    void FitMLE(const std::vector<int> &sample);
-    void FitMM(const std::vector<int> &sample);
-    BetaRand FitBayes(const std::vector<int> &sample, const BetaRand &priorDistribution);
+    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

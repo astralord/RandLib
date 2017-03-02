@@ -24,8 +24,6 @@ public:
 
 private:
     using StableRand::SetParameters;
-    using StableRand::GetExponent;
-    using StableRand::GetSkewness;
 
 public:
     double f(const double & x) const override;

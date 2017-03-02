@@ -149,7 +149,7 @@ void LogNormalRand::FitScaleMM(const std::vector<double> &sample)
     SetScale(std::sqrt(aux + aux));
 }
 
-void LogNormalRand::FitMM(const std::vector<double> &sample)
+void LogNormalRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
@@ -178,7 +178,7 @@ void LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
     SetScale(std::sqrt(logVariance(sample, mu)));
 }
 
-void LogNormalRand::FitMLE(const std::vector<double> &sample)
+void LogNormalRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
@@ -231,7 +231,7 @@ InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample,
     return posteriorDistribution;
 }
 
-NormalInverseGammaRand LogNormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand LogNormalRand::FitLocationAndScaleBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     /// Sanity check
     if (!allElementsAreNonNegative(sample))

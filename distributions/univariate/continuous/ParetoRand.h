@@ -56,7 +56,7 @@ private:
 public:
     inline double Entropy() const;
 
-    void FitMLE(const std::vector<double> &sample);
+    void FitShapeAndScaleMLE(const std::vector<double> &sample);
 };
 
 #endif // PARETORAND_H

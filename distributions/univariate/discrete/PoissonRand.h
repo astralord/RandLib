@@ -47,9 +47,9 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    void FitMLE(const std::vector<int> &sample);
-    void FitMM(const std::vector<int> &sample);
-    GammaRand FitBayes(const std::vector<int> &sample, const GammaRand & priorDistribution);
+    void FitRateMLE(const std::vector<int> &sample);
+    void FitRateMM(const std::vector<int> &sample);
+    GammaRand FitRateBayes(const std::vector<int> &sample, const GammaRand & priorDistribution);
 };
 
 #endif // POISSONRAND_H

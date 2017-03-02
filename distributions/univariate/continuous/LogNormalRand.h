@@ -53,17 +53,17 @@ public:
     /// Method of moments
     void FitLocationMM(const std::vector<double> &sample);
     void FitScaleMM(const std::vector<double> &sample);
-    void FitMM(const std::vector<double> &sample);
+    void FitLocationAndScaleMM(const std::vector<double> &sample);
 
     /// Maximum-likelihod estimation
     void FitLocationMLE(const std::vector<double> &sample);
     void FitScaleMLE(const std::vector<double> &sample);
-    void FitMLE(const std::vector<double> &sample);
+    void FitLocationAndScaleMLE(const std::vector<double> &sample);
 
     /// Bayesian estimation
     NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
     InverseGammaRand FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
-    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
+    NormalInverseGammaRand FitLocationAndScaleBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // LOGNORMALRAND_H

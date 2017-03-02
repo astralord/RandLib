@@ -66,8 +66,6 @@ public:
 
 private:
     using NakagamiRand::SetParameters;
-    using NakagamiRand::GetShape;
-    using NakagamiRand::GetSpread;
 
 public:
     void SetParameters(int degree);

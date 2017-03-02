@@ -144,25 +144,10 @@ void NormalRand::FitVarianceMLE(const std::vector<double> &sample)
     SetVariance(sampleVariance(sample, mu));
 }
 
-void NormalRand::FitMLE(const std::vector<double> &sample)
+void NormalRand::FitMeanAndVariance(const std::vector<double> &sample)
 {
     FitMeanMLE(sample);
     FitVarianceMLE(sample);
-}
-
-void NormalRand::FitMeanMM(const std::vector<double> &sample)
-{
-    FitMeanMLE(sample);
-}
-
-void NormalRand::FitVarianceMM(const std::vector<double> &sample)
-{
-    FitVarianceMLE(sample);
-}
-
-void NormalRand::FitMM(const std::vector<double> &sample)
-{
-    FitMLE(sample);
 }
 
 void NormalRand::FitMeanUMVU(const std::vector<double> &sample)
@@ -175,7 +160,7 @@ void NormalRand::FitVarianceUMVU(const std::vector<double> &sample)
     FitVarianceMLE(sample);
 }
 
-void NormalRand::FitUMVU(const std::vector<double> &sample)
+void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample)
 {
     int n = sample.size();
     if (n <= 1)
@@ -185,14 +170,14 @@ void NormalRand::FitUMVU(const std::vector<double> &sample)
     SetVariance(n * s / (n - 1));
 }
 
-void NormalRand::FitUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
+void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
 {
     size_t n = sample.size();
 
     if (alpha <= 0 || alpha > 1)
         throw std::invalid_argument(fitError(WRONG_LEVEL, "Alpha is equal to " + toStringWithPrecision(alpha)));
 
-    FitUMVU(sample);
+    FitMeanAndVarianceUMVU(sample);
 
     double halfAlpha = 0.5 * alpha;
 
@@ -234,7 +219,7 @@ InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample,
     return posteriorDistribution;
 }
 
-NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand NormalRand::FitMeanAndVarianceBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     double alpha = priorDistribution.GetShape();

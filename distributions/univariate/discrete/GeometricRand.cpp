@@ -90,19 +90,7 @@ double GeometricRand::Entropy() const
     return (a + b) / (M_LN2 * p);
 }
 
-void GeometricRand::FitMLE(const std::vector<int> &sample)
-{
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetProbability(1.0 / (sampleMean(sample) + 1));
-}
-
-void GeometricRand::FitMM(const std::vector<int> &sample)
-{
-    FitMLE(sample);
-}
-
-BetaRand GeometricRand::FitBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
+BetaRand GeometricRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));

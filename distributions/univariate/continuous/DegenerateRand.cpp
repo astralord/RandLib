@@ -87,7 +87,7 @@ double DegenerateRand::Entropy() const
     return 0.0;
 }
 
-void DegenerateRand::FitMLE(const std::vector<double> &sample)
+void DegenerateRand::FitValueMLE(const std::vector<double> &sample)
 {
     auto sampleBegin = sample.begin();
     if (!std::equal(sampleBegin, sample.end(), sampleBegin))
@@ -95,7 +95,7 @@ void DegenerateRand::FitMLE(const std::vector<double> &sample)
     SetValue(*sampleBegin);
 }
 
-void DegenerateRand::FitMM(const std::vector<double> &sample)
+void DegenerateRand::FitValueMM(const std::vector<double> &sample)
 {
-    FitMLE(sample);
+    FitValueMLE(sample);
 }
