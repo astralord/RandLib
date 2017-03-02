@@ -105,11 +105,6 @@ DoublePair BivariateNormalRand::Variate() const
     return std::make_pair(x, y);
 }
 
-DoublePair BivariateNormalRand::Mean() const
-{
-    return std::make_pair(mu1, mu2);
-}
-
 double BivariateNormalRand::Correlation() const
 {
     return rho;

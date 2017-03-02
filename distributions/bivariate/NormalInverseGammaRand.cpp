@@ -78,14 +78,6 @@ DoublePair NormalInverseGammaRand::Variate() const
     return var;
 }
 
-DoublePair NormalInverseGammaRand::Mean() const
-{
-    DoublePair mean;
-    mean.first = mu;
-    mean.second = Y.Mean();
-    return mean;
-}
-
 double NormalInverseGammaRand::Correlation() const
 {
     return 0.0;

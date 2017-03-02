@@ -34,7 +34,6 @@ public:
     double F(const DoublePair & point) const override;
     DoublePair Variate() const override;
 
-    DoublePair Mean() const override;
     double Correlation() const override;
 };
 

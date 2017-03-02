@@ -4,6 +4,12 @@
 #include "../univariate/continuous/InverseGammaRand.h"
 
 template < class T1, class T2 >
+DoublePair BivariateProbabilityDistribution<T1, T2>::Mean() const
+{
+    return std::make_pair(X.Mean(), Y.Mean());
+}
+
+template < class T1, class T2 >
 DoubleTriplet BivariateProbabilityDistribution<T1, T2>::Covariance() const
 {
     double var1 = X.Variance();

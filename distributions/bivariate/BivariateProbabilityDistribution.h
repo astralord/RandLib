@@ -20,11 +20,11 @@ public:
     virtual double f(const DoublePair &point) const = 0;
     virtual double logf(const DoublePair &point) const = 0;
 
-    virtual DoublePair Mean() const = 0;
+    virtual DoublePair Mean() const final;
     virtual DoubleTriplet Covariance() const final;
     virtual double Correlation() const = 0;
 
-    std::pair<T1, T2> GetMarginalDistributions() const;
+    virtual std::pair<T1, T2> GetMarginalDistributions() const final;
 };
 
 #endif // BIVARIATEPROBABILITYDISTRIBUTION_H
