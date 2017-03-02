@@ -153,9 +153,6 @@ public:
     ErlangRand(int shape = 1, double rate = 1);
     std::string Name() const override;
 
-    inline int GetShape() const;
-    inline double GetRate() const;
-
 protected:
     /// prohibit to use gamma's public setters
     using GammaRand::SetParameters;
