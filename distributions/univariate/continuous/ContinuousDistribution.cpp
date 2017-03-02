@@ -222,7 +222,7 @@ bool ContinuousDistribution::KolmogorovSmirnovTest(const std::vector<double> &or
     for (size_t i = 1; i != n; ++i) {
         double x = orderStatistic[i - 1];
         if (x > orderStatistic[i])
-            return false; // SAMPLE_IS_NOT_SORTED
+            throw std::invalid_argument("Sample should be sorted in ascending order");
         double upperBound = Fn + interval;
         Fn = i * nInv;
         double lowerBound = Fn - interval;

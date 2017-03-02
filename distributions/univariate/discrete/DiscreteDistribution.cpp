@@ -160,22 +160,22 @@ bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderSt
     /// follow asymptotic chi-square distribution and that leads to
     /// serious underestimate of the error of the first kind.
     /// For more details look: "The use of MLE in chi-square tests for goodness of fit"
-    /// by Herman Chernoff and E.L. L/ehmann
+    /// by Herman Chernoff and E.L. Lehmann
 
     size_t n = orderStatistic.size(), i = 0, k = 0;
     double nInv = 1.0 / n, sum = 0.0;
 
     /// Sanity checks
     if (lowerBoundary >= upperBoundary)
-        return false; // WRONG_PARAMETERS
+        throw std::invalid_argument("Lower boundary should be less than upper one");
     for (size_t i = 1; i != n; ++i) {
         if (orderStatistic[i] < orderStatistic[i - 1])
-            return false; // SAMPLE_IS_NOT_SORTED
+            throw std::invalid_argument("Sample should be sorted in ascending order");
     }
     if (orderStatistic[0] < this->MinValue())
-        return false; // TOO_SMALL_VALUES
+        throw std::invalid_argument("Some elements in the sample are too small to belong to this distribution, they should be bigger than " + toStringWithPrecision(this->MinValue()));
     if (orderStatistic[n - 1] > this->MaxValue())
-        return false; // TOO_LARGE_VALUES
+        throw std::invalid_argument("Some elements in the sample are too large to belong to this distribution, they should be less than " + toStringWithPrecision(this->MaxValue()));
 
     /// Lower interval
     int x = orderStatistic[0];
@@ -214,8 +214,10 @@ bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderSt
         ++k;
     }
 
-    if (k <= numberOfEstimatedParameters + 1)
-        return false; // TOO_FEW_VALUES
+    if (k <= numberOfEstimatedParameters + 1) {
+        throw std::invalid_argument("Sample is too small, number of groups (" + toStringWithPrecision(k)
+                                    + ") should be bigger than number of estimated parameters plus one (" + toStringWithPrecision(numberOfEstimatedParameters + 1) + ")");
+    }
     double statistic = n * sum;
     ChiSquaredRand X(k - 1);
     double q = X.Quantile1m(alpha);
