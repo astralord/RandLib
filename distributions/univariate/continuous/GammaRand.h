@@ -132,10 +132,8 @@ public:
     inline int GetDegree() const { return static_cast<int>(alpha + alpha); }
 
 protected:
-    /// prohibit to use gamma's public Getters and Setters
+    /// prohibit to use gamma's public setters
     using GammaRand::SetParameters;
-    using GammaRand::GetShape;
-    using GammaRand::GetScale;
 };
 
 
@@ -159,10 +157,8 @@ public:
     inline double GetRate() const;
 
 protected:
-    /// prohibit to use gamma's public Getters and Setters
+    /// prohibit to use gamma's public setters
     using GammaRand::SetParameters;
-    using GammaRand::GetShape;
-    using GammaRand::GetScale;
 };
 
 
