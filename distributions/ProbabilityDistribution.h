@@ -96,6 +96,7 @@ protected:
     };
 
     static constexpr char POSITIVITY_VIOLATION[] = "All elements should be positive";
+    static constexpr char NON_NEGATIVITY_VIOLATION[] = "All elements should be non-negative";
     static constexpr char UPPER_LIMIT_VIOLATION[] = "No element shouldn be bigger than ";
     static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be less than ";
 

@@ -359,7 +359,7 @@ double BinomialRand::ExcessKurtosis() const
 void BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThen(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     SetParameters(n, sampleMean(sample) / n);
@@ -373,7 +373,7 @@ void BinomialRand::FitProbabilityMM(const std::vector<int> &sample)
 BetaRand BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThen(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();

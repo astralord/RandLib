@@ -203,7 +203,7 @@ template< typename T >
 void NegativeBinomialRand<T>::FitNumberMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double mean = sampleMean(sample);
     SetParameters(mean * p / q, p);
 }
@@ -212,7 +212,7 @@ template< typename T >
 void NegativeBinomialRand<T>::FitProbabilityMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double mean = sampleMean(sample);
     SetParameters(r, r / (r + mean));
 }
@@ -224,7 +224,7 @@ template< typename T >
 void NegativeBinomialRand<T>::FitNumberAndProbabilityMM(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     size_t n = sample.size();
     if (n <= 1)
         throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
@@ -240,7 +240,7 @@ void NegativeBinomialRand<double>::FitNumberAndProbabilityMLE(const std::vector<
 {
     /// Check positivity of sample
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
     double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
     /// Method can't be applied in the case of too small variance

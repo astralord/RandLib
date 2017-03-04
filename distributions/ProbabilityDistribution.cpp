@@ -51,6 +51,8 @@ void ProbabilityDistribution<T>::SurvivalFunction(const std::vector<T> &x, std::
 template < typename T >
 constexpr char ProbabilityDistribution<T>::POSITIVITY_VIOLATION[];
 template < typename T >
+constexpr char ProbabilityDistribution<T>::NON_NEGATIVITY_VIOLATION[];
+template < typename T >
 constexpr char ProbabilityDistribution<T>::UPPER_LIMIT_VIOLATION[];
 template < typename T >
 constexpr char ProbabilityDistribution<T>::LOWER_LIMIT_VIOLATION[];

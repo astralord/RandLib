@@ -128,7 +128,7 @@ double PoissonRand::ExcessKurtosis() const
 void PoissonRand::FitRateMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     SetRate(sampleMean(sample));
 }
 
@@ -140,7 +140,7 @@ void PoissonRand::FitRateMM(const std::vector<int> &sample)
 GammaRand PoissonRand::FitRateBayes(const std::vector<int> &sample, const GammaRand &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     GammaRand posteriorDistribution(alpha + sampleSum(sample), beta + sample.size());

@@ -93,7 +93,7 @@ double GeometricRand::Entropy() const
 BetaRand GeometricRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();

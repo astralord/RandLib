@@ -231,6 +231,13 @@ public:
     static bool allElementsAreNonNegative(const std::vector<T> &sample);
 
     /**
+     * @brief allElementsArePositive
+     * @param sample
+     * @return true if all elements in sample are positive
+     */
+    static bool allElementsArePositive(const std::vector<T> &sample);
+
+    /**
      * @brief sum
      * @param sample
      * @return sum of all elements in a sample

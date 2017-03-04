@@ -22,7 +22,7 @@ std::string BetaRand::Name() const
                    + toStringWithPrecision(MaxValue()) + ")";
 }
 
-BetaRand::GENERATOR_ID BetaRand::GetIdOfUsedGenerator() const
+BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
 {
     if (alpha < 1 && beta < 1 && alpha + beta > 1)
         return ATKINSON_WHITTAKER;
@@ -44,9 +44,9 @@ BetaRand::GENERATOR_ID BetaRand::GetIdOfUsedGenerator() const
     return (alpha + beta < 2) ? JOHNK : GAMMA_RATIO;
 }
 
-void BetaRand::SetCoefficientsForGenerator()
+void BetaRand::setCoefficientsForGenerator()
 {
-    GENERATOR_ID id = GetIdOfUsedGenerator();
+    GENERATOR_ID id = getIdOfUsedGenerator();
     if (id == REJECTION_NORMAL) {
         double alpham1 = alpha - 1;
         s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
@@ -76,7 +76,7 @@ void BetaRand::SetShapes(double shape1, double shape2)
     /// we use log(Gamma(x)) in order to avoid too big numbers
     mLogBetaFun = std::lgamma(alpha + beta) - GammaRV1.GetLogGammaFunction() - GammaRV2.GetLogGammaFunction();
     betaFun = std::exp(-mLogBetaFun);
-    SetCoefficientsForGenerator();
+    setCoefficientsForGenerator();
 }
 
 void BetaRand::SetSupport(double minValue, double maxValue)
@@ -284,7 +284,7 @@ double BetaRand::variateJohnk() const
 double BetaRand::Variate() const
 {
     double var = 0;
-    GENERATOR_ID id = GetIdOfUsedGenerator();
+    GENERATOR_ID id = getIdOfUsedGenerator();
 
     switch (id) {
     case UNIFORM:
@@ -322,7 +322,7 @@ double BetaRand::Variate() const
 
 void BetaRand::Sample(std::vector<double> &outputData) const
 {
-    GENERATOR_ID id = GetIdOfUsedGenerator();
+    GENERATOR_ID id = getIdOfUsedGenerator();
 
     switch (id) {
     case UNIFORM: {

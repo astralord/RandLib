@@ -188,7 +188,7 @@ double UnivariateProbabilityDistribution<T>::FourthMoment() const
 template< typename T >
 bool UnivariateProbabilityDistribution<T>::allElementsAreNotBiggerThen(T value, const std::vector<T> &sample)
 {
-    for (const double & var : sample) {
+    for (const T & var : sample) {
         if (var > value)
             return false;
     }
@@ -198,7 +198,7 @@ bool UnivariateProbabilityDistribution<T>::allElementsAreNotBiggerThen(T value, 
 template< typename T >
 bool UnivariateProbabilityDistribution<T>::allElementsAreNotLessThen(T value, const std::vector<T> &sample)
 {
-    for (const double & var : sample) {
+    for (const T & var : sample) {
         if (var < value)
             return false;
     }
@@ -209,6 +209,16 @@ template< typename T >
 bool UnivariateProbabilityDistribution<T>::allElementsAreNonNegative(const std::vector<T> &sample)
 {
     return allElementsAreNotLessThen(0, sample);
+}
+
+template< typename T >
+bool UnivariateProbabilityDistribution<T>::allElementsArePositive(const std::vector<T> &sample)
+{
+    for (const T & var : sample) {
+        if (var <= 0)
+            return false;
+    }
+    return true;
 }
 
 template< typename T >

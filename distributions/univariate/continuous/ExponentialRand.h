@@ -57,8 +57,6 @@ public:
 
     double Moment(int n) const;
 
-    /// Uniformly minimum variance unbiased estimator
-    void FitRateUMVU(const std::vector<double> &sample);
     /// Delete GammaRand estimators for shape
     void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
     void FitShapeMM(const std::vector<double> &sample) = delete;

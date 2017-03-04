@@ -25,7 +25,7 @@ void GammaRand::SetParameters(double shape, double rate)
     logBeta = std::log(beta);
     pdfCoef = mLgammaShape + alpha * logBeta;
 
-    if (GetIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
+    if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
         /// set constants for generator
         t = 0.5 * std::log1p(-alpha);
         t = 0.07 + 0.75 * std::exp(t);
@@ -72,7 +72,7 @@ double GammaRand::S(const double & x) const
     return (x > 0.0) ? RandMath::qgamma(alpha, x * beta) : 1.0;
 }
 
-GammaRand::GENERATOR_ID GammaRand::GetIdOfUsedGenerator(double shape)
+GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
 {
     if (shape < 0.34)
         return SMALL_SHAPE;
@@ -190,7 +190,7 @@ double GammaRand::StandardVariate(double shape)
     if (shape <= 0)
         return NAN;
 
-    GENERATOR_ID genId = GetIdOfUsedGenerator(shape);
+    GENERATOR_ID genId = getIdOfUsedGenerator(shape);
 
     switch(genId) {
     case INTEGER_SHAPE:
@@ -216,7 +216,7 @@ double GammaRand::Variate(double shape, double rate)
 
 double GammaRand::Variate() const
 {
-    GENERATOR_ID genId = GetIdOfUsedGenerator(alpha);
+    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
     switch(genId) {
     case INTEGER_SHAPE:
@@ -237,7 +237,7 @@ double GammaRand::Variate() const
 
 void GammaRand::Sample(std::vector<double> &outputData) const
 {
-    GENERATOR_ID genId = GetIdOfUsedGenerator(alpha);
+    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
     switch(genId) {
     case INTEGER_SHAPE:
@@ -480,10 +480,20 @@ std::complex<double> GammaRand::CFImpl(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
+void GammaRand::FitRateUMVU(const std::vector<double> &sample)
+{
+    /// Sanity check
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    double mean = sampleMean(sample);
+    double coef = alpha - 1.0 / sample.size();
+    SetParameters(alpha, coef / mean);
+}
+
 void GammaRand::FitRateMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetParameters(alpha, alpha / sampleMean(sample));
 }
@@ -491,7 +501,7 @@ void GammaRand::FitRateMLE(const std::vector<double> &sample)
 void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate average and log-average
@@ -524,7 +534,7 @@ void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
 void GammaRand::FitShapeMM(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetParameters(sampleMean(sample) * beta, beta);
 }
@@ -537,7 +547,7 @@ void GammaRand::FitRateMM(const std::vector<double> &sample)
 void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     if (n <= 1)
@@ -552,7 +562,7 @@ void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
 GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const GammaRand & priorDistribution)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();

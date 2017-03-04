@@ -81,11 +81,11 @@ private:
         MARSAGLIA_TSANG /// 0.34 < α < 1 or α >= 1.2
     };
     /**
-     * @brief GetIdOfUsedGenerator
+     * @brief getIdOfUsedGenerator
      * @param shape α
      * @return id of used variate generator according to the shape
      */
-    static GENERATOR_ID GetIdOfUsedGenerator(double shape);
+    static GENERATOR_ID getIdOfUsedGenerator(double shape);
     /**
      * @brief variateThroughExponentialSum
      * @param shape α
@@ -178,38 +178,45 @@ private:
     std::complex<double> CFImpl(double t) const override;
 public:
     /**
+     * @brief FitRateUMVU
+     * set rate, returned by uniformly minimum variance unbiased estimator
+     * @param sample
+     */
+    void FitRateUMVU(const std::vector<double> &sample);
+    /**
      * @brief FitRateMLE
-     * set β, estimated via maximum-likelihood method
+     * set rate, estimated via maximum-likelihood method
      * @param sample
      */
     void FitRateMLE(const std::vector<double> &sample);
     /**
      * @brief FitShapeAndRateMLE
-     * set α and β, estimated via maximum-likelihood method
+     * set shape and rate, estimated via maximum-likelihood method
      * @param sample
      */
     void FitShapeAndRateMLE(const std::vector<double> &sample);
     /**
      * @brief FitShapeMM
-     * set α, estimated via method of moments
+     * set shape, estimated via method of moments
      * @param sample
      */
     void FitShapeMM(const std::vector<double> &sample);
     /**
      * @brief FitRateMM
-     * set β, estimated via method of moments
+     * set rate, estimated via method of moments
+     * (it duplicates estimation of rate by maximum-likelihood)
      * @param sample
      */
     void FitRateMM(const std::vector<double> &sample);
     /**
      * @brief FitShapeAndRateMM
-     * set α and β, estimated via method of moments
+     * set shape and rate, estimated via method of moments
      * @param sample
      */
     void FitShapeAndRateMM(const std::vector<double> &sample);
     /**
      * @brief FitRateBayes
-     * set β, returned from bayesian estimation
+     * set rate, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
@@ -240,6 +247,7 @@ private:
     /// prohibit to use gamma's public setters
     using GammaRand::SetParameters;
     /// and all estimators
+    void FitRateUMVU(const std::vector<double> &sample) = delete;
     void FitRateMLE(const std::vector<double> &sample) = delete;
     void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
     void FitShapeMM(const std::vector<double> &sample) = delete;

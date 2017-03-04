@@ -131,7 +131,7 @@ double LogNormalRand::logVariance(const std::vector<double> &sample, double mu)
 void LogNormalRand::FitLocationMM(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
     double var = X.Variance();
@@ -141,7 +141,7 @@ void LogNormalRand::FitLocationMM(const std::vector<double> &sample)
 void LogNormalRand::FitScaleMM(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
     double mu = X.GetLocation();
@@ -152,7 +152,7 @@ void LogNormalRand::FitScaleMM(const std::vector<double> &sample)
 void LogNormalRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
     // TODO: use UNBIASED variance
@@ -165,7 +165,7 @@ void LogNormalRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 void LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetLocation(logAverage(sample));
 }
@@ -173,7 +173,7 @@ void LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
 void LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mu = X.GetLocation();
     SetScale(std::sqrt(logVariance(sample, mu)));
@@ -182,7 +182,7 @@ void LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
 void LogNormalRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     long double logMean = 0.0L;
@@ -203,7 +203,7 @@ void LogNormalRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
 NormalRand LogNormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double mu0 = priorDistribution.GetLocation();
@@ -219,7 +219,7 @@ NormalRand LogNormalRand::FitLocationBayes(const std::vector<double> &sample, co
 InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double alpha = priorDistribution.GetShape();
@@ -235,7 +235,7 @@ InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample,
 NormalInverseGammaRand LogNormalRand::FitLocationAndScaleBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     /// Sanity check
-    if (!allElementsAreNonNegative(sample))
+    if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double alpha = priorDistribution.GetShape();

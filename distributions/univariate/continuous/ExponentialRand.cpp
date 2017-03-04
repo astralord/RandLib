@@ -122,15 +122,3 @@ double ExponentialRand::Moment(int n) const
         return 1;
     return std::exp(std::lgamma(n + 1) - n * std::log(beta));
 }
-
-void ExponentialRand::FitRateUMVU(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    int n = sample.size();
-    if (n <= 1)
-        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-    double mean = sampleMean(sample);
-    SetRate((n - 1) * mean / n);
-}
