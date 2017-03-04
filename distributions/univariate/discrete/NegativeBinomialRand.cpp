@@ -229,7 +229,7 @@ void NegativeBinomialRand<T>::FitNumberAndProbabilityMM(const std::vector<int> &
     if (n <= 1)
         throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
     double mean = sampleMean(sample);
-    double variance = n * sampleVariance(sample, mean) / (n - 1); /// unbiased variance
+    double variance = sampleVariance(sample, mean);
     if (variance <= mean)
         throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
     SetParameters(mean * mean / (variance - mean), mean / variance);

@@ -254,14 +254,13 @@ void LaplaceRand::FitScaleAndAsymmetryMLE(const std::vector<double> &sample)
     xPlus /= n;
     xMinus /= n;
 
-    // TODO: find workaround for those two cases (generalisation?)
     if (xMinus == 0) {
         /// X ~ Exp(1 / xPlus)
-        throw std::invalid_argument(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
     if (xPlus == 0) {
         /// -X ~ Exp(1 / xMinus)
-        throw std::invalid_argument(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
 
     double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);
@@ -328,7 +327,6 @@ void LaplaceRand::FitAsymmetryMM(const std::vector<double> &sample)
 
 void LaplaceRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 {
-    // TODO: use UNBIASED variance and UNBIASED skewness in other cases
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
     double scale = (var * kSq) / (1 + kSq * kSq);

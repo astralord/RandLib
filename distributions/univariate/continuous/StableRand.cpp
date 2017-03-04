@@ -633,9 +633,9 @@ double StableRand::S(const double & x) const
     case LEVY:
         return (beta > 0) ? cdfLevyCompl(x) : cdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
-        return 1.0 - cdfForUnityExponent(x); // TODO: implement
+        return 1.0 - cdfForUnityExponent(x);
     case COMMON:
-        return 1.0 - cdfForCommonExponent(x); // TODO: implement
+        return 1.0 - cdfForCommonExponent(x);
     default:
         return NAN; /// unexpected return
     }

@@ -553,7 +553,7 @@ void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
     if (n <= 1)
         throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
     double mu = sampleMean(sample);
-    double var = n * sampleVariance(sample, mu) / (n - 1); /// unbiased variance
+    double var = sampleVariance(sample, mu);
     double shape = mu * mu / var;
     double scale = var / mu;
     SetParameters(shape, scale);
