@@ -25,7 +25,7 @@ public:
     double MaxValue() const override { return b; }
 
 private:
-    void SetParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1) = delete;
+    void SetShapes(double shape1, double shape2) = delete;
 
 public:
     double f(const double & x) const override;

@@ -270,9 +270,19 @@ double GammaRand::Mean() const
     return alpha * theta;
 }
 
+double GammaRand::GeometricMean() const
+{
+    return RandMath::digamma(alpha) - logBeta;
+}
+
 double GammaRand::Variance() const
 {
     return alpha * theta * theta;
+}
+
+double GammaRand::GeometricVariance() const
+{
+    return RandMath::trigamma(alpha);
 }
 
 double GammaRand::Mode() const
@@ -529,10 +539,14 @@ void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
     /// Sanity check
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double mu1 = sampleMean(sample);
-    double var = sampleVariance(sample, mu1);
-    double shape = mu1 * mu1 / var;
-    SetParameters(shape, shape / mu1);
+    size_t n = sample.size();
+    if (n <= 1)
+        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
+    double mu = sampleMean(sample);
+    double var = n * sampleVariance(sample, mu) / (n - 1); /// unbiased variance
+    double shape = mu * mu / var;
+    double scale = var / mu;
+    SetParameters(shape, scale);
 }
 
 GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const GammaRand & priorDistribution)

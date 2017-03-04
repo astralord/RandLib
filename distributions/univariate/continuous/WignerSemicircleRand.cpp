@@ -15,7 +15,7 @@ void WignerSemicircleRand::SetRadius(double radius)
     R = (radius > 0.0) ? radius : 1.0;
     logRSq = std::log(R * R);
     RSq = R * R;
-    X.SetParameters(1.5, 1.5);
+    X.SetShapes(1.5, 1.5);
 }
 
 double WignerSemicircleRand::f(const double & x) const

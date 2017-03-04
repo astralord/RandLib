@@ -328,6 +328,7 @@ void LaplaceRand::FitAsymmetryMM(const std::vector<double> &sample)
 
 void LaplaceRand::FitLocationAndScaleMM(const std::vector<double> &sample)
 {
+    // TODO: use UNBIASED variance and UNBIASED skewness in other cases
     double mean = sampleMean(sample);
     double var = sampleVariance(sample, mean);
     double scale = (var * kSq) / (1 + kSq * kSq);

@@ -12,7 +12,7 @@ std::string BetaPrimeRand::Name() const
 
 void BetaPrimeRand::SetParameters(double shape1, double shape2)
 {
-    B.SetParameters(shape1, shape2);
+    B.SetShapes(shape1, shape2);
     alpha = B.GetAlpha();
     beta = B.GetBeta();
 }

@@ -54,14 +54,14 @@ private:
     std::complex<double> CFImpl(double t) const override;
 public:
     /**
-     * @brief GetInvBetaFunction
-     * @return 1 / Beta(α, β)
+     * @brief GetBetaFunction
+     * @return B(α, β)
      */
     inline double GetBetaFunction() const { return B.GetBetaFunction(); }
 
     /**
      * @brief GetLogBetaFunction
-     * @return log Beta(α, β)
+     * @return log(B(α, β))
      */
     inline double GetLogBetaFunction() const { return B.GetLogBetaFunction(); }
 };

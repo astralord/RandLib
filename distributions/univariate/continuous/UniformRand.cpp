@@ -190,8 +190,11 @@ void UniformRand::FitMaximumMM(const std::vector<double> &sample)
 
 void UniformRand::FitSupportMM(const std::vector<double> &sample)
 {
+    size_t n = sample.size();
+    if (n <= 1)
+        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
     double mean = sampleMean(sample);
-    double var = sampleVariance(sample, mean);
+    double var = n * sampleVariance(sample, mean) / (n - 1);
     double s = std::sqrt(3 * var);
     double leftBound = mean - s, rightBound = mean + s;
     if (!allElementsAreNotLessThen(leftBound, sample))

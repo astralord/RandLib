@@ -2,9 +2,16 @@
 #include "../discrete/BernoulliRand.h"
 #include "UniformRand.h"
 
+BetaRand::BetaRand(double shape1, double shape2)
+{
+    SetShapes(shape1, shape2);
+    SetSupport(0, 1);
+}
+
 BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValue)
 {
-    SetParameters(shape1, shape2, minValue, maxValue);
+    SetShapes(shape1, shape2);
+    SetSupport(minValue, maxValue);
 }
 
 std::string BetaRand::Name() const
@@ -60,9 +67,8 @@ void BetaRand::SetCoefficientsForGenerator()
     }
 }
 
-void BetaRand::SetParameters(double shape1, double shape2, double minValue, double maxValue)
+void BetaRand::SetShapes(double shape1, double shape2)
 {
-    SetSupport(minValue, maxValue);
     GammaRV1.SetParameters(shape1, 1);
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
@@ -491,9 +497,35 @@ std::complex<double> BetaRand::CFImpl(double t) const
     return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
-ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue)
+void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 {
-    BetaRand::SetParameters(1.0 - shape, shape, minValue, maxValue);
+    if (!allElementsAreNotLessThen(a, sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+    if (!allElementsAreNotBiggerThen(b, sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+    double mean = sampleMean(sample);
+    double shape = mean - a;
+    shape /= b - mean;
+    shape *= beta;
+    SetShapes(shape, beta);
+}
+
+void BetaRand::FitBetaMM(const std::vector<double> &sample)
+{
+    if (!allElementsAreNotLessThen(a, sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+    if (!allElementsAreNotBiggerThen(b, sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+    double mean = sampleMean(sample);
+    double shape = b - mean;
+    shape /= mean - a;
+    shape *= alpha;
+    SetShapes(alpha, shape);
+}
+
+ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue) :
+    BetaRand(1.0 - shape, shape, minValue, maxValue)
+{
 }
 
 std::string ArcsineRand::Name() const
@@ -505,7 +537,7 @@ std::string ArcsineRand::Name() const
 
 void ArcsineRand::SetShape(double shape)
 {
-    BetaRand::SetParameters(1.0 - shape, shape, a, b);
+    BetaRand::SetShapes(1.0 - shape, shape);
 }
 
 
@@ -530,5 +562,5 @@ void BaldingNicholsRand::SetFixatingIndexAndFrequency(double fixatingIndex, doub
         p = 0.5;
 
     double frac = (1.0 - F) / F, fracP = frac * p;
-    BetaRand::SetParameters(fracP, frac - fracP);
+    BetaRand::SetShapes(fracP, frac - fracP);
 }

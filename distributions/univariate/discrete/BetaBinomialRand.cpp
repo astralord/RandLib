@@ -17,7 +17,7 @@ std::string BetaBinomialRand::Name() const
 void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
 {
     n = std::max(number, 1);
-    B.SetParameters(shape1, shape2);
+    B.SetShapes(shape1, shape2);
     pmfCoef = std::lgamma(n + 1);
     pmfCoef -= std::lgamma(B.GetAlpha() + B.GetBeta() + n);
     pmfCoef -= B.GetLogBetaFunction();

@@ -30,14 +30,15 @@ protected:
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    double mLogBetaFun; /// log(Beta(α, β)
-    double betaFun; /// Beta(α, β)
+    double mLogBetaFun; /// log(B(α, β)
+    double betaFun; /// B(α, β)
 
     /// coefficients for generators
     double s, t, u;
 
 public:
-    BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
+    BetaRand(double shape1 = 1, double shape2 = 1);
+    BetaRand(double shape1, double shape2, double minValue, double maxValue);
     virtual ~BetaRand() {}
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
@@ -60,7 +61,7 @@ private:
 
     /**
      * @brief GetIdOfUsedGenerator
-     * @return id of the used variate generator according to shape parameters
+     * @return id of used variate generator according to the shapes
      */
     GENERATOR_ID GetIdOfUsedGenerator() const;
 
@@ -70,10 +71,39 @@ private:
     void SetCoefficientsForGenerator();
 
 public:
-    void SetParameters(double shape1, double shape2, double minValue = 0, double maxValue = 1);
+    /**
+     * @brief SetShapes
+     * @param shape1 α
+     * @param shape2 β
+     */
+    void SetShapes(double shape1, double shape2);
+    /**
+     * @brief SetSupport
+     * @param minValue a
+     * @param maxValue b
+     */
     void SetSupport(double minValue, double maxValue);
+    /**
+     * @brief GetAlpha
+     * @return α
+     */
     inline double GetAlpha() const { return alpha; }
+    /**
+     * @brief GetBeta
+     * @return β
+     */
     inline double GetBeta() const { return beta; }
+    /**
+     * @brief GetBetaFunction
+     * @return B(α, β)
+     */
+    inline double GetBetaFunction() const { return betaFun; }
+
+    /**
+     * @brief GetLogBetaFunction
+     * @return log(B(α, β))
+     */
+    inline double GetLogBetaFunction() const { return -mLogBetaFun; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;
@@ -155,23 +185,25 @@ protected:
 
 public:
     /**
-     * @brief GetInverseBetaFunction
-     * @return Beta(α, β)
+     * @brief FitAlphaMM
+     * set α, estimated via method of moments
+     * @param sample
      */
-    inline double GetBetaFunction() const { return betaFun; }
-
+    void FitAlphaMM(const std::vector<double> &sample);
     /**
-     * @brief GetLogBetaFunction
-     * @return log Beta(α, β)
+     * @brief FitBetaMM
+     * set β, estimated via method of moments
+     * @param sample
      */
-    inline double GetLogBetaFunction() const { return -mLogBetaFun; }
+    void FitBetaMM(const std::vector<double> &sample);
 };
 
 
 /**
- * @brief The ArcsineRand class 
+ * @brief The ArcsineRand class
+ * Arcsine distribution
  *
- * X ~ Arcsine(α)
+ * Notation: X ~ Arcsine(α)
  * 
  * Related distributions
  * X ~ Beta(1 - α, α)
@@ -187,12 +219,19 @@ public:
 
 protected:
     /// prohibit to use beta's setters
-    using BetaRand::SetParameters;
+    using BetaRand::SetShapes;
+    void SetSupport(double minValue, double maxValue) = delete;
 };
 
 
 /**
  * @brief The BaldingNicholsRand class
+ * Balding-Nichols distribution
+ *
+ * Notation: X ~ Balding-Nichols(F, p)
+ *
+ * Related distributions
+ * X ~ Beta(p * F', (1 - p) * F') for F' = (1 - F) / F
  */
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand
 {
@@ -202,11 +241,12 @@ public:
     std::string Name() const override;
 
     void SetFixatingIndexAndFrequency(double fixatingIndex, double frequency);
-    inline double GetFrequency() const { return p; }
     inline double GetFixatingIndex() const { return F; }
+    inline double GetFrequency() const { return p; }
 
 private:
-    using BetaRand::SetParameters;
+    using BetaRand::SetShapes;
+    void SetSupport(double minValue, double maxValue) = delete;
 };
 
 #endif // BETARAND_H

@@ -155,6 +155,7 @@ void LogNormalRand::FitLocationAndScaleMM(const std::vector<double> &sample)
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double average = sampleMean(sample);
+    // TODO: use UNBIASED variance
     double secondMoment = rawMoment(sample, 2);
     double averageSq = average * average;
     SetLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
