@@ -221,6 +221,9 @@ protected:
     /// prohibit to use beta's setters
     using BetaRand::SetShapes;
     void SetSupport(double minValue, double maxValue) = delete;
+    /// and estimators
+    void FitAlphaMM(const std::vector<double> &sample) = delete;
+    void FitBetaMM(const std::vector<double> &sample) = delete;
 };
 
 
@@ -245,8 +248,12 @@ public:
     inline double GetFrequency() const { return p; }
 
 private:
+    /// prohibit to use beta's setters
     using BetaRand::SetShapes;
     void SetSupport(double minValue, double maxValue) = delete;
+    /// and estimators
+    void FitAlphaMM(const std::vector<double> &sample) = delete;
+    void FitBetaMM(const std::vector<double> &sample) = delete;
 };
 
 #endif // BETARAND_H

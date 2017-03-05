@@ -61,3 +61,77 @@ Bayesian estimator: Normal(-0.283042, 0.951348)
 UMVU estimator: Normal(-0.311347, 0.82504)
 Maximum-likelihood estimator: Normal(-0.311347, 0.742536)
 ```
+
+Implemented distributions (under titles special cases are listed):
+* Continuous
+  * Beta distribution
+    * Arcsine distribution
+    * Balding-Nichols distribution
+    * Uniform distribution
+  * Beta-prime distribution (Beta of the second kind)
+  * Degenerate distribution
+  * Exponentially-modified Gaussian distribution (EMG)
+  * F-distribution (Fisher-Snedecor)
+  * Gamma distribution
+    * Chi-Squared distribution
+    * Erlang distribution
+    * Exponential distribution
+  * Generalised extreme value distribution
+    * Gumbel distribution
+    * Frechet distribution
+    * Weibull distribution
+  * Geometric Stable distribution
+    * Laplace distribution
+  * Inverse-Gamma distribution
+  * Inverse-Gaussian distribution
+  * Irwin-Hall distribution
+  * Kolmogorov-Smirnov distribution
+  * Kumaraswamy distribution
+  * Logistic distribution
+  * Log-Normal distribution
+  * Nakagami distribution
+    * Chi distribution
+    * Maxwell-Boltzmann distribution
+    * Rayleigh distribution
+  * Noncentral Chi-Squared distribution
+  * Noncentral t-distribution
+  * Pareto distribution
+  * Planck distribution
+  * Raised-cosine distribution
+    * Raab-Green distribution
+  * Sech distribution
+  * Stable distribution
+    * Cauchy distribution
+    * Holtsmark distribution
+    * Landau distribution
+    * Levy distribution
+    * Normal distribution
+  * t-distribution
+  * Triangular distribution
+  * Von-Mises distribution
+  * Wigner-Semicircle distribution
+* Disrete:
+  * Beta-binomial distribution
+  * Binomial distribution
+    * Bernoulli distribution
+  * Categorical distribution
+  * Hypergeometric distribution
+  * Logarithmic distribution
+  * Negative-binomial (Polya) distribution
+    * Pascal distribution
+    * Geometric distribution
+  * Negative hypergeometric distribution
+  * Poisson distribution
+  * Rademacher distribution
+  * Skellam distribution
+  * Uniform discrete distribution
+  * Yule distribution
+  * Zeta distribution
+  * Zipf distribution
+* Singular:
+  * Cantor distribution
+* Bivariate:
+  * Bivariate Normal distribution
+  * Normal-inverse-Gamma distribution
+  
+  
