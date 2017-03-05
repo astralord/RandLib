@@ -117,9 +117,8 @@ Implemented distributions (under titles special cases are listed):
   * Categorical distribution
   * Hypergeometric distribution
   * Logarithmic distribution
-  * Negative-binomial distribution
+  * Negative-binomial (Polya) distribution
     * Pascal distribution
-    * Polya distribution
     * Geometric distribution
   * Negative hypergeometric distribution
   * Poisson distribution
