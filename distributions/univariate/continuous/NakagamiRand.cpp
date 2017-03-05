@@ -95,7 +95,7 @@ double NakagamiRand::quantileImpl1m(double p) const
 /// CHI
 ChiRand::ChiRand(int degree)
 {
-    SetParameters(degree);
+    SetDegree(degree);
 }
 
 std::string ChiRand::Name() const
@@ -103,7 +103,7 @@ std::string ChiRand::Name() const
     return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
 }
 
-void ChiRand::SetParameters(int degree)
+void ChiRand::SetDegree(int degree)
 {
     NakagamiRand::SetParameters(0.5 * degree, degree);
 }
@@ -131,8 +131,7 @@ double ChiRand::ExcessKurtosis() const
 
 
 /// MAXWELL-BOLTZMANN
-MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale) :
-    ChiRand(3)
+MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale)
 {
     SetScale(scale);
 }
@@ -145,6 +144,7 @@ std::string MaxwellBoltzmannRand::Name() const
 void MaxwellBoltzmannRand::SetScale(double scale)
 {
     sigma = (scale > 0.0) ? scale : 1.0;
+    NakagamiRand::SetParameters(1.5, 3 * sigma * sigma);
 }
 
 double MaxwellBoltzmannRand::f(const double & x) const
@@ -161,8 +161,8 @@ double MaxwellBoltzmannRand::F(const double & x) const
 {
     if (x <= 0.0)
         return 0.0;
-    double xAdj = x / sigma;
-    double y = std::exp(-0.5 * xAdj * xAdj);
+    double xAdj = M_SQRT1_2 * x / sigma;
+    double y = std::exp(-xAdj * xAdj);
     y *= 2 * xAdj * M_1_SQRTPI;
     return std::erf(xAdj) - y;
 }
@@ -171,8 +171,8 @@ double MaxwellBoltzmannRand::S(const double & x) const
 {
     if (x <= 0.0)
         return 1.0;
-    double xAdj = x / sigma;
-    double y = std::exp(-0.5 * xAdj * xAdj);
+    double xAdj = M_SQRT1_2 * x / sigma;
+    double y = std::exp(-xAdj * xAdj);
     y *= 2 * xAdj * M_1_SQRTPI;
     return std::erfc(xAdj) + y;
 }
@@ -223,20 +223,8 @@ double MaxwellBoltzmannRand::ExcessKurtosis() const
     return 4 * numerator / denominator;
 }
 
-double MaxwellBoltzmannRand::quantileImpl(double p) const
-{
-    return sigma * ChiRand::quantileImpl(p);
-}
-
-double MaxwellBoltzmannRand::quantileImpl1m(double p) const
-{
-    return sigma * ChiRand::quantileImpl1m(p);
-}
-
-
 /// RAYLEIGH
-RayleighRand::RayleighRand(double scale) :
-    ChiRand(2)
+RayleighRand::RayleighRand(double scale)
 {
     SetScale(scale);
 }
@@ -249,6 +237,7 @@ std::string RayleighRand::Name() const
 void RayleighRand::SetScale(double scale)
 {
     sigma = (scale > 0.0) ? scale : 1.0;
+    NakagamiRand::SetParameters(1, 2 * sigma * sigma);
 }
 
 double RayleighRand::f(const double & x) const

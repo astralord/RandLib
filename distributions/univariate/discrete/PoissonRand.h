@@ -6,6 +6,7 @@
 
 /**
  * @brief The PoissonRand class
+ * Poisson distribution
  *
  * P(X = k) = λ^k * e^(-λ) / k!
  *

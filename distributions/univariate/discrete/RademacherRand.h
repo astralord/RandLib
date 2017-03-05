@@ -6,6 +6,7 @@
 
 /**
  * @brief The RademacherRand class
+ * Rademacher distribution
  *
  * P(X = k) = 0.5 * 1_{|k| = 1}
  *

@@ -102,7 +102,6 @@ public:
      * @brief FitProbabilityMLE
      * Fit probability p with maximum-likelihood estimation
      * @param sample
-     * @return
      */
     void FitProbabilityMLE(const std::vector<int> &sample);
 
@@ -110,7 +109,6 @@ public:
      * @brief FitProbabilityMM
      * Fit probability p, using method of moments
      * @param sample
-     * @return
      */
     void FitProbabilityMM(const std::vector<int> &sample);
 
@@ -127,7 +125,7 @@ public:
      * @brief FitProbabilityMinimax
      * Fit probability p with minimax estimator
      * @param sample
-     * @return
+     * @return posterior distribution
      */
     BetaRand FitProbabilityMinimax(const std::vector<int> &sample);
 };

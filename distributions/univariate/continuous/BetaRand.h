@@ -60,13 +60,13 @@ private:
     };
 
     /**
-     * @brief GetIdOfUsedGenerator
+     * @brief getIdOfUsedGenerator
      * @return id of used variate generator according to the shapes
      */
     GENERATOR_ID getIdOfUsedGenerator() const;
 
     /**
-     * @brief SetCoefficientsForGenerator
+     * @brief setCoefficientsForGenerator
      */
     void setCoefficientsForGenerator();
 

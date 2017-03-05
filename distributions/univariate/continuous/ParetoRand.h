@@ -56,6 +56,10 @@ private:
 public:
     inline double Entropy() const;
 
+    /**
+     * @brief FitShapeAndScaleMLE
+     * @param sample
+     */
     void FitShapeAndScaleMLE(const std::vector<double> &sample);
 };
 

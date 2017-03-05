@@ -43,6 +43,12 @@ public:
 
     double Entropy() const;
 
+    /**
+     * @brief FitProbabilityBayes
+     * @param sample
+     * @param priorDistribution
+     * @return posterior distribution
+     */
     BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution);
 };
 

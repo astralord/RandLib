@@ -12,6 +12,7 @@
  * Notation X ~ Gamma(α, β)
  *
  * Related distributions:
+ * σX ~ Gamma(α, σβ)
  * If X ~ Gamma(1, β), then X ~ Exp(β)
  * If X ~ Gamma(0.5 * n, 0.5), then X ~ Chi^2(n)
  * If X ~ Gamma(k, β) for integer k, then X ~ Erlang(k, β)

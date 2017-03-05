@@ -8,6 +8,10 @@
  * Nakagami distribution
  *
  * Notation: X ~ Nakagami(m, w)
+ *
+ * Related distributions:
+ * σX ~ Nakagami(m, wσ^2)
+ * X^2 ~ Gamma(m, m / w)
  */
 class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
@@ -25,6 +29,7 @@ public:
     void SetParameters(double shape, double spread);
     inline double GetShape() const { return m; }
     inline double GetSpread() const { return w; }
+    inline double GetLogGammaFunction() const { return Y.GetLogGammaFunction(); }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;
@@ -40,9 +45,6 @@ public:
 protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
-
-public:
-    double GetLogGammaFunction() const { return Y.GetLogGammaFunction(); }
 };
 
 
@@ -68,7 +70,7 @@ private:
     using NakagamiRand::SetParameters;
 
 public:
-    void SetParameters(int degree);
+    void SetDegree(int degree);
     inline int GetDegree() const { return 2 * NakagamiRand::GetShape(); }
 
     double Skewness() const override;
@@ -84,14 +86,19 @@ public:
  *
  * Related distributions:
  * X / σ ~ Chi(3)
- * X / σ ~ Nakagami(1.5, 3)
+ * X ~ Nakagami(1.5, 3σ^2)
  */
-class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public ChiRand
+class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiRand
 {
     double sigma;
 public:
     explicit MaxwellBoltzmannRand(double scale);
     std::string Name() const override;
+
+private:
+    using NakagamiRand::SetParameters;
+
+public:
     void SetScale(double scale);
     double GetScale() const { return sigma; }
 
@@ -106,10 +113,6 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
-
-private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
 };
 
 
@@ -121,14 +124,19 @@ private:
  *
  * Related distributions:
  * X / σ ~ Chi(2)
- * X / σ ~ Nakagami(1, 2)
+ * X ~ Nakagami(1, 2σ^2)
  */
-class RANDLIBSHARED_EXPORT RayleighRand : public ChiRand
+class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiRand
 {
     double sigma;
 public:
     explicit RayleighRand(double scale = 1);
     std::string Name() const override;
+
+private:
+    using NakagamiRand::SetParameters;
+
+public:
     void SetScale(double scale);
     double GetScale() const { return sigma; }
 
@@ -150,7 +158,17 @@ private:
     double quantileImpl1m(double p) const override;
 
 public:
+    /**
+     * @brief FitScaleMLE
+     * set scale via maximum-likelihood method
+     * @param sample
+     */
     void FitScaleMLE(const std::vector<double> &sample);
+    /**
+     * @brief FitScaleUMVU
+     * set scale, returned by uniformly minimum variance unbiased estimator
+     * @param sample
+     */
     void FitScaleUMVU(const std::vector<double> &sample);
 };
 
