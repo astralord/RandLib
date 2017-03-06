@@ -17,7 +17,7 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
     NakagamiRand Y;
     double pdfCoef;
     double nup1Half; /// 0.5 * (nu + 1)
-    double betaInv; /// 1.0 / beta(0.5 * nu, 0.5)
+    double beta; /// beta(0.5 * nu, 0.5)
 
 public:
     explicit StudentTRand(double degree = 1.0, double location = 0.0, double scale = 1.0);

@@ -14,7 +14,7 @@
 class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
 {
     double p;
-    double logQInv; /// 1 / log(q)
+    double logProb, log1mProb; /// log(p), log(q)
 public:
     explicit LogarithmicRand(double probability);
     std::string Name() const override;
@@ -27,6 +27,9 @@ public:
 
     double P(const int & k) const override;
     double logP(const int & k) const override;
+private:
+    double betaFun(int a) const;
+public:
     double F(const int & k) const override;
     double S(const int & k) const override;
     int Variate() const override;

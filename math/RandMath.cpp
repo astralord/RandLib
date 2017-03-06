@@ -117,7 +117,7 @@ long double binomialCoef(int n, int k)
     if (k > n)
         return 0;
     if (n > 20) /// to avoid overflow
-        return 1.0 / ((n + 1) * betaFun(n - k + 1, k + 1));
+        return 1.0 / ((n + 1) * beta(n - k + 1, k + 1));
     long double n_fact = factorial(n);
     long double k_fact = factorial(k);
     long double n_k_fact;
@@ -553,7 +553,7 @@ double qgamma(double a, double x)
 
 /// INCOMPLETE BETA FUNCTIONS
 
-double betaFun(double a, double b)
+double beta(double a, double b)
 {
     if (a <= 0 || b <= 0)
         return NAN;
@@ -562,14 +562,14 @@ double betaFun(double a, double b)
     return std::exp(lgammaA + lgammaB - std::lgamma(a + b));
 }
 
-double incompleteBetaFun(double x, double a, double b)
+double betaInc(double x, double a, double b)
 {
-    return incompleteBetaFun(x, a, b, betaFun(a, b));
+    return betaInc(x, a, b, beta(a, b));
 }
 
-double incompleteBetaFun(double x, double a, double b, double beta)
+double betaInc(double x, double a, double b, double beta)
 {
-    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
+    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0) /// if incorrect parameters
         return NAN;
     if (x == 0.0)
         return 0.0;
@@ -577,26 +577,14 @@ double incompleteBetaFun(double x, double a, double b, double beta)
         return (b == 0) ? NAN : beta;
     if (a < 1)
     {
-        double y = incompleteBetaFun(x, a + 1, b) * (a + b);
+        double y = betaInc(x, a + 1, b) * (a + b);
         double z = a * std::log(x) + b * std::log1p(-x);
         y += std::exp(z);
         return y / a;
     }
     if (b < 1)
     {
-        if (b == 0) /// series expansion
-        {
-            double denom = a;
-            double sum = 1.0 / a, add = 1;
-            int i = 1;
-            do {
-                add = std::pow(x, i) / (++denom);
-                sum += add;
-                ++i;
-            } while (add > MIN_POSITIVE * sum);
-            return std::pow(x, a) * sum;
-        }
-        double y = incompleteBetaFun(x, a, b + 1) * (a + b);
+        double y = betaInc(x, a, b + 1) * (a + b);
         double z = a * std::log(x) + b * std::log1p(-x);
         y -= std::exp(z);
         return y / b;
@@ -631,7 +619,7 @@ double incompleteBetaFun(double x, double a, double b, double beta)
     return invert ? beta - y : y;
 }
 
-double regularizedBetaFun(double x, double a, double b)
+double ibeta(double x, double a, double b)
 {
     if (a <= 0 || b < 0 || x < 0.0 || x > 1.0)
         return NAN;
@@ -639,8 +627,19 @@ double regularizedBetaFun(double x, double a, double b)
         return 0.0;
     if (x == 1.0)
         return 1.0;
-    double beta = betaFun(a, b);
-    return incompleteBetaFun(x, a, b, beta) / beta;
+    double c = beta(a, b);
+    return betaInc(x, a, b, c) / c;
+}
+
+double ibeta(double x, double a, double b, double beta)
+{
+    if (a <= 0 || b < 0 || x < 0.0 || x > 1.0)
+        return NAN;
+    if (b == 0.0 || x == 0.0)
+        return 0.0;
+    if (x == 1.0)
+        return 1.0;
+    return betaInc(x, a, b, beta) / beta;
 }
 
 /**

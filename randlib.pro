@@ -82,7 +82,7 @@ SOURCES += \
     distributions/univariate/continuous/KumaraswamyRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquaredRand.cpp \
     distributions/univariate/continuous/NoncentralTRand.cpp \
-    distributions/univariate/continuous/KolmogorovSmirnovRand.cpp
+    distributions/univariate/continuous/KolmogorovSmirnovRand.cpp \
 
 HEADERS +=\
     randlib_global.h \

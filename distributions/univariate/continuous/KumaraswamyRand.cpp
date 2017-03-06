@@ -156,7 +156,7 @@ double KumaraswamyRand::ExcessKurtosis() const
 
 double KumaraswamyRand::Moment(int n) const
 {
-    return b * RandMath::betaFun((a + n) / a, b);
+    return b * RandMath::beta((a + n) / a, b);
 }
 
 double KumaraswamyRand::quantileImpl(double p) const

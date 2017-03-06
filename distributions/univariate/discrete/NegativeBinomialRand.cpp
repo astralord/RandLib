@@ -66,13 +66,13 @@ double NegativeBinomialRand<T>::logP(const int & k) const
 template< typename T >
 double NegativeBinomialRand<T>::F(const int & k) const
 {
-    return (k < 0) ? 0.0 : RandMath::regularizedBetaFun(p, r, k + 1);
+    return (k < 0) ? 0.0 : RandMath::ibeta(p, r, k + 1);
 }
 
 template< typename T >
 double NegativeBinomialRand<T>::S(const int & k) const
 {
-    return (k < 0) ? 0.0 : RandMath::regularizedBetaFun(q, k + 1, r);
+    return (k < 0) ? 0.0 : RandMath::ibeta(q, k + 1, r);
 }
 
 template< >

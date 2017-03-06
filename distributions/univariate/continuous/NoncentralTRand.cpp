@@ -34,14 +34,15 @@ double NoncentralTRand::Faux(double x, double nuAux, double muAux) const
     double y = xSq / (xSq + nuAux);
     double halfNu = 0.5 * nuAux;
     double logY = std::log(y), aux = halfNu * std::log1p(-y);
+    double lgammaHalfNu = std::lgamma(halfNu);
     static constexpr double M_LN2_2 = 0.5 * M_LN2;
 
     /// go forward
     double sum1 = 0.0, sum2 = 0.0, addon1 = 0.0, addon2 = 0.0;
     double floorTemp = std::max(std::floor(temp), 1.0); /// starting point at most weight
     int j = floorTemp;
-    double I1 = RandMath::regularizedBetaFun(y, j + 0.5, halfNu);
-    double I2 = RandMath::regularizedBetaFun(y, j + 1.0, halfNu);
+    double I1 = RandMath::ibeta(y, j + 0.5, halfNu);
+    double I2 = RandMath::ibeta(y, j + 1.0, halfNu);
     double I1Temp = I1, I2Temp = I2;
     do {
         double jpHalf = j + 0.5, jp1 = j + 1.0;
@@ -55,11 +56,15 @@ double NoncentralTRand::Faux(double x, double nuAux, double muAux) const
         sum2 += addon2;
         /// shift first regularized beta function
         double z = jpHalf * logY + aux;
-        z = std::exp(z) / (jpHalf * RandMath::betaFun(jpHalf, halfNu));
+        double logBeta = std::lgamma(jpHalf) + lgammaHalfNu - std::lgamma(jpHalf + halfNu);
+        z = std::exp(z - logBeta);
+        z /= jpHalf;
         I1 -= z;
         /// shift second regularized beta function
         z = jp1 * logY + aux;
-        z = std::exp(z) / (jp1 * RandMath::betaFun(jp1, halfNu));
+        logBeta = std::lgamma(jp1) + lgammaHalfNu - std::lgamma(jp1 + halfNu);
+        z = std::exp(z - logBeta);
+        z /= jp1;
         I2 -= z;
         ++j;
     } while (std::fabs(addon1) > MIN_POSITIVE * std::fabs(sum1) || std::fabs(addon2) > MIN_POSITIVE * std::fabs(sum2));
@@ -76,13 +81,18 @@ double NoncentralTRand::Faux(double x, double nuAux, double muAux) const
         double jpHalf = j + 0.5, jp1 = j + 1.0;
         /// shift first regularized beta function
         double z = jpHalf * logY + aux;
-        z = std::exp(z) / (jpHalf * RandMath::betaFun(jpHalf, halfNu));
+        double logBeta = std::lgamma(jpHalf) + lgammaHalfNu - std::lgamma(jpHalf + halfNu);
+        z = std::exp(z - logBeta);
+        z /= jpHalf;
         I1 += z;
         /// shift second regularized beta function
         z = jp1 * logY + aux;
-        z = std::exp(z) / (jp1 * RandMath::betaFun(jp1, halfNu));
+        double lgammajp1 = std::lgamma(jp1);
+        logBeta = lgammajp1 + lgammaHalfNu - std::lgamma(jp1 + halfNu);
+        z = std::exp(z - logBeta);
+        z /= jp1;
         I2 += z;
-        double p = j * logTemp - std::lgamma(jp1);
+        double p = j * logTemp - lgammajp1;
         p = std::exp(p);
         double q = j * logTemp - std::lgamma(j + 1.5) - M_LN2_2;
         q = std::exp(q);

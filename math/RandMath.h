@@ -144,41 +144,34 @@ double lqgamma(double a, double x);
 double qgamma(double a, double x);
 
 /**
- * @brief betaFun
- * Calculate Beta function
+ * @brief beta
+ * Calculate beta function
  * @param a
  * @param b
- * @return Gamma(a) * Gamma(b) / Gamma(a + b)
+ * @return B(a, b) = Γ(a) * Γ(b) / Γ(a + b)
  */
-double betaFun(double a, double b);
+double beta(double a, double b);
 
 /**
- * @brief incompleteBetaFun
+ * @brief ibeta
+ * Calculate regularized beta function
  * @param x
  * @param a
  * @param b
- * @return
+ * @return I(x, a, b) = B(x, a, b) / B(a, b)
  */
-double incompleteBetaFun(double x, double a, double b);
+double ibeta(double x, double a, double b);
 
 /**
- * @brief incompleteBetaFun
+ * @brief ibeta
+ * Calculate regularized beta function
  * @param x
  * @param a
  * @param b
- * @return
+ * @param beta B(a, b)
+ * @return I(x, a, b) = B(x, a, b) / B(a, b)
  */
-double incompleteBetaFun(double x, double a, double b, double beta);
-
-/**
- * @brief regularizedBetaFun
- * @param x
- * @param a
- * @param b
- * @return
- */
-double regularizedBetaFun(double x, double a, double b);
-
+double ibeta(double x, double a, double b, double beta);
 
 /**
  * @brief integral

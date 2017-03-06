@@ -125,7 +125,7 @@ double BinomialRand::F(const int & k) const
         return 0.0;
     if (k >= n)
         return 1.0;
-    return RandMath::regularizedBetaFun(q, n - k, 1 + k);
+    return RandMath::ibeta(q, n - k, 1 + k);
 }
 
 double BinomialRand::S(const int & k) const
@@ -134,7 +134,7 @@ double BinomialRand::S(const int & k) const
         return 1.0;
     if (k >= n)
         return 0.0;
-    return RandMath::regularizedBetaFun(p, 1 + k, n - k);
+    return RandMath::ibeta(p, 1 + k, n - k);
 }
 
 BinomialRand::GENERATOR_ID BinomialRand::GetIdOfUsedGenerator() const

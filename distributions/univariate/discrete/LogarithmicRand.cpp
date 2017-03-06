@@ -16,27 +16,44 @@ void LogarithmicRand::SetProbability(double probability)
     p = probability;
     if (p <= 0 || p >= 1)
         p = 0.5;
-    logQInv = 1.0 / std::log1p(-p);
+    logProb = std::log(p);
+    log1mProb = std::log1p(-p);
 }
 
 double LogarithmicRand::P(const int & k) const
 {
-    return (k < 1) ? 0.0 : -logQInv * std::pow(p, k) / k;
+    return (k < 1) ? 0.0 : -std::pow(p, k) / (k * log1mProb);
 }
 
 double LogarithmicRand::logP(const int & k) const
 {
-    return (k < 1) ? -INFINITY : std::log(P(k));
+    return (k < 1) ? -INFINITY : k * logProb - std::log(-k * log1mProb);
+}
+
+double LogarithmicRand::betaFun(int a) const
+{
+    /// calculate B(p, a, 0),
+    /// where B(x, a, b) denotes incomplete beta function,
+    /// using series expansion (converges for x < 1)
+    double denom = a;
+    double sum = 1.0 / a, add = 1;
+    int i = 1;
+    do {
+        add = std::exp(i * logProb) / (++denom);
+        sum += add;
+        ++i;
+    } while (add > MIN_POSITIVE * sum);
+    return std::exp(a * logProb) * sum;
 }
 
 double LogarithmicRand::F(const int & k) const
 {
-    return (k < 1) ? 0.0 : 1 + logQInv * RandMath::incompleteBetaFun(p, k + 1, 0);
+    return (k < 1) ? 0.0 : 1 + betaFun(k + 1) / log1mProb;
 }
 
 double LogarithmicRand::S(const int & k) const
 {
-    return (k < 1) ? 1.0 : -logQInv * RandMath::incompleteBetaFun(p, k + 1, 0);
+    return (k < 1) ? 1.0 : -betaFun(k + 1) / log1mProb;
 }
 
 int LogarithmicRand::Variate() const
@@ -47,7 +64,7 @@ int LogarithmicRand::Variate() const
     if (V >= p)
         return 1.0;
     double U = UniformRand::StandardVariate();
-    double y = -std::expm1(U / logQInv);
+    double y = -std::expm1(U * log1mProb);
     if (V > y)
         return 1.0;
     if (V > y * y)
@@ -57,13 +74,13 @@ int LogarithmicRand::Variate() const
 
 double LogarithmicRand::Mean() const
 {
-    return -logQInv * p / (1.0 - p);
+    return -p / (1.0 - p) / log1mProb;
 }
 
 double LogarithmicRand::Variance() const
 {
-    double var = p * logQInv + 1;
-    var *= logQInv;
+    double var = p / log1mProb + 1;
+    var /= log1mProb;
     var *= p;
     double q = 1.0 - p;
     return -var / (q * q);
@@ -73,7 +90,7 @@ std::complex<double> LogarithmicRand::CFImpl(double t) const
 {
     std::complex<double> y(std::cos(t), std::sin(t));
     y = std::log(1.0 - p * y);
-    return y * logQInv;
+    return y / log1mProb;
 }
 
 int LogarithmicRand::Mode() const
