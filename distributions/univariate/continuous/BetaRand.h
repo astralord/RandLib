@@ -30,7 +30,7 @@ protected:
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    double mLogBetaFun; /// log(B(α, β)
+    double logBetaFun; /// log(B(α, β)
     double betaFun; /// B(α, β)
 
     /// coefficients for generators
@@ -103,7 +103,7 @@ public:
      * @brief GetLogBetaFunction
      * @return log(B(α, β))
      */
-    inline double GetLogBetaFunction() const { return -mLogBetaFun; }
+    inline double GetLogBetaFunction() const { return logBetaFun; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

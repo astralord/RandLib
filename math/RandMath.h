@@ -5,21 +5,15 @@
 #include <functional>
 #include <complex>
 #include <vector>
-#include <cmath>
 #include <utility>
 
 #include "Constants.h"
+#include "GammaMath.h"
+#include "BetaMath.h"
 
 #include "randlib_global.h"
 
 #include <QDebug>
-
-constexpr long double MIN_POSITIVE = 1e-21l;
-
-typedef std::pair <double, double> DoublePair;
-typedef std::pair <int, int> IntPair;
-
-typedef std::tuple <double, double, double> DoubleTriplet;
 
 namespace RandMath
 {
@@ -85,93 +79,6 @@ double erfinv(double p);
  * @return inverse complementary error function: such x that erfc(x) = p
  */
 double erfcinv(double p);
-
-/**
- * @brief digamma
- * @param x
- * @return digamma(x) = d(ln(Gamma(x)))/dx = d(Gamma(x))/Gamma(x)
- */
-double digamma(double x);
-
-/**
- * @brief logmdigamma
- * @param x
- * @return digamma(x) - log(x)
- */
-double digammamLog(double x);
-
-/**
- * @brief trigamma
- * @param x
- * @return trigamma(x) = digamma'(x)
- */
-double trigamma(double x);
-
-/**
- * @brief lpgamma
- * Calculate logarithm of lower regularised incomplete gamma function log(P(a, x))
- * @param a
- * @param x
- * @return log(P(a, x))
- */
-double lpgamma(double a, double x);
-
- /**
- * @brief pgamma
- * Calculate lower regularised incomplete gamma function P(a, x)
- * @param a
- * @param x
- * @return P(a, x)
- */
-double pgamma(double a, double x);
-
- /**
- * @brief lqgamma
- * Calculate logarithm of upper incomplete gamma function
- * @param a
- * @param x
- * @return log(Q(a, x))
- */
-double lqgamma(double a, double x);
-
-/**
- * @brief qgamma
- * Calculate upper incomplete gamma function
- * @param a
- * @param x
- * @return Q(a, x)
- */
-double qgamma(double a, double x);
-
-/**
- * @brief beta
- * Calculate beta function
- * @param a
- * @param b
- * @return B(a, b) = Γ(a) * Γ(b) / Γ(a + b)
- */
-double beta(double a, double b);
-
-/**
- * @brief ibeta
- * Calculate regularized beta function
- * @param x
- * @param a
- * @param b
- * @return I(x, a, b) = B(x, a, b) / B(a, b)
- */
-double ibeta(double x, double a, double b);
-
-/**
- * @brief ibeta
- * Calculate regularized beta function
- * @param x
- * @param a
- * @param b
- * @param beta B(a, b)
- * @return I(x, a, b) = B(x, a, b) / B(a, b)
- */
-double ibeta(double x, double a, double b, double beta);
 
 /**
  * @brief integral

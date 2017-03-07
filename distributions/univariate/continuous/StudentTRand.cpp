@@ -27,7 +27,7 @@ void StudentTRand::SetDegree(double degree)
     pdfCoef = std::lgamma(nup1Half);
     pdfCoef -= 0.5 * M_LNPI;
     pdfCoef -= Y.GetLogGammaFunction();
-    beta = std::exp(-pdfCoef);
+    logBetaFun = -pdfCoef;
     pdfCoef -= 0.5 * std::log(nu);
 }
 
@@ -99,8 +99,8 @@ double StudentTRand::F(const double & x) const
         return 0.5 + M_1_PI * y;
     }
     double t = nu / (x0 * x0 + nu);
-    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, beta);
-    return (x0 > 0.0) ? (1 - y) : y;
+    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1p(-t));
+    return (x0 > 0.0) ? (1.0 - y) : y;
 }
 
 double StudentTRand::S(const double & x) const
@@ -122,7 +122,7 @@ double StudentTRand::S(const double & x) const
         return 0.5 - M_1_PI * y;
     }
     double t = nu / (x0 * x0 + nu);
-    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, beta);
+    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1p(-t));
     return (x0 > 0.0) ? y : 1.0 - y;
 }
 

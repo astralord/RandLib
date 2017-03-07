@@ -74,8 +74,8 @@ void BetaRand::SetShapes(double shape1, double shape2)
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
     /// we use log(Gamma(x)) in order to avoid too big numbers
-    mLogBetaFun = std::lgamma(alpha + beta) - GammaRV1.GetLogGammaFunction() - GammaRV2.GetLogGammaFunction();
-    betaFun = std::exp(-mLogBetaFun);
+    logBetaFun = -std::lgamma(alpha + beta) + GammaRV1.GetLogGammaFunction() + GammaRV2.GetLogGammaFunction();
+    betaFun = std::exp(logBetaFun);
     setCoefficientsForGenerator();
 }
 
@@ -131,7 +131,7 @@ double BetaRand::logf(const double & x) const
         y = (alpha - 1) * std::log(xSt);
         y += (beta - 1) * std::log1p(-xSt);
     }
-    return mLogBetaFun - logBma + y;
+    return -logBetaFun - logBma + y;
 }
 
 double BetaRand::F(const double & x) const
@@ -145,7 +145,7 @@ double BetaRand::F(const double & x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(xSt));
-    return RandMath::ibeta(xSt, alpha, beta, betaFun);
+    return RandMath::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1p(-xSt));
 }
 
 double BetaRand::S(const double & x) const
@@ -159,7 +159,7 @@ double BetaRand::S(const double & x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::acos(std::sqrt(xSt));
-    return RandMath::ibeta(1.0 - xSt, alpha, beta, betaFun);
+    return RandMath::ibeta(1.0 - xSt, alpha, beta, logBetaFun, std::log1p(-xSt), std::log(xSt));
 }
 
 double BetaRand::variateArcsine() const

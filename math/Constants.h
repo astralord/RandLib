@@ -3,6 +3,11 @@
 
 #include <cmath>
 
+constexpr long double MIN_POSITIVE = 1e-21l;
+
+typedef std::pair <double, double> DoublePair;
+typedef std::tuple <double, double, double> DoubleTriplet;
+
 #ifndef INFINITY
 #include <limits>
 long double INFINITY = std::numeric_limits<long double>::infinity()l;

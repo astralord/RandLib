@@ -125,7 +125,9 @@ double BinomialRand::F(const int & k) const
         return 0.0;
     if (k >= n)
         return 1.0;
-    return RandMath::ibeta(q, n - k, 1 + k);
+    int nmk = n - k, kp1 = k + 1;
+    double logBetaFun = RandMath::logBeta(nmk, kp1);
+    return RandMath::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 
 double BinomialRand::S(const int & k) const
@@ -134,7 +136,9 @@ double BinomialRand::S(const int & k) const
         return 1.0;
     if (k >= n)
         return 0.0;
-    return RandMath::ibeta(p, 1 + k, n - k);
+    int nmk = n - k, kp1 = k + 1;
+    double logBetaFun = RandMath::logBeta(kp1, nmk);
+    return RandMath::ibeta(p, kp1, nmk, logBetaFun, logProb, log1mProb);
 }
 
 BinomialRand::GENERATOR_ID BinomialRand::GetIdOfUsedGenerator() const
