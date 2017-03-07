@@ -84,7 +84,8 @@ SOURCES += \
     distributions/univariate/continuous/NoncentralTRand.cpp \
     distributions/univariate/continuous/KolmogorovSmirnovRand.cpp \
     math/BetaMath.cpp \
-    math/GammaMath.cpp
+    math/GammaMath.cpp \
+    math/NumericMath.cpp
 
 HEADERS +=\
     randlib_global.h \
@@ -168,7 +169,8 @@ HEADERS +=\
     distributions/univariate/continuous/NoncentralTRand.h \
     distributions/univariate/continuous/KolmogorovSmirnovRand.h \
     math/BetaMath.h \
-    math/GammaMath.h
+    math/GammaMath.h \
+    math/NumericMath.h
 
 unix {
     target.path = /usr/lib

@@ -25,7 +25,7 @@ double ContinuousDistribution::quantileImpl(double p) const
 
     /// We use quantile from sample as an initial guess
     static constexpr int SAMPLE_SIZE = 128;
-    std::vector<double> sample(SAMPLE_SIZE);
+    static std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
     int index = p * SAMPLE_SIZE;
     if (index == 0) { /// if p is too small
@@ -69,7 +69,7 @@ double ContinuousDistribution::quantileImpl1m(double p) const
 
     /// We use quantile from sample as an initial guess
     static constexpr int SAMPLE_SIZE = 128;
-    std::vector<double> sample(SAMPLE_SIZE);
+    static std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
     int index = p * SAMPLE_SIZE;
     if (index == 0) { /// if p is too small
