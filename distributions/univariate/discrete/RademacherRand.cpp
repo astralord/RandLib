@@ -47,9 +47,9 @@ std::complex<double> RademacherRand::CFImpl(double t) const
     return std::cos(t);
 }
 
-double RademacherRand::Median() const
+int RademacherRand::Median() const
 {
-    return 0.0;
+    return -1;
 }
 
 int RademacherRand::Mode() const

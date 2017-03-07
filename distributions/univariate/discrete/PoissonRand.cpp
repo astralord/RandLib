@@ -104,7 +104,7 @@ std::complex<double> PoissonRand::CFImpl(double t) const
     return std::exp(lambda * y);
 }
 
-double PoissonRand::Median() const
+int PoissonRand::Median() const
 {
     /// this value is approximate
     return std::floor(lambda + 1.0 / 3 - 0.02 / lambda);

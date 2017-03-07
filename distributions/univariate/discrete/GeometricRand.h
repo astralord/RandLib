@@ -39,7 +39,7 @@ public:
 
     void Sample(std::vector<int> &outputData) const override;
 
-    double Median() const override;
+    int Median() const override;
 
     double Entropy() const;
 

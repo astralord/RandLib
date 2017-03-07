@@ -41,8 +41,8 @@ public:
     int Mode() const override;
 
 private:
-    double quantileImpl(double prob) const override;
-    double quantileImpl1m(double prob) const override;
+    int quantileImpl(double p) const override;
+    int quantileImpl1m(double p) const override;
     std::complex<double> CFImpl(double t) const override;
 };
 

@@ -87,16 +87,11 @@ double CategoricalRand::Variance() const
 
 int CategoricalRand::Mode() const
 {
-    double maxProb = q;
-    int mode = 0;
-    for (int i = 0; i != K; ++i) {
-        if (prob[i] > maxProb)
-            mode = i + 1;
-    }
-    return mode;
+    auto maxProbIt = std::max_element(prob.begin(), prob.end());
+    return (*maxProbIt <= q) ? 0 : std::distance(prob.begin(), maxProbIt) + 1;
 }
 
-double CategoricalRand::quantileImpl(double p) const
+int CategoricalRand::quantileImpl(double p) const
 {
     double sum = q;
     for (int i = 0; i != K; ++i) {
@@ -107,7 +102,7 @@ double CategoricalRand::quantileImpl(double p) const
     return K;
 }
 
-double CategoricalRand::quantileImpl1m(double p) const
+int CategoricalRand::quantileImpl1m(double p) const
 {
     double sum = prob[K - 1];
     for (int i = K - 2; i >= 0; --i) {

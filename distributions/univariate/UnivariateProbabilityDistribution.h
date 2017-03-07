@@ -68,14 +68,14 @@ private:
      * @param p
      * @return such x that F(x) = p
      */
-    virtual double quantileImpl(double p) const = 0;
+    virtual T quantileImpl(double p) const = 0;
 
     /**
      * @brief quantileImpl1m
      * @param p
      * @return such x that F(x) = 1 - p
      */
-    virtual double quantileImpl1m(double p) const = 0;
+    virtual T quantileImpl1m(double p) const = 0;
 
 protected:
     /**
@@ -147,7 +147,7 @@ public:
      * @brief Median
      * @return such x that F(x) = 0.5
      */
-    virtual double Median() const;
+    virtual T Median() const;
 
     /**
      * @brief Mode

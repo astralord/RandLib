@@ -78,7 +78,7 @@ void GeometricRand::Sample(std::vector<int> &outputData) const
     }
 }
 
-double GeometricRand::Median() const
+int GeometricRand::Median() const
 {
     return std::floor(-M_LN2 / log1mProb);
 }

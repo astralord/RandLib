@@ -99,16 +99,16 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
     if (x == 1.0)
         return 1.0;
     if (b == 1.0)
-        return std::pow(x, a);
-    if (a == 1.0) {
-        double y = b * std::log1p(-x);
-        return -std::expm1(y);
-    }
+        return std::exp(a * logX);
+    if (a == 1.0)
+        return -std::expm1(b * log1mX);
 
+    /// If x is larger than mean of Beta distribution,
+    /// convergence of complementary distribution function is faster
     if (x > a / (a + b))
         return 1.0 - ibeta(1.0 - x, b, a);
 
-    /// We use 0.45 instead of 0.5 here
+    /// We truncate after 0.45 instead of 0.5 here
     /// in order to avoid x being too close to 0.5
     if (x < 0.45) {
         if (b < 1)

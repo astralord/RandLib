@@ -31,7 +31,7 @@ public:
 
     double Mean() const override;
     double Variance() const override;
-    double Median() const override;
+    int Median() const override;
     int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;

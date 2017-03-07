@@ -109,7 +109,7 @@ void UnivariateProbabilityDistribution<T>::HazardFunction(const std::vector<doub
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::Median() const
+T UnivariateProbabilityDistribution<T>::Median() const
 {
     return quantileImpl(0.5);
 }

@@ -58,9 +58,9 @@ double UniformDiscreteRand::Variance() const
     return (n * n - 1.0) / 12;
 }
 
-double UniformDiscreteRand::Median() const
+int UniformDiscreteRand::Median() const
 {
-    return 0.5 * (b + a);
+    return (b + a) >> 1;
 }
 
 int UniformDiscreteRand::Mode() const

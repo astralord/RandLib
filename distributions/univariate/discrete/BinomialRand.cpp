@@ -338,14 +338,14 @@ std::complex<double> BinomialRand::CFImpl(double t) const
     return std::pow(y, n);
 }
 
-double BinomialRand::Median() const
+int BinomialRand::Median() const
 {
     return std::round(np);
 }
 
 int BinomialRand::Mode() const
 {
-    return std::round(np + p);
+    return std::floor(np + p);
 }
 
 double BinomialRand::Skewness() const

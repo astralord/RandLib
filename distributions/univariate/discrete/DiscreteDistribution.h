@@ -37,8 +37,8 @@ public:
     int Mode() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    int quantileImpl(double p) const override;
+    int quantileImpl1m(double p) const override;
     double ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const override;
 
 public:

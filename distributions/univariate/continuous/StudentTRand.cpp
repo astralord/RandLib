@@ -56,8 +56,7 @@ double StudentTRand::f(const double & x) const
         double y = 3 + xSq;
         return 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
     }
-    double y = -nup1Half * std::log1p(xSq / nu);
-    return std::exp(pdfCoef + y) / sigma;
+    return std::exp(logf(x));
 }
 
 double StudentTRand::logf(const double & x) const
@@ -185,7 +184,6 @@ double StudentTRand::quantileImpl(double p) const
         double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
         return mu + sigma * 2 * RandMath::sign(temp) * std::sqrt(beta);
     }
-    // TODO: implement inverse of beta function
     return ContinuousDistribution::quantileImpl(p);
 }
 
