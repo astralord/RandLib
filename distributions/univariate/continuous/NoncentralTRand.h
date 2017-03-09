@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT NoncentralTRand : public ContinuousDistribution
     double sqrt1p2oNu;
 
     struct nuStruct {
-        double it; /// ν itself
+        double halfNu; /// ν itself
         double qEpsCoef, q1mEpsCoef;
         double logHalfNu, lgammaHalfNu;
     } nuCoefs, nup2Coefs;
@@ -38,7 +38,7 @@ private:
     DoublePair getIntegrationLimits(double x, double muAux, const nuStruct &nuAuxCoef) const;
     double cdf(double x, const nuStruct &nuAuxCoef, bool isCompl) const;
     double g(double z, double x, const nuStruct &nuAuxCoef, double muAux, bool lower) const;
-    double findMode(double x, double nuAux, double muAux, double A, double B) const;
+    double findMode(double x, double halfNuAux, double muAux, double A, double B) const;
     double lowerTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
     double upperTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
 

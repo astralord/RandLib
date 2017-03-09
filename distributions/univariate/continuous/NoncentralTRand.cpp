@@ -27,18 +27,18 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
     /// precalculate values for pdf/cdf integration
     static constexpr double epsilon = 1e-16;
     ChiSquaredRand X(nu);
-    nuCoefs.it = nu;
+    nuCoefs.halfNu = 0.5 * nu;
     nuCoefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
     nuCoefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
-    nuCoefs.logHalfNu = std::log(0.5 * nu);
-    nuCoefs.lgammaHalfNu = std::lgamma(0.5 * nu);
+    nuCoefs.logHalfNu = std::log(nuCoefs.halfNu);
+    nuCoefs.lgammaHalfNu = std::lgamma(nuCoefs.halfNu);
     double nup2 = nu + 2;
     X.SetDegree(nup2);
-    nup2Coefs.it = nup2;
+    nup2Coefs.halfNu = nuCoefs.halfNu + 1.0;
     nup2Coefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nup2);
     nup2Coefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nup2);
-    nup2Coefs.logHalfNu = std::log(0.5 * nup2);
-    nup2Coefs.lgammaHalfNu = std::lgamma(0.5 * nup2);
+    nup2Coefs.logHalfNu = std::log1p(nuCoefs.halfNu);
+    nup2Coefs.lgammaHalfNu = std::lgamma(nup2Coefs.halfNu);
 }
 
 DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const NoncentralTRand::nuStruct &nuAuxCoef) const
@@ -63,30 +63,30 @@ double NoncentralTRand::g(double z, double x, const nuStruct &nuAuxCoef, double 
 {
     if (z == -muAux)
         return 0.0;
-    double halfNuAux = 0.5 * nuAuxCoef.it;
     double y = -0.5 * z * z;
     y -= 0.5 * (M_LN2 + M_LNPI);
     double b = (z + muAux) / x;
     b *= b;
-    b *= halfNuAux;
+    b *= nuAuxCoef.halfNu;
     /// 'lower' stands for lower tail P(X < x),
     /// however in that case we need to call upper incomplete gamma function
     /// and vice versa
-    y += lower ? RandMath::lqgamma(halfNuAux, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu) : RandMath::lpgamma(halfNuAux, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu);
+    y += lower ? RandMath::lqgamma(nuAuxCoef.halfNu, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu) :
+                 RandMath::lpgamma(nuAuxCoef.halfNu, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu);
     return std::exp(y);
 }
 
-double NoncentralTRand::findMode(double x, double nuAux, double muAux, double A, double B) const
+double NoncentralTRand::findMode(double x, double halfNuAux, double muAux, double A, double B) const
 {
     /// find approximate value of mode
-    double temp = (nuAux > 2) ? 4 * nuAux - 8 : 4.0;
+    double temp = (halfNuAux > 1) ? 8 * halfNuAux - 8 : 4.0;
     double mode = muAux * muAux + temp;
     double xSq = x * x;
     mode *= xSq;
-    mode += temp * nuAux;
+    mode += 2 * temp * halfNuAux;
     mode = x * std::sqrt(mode);
-    mode -= muAux * (xSq + 2 * nuAux);
-    mode /= 2 * (xSq + nuAux);
+    mode -= muAux * (xSq + 4 * halfNuAux);
+    mode /= 2 * xSq + 4 * halfNuAux;
     /// sanity check
     if (mode <= A || mode >= B)
         mode = 0.5 * (A + B);
@@ -98,7 +98,7 @@ double NoncentralTRand::lowerTail(const double &x, double muAux, const nuStruct 
     DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
     double A = intLimits.first, B = intLimits.second;
     /// find peak of the integrand
-    double mode = findMode(x, nuAuxCoef.it, muAux, A, B);
+    double mode = findMode(x, nuAuxCoef.halfNu, muAux, A, B);
     /// calculate two integrals
     std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, nuAuxCoef, muAux, true);
     double I1 = RandMath::integral(integrandPtr, A, mode);
@@ -118,7 +118,7 @@ double NoncentralTRand::upperTail(const double &x, double muAux, const nuStruct 
     DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
     double A = intLimits.first, B = intLimits.second;
     /// find peak of the integrand
-    double mode = findMode(x, nuAuxCoef.it, muAux, A, B);
+    double mode = findMode(x, nuAuxCoef.halfNu, muAux, A, B);
     /// calculate two integrals
     std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, nuAuxCoef, muAux, false);
     double I1 = RandMath::integral(integrandPtr, A, mode);
