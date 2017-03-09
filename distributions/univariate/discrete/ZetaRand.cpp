@@ -17,7 +17,7 @@ void ZetaRand::SetExponent(double exponent)
     s = exponent <= 1.0 ? 2.0 : exponent;
     sm1 = s - 1.0;
     zetaSInv = 1.0 / RandMath::zetaRiemann(s);
-    b = 1.0 - std::pow(2.0, -sm1);
+    b = 1.0 - std::pow(2.0, -sm1); // TODO: expm1(...)
 }
 
 double ZetaRand::P(const int & k) const
