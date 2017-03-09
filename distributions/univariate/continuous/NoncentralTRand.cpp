@@ -18,7 +18,6 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
 {
     nu = (degree > 0.0) ? degree : 1.0;
     T.SetDegree(nu);
-    logNu = std::log(nu);
     sqrt1p2oNu = std::exp(0.5 * std::log1p(2.0 / nu));
 
     mu = noncentrality;
@@ -28,15 +27,21 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
     /// precalculate values for pdf/cdf integration
     static constexpr double epsilon = 1e-16;
     ChiSquaredRand X(nu);
-    nuCoef.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
-    nuCoef.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
+    nuCoefs.it = nu;
+    nuCoefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
+    nuCoefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
+    nuCoefs.logHalfNu = std::log(0.5 * nu);
+    nuCoefs.lgammaHalfNu = std::lgamma(0.5 * nu);
     double nup2 = nu + 2;
     X.SetDegree(nup2);
-    nup2Coef.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nup2);
-    nup2Coef.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nup2);
+    nup2Coefs.it = nup2;
+    nup2Coefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nup2);
+    nup2Coefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nup2);
+    nup2Coefs.logHalfNu = std::log(0.5 * nup2);
+    nup2Coefs.lgammaHalfNu = std::lgamma(0.5 * nup2);
 }
 
-DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const NoncentralTRand::nuCoefs &nuAuxCoef) const
+DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const NoncentralTRand::nuStruct &nuAuxCoef) const
 {
     static constexpr double normQuant = -37.5194;
     double A0 = std::max(-muAux, normQuant), B0 = -normQuant;
@@ -45,28 +50,20 @@ DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const N
     return std::make_pair(std::max(qEps, A0), std::min(q1mEps, B0));
 }
 
-double NoncentralTRand::cdf(double x, double nuAux, double muAux, const NoncentralTRand::nuCoefs &nuAuxCoef) const
+double NoncentralTRand::cdf(double x, const NoncentralTRand::nuStruct &nuAuxCoef, bool isCompl) const
 {
-    if (x < -muAux)
-        return upperTail(-x, nuAux, -muAux, nuAuxCoef, true);
+    if (x < -mu)
+        return upperTail(-x, -mu, nuAuxCoef, !isCompl);
     if (x < 0.0)
-        return lowerTail(-x, nuAux, -muAux, nuAuxCoef, true);
-    return (x < muAux) ? lowerTail(x, nuAux, muAux, nuAuxCoef, false) : upperTail(x, nuAux, muAux, nuAuxCoef, false);
+        return lowerTail(-x, -mu, nuAuxCoef, !isCompl);
+    return (x < mu) ? lowerTail(x, mu, nuAuxCoef, isCompl) : upperTail(x, mu, nuAuxCoef, isCompl);
 }
 
-double NoncentralTRand::ccdf(double x, double nuAux, double muAux, const NoncentralTRand::nuCoefs &nuAuxCoef) const
-{
-    if (x < -muAux)
-        return upperTail(-x, nuAux, -muAux, nuAuxCoef, false);
-    if (x < 0.0)
-        return lowerTail(-x, nuAux, -muAux, nuAuxCoef, false);
-    return (x < muAux) ? lowerTail(x, nuAux, muAux, nuAuxCoef, true) : upperTail(x, nuAux, muAux, nuAuxCoef, true);
-}
-
-double NoncentralTRand::g(double z, double x, double halfNuAux, double muAux, bool lower) const
+double NoncentralTRand::g(double z, double x, const nuStruct &nuAuxCoef, double muAux, bool lower) const
 {
     if (z == -muAux)
         return 0.0;
+    double halfNuAux = 0.5 * nuAuxCoef.it;
     double y = -0.5 * z * z;
     y -= 0.5 * (M_LN2 + M_LNPI);
     double b = (z + muAux) / x;
@@ -75,7 +72,7 @@ double NoncentralTRand::g(double z, double x, double halfNuAux, double muAux, bo
     /// 'lower' stands for lower tail P(X < x),
     /// however in that case we need to call upper incomplete gamma function
     /// and vice versa
-    y += lower ? RandMath::lqgamma(halfNuAux, b) : RandMath::lpgamma(halfNuAux, b);
+    y += lower ? RandMath::lqgamma(halfNuAux, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu) : RandMath::lpgamma(halfNuAux, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu);
     return std::exp(y);
 }
 
@@ -96,15 +93,14 @@ double NoncentralTRand::findMode(double x, double nuAux, double muAux, double A,
     return mode;
 }
 
-double NoncentralTRand::lowerTail(const double &x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const
+double NoncentralTRand::lowerTail(const double &x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const
 {
     DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
     double A = intLimits.first, B = intLimits.second;
     /// find peak of the integrand
-    double mode = findMode(x, nuAux, muAux, A, B);
+    double mode = findMode(x, nuAuxCoef.it, muAux, A, B);
     /// calculate two integrals
-    double halfNuAux = 0.5 * nuAux;
-    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, halfNuAux, muAux, true);
+    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, nuAuxCoef, muAux, true);
     double I1 = RandMath::integral(integrandPtr, A, mode);
     double I2 = RandMath::integral(integrandPtr, mode, B);
     double I = I1 + I2;
@@ -117,15 +113,14 @@ double NoncentralTRand::lowerTail(const double &x, double nuAux, double muAux, c
     return PhiA + I;
 }
 
-double NoncentralTRand::upperTail(const double &x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const
+double NoncentralTRand::upperTail(const double &x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const
 {
     DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
     double A = intLimits.first, B = intLimits.second;
     /// find peak of the integrand
-    double mode = findMode(x, nuAux, muAux, A, B);
+    double mode = findMode(x, nuAuxCoef.it, muAux, A, B);
     /// calculate two integrals
-    double halfNuAux = 0.5 * nuAux;
-    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, halfNuAux, muAux, false);
+    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, nuAuxCoef, muAux, false);
     double I1 = RandMath::integral(integrandPtr, A, mode);
     double I2 = RandMath::integral(integrandPtr, mode, B);
     double I = I1 + I2;
@@ -144,12 +139,12 @@ double NoncentralTRand::f(const double & x) const
         return T.f(x);
     if (x == 0.0) {
         double y = std::lgamma(0.5 * nu + 0.5);
-        double z = mu * mu + M_LNPI + logNu;
+        double z = mu * mu + M_LNPI + M_LN2 + nuCoefs.logHalfNu;
         y -= T.Y.GetLogGammaFunction();
         return std::exp(y - 0.5 * z);
     }
-    double y = cdf(x * sqrt1p2oNu, nu + 2.0, mu, nup2Coef);
-    y -= cdf(x, nu, mu, nuCoef);
+    double y = cdf(x * sqrt1p2oNu, nup2Coefs, false);
+    y -= cdf(x, nuCoefs, false);
     return nu * y / x;
 }
 
@@ -164,7 +159,7 @@ double NoncentralTRand::F(const double & x) const
         return T.F(x);
     if (x == 0.0)
         return PhimMu;
-    return cdf(x, nu, mu, nuCoef);
+    return cdf(x, nuCoefs, false);
 }
 
 double NoncentralTRand::S(const double &x) const
@@ -173,7 +168,7 @@ double NoncentralTRand::S(const double &x) const
         return T.S(x);
     if (x == 0.0)
         return PhiMu;
-    return ccdf(x, nu, mu, nuCoef);
+    return cdf(x, nuCoefs, true);
 }
 
 double NoncentralTRand::Variate() const
@@ -200,7 +195,7 @@ double NoncentralTRand::Mean() const
         return 0.0;
     double mean = std::lgamma(0.5 * nu - 0.5);
     mean -= T.Y.GetLogGammaFunction();
-    mean += 0.5 * (logNu - M_LN2);
+    mean += 0.5 * (nuCoefs.logHalfNu);
     return mu * std::exp(mean);
 }
 
@@ -220,7 +215,7 @@ double NoncentralTRand::Skewness() const
     double var = nu * (1.0 + mu * mu) / (nu - 2) + mean * mean;
     double thirdMoment = std::lgamma(0.5 * nu - 1.5);
     thirdMoment -= T.Y.GetLogGammaFunction();
-    thirdMoment += 1.5 * logNu + 0.5 * M_LN2;
+    thirdMoment += 1.5 * (nuCoefs.logHalfNu + M_LN2);
     thirdMoment = 0.25 * std::exp(thirdMoment);
     thirdMoment *= mu * (3.0 + mu * mu);
     double denominator = std::pow(var, 1.5);
@@ -235,7 +230,7 @@ double NoncentralTRand::ExcessKurtosis() const
     fourthMoment *= (std::pow(mu, 4) + 6 * mu * mu + 3);
     double thirdMoment = std::lgamma(0.5 * nu - 1.5);
     thirdMoment -= T.Y.GetLogGammaFunction();
-    thirdMoment += 1.5 * logNu + 0.5 * M_LN2;
+    thirdMoment += 1.5 * (nuCoefs.logHalfNu + M_LN2);
     thirdMoment = 0.25 * std::exp(thirdMoment);
     thirdMoment *= mu * (3.0 + mu * mu);
     double mean = Mean();

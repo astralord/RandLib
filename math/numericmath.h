@@ -58,11 +58,11 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
  * @brief findMin
  * Combined Brent's method
  * @param funPtr
- * @param a lower boundary
- * @param c upper boundary
+ * @param abc lower boundary / middle / upper boundary
+ * @param fabc funPtr(abc)
  * @param root such x that funPtr(x) is min
  * @param epsilon tolerance
- * @return
+ * @return true if success
  */
 bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet &abc, const DoubleTriplet &fabc, double &root, double epsilon = 1e-8);
 
@@ -73,7 +73,7 @@ bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet &
  * @param closePoint point that is nearby minimum
  * @param root such x that funPtr(x) is min
  * @param epsilon tolerance
- * @return
+ * @return true if success
  */
 bool findMin(const std::function<double (double)> &funPtr, double closePoint, double &root, double epsilon = 1e-8);
 

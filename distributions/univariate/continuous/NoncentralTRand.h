@@ -11,13 +11,14 @@
 class RANDLIBSHARED_EXPORT NoncentralTRand : public ContinuousDistribution
 {
     double nu, mu;
-    double logNu;
     double PhiMu, PhimMu;
     double sqrt1p2oNu;
 
-    struct nuCoefs {
+    struct nuStruct {
+        double it; /// ν itself
         double qEpsCoef, q1mEpsCoef;
-    } nuCoef, nup2Coef;
+        double logHalfNu, lgammaHalfNu;
+    } nuCoefs, nup2Coefs;
 
     StudentTRand T;
 
@@ -34,13 +35,12 @@ public:
     inline double GetNoncentrality() const { return mu; }
 
 private:
-    DoublePair getIntegrationLimits(double x, double muAux, const nuCoefs &nuAuxCoef) const;
-    double cdf(double x, double nuAux, double muAux, const nuCoefs &nuAuxCoef) const;
-    double ccdf(double x, double nuAux, double muAux, const nuCoefs &nuAuxCoef) const;
-    double g(double z, double x, double halfNuAux, double muAux, bool lower) const;
+    DoublePair getIntegrationLimits(double x, double muAux, const nuStruct &nuAuxCoef) const;
+    double cdf(double x, const nuStruct &nuAuxCoef, bool isCompl) const;
+    double g(double z, double x, const nuStruct &nuAuxCoef, double muAux, bool lower) const;
     double findMode(double x, double nuAux, double muAux, double A, double B) const;
-    double lowerTail(const double & x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const;
-    double upperTail(const double & x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const;
+    double lowerTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
+    double upperTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
 
 public:
     double f(const double & x) const override;
