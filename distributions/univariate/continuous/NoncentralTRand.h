@@ -6,12 +6,18 @@
 
 /**
  * @brief The NoncentralTRand class
+ * Notation: Noncentral-t(ν, μ)
  */
 class RANDLIBSHARED_EXPORT NoncentralTRand : public ContinuousDistribution
 {
     double nu, mu;
     double logNu;
-    double cdfCoef;
+    double PhiMu, PhimMu;
+    double sqrt1p2oNu;
+
+    struct nuCoefs {
+        double qEpsCoef, q1mEpsCoef;
+    } nuCoef, nup2Coef;
 
     StudentTRand T;
 
@@ -28,12 +34,19 @@ public:
     inline double GetNoncentrality() const { return mu; }
 
 private:
-    double Faux(double x, double nuAux, double muAux) const;
+    DoublePair getIntegrationLimits(double x, double muAux, const nuCoefs &nuAuxCoef) const;
+    double cdf(double x, double nuAux, double muAux, const nuCoefs &nuAuxCoef) const;
+    double ccdf(double x, double nuAux, double muAux, const nuCoefs &nuAuxCoef) const;
+    double g(double z, double x, double halfNuAux, double muAux, bool lower) const;
+    double findMode(double x, double nuAux, double muAux, double A, double B) const;
+    double lowerTail(const double & x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const;
+    double upperTail(const double & x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const;
 
 public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
     double F(const double & x) const override;
+    double S(const double & x) const override;
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 

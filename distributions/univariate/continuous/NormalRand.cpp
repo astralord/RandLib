@@ -61,12 +61,12 @@ double NormalRand::logf(const double & x) const
 
 double NormalRand::F(const double & x) const
 {
-    return StableRand::cdfNormal(x);
+    return cdfNormal(x);
 }
 
 double NormalRand::S(const double & x) const
 {
-    return StableRand::cdfNormalCompl(x);
+    return cdfNormalCompl(x);
 }
 
 double NormalRand::Variate() const

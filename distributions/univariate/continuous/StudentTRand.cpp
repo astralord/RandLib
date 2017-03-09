@@ -87,7 +87,7 @@ double StudentTRand::F(const double & x) const
         return 0.5;
     if (nu == 1) {
         /// Cauchy distribution
-        return 0.5 * M_1_PI * RandMath::atan(x);
+        return 0.5 + M_1_PI * RandMath::atan(x0);
     }
     if (nu == 2) {
         return 0.5 + 0.5 * x0 / std::sqrt(2 + x0 * x0);
@@ -110,7 +110,7 @@ double StudentTRand::S(const double & x) const
         return 0.5;
     if (nu == 1) {
         /// Cauchy distribution
-        return 0.5 + M_1_PI * RandMath::atan(-x);
+        return 0.5 + M_1_PI * RandMath::atan(-x0);
     }
     if (nu == 2) {
         return 0.5 - 0.5 * x0 / std::sqrt(2 + x0 * x0);

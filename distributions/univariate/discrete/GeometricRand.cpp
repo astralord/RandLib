@@ -80,7 +80,9 @@ void GeometricRand::Sample(std::vector<int> &outputData) const
 
 int GeometricRand::Median() const
 {
-    return std::floor(-M_LN2 / log1mProb);
+    double median = -M_LN2 / log1mProb;
+    double flooredMedian = std::floor(median);
+    return (RandMath::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
 }
 
 double GeometricRand::Entropy() const

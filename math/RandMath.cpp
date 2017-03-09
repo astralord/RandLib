@@ -420,21 +420,21 @@ double MarcumPSeries(double mu, double x, double y)
     static constexpr double ln2piEps = -35.0; /// ~log(2πε) for ε = 1e-16
     double lgammamu = std::lgamma(mu);
     double C = lgammamu - ln2piEps + mu;
-    double logx = std::log(x), logy = std::log(y);
+    double logX = std::log(x), logY = std::log(y);
 
     /// solving equation f(n) = 0
     /// to specify first negleted term
     double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
-    double logxy = logx + logy;
-    if (!RandMath::findRoot([C, mu, logxy] (double n)
+    double logXY = logX + logY;
+    if (!RandMath::findRoot([C, mu, logXY] (double n)
     {
         double npmu = n + mu;
         double logn = std::log(n), lognpmu = std::log(npmu);
-        double first = logn - 2 - logxy;
+        double first = logn - 2 - logXY;
         first *= n;
         first += npmu * lognpmu;
         first -= C;
-        double second = logn + lognpmu - logxy;
+        double second = logn + lognpmu - logXY;
         double third = 2.0 / n;
         return DoubleTriplet(first, second, third);
     }, root))
@@ -443,12 +443,12 @@ double MarcumPSeries(double mu, double x, double y)
     /// series expansion
     double sum = 0.0;
     int n0 = std::max(std::ceil(root), 5.0); /// sanity check
-    double P = pgamma(mu + n0, y);
+    double P = pgamma(mu + n0, y, logY);
     for (int n = n0; n > 0; --n) {
-        double term = n * logx - x;
+        double term = n * logX - x;
         term = std::exp(term) * P / factorial(n);
         sum += term;
-        double diffP = (mu + n - 1) * logy - y - std::lgamma(mu + n);
+        double diffP = (mu + n - 1) * logY - y - std::lgamma(mu + n);
         P += std::exp(diffP);
     }
     sum += std::exp(-x) * P;
@@ -541,6 +541,7 @@ double MarcumPForMuLessThanOne(double mu, double x, double y)
 
 double MarcumP(double mu, double x, double y)
 {
+    // TODO: hash values of sqrt(x), sqrt(y), log(x), log(y) if possible
     if (x < 0.0 || y <= 0.0)
         return 0.0;
 

@@ -8,6 +8,7 @@
 
 /**
  * @brief The NoncentralChiSquaredRand class
+ * Notation: X ~ Noncentral-chi^2(k, λ)
  */
 class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
 {

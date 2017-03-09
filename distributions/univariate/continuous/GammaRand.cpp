@@ -21,9 +21,10 @@ void GammaRand::SetParameters(double shape, double rate)
     beta = (rate > 0.0) ? rate : 1.0;
     theta = 1.0 / beta;
 
-    mLgammaShape = -std::lgamma(alpha);
+    lgammaShape = std::lgamma(alpha);
+    logAlpha = std::log(alpha);
     logBeta = std::log(beta);
-    pdfCoef = mLgammaShape + alpha * logBeta;
+    pdfCoef = -lgammaShape + alpha * logBeta;
 
     if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
         /// set constants for generator
@@ -339,7 +340,7 @@ double GammaRand::initRootForSmallP(double r) const
 double GammaRand::initRootForLargeP(double logQ) const
 {
     /// look for approximate value of x -> INFINITY
-    double x = (logQ - mLgammaShape) / alpha;
+    double x = (logQ + lgammaShape) / alpha;
     x = -std::exp(x) / alpha;
     return -alpha * RandMath::Wm1Lambert(x);
 }
@@ -376,7 +377,7 @@ double GammaRand::quantileInitialGuess(double p) const
     /// (Amparo Gil, Javier Segura and Nico M. Temme)
     double guess = 0;
     if (alpha < 10) {
-        double r = std::log(p * alpha) - mLgammaShape;
+        double r = std::log(p * alpha) + lgammaShape;
         r = std::exp(r * alphaInv);
         /// if p -> 0
         if (r < 0.2 * (alpha + 1)) {
@@ -384,9 +385,8 @@ double GammaRand::quantileInitialGuess(double p) const
         }
         else {
             double logQ = std::log1p(-p);
-            double logAlpha = std::log(alpha); // can be hashed
-            double maxBoundary1 = -0.5 * alpha - logAlpha + mLgammaShape; /// boundary adviced in a paper
-            double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
+            double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaShape; /// boundary adviced in a paper
+            double maxBoundary2 = alpha * (logAlpha - 1) - lgammaShape; /// the maximum possible value to have a solution
             /// if p -> 1
             if (logQ < std::min(maxBoundary1, maxBoundary2))
                 guess = initRootForLargeP(logQ);
@@ -405,9 +405,8 @@ double GammaRand::quantileInitialGuess1m(double p) const
 {
     if (alpha < 10) {
         double logQ = std::log(p);
-        double logAlpha = std::log(alpha); // can be hashed
-        double maxBoundary1 = -0.5 * alpha - logAlpha + mLgammaShape; /// boundary adviced in a paper
-        double maxBoundary2 = alpha * (logAlpha - 1) + mLgammaShape; /// the maximum possible value to have a solution
+        double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaShape; /// boundary adviced in a paper
+        double maxBoundary2 = alpha * (logAlpha - 1) - lgammaShape; /// the maximum possible value to have a solution
         /// if p -> 0
         if (logQ < std::min(maxBoundary1, maxBoundary2))
             return initRootForLargeP(logQ) / beta;

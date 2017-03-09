@@ -44,12 +44,12 @@ double PoissonRand::logP(const int & k) const
 
 double PoissonRand::F(const int & k) const
 {
-    return (k >= 0.0) ? RandMath::qgamma(k + 1, lambda) : 0.0;
+    return (k >= 0.0) ? RandMath::qgamma(k + 1, lambda, logLambda) : 0.0;
 }
 
 double PoissonRand::S(const int & k) const
 {
-    return (k >= 0.0) ? RandMath::pgamma(k + 1, lambda) : 1.0;
+    return (k >= 0.0) ? RandMath::pgamma(k + 1, lambda, logLambda) : 1.0;
 }
 
 int PoissonRand::Variate() const

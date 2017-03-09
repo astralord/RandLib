@@ -1,5 +1,6 @@
 #include "NoncentralTRand.h"
 #include "NormalRand.h"
+#include <functional>
 
 NoncentralTRand::NoncentralTRand(double degree, double noncentrality) :
     T(degree)
@@ -16,96 +17,125 @@ std::string NoncentralTRand::Name() const
 void NoncentralTRand::SetParameters(double degree, double noncentrality)
 {
     nu = (degree > 0.0) ? degree : 1.0;
+    T.SetDegree(nu);
     logNu = std::log(nu);
+    sqrt1p2oNu = std::exp(0.5 * std::log1p(2.0 / nu));
 
     mu = noncentrality;
-    cdfCoef = 0.5 * std::erfc(M_SQRT1_2 * mu); /// φ(-μ)
+    PhiMu = 0.5 * std::erfc(-M_SQRT1_2 * mu); /// φ(μ)
+    PhimMu = 0.5 * std::erfc(M_SQRT1_2 * mu); /// φ(-μ)
 
-    T.SetDegree(nu);
+    /// precalculate values for pdf/cdf integration
+    static constexpr double epsilon = 1e-16;
+    ChiSquaredRand X(nu);
+    nuCoef.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
+    nuCoef.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
+    double nup2 = nu + 2;
+    X.SetDegree(nup2);
+    nup2Coef.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nup2);
+    nup2Coef.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nup2);
 }
 
-double NoncentralTRand::Faux(double x, double nuAux, double muAux) const
+DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const NoncentralTRand::nuCoefs &nuAuxCoef) const
 {
-    if (x == 0.0)
+    static constexpr double normQuant = -37.5194;
+    double A0 = std::max(-muAux, normQuant), B0 = -normQuant;
+    double qEps = x * nuAuxCoef.qEpsCoef - muAux;
+    double q1mEps = x * nuAuxCoef.q1mEpsCoef - muAux;
+    return std::make_pair(std::max(qEps, A0), std::min(q1mEps, B0));
+}
+
+double NoncentralTRand::cdf(double x, double nuAux, double muAux, const NoncentralTRand::nuCoefs &nuAuxCoef) const
+{
+    if (x < -muAux)
+        return upperTail(-x, nuAux, -muAux, nuAuxCoef, true);
+    if (x < 0.0)
+        return lowerTail(-x, nuAux, -muAux, nuAuxCoef, true);
+    return (x < muAux) ? lowerTail(x, nuAux, muAux, nuAuxCoef, false) : upperTail(x, nuAux, muAux, nuAuxCoef, false);
+}
+
+double NoncentralTRand::ccdf(double x, double nuAux, double muAux, const NoncentralTRand::nuCoefs &nuAuxCoef) const
+{
+    if (x < -muAux)
+        return upperTail(-x, nuAux, -muAux, nuAuxCoef, false);
+    if (x < 0.0)
+        return lowerTail(-x, nuAux, -muAux, nuAuxCoef, false);
+    return (x < muAux) ? lowerTail(x, nuAux, muAux, nuAuxCoef, true) : upperTail(x, nuAux, muAux, nuAuxCoef, true);
+}
+
+double NoncentralTRand::g(double z, double x, double halfNuAux, double muAux, bool lower) const
+{
+    if (z == -muAux)
         return 0.0;
+    double y = -0.5 * z * z;
+    y -= 0.5 * (M_LN2 + M_LNPI);
+    double b = (z + muAux) / x;
+    b *= b;
+    b *= halfNuAux;
+    /// 'lower' stands for lower tail P(X < x),
+    /// however in that case we need to call upper incomplete gamma function
+    /// and vice versa
+    y += lower ? RandMath::lqgamma(halfNuAux, b) : RandMath::lpgamma(halfNuAux, b);
+    return std::exp(y);
+}
+
+double NoncentralTRand::findMode(double x, double nuAux, double muAux, double A, double B) const
+{
+    /// find approximate value of mode
+    double temp = (nuAux > 2) ? 4 * nuAux - 8 : 4.0;
+    double mode = muAux * muAux + temp;
     double xSq = x * x;
-    double temp = 0.5 * muAux * muAux;
-    double logTemp = std::log(temp);
-    double y = xSq / (xSq + nuAux);
-    double halfNu = 0.5 * nuAux;
-    double logY = std::log(y), aux = halfNu * std::log1p(-y);
-    double lgammaHalfNu = std::lgamma(halfNu);
-    static constexpr double M_LN2_2 = 0.5 * M_LN2;
+    mode *= xSq;
+    mode += temp * nuAux;
+    mode = x * std::sqrt(mode);
+    mode -= muAux * (xSq + 2 * nuAux);
+    mode /= 2 * (xSq + nuAux);
+    /// sanity check
+    if (mode <= A || mode >= B)
+        mode = 0.5 * (A + B);
+    return mode;
+}
 
-    /// go forward
-    double sum1 = 0.0, sum2 = 0.0, addon1 = 0.0, addon2 = 0.0;
-    double floorTemp = std::max(std::floor(temp), 1.0); /// starting point at most weight
-    int j = floorTemp;
-    double I1 = RandMath::ibeta(y, j + 0.5, halfNu);
-    double I2 = RandMath::ibeta(y, j + 1.0, halfNu);
-    double I1Temp = I1, I2Temp = I2;
-    do {
-        double jpHalf = j + 0.5, jp1 = j + 1.0;
-        double p = j * logTemp - std::lgamma(jp1);
-        p = std::exp(p);
-        double q = j * logTemp - std::lgamma(j + 1.5) - M_LN2_2;
-        q = std::exp(q);
-        addon1 = p * I1;
-        addon2 = q * I2;
-        sum1 += addon1;
-        sum2 += addon2;
-        /// shift first regularized beta function
-        double z = jpHalf * logY + aux;
-        double logBeta = std::lgamma(jpHalf) + lgammaHalfNu - std::lgamma(jpHalf + halfNu);
-        z = std::exp(z - logBeta);
-        z /= jpHalf;
-        I1 -= z;
-        /// shift second regularized beta function
-        z = jp1 * logY + aux;
-        logBeta = std::lgamma(jp1) + lgammaHalfNu - std::lgamma(jp1 + halfNu);
-        z = std::exp(z - logBeta);
-        z /= jp1;
-        I2 -= z;
-        ++j;
-    } while (std::fabs(addon1) > MIN_POSITIVE * std::fabs(sum1) || std::fabs(addon2) > MIN_POSITIVE * std::fabs(sum2));
+double NoncentralTRand::lowerTail(const double &x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const
+{
+    DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
+    double A = intLimits.first, B = intLimits.second;
+    /// find peak of the integrand
+    double mode = findMode(x, nuAux, muAux, A, B);
+    /// calculate two integrals
+    double halfNuAux = 0.5 * nuAux;
+    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, halfNuAux, muAux, true);
+    double I1 = RandMath::integral(integrandPtr, A, mode);
+    double I2 = RandMath::integral(integrandPtr, mode, B);
+    double I = I1 + I2;
+    /// for S(x) return 1 - F(x) w/o losing precision
+    if (isCompl) {
+        double PhimA = (A == -mu) ? PhiMu : 0.5 * std::erfc(M_SQRT1_2 * A); /// φ(-A)
+        return PhimA - I;
+    }
+    double PhiA = (A == -mu) ? PhimMu : 0.5 * std::erfc(-M_SQRT1_2 * A); /// φ(A)
+    return PhiA + I;
+}
 
-    double sum = sum1 + muAux * sum2;
-    /// go backwards
-    sum1 = 0.0, sum2 = 0.0;
-    j = floorTemp - 1;
-    I1 = I1Temp;
-    I2 = I2Temp;
-    addon1 = 1.0;
-    addon2 = 1.0;
-    while (j >= 0 && (std::fabs(addon1) > MIN_POSITIVE * std::fabs(sum1) || std::fabs(addon2) > MIN_POSITIVE * std::fabs(sum2))) {
-        double jpHalf = j + 0.5, jp1 = j + 1.0;
-        /// shift first regularized beta function
-        double z = jpHalf * logY + aux;
-        double logBeta = std::lgamma(jpHalf) + lgammaHalfNu - std::lgamma(jpHalf + halfNu);
-        z = std::exp(z - logBeta);
-        z /= jpHalf;
-        I1 += z;
-        /// shift second regularized beta function
-        z = jp1 * logY + aux;
-        double lgammajp1 = std::lgamma(jp1);
-        logBeta = lgammajp1 + lgammaHalfNu - std::lgamma(jp1 + halfNu);
-        z = std::exp(z - logBeta);
-        z /= jp1;
-        I2 += z;
-        double p = j * logTemp - lgammajp1;
-        p = std::exp(p);
-        double q = j * logTemp - std::lgamma(j + 1.5) - M_LN2_2;
-        q = std::exp(q);
-        addon1 = p * I1;
-        addon2 = q * I2;
-        sum1 += addon1;
-        sum2 += addon2;
-        --j;
-    };
-    sum += sum1 + muAux * sum2;
-    sum *= 0.5;
-    /// Avoid under- and overflow
-    return (temp > 50 && sum > 0.0) ? std::exp(std::log(sum) - temp) : sum * std::exp(-temp);
+double NoncentralTRand::upperTail(const double &x, double nuAux, double muAux, const nuCoefs &nuAuxCoef, bool isCompl) const
+{
+    DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
+    double A = intLimits.first, B = intLimits.second;
+    /// find peak of the integrand
+    double mode = findMode(x, nuAux, muAux, A, B);
+    /// calculate two integrals
+    double halfNuAux = 0.5 * nuAux;
+    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, halfNuAux, muAux, false);
+    double I1 = RandMath::integral(integrandPtr, A, mode);
+    double I2 = RandMath::integral(integrandPtr, mode, B);
+    double I = I1 + I2;
+    /// for S(x) return 1 - F(x) w/o losing precision
+    if (isCompl) {
+        double PhimB = (B == -mu) ? PhiMu : 0.5 * std::erfc(M_SQRT1_2 * B); /// φ(-B)
+        return PhimB + I;
+    }
+    double PhiB = (B == -mu) ? PhimMu : 0.5 * std::erfc(-M_SQRT1_2 * B); /// φ(B)
+    return PhiB - I;
 }
 
 double NoncentralTRand::f(const double & x) const
@@ -118,11 +148,8 @@ double NoncentralTRand::f(const double & x) const
         y -= T.Y.GetLogGammaFunction();
         return std::exp(y - 0.5 * z);
     }
-    int signX = RandMath::sign(x);
-    double muAdj = signX * mu;
-    double y = Faux(x * std::sqrt(1.0 + 2.0 / nu), nu + 2.0, muAdj);
-    y -= Faux(x, nu, muAdj);
-    y *= signX;
+    double y = cdf(x * sqrt1p2oNu, nu + 2.0, mu, nup2Coef);
+    y -= cdf(x, nu, mu, nuCoef);
     return nu * y / x;
 }
 
@@ -135,8 +162,18 @@ double NoncentralTRand::F(const double & x) const
 {
     if (mu == 0.0)
         return T.F(x);
-    double y = ((x >= 0.0) ? Faux(x, nu, mu) : -Faux(x, nu, -mu));
-    return cdfCoef + y;
+    if (x == 0.0)
+        return PhimMu;
+    return cdf(x, nu, mu, nuCoef);
+}
+
+double NoncentralTRand::S(const double &x) const
+{
+    if (mu == 0.0)
+        return T.S(x);
+    if (x == 0.0)
+        return PhiMu;
+    return ccdf(x, nu, mu, nuCoef);
 }
 
 double NoncentralTRand::Variate() const
@@ -151,9 +188,8 @@ void NoncentralTRand::Sample(std::vector<double> &outputData) const
     if (mu == 0.0)
         return T.Sample(outputData);
     T.Y.Sample(outputData);
-    for (double &var : outputData) {
+    for (double &var : outputData)
         var = (mu + NormalRand::StandardVariate()) / var;
-    }
 }
 
 double NoncentralTRand::Mean() const

@@ -98,7 +98,6 @@ public:
      * @return B(α, β)
      */
     inline double GetBetaFunction() const { return betaFun; }
-
     /**
      * @brief GetLogBetaFunction
      * @return log(B(α, β))

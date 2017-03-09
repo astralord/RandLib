@@ -21,9 +21,9 @@ class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
 {
 protected:
     double alpha, theta, beta;
-    double mLgammaShape; /// -log(Γ(α))
+    double lgammaShape; /// log(Γ(α))
     double pdfCoef; ///  α * log(β) - log(Γ(α))
-    double logBeta; /// log(β)
+    double logAlpha, logBeta; ///  log(α), log(β)
 
 private:
     double t, b, alphaInv; /// constants for sampling
@@ -61,7 +61,12 @@ public:
      * @brief GetLogGammaFunction
      * @return log(Γ(α))
      */
-    inline double GetLogGammaFunction() const { return -mLgammaShape; }
+    inline double GetLogGammaFunction() const { return lgammaShape; }
+    /**
+     * @brief GetLogShape
+     * @return log(α)
+     */
+    inline double GetLogShape() const { return logAlpha; }
     /**
      * @brief GetLogRate
      * @return log(β)
