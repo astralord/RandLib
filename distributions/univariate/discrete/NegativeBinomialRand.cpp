@@ -57,7 +57,7 @@ double NegativeBinomialRand<T>::logP(const int & k) const
     if (k < 0)
         return -INFINITY;
     double y = std::lgamma(r + k);
-    y -= std::lgamma(k + 1);
+    y -= RandMath::lfact(k);
     y += k * log1mProb;
     y += pdfCoef;
     return y;

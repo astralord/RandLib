@@ -23,11 +23,11 @@ void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successe
     K = std::min(N, K);
 
     p0 = static_cast<double>(K) / N;
-    pmfCoef = std::lgamma(K + 1);
-    pmfCoef += std::lgamma(N - K + 1);
-    pmfCoef += std::lgamma(N - n + 1);
-    pmfCoef += std::lgamma(n + 1);
-    pmfCoef -= std::lgamma(N + 1);
+    pmfCoef = RandMath::lfact(K);
+    pmfCoef += RandMath::lfact(N - K);
+    pmfCoef += RandMath::lfact(N - n);
+    pmfCoef += RandMath::lfact(n);
+    pmfCoef -= RandMath::lfact(N);
 }
 
 double HyperGeometricRand::P(const int & k) const
@@ -39,10 +39,10 @@ double HyperGeometricRand::logP(const int & k) const
 {
     if (k < MinValue() || k > MaxValue())
         return -INFINITY;
-    double y = std::lgamma(k + 1);
-    y += std::lgamma(K - k + 1);
-    y += std::lgamma(n - k + 1);
-    y += std::lgamma(N - K - n + k + 1);
+    double y = RandMath::lfact(k);
+    y += RandMath::lfact(K - k);
+    y += RandMath::lfact(n - k);
+    y += RandMath::lfact(N - K - n + k);
     return pmfCoef - y;
 }
 

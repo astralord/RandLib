@@ -36,9 +36,9 @@ public:
 
 private:
     DoublePair getIntegrationLimits(double x, double muAux, const nuStruct &nuAuxCoef) const;
-    double cdf(double x, const nuStruct &nuAuxCoef, bool isCompl) const;
-    double g(double z, double x, const nuStruct &nuAuxCoef, double muAux, bool lower) const;
-    double findMode(double x, double halfNuAux, double muAux, double A, double B) const;
+    double cdf(const double & x, const nuStruct &nuAuxCoef, bool isCompl) const;
+    double g(double z, const double & x, const nuStruct &nuAuxCoef, double muAux, bool lower) const;
+    double findMode(const double & x, double halfNuAux, double muAux, double A, double B) const;
     double lowerTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
     double upperTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
 

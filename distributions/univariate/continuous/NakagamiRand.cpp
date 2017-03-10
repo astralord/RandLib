@@ -340,10 +340,11 @@ void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
         SetScale((1.0 + coef) * std::sqrt(sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
     }
     else if (n > 15) {
-        double coef = std::lgamma(n + 1) + std::lgamma(n);
+        double coef = RandMath::lfact(n);
+        coef += RandMath::lfact(n - 1);
         coef += 2 * n * M_LN2;
         coef += 0.5 * std::log(n);
-        coef -= std::lgamma(2 * n + 1);
+        coef -= RandMath::lfact(2 * n);
         coef -= 0.5 * M_LNPI;
         coef += 0.5 * std::log(sigmaBiasedSq);
         SetScale(std::exp(coef));

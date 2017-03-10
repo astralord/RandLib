@@ -31,14 +31,14 @@ double atan(double x)
 }
 
 /**
- * @brief maxFactorialTableValue maximum value for input parameter to use table methods
+ * @brief FACTORIAL_TABLESIZE maximum value for input parameter to use table method
  */
-constexpr int maxFactorialTableValue = 255;
+constexpr int FACTORIAL_TABLESIZE = 255;
 
 /**
- * @brief factorialTable (n * 10)! for n from 0 to 25
+ * @brief FACTORIAL_TABLE (n * 10)! for n from 0 to 25
  */
-constexpr long double factorialTable[] =
+constexpr long double FACTORIAL_TABLE[] =
 {
     1.l,
     3628800.l,
@@ -81,7 +81,7 @@ long double factorialForSmallValue(int n)
     {
         /// go up
         int nPrev = n - residue;
-        long double fact = factorialTable[nPrev / 10];
+        long double fact = FACTORIAL_TABLE[nPrev / 10];
         for (int i = 1; i <= residue; ++i)
             fact *= nPrev + i;
         return fact;
@@ -92,14 +92,14 @@ long double factorialForSmallValue(int n)
     double denominator = 1;
     for (int i = 0; i < 10 - residue; ++i)
         denominator *= nNext - i;
-    return factorialTable[nNext / 10] / denominator;
+    return FACTORIAL_TABLE[nNext / 10] / denominator;
 }
 
 long double factorial(double n)
 {
     if (n < 0)
         return 0.0;
-    return (n > maxFactorialTableValue) ? std::tgamma(n + 1) : factorialForSmallValue(n);
+    return (n > FACTORIAL_TABLESIZE) ? std::tgamma(n + 1) : factorialForSmallValue(n);
 }
 
 long double doubleFactorial(int n)

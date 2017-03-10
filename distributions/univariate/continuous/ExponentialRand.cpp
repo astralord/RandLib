@@ -120,5 +120,5 @@ double ExponentialRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return std::exp(std::lgamma(n + 1) - n * std::log(beta));
+    return std::exp(RandMath::lfact(n) - n * std::log(beta));
 }

@@ -50,7 +50,7 @@ DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const N
     return std::make_pair(std::max(qEps, A0), std::min(q1mEps, B0));
 }
 
-double NoncentralTRand::cdf(double x, const NoncentralTRand::nuStruct &nuAuxCoef, bool isCompl) const
+double NoncentralTRand::cdf(const double &x, const NoncentralTRand::nuStruct &nuAuxCoef, bool isCompl) const
 {
     if (x < -mu)
         return upperTail(-x, -mu, nuAuxCoef, !isCompl);
@@ -59,7 +59,7 @@ double NoncentralTRand::cdf(double x, const NoncentralTRand::nuStruct &nuAuxCoef
     return (x < mu) ? lowerTail(x, mu, nuAuxCoef, isCompl) : upperTail(x, mu, nuAuxCoef, isCompl);
 }
 
-double NoncentralTRand::g(double z, double x, const nuStruct &nuAuxCoef, double muAux, bool lower) const
+double NoncentralTRand::g(double z, const double &x, const nuStruct &nuAuxCoef, double muAux, bool lower) const
 {
     if (z == -muAux)
         return 0.0;
@@ -76,7 +76,7 @@ double NoncentralTRand::g(double z, double x, const nuStruct &nuAuxCoef, double 
     return std::exp(y);
 }
 
-double NoncentralTRand::findMode(double x, double halfNuAux, double muAux, double A, double B) const
+double NoncentralTRand::findMode(const double &x, double halfNuAux, double muAux, double A, double B) const
 {
     /// find approximate value of mode
     double temp = (halfNuAux > 1) ? 8 * halfNuAux - 8 : 4.0;

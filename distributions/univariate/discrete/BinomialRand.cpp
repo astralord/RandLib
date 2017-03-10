@@ -86,7 +86,7 @@ void BinomialRand::SetParameters(int number, double probability)
     p = std::max(p, 0.0);
     q = 1.0 - p;
     np = n * p;
-    lgammaNp1 = std::lgamma(n + 1);
+    lgammaNp1 = RandMath::lfact(n);
     logProb = std::log(p);
     log1mProb = std::log1p(-p);
     SetGeneratorConstants();
@@ -95,8 +95,8 @@ void BinomialRand::SetParameters(int number, double probability)
 double BinomialRand::logProbFloor(int k) const
 {
     double y = lgammaNp1;
-    y -= std::lgamma(n - k);
-    y -= std::lgamma(k);
+    y -= RandMath::lfact(n - k - 1);
+    y -= RandMath::lfact(k - 1);
     y += k * logPFloor;
     y += (n - k) * logQFloor;
     return y;
@@ -112,8 +112,8 @@ double BinomialRand::logP(const int & k) const
     if (k < 0 || k > n)
         return -INFINITY;
     double y = lgammaNp1;
-    y -= std::lgamma(n - k + 1);
-    y -= std::lgamma(k + 1);
+    y -= RandMath::lfact(n - k);
+    y -= RandMath::lfact(k);
     y += k * logProb;
     y += (n - k) * log1mProb;
     return y;

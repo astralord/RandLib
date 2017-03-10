@@ -5,9 +5,15 @@
 
 /// Gamma-related functions
 
-// TODO: speed up with log(x) and [log(a), log(Gamma(a))]
 namespace RandMath
 {
+
+/**
+ * @brief lfact
+ * @param n
+ * @return log(n!)
+ */
+double lfact(size_t n);
 
 /**
  * @brief digamma

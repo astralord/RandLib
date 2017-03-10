@@ -28,7 +28,7 @@ double YuleRand::logP(const int & k) const
     if (k < 1)
         return -INFINITY;
     double y = lgamma1pRo;
-    y += std::lgamma(k);
+    y += RandMath::lfact(k - 1);
     y -= std::lgamma(k + ro + 1);
     y += X.GetLogShape();
     return y;
@@ -39,7 +39,7 @@ double YuleRand::F(const int & k) const
     if (k < 1)
         return 0.0;
     double y = lgamma1pRo;
-    y += std::lgamma(k);
+    y += RandMath::lfact(k - 1);
     y -= std::lgamma(k + ro + 1);
     y = std::exp(y);
     return 1.0 - k * y;
@@ -50,7 +50,7 @@ double YuleRand::S(const int & k) const
     if (k < 1)
         return 1.0;
     double y = lgamma1pRo;
-    y += std::lgamma(k);
+    y += RandMath::lfact(k - 1);
     y -= std::lgamma(k + ro + 1);
     y = std::exp(y);
     return k * y;

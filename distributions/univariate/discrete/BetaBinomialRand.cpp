@@ -18,7 +18,7 @@ void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
 {
     n = std::max(number, 1);
     B.SetShapes(shape1, shape2);
-    pmfCoef = std::lgamma(n + 1);
+    pmfCoef = RandMath::lfact(n);
     pmfCoef -= std::lgamma(B.GetAlpha() + B.GetBeta() + n);
     pmfCoef -= B.GetLogBetaFunction();
 }
@@ -34,8 +34,8 @@ double BetaBinomialRand::logP(const int & k) const
         return 0.0;
     double y = std::lgamma(k + B.GetAlpha());
     y += std::lgamma(n - k + B.GetBeta());
-    y -= std::lgamma(k + 1);
-    y -= std::lgamma(n - k + 1);
+    y -= RandMath::lfact(k);
+    y -= RandMath::lfact(n - k);
     return pmfCoef + y;
 }
 
