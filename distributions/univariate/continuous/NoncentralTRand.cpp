@@ -31,7 +31,7 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
     nuCoefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
     nuCoefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
     nuCoefs.logHalfNu = std::log(nuCoefs.halfNu);
-    nuCoefs.lgammaHalfNu = std::lgamma(nuCoefs.halfNu);
+    nuCoefs.lgammaHalfNu = Y.GetLogGammaFunction();
     double nup2 = nu + 2;
     X.SetDegree(nup2);
     nup2Coefs.halfNu = nuCoefs.halfNu + 1.0;
