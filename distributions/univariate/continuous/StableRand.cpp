@@ -107,7 +107,10 @@ double StableRand::pdfCauchy(double x) const
 
 double StableRand::logpdfCauchy(double x) const
 {
-    return std::log(pdfCauchy(x));
+    double x0 = x - mu;
+    x0 /= sigma;
+    double xSq = x * x;
+    return -std::log1p(xSq) - logSigma - M_LNPI;
 }
 
 double StableRand::pdfLevy(double x) const
