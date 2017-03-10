@@ -31,7 +31,7 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
     nuCoefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
     nuCoefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
     nuCoefs.logHalfNu = std::log(nuCoefs.halfNu);
-    nuCoefs.lgammaHalfNu = Y.GetLogGammaFunction();
+    nuCoefs.lgammaHalfNu = T.Y.GetLogGammaFunction();
     double nup2 = nu + 2;
     X.SetDegree(nup2);
     nup2Coefs.halfNu = nuCoefs.halfNu + 1.0;
@@ -138,10 +138,7 @@ double NoncentralTRand::f(const double & x) const
     if (mu == 0.0)
         return T.f(x);
     if (x == 0.0) {
-        double y = std::lgamma(0.5 * nu + 0.5);
-        double z = mu * mu + M_LNPI + M_LN2 + nuCoefs.logHalfNu;
-        y -= T.Y.GetLogGammaFunction();
-        return std::exp(y - 0.5 * z);
+        return std::exp(logf(x));
     }
     double y = cdf(x * sqrt1p2oNu, nup2Coefs, false);
     y -= cdf(x, nuCoefs, false);
@@ -150,6 +147,15 @@ double NoncentralTRand::f(const double & x) const
 
 double NoncentralTRand::logf(const double & x) const
 {
+    if (mu == 0.0)
+        return T.logf(x);
+    if (x == 0.0)
+    {
+        double y = mu * mu + M_LN2 + nuCoefs.logHalfNu;
+        y *= -0.5;
+        y -= T.logBetaFun;
+        return y;
+    }
     return std::log(f(x));
 }
 
