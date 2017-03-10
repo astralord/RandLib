@@ -451,7 +451,8 @@ double lpgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
         }
         return a * logX - x + std::log1p(sum) - lgammaAp1;
     }
-    return (mId == PUA) ? std::log(pgammaRaw(a, x, logX, logA, lgammaA, mId)) : std::log1p(-qgammaRaw(a, x, logX, logA, lgammaA, mId));
+    return (mId == PUA) ? std::log(pgammaRaw(a, x, logX, logA, lgammaA, mId)) :
+                          std::log1p(-qgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double lpgamma(double a, double x, double logA, double lgammaA)
@@ -498,7 +499,8 @@ double pgammaRaw(double a, double x, double logX, double logA, double lgammaA, R
         return std::exp(lpgammaRaw(a, x, logX, logA, lgammaA, mId));
     if (mId == PUA)
         return incompleteGammaUniformExpansion(a, x, logX, logA, true);
-    return (mId == QUA) ? 1.0 - qgammaRaw(a, x, logX, logA, lgammaA, mId) : -std::expm1(lqgammaRaw(a, x, logX, logA, lgammaA, mId));
+    return (mId == QUA) ? 1.0 - qgammaRaw(a, x, logX, logA, lgammaA, mId) :
+                          -std::expm1(lqgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double pgamma(double a, double x, double logA, double lgammaA)
@@ -589,7 +591,8 @@ double lqgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
         y -= std::log1p(x - a);
         return y;
     }
-    return (mId == QUA) ? std::log(qgammaRaw(a, x, logX, logA, lgammaA, mId)) : std::log1p(-pgammaRaw(a, x, logX, logA, lgammaA, mId));
+    return (mId == QUA) ? std::log(qgammaRaw(a, x, logX, logA, lgammaA, mId)) :
+                          std::log1p(-pgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double lqgamma(double a, double x, double logA, double lgammaA)
@@ -638,7 +641,8 @@ double qgammaRaw(double a, double x, double logX, double logA, double lgammaA, R
         return -std::expm1(qtGammaExpansionAux(a, logX, logA, lgammaA));
     if (mId == QUA)
         return incompleteGammaUniformExpansion(a, x, logX, logA, false);
-    return (mId == PUA) ? 1.0 - pgammaRaw(a, x, logX, logA, lgammaA, mId) : -std::expm1(lpgammaRaw(a, x, logX, logA, lgammaA, mId));
+    return (mId == PUA) ? 1.0 - pgammaRaw(a, x, logX, logA, lgammaA, mId) :
+                          -std::expm1(lpgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double qgamma(double a, double x, double logA, double lgammaA)

@@ -159,7 +159,7 @@ double BetaRand::S(const double & x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::acos(std::sqrt(xSt));
-    return RandMath::ibeta(1.0 - xSt, alpha, beta, logBetaFun, std::log1p(-xSt), std::log(xSt));
+    return RandMath::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1p(-xSt), std::log(xSt));
 }
 
 double BetaRand::variateArcsine() const
@@ -437,9 +437,13 @@ double BetaRand::quantileImpl(double p) const
             double x = std::sin(0.5 * M_PI * p);
             return a + bma * x * x;
         }
-        if (alpha == 1)
+        if (alpha == 1.0)
             return a + bma * p;
     }
+    if (alpha == 1.0)
+        return a - bma * std::expm1(std::log1p(-p) / beta);
+    if (beta == 1.0)
+        return a + bma * std::pow(p, 1.0 / alpha);
     return ContinuousDistribution::quantileImpl(p);
 }
 
@@ -451,9 +455,13 @@ double BetaRand::quantileImpl1m(double p) const
             double x = std::cos(0.5 * M_PI * p);
             return a + bma * x * x;
         }
-        if (alpha == 1)
+        if (alpha == 1.0)
             return b - bma * p;
     }
+    if (alpha == 1.0)
+        return a - bma * std::expm1(std::log(p) / beta);
+    if (beta == 1.0)
+        return a + bma * std::exp(std::log1p(-p) / alpha);
     return ContinuousDistribution::quantileImpl1m(p);
 }
 

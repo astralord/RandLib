@@ -207,6 +207,21 @@ double NoncentralTRand::Variance() const
     return nu * (1.0 + mu * mu) / (nu - 2) + mean * mean;
 }
 
+double NoncentralTRand::Mode() const
+{
+    if (mu == 0.0)
+        return 0.0;
+    double left = std::sqrt(nu / (nu + 2.5)); /// left boundary for mode / μ
+    double right = std::sqrt(nu / (nu + 1.0)); /// right boundary for mode / μ
+    double guess = 0.5 * mu * (left + right);
+    double root = 0;
+    RandMath::findMin([this] (double x)
+    {
+        return -f(x);
+    }, guess, root);
+    return root;
+}
+
 double NoncentralTRand::Skewness() const
 {
     if (nu <= 3)
