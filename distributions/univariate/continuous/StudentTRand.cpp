@@ -66,10 +66,9 @@ double StudentTRand::logf(const double & x) const
     x0 /= sigma;
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
-        return std::log(M_1_PI / (sigma * (1 + xSq)));
-    if (nu == 2) {
+        return -std::log1p(xSq) - logSigma - M_LNPI;
+    if (nu == 2)
         return -logSigma - 1.5 * std::log(2.0 + xSq);
-    }
     if (nu == 3) {
         double y = 3 + xSq;
         y = 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
