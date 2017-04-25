@@ -37,7 +37,6 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
     nuCoefs.lgammaHalfNu = std::lgamma(nuCoefs.halfNu);
     nuCoefs.lgamma1 = std::lgamma(startingPoint + 0.5 + nuCoefs.halfNu);
     nuCoefs.lgamma2 = std::lgamma(startingPoint + 1 + nuCoefs.halfNu);
-
     nup2Coefs.halfNu = nuCoefs.halfNu + 1.0;
     nup2Coefs.logHalfNu = std::log1p(nuCoefs.halfNu);
     nup2Coefs.lgammaHalfNu = std::lgamma(nup2Coefs.halfNu);
@@ -140,7 +139,7 @@ double NoncentralTRand::cdfSeries(const double &x, const nuStruct &degreeCoef, d
         --j;
         lgammajpHalf = lgammajmHalf;
     };
-    if (std::fabs(x) < 0.05)
+    //if (std::fabs(x) < 0.05)
         //qDebug() << "SUM:" << x << (double)sum1 << (double)sum2 << (double)(0.5 * (sum1 + sum2));
     return 0.5 * (sum1 + sum2);
 }
@@ -238,7 +237,7 @@ double NoncentralTRand::cdfComplSeries(const double &x, const NoncentralTRand::n
         --j;
         lgammajpHalf = lgammajmHalf;
     };
-    if (std::fabs(x) < 0.05)
+    //if (std::fabs(x) < 0.05)
         //qDebug() << "SUM:" << x << (double)sum1 << (double)sum2 << (double)(0.5 * (sum1 + sum2));
     return 0.5 * (sum1 + sum2);
 }
