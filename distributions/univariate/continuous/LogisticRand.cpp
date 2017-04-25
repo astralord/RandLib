@@ -34,8 +34,8 @@ double LogisticRand::f(const double & x) const
 double LogisticRand::logf(const double & x) const
 {
     double x0 = (mu - x) / s;
-    double y = std::exp(x0);
-    y = 2 * std::log1p(y);
+    double y = RandMath::log1pexp(x0);
+    y *= 2;
     y += logS;
     return x0 - y;
 }

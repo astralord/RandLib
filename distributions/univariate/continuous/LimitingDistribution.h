@@ -5,14 +5,20 @@
 
 /**
  * @brief The LimitingDistribution class
+ * Abstract distribution, which has common properties of
+ * Stable and Geometric-stable distributions, due to their similarity
  */
 class RANDLIBSHARED_EXPORT LimitingDistribution : public ContinuousDistribution
 {
 protected:
     double alpha, beta, mu, sigma;
     double alphaInv;
-    double logSigma; /// log(σ)
-    double logsigmaPi_2; /// log(σπ/2)
+
+    /// log(σ)
+    double logSigma;
+
+    /// log(σπ/2)
+    double logsigmaPi_2;
 
 public:
     LimitingDistribution(double exponent, double skewness, double scale = 1, double location = 0);

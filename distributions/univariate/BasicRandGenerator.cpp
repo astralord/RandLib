@@ -1,5 +1,4 @@
 #include "BasicRandGenerator.h"
-#include <time.h>
 
 template <>
 unsigned long long BasicRandGenerator<JLKISS64>::variate()

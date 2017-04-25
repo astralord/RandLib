@@ -14,8 +14,6 @@
 
 #include "randlib_global.h"
 
-#include <QDebug>
-
 namespace RandMath
 {
 /**
@@ -40,6 +38,34 @@ int sign(double x);
  * @return safe atan(x)
  */
 double atan(double x);
+
+/**
+ * @brief log1pexp
+ * @param x
+ * @return log(1 + exp(x))
+ */
+double log1pexp(double x);
+
+/**
+ * @brief log1mexp
+ * @param x
+ * @return log(1 - exp(x))
+ */
+double log1mexp(double x);
+
+/**
+ * @brief logexpm1
+ * @param x
+ * @return log(exp(x) - 1)
+ */
+double logexpm1(double x);
+
+/**
+ * @brief log2mexp
+ * @param x
+ * @return log(2 - exp(x))
+ */
+double log2mexp(double x);
 
 /**
  * @brief factorial

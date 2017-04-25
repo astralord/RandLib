@@ -1,4 +1,4 @@
-QT       -= gui
+CONFIG -= qt
 
 TARGET = RandLib
 TEMPLATE = lib

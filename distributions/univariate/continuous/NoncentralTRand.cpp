@@ -21,136 +21,266 @@ void NoncentralTRand::SetParameters(double degree, double noncentrality)
     sqrt1p2oNu = std::exp(0.5 * std::log1p(2.0 / nu));
 
     mu = noncentrality;
+
     PhiMu = 0.5 * std::erfc(-M_SQRT1_2 * mu); /// φ(μ)
     PhimMu = 0.5 * std::erfc(M_SQRT1_2 * mu); /// φ(-μ)
 
-    /// precalculate values for pdf/cdf integration
-    static constexpr double epsilon = 1e-16;
-    ChiSquaredRand X(nu);
+    halfMuSq = 0.5 * mu * mu;
+    startingPoint = std::floor(halfMuSq);
+    logHalfMuSq = 2 * std::log(std::fabs(mu)) - M_LN2;
+    lgammaStartingPointpHalf = std::lgamma(startingPoint + 0.5);
+    lgammaStartingPointp1 = RandMath::lfact(startingPoint);
+
+    /// precalculate values for pdf/cdf calculation
     nuCoefs.halfNu = 0.5 * nu;
-    nuCoefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nu);
-    nuCoefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nu);
     nuCoefs.logHalfNu = std::log(nuCoefs.halfNu);
     nuCoefs.lgammaHalfNu = std::lgamma(nuCoefs.halfNu);
-    double nup2 = nu + 2;
-    X.SetDegree(nup2);
+    nuCoefs.lgamma1 = std::lgamma(startingPoint + 0.5 + nuCoefs.halfNu);
+    nuCoefs.lgamma2 = std::lgamma(startingPoint + 1 + nuCoefs.halfNu);
+
     nup2Coefs.halfNu = nuCoefs.halfNu + 1.0;
-    nup2Coefs.qEpsCoef = std::sqrt(X.Quantile(epsilon) / nup2);
-    nup2Coefs.q1mEpsCoef = std::sqrt(X.Quantile1m(epsilon) / nup2);
     nup2Coefs.logHalfNu = std::log1p(nuCoefs.halfNu);
     nup2Coefs.lgammaHalfNu = std::lgamma(nup2Coefs.halfNu);
+    nup2Coefs.lgamma1 = std::lgamma(startingPoint + 0.5 + nup2Coefs.halfNu);
+    nup2Coefs.lgamma2 = std::lgamma(startingPoint + 1 + nup2Coefs.halfNu);
 }
 
-DoublePair NoncentralTRand::getIntegrationLimits(double x, double muAux, const NoncentralTRand::nuStruct &nuAuxCoef) const
+double NoncentralTRand::cdfSeries(const double &x, const nuStruct &degreeCoef, double noncentrality) const
 {
-    static constexpr double normQuant = -37.5194;
-    double A0 = std::max(-muAux, normQuant), B0 = -normQuant;
-    double qEps = x * nuAuxCoef.qEpsCoef - muAux;
-    double q1mEps = x * nuAuxCoef.q1mEpsCoef - muAux;
-    return std::make_pair(std::max(qEps, A0), std::min(q1mEps, B0));
-}
-
-double NoncentralTRand::cdf(const double &x, const NoncentralTRand::nuStruct &nuAuxCoef, bool isCompl) const
-{
-    if (x < -mu)
-        return upperTail(-x, -mu, nuAuxCoef, !isCompl);
-    if (x < 0.0)
-        return lowerTail(-x, -mu, nuAuxCoef, !isCompl);
-    return (x < mu) ? lowerTail(x, mu, nuAuxCoef, isCompl) : upperTail(x, mu, nuAuxCoef, isCompl);
-}
-
-double NoncentralTRand::g(double z, const double &x, const nuStruct &nuAuxCoef, double muAux, bool lower) const
-{
-    if (z == -muAux)
+    if (x == 0.0)
         return 0.0;
-    double y = -0.5 * z * z;
-    y -= 0.5 * (M_LN2 + M_LNPI);
-    double b = (z + muAux) / x;
-    b *= b;
-    b *= nuAuxCoef.halfNu;
-    /// 'lower' stands for lower tail P(X < x),
-    /// however in that case we need to call upper incomplete gamma function
-    /// and vice versa
-    y += lower ? RandMath::lqgamma(nuAuxCoef.halfNu, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu) :
-                 RandMath::lpgamma(nuAuxCoef.halfNu, b, nuAuxCoef.logHalfNu, nuAuxCoef.lgammaHalfNu);
-    return std::exp(y);
+    long double xSq = x * x;
+    long double y = xSq / (xSq + 2 * degreeCoef.halfNu);
+    long double logY = std::log(y), log1mY = std::log1p(-y);
+    static constexpr double M_LN2_2 = 0.5 * M_LN2;
+
+    /// go forward
+    long double sum1 = 0.0, addon = 0.0;
+    int j = startingPoint;
+    long double logBetaFun1 = lgammaStartingPointpHalf + degreeCoef.lgammaHalfNu - degreeCoef.lgamma1;
+    long double logBetaFun2 = lgammaStartingPointp1 + degreeCoef.lgammaHalfNu - degreeCoef.lgamma2;
+    long double I1 = RandMath::ibeta(y, j + 0.5, degreeCoef.halfNu, logBetaFun1, logY, log1mY);
+    long double I2 = RandMath::ibeta(y, j + 1.0, degreeCoef.halfNu, logBetaFun2, logY, log1mY);
+    long double lgammajpHalf = lgammaStartingPointpHalf, lgammajp1 = lgammaStartingPointp1;
+    long double lgammaj1 = degreeCoef.lgamma1, lgammaj2 = degreeCoef.lgamma2;
+    long double I1Temp = I1, I2Temp = I2;
+    size_t iter = 0;
+    static constexpr size_t MAX_ITER = 1e5;
+    do {
+        double jpHalf = j + 0.5;
+        int jp1 = j + 1;
+        long double logJpHalf = std::log(jpHalf), logJp1 = std::log(jp1);
+        long double temp = j * logHalfMuSq - halfMuSq;
+        long double p = temp - lgammajp1;
+        p = std::exp(p);
+        long double q = temp - logJpHalf - lgammajpHalf - M_LN2_2;
+        q = noncentrality * std::exp(q);
+        addon = p * I1 + q * I2;
+        sum1 += addon;
+        if (std::fabs(addon) < MIN_POSITIVE * std::fabs(sum1))
+            break;
+        /// shift first regularized beta function
+        long double z = jpHalf * logY + degreeCoef.halfNu * log1mY;
+        long double logBeta = lgammajpHalf + degreeCoef.lgammaHalfNu - lgammaj1;
+        z = std::exp(z - logBeta);
+        z /= jpHalf;
+        I1 -= z;
+        /// shift second regularized beta function
+        z = jp1 * logY + degreeCoef.halfNu * log1mY;
+        logBeta = lgammajp1 + degreeCoef.lgammaHalfNu - lgammaj2;
+        z = std::exp(z - logBeta);
+        z /= jp1;
+        I2 -= z;
+        /// go to the next term
+        lgammajpHalf += logJpHalf;
+        lgammajp1 += logJp1;
+        lgammaj1 += std::log(jpHalf + degreeCoef.halfNu);
+        lgammaj2 += std::log(jp1 + degreeCoef.halfNu);
+        ++j;
+    } while (++iter < MAX_ITER);
+
+    /// go backwards
+    long double sum2 = 0.0;
+    j = startingPoint;
+    I1 = I1Temp;
+    I2 = I2Temp;
+    lgammajpHalf = lgammaStartingPointpHalf;
+    long double lgammajmHalf = lgammaStartingPointpHalf;
+    long double lgammaj = lgammaStartingPointp1;
+    lgammaj1 = degreeCoef.lgamma1;
+    lgammaj2 = degreeCoef.lgamma2;
+    while (j > 0) {
+        /// move to j - 1
+        double jmHalf = j - 0.5;
+        lgammajmHalf -= std::log(jmHalf);
+        lgammaj -= std::log(j);
+        lgammaj1 -= std::log(jmHalf + degreeCoef.halfNu);
+        lgammaj2 -= std::log(j + degreeCoef.halfNu);
+        /// shift first regularized beta function
+        long double z = jmHalf * logY + degreeCoef.halfNu * log1mY;
+        long double logBeta = lgammajmHalf + degreeCoef.lgammaHalfNu - lgammaj1;
+        z = std::exp(z - logBeta);
+        z /= jmHalf;
+        I1 += z;
+        /// shift second regularized beta function
+        z = j * logY + degreeCoef.halfNu * log1mY;
+        logBeta = lgammaj + degreeCoef.lgammaHalfNu - lgammaj2;
+        z = std::exp(z - logBeta);
+        z /= j;
+        I2 += z;
+        long double temp = (j - 1) * logHalfMuSq - halfMuSq;
+        long double p = temp - lgammaj; // p and q get by relation with previous values
+        p = std::exp(p);
+        long double q = temp - lgammajpHalf - M_LN2_2;
+        q = noncentrality * std::exp(q);
+        addon = p * I1 + q * I2;
+        sum2 += addon;
+        if (std::fabs(addon) < MIN_POSITIVE * std::fabs(sum2))
+            break;
+        --j;
+        lgammajpHalf = lgammajmHalf;
+    };
+    if (std::fabs(x) < 0.05)
+        //qDebug() << "SUM:" << x << (double)sum1 << (double)sum2 << (double)(0.5 * (sum1 + sum2));
+    return 0.5 * (sum1 + sum2);
 }
 
-double NoncentralTRand::findMode(const double &x, double halfNuAux, double muAux, double A, double B) const
+double NoncentralTRand::cdfComplSeries(const double &x, const NoncentralTRand::nuStruct &degreeCoef, double noncentrality) const
 {
-    /// find approximate value of mode
-    double temp = (halfNuAux > 1) ? 8 * halfNuAux - 8 : 4.0;
-    double mode = muAux * muAux + temp;
-    double xSq = x * x;
-    mode *= xSq;
-    mode += 2 * temp * halfNuAux;
-    mode = x * std::sqrt(mode);
-    mode -= muAux * (xSq + 4 * halfNuAux);
-    mode /= 2 * xSq + 4 * halfNuAux;
-    /// sanity check
-    if (mode <= A || mode >= B)
-        mode = 0.5 * (A + B);
-    return mode;
+    // TODO: find bug here, sum is always around 1e-15
+    long double y = degreeCoef.halfNu / (degreeCoef.halfNu + 0.5 * x * x);
+    double logY = std::log(y), log1mY = std::log1p(-y);
+    static constexpr long double M_LN2_2 = 0.5 * M_LN2;
+
+    /// go forward
+    long double sum1 = 0.0, addon = 0.0;
+    int j = startingPoint;
+    long double logBetaFun1 = lgammaStartingPointpHalf + degreeCoef.lgammaHalfNu - degreeCoef.lgamma1;
+    long double logBetaFun2 = lgammaStartingPointp1 + degreeCoef.lgammaHalfNu - degreeCoef.lgamma2;
+    long double I1 = RandMath::ibeta(y, degreeCoef.halfNu, j + 0.5, logBetaFun1, logY, log1mY);
+    long double I2 = RandMath::ibeta(y, degreeCoef.halfNu, j + 1.0, logBetaFun2, logY, log1mY);
+    long double lgammajpHalf = lgammaStartingPointpHalf, lgammajp1 = lgammaStartingPointp1;
+    long double lgammaj1 = degreeCoef.lgamma1, lgammaj2 = degreeCoef.lgamma2;
+    long double I1Temp = I1, I2Temp = I2;
+    size_t iter = 0;
+    static constexpr size_t MAX_ITER = 1e5;
+    do {
+        double jpHalf = j + 0.5;
+        int jp1 = j + 1;
+        long double logJpHalf = std::log(jpHalf), logJp1 = std::log(jp1);
+        long double temp = j * logHalfMuSq - halfMuSq;
+        long double p = temp - lgammajp1;
+        p = std::exp(p);
+        long double q = temp - logJpHalf - lgammajpHalf - M_LN2_2;
+        q = noncentrality * std::exp(q);
+        addon = p * I1 + q * I2;
+        sum1 += addon;
+        if (std::fabs(addon) < MIN_POSITIVE * std::fabs(sum1))
+            break;
+        /// shift first regularized beta function
+        long double z = degreeCoef.halfNu  * logY + jpHalf * log1mY;
+        long double logBeta = lgammajpHalf + degreeCoef.lgammaHalfNu - lgammaj1;
+        z = std::exp(z - logBeta);
+        z /= jpHalf;
+        I1 += z;
+        /// shift second regularized beta function
+        z = degreeCoef.halfNu * logY + jp1 * log1mY;
+        logBeta = lgammajp1 + degreeCoef.lgammaHalfNu - lgammaj2;
+        z = std::exp(z - logBeta);
+        z /= jp1;
+        I2 += z;
+        /// go to the next term
+        lgammajpHalf += logJpHalf;
+        lgammajp1 += logJp1;
+        lgammaj1 += std::log(jpHalf + degreeCoef.halfNu);
+        lgammaj2 += std::log(jp1 + degreeCoef.halfNu);
+        ++j;
+    } while (++iter < MAX_ITER);
+
+    /// go backwards
+    long double sum2 = 0.0;
+    j = startingPoint;
+    I1 = I1Temp;
+    I2 = I2Temp;
+    lgammajpHalf = lgammaStartingPointpHalf;
+    long double lgammajmHalf = lgammaStartingPointpHalf;
+    long double lgammaj = lgammaStartingPointp1;
+    lgammaj1 = degreeCoef.lgamma1;
+    lgammaj2 = degreeCoef.lgamma2;
+    while (j > 0) {
+        /// move to j - 1
+        double jmHalf = j - 0.5;
+        lgammajmHalf -= std::log(jmHalf);
+        lgammaj -= std::log(j);
+        lgammaj1 -= std::log(jmHalf + degreeCoef.halfNu);
+        lgammaj2 -= std::log(j + degreeCoef.halfNu);
+        /// shift first regularized beta function
+        long double z = degreeCoef.halfNu * logY + jmHalf * log1mY;
+        long double logBeta = lgammajmHalf + degreeCoef.lgammaHalfNu - lgammaj1;
+        z = std::exp(z - logBeta);
+        z /= jmHalf;
+        I1 -= z;
+        /// shift second regularized beta function
+        z = degreeCoef.halfNu * logY + j * log1mY;
+        logBeta = lgammaj + degreeCoef.lgammaHalfNu - lgammaj2;
+        z = std::exp(z - logBeta);
+        z /= j;
+        I2 -= z;
+        long double temp = (j - 1) * logHalfMuSq - halfMuSq;
+        long double p = temp - lgammaj;
+        p = std::exp(p);
+        long double q = temp - lgammajpHalf - M_LN2_2;
+        q = noncentrality * std::exp(q);
+        addon = p * I1 + q * I2;
+        sum2 += addon;
+        if (std::fabs(addon) < MIN_POSITIVE * std::fabs(sum2))
+            break;
+        --j;
+        lgammajpHalf = lgammajmHalf;
+    };
+    if (std::fabs(x) < 0.05)
+        //qDebug() << "SUM:" << x << (double)sum1 << (double)sum2 << (double)(0.5 * (sum1 + sum2));
+    return 0.5 * (sum1 + sum2);
 }
 
-double NoncentralTRand::lowerTail(const double &x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const
+double NoncentralTRand::logPdfAtZero() const
 {
-    DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
-    double A = intLimits.first, B = intLimits.second;
-    /// find peak of the integrand
-    double mode = findMode(x, nuAuxCoef.halfNu, muAux, A, B);
-    /// calculate two integrals
-    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, nuAuxCoef, muAux, true);
-    double I1 = RandMath::integral(integrandPtr, A, mode);
-    double I2 = RandMath::integral(integrandPtr, mode, B);
-    double I = I1 + I2;
-    /// for S(x) return 1 - F(x) w/o losing precision
-    if (isCompl) {
-        double PhimA = (A == -mu) ? PhiMu : 0.5 * std::erfc(M_SQRT1_2 * A); /// φ(-A)
-        return PhimA - I;
+    double y = mu * mu + M_LN2 + nuCoefs.logHalfNu;
+    y *= -0.5;
+    y -= T.logBetaFun;
+    return y;
+}
+
+double NoncentralTRand::pdfCommon(const double &x, double noncentrality) const
+{
+    double y = 0.0;
+    if (x >= 0.0) {
+        y = cdfSeries(x * sqrt1p2oNu, nup2Coefs, noncentrality);
+        y -= cdfSeries(x, nuCoefs, noncentrality);
     }
-    double PhiA = (A == -mu) ? PhimMu : 0.5 * std::erfc(-M_SQRT1_2 * A); /// φ(A)
-    return PhiA + I;
-}
-
-double NoncentralTRand::upperTail(const double &x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const
-{
-    DoublePair intLimits = getIntegrationLimits(x, muAux, nuAuxCoef);
-    double A = intLimits.first, B = intLimits.second;
-    /// find peak of the integrand
-    double mode = findMode(x, nuAuxCoef.halfNu, muAux, A, B);
-    /// calculate two integrals
-    std::function<double (double)> integrandPtr = std::bind(&NoncentralTRand::g, this, std::placeholders::_1, x, nuAuxCoef, muAux, false);
-    double I1 = RandMath::integral(integrandPtr, A, mode);
-    double I2 = RandMath::integral(integrandPtr, mode, B);
-    double I = I1 + I2;
-    /// for S(x) return 1 - F(x) w/o losing precision
-    if (isCompl) {
-        double PhimB = (B == -mu) ? PhiMu : 0.5 * std::erfc(M_SQRT1_2 * B); /// φ(-B)
-        return PhimB + I;
+    else {
+        y = cdfComplSeries(-x * sqrt1p2oNu, nup2Coefs, -noncentrality);
+        y -= cdfComplSeries(-x, nuCoefs, -noncentrality);
     }
-    double PhiB = (B == -mu) ? PhimMu : 0.5 * std::erfc(-M_SQRT1_2 * B); /// φ(B)
-    return PhiB - I;
+    y *= nu / x;
+    return std::max(y, 0.0);
 }
 
 double NoncentralTRand::f(const double & x) const
 {
     if (mu == 0.0)
         return T.f(x);
-    if (x == 0.0) {
-        double y = std::lgamma(0.5 * nu + 0.5);
-        double z = mu * mu + M_LNPI + M_LN2 + nuCoefs.logHalfNu;
-        y -= T.Y.GetLogGammaFunction();
-        return std::exp(y - 0.5 * z);
-    }
-    double y = cdf(x * sqrt1p2oNu, nup2Coefs, false);
-    y -= cdf(x, nuCoefs, false);
-    return nu * y / x;
+    return (x == 0.0) ? std::exp(logPdfAtZero()) : pdfCommon(x, mu);
 }
 
 double NoncentralTRand::logf(const double & x) const
 {
-    return std::log(f(x));
+    if (mu == 0.0)
+        return T.logf(x);
+    if (x == 0.0)
+        return logPdfAtZero();
+    double y = pdfCommon(x, mu);
+    return (y > 0.0) ? std::log(y) : -INFINITY;
 }
 
 double NoncentralTRand::F(const double & x) const
@@ -159,16 +289,22 @@ double NoncentralTRand::F(const double & x) const
         return T.F(x);
     if (x == 0.0)
         return PhimMu;
-    return cdf(x, nuCoefs, false);
+
+    // mu > 0
+    if (x >= 0.0)
+        return PhimMu + cdfSeries(x, nuCoefs, mu);
+    return PhimMu - cdfSeries(-x, nuCoefs, -mu);
+
+    /*double y = (x >= 0.0) ? PhimMu + cdfSeries(x, nuCoefs, mu) : cdfComplSeries(-x, nuCoefs, -mu);
+    return std::max(y, 0.0);*/
 }
 
 double NoncentralTRand::S(const double &x) const
 {
     if (mu == 0.0)
         return T.S(x);
-    if (x == 0.0)
-        return PhiMu;
-    return cdf(x, nuCoefs, true);
+    double y = (x >= 0.0) ? cdfComplSeries(x, nuCoefs, mu) : PhiMu + cdfSeries(-x, nuCoefs, -mu);
+    return std::max(y, 0.0);
 }
 
 double NoncentralTRand::Variate() const
@@ -193,10 +329,9 @@ double NoncentralTRand::Mean() const
         return NAN;
     if (mu == 0.0)
         return 0.0;
-    double mean = std::lgamma(0.5 * nu - 0.5);
-    mean -= T.Y.GetLogGammaFunction();
-    mean += 0.5 * (nuCoefs.logHalfNu);
-    return mu * std::exp(mean);
+    double temp = T.Y.GetLogGammaShapeRatio();
+    temp += 0.5 * nuCoefs.logHalfNu;
+    return 2 * mu / (nu - 1) * std::exp(temp);
 }
 
 double NoncentralTRand::Variance() const
@@ -204,7 +339,7 @@ double NoncentralTRand::Variance() const
     if (nu <= 2)
         return (nu > 1) ? INFINITY : NAN;
     double mean = Mean();
-    return nu * (1.0 + mu * mu) / (nu - 2) + mean * mean;
+    return nu * (1.0 + mu * mu) / (nu - 2) + mean * mean; // TODO: Wikipedia lies, re-check
 }
 
 double NoncentralTRand::Mode() const
@@ -228,7 +363,7 @@ double NoncentralTRand::Skewness() const
         return NAN;
     double mean = Mean();
     double var = nu * (1.0 + mu * mu) / (nu - 2) + mean * mean;
-    double thirdMoment = std::lgamma(0.5 * nu - 1.5);
+    double thirdMoment = std::lgamma(0.5 * nu - 1.5); //TODO: use hashed GetLogGammaShapeRatio
     thirdMoment -= T.Y.GetLogGammaFunction();
     thirdMoment += 1.5 * (nuCoefs.logHalfNu + M_LN2);
     thirdMoment = 0.25 * std::exp(thirdMoment);
@@ -243,7 +378,7 @@ double NoncentralTRand::ExcessKurtosis() const
         return (nu > 2) ? INFINITY : NAN;
     double fourthMoment = nu * nu / ((nu - 2) * (nu - 4));
     fourthMoment *= (std::pow(mu, 4) + 6 * mu * mu + 3);
-    double thirdMoment = std::lgamma(0.5 * nu - 1.5);
+    double thirdMoment = std::lgamma(0.5 * nu - 1.5); //TODO: use hashed GetLogGammaShapeRatio
     thirdMoment -= T.Y.GetLogGammaFunction();
     thirdMoment += 1.5 * (nuCoefs.logHalfNu + M_LN2);
     thirdMoment = 0.25 * std::exp(thirdMoment);
@@ -254,4 +389,46 @@ double NoncentralTRand::ExcessKurtosis() const
     kurtosis -= 3 * std::pow(mean, 4);
     double var = Variance();
     return kurtosis / (var * var);
+}
+
+double NoncentralTRand::quantileImpl(double p) const
+{
+    if (p > 1e-5)
+        return ContinuousDistribution::quantileImpl(p);
+    /// we need to be cautious with small values of p
+    /// initial guess is obtained by inverse error function approximation
+    double guess = -2 * std::erfc(2 * p);
+    guess += mu;
+    guess /= 1 - 0.25 * nu;
+    double logP = std::log(p);
+    if (RandMath::findRoot([this, logP] (double x)
+    {
+        double logCdf = std::log(F(x)), logPdf = logf(x);
+        double first = logCdf - logP;
+        double second = std::exp(logPdf - logCdf);
+        return DoublePair(first, second);
+    }, guess))
+        return guess;
+    return NAN;
+}
+
+double NoncentralTRand::quantileImpl1m(double p) const
+{
+    if (p > 1e-5)
+        return ContinuousDistribution::quantileImpl1m(p);
+    /// we need to be cautious with small values of p
+    /// initial guess is obtained by inverse error function approximation
+    double guess = 2 * std::erfc(2 * p);
+    guess += mu;
+    guess /= 1 - 0.25 * nu;
+    double logP = std::log(p);
+    if (RandMath::findRoot([this, logP] (double x)
+    {
+        double logCcdf = std::log(S(x)), logPdf = logf(x);
+        double first = logP - logCcdf;
+        double second = std::exp(logPdf - logCcdf);
+        return DoublePair(first, second);
+    }, guess))
+        return guess;
+    return NAN;
 }

@@ -68,9 +68,19 @@ double GammaRand::F(const double & x) const
     return (x > 0.0) ? RandMath::pgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 0.0;
 }
 
+double GammaRand::logF(const double &x) const
+{
+    return (x > 0.0) ? RandMath::lpgamma(alpha, x * beta, logAlpha, lgammaAlpha) : -INFINITY;
+}
+
 double GammaRand::S(const double & x) const
 {
     return (x > 0.0) ? RandMath::qgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 1.0;
+}
+
+double GammaRand::logS(const double &x) const
+{
+    return (x > 0.0) ? RandMath::lqgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 0.0;
 }
 
 GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
@@ -418,13 +428,15 @@ double GammaRand::quantileImpl(double p) const
 {
     double guess = quantileInitialGuess(p);
     if (p < 1e-5) { /// too small p
-        if (RandMath::findRoot([this, p] (double x)
+        double logP = std::log(p);
+        if (RandMath::findRoot([this, logP] (double x)
         {
-            double cdf = F(x), pdf = f(x);
-            double first = std::log(cdf / p);
-            double second = pdf / cdf;
-            double third = (df(x) * cdf - pdf * pdf) / (cdf * cdf);
-            return DoubleTriplet(first, second, third);
+           if (x <= 0)
+               return DoublePair(-INFINITY, 0);
+            double logCdf = logF(x), logPdf = logf(x);
+            double first = logCdf - logP;
+            double second = std::exp(logPdf - logCdf);
+            return DoublePair(first, second);
         }, guess))
             return guess;
         /// if we can't find quantile, then probably something bad has happened
@@ -448,13 +460,15 @@ double GammaRand::quantileImpl1m(double p) const
 {
     double guess = quantileInitialGuess1m(p);
     if (p < 1e-5) { /// too small p
-        if (RandMath::findRoot([this, p] (double x)
+        double logP = std::log(p);
+        if (RandMath::findRoot([this, logP] (double x)
         {
-            double ccdf = S(x), pdf = f(x);
-            double first = std::log(ccdf / p);
-            double second = -pdf / ccdf;
-            double third = (-df(x) * ccdf - pdf * pdf) / (ccdf * ccdf);
-            return DoubleTriplet(first, second, third);
+           if (x <= 0)
+               return DoublePair(logP, 0);
+            double logCcdf = logS(x), logPdf = logf(x);
+            double first = logP - logCcdf;
+            double second = std::exp(logPdf - logCcdf);
+            return DoublePair(first, second);
         }, guess))
             return guess;
         /// if we can't find quantile, then probably something bad has happened

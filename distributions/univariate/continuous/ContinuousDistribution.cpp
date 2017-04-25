@@ -14,7 +14,7 @@ double ContinuousDistribution::quantileImpl(double p) const
 {
     double guess = 0.0;
     SUPPORT_TYPE supp = SupportType();
-    if (supp == FINITE_T) {
+    if (supp == FINITE_T && p > 1e-6) {
         if (RandMath::findRoot([this, p] (double x)
         {
             return F(x) - p;
@@ -28,13 +28,15 @@ double ContinuousDistribution::quantileImpl(double p) const
     static std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
     int index = p * SAMPLE_SIZE;
-    if (index == 0) { /// if p is too small
+    /// if p is too small
+    if (index == 0) {
         guess = *std::min_element(sample.begin(), sample.end());
-        if (RandMath::findRoot([this, p] (double x)
+        double logP = std::log(p);
+        if (RandMath::findRoot([this, logP] (double x)
         {
-            double cdf = F(x);
-            double first = std::log(cdf / p);
-            double second = f(x) / cdf;
+            double logCdf = std::log(F(x)), logPdf = logf(x);
+            double first = logCdf - logP;
+            double second = std::exp(logPdf - logCdf);
             return DoublePair(first, second);
         }, guess))
             return guess;
@@ -58,7 +60,9 @@ double ContinuousDistribution::quantileImpl1m(double p) const
 {
     double guess = 0.0;
     SUPPORT_TYPE supp = SupportType();
-    if (supp == FINITE_T) {
+    /// we use this method only for sufficient large p
+    /// in order to avoid underflow
+    if (supp == FINITE_T && p > 1e-6) {
         if (RandMath::findRoot([this, p] (double x)
         {
             return S(x) - p;
@@ -72,22 +76,24 @@ double ContinuousDistribution::quantileImpl1m(double p) const
     static std::vector<double> sample(SAMPLE_SIZE);
     this->Sample(sample);
     int index = p * SAMPLE_SIZE;
-    if (index == 0) { /// if p is too small
+    /// if p is too small
+    if (index == 0) {
         guess = *std::max_element(sample.begin(), sample.end());
-        if (RandMath::findRoot([this, p] (double x)
+        double logP = std::log(p);
+        if (RandMath::findRoot([this, logP] (double x)
         {
-            double ccdf = S(x);
-            double first = std::log(ccdf / p);
-            double second = -f(x) / ccdf;
+            double logCcdf = std::log(S(x)), logPdf = logf(x);
+            double first = logP - logCcdf;
+            double second = std::exp(logPdf - logCcdf);
             return DoublePair(first, second);
         }, guess))
             return guess;
         return NAN;
     }
+
     /// Sort in desceding order
     std::sort(sample.begin(), sample.end(), std::greater<>());
     guess = sample[index];
-
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = p - S(x);

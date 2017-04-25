@@ -60,28 +60,28 @@ public:
     /**
      * @brief F
      * @param x
-     * @return P(X < x)
+     * @return P(X ≤ x)
      */
     virtual double F(const T & x) const = 0;
 
     /**
      * @brief CumulativeDistributionFunction
      * @param x input vector
-     * @param y output vector: y = P(X < x)
+     * @param y output vector: y = P(X ≤ x)
      */
     void CumulativeDistributionFunction(const std::vector<T> &x, std::vector<double> &y) const;
 
     /**
      * @brief S
      * @param x
-     * @return 1 - P(X < x)
+     * @return P(X > x)
      */
     virtual double S(const T & x) const;
 
     /**
      * @brief SurvivalFunction
      * @param x input vector
-     * @param y output vector: y = 1 - P(X < x)
+     * @param y output vector: y = P(X > x)
      */
     void SurvivalFunction(const std::vector<T> &x, std::vector<double> &y) const;
 

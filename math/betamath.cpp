@@ -20,7 +20,8 @@ double beta(double a, double b)
 double ibetaPowerSeries1(double x, double a, double b, double logBetaFun, double logX, double log1mX)
 {
     double addon = 1.0, sum = 0.0;
-    double u = x / (x - 1);
+    /// avoid underflow
+    double u = (x > 1e-5) ? -x / (1.0 - x) : -std::exp(logX - log1mX);
     int n = 1;
     do {
         addon *= (n - b) * u / (a + n);
@@ -37,7 +38,8 @@ double ibetaPowerSeries1(double x, double a, double b, double logBetaFun, double
 double ibetacontinuedFraction1(double x, double a, double b, int number, double logBetaFun, double logX, double log1mX)
 {
     int n = number;
-    double u = x / (1.0 - x);
+    /// avoid underflow
+    double u = (x > 1e-5) ? x / (1.0 - x) : std::exp(logX - log1mX);
     double frac = 0.0;
     while (n > 1) {
         double cn = (b - n + 1) / (a + n - 1) * u;
@@ -146,7 +148,6 @@ double ibeta(double x, double a, double b)
         double y = b * std::log1p(-x);
         return -std::expm1(y);
     }
-
     double logBetaFun = logBeta(a, b);
     double logX = std::log(x), log1mX = std::log1p(-x);
     return ibeta(x, a, b, logBetaFun, logX, log1mX);

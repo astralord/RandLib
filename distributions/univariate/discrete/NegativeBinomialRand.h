@@ -83,12 +83,30 @@ private:
     /// Parameters estimation
     static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
 public:
-    /// Method of moments
+    /**
+     * @brief FitNumberMM
+     * set number, estimated via method of moments
+     * @param sample
+     */
     void FitNumberMM(const std::vector<int> &sample);
+    /**
+     * @brief FitProbabilityMM
+     * set probability, estimated via method of moments
+     * @param sample
+     */
     void FitProbabilityMM(const std::vector<int> & sample);
+    /**
+     * @brief FitNumberAndProbabilityMM
+     * set number and probability, estimated via method of moments
+     * @param sample
+     */
     void FitNumberAndProbabilityMM(const std::vector<int> & sample);
 
-    /// Maximum likelihood
+    /**
+     * @brief FitNumberAndProbabilityMLE
+     * set number and probability, estimated via maximum-likelihood method
+     * @param sample
+     */
     void FitNumberAndProbabilityMLE(const std::vector<int> &sample);
 };
 

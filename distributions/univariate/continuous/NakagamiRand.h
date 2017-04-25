@@ -17,6 +17,7 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
     double m, w;
     GammaRand Y;
+    double lgammaShapeRatio; /// log(Γ(m + 0.5) / Γ(m))
 
 public:
     NakagamiRand(double shape = 0.5, double spread = 1);
@@ -27,9 +28,26 @@ public:
     double MaxValue() const override { return INFINITY; }
 
     void SetParameters(double shape, double spread);
+    /**
+     * @brief GetShape
+     * @return shape m
+     */
     inline double GetShape() const { return m; }
+    /**
+     * @brief GetSpread
+     * @return spread w
+     */
     inline double GetSpread() const { return w; }
+    /**
+     * @brief GetLogGammaFunction
+     * @return log(Γ(m))
+     */
     inline double GetLogGammaFunction() const { return Y.GetLogGammaFunction(); }
+    /**
+     * @brief GetLogGammaShapeRatio
+     * @return log(Γ(m + 0.5) / Γ(m))
+     */
+    inline double GetLogGammaShapeRatio() const { return lgammaShapeRatio; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;
@@ -71,6 +89,10 @@ private:
 
 public:
     void SetDegree(int degree);
+    /**
+     * @brief GetDegree
+     * @return degree k
+     */
     inline int GetDegree() const { return 2 * NakagamiRand::GetShape(); }
 
     double Skewness() const override;
@@ -100,6 +122,10 @@ private:
 
 public:
     void SetScale(double scale);
+    /**
+     * @brief GetScale
+     * @return scale σ
+     */
     double GetScale() const { return sigma; }
 
     double f(const double & x) const override;
@@ -138,6 +164,10 @@ private:
 
 public:
     void SetScale(double scale);
+    /**
+     * @brief GetScale
+     * @return scale σ
+     */
     double GetScale() const { return sigma; }
 
     double f(const double & x) const override;

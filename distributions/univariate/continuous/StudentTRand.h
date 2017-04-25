@@ -7,7 +7,8 @@
  * @brief The StudentTRand class
  * Student's t-distribution
  *
- * Notation: X ~ t(nu)
+ * Notation: X ~ t(ν, μ, σ)
+ * If X ~ t(1, μ, σ), then X ~ Cauchy(μ, σ)
  */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
@@ -16,8 +17,8 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
     double logSigma;
     NakagamiRand Y;
     double pdfCoef;
-    double nup1Half; /// 0.5 * (nu + 1)
-    double logBetaFun; /// log(B(0.5 * nu, 0.5))
+    double nup1Half; /// 0.5 * (ν + 1)
+    double logBetaFun; /// log(B(0.5 * ν, 0.5))
 
 public:
     explicit StudentTRand(double degree = 1.0, double location = 0.0, double scale = 1.0);

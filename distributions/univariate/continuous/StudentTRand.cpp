@@ -24,9 +24,8 @@ void StudentTRand::SetDegree(double degree)
     Y.SetParameters(0.5 * nu, 1.0);
 
     nup1Half = 0.5 * (nu + 1);
-    pdfCoef = std::lgamma(nup1Half);
+    pdfCoef = Y.GetLogGammaShapeRatio();
     pdfCoef -= 0.5 * M_LNPI;
-    pdfCoef -= Y.GetLogGammaFunction();
     logBetaFun = -pdfCoef;
     pdfCoef -= 0.5 * std::log(nu);
 }
@@ -66,14 +65,13 @@ double StudentTRand::logf(const double & x) const
     x0 /= sigma;
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
-        return std::log(M_1_PI / (sigma * (1 + xSq)));
-    if (nu == 2) {
+        return -logSigma - M_LNPI - std::log1p(xSq);
+    if (nu == 2)
         return -logSigma - 1.5 * std::log(2.0 + xSq);
-    }
     if (nu == 3) {
-        double y = 3 + xSq;
-        y = 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
-        return std::log(y);
+        double y = -2 * std::log(3.0 + xSq);
+        y += M_LN2 + 1.5 * M_LN3 - M_LNPI - logSigma;
+        return y;
     }
     double y = -nup1Half * std::log1p(xSq / nu);
     return pdfCoef + y - logSigma;
@@ -89,15 +87,16 @@ double StudentTRand::F(const double & x) const
         /// Cauchy distribution
         return 0.5 + M_1_PI * RandMath::atan(x0);
     }
+    double xSq = x0 * x0;
     if (nu == 2) {
-        return 0.5 + 0.5 * x0 / std::sqrt(2 + x0 * x0);
+        return 0.5 + 0.5 * x0 / std::sqrt(2 + xSq);
     }
     if (nu == 3) {
-        double y = M_SQRT3 * x0 / (x0 * x0 + 3);
+        double y = M_SQRT3 * x0 / (xSq + 3);
         y += RandMath::atan(x0 / M_SQRT3);
         return 0.5 + M_1_PI * y;
     }
-    double t = nu / (x0 * x0 + nu);
+    double t = nu / (xSq + nu);
     double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1p(-t));
     return (x0 > 0.0) ? (1.0 - y) : y;
 }
@@ -112,15 +111,16 @@ double StudentTRand::S(const double & x) const
         /// Cauchy distribution
         return 0.5 + M_1_PI * RandMath::atan(-x0);
     }
+    double xSq = x0 * x0;
     if (nu == 2) {
-        return 0.5 - 0.5 * x0 / std::sqrt(2 + x0 * x0);
+        return 0.5 - 0.5 * x0 / std::sqrt(2 + xSq);
     }
     if (nu == 3) {
-        double y = M_SQRT3 * x0 / (x0 * x0 + 3);
+        double y = M_SQRT3 * x0 / (xSq + 3);
         y += RandMath::atan(x0 / M_SQRT3);
         return 0.5 - M_1_PI * y;
     }
-    double t = nu / (x0 * x0 + nu);
+    double t = nu / (xSq + nu);
     double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1p(-t));
     return (x0 > 0.0) ? y : 1.0 - y;
 }

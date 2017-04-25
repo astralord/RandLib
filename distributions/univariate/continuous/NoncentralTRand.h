@@ -11,13 +11,16 @@
 class RANDLIBSHARED_EXPORT NoncentralTRand : public ContinuousDistribution
 {
     double nu, mu;
-    double PhiMu, PhimMu;
+    long double PhiMu, PhimMu;
     double sqrt1p2oNu;
+    int startingPoint; /// starting point at most weight
+    double logHalfMuSq, halfMuSq;
+    double lgammaStartingPointpHalf, lgammaStartingPointp1;
 
     struct nuStruct {
         double halfNu; /// ν itself
-        double qEpsCoef, q1mEpsCoef;
         double logHalfNu, lgammaHalfNu;
+        double lgamma1, lgamma2;
     } nuCoefs, nup2Coefs;
 
     StudentTRand T;
@@ -31,17 +34,32 @@ public:
     double MaxValue() const override { return INFINITY; }
 
     void SetParameters(double degree, double noncentrality);
+    /**
+     * @brief GetDegree
+     * @return degree ν
+     */
     inline double GetDegree() const { return nu; }
+    /**
+     * @brief GetNoncentrality
+     * @return noncentrality μ
+     */
     inline double GetNoncentrality() const { return mu; }
 
 private:
-    DoublePair getIntegrationLimits(double x, double muAux, const nuStruct &nuAuxCoef) const;
-    double cdf(const double & x, const nuStruct &nuAuxCoef, bool isCompl) const;
-    double g(double z, const double & x, const nuStruct &nuAuxCoef, double muAux, bool lower) const;
-    double findMode(const double & x, double halfNuAux, double muAux, double A, double B) const;
-    double lowerTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
-    double upperTail(const double & x, double muAux, const nuStruct &nuAuxCoef, bool isCompl) const;
-
+    double cdfSeries(const double &x, const nuStruct &degreeCoef, double noncentrality) const;
+    double cdfComplSeries(const double &x, const nuStruct &degreeCoef, double noncentrality) const;
+    /**
+     * @brief logPdfAtZero
+     * @return log(f(0))
+     */
+    double logPdfAtZero() const;
+    /**
+     * @brief pdfCommon
+     * @param x
+     * @param noncentrality
+     * @return pdf for x ≠ 0
+     */
+    double pdfCommon(const double & x, double noncentrality) const;
 public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
@@ -55,6 +73,10 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 };
 
 #endif // NONCENTRALTRAND_H

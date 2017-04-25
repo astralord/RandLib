@@ -40,22 +40,26 @@ void StableRand::SetParameters(double exponent, double skewness)
     alpha_alpham1 = alpha / (alpha - 1.0);
     alpham1Inv = alpha_alpham1 - 1.0;
 
-    if (distributionId == NORMAL) {
+    if (distributionId == NORMAL)
         pdfCoef = M_LN2 + logSigma + 0.5 * M_LNPI;
-    }
-    else if (distributionId == LEVY) {
+    else if (distributionId == LEVY)
         pdfCoef = logSigma - M_LN2 - M_LNPI;
-    }
+    else if (distributionId == CAUCHY)
+        pdfCoef = -logSigma - M_LNPI;
     else if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (sigma * std::fabs(beta));
         /// pdfXLimit is such k that f(x) < 1e-4 for |x| > k
         pdfXLimit = std::sqrt(2e4 / M_PI * M_E);
     }
     else if (distributionId == COMMON) {
-        xi = beta * std::tan(M_PI_2 * alpha);
-        zeta = -xi;
-        omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
-        xi = alphaInv * RandMath::atan(xi);
+        if (beta != 0.0) {
+            zeta = -beta * std::tan(M_PI_2 * alpha);
+            omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
+            xi = alphaInv * RandMath::atan(-zeta);
+        }
+        else {
+            zeta = omega = xi = 0.0;
+        }
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
         /// pdfXLimit is such k that for x > k we use asymptotic expansion
         pdfXLimit = 3.0 / (1.0 + alpha) * M_LN10;
@@ -78,6 +82,8 @@ void StableRand::SetScale(double scale)
         pdfCoef = M_LN2 + logSigma + 0.5 * M_LNPI;
     else if (distributionId == LEVY)
         pdfCoef = logSigma - M_LN2 - M_LNPI;
+    else if (distributionId == CAUCHY)
+        pdfCoef = -logSigma - M_LNPI;
     else if (distributionId == COMMON)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
 }
@@ -107,7 +113,10 @@ double StableRand::pdfCauchy(double x) const
 
 double StableRand::logpdfCauchy(double x) const
 {
-    return std::log(pdfCauchy(x));
+    double x0 = x - mu;
+    x0 /= sigma;
+    double xSq = x0 * x0;
+    return pdfCoef - std::log1p(xSq);
 }
 
 double StableRand::pdfLevy(double x) const
@@ -178,7 +187,7 @@ double StableRand::pdfForUnityExponent(double x) const
         return y;
     }
 
-    /// We squize boudaries for too peaked integrands
+    /// We squeeze boudaries for too peaked integrands
     double boundary = RandMath::atan(M_2_PI * beta * (5.0 - xAdj));
     double upperBoundary = (beta > 0.0) ? boundary : M_PI_2;
     double lowerBoundary = (beta < 0.0) ? boundary : -M_PI_2;

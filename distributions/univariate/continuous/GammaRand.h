@@ -76,7 +76,9 @@ public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
     double F(const double & x) const override;
+    double logF(const double &x) const;
     double S(const double & x) const override;
+    double logS(const double & x) const;
     
 private:
     enum GENERATOR_ID {

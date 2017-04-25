@@ -64,7 +64,7 @@ double PlanckRand::logf(const double & x) const
         return INFINITY;
     }
     double y = pdfCoef + a * std::log(x);
-    return y - std::log(std::expm1(b * x));
+    return y - RandMath::logexpm1(b * x);
 }
 
 double PlanckRand::F(const double & x) const

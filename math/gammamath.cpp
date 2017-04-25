@@ -462,7 +462,7 @@ double lpgamma(double a, double x, double logA, double lgammaA)
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
-        return std::log1p(-std::exp(-x));
+        return RandMath::log1mexp(-x);
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
     return lpgammaRaw(a, x, logX, logA, lgammaA, mId);
@@ -475,7 +475,7 @@ double lpgamma(double a, double x, double logX)
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
-        return std::log1p(-std::exp(-x));
+        return RandMath::log1mexp(-x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
     return lpgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
 }
@@ -487,7 +487,7 @@ double lpgamma(double a, double x)
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
-        return std::log1p(-std::exp(-x));
+        return RandMath::log1mexp(-x);
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
     return lpgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
@@ -563,8 +563,7 @@ double lqgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
     if (mId == QT)
     {
         double y = qtGammaExpansionAux(a, logX, logA, lgammaA);
-        y = -std::exp(y);
-        return std::log1p(y);
+        return RandMath::log1mexp(y);
     }
     if (mId == CF)
     {

@@ -58,17 +58,8 @@ double KumaraswamyRand::logf(const double & x) const
         return (b > 1) ? -INFINITY : INFINITY;
     }
 
-    if (a == b) {
-        double logX = std::log(x);
-        double y = -std::expm1(a * logX); /// 1-x^a
-        y = std::log(y);
-        y += logX;
-        y *= a - 1;
-        return 2 * logA + y;
-    }
     double logX = std::log(x);
-    double y = -std::expm1(a * logX); /// 1-x^a
-    y = std::log(y);
+    double y = RandMath::log1mexp(a * logX); /// 1-x^a
     y *= b - 1;
     y += (a - 1) * logX;
     return logA + logB + y;
@@ -80,8 +71,9 @@ double KumaraswamyRand::F(const double & x) const
         return 0.0;
     if (x >= 1.0)
         return 1.0;
-    double y = -std::expm1(a * std::log(x)); /// 1 - x^a
-    return -std::expm1(b * std::log(y));
+    double y = a * std::log(x);
+    y = RandMath::log1mexp(y); /// 1 - x^a
+    return -std::expm1(b * y);
 }
 
 double KumaraswamyRand::S(const double & x) const
@@ -163,8 +155,7 @@ double KumaraswamyRand::quantileImpl(double p) const
 {
     if (p < 1e-5) {
         double x = std::log1p(-p);
-        x = std::exp(x / b);
-        x = std::log1p(-x);
+        x = RandMath::log1mexp(x / b);
         return std::exp(x / a);
     }
     double x = std::pow(1.0 - p, 1.0 / b);

@@ -124,14 +124,9 @@ double BetaRand::logf(const double & x) const
     }
     /// Standardize
     double xSt = (x - a) / bma;
-    double y = 0.0;
-    if (alpha == beta)
-        y = (alpha - 1) * std::log(xSt - xSt * xSt);
-    else {
-        y = (alpha - 1) * std::log(xSt);
-        y += (beta - 1) * std::log1p(-xSt);
-    }
-    return -logBetaFun - logBma + y;
+    double y = (alpha - 1) * std::log(xSt);
+    y += (beta - 1) * std::log1p(-xSt);
+    return y - logBetaFun - logBma;
 }
 
 double BetaRand::F(const double & x) const

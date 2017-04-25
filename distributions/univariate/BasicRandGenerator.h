@@ -2,6 +2,7 @@
 #define BASICRANDGENERATOR_H
 
 #include "randlib_global.h"
+#include <time.h>
 
 enum GeneratorType {
     JKISS, // 2 ^ 1271

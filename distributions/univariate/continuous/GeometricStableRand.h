@@ -13,10 +13,14 @@ class RANDLIBSHARED_EXPORT GeometricStableRand : public LimitingDistribution
 
 protected:
     /// parameters for α = 2
-    double k; /// asymmetry coefficient
-    double kInv, kSq; /// 1 / k and k * k
-    double pdfCoef; /// log(σ * (k + 1 / k))
-    double cdfCoef; /// log(1 + k * k)
+    /// asymmetry coefficient
+    double k;
+    /// 1 / k and k * k
+    double kInv, kSq;
+    /// log(σ * (k + 1 / k))
+    double pdfCoef;
+    /// log(1 + k * k)
+    double cdfCoef;
 
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);

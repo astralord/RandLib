@@ -14,17 +14,21 @@ std::string NakagamiRand::Name() const
 
 void NakagamiRand::SetParameters(double shape, double spread)
 {
-    m = std::max(shape, 0.5);
+    m = (shape > 0.0) ? shape : 1.0;
     w = (spread > 0.0) ? spread : 1.0;
     Y.SetParameters(m, m / w);
+    lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaFunction();
 }
 
 double NakagamiRand::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
-    if (x == 0)
-        return (m > 0.5) ? 0.0 : std::sqrt(M_2_PI / w);
+    if (x == 0) {
+        if (m > 0.5)
+            return 0.0;
+        return (m < 0.5) ? INFINITY : std::sqrt(M_2_PI / w);
+    }
     return 2 * x * Y.f(x * x);
 }
 
@@ -32,8 +36,11 @@ double NakagamiRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
-    if (x == 0)
-        return (m > 0.5) ? -INFINITY : 0.5 * std::log(M_2_PI / w);
+    if (x == 0) {
+        if (m > 0.5)
+            return 0-INFINITY;
+        return (m < 0.5) ? INFINITY : 0.5 * std::log(M_2_PI / w);
+    }
     return std::log(2 * x) + Y.logf(x * x);
 }
 
@@ -61,24 +68,22 @@ void NakagamiRand::Sample(std::vector<double> &outputData) const
 
 double NakagamiRand::Mean() const
 {
-    double y = std::lgamma(m + 0.5);
-    y -= Y.GetLogGammaFunction();
+    double y = lgammaShapeRatio;
     y += 0.5 * std::log(w / m);
     return std::exp(y);
 }
 
 double NakagamiRand::Variance() const
 {
-    double y = std::lgamma(m + 0.5);
-    y -= Y.GetLogGammaFunction();
-    y = std::exp(y + y);
+    double y = lgammaShapeRatio;
+    y = std::exp(2 * y);
     return w * (1 - y / m);
 }
 
 double NakagamiRand::Mode() const
 {
     double mode = 0.5 * w / m;
-    return std::sqrt(w - mode);
+    return std::sqrt(std::max(w - mode, 0.0));
 }
 
 double NakagamiRand::quantileImpl(double p) const

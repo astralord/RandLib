@@ -30,6 +30,30 @@ double atan(double x)
     return (x < -1.0) ? -M_PI_2 - std::atan(1.0 / x) : std::atan(x);
 }
 
+double log1pexp(double x)
+{
+    if (x < 20.0)
+        return std::log1p(std::exp(x));
+    return (x < 35.0) ? x + std::exp(-x) : x;
+}
+
+double log1mexp(double x)
+{
+    return (x < -M_LN2) ? std::log1p(-std::exp(x)) : std::log(-std::expm1(x));
+}
+
+double logexpm1(double x)
+{
+    if (x < 20.0)
+        return std::log(std::expm1(x));
+    return (x < 35.0) ? x - std::exp(-x) : x;
+}
+
+double log2mexp(double x)
+{
+    return std::log1p(-std::expm1(x));
+}
+
 /**
  * @brief FACTORIAL_TABLESIZE maximum value for input parameter to use table method
  */
@@ -289,7 +313,7 @@ double logModifiedBesselFirstKind(double x, double nu)
         double y = 0.5 * std::log(M_2_PI / x);
         y -= M_LN2;
         y += x;
-        y += std::log1p(sign(nu) * std::exp(-2 * x));
+        y += (nu > 0) ? RandMath::log1pexp(-2 * x) : RandMath::log1mexp(-2 * x);
         return y;
     }
 
@@ -448,6 +472,7 @@ double MarcumPSeries(double mu, double x, double y)
         double term = n * logX - x;
         term = std::exp(term) * P / factorial(n);
         sum += term;
+        // check if diffP can be calculated via recursion
         double diffP = (mu + n - 1) * logY - y - std::lgamma(mu + n);
         P += std::exp(diffP);
     }
@@ -509,6 +534,8 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
  */
 double MarcumPForMuLessThanOne(double mu, double x, double y)
 {
+    // TODO: check Krishnamoorthy paper for alternative representation
+
     /// in this case we use numerical integration,
     /// however we have singularity point at 0,
     /// so we get rid of it by subtracting the function

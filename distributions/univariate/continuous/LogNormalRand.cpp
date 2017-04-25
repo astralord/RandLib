@@ -101,10 +101,11 @@ double LogNormalRand::Skewness() const
 
 double LogNormalRand::ExcessKurtosis() const
 {
-    double a = std::pow(expHalfSigmaSq, 8);
-    double b = 2 * std::pow(expHalfSigmaSq, 6);
-    double c = 3 * std::pow(expHalfSigmaSq, 4);
-    return a + b + c - 6;
+    double temp = expHalfSigmaSq * expHalfSigmaSq;
+    double c = temp * temp;
+    double b = c * temp;
+    double a = c * c;
+    return a + 2 * b + 3 * c - 6;
 }
 
 double LogNormalRand::logAverage(const std::vector<double> &sample)

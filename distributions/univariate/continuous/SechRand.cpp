@@ -17,7 +17,7 @@ double SechRand::f(const double & x) const
 
 double SechRand::logf(const double & x) const
 {
-    return M_PI_2 * x - std::log1p(std::exp(M_PI * x));
+    return M_PI_2 * x - RandMath::log1pexp(M_PI * x);
 }
 
 double SechRand::F(const double & x) const
