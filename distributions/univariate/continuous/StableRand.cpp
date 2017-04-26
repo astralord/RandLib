@@ -237,27 +237,27 @@ double StableRand::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) co
     double sum = 0.0;
     if (beta == 0.0) {
         /// Symmetric distribution
-        for (int i = 1; i <= k; ++i)
+        for (int n = 1; n <= k; ++n)
         {
-            int i2 = i + i;
-            double term = std::lgamma((i2 + 1) / alpha);
-            term += i2 * logX;
+            int n2 = n + n;
+            double term = std::lgamma((n2 + 1) / alpha);
+            term += n2 * logX;
+            term -= RandMath::lfact(n2);
             term = std::exp(term);
-            term /= RandMath::factorial(i2);
-            sum += (i & 1) ? -term : term;
+            sum += (n & 1) ? -term : term;
         }
     }
     else {
         /// Asymmetric distribution
         double rhoPi_alpha = M_PI_2 + xiAdj;
-        for (int i = 1; i <= k; ++i) {
-            int ip1 = i + 1;
-            double term = std::lgamma(ip1 * alphaInv);
-            term += i * logX;
+        for (int n = 1; n <= k; ++n) {
+            int np1 = n + 1;
+            double term = std::lgamma(np1 * alphaInv);
+            term += n * logX;
+            term -= RandMath::lfact(n);
             term = std::exp(term - omega);
-            term /= RandMath::factorial(i);
-            term *= std::sin(ip1 * rhoPi_alpha);
-            sum += (i & 1) ? -term : term;
+            term *= std::sin(np1 * rhoPi_alpha);
+            sum += (n & 1) ? -term : term;
         }
     }
     return y0 + sum * M_1_PI / alpha;
@@ -272,8 +272,8 @@ double StableRand::pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) con
         double aux = n * alpha + 1.0;
         double term = std::lgamma(aux);
         term -= aux * logX;
+        term -= RandMath::lfact(n);
         term = std::exp(term - omega);
-        term /= RandMath::factorial(n);
         term *= std::sin(rhoPi * n);
         sum += (n & 1) ? term : -term;
     }

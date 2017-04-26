@@ -49,6 +49,7 @@ double IrwinHallRand::F(const double & x) const
     double sum = 0.0;
     for (int i = 0; i <= n; ++i)
     {
+        // TODO: use log-scale
         double y = x - i;
         double add = RandMath::binomialCoef(n, i);
         add *= std::pow(y, n);

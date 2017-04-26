@@ -326,7 +326,7 @@ double logModifiedBesselFirstKind(double x, double nu)
         do {
             addon = 2 * i * logHalfx;
             addon -= std::lgamma(nu + i + 1);
-            addon = std::exp(addon) / factorial(i);
+            addon = std::exp(addon - lfact(i));
             sum += addon;
             ++i;
         } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
@@ -470,7 +470,7 @@ double MarcumPSeries(double mu, double x, double y)
     double P = pgamma(mu + n0, y, logY);
     for (int n = n0; n > 0; --n) {
         double term = n * logX - x;
-        term = std::exp(term) * P / factorial(n);
+        term = std::exp(term - lfact(n)) * P;
         sum += term;
         // check if diffP can be calculated via recursion
         double diffP = (mu + n - 1) * logY - y - std::lgamma(mu + n);

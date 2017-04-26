@@ -356,6 +356,7 @@ void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
     }
     else
     {
+        // TODO: use log-scale
         /// works faster for small n
         double factNm1 = RandMath::factorial(n - 1);
         double factN = n * factNm1;
