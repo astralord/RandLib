@@ -78,7 +78,8 @@ double NoncentralChiSquaredRand::Variate(double degree, double noncentrality)
         double y = std::sqrt(noncentrality) + NormalRand::StandardVariate();
         return rv + y * y;
     }
-    return 2 * GammaRand::StandardVariate(0.5 * degree + PoissonRand::Variate(0.5 * noncentrality));
+    double shape = 0.5 * degree + PoissonRand::Variate(0.5 * noncentrality);
+    return 2 * GammaRand::StandardVariate(shape);
 }
 
 double NoncentralChiSquaredRand::Variate() const

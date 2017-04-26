@@ -48,8 +48,7 @@ void StableRand::SetParameters(double exponent, double skewness)
         pdfCoef = -logSigma - M_LNPI;
     else if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (sigma * std::fabs(beta));
-        /// pdfXLimit is such k that f(x) < 1e-4 for |x| > k
-        pdfXLimit = std::sqrt(2e4 / M_PI * M_E);
+        pdftailBound = std::sqrt(2e4 / M_PI * M_E);
     }
     else if (distributionId == COMMON) {
         if (beta != 0.0) {
@@ -61,12 +60,12 @@ void StableRand::SetParameters(double exponent, double skewness)
             zeta = omega = xi = 0.0;
         }
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / sigma;
-        /// pdfXLimit is such k that for x > k we use asymptotic expansion
-        pdfXLimit = 3.0 / (1.0 + alpha) * M_LN10;
+        pdftailBound = 3.0 / (1.0 + alpha) * M_LN10;
+        cdftailBound = 3.0 / alpha * M_LN10;
         /// define boundaries of region near 0, where we use series expansion
         if (alpha <= ALMOST_TWO) {
             seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
-            seriesZeroParams.second = -(1.5 / alpha + 0.5) * M_LN10; /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
+            seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10; /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
         }
         else {
             seriesZeroParams.first = 85;
@@ -181,7 +180,7 @@ double StableRand::pdfForUnityExponent(double x) const
     double xAdj = -M_PI_2 * xSt / beta - logsigmaPi_2;
 
     // TODO: this limit is not available anymore, re-check
-    if (std::fabs(xSt) > pdfXLimit) {
+    if (std::fabs(xSt) > pdftailBound) {
         double y = 1.0 / (M_PI * xSt * xSt);
         y *= (xSt > 0) ? (1 + beta) : (1 - beta);
         return y;
@@ -250,14 +249,14 @@ double StableRand::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) co
     }
     else {
         /// Asymmetric distribution
-        double coef = M_PI_2 + xiAdj;
+        double rhoPi_alpha = M_PI_2 + xiAdj;
         for (int i = 1; i <= k; ++i) {
             int ip1 = i + 1;
             double term = std::lgamma(ip1 * alphaInv);
             term += i * logX;
             term = std::exp(term - omega);
             term /= RandMath::factorial(i);
-            term *= std::sin(ip1 * coef);
+            term *= std::sin(ip1 * rhoPi_alpha);
             sum += (i & 1) ? -term : term;
         }
     }
@@ -266,19 +265,17 @@ double StableRand::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) co
 
 double StableRand::pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const
 {
-    double coef = M_PI_2;
-    if (beta != 0.0)
-        coef += xiAdj;
-    coef *= alpha;
+    double rhoPi = M_PI_2 + xiAdj;
+    rhoPi *= alpha;
     double sum = 0.0;
-    for (int i = 1; i <= k; ++i) {
-        double aux = i * alpha + 1.0;
+    for (int n = 1; n <= k; ++n) {
+        double aux = n * alpha + 1.0;
         double term = std::lgamma(aux);
         term -= aux * logX;
         term = std::exp(term - omega);
-        term /= RandMath::factorial(i);
-        term *= std::sin(coef * i);
-        sum += (i & 1) ? term : -term;
+        term /= RandMath::factorial(n);
+        term *= std::sin(rhoPi * n);
+        sum += (n & 1) ? term : -term;
     }
     return M_1_PI * sum;
 }
@@ -380,7 +377,8 @@ double StableRand::integrandAuxForCommonExponent(double theta, double xAdj, doub
     y -= alpha * std::log(sinThetaAdj);
     y *= alpham1Inv;
     y += std::log(std::cos(thetaAdj - theta));
-    return std::isfinite(y) ? y + xAdj : limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
+    y += xAdj;
+    return std::isfinite(y) ? y : limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
 }
 
 double StableRand::integrandForCommonExponent(double theta, double xAdj, double xiAdj) const
@@ -425,7 +423,7 @@ double StableRand::pdfForCommonExponent(double x) const
         return pdfSeriesExpansionAtZero(logAbsX, xiAdj, seriesZeroParams.first) / sigma;
 
     /// If x is large enough we use tail approximation
-    if (logAbsX > pdfXLimit && alpha <= ALMOST_TWO)
+    if (logAbsX > pdftailBound && alpha <= ALMOST_TWO)
         return pdfSeriesExpansionAtInf(logAbsX, xiAdj, 10) / sigma;
 
     double xAdj = alpha_alpham1 * logAbsX;
@@ -560,6 +558,11 @@ double StableRand::fastcdfExponentiation(double u)
     return std::exp(-y);
 }
 
+double StableRand::cdfAtZero(double xiAdj) const
+{
+    return 0.5 - M_1_PI * xiAdj;
+}
+
 double StableRand::cdfForUnityExponent(double x) const
 {
     double xSt = (x - mu) / sigma;
@@ -573,10 +576,58 @@ double StableRand::cdfForUnityExponent(double x) const
     return (beta > 0) ? y : 1.0 - y;
 }
 
-double StableRand::cdfIntegralRepresentation(double absXSt, double xiAdj) const
+double StableRand::cdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const
 {
-    /// Here we assume that absXSt > 0
-    double xAdj = alpha_alpham1 * (std::log(absXSt) - omega);
+    /// Calculate first term of the sum
+    /// (if x = 0, only this term is non-zero)
+    double y0 = cdfAtZero(xiAdj);
+    double sum = 0.0;
+    if (beta == 0.0) {
+        /// Symmetric distribution
+        for (int m = 0; m <= k; ++m) {
+            int m2p1 = 2 * m + 1;
+            double term = std::lgamma(m2p1 * alphaInv);
+            term += m2p1 * logX;
+            term -= RandMath::lfact(m2p1);
+            term = std::exp(term);
+            sum += (m & 1) ? -term : term;
+        }
+    }
+    else {
+        /// Asymmetric distribution
+        double rhoPi_alpha = M_PI_2 + xiAdj;
+        for (int n = 1; n <= k; ++n) {
+            double term = std::lgamma(n * alphaInv);
+            term += n * logX;
+            term -= RandMath::lfact(n);
+            term = std::exp(term);
+            term *= std::sin(n * rhoPi_alpha);
+            sum += (n & 1) ? term : -term;
+        }
+    }
+    return y0 + sum * M_1_PI * alphaInv;
+}
+
+double StableRand::cdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const
+{
+    double rhoPi = M_PI_2 + xiAdj;
+    rhoPi *= alpha;
+    double sum = 0.0;
+    for (int n = 1; n <= k; ++n) {
+        double aux = n * alpha;
+        double term = std::lgamma(aux);
+        term -= aux * logX;
+        term -= RandMath::lfact(n);
+        term = std::exp(term);
+        term *= std::sin(rhoPi * n);
+        sum += (n & 1) ? term : -term;
+    }
+    return M_1_PI * sum;
+}
+
+double StableRand::cdfIntegralRepresentation(double logX, double xiAdj) const
+{
+    double xAdj = alpha_alpham1 * logX;
     return M_1_PI * RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
         double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
@@ -588,30 +639,29 @@ double StableRand::cdfIntegralRepresentation(double absXSt, double xiAdj) const
 double StableRand::cdfForCommonExponent(double x) const
 {
     double xSt = (x - mu) / sigma; /// Standardize
-    
-    if (std::fabs(xSt) < 1e-4) /// If we are close to 0 then we do interpolation avoiding dangerous variates
-    {
-        double y0 = 0.5 - M_1_PI * xi; /// f(0)
-        if (std::fabs(xSt) < MIN_POSITIVE)
-            return y0;
-        double b = (xSt > 0) ? 1.1e-4 : -1.1e-4;
-        double y1 = cdfForCommonExponent(mu + sigma * b);
-        return RandMath::linearInterpolation(0, b, y0, y1, xSt);
+    if (xSt == 0)
+        return cdfAtZero(xi);
+    if (xSt > 0.0) {
+        double logAbsX = std::log(xSt) - omega;
+        /// If x is too close to 0, we do series expansion avoiding numerical problems
+        if (logAbsX < seriesZeroParams.second)
+            return cdfSeriesExpansionAtZero(logAbsX, xi, seriesZeroParams.first);
+        /// If x is large enough we use tail approximation
+        if (logAbsX > cdftailBound)
+            return 1.0 - cdfSeriesExpansionAtInf(logAbsX, xi, 10);
+        if (alpha > 1.0)
+            return 1.0 - cdfIntegralRepresentation(logAbsX, xi);
+        return (beta == -1.0) ? 1.0 : cdfAtZero(xi) + cdfIntegralRepresentation(logAbsX, xi);
     }
-
-    if (alpha > 1.0) {
-        if (xSt > 0.0)
-            return 1.0 - cdfIntegralRepresentation(xSt, xi);
-        /// We use relation F(-x, xi) + F(x, -xi) = 1
-        return cdfIntegralRepresentation(-xSt, -xi);
-    }
-
-    /// α < 1
-    double temp = 0.5 - xi / M_PI;
-    if (xSt > 0.0)
-        return (beta == -1.0) ? 1.0 : temp + cdfIntegralRepresentation(xSt, xi);
-    /// We use relation F(-x, xi) + F(x, -xi) = 1
-    return (beta == 1.0) ? 0.0 : temp - cdfIntegralRepresentation(-xSt, -xi);
+    /// For x < 0 we use relation F(-x, xi) + F(x, -xi) = 1
+    double logAbsX = std::log(-xSt) - omega;
+    if (logAbsX < seriesZeroParams.second)
+        return 1.0 - cdfSeriesExpansionAtZero(logAbsX, -xi, seriesZeroParams.first);
+    if (logAbsX > cdftailBound)
+        return cdfSeriesExpansionAtInf(logAbsX, -xi, 10);
+    if (alpha > 1.0)
+        return cdfIntegralRepresentation(logAbsX, -xi);
+    return (beta == 1.0) ? 0.0 : cdfAtZero(xi) - cdfIntegralRepresentation(logAbsX, -xi);
 }
 
 double StableRand::F(const double & x) const

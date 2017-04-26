@@ -44,7 +44,7 @@ class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 
 protected:
     double pdfCoef;
-    double pdfXLimit; /// boundary k such that for |x| > k we can use tail approximation
+    double pdftailBound, cdftailBound; /// boundaries k such that for |x| > k we can use tail approximation
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
@@ -195,7 +195,12 @@ private:
      * @return exp(-exp(u)), accelerated by truncation of input u
      */
     static double fastcdfExponentiation(double u);
-
+    /**
+     * @brief cdfAtZero
+     * @param xiAdj adjusted ξ
+     * @return cumulative distribution function for x = 0
+     */
+    double cdfAtZero(double xiAdj) const;
     /**
      * @brief cdfForUnityExponent
      * @param x
@@ -203,12 +208,28 @@ private:
      */
     double cdfForUnityExponent(double x) const;
     /**
+     * @brief cdfSeriesExpansionAtZero
+     * @param logX log(x)
+     * @param xiAdj adjusted ξ
+     * @param k number of elements in series
+     * @return series expansion of cumulative distribution function for x near 0
+     */
+    double cdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
+    /**
+     * @brief pdfSeriesExpansionAtInf
+     * @param logX log(x)
+     * @param xiAdj adjusted ξ
+     * @param k number of elements in series
+     * @return series expansion of cumulative distribution function for large x
+     */
+    double cdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
+    /**
      * @brief cdfIntegralRepresentation
      * @param absXSt absolute value of standardised x
      * @param xiAdj adjusted ξ
      * @return integral representation of cumulative distribution function for common case of α ≠ 1
      */
-    double cdfIntegralRepresentation(double absXSt, double xiAdj) const;
+    double cdfIntegralRepresentation(double logX, double xiAdj) const;
     /**
      * @brief cdfForCommonExponent
      * @param x
@@ -263,6 +284,7 @@ public:
 private:
     using StableRand::SetParameters;
 };
+
 
 /**
  * @brief The LandauRand class

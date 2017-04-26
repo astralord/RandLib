@@ -1,9 +1,7 @@
 #ifndef RANDLIB_GLOBAL_H
 #define RANDLIB_GLOBAL_H
 
-#include <algorithm>
-
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
     #define Q_DECL_EXPORT __declspec(dllexport)
     #define Q_DECL_IMPORT __declspec(dllimport)
 #else

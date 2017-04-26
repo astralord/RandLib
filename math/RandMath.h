@@ -6,6 +6,7 @@
 #include <complex>
 #include <vector>
 #include <utility>
+#include <algorithm>
 
 #include "Constants.h"
 #include "GammaMath.h"
