@@ -13,10 +13,10 @@
  *
  * Related distributions:
  * If X ~ Cauchy(0, 1), then μ + σ * X ~ Cauchy(μ, σ)
- * X ~ Stable(1, 0, σ, μ)
- * If X, Y ~ Normal(0, 1), then X/Y ~ Cauchy(0, 1)
+ * X ~ S(1, 0, σ, μ)
+ * If X, Y ~ Normal(0, 1), then X / Y ~ Cauchy(0, 1)
  */
-class RANDLIBSHARED_EXPORT CauchyRand : public StableRand
+class RANDLIBSHARED_EXPORT CauchyRand : public StableDistribution
 {
 public:
     CauchyRand(double location = 0, double scale = 1);
@@ -24,9 +24,6 @@ public:
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }
-
-private:
-    using StableRand::SetParameters;
 
 public:
     double f(const double & x) const override;

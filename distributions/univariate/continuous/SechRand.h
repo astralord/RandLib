@@ -5,6 +5,9 @@
 
 /**
  * @brief The SechRand class
+ * Hyperbolic secant distribution
+ *
+ * Notation: X ~ Sech
  */
 class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
 {

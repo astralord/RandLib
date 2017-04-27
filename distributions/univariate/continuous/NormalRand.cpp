@@ -10,7 +10,7 @@ long double NormalRand::stairHeight[256] = {0};
 const bool NormalRand::dummy = NormalRand::SetupTables();
 
 NormalRand::NormalRand(double mean, double var)
-    : StableRand(2.0, 0.0, 1.0, mean)
+    : StableDistribution(2.0, 0.0, 1.0, mean)
 {
     SetVariance(var);
 }
@@ -23,7 +23,7 @@ std::string NormalRand::Name() const
 void NormalRand::SetScale(double scale)
 {
     sigma = scale > 0 ? scale : 1.0;
-    StableRand::SetScale(sigma * M_SQRT1_2);
+    StableDistribution::SetScale(sigma * M_SQRT1_2);
 }
 
 bool NormalRand::SetupTables()

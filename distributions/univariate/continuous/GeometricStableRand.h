@@ -6,6 +6,9 @@
 
 /**
  * @brief The GeometricStableRand class
+ * Geometric-Stable distribution
+ *
+ * Notation: X ~ GS(α, β, γ, μ)
  */
 class RANDLIBSHARED_EXPORT GeometricStableRand : public LimitingDistribution
 {

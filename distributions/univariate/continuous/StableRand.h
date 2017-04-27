@@ -5,17 +5,17 @@
 #include "LimitingDistribution.h"
 
 /**
- * @brief The StableRand class
- * Stable distribution
+ * @brief The StableDistribution class
+ * Abstract class for Stable distribution
  *
- * X ~ Stable(α, β, γ, μ)
+ * X ~ S(α, β, γ, μ)
  *
  * Related distributions:
- * If X ~ Normal(μ, σ), then X ~ Stable(2, 0, √2σ, μ)
- * If X ~ Cauchy(μ, γ), then X ~ Stable(1, 0, γ, μ)
- * If +/-X ~ Levy(μ, γ), then X ~ Stable(0.5, +/-1, γ, μ)
+ * If X ~ Normal(μ, σ), then X ~ S(2, 0, √2σ, μ)
+ * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ)
+ * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
-class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
+class RANDLIBSHARED_EXPORT StableDistribution : public LimitingDistribution
 {
     /// coefficients for common α
     double xi, omega, zeta;
@@ -49,10 +49,9 @@ protected:
     double pdftailBound, cdftailBound;
 
 public:
-    StableRand(double exponent, double skewness, double scale = 1, double location = 0);
-    virtual ~StableRand() {}
+    StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
+    virtual ~StableDistribution() {}
 
-    std::string Name() const override;
     SUPPORT_TYPE SupportType() const override {
         if (alpha < 1) {
             if (beta == 1)
@@ -65,7 +64,10 @@ public:
     double MinValue() const override { return (alpha < 1 && beta == 1) ? mu : -INFINITY; }
     double MaxValue() const override { return (alpha < 1 && beta == -1) ? mu : INFINITY; }
 
+protected:
     void SetParameters(double exponent, double skewness);
+
+public:
     void SetScale(double scale);
 
     /// Probability distribution functions
@@ -271,38 +273,49 @@ private:
 
 
 /**
- * @brief The HoltsmarkRand class
- *
- * X ~ Holtsmark(γ, μ)
- *
- * Related distributions:
- * X ~ Stable(1.5, 0, γ, μ)
+ * @brief The StableRand class
+ * Stable distribution
  */
-class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
+class RANDLIBSHARED_EXPORT StableRand : public StableDistribution
 {
 public:
-    HoltsmarkRand(double scale = 1, double location = 0) : StableRand(1.5, 0.0, scale, location) {}
+    StableRand(double exponent, double skewness, double scale = 1, double location = 0) : StableDistribution(exponent, skewness, scale, location) {}
     std::string Name() const override;
-private:
-    using StableRand::SetParameters;
+    using StableDistribution::SetParameters;
+};
+
+
+/**
+ * @brief The HoltsmarkRand class
+ * Holtsmark distribution
+ *
+ * Notation: X ~ Holtsmark(γ, μ)
+ *
+ * Related distributions:
+ * X ~ S(1.5, 0, γ, μ)
+ */
+class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableDistribution
+{
+public:
+    HoltsmarkRand(double scale = 1, double location = 0) : StableDistribution(1.5, 0.0, scale, location) {}
+    std::string Name() const override;
 };
 
 
 /**
  * @brief The LandauRand class
+ * Landau distribution
  *
- * X ~ Landau(γ, μ)
+ * Notation: X ~ Landau(γ, μ)
  *
  * Related distributions:
- * X ~ Stable(1, 1, γ, μ)
+ * X ~ S(1, 1, γ, μ)
  */
-class RANDLIBSHARED_EXPORT LandauRand : public StableRand
+class RANDLIBSHARED_EXPORT LandauRand : public StableDistribution
 {
 public:
-    LandauRand(double scale = 1, double location = 0) : StableRand(1.0, 1.0, scale, location) {}
+    LandauRand(double scale = 1, double location = 0) : StableDistribution(1.0, 1.0, scale, location) {}
     std::string Name() const override;
-private:
-    using StableRand::SetParameters;
 };
 
 #endif // STABLERAND_H

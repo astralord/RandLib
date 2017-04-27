@@ -6,7 +6,7 @@
 /**
  * @brief The LimitingDistribution class
  * Abstract distribution, which has common properties of
- * Stable and Geometric-stable distributions, due to their similarity
+ * Stable and Geometric-Stable distributions, due to their similarity
  */
 class RANDLIBSHARED_EXPORT LimitingDistribution : public ContinuousDistribution
 {
@@ -23,8 +23,9 @@ protected:
 public:
     LimitingDistribution(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~LimitingDistribution() {}
-
+protected:
     void SetParameters(double exponent, double skewness);
+public:
     void SetLocation(double location);
     void SetScale(double scale);
 

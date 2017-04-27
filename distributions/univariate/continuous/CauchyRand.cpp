@@ -2,7 +2,7 @@
 #include "UniformRand.h"
 
 CauchyRand::CauchyRand(double location, double scale)
-    : StableRand(1, 0, scale, location)
+    : StableDistribution(1, 0, scale, location)
 {
 }
 

@@ -14,9 +14,9 @@
  * Notation: X ~ N(μ, σ)
  *
  * Related distributions:
- * X ~ Stable(2, 0, √2σ, μ)
+ * X ~ S(2, 0, √2σ, μ)
  */
-class RANDLIBSHARED_EXPORT NormalRand : public StableRand
+class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 {
     double sigma;
 
@@ -29,9 +29,6 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 public:
     NormalRand(double mean = 0, double var = 1);
     std::string Name() const override;
-
-private:
-    using StableRand::SetParameters;
 
 public:
     void SetScale(double scale);

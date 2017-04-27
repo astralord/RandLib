@@ -5,12 +5,17 @@
 
 /**
  * @brief The FrechetRand class
+ * Frechet distribution
+ *
+ * Notation: X ~ Frechet(α, s, m)
  */
 class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 {
     double alpha, s, m;
-    double alphaInv; /// 1/α
-    double pdfCoef; /// log(α/s)
+    /// 1/α
+    double alphaInv;
+    /// log(α/s)
+    double pdfCoef;
 
 public:
     FrechetRand(double shape, double scale, double location);

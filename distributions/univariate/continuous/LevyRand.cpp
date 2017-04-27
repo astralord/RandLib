@@ -2,7 +2,7 @@
 #include "NormalRand.h"
 
 LevyRand::LevyRand(double location, double scale)
-    : StableRand(0.5, 1, scale, location)
+    : StableDistribution(0.5, 1, scale, location)
 {
 }
 

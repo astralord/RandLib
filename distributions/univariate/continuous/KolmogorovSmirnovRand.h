@@ -5,6 +5,9 @@
 
 /**
  * @brief The KolmogorovSmirnovRand class
+ * Kolmogorov-Smirnov distribution
+ *
+ * Notation: X ~ KS
  */
 class RANDLIBSHARED_EXPORT KolmogorovSmirnovRand : public ContinuousDistribution
 {

@@ -13,17 +13,14 @@
  *
  * Related distributions:
  * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ)
- * X ~ Stable(0.5, 1, σ, μ)
+ * X ~ S(0.5, 1, σ, μ)
  * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
  */
-class RANDLIBSHARED_EXPORT LevyRand : public StableRand
+class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution
 {
 public:
     LevyRand(double location = 0, double scale = 1);
     std::string Name() const override;
-
-private:
-    using StableRand::SetParameters;
 
 public:
     double f(const double & x) const override;

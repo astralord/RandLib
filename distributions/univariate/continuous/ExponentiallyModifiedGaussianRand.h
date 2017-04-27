@@ -7,7 +7,7 @@
 
 /**
  * @brief The ExponentiallyModifiedGaussianRand class
- * Exponentially modified Gaussian distribution
+ * Exponentially-modified Gaussian distribution
  *
  * Notation: X ~ EMG(μ, σ, β)
  *
@@ -19,7 +19,8 @@ class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public Continuous
     NormalRand X;
     ExponentialRand Y;
 
-    double a, b, c, v; /// auxiliary variables
+    /// auxiliary variables
+    double a, b, c, v;
 
 public:
     explicit ExponentiallyModifiedGaussianRand(double location = 0, double variance = 1, double rate = 1);
