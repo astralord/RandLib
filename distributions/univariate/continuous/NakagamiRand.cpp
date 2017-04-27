@@ -2,17 +2,12 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 
-NakagamiRand::NakagamiRand(double shape, double spread)
+NakagamiDistribution::NakagamiDistribution(double shape, double spread)
 {
     SetParameters(shape, spread);
 }
 
-std::string NakagamiRand::Name() const
-{
-    return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
-}
-
-void NakagamiRand::SetParameters(double shape, double spread)
+void NakagamiDistribution::SetParameters(double shape, double spread)
 {
     m = (shape > 0.0) ? shape : 1.0;
     w = (spread > 0.0) ? spread : 1.0;
@@ -20,7 +15,7 @@ void NakagamiRand::SetParameters(double shape, double spread)
     lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaFunction();
 }
 
-double NakagamiRand::f(const double & x) const
+double NakagamiDistribution::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -32,7 +27,7 @@ double NakagamiRand::f(const double & x) const
     return 2 * x * Y.f(x * x);
 }
 
-double NakagamiRand::logf(const double & x) const
+double NakagamiDistribution::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -44,56 +39,62 @@ double NakagamiRand::logf(const double & x) const
     return std::log(2 * x) + Y.logf(x * x);
 }
 
-double NakagamiRand::F(const double & x) const
+double NakagamiDistribution::F(const double & x) const
 {
     return (x > 0.0) ? Y.F(x * x) : 0.0;
 }
 
-double NakagamiRand::S(const double & x) const
+double NakagamiDistribution::S(const double & x) const
 {
     return (x > 0.0) ? Y.S(x * x) : 1.0;
 }
 
-double NakagamiRand::Variate() const
+double NakagamiDistribution::Variate() const
 {
     return std::sqrt(Y.Variate());
 }
 
-void NakagamiRand::Sample(std::vector<double> &outputData) const
+void NakagamiDistribution::Sample(std::vector<double> &outputData) const
 {
     Y.Sample(outputData);
     for (double & var : outputData)
         var = std::sqrt(var);
 }
 
-double NakagamiRand::Mean() const
+double NakagamiDistribution::Mean() const
 {
     double y = lgammaShapeRatio;
     y += 0.5 * std::log(w / m);
     return std::exp(y);
 }
 
-double NakagamiRand::Variance() const
+double NakagamiDistribution::Variance() const
 {
     double y = lgammaShapeRatio;
     y = std::exp(2 * y);
     return w * (1 - y / m);
 }
 
-double NakagamiRand::Mode() const
+double NakagamiDistribution::Mode() const
 {
     double mode = 0.5 * w / m;
     return std::sqrt(std::max(w - mode, 0.0));
 }
 
-double NakagamiRand::quantileImpl(double p) const
+double NakagamiDistribution::quantileImpl(double p) const
 {
     return std::sqrt(Y.Quantile(p));
 }
 
-double NakagamiRand::quantileImpl1m(double p) const
+double NakagamiDistribution::quantileImpl1m(double p) const
 {
     return std::sqrt(Y.Quantile1m(p));
+}
+
+/// NAKAGAMI
+std::string NakagamiRand::Name() const
+{
+    return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
 }
 
 
@@ -110,7 +111,7 @@ std::string ChiRand::Name() const
 
 void ChiRand::SetDegree(int degree)
 {
-    NakagamiRand::SetParameters(0.5 * degree, degree);
+    NakagamiDistribution::SetParameters(0.5 * degree, degree);
 }
 
 double ChiRand::Skewness() const
@@ -149,7 +150,7 @@ std::string MaxwellBoltzmannRand::Name() const
 void MaxwellBoltzmannRand::SetScale(double scale)
 {
     sigma = (scale > 0.0) ? scale : 1.0;
-    NakagamiRand::SetParameters(1.5, 3 * sigma * sigma);
+    NakagamiDistribution::SetParameters(1.5, 3 * sigma * sigma);
 }
 
 double MaxwellBoltzmannRand::f(const double & x) const
@@ -242,7 +243,7 @@ std::string RayleighRand::Name() const
 void RayleighRand::SetScale(double scale)
 {
     sigma = (scale > 0.0) ? scale : 1.0;
-    NakagamiRand::SetParameters(1, 2 * sigma * sigma);
+    NakagamiDistribution::SetParameters(1, 2 * sigma * sigma);
 }
 
 double RayleighRand::f(const double & x) const

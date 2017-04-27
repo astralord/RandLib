@@ -4,8 +4,8 @@
 #include "GammaRand.h"
 
 /**
- * @brief The NakagamiRand class
- * Nakagami distribution
+ * @brief The NakagamiDistribution class
+ * Abstract class for Nakagami distribution
  *
  * Notation: X ~ Nakagami(m, w)
  *
@@ -13,7 +13,7 @@
  * σX ~ Nakagami(m, wσ^2)
  * X^2 ~ Gamma(m, m / w)
  */
-class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
 {
     double m, w;
     GammaRand Y;
@@ -21,14 +21,21 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
     double lgammaShapeRatio;
 
 public:
-    NakagamiRand(double shape = 0.5, double spread = 1);
+    NakagamiDistribution(double shape = 0.5, double spread = 1);
 
-    std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
 
+protected:
+    /**
+     * @brief SetParameters
+     * @param shape m
+     * @param spread w
+     */
     void SetParameters(double shape, double spread);
+
+public:
     /**
      * @brief GetShape
      * @return shape m
@@ -68,6 +75,19 @@ protected:
 
 
 /**
+ * @brief The NakagamiRand class
+ * Nakagami distribution
+ */
+class RANDLIBSHARED_EXPORT NakagamiRand : public NakagamiDistribution
+{
+public:
+    NakagamiRand(double shape = 0.5, double spread = 1) : NakagamiDistribution(shape, spread) {}
+    std::string Name() const override;
+    using NakagamiDistribution::SetParameters;
+};
+
+
+/**
  * @brief The ChiRand class
  * Chi distribution
  *
@@ -78,7 +98,7 @@ protected:
  * X^2 ~ Chi-Squared(k)
  * X^2 ~ Gamma(k/2, 0.5)
  */
-class RANDLIBSHARED_EXPORT ChiRand : public NakagamiRand
+class RANDLIBSHARED_EXPORT ChiRand : public NakagamiDistribution
 {
 
 public:
@@ -86,7 +106,7 @@ public:
     std::string Name() const override;
 
 private:
-    using NakagamiRand::SetParameters;
+    using NakagamiDistribution::SetParameters;
 
 public:
     void SetDegree(int degree);
@@ -94,7 +114,7 @@ public:
      * @brief GetDegree
      * @return degree k
      */
-    inline int GetDegree() const { return 2 * NakagamiRand::GetShape(); }
+    inline int GetDegree() const { return 2 * NakagamiDistribution::GetShape(); }
 
     double Skewness() const override;
     double ExcessKurtosis() const override;
@@ -111,7 +131,7 @@ public:
  * X / σ ~ Chi(3)
  * X ~ Nakagami(1.5, 3σ^2)
  */
-class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiRand
+class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiDistribution
 {
     double sigma;
 public:
@@ -119,7 +139,7 @@ public:
     std::string Name() const override;
 
 private:
-    using NakagamiRand::SetParameters;
+    using NakagamiDistribution::SetParameters;
 
 public:
     void SetScale(double scale);
@@ -153,7 +173,7 @@ public:
  * X / σ ~ Chi(2)
  * X ~ Nakagami(1, 2σ^2)
  */
-class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiRand
+class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiDistribution
 {
     double sigma;
 public:
@@ -161,7 +181,7 @@ public:
     std::string Name() const override;
 
 private:
-    using NakagamiRand::SetParameters;
+    using NakagamiDistribution::SetParameters;
 
 public:
     void SetScale(double scale);
