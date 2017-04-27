@@ -171,9 +171,35 @@ double Wm1Lambert(double x, double epsilon = 1e-11);
  * @param mu
  * @param x
  * @param y
+ * @param sqrtX √x
+ * @param sqrtY √y
+ * @param logX log(x)
+ * @param logY log(y)
+ * @return 1 - Marcum Q-function
+ */
+double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY);
+
+/**
+ * @brief MarcumP
+ * @param mu
+ * @param x
+ * @param y
  * @return 1 - Marcum Q-function
  */
 double MarcumP(double mu, double x, double y);
+
+/**
+ * @brief MarcumQ
+ * @param mu
+ * @param x
+ * @param y
+ * @param sqrtX √x
+ * @param sqrtY √y
+ * @param logX log(x)
+ * @param logY log(y)
+ * @return Marcum Q-function
+ */
+double MarcumQ(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY);
 
 /**
  * @brief MarcumQ

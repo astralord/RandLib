@@ -437,17 +437,19 @@ double Wm1Lambert(double x, double epsilon)
  * @param mu
  * @param x
  * @param y
+ * @param logX log(x)
+ * @param logY log(y)
  * @return series expansion for Marcum-P function
  */
-double MarcumPSeries(double mu, double x, double y)
+double MarcumPSeries(double mu, double x, double y, double logX, double logY)
 {
-    static constexpr double ln2piEps = -35.0; /// ~log(2πε) for ε = 1e-16
+    /// ~log(2πε) for ε = 1e-16
+    static constexpr double ln2piEps = -35.0;
     double lgammamu = std::lgamma(mu);
     double C = lgammamu - ln2piEps + mu;
-    double logX = std::log(x), logY = std::log(y);
 
     /// solving equation f(n) = 0
-    /// to specify first negleted term
+    /// to find first negleted term
     double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
     double logXY = logX + logY;
     if (!RandMath::findRoot([C, mu, logXY] (double n)
@@ -462,11 +464,13 @@ double MarcumPSeries(double mu, double x, double y)
         double third = 2.0 / n;
         return DoubleTriplet(first, second, third);
     }, root))
-        return NAN; /// unexpected return
+        /// unexpected return
+        return NAN;
 
     /// series expansion
     double sum = 0.0;
-    int n0 = std::max(std::ceil(root), 5.0); /// sanity check
+    /// sanity check
+    int n0 = std::max(std::ceil(root), 5.0);
     double P = pgamma(mu + n0, y, logY);
     for (int n = n0; n > 0; --n) {
         double term = n * logX - x;
@@ -485,8 +489,8 @@ double MarcumPSeries(double mu, double x, double y)
  * @param mu
  * @param x
  * @param y
- * @param sqrtX
- * @param sqrtY
+ * @param sqrtX √x
+ * @param sqrtY √y
  * @return asymptotic expansion for Marcum-P function for large x*y
  */
 double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, double sqrtY)
@@ -499,7 +503,8 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
     double Phi = (sigma == 0) ? 0.0 : sign(x - y) * std::sqrt(M_PI / sigma) * aux;
     double Psi0 = aux / std::sqrt(rho);
     double logXi = M_LN2 + 0.5 * std::log(x * y);
-    int n0 = std::max(std::ceil(sigmaXi), 7.0); /// sanity check
+    /// sanity check
+    int n0 = std::max(std::ceil(sigmaXi), 7.0);
     double sum = 0.0;
     double A1 = 1.0, A2 = 1.0;
     for (int n = 1; n <= n0; ++n) {
@@ -532,7 +537,7 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
  * @param y
  * @return
  */
-double MarcumPForMuLessThanOne(double mu, double x, double y)
+double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, double logY)
 {
     // TODO: check Krishnamoorthy paper for alternative representation
 
@@ -541,8 +546,8 @@ double MarcumPForMuLessThanOne(double mu, double x, double y)
     /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
     double aux = x + mu * M_LN2 + std::lgamma(mu);
-    double log2x = std::log(2 * x);
-    double I = std::log(2 * y) * mu - aux;
+    double log2x = M_LN2 + logX;
+    double I = (M_LN2 + logY) * mu - aux;
     I = std::exp(I) / mu;
 
     double mum1 = mu - 1.0;
@@ -566,19 +571,18 @@ double MarcumPForMuLessThanOne(double mu, double x, double y)
     return I;
 }
 
-double MarcumP(double mu, double x, double y)
+double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
 {
     // TODO: hash values of sqrt(x), sqrt(y), log(x), log(y) if possible
     if (x < 0.0 || y <= 0.0)
         return 0.0;
 
     if (mu < 1.0)
-        return MarcumPForMuLessThanOne(mu, x, y);
+        return MarcumPForMuLessThanOne(mu, x, y, logX, logY);
 
     if (x < 30)
-        return MarcumPSeries(mu, x, y);
+        return MarcumPSeries(mu, x, y, logX, logY);
 
-    double sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
     double xi = 2 * sqrtX * sqrtY;
     if (xi > 30 && mu * mu < 2 * xi)
         return MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
@@ -586,8 +590,7 @@ double MarcumP(double mu, double x, double y)
     // TODO: implement the rest techniques
 
     double mum1 = mu - 1;
-    double logX = std::log(x);
-    return RandMath::integral([mum1, logX, x](double t){
+    return RandMath::integral([mum1, logX, x](double t) {
         if (t < 0.0)
             return 0.0;
         if (t == 0.0)
@@ -599,10 +602,23 @@ double MarcumP(double mu, double x, double y)
     }, 0, y);
 }
 
+double MarcumP(double mu, double x, double y)
+{
+    double sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
+    double logX = std::log(x), logY = std::log(y);
+    return MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
+}
+
 double MarcumQ(double mu, double x, double y)
 {
     // TODO: implement and use, when mu + x > y
     return 1.0 - MarcumP(mu, x, y);
+}
+
+double MarcumQ(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
+{
+    // TODO: implement and use, when mu + x > y
+    return 1.0 - MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
 
 }

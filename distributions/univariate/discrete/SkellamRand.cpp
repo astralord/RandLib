@@ -15,12 +15,13 @@ void SkellamRand::SetMeans(double mean1, double mean2)
 {
     X.SetRate(mean1);
     mu1 = X.GetRate();
+    logMu1 = std::log(mu1);
+    sqrtMu1 = std::sqrt(mu1);
 
     Y.SetRate(mean2);
     mu2 = Y.GetRate();
-
-    pmfCoef2 = std::log(mu1 / mu2);
-    pmfCoef1 = 2.0 * std::sqrt(mu1 * mu2);
+    logMu2 = std::log(mu2);
+    sqrtMu2 = std::sqrt(mu2);
 }
 
 double SkellamRand::P(const int & k) const
@@ -30,20 +31,20 @@ double SkellamRand::P(const int & k) const
 
 double SkellamRand::logP(const int & k) const
 {
-    double y = RandMath::logModifiedBesselFirstKind(pmfCoef1, k);
-    y += 0.5 * k * pmfCoef2;
+    double y = RandMath::logModifiedBesselFirstKind(2 * sqrtMu1 * sqrtMu2, k);
+    y += 0.5 * k * (logMu1 - logMu2);
     y -= mu1 + mu2;
     return y;
 }
 
 double SkellamRand::F(const int & k) const
 {
-    return (k < 0) ? RandMath::MarcumP(-k, mu1, mu2) : RandMath::MarcumQ(k + 1, mu2, mu1);
+    return (k < 0) ? RandMath::MarcumP(-k, mu1, mu2, sqrtMu1, sqrtMu2, logMu1, logMu2) : RandMath::MarcumQ(k + 1, mu2, mu1, sqrtMu2, sqrtMu1, logMu2, logMu1);
 }
 
 double SkellamRand::S(const int & k) const
 {
-    return (k < 0) ? RandMath::MarcumQ(-k, mu1, mu2) : RandMath::MarcumP(k + 1, mu2, mu1);
+    return (k < 0) ? RandMath::MarcumQ(-k, mu1, mu2, sqrtMu1, sqrtMu2, logMu1, logMu2) : RandMath::MarcumP(k + 1, mu2, mu1, sqrtMu2, sqrtMu1, logMu2, logMu1);
 }
 
 int SkellamRand::Variate() const

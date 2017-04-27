@@ -55,12 +55,22 @@ double NoncentralChiSquaredRand::logf(const double & x) const
 
 double NoncentralChiSquaredRand::F(const double & x) const
 {
-    return (x > 0) ? RandMath::MarcumP(halfK, halfLambda, 0.5 * x) : 0.0;
+    if (x <= 0.0)
+        return 0.0;
+    double halfX = 0.5 * x;
+    double sqrtHalfX = std::sqrt(halfX);
+    double logHalfX = std::log(halfX);
+    return RandMath::MarcumP(halfK, halfLambda, halfX, sqrtLambda / M_SQRT2, sqrtHalfX, logLambda - M_LN2, logHalfX);
 }
 
 double NoncentralChiSquaredRand::S(const double & x) const
 {
-    return (x > 0) ? RandMath::MarcumQ(halfK, halfLambda, 0.5 * x) : 1.0;
+    if (x <= 0.0)
+        return 1.0;
+    double halfX = 0.5 * x;
+    double sqrtHalfX = std::sqrt(halfX);
+    double logHalfX = std::log(halfX);
+    return RandMath::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / M_SQRT2, sqrtHalfX, logLambda - M_LN2, logHalfX);
 }
 
 double NoncentralChiSquaredRand::variateForDegreeEqualOne() const
@@ -71,8 +81,10 @@ double NoncentralChiSquaredRand::variateForDegreeEqualOne() const
 
 double NoncentralChiSquaredRand::Variate(double degree, double noncentrality)
 {
-    if (degree <= 0 || noncentrality <= 0)
-        return NAN; /// wrong parameters
+    if (degree <= 0 || noncentrality <= 0) {
+        /// wrong parameters
+        return NAN;
+    }
 
     if (degree >= 1) {
         double rv = (degree == 1) ? 0.0 : 2 * GammaDistribution::StandardVariate(0.5 * degree - 0.5);

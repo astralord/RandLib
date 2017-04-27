@@ -16,10 +16,8 @@
 class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 {
     double mu1, mu2;
-    /// 2 * sqrt(mu1 * mu2)
-    double pmfCoef1;
-    /// log(mu1 / mu2)
-    double pmfCoef2;
+    double logMu1, logMu2;
+    double sqrtMu1, sqrtMu2;
 
     PoissonRand X, Y;
 
