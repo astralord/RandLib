@@ -8,12 +8,12 @@
  * @brief The StableRand class
  * Stable distribution
  *
- * X ~ Stable(α, β, σ, μ)
+ * X ~ Stable(α, β, γ, μ)
  *
  * Related distributions:
  * If X ~ Normal(μ, σ), then X ~ Stable(2, 0, √2σ, μ)
- * If X ~ Cauchy(μ, σ), then X ~ Stable(1, 0, σ, μ)
- * If +/-X ~ Levy(μ, σ), then X ~ Stable(0.5, +/-1, σ, μ)
+ * If X ~ Cauchy(μ, γ), then X ~ Stable(1, 0, γ, μ)
+ * If +/-X ~ Levy(μ, γ), then X ~ Stable(0.5, +/-1, γ, μ)
  */
 class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
 {
@@ -43,8 +43,10 @@ class RANDLIBSHARED_EXPORT StableRand : public LimitingDistribution
     DISTRIBUTION_ID distributionId;
 
 protected:
+    /// hashed coefficient for faster pdf calculations
     double pdfCoef;
-    double pdftailBound, cdftailBound; /// boundaries k such that for |x| > k we can use tail approximation
+    /// boundaries k such that for |x| > k we can use tail approximation
+    double pdftailBound, cdftailBound;
 
 public:
     StableRand(double exponent, double skewness, double scale = 1, double location = 0);
@@ -271,10 +273,10 @@ private:
 /**
  * @brief The HoltsmarkRand class
  *
- * X ~ Holtsmark(σ, μ)
+ * X ~ Holtsmark(γ, μ)
  *
  * Related distributions:
- * X ~ Stable(1.5, 0, σ, μ)
+ * X ~ Stable(1.5, 0, γ, μ)
  */
 class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableRand
 {
@@ -289,10 +291,10 @@ private:
 /**
  * @brief The LandauRand class
  *
- * X ~ Landau(σ, μ)
+ * X ~ Landau(γ, μ)
  *
  * Related distributions:
- * X ~ Stable(1, 1, σ, μ)
+ * X ~ Stable(1, 1, γ, μ)
  */
 class RANDLIBSHARED_EXPORT LandauRand : public StableRand
 {

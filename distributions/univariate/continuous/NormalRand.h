@@ -18,7 +18,7 @@
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableRand
 {
-    double sigma0;
+    double sigma;
 
     /// Tables for ziggurat
     static long double stairWidth[257], stairHeight[256];
@@ -40,17 +40,17 @@ public:
      * @brief GetScale
      * @return σ
      */
-    inline double GetScale() const { return sigma0; }
+    inline double GetScale() const { return sigma; }
     /**
      * @brief GetLogScale
      * @return log(σ)
      */
-    inline double GetLogScale() const { return logSigma - 0.5 * M_LN2; }
+    inline double GetLogScale() const { return logGamma - 0.5 * M_LN2; }
     /**
      * @brief GetPrecision
      * @return 1/σ^2
      */
-    inline double GetPrecision() const { return 1.0 / (sigma0 * sigma0); }
+    inline double GetPrecision() const { return 1.0 / (sigma * sigma); }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

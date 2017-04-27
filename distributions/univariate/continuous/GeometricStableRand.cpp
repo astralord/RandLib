@@ -29,13 +29,13 @@ void GeometricStableRand::SetParameters(double exponent, double skewness, double
     Z.SetParameters(alpha, beta);
 
     if (alpha == 2) {
-        double sigma2 = sigma + sigma;
+        double sigma2 = gamma + gamma;
         k = mu * mu + sigma2 * sigma2;
         k = std::sqrt(k) - mu;
         k /= sigma2;
         kInv = 1.0 / k;
         kSq = k * k;
-        pdfCoef = std::log(sigma * (k + kInv));
+        pdfCoef = std::log(gamma * (k + kInv));
         cdfCoef = -std::log1p(kSq);
     }
 }
@@ -47,14 +47,14 @@ double GeometricStableRand::pdfLaplace(double x) const
 
 double GeometricStableRand::logpdfLaplace(double x) const
 {
-    double y = x / sigma;
+    double y = x / gamma;
     y *= (x < 0) ? kInv : -k;
     return y - pdfCoef;
 }
 
 double GeometricStableRand::cdfLaplace(double x) const
 {
-    double y = x / sigma;
+    double y = x / gamma;
     if (x < 0) {
         y *= kInv;
         y = std::exp(cdfCoef + y);
@@ -65,7 +65,7 @@ double GeometricStableRand::cdfLaplace(double x) const
 
 double GeometricStableRand::cdfLaplaceCompl(double x) const
 {
-    double y = x / sigma;
+    double y = x / gamma;
     if (x < 0) {
         y *= kInv;
         y = std::exp(cdfCoef + y);
@@ -79,7 +79,7 @@ double GeometricStableRand::pdfByLevy(double x) const
     if (mu == 0) {
         /// Invert parameter for case of -Levy
         x *= beta;
-        double halfSigmaInv = 0.5 / sigma;
+        double halfSigmaInv = 0.5 / gamma;
         double z = halfSigmaInv * x;
         double sqrtZ = std::sqrt(z);
         double y = -std::erfc(sqrtZ);
@@ -90,7 +90,7 @@ double GeometricStableRand::pdfByLevy(double x) const
     }
 
     /// If mu != 0
-    double a = x / sigma, c = mu / sigma;
+    double a = x / gamma, c = mu / gamma;
     if (beta < 0) {
         a = -a;
         c = -c;
@@ -103,10 +103,10 @@ double GeometricStableRand::pdfByLevy(double x) const
         double h1 = 1 - h;
         double r = x / (mu * c);
         if (a < 0 && c < 0)
-            return -2 / (sigma * h * h1) * std::exp(r * (h0 - c));
+            return -2 / (gamma * h * h1) * std::exp(r * (h0 - c));
         double K = h1 - c;
         K = std::exp(r * K);
-        K /= 2 * sigma * c * h;
+        K /= 2 * gamma * c * h;
         double p =  std::exp(r * h);
         double gamma = std::sqrt(0.5 * a) / c;
         double g = h0 * gamma;
@@ -138,7 +138,7 @@ double GeometricStableRand::pdfByLevy(double x) const
         integrand /= amct * std::sqrt(amct);
         return integrand;
     }, 0, adivc);
-    return y / (sigma * M_SQRT2PI);
+    return y / (gamma * M_SQRT2PI);
 }
 
 double GeometricStableRand::pdfByCauchy(double x) const
@@ -148,12 +148,12 @@ double GeometricStableRand::pdfByCauchy(double x) const
     // to split the integral on two
     if (x == 0)
         return INFINITY;
-    return -sigma * M_1_PI * RandMath::integral([this, x] (double t)
+    return -gamma * M_1_PI * RandMath::integral([this, x] (double t)
     {
         if (t <= 0.0 || t >= 1.0)
             return 0.0;
         double logt = std::log(t);
-        double a = sigma * logt;
+        double a = gamma * logt;
         a *= a;
         double b = x + mu * logt;
         b *= b;
@@ -190,14 +190,14 @@ double GeometricStableRand::f(const double & x) const
             double coef = std::tgamma(1.0 - alphaInv);
             if (!std::isfinite(coef))
                 return INFINITY;
-            return Z.f(0) * coef / sigma;
+            return Z.f(0) * coef / gamma;
         }
 
         // can be hashed
         double c = std::lgamma(alpha);
         double signMu = RandMath::sign(mu);
-        c += (alpha - 1) * std::log(sigma);
-        c -= (alpha + 1) * std::log(signMu * mu / sigma);
+        c += (alpha - 1) * std::log(gamma);
+        c -= (alpha + 1) * std::log(signMu * mu / gamma);
         c = std::exp(c);
         c *= std::sin(M_PI_2 * alpha);
         c /= M_PI;
@@ -209,7 +209,7 @@ double GeometricStableRand::f(const double & x) const
                 return 0.0;
             double denominator = 1.0 - z;
             double t = z / denominator;
-            double temp = sigma * std::pow(t, alphaInv);
+            double temp = gamma * std::pow(t, alphaInv);
             double par = -mu * t / temp;
             double y = Z.f(par) / temp;
             y -= c / std::pow(t, alpha);
@@ -227,7 +227,7 @@ double GeometricStableRand::f(const double & x) const
         if (z <= 0 || z >= 1)
             return 0.0;
         double logz = std::log(z);
-        double tau = 1.0 / (sigma * std::pow(-logz, alphaInv));
+        double tau = 1.0 / (gamma * std::pow(-logz, alphaInv));
         double par = tau * (x + mu * logz);
         return tau * Z.f(par);
     },
@@ -252,13 +252,13 @@ double GeometricStableRand::F(const double & x) const
                 return Z.F(0);
             if (alpha > 1)
                 return (mu > 0) ? 0.0 : 1.0;
-            double par = (alpha < 1) ? 0 : -mu / sigma;
+            double par = (alpha < 1) ? 0 : -mu / gamma;
             return Z.F(par);
         }
         double denominator = 1.0 - z;
         double t = z / denominator;
         double par = x - mu * t;
-        par /= std::pow(t, alphaInv) * sigma;
+        par /= std::pow(t, alphaInv) * gamma;
         double y = std::exp(-t) * Z.F(par);
         return y / (denominator * denominator);
     },
@@ -269,14 +269,14 @@ double GeometricStableRand::variateForUnityExponent() const
 {
     double W = ExponentialRand::StandardVariate();
     double X = Z.Variate();
-    return W * (mu + sigma * X + 2 * sigma * std::log(sigma * W) / M_PI);
+    return W * (mu + gamma * X + 2 * gamma * std::log(gamma * W) / M_PI);
 }
 
 double GeometricStableRand::variateForCommonExponent() const
 {
     double W = ExponentialRand::StandardVariate();
     double X = Z.Variate();
-    return mu * W + std::pow(W, alphaInv) * sigma * X;
+    return mu * W + std::pow(W, alphaInv) * gamma * X;
 }
 
 double GeometricStableRand::variateByLevy(bool positive) const
@@ -285,7 +285,7 @@ double GeometricStableRand::variateByLevy(bool positive) const
     double X = LevyRand::StandardVariate();
     if (!positive)
         X = -X;
-    X *= sigma * W;
+    X *= gamma * W;
     X += mu;
     return X * W;
 }
@@ -293,14 +293,14 @@ double GeometricStableRand::variateByLevy(bool positive) const
 double GeometricStableRand::variateByCauchy() const
 {
     double W = ExponentialRand::StandardVariate();
-    double X = CauchyRand::Variate(mu, sigma);
+    double X = CauchyRand::Variate(mu, gamma);
     return X * W;
 }
 
 double GeometricStableRand::Variate() const
 {
     if (alpha == 2)
-        return (mu == 0) ? LaplaceRand::Variate(0, sigma) : LaplaceRand::Variate(0, sigma, k);
+        return (mu == 0) ? LaplaceRand::Variate(0, gamma) : LaplaceRand::Variate(0, gamma, k);
     if (alpha == 0.5) {
         if (beta == 1)
             return variateByLevy(true);
@@ -317,11 +317,11 @@ void GeometricStableRand::Sample(std::vector<double> &outputData) const
     if (alpha == 2) {
         if (mu == 0) {
             for (double &var : outputData)
-                var = LaplaceRand::Variate(0, sigma);
+                var = LaplaceRand::Variate(0, gamma);
         }
         else {
             for (double &var : outputData)
-                var = LaplaceRand::Variate(0, sigma, k);
+                var = LaplaceRand::Variate(0, gamma, k);
         }
     }
     else if (alpha == 0.5 && std::fabs(beta) == 1) {
@@ -353,7 +353,7 @@ void GeometricStableRand::Sample(std::vector<double> &outputData) const
 double GeometricStableRand::Variance() const
 {
     if (alpha == 2) {
-        double y = sigma * sigma / kSq;
+        double y = gamma * gamma / kSq;
         return (1.0 + kSq * kSq) * y;
     }
     return INFINITY;
@@ -369,11 +369,11 @@ double GeometricStableRand::Median() const
     if (alpha == 2) {
         if (k > 1) {
             double y = std::log1p(1.0 / kSq) - M_LN2;
-            return sigma * k * y;
+            return gamma * k * y;
         }
         else {
             double y = std::log1p(kSq) - M_LN2;
-            return -sigma / k * y;
+            return -gamma / k * y;
         }
     }
     return ContinuousDistribution::Median();

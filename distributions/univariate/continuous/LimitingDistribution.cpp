@@ -23,10 +23,10 @@ void LimitingDistribution::SetLocation(double location)
 
 void LimitingDistribution::SetScale(double scale)
 {
-    sigma = scale > 0 ? scale : 1.0;
-    logSigma = std::log(sigma);
+    gamma = scale > 0 ? scale : 1.0;
+    logGamma = std::log(gamma);
     if (alpha == 1.0 && beta != 0.0)
-        logsigmaPi_2 = logSigma + M_LNPI - M_LN2;
+        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
 }
 
 double LimitingDistribution::Mean() const
@@ -45,6 +45,6 @@ std::complex<double> LimitingDistribution::psi(double t) const
     x *= beta;
     if (t < 0)
         x = -x;
-    double re = std::pow(sigma * fabsT, alpha);
+    double re = std::pow(gamma * fabsT, alpha);
     return std::complex<double>(re, re * x - mu * t);
 }

@@ -28,7 +28,7 @@ double CauchyRand::S(const double & x) const
 
 double CauchyRand::Variate() const
 {
-    return mu + sigma * StandardVariate();
+    return mu + gamma * StandardVariate();
 }
 
 double CauchyRand::Variate(double location, double scale)
@@ -48,21 +48,21 @@ double CauchyRand::StandardVariate()
     
 std::complex<double> CauchyRand::CFImpl(double t) const
 {
-    std::complex<double> x(-sigma * std::fabs(t), mu * t);
+    std::complex<double> x(-gamma * std::fabs(t), mu * t);
     return std::exp(x);
 }
 
 double CauchyRand::quantileImpl(double p) const
 {
-    return mu - sigma / std::tan(M_PI * p);
+    return mu - gamma / std::tan(M_PI * p);
 }
 
 double CauchyRand::quantileImpl1m(double p) const
 {
-    return mu + sigma / std::tan(M_PI * p);
+    return mu + gamma / std::tan(M_PI * p);
 }
 
 double CauchyRand::Entropy() const
 {
-    return std::log(4 * sigma * M_PI);
+    return std::log(4 * gamma * M_PI);
 }

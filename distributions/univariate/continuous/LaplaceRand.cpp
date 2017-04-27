@@ -28,9 +28,9 @@ void LaplaceRand::SetAsymmetry(double asymmetry)
         k = 1.0;
     kInv = 1.0 / k;
     kSq = k * k;
-    pdfCoef = std::log(sigma * (k + kInv));
+    pdfCoef = std::log(gamma * (k + kInv));
     cdfCoef = -std::log1p(kSq);
-    mu = (1.0 - kSq) * sigma * kInv;
+    mu = (1.0 - kSq) * gamma * kInv;
 }
 
 double LaplaceRand::f(const double & x) const
@@ -55,7 +55,7 @@ double LaplaceRand::S(const double & x) const
 
 double LaplaceRand::Variate() const
 {
-    return (k == 1) ? LaplaceRand::Variate(m, sigma) : LaplaceRand::Variate(m, sigma, k);
+    return (k == 1) ? LaplaceRand::Variate(m, gamma) : LaplaceRand::Variate(m, gamma, k);
 }
 
 double LaplaceRand::Variate(double location, double scale)
@@ -76,11 +76,11 @@ void LaplaceRand::Sample(std::vector<double> &outputData) const
 {
     if (k == 1) {
         for (double & var : outputData)
-            var = LaplaceRand::Variate(m, sigma);
+            var = LaplaceRand::Variate(m, gamma);
     }
     else {
         for (double & var : outputData)
-            var = LaplaceRand::Variate(m, sigma, k);
+            var = LaplaceRand::Variate(m, gamma, k);
     }
 }
 
@@ -91,7 +91,7 @@ double LaplaceRand::Mean() const
 
 std::complex<double> LaplaceRand::CFImpl(double t) const
 {
-    double bt = sigma * t;
+    double bt = gamma * t;
     double btSq = bt * bt;
     double denominator = (1 + kSq * btSq) * (1 + btSq / kSq);
     std::complex<double> y(std::cos(m * t), std::sin(m * t));
@@ -104,13 +104,13 @@ double LaplaceRand::quantileImpl(double p) const
     if (p < kSq / (1 + kSq)) {
         double q = p * (1.0 / kSq + 1.0);
         q = std::log(q);
-        q *= k * sigma;
+        q *= k * gamma;
         return m + q;
     }
     else {
         double q = (kSq + 1) * (1 - p);
         q = std::log(q);
-        q *= sigma / k;
+        q *= gamma / k;
         return m - q;
     }
 }
@@ -120,13 +120,13 @@ double LaplaceRand::quantileImpl1m(double p) const
     if (p > 1.0 / (1 + kSq)) {
         double q = (1.0 - p) * (1.0 / kSq + 1.0);
         q = std::log(q);
-        q *= k * sigma;
+        q *= k * gamma;
         return m + q;
     }
     else {
         double q = (kSq + 1) * p;
         q = std::log(q);
-        q *= sigma / k;
+        q *= gamma / k;
         return m - q;
     }
 }
@@ -144,7 +144,7 @@ double LaplaceRand::Mode() const
 double LaplaceRand::Entropy() const
 {
     double y = 1 + kSq;
-    y *= kInv * sigma;
+    y *= kInv * gamma;
     return log1p(y);
 }
 
@@ -203,7 +203,7 @@ void LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
         return;
     }
 
-    double sigmaN = sigma * sample.size();
+    double sigmaN = gamma * sample.size();
     double root = 1.0;
     double minBound, maxBound;
     if (xPlus < -xMinus) {
@@ -299,7 +299,7 @@ double LaplaceRand::GetAsymmetryFromSkewness(double skewness)
 void LaplaceRand::FitLocationMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
-    SetShift(mean - sigma * (1.0 / k - k));
+    SetShift(mean - gamma * (1.0 / k - k));
 }
 
 void LaplaceRand::FitScaleMM(const std::vector<double> &sample)
@@ -318,7 +318,7 @@ void LaplaceRand::FitScaleMM(const std::vector<double> &sample)
 void LaplaceRand::FitAsymmetryMM(const std::vector<double> &sample)
 {
     double mean = sampleMean(sample);
-    double aux = (m - mean) / sigma;
+    double aux = (m - mean) / gamma;
     double asymmetry = aux * aux + 4;
     asymmetry = std::sqrt(asymmetry);
     asymmetry += aux;
@@ -331,7 +331,7 @@ void LaplaceRand::FitLocationAndScaleMM(const std::vector<double> &sample)
     double var = sampleVariance(sample, mean);
     double scale = (var * kSq) / (1 + kSq * kSq);
     SetScale(std::sqrt(scale));
-    SetShift(mean - sigma * (1.0 / k - k));
+    SetShift(mean - gamma * (1.0 / k - k));
 }
 
 void LaplaceRand::FitLocationAndAsymmetryMM(const std::vector<double> &sample)
@@ -343,7 +343,7 @@ void LaplaceRand::FitLocationAndAsymmetryMM(const std::vector<double> &sample)
     if (!std::isfinite(root))
         throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetAsymmetry(root);
-    SetShift(mean - sigma * (1.0 / k - k));
+    SetShift(mean - gamma * (1.0 / k - k));
 }
 
 void LaplaceRand::FitScaleAndAsymmetryMM(const std::vector<double> &sample)
@@ -369,5 +369,5 @@ void LaplaceRand::FitLocationScaleAndAsymmetryMM(const std::vector<double> &samp
     SetAsymmetry(root);
     double scale = (var * kSq) / (1 + kSq * kSq);
     SetScale(std::sqrt(scale));
-    SetShift(mean - sigma * (1.0 / k - k));
+    SetShift(mean - gamma * (1.0 / k - k));
 }

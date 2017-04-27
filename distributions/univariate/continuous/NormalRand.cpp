@@ -22,8 +22,8 @@ std::string NormalRand::Name() const
 
 void NormalRand::SetScale(double scale)
 {
-    sigma0 = scale > 0 ? scale : 1.0;
-    StableRand::SetScale(sigma0 * M_SQRT1_2);
+    sigma = scale > 0 ? scale : 1.0;
+    StableRand::SetScale(sigma * M_SQRT1_2);
 }
 
 bool NormalRand::SetupTables()
@@ -71,7 +71,7 @@ double NormalRand::S(const double & x) const
 
 double NormalRand::Variate() const
 {
-    return mu + sigma0 * StandardVariate();
+    return mu + sigma * StandardVariate();
 }
 
 double NormalRand::StandardVariate()
@@ -117,18 +117,18 @@ void NormalRand::Sample(std::vector<double> &outputData) const
 
 std::complex<double> NormalRand::CFImpl(double t) const
 {
-    double sigma0T = sigma0 * t;
-    return std::exp(std::complex<double>(-0.5 * sigma0T * sigma0T, mu * t));
+    double sigmaT = sigma * t;
+    return std::exp(std::complex<double>(-0.5 * sigmaT * sigmaT, mu * t));
 }
 
 double NormalRand::quantileImpl(double p) const
 {
-    return mu - sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return mu - sigma * M_SQRT2 * RandMath::erfcinv(2 * p);
 }
 
 double NormalRand::quantileImpl1m(double p) const
 {
-    return mu + sigma0 * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return mu + sigma * M_SQRT2 * RandMath::erfcinv(2 * p);
 }
 
 double NormalRand::Moment(int n) const
@@ -137,7 +137,7 @@ double NormalRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return (n & 1) ? std::pow(sigma0, n) * RandMath::doubleFactorial(n - 1) : 0;
+    return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
 void NormalRand::FitMeanMLE(const std::vector<double> &sample)
@@ -189,16 +189,16 @@ void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, Doubl
 
     /// calculate confidence interval for mean
     StudentTRand t(n - 1);
-    double interval = t.Quantile1m(halfAlpha) * sigma0 / std::sqrt(n);
+    double interval = t.Quantile1m(halfAlpha) * sigma / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
     double shape = 0.5 * n - 0.5;
     GammaRand gamma(shape, shape);
-    double sigma0Sq = sigma0 * sigma0;
-    confidenceIntervalForVariance.first = sigma0Sq / gamma.Quantile1m(halfAlpha);
-    confidenceIntervalForVariance.second = sigma0Sq / gamma.Quantile(halfAlpha);
+    double sigmaSq = sigma * sigma;
+    confidenceIntervalForVariance.first = sigmaSq / gamma.Quantile1m(halfAlpha);
+    confidenceIntervalForVariance.second = sigmaSq / gamma.Quantile(halfAlpha);
 }
 
 NormalRand NormalRand::FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)

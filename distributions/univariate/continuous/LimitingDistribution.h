@@ -11,14 +11,14 @@
 class RANDLIBSHARED_EXPORT LimitingDistribution : public ContinuousDistribution
 {
 protected:
-    double alpha, beta, mu, sigma;
+    double alpha, beta, mu, gamma;
     double alphaInv;
 
-    /// log(σ)
-    double logSigma;
+    /// log(γ)
+    double logGamma;
 
-    /// log(σπ/2)
-    double logsigmaPi_2;
+    /// log(γπ/2)
+    double logGammaPi_2;
 
 public:
     LimitingDistribution(double exponent, double skewness, double scale = 1, double location = 0);
@@ -30,9 +30,9 @@ public:
 
     inline double GetExponent() const { return alpha; }
     inline double GetSkewness() const { return beta; }
-    inline double GetScale() const { return sigma; }
+    inline double GetScale() const { return gamma; }
     inline double GetLocation() const { return mu; }
-    inline double GetLogScale() const { return logSigma; }
+    inline double GetLogScale() const { return logGamma; }
 
     double Mean() const override;
 
