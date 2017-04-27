@@ -22,11 +22,6 @@ public:
     explicit GeometricRand(double probability = 0.5);
     std::string Name() const override;
 
-private:
-    using NegativeBinomialRand::SetParameters;
-    using NegativeBinomialRand::FitNumberAndProbabilityMM;
-    void FitNumberMM(const std::vector<int> &sample) = delete;
-
 public:
     void SetProbability(double probability);
 

@@ -7,8 +7,8 @@
 
 
 /**
- * @brief The NegativeBinomialRand class
- * Negative binomial distribution
+ * @brief The NegativeBinomialDistribution class
+ * Abstract class for Negative binomial distribution
  *
  * P(X = k) = C(k + r - 1, k) p^r (1-p)^k
  *
@@ -18,7 +18,7 @@
  * If X ~ NB(1, p), then X ~ Geometric(p)
  */
 template < typename T >
-class RANDLIBSHARED_EXPORT NegativeBinomialRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
 {
 protected:
     double p, q;
@@ -33,16 +33,18 @@ private:
     GammaRand GammaRV;
 
 public:
-    NegativeBinomialRand(T number, double probability);
-    std::string Name() const override;
+    NegativeBinomialDistribution(T number, double probability);
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return INT_MAX; }
 
 private:
     void SetValidParameters(T number, double probability);
-public:
+
+protected:
     void SetParameters(T number, double probability);
+
+public:
     inline double GetProbability() const { return p; }
     inline T GetNumber() const { return r; }
 
@@ -79,22 +81,37 @@ public:
 
 private:
     std::complex<double> CFImpl(double t) const override;
-
-    /// Parameters estimation
-    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
 public:
-    /**
-     * @brief FitNumberMM
-     * set number, estimated via method of moments
-     * @param sample
-     */
-    void FitNumberMM(const std::vector<int> &sample);
     /**
      * @brief FitProbabilityMM
      * set probability, estimated via method of moments
      * @param sample
      */
     void FitProbabilityMM(const std::vector<int> & sample);
+};
+
+
+/**
+ * @brief The NegativeBinomialRand class
+ * Negative binomial distribution
+ */
+template < typename T >
+class RANDLIBSHARED_EXPORT NegativeBinomialRand : public NegativeBinomialDistribution<T>
+{
+public:
+    NegativeBinomialRand(T number, double probability) : NegativeBinomialDistribution<T>(number, probability) {}
+    std::string Name() const override;
+
+    using NegativeBinomialDistribution<T>::SetParameters;
+
+    /// Parameters estimation
+    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
+    /**
+     * @brief FitNumberMM
+     * set number, estimated via method of moments
+     * @param sample
+     */
+    void FitNumberMM(const std::vector<int> &sample);
     /**
      * @brief FitNumberAndProbabilityMM
      * set number and probability, estimated via method of moments
