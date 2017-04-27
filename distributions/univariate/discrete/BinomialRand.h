@@ -6,15 +6,15 @@
 #include "../continuous/BetaRand.h"
 
 /**
- * @brief The BinomialRand class
- * Binomial distribution
+ * @brief The BinomialDistribution class
+ * Abstract class for Binomial distribution
  *
  * Notation: X ~ Bin(n, p)
  *
  * Related distributions:
  * if X ~ Bin(1, p), then X ~ Bernoulli(p)
  */
-class RANDLIBSHARED_EXPORT BinomialRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution
 {
 protected:
     double p, q;
@@ -23,24 +23,29 @@ protected:
 private:
     int n;
     double np;
-    double lgammaNp1; /// log((n + 1)!)
+    /// log((n + 1)!)
+    double lgammaNp1;
 
     double delta1, delta2;
     double sigma1, sigma2, c;
     double a1, a2, a3, a4;
     double coefa3, coefa4;
 
-    double minpq, pFloor; /// min(p, q) and [n * min(p, q)] / n respectively
-    double logPFloor, logQFloor; /// log(pFloor) and log(1 - pFloor)
-    double pRes; /// min(p, q) - pFloor
-    double npFloor, nqFloor; /// [n * p] and [n * q] if p < 0.5, otherwise - vice versa
-    double logPnpInv; /// log(P(npFloor))
+    /// min(p, q) and [n * min(p, q)] / n respectively
+    double minpq, pFloor;
+    /// log(pFloor) and log(1 - pFloor)
+    double logPFloor, logQFloor;
+    /// min(p, q) - pFloor
+    double pRes;
+    /// [n * p] and [n * q] if p < 0.5, otherwise - vice versa
+    double npFloor, nqFloor;
+    /// log(P(npFloor))
+    double logPnpInv;
 
     GeometricRand G;
 
 public:
-    BinomialRand(int number, double probability);
-    std::string Name() const override;
+    BinomialDistribution(int number, double probability);
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return n; }
@@ -48,8 +53,10 @@ public:
 private:
     void SetGeneratorConstants();
 
-public:
+protected:
     void SetParameters(int number, double probability);
+
+public:
     inline double GetNumber() const { return n; }
     inline double GetProbability() const { return p; }
 
@@ -128,6 +135,19 @@ public:
      * @return posterior distribution
      */
     BetaRand FitProbabilityMinimax(const std::vector<int> &sample);
+};
+
+
+/**
+ * @brief The BinomialRand class
+ * Binomial distribution
+ */
+class RANDLIBSHARED_EXPORT BinomialRand : public BinomialDistribution
+{
+public:
+    BinomialRand(int number, double probability) : BinomialDistribution(number, probability) {}
+    std::string Name() const override;
+    using BinomialDistribution::SetParameters;
 };
 
 

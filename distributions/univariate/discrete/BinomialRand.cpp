@@ -4,17 +4,12 @@
 #include "../continuous/ExponentialRand.h"
 #include "BernoulliRand.h"
 
-BinomialRand::BinomialRand(int number, double probability)
+BinomialDistribution::BinomialDistribution(int number, double probability)
 {
     SetParameters(number, probability);
 }
 
-std::string BinomialRand::Name() const
-{
-    return "Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
-}
-
-void BinomialRand::SetGeneratorConstants()
+void BinomialDistribution::SetGeneratorConstants()
 {
     minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
@@ -79,7 +74,7 @@ void BinomialRand::SetGeneratorConstants()
     logPnpInv = logProbFloor(npFloor);
 }
 
-void BinomialRand::SetParameters(int number, double probability)
+void BinomialDistribution::SetParameters(int number, double probability)
 {
     n = std::max(number, 1);
     p = std::min(probability, 1.0);
@@ -92,7 +87,7 @@ void BinomialRand::SetParameters(int number, double probability)
     SetGeneratorConstants();
 }
 
-double BinomialRand::logProbFloor(int k) const
+double BinomialDistribution::logProbFloor(int k) const
 {
     double y = lgammaNp1;
     y -= RandMath::lfact(n - k - 1);
@@ -102,12 +97,12 @@ double BinomialRand::logProbFloor(int k) const
     return y;
 }
 
-double BinomialRand::P(const int & k) const
+double BinomialDistribution::P(const int & k) const
 {
     return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
-double BinomialRand::logP(const int & k) const
+double BinomialDistribution::logP(const int & k) const
 {
     if (k < 0 || k > n)
         return -INFINITY;
@@ -119,7 +114,7 @@ double BinomialRand::logP(const int & k) const
     return y;
 }
 
-double BinomialRand::F(const int & k) const
+double BinomialDistribution::F(const int & k) const
 {
     if (k < 0)
         return 0.0;
@@ -132,7 +127,7 @@ double BinomialRand::F(const int & k) const
     return RandMath::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 
-double BinomialRand::S(const int & k) const
+double BinomialDistribution::S(const int & k) const
 {
     if (k < 0)
         return 1.0;
@@ -143,7 +138,7 @@ double BinomialRand::S(const int & k) const
     return RandMath::ibeta(p, kp1, nmk, logBetaFun, logProb, log1mProb);
 }
 
-BinomialRand::GENERATOR_ID BinomialRand::GetIdOfUsedGenerator() const
+BinomialDistribution::GENERATOR_ID BinomialDistribution::GetIdOfUsedGenerator() const
 {
     /// if (n is tiny and minpq is big) or p = 0.5 and n is not so large,
     /// we just sum Bernoulli random variables
@@ -159,7 +154,7 @@ BinomialRand::GENERATOR_ID BinomialRand::GetIdOfUsedGenerator() const
     return REJECTION;
 }
 
-int BinomialRand::variateRejection() const
+int BinomialDistribution::variateRejection() const
 {
     /// a rejection algorithm by Devroye and Naderlsamanl (1980)
     /// p.533. Non-Uniform Random Variate Generation. Luc Devroye
@@ -219,7 +214,7 @@ int BinomialRand::variateRejection() const
     return -1;
 }
 
-int BinomialRand::variateWaiting(int number) const
+int BinomialDistribution::variateWaiting(int number) const
 {
     /// waiting algorithm, using
     /// sum of geometrically distributed variables
@@ -231,7 +226,7 @@ int BinomialRand::variateWaiting(int number) const
     return X;
 }
 
-int BinomialRand::Variate() const
+int BinomialDistribution::Variate() const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     switch (genId) {
@@ -256,7 +251,7 @@ int BinomialRand::Variate() const
     return -1; /// unexpected return
 }
 
-int BinomialRand::variateBernoulliSum(int number, double probability)
+int BinomialDistribution::variateBernoulliSum(int number, double probability)
 {
     int var = 0;
     if (RandMath::areClose(probability, 0.5)) {
@@ -270,12 +265,12 @@ int BinomialRand::variateBernoulliSum(int number, double probability)
     return var;
 }
 
-int BinomialRand::Variate(int number, double probability)
+int BinomialDistribution::Variate(int number, double probability)
 {
     return variateBernoulliSum(number, probability);
 }
 
-void BinomialRand::Sample(std::vector<int> &outputData) const
+void BinomialDistribution::Sample(std::vector<int> &outputData) const
 {
     if (p == 0.0) {
         std::fill(outputData.begin(), outputData.end(), 0);
@@ -324,45 +319,45 @@ void BinomialRand::Sample(std::vector<int> &outputData) const
     }
 }
 
-double BinomialRand::Mean() const
+double BinomialDistribution::Mean() const
 {
     return np;
 }
 
-double BinomialRand::Variance() const
+double BinomialDistribution::Variance() const
 {
     return np * q;
 }
 
-std::complex<double> BinomialRand::CFImpl(double t) const
+std::complex<double> BinomialDistribution::CFImpl(double t) const
 {
     std::complex<double> y(q + p * std::cos(t), p * std::sin(t));
     return std::pow(y, n);
 }
 
-int BinomialRand::Median() const
+int BinomialDistribution::Median() const
 {
     return std::round(np);
 }
 
-int BinomialRand::Mode() const
+int BinomialDistribution::Mode() const
 {
     return std::floor(np + p);
 }
 
-double BinomialRand::Skewness() const
+double BinomialDistribution::Skewness() const
 {
     return (q - p) / std::sqrt(np * q);
 }
 
-double BinomialRand::ExcessKurtosis() const
+double BinomialDistribution::ExcessKurtosis() const
 {
     double y = 1.0 / (p * q);
     y -= 6.0;
     return y / n;
 }
 
-void BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
+void BinomialDistribution::FitProbabilityMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
@@ -371,12 +366,12 @@ void BinomialRand::FitProbabilityMLE(const std::vector<int> &sample)
     SetParameters(n, sampleMean(sample) / n);
 }
 
-void BinomialRand::FitProbabilityMM(const std::vector<int> &sample)
+void BinomialDistribution::FitProbabilityMM(const std::vector<int> &sample)
 {
     FitProbabilityMLE(sample);
 }
 
-BetaRand BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
+BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
@@ -391,9 +386,14 @@ BetaRand BinomialRand::FitProbabilityBayes(const std::vector<int> &sample, const
     return posteriorDistribution;
 }
 
-BetaRand BinomialRand::FitProbabilityMinimax(const std::vector<int> &sample)
+BetaRand BinomialDistribution::FitProbabilityMinimax(const std::vector<int> &sample)
 {
     double shape = 0.5 * std::sqrt(n);
     BetaRand B(shape, shape);
     return FitProbabilityBayes(sample, B);
+}
+
+std::string BinomialRand::Name() const
+{
+    return "Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
 }

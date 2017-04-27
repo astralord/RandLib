@@ -56,7 +56,7 @@ double BetaBinomialRand::F(const int & k) const
 int BetaBinomialRand::Variate() const
 {
     double p = B.Variate();
-    return BinomialRand::Variate(n, p);
+    return BinomialDistribution::Variate(n, p);
 }
 
 double BetaBinomialRand::Mean() const

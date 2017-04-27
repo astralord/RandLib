@@ -1,30 +1,25 @@
 #include "RaisedCosineRand.h"
 #include "UniformRand.h"
 
-RaisedCosineRand::RaisedCosineRand(double location, double scale)
+RaisedCosineDistribution::RaisedCosineDistribution(double location, double scale)
 {
     SetLocation(location);
     SetScale(scale);
 }
 
-std::string RaisedCosineRand::Name() const
-{
-    return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
-}
-
-void RaisedCosineRand::SetLocation(double location)
+void RaisedCosineDistribution::SetLocation(double location)
 {
     mu = location;
 }
 
-void RaisedCosineRand::SetScale(double scale)
+void RaisedCosineDistribution::SetScale(double scale)
 {
     s = scale > 0.0 ? scale : M_PI;
     s_pi = s * M_1_PI;
     log2S = std::log(2 * s);
 }
 
-double RaisedCosineRand::f(const double & x) const
+double RaisedCosineDistribution::f(const double & x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
@@ -33,7 +28,7 @@ double RaisedCosineRand::f(const double & x) const
     return 0.5 * y / s;
 }
 
-double RaisedCosineRand::logf(const double & x) const
+double RaisedCosineDistribution::logf(const double & x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
@@ -43,7 +38,7 @@ double RaisedCosineRand::logf(const double & x) const
     return y - log2S;
 }
 
-double RaisedCosineRand::F(const double & x) const
+double RaisedCosineDistribution::F(const double & x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
@@ -56,7 +51,7 @@ double RaisedCosineRand::F(const double & x) const
     return 0.5 * y;
 }
 
-double RaisedCosineRand::S(const double & x) const
+double RaisedCosineDistribution::S(const double & x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
@@ -69,7 +64,7 @@ double RaisedCosineRand::S(const double & x) const
     return 0.5 - 0.5 * y;
 }
 
-double RaisedCosineRand::StandardVariate()
+double RaisedCosineDistribution::StandardVariate()
 {
     /// p. 160. Non-Uniform Random Variate Generation. Luc Devroye
     double X = UniformRand::Variate(-M_PI_2, M_PI_2);
@@ -100,23 +95,23 @@ double RaisedCosineRand::StandardVariate()
     return NAN;
 }
 
-double RaisedCosineRand::Variate() const
+double RaisedCosineDistribution::Variate() const
 {
     return mu + s_pi * StandardVariate();
 }
 
-double RaisedCosineRand::Mean() const
+double RaisedCosineDistribution::Mean() const
 {
     return mu;
 }
 
-double RaisedCosineRand::Variance() const
+double RaisedCosineDistribution::Variance() const
 {
     static constexpr double coef = 1.0 / 3 - 2.0 / M_PI_SQ;
     return s * s * coef;
 }
 
-std::complex<double> RaisedCosineRand::CFImpl(double t) const
+std::complex<double> RaisedCosineDistribution::CFImpl(double t) const
 {
     double st = s * t;
     double numerator = M_PI_SQ * std::sin(st);
@@ -126,22 +121,22 @@ std::complex<double> RaisedCosineRand::CFImpl(double t) const
     return numerator / denominator * y;
 }
 
-double RaisedCosineRand::Median() const
+double RaisedCosineDistribution::Median() const
 {
     return mu;
 }
 
-double RaisedCosineRand::Mode() const
+double RaisedCosineDistribution::Mode() const
 {
     return mu;
 }
 
-double RaisedCosineRand::Skewness() const
+double RaisedCosineDistribution::Skewness() const
 {
     return 0.0;
 }
 
-double RaisedCosineRand::ExcessKurtosis() const
+double RaisedCosineDistribution::ExcessKurtosis() const
 {
     static constexpr double numerator = 1.2 * (90.0 - M_PI_SQ * M_PI_SQ);
     static constexpr double denominator = M_PI_SQ - 6.0;
@@ -149,6 +144,10 @@ double RaisedCosineRand::ExcessKurtosis() const
     return y;
 }
 
+std::string RaisedCosineRand::Name() const
+{
+    return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+}
 
 std::string RaabGreenRand::Name() const
 {

@@ -15,16 +15,13 @@
  * X ~ Binomial(1, p)
  * 2X - 1 ~ Rademacher
  */
-class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialRand
+class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution
 {
     unsigned long long boundary;
 
 public:
     explicit BernoulliRand(double probability = 0.5);
     std::string Name() const override;
-
-protected:
-    using BinomialRand::SetParameters;
 
 public:
     void SetProbability(double probability);

@@ -4,27 +4,29 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The RaisedCosineRand class
- * Raised-cosine distribution
+ * @brief The RaisedCosineDistribution class
+ * Abstract class for Raised-cosine distribution
  *
  * Notation: X ~ Raised-cosine(μ, s)
  */
-class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT RaisedCosineDistribution : public ContinuousDistribution
 {
     double mu, s;
     double s_pi;
     double log2S;
 public:
-    RaisedCosineRand(double location, double scale);
+    RaisedCosineDistribution(double location, double scale);
 
-    std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return mu - s; }
     double MaxValue() const override { return mu + s; }
 
+protected:
     void SetLocation(double location);
-    inline double GetLocation() const { return mu; }
     void SetScale(double scale);
+
+public:
+    inline double GetLocation() const { return mu; }
     inline double GetScale() const { return s; }
 
     double f(const double & x) const override;
@@ -46,19 +48,33 @@ private:
     std::complex<double> CFImpl(double t) const override;
 };
 
+/**
+ * @brief The RaisedCosineRand class
+ * Raised-cosine distribution
+ */
+class RANDLIBSHARED_EXPORT RaisedCosineRand : public RaisedCosineDistribution
+{
+public:
+    RaisedCosineRand(double location, double scale) : RaisedCosineDistribution(location, scale) {}
+    std::string Name() const override;
+
+    using RaisedCosineDistribution::SetLocation;
+    using RaisedCosineDistribution::SetScale;
+};
 
 /**
  * @brief The RaabGreenRand class
+ * Raab-Green distribution
  *
- * X ~ Raab-Green()
+ * Notation: X ~ Raab-Green()
  *
  * Related distributions:
  * X ~ Raised-cosine(0.0, π)
  */
-class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineRand
+class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineDistribution
 {
 public:
-    RaabGreenRand() : RaisedCosineRand(0.0, M_PI) {}
+    RaabGreenRand() : RaisedCosineDistribution(0.0, M_PI) {}
     std::string Name() const override;
 };
 

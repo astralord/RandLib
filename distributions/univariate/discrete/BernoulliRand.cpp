@@ -2,7 +2,7 @@
 #include "../continuous/UniformRand.h"
 #include "../BasicRandGenerator.h"
 
-BernoulliRand::BernoulliRand(double probability) : BinomialRand(1, probability)
+BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1, probability)
 {
     boundary = q * RandGenerator::maxValue();
 }
