@@ -11,7 +11,7 @@
  * Notation: X ~ Laplace(m, σ, k)
  *
  * Related distributions:
- * X = m + σ (Y / k - W * k), where Y, W ~ Exp(1)
+ * X = m + σ * (Y / k - W * k), where Y, W ~ Exp(1)
  * If X ~ Laplace(m, σ, k), then X - m ~ GeometricStable(2, 0, σ, σ(1 - k^2) / k)
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand

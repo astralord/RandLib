@@ -5,8 +5,9 @@
 
 /**
  * @brief The RaisedCosineRand class
+ * Raised-cosine distribution
  *
- * X ~ Raised-cosine(μ, s)
+ * Notation: X ~ Raised-cosine(μ, s)
  */
 class RANDLIBSHARED_EXPORT RaisedCosineRand : public ContinuousDistribution
 {

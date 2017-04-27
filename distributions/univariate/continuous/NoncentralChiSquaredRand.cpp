@@ -17,11 +17,12 @@ void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality
     halfK = 0.5 * k;
 
     lambda = (noncentrality <= 0.0) ? 1.0 : noncentrality;
+    halfLambda = 0.5 * lambda;
     sqrtLambda = std::sqrt(lambda);
     logLambda = std::log(lambda);
 
     if (k < 1)
-        Y.SetRate(0.5 * lambda);
+        Y.SetRate(halfLambda);
 }
 
 double NoncentralChiSquaredRand::f(const double & x) const
@@ -30,7 +31,7 @@ double NoncentralChiSquaredRand::f(const double & x) const
         return 0.0;
     if (x == 0.0) {
         if (k == 2)
-            return 0.5 * std::exp(-0.5 * lambda);
+            return 0.5 * std::exp(-halfLambda);
         return (k > 2) ? 0.0 : INFINITY;
     }
     return std::exp(logf(x));
@@ -42,7 +43,7 @@ double NoncentralChiSquaredRand::logf(const double & x) const
         return -INFINITY;
     if (x == 0.0) {
         if (k == 2)
-            return -0.5 * lambda - M_LN2;
+            return -halfLambda - M_LN2;
         return (k > 2) ? -INFINITY : INFINITY;
     }
     double halfKm1 = halfK - 1;
@@ -54,12 +55,12 @@ double NoncentralChiSquaredRand::logf(const double & x) const
 
 double NoncentralChiSquaredRand::F(const double & x) const
 {
-    return (x > 0) ? RandMath::MarcumP(halfK, 0.5 * lambda, 0.5 * x) : 0.0;
+    return (x > 0) ? RandMath::MarcumP(halfK, halfLambda, 0.5 * x) : 0.0;
 }
 
 double NoncentralChiSquaredRand::S(const double & x) const
 {
-    return (x > 0) ? RandMath::MarcumQ(halfK, 0.5 * lambda, 0.5 * x) : 1.0;
+    return (x > 0) ? RandMath::MarcumQ(halfK, halfLambda, 0.5 * x) : 1.0;
 }
 
 double NoncentralChiSquaredRand::variateForDegreeEqualOne() const

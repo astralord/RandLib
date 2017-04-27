@@ -6,6 +6,9 @@
 
 /**
  * @brief The LogisticRand class
+ * Logistic distribution
+ *
+ * Notation: X ~ Logistic(μ, s)
  */
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {

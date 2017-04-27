@@ -17,7 +17,8 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public ContinuousDistribution
 {
     double m, w;
     GammaRand Y;
-    double lgammaShapeRatio; /// log(Γ(m + 0.5) / Γ(m))
+    /// log(Γ(m + 0.5) / Γ(m))
+    double lgammaShapeRatio;
 
 public:
     NakagamiRand(double shape = 0.5, double spread = 1);

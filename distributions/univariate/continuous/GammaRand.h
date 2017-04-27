@@ -26,7 +26,8 @@ protected:
     double logAlpha, logBeta; ///  log(α), log(β)
 
 private:
-    double t, b, alphaInv; /// constants for sampling
+    /// constants for faster sampling
+    double t, b;
 
 public:
     GammaRand(double shape = 1, double rate = 1);

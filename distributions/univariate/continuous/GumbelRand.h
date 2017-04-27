@@ -6,6 +6,8 @@
 /**
  * @brief The GumbelRand class
  * Gumbel distribution
+ *
+ * Notation: X ~ Gumbel(μ, β)
  */
 class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {

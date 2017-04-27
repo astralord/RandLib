@@ -5,13 +5,19 @@
 
 /**
  * @brief The VonMisesRand class
+ * Von-Mises distribution
+ *
+ * Notation: X ~ Von-Mises(μ, k)
  */
 class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
 {
     double mu, k;
-    double logI0k; /// log(I_0(k))
-    double s; /// generator coefficient
-    int p; /// cdf coefficient
+    /// log(I_0(k))
+    double logI0k;
+     /// generator coefficient
+    double s;
+    /// cdf coefficient
+    int p;
     static constexpr double CK = 10.5;
 
 public:

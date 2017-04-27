@@ -6,7 +6,12 @@
 
 /**
  * @brief The LogNormalRand class
- * Log-normal distribution
+ * Log-Normal distribution
+ *
+ * Notation X ~ Log-Normal(μ, σ)
+ *
+ * Related distributions:
+ * log(X) ~ Normal(μ, σ)
  */
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 {

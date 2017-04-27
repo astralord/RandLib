@@ -12,9 +12,12 @@
 class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
 {
     double a, b, c;
-    double constForGenerator; /// (c - a) / (b - a)
-    double coefGenerator1; /// (b - a) * (c - a)
-    double coefGenerator2; /// (b - a) * (b - c)
+    /// (c - a) / (b - a)
+    double constForGenerator;
+    /// (b - a) * (c - a)
+    double coefGenerator1;
+    /// (b - a) * (b - c)
+    double coefGenerator2;
     void SetConstantsForGenerator();
 
 public:

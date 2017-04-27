@@ -65,11 +65,13 @@ void StableRand::SetParameters(double exponent, double skewness)
         /// define boundaries of region near 0, where we use series expansion
         if (alpha <= ALMOST_TWO) {
             seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
-            seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10; /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
+            /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
+            seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10;
         }
         else {
             seriesZeroParams.first = 85;
-            seriesZeroParams.second = M_LN2 + M_LN3; /// corresponds to 6
+            /// corresponds to 6
+            seriesZeroParams.second = M_LN2 + M_LN3;
         }
     }
 }
@@ -393,10 +395,11 @@ double StableRand::integrandForCommonExponent(double theta, double xAdj, double 
 
 double StableRand::pdfForCommonExponent(double x) const
 {
-    double xSt = (x - mu) / gamma; /// Standardize
-
+    /// Standardize
+    double xSt = (x - mu) / gamma;
     double absXSt = xSt;
-    double xiAdj = xi; /// +- xi
+    /// +- xi
+    double xiAdj = xi;
     if (xSt > 0) {
         if (alpha < 1 && beta == -1)
             return 0.0;

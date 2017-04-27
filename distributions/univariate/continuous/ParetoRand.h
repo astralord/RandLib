@@ -5,26 +5,29 @@
 
 /**
  * @brief The ParetoRand class
+ * Pareto distribution
+ *
+ * Notation: X ~ Pareto(α, σ)
  */
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
-    double xm, alpha;
-    double logAlpha, logXm;
+    double sigma, alpha;
+    double logAlpha, logSigma;
 
 public:
     ParetoRand(double shape = 1, double scale = 1);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return xm; }
+    double MinValue() const override { return sigma; }
     double MaxValue() const override { return INFINITY; }
 
     void SetShape(double shape);
     void SetScale(double scale);
     inline double GetShape() const { return alpha; }
-    inline double GetScale() const { return xm; }
+    inline double GetScale() const { return sigma; }
     inline double GetLogShape() const { return logAlpha; }
-    inline double GetLogScale() const { return logXm; }
+    inline double GetLogScale() const { return logSigma; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

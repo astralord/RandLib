@@ -9,12 +9,13 @@
  *
  * P(X = k) = -p^k / [k log(1 - p)]
  *
- * X ~ Logarithmic(p)
+ * X ~ Log(p)
  */
 class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
 {
     double p;
-    double logProb, log1mProb; /// log(p), log(q)
+    /// log(p), log(q)
+    double logProb, log1mProb;
 public:
     explicit LogarithmicRand(double probability);
     std::string Name() const override;

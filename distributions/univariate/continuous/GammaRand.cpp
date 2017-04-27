@@ -16,7 +16,6 @@ std::string GammaRand::Name() const
 void GammaRand::SetParameters(double shape, double rate)
 {
     alpha = shape > 0 ? shape : 1.0;
-    alphaInv = 1.0 / alpha;
     
     beta = (rate > 0.0) ? rate : 1.0;
     theta = 1.0 / beta;
@@ -120,12 +119,12 @@ double GammaRand::variateBest() const
         double V = b * UniformRand::StandardVariate();
         double W = UniformRand::StandardVariate();
         if (V <= 1) {
-            X = t * std::pow(V, alphaInv);
+            X = t * std::pow(V, 1.0 / alpha);
             if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
                 return X;
         }
         else {
-            X = -std::log(alphaInv * t * (b - V));
+            X = -std::log(t * (b - V) / alpha);
             double Y = X / t;
             if (W * (alpha + Y - alpha * Y) <= 1 || W <= std::pow(Y, alpha - 1))
                 return X;
@@ -388,7 +387,7 @@ double GammaRand::quantileInitialGuess(double p) const
     double guess = 0;
     if (alpha < 10) {
         double r = std::log(p * alpha) + lgammaAlpha;
-        r = std::exp(r * alphaInv);
+        r = std::exp(r / alpha);
         /// if p -> 0
         if (r < 0.2 * (alpha + 1)) {
             guess = initRootForSmallP(r);

@@ -30,8 +30,10 @@ protected:
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    double logBetaFun; /// log(B(α, β)
-    double betaFun; /// B(α, β)
+    /// log(B(α, β)
+    double logBetaFun;
+    /// B(α, β)
+    double betaFun;
 
     /// coefficients for generators
     double s, t, u;
@@ -46,7 +48,6 @@ public:
     double MaxValue() const override { return b; }
 
 private:
-
     enum GENERATOR_ID {
         UNIFORM,
         ARCSINE,

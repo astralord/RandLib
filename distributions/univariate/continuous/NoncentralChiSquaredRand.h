@@ -8,12 +8,13 @@
 
 /**
  * @brief The NoncentralChiSquaredRand class
- * Notation: X ~ Noncentral-chi^2(k, λ)
+ * Noncentral Chi-Squared distribution
+ * Notation: X ~ Noncentral-χ^2(k, λ)
  */
 class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
 {
     double k, lambda;
-    double halfK; /// 0.5 * k
+    double halfK, halfLambda;
     double sqrtLambda, logLambda;
 
     PoissonRand Y;

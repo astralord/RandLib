@@ -6,6 +6,8 @@
 /**
  * @brief The WeibullRand class
  * Weibull distribution
+ *
+ * Notation: X ~ Weibull(λ, k)
  */
 class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
 {

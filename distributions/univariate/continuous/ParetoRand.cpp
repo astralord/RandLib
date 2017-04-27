@@ -20,21 +20,21 @@ void ParetoRand::SetShape(double shape)
 
 void ParetoRand::SetScale(double scale)
 {
-    xm = (scale > 0.0) ? scale : 1.0;
-    logXm = std::log(xm);
+    sigma = (scale > 0.0) ? scale : 1.0;
+    logSigma = std::log(sigma);
 }
 
 double ParetoRand::f(const double & x) const
 {
-    return (x < xm) ? 0.0 : std::exp(logf(x));
+    return (x < sigma) ? 0.0 : std::exp(logf(x));
 }
 
 double ParetoRand::logf(const double & x) const
 {
-    if (x < xm)
+    if (x < sigma)
         return -INFINITY;
     double logX = std::log(x);
-    double y = logXm - logX;
+    double y = logSigma - logX;
     y *= alpha;
     y -= logX;
     y += logAlpha;
@@ -43,12 +43,12 @@ double ParetoRand::logf(const double & x) const
 
 double ParetoRand::F(const double & x) const
 {
-    return (x > xm) ? -std::expm1(alpha * std::log(xm / x)) : 0.0;
+    return (x > sigma) ? -std::expm1(alpha * std::log(sigma / x)) : 0.0;
 }
 
 double ParetoRand::S(const double & x) const
 {
-    return (x > xm) ? std::pow(xm / x, alpha) : 1.0;
+    return (x > sigma) ? std::pow(sigma / x, alpha) : 1.0;
 }
 
 double ParetoRand::variateForAlphaOne()
@@ -82,35 +82,35 @@ double ParetoRand::Variate(double shape, double scale)
 
 double ParetoRand::Variate() const
 {
-    return xm * StandardVariate(alpha);
+    return sigma * StandardVariate(alpha);
 }
 
 void ParetoRand::Sample(std::vector<double> &outputData) const
 {
     if (RandMath::areClose(alpha, 1.0)) {
         for (double &var : outputData)
-            var = xm * variateForAlphaOne();
+            var = sigma * variateForAlphaOne();
     }
     else if (RandMath::areClose(alpha, 2.0)) {
         for (double &var : outputData)
-            var = xm * variateForAlphaTwo();
+            var = sigma * variateForAlphaTwo();
     }
     else {
         for (double &var : outputData)
-            var = xm * variateForCommonAlpha(alpha);
+            var = sigma * variateForCommonAlpha(alpha);
     }
 }
 
 double ParetoRand::Mean() const
 {
-    return (alpha > 1) ? alpha * xm / (alpha - 1) : INFINITY;
+    return (alpha > 1) ? alpha * sigma / (alpha - 1) : INFINITY;
 }
 
 double ParetoRand::Variance() const
 {
     if (alpha > 2)
     {
-        double var = xm / (alpha - 1);
+        double var = sigma / (alpha - 1);
         var *= var;
         return alpha * var / (alpha - 2);
     }
@@ -119,13 +119,13 @@ double ParetoRand::Variance() const
 
 double ParetoRand::Median() const
 {
-    double y = alpha * logXm + M_LN2;
+    double y = alpha * logSigma + M_LN2;
     return std::exp(y / alpha);
 }
 
 double ParetoRand::Mode() const
 {
-    return xm;
+    return sigma;
 }
 
 double ParetoRand::Skewness() const
@@ -153,19 +153,19 @@ double ParetoRand::ExcessKurtosis() const
 
 double ParetoRand::quantileImpl(double p) const
 {
-    double y = alpha * logXm - std::log1p(-p);
+    double y = alpha * logSigma - std::log1p(-p);
     return std::exp(y / alpha);
 }
 
 double ParetoRand::quantileImpl1m(double p) const
 {
-    double y = alpha * logXm - std::log(p);
+    double y = alpha * logSigma - std::log(p);
     return std::exp(y / alpha);
 }
 
 double ParetoRand::Entropy() const
 {
-    return logXm - logAlpha + 1.0 / alpha + 1;
+    return logSigma - logAlpha + 1.0 / alpha + 1;
 }
 
 void ParetoRand::FitShapeAndScaleMLE(const std::vector<double> &sample)

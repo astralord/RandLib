@@ -8,7 +8,7 @@
  * @brief The UniformDiscreteRand class
  * Uniform discrete distribution
  *
- *  X ~ U(a, b)
+ * Notation: X ~ U(a, b)
  *
  * P(X = k) = 1_{k \in [a, b]} / (b - a + 1)
  */

@@ -6,6 +6,9 @@
 
 /**
  * @brief The PlanckRand class
+ * Planck distribution
+ *
+ * Notation: X ~ Planck(a, b)
  */
 class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
 {
