@@ -5,8 +5,8 @@
 #include "NormalRand.h"
 
 /**
- * @brief The BetaRand class
- * Beta distribution
+ * @brief The BetaDistribution class
+ * Abstract class for Beta distribution
  *
  * f(x | α, β) = x^{α-1} (1-x)^{β-1} / B(α, β),
  * where B(α, β) denotes Beta function
@@ -19,7 +19,7 @@
  * X = Y / (Y + Z), where Y ~ Gamma(α) and Z ~ Gamma(β)
  * βX / α(1 - X) ~ F(2α, 2β)
  */
-class RANDLIBSHARED_EXPORT BetaRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution
 {
 protected:
     /// parameters of distribution
@@ -39,10 +39,10 @@ private:
     double s, t, u;
 
 public:
-    BetaRand(double shape1 = 1, double shape2 = 1);
-    BetaRand(double shape1, double shape2, double minValue, double maxValue);
-    virtual ~BetaRand() {}
-    std::string Name() const override;
+    BetaDistribution(double shape1 = 1, double shape2 = 1);
+    BetaDistribution(double shape1, double shape2, double minValue, double maxValue);
+    virtual ~BetaDistribution() {}
+
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
@@ -71,7 +71,7 @@ private:
      */
     void setCoefficientsForGenerator();
 
-public:
+protected:
     /**
      * @brief SetShapes
      * @param shape1 α
@@ -84,6 +84,8 @@ public:
      * @param maxValue b
      */
     void SetSupport(double minValue, double maxValue);
+
+public:
     /**
      * @brief GetAlpha
      * @return α
@@ -182,8 +184,22 @@ protected:
     double quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
+};
 
+/**
+ * @brief The BetaRand class
+ * Beta distribution
+ */
+class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution
+{
 public:
+    BetaRand(double shape1 = 1, double shape2 = 1) : BetaDistribution(shape1, shape2) {}
+    BetaRand(double shape1, double shape2, double minValue, double maxValue) : BetaDistribution(shape1, shape2, minValue, maxValue) {}
+    std::string Name() const override;
+
+    using BetaDistribution::SetShapes;
+    using BetaDistribution::SetSupport;
+
     /**
      * @brief FitAlphaMM
      * set α, estimated via method of moments
@@ -208,22 +224,13 @@ public:
  * Related distributions
  * X ~ Beta(1 - α, α)
  */
-class RANDLIBSHARED_EXPORT ArcsineRand : public BetaRand
+class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
 {
 public:
     ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1);
     std::string Name() const override;
-
     void SetShape(double shape);
     inline double GetShape() const { return beta; }
-
-protected:
-    /// prohibit to use beta's setters
-    using BetaRand::SetShapes;
-    void SetSupport(double minValue, double maxValue) = delete;
-    /// and estimators
-    void FitAlphaMM(const std::vector<double> &sample) = delete;
-    void FitBetaMM(const std::vector<double> &sample) = delete;
 };
 
 
@@ -236,7 +243,7 @@ protected:
  * Related distributions
  * X ~ Beta(p * F', (1 - p) * F') for F' = (1 - F) / F
  */
-class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaRand
+class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution
 {
     double p, F;
 public:
@@ -246,14 +253,6 @@ public:
     void SetFixatingIndexAndFrequency(double fixatingIndex, double frequency);
     inline double GetFixatingIndex() const { return F; }
     inline double GetFrequency() const { return p; }
-
-private:
-    /// prohibit to use beta's setters
-    using BetaRand::SetShapes;
-    void SetSupport(double minValue, double maxValue) = delete;
-    /// and estimators
-    void FitAlphaMM(const std::vector<double> &sample) = delete;
-    void FitBetaMM(const std::vector<double> &sample) = delete;
 };
 
 #endif // BETARAND_H

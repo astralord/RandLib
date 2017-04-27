@@ -2,27 +2,19 @@
 #include "../discrete/BernoulliRand.h"
 #include "UniformRand.h"
 
-BetaRand::BetaRand(double shape1, double shape2)
+BetaDistribution::BetaDistribution(double shape1, double shape2)
 {
     SetShapes(shape1, shape2);
     SetSupport(0, 1);
 }
 
-BetaRand::BetaRand(double shape1, double shape2, double minValue, double maxValue)
+BetaDistribution::BetaDistribution(double shape1, double shape2, double minValue, double maxValue)
 {
     SetShapes(shape1, shape2);
     SetSupport(minValue, maxValue);
 }
 
-std::string BetaRand::Name() const
-{
-    return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
-                   + toStringWithPrecision(GetBeta()) + ", "
-                   + toStringWithPrecision(MinValue()) + ", "
-                   + toStringWithPrecision(MaxValue()) + ")";
-}
-
-BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
+BetaDistribution::GENERATOR_ID BetaDistribution::getIdOfUsedGenerator() const
 {
     if (alpha < 1 && beta < 1 && alpha + beta > 1)
         return ATKINSON_WHITTAKER;
@@ -44,7 +36,7 @@ BetaRand::GENERATOR_ID BetaRand::getIdOfUsedGenerator() const
     return (alpha + beta < 2) ? JOHNK : GAMMA_RATIO;
 }
 
-void BetaRand::setCoefficientsForGenerator()
+void BetaDistribution::setCoefficientsForGenerator()
 {
     GENERATOR_ID id = getIdOfUsedGenerator();
     if (id == REJECTION_NORMAL) {
@@ -67,7 +59,7 @@ void BetaRand::setCoefficientsForGenerator()
     }
 }
 
-void BetaRand::SetShapes(double shape1, double shape2)
+void BetaDistribution::SetShapes(double shape1, double shape2)
 {
     GammaRV1.SetParameters(shape1, 1);
     GammaRV2.SetParameters(shape2, 1);
@@ -79,7 +71,7 @@ void BetaRand::SetShapes(double shape1, double shape2)
     setCoefficientsForGenerator();
 }
 
-void BetaRand::SetSupport(double minValue, double maxValue)
+void BetaDistribution::SetSupport(double minValue, double maxValue)
 {
     a = minValue;
     b = maxValue;
@@ -91,7 +83,7 @@ void BetaRand::SetSupport(double minValue, double maxValue)
     logBma = std::log(bma);
 }
 
-double BetaRand::f(const double & x) const
+double BetaDistribution::f(const double & x) const
 {
     if (x < a || x > b)
         return 0.0;
@@ -108,7 +100,7 @@ double BetaRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double BetaRand::logf(const double & x) const
+double BetaDistribution::logf(const double & x) const
 {
     if (x < a || x > b)
         return -INFINITY;
@@ -129,7 +121,7 @@ double BetaRand::logf(const double & x) const
     return y - logBetaFun - logBma;
 }
 
-double BetaRand::F(const double & x) const
+double BetaDistribution::F(const double & x) const
 {
     if (x <= a)
         return 0.0;
@@ -143,7 +135,7 @@ double BetaRand::F(const double & x) const
     return RandMath::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1p(-xSt));
 }
 
-double BetaRand::S(const double & x) const
+double BetaDistribution::S(const double & x) const
 {
     if (x <= a)
         return 1.0;
@@ -157,14 +149,14 @@ double BetaRand::S(const double & x) const
     return RandMath::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1p(-xSt), std::log(xSt));
 }
 
-double BetaRand::variateArcsine() const
+double BetaDistribution::variateArcsine() const
 {
     double U = UniformRand::Variate(-M_PI, M_PI);
     double X = std::sin(U);
     return X * X;
 }
 
-double BetaRand::variateRejectionUniform() const
+double BetaDistribution::variateRejectionUniform() const
 {
     /// Rejection method from uniform distribution
     /// boosted for specific value of shapes α = β = 1.5
@@ -178,7 +170,7 @@ double BetaRand::variateRejectionUniform() const
     return NAN; /// fail
 }
 
-double BetaRand::variateRejectionUniformExtended() const
+double BetaDistribution::variateRejectionUniformExtended() const
 {
     /// Rejection method from uniform distribution
     /// boosted by using exponential distribution
@@ -194,7 +186,7 @@ double BetaRand::variateRejectionUniformExtended() const
     return NAN; /// fail
 }
 
-double BetaRand::variateCheng() const
+double BetaDistribution::variateCheng() const
 {
     double R, T, Y;
     do {
@@ -211,7 +203,7 @@ double BetaRand::variateCheng() const
     return Y * R;
 }
 
-double BetaRand::variateAtkinsonWhittaker() const
+double BetaDistribution::variateAtkinsonWhittaker() const
 {
     int iter = 0;
     do {
@@ -231,14 +223,14 @@ double BetaRand::variateAtkinsonWhittaker() const
     return NAN; /// fail
 }
 
-double BetaRand::variateGammaRatio() const
+double BetaDistribution::variateGammaRatio() const
 {
     double Y = GammaRV1.Variate();
     double Z = GammaRV2.Variate();
     return Y / (Y + Z);
 }
 
-double BetaRand::variateRejectionNormal() const
+double BetaDistribution::variateRejectionNormal() const
 {
     int iter = 0;
     double N = 0, Z = 0;
@@ -264,7 +256,7 @@ double BetaRand::variateRejectionNormal() const
     return NAN; /// fail
 }
 
-double BetaRand::variateJohnk() const
+double BetaDistribution::variateJohnk() const
 {
     double X = 0, Z = 0;
     do {
@@ -276,7 +268,7 @@ double BetaRand::variateJohnk() const
     return X / Z;
 }
 
-double BetaRand::Variate() const
+double BetaDistribution::Variate() const
 {
     double var = 0;
     GENERATOR_ID id = getIdOfUsedGenerator();
@@ -315,7 +307,7 @@ double BetaRand::Variate() const
     return a + bma * var;
 }
 
-void BetaRand::Sample(std::vector<double> &outputData) const
+void BetaDistribution::Sample(std::vector<double> &outputData) const
 {
     GENERATOR_ID id = getIdOfUsedGenerator();
 
@@ -374,13 +366,13 @@ void BetaRand::Sample(std::vector<double> &outputData) const
         var = a + bma * var;
 }
 
-double BetaRand::Mean() const
+double BetaDistribution::Mean() const
 {
     double mean = alpha / (alpha + beta);
     return a + bma * mean;
 }
 
-double BetaRand::Variance() const
+double BetaDistribution::Variance() const
 {
     double var = alpha + beta;
     var *= var * (var + 1);
@@ -388,12 +380,12 @@ double BetaRand::Variance() const
     return bma * bma * var;
 }
 
-double BetaRand::Median() const
+double BetaDistribution::Median() const
 {
     return (alpha == beta) ? 0.5 * (b + a) : quantileImpl(0.5);
 }
 
-double BetaRand::Mode() const
+double BetaDistribution::Mode() const
 {
     double mode;
     if (alpha > 1)
@@ -403,7 +395,7 @@ double BetaRand::Mode() const
     return a + bma * mode;
 }
 
-double BetaRand::Skewness() const
+double BetaDistribution::Skewness() const
 {
     double skewness = (alpha + beta + 1) / (alpha * beta);
     skewness = std::sqrt(skewness);
@@ -412,7 +404,7 @@ double BetaRand::Skewness() const
     return 2 * skewness;
 }
 
-double BetaRand::ExcessKurtosis() const
+double BetaDistribution::ExcessKurtosis() const
 {
     double sum = alpha + beta;
     double kurtosis = alpha - beta;
@@ -424,7 +416,7 @@ double BetaRand::ExcessKurtosis() const
     return 6 * kurtosis;
 }
 
-double BetaRand::quantileImpl(double p) const
+double BetaDistribution::quantileImpl(double p) const
 {
     if (alpha == beta)
     {
@@ -442,7 +434,7 @@ double BetaRand::quantileImpl(double p) const
     return ContinuousDistribution::quantileImpl(p);
 }
 
-double BetaRand::quantileImpl1m(double p) const
+double BetaDistribution::quantileImpl1m(double p) const
 {
     if (alpha == beta)
     {
@@ -460,7 +452,7 @@ double BetaRand::quantileImpl1m(double p) const
     return ContinuousDistribution::quantileImpl1m(p);
 }
 
-std::complex<double> BetaRand::CFImpl(double t) const
+std::complex<double> BetaDistribution::CFImpl(double t) const
 {
     /// if we don't have singularity points, we can use direct integration
     if (alpha >= 1 && beta >= 1)
@@ -500,6 +492,14 @@ std::complex<double> BetaRand::CFImpl(double t) const
     return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
+std::string BetaRand::Name() const
+{
+    return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
+                   + toStringWithPrecision(GetBeta()) + ", "
+                   + toStringWithPrecision(MinValue()) + ", "
+                   + toStringWithPrecision(MaxValue()) + ")";
+}
+
 void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 {
     if (!allElementsAreNotLessThen(a, sample))
@@ -527,7 +527,7 @@ void BetaRand::FitBetaMM(const std::vector<double> &sample)
 }
 
 ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue) :
-    BetaRand(1.0 - shape, shape, minValue, maxValue)
+    BetaDistribution(1.0 - shape, shape, minValue, maxValue)
 {
 }
 
@@ -540,7 +540,7 @@ std::string ArcsineRand::Name() const
 
 void ArcsineRand::SetShape(double shape)
 {
-    BetaRand::SetShapes(1.0 - shape, shape);
+    BetaDistribution::SetShapes(1.0 - shape, shape);
 }
 
 
@@ -565,5 +565,5 @@ void BaldingNicholsRand::SetFixatingIndexAndFrequency(double fixatingIndex, doub
         p = 0.5;
 
     double frac = (1.0 - F) / F, fracP = frac * p;
-    BetaRand::SetShapes(fracP, frac - fracP);
+    BetaDistribution::SetShapes(fracP, frac - fracP);
 }

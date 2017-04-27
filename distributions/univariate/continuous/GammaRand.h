@@ -288,6 +288,7 @@ class RANDLIBSHARED_EXPORT ErlangRand : public GammaDistribution
 public:
     ErlangRand(int shape = 1, double rate = 1);
     std::string Name() const override;
+    void SetParameters(int shape, double rate);
 };
 
 

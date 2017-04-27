@@ -92,7 +92,7 @@ double GeometricRand::Entropy() const
     return (a + b) / (M_LN2 * p);
 }
 
-BetaRand GeometricRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaRand &priorDistribution)
+BetaRand GeometricRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));

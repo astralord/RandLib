@@ -119,7 +119,7 @@ public:
      * @param priorDistribution
      * @return posterior distribution
      */
-    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaRand & priorDistribution);
+    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution & priorDistribution);
 
     /**
      * @brief FitProbabilityMinimax

@@ -15,21 +15,18 @@
  * X ~ Beta(1, 1, a, b)
  * (X - a) / (b - a) ~ IH(1)
  */
-class RANDLIBSHARED_EXPORT UniformRand : public BetaRand
+class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution
 {
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
     std::string Name() const override;
+
+    using BetaDistribution::SetSupport;
+
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }
 
-private:
-    void SetShapes(double shape1, double shape2) = delete;
-    void FitAlphaMM(const std::vector<double> &sample) = delete;
-    void FitBetaMM(const std::vector<double> &sample) = delete;
-
-public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
     double F(const double & x) const override;
@@ -55,6 +52,7 @@ private:
 
     static constexpr char TOO_LARGE_A[] = "Minimum element of the sample is smaller than lower boundary returned by method: ";
     static constexpr char TOO_SMALL_B[] = "Maximum element of the sample is larger than upper boundary returned by method: ";
+
 public:
     inline double Entropy() const;
 

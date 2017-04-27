@@ -389,8 +389,10 @@ double GammaDistribution::quantileInitialGuess(double p) const
         }
         else {
             double logQ = std::log1p(-p);
-            double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha; /// boundary adviced in a paper
-            double maxBoundary2 = alpha * (logAlpha - 1) - lgammaAlpha; /// the maximum possible value to have a solution
+            /// boundary adviced in a paper
+            double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha;
+            /// the maximum possible value to have a solution
+            double maxBoundary2 = alpha * (logAlpha - 1) - lgammaAlpha;
             /// if p -> 1
             if (logQ < std::min(maxBoundary1, maxBoundary2))
                 guess = initRootForLargeP(logQ);
@@ -409,8 +411,10 @@ double GammaDistribution::quantileInitialGuess1m(double p) const
 {
     if (alpha < 10) {
         double logQ = std::log(p);
-        double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha; /// boundary adviced in a paper
-        double maxBoundary2 = alpha * (logAlpha - 1) - lgammaAlpha; /// the maximum possible value to have a solution
+        /// boundary adviced in a paper
+        double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha;
+        /// the maximum possible value to have a solution
+        double maxBoundary2 = alpha * (logAlpha - 1) - lgammaAlpha;
         /// if p -> 0
         if (logQ < std::min(maxBoundary1, maxBoundary2))
             return initRootForLargeP(logQ) / beta;
@@ -606,10 +610,15 @@ void ChiSquaredRand::SetDegree(int degree)
 /// ERLANG
 ErlangRand::ErlangRand(int shape, double rate)
 {
-    GammaDistribution::SetParameters(std::max(shape, 1), rate);
+    SetParameters(shape, rate);
 }
 
 std::string ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
+}
+
+void ErlangRand::SetParameters(int shape, double rate)
+{
+    GammaDistribution::SetParameters(std::max(shape, 1), rate);
 }

@@ -2,7 +2,7 @@
 #include "../BasicRandGenerator.h"
 
 UniformRand::UniformRand(double minValue, double maxValue) :
-    BetaRand(1, 1, minValue, maxValue)
+    BetaDistribution(1, 1, minValue, maxValue)
 {
 }
 
