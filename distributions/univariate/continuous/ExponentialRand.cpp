@@ -6,7 +6,7 @@ long double ExponentialRand::stairWidth[257] = {0};
 long double ExponentialRand::stairHeight[256] = {0};
 bool ExponentialRand::dummy = ExponentialRand::SetupTables();
 
-ExponentialRand::ExponentialRand(double rate) : GammaRand()
+ExponentialRand::ExponentialRand(double rate) : GammaDistribution()
 {
     SetRate(rate);
 }

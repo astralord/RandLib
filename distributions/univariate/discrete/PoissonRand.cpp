@@ -131,7 +131,7 @@ void PoissonRand::FitRateMM(const std::vector<int> &sample)
     FitRateMLE(sample);
 }
 
-GammaRand PoissonRand::FitRateBayes(const std::vector<int> &sample, const GammaRand &priorDistribution)
+GammaRand PoissonRand::FitRateBayes(const std::vector<int> &sample, const GammaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));

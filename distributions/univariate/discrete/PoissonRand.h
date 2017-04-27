@@ -50,7 +50,7 @@ private:
 public:
     void FitRateMLE(const std::vector<int> &sample);
     void FitRateMM(const std::vector<int> &sample);
-    GammaRand FitRateBayes(const std::vector<int> &sample, const GammaRand & priorDistribution);
+    GammaRand FitRateBayes(const std::vector<int> &sample, const GammaDistribution & priorDistribution);
 };
 
 #endif // POISSONRAND_H

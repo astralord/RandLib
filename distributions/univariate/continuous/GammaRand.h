@@ -4,8 +4,8 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The GammaRand class
- * Gamma distribution
+ * @brief The GammaDistribution class
+ * Abstract class for Gamma distribution
  * f(x | α, β) = β^α / Γ(α) * x^(α-1) * exp(-βx),
  * where Γ(α) denotes Gamma function
  *
@@ -17,32 +17,38 @@
  * If X ~ Gamma(0.5 * n, 0.5), then X ~ Chi^2(n)
  * If X ~ Gamma(k, β) for integer k, then X ~ Erlang(k, β)
  */
-class RANDLIBSHARED_EXPORT GammaRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution
 {
 protected:
     double alpha, theta, beta;
-    double lgammaAlpha; /// log(Γ(α))
-    double pdfCoef; ///  α * log(β) - log(Γ(α))
-    double logAlpha, logBeta; ///  log(α), log(β)
+    /// log(Γ(α))
+    double lgammaAlpha;
+    /// α * log(β) - log(Γ(α))
+    double pdfCoef;
+    /// log(α), log(β)
+    double logAlpha, logBeta;
 
 private:
     /// constants for faster sampling
     double t, b;
 
 public:
-    GammaRand(double shape = 1, double rate = 1);
-    virtual ~GammaRand() {}
+    GammaDistribution(double shape = 1, double rate = 1);
+    virtual ~GammaDistribution() {}
 
-    std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
+
+protected:
     /**
      * @brief SetParameters
      * @param shape α
      * @param rate β
      */
     void SetParameters(double shape, double rate);
+
+public:
     /**
      * @brief GetShape
      * @return α
@@ -185,7 +191,21 @@ private:
     double quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
+};
+
+
+/**
+ * @brief The GammaRand class
+ * Gamma distribution
+ */
+class RANDLIBSHARED_EXPORT GammaRand : public GammaDistribution
+{
 public:
+    GammaRand(double shape = 1, double rate = 1) : GammaDistribution(shape, rate) {}
+    std::string Name() const override;
+
+    using GammaDistribution::SetParameters;
+
     /**
      * @brief FitRateUMVU
      * set rate, returned by uniformly minimum variance unbiased estimator
@@ -230,7 +250,7 @@ public:
      * @param priorDistribution
      * @return posterior distribution
      */
-    GammaRand FitRateBayes(const std::vector<double> &sample, const GammaRand &priorDistribution);
+    GammaRand FitRateBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution);
 };
 
 
@@ -243,26 +263,13 @@ public:
  * Related distributions:
  * X ~ Gamma(0.5 * n, 0.5)
  */
-class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaRand
+class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {
 public:
     explicit ChiSquaredRand(int degree = 1);
     std::string Name() const override;
-
     void SetDegree(int degree);
     inline int GetDegree() const { return static_cast<int>(2 * alpha); }
-
-private:
-    /// prohibit to use gamma's public setters
-    using GammaRand::SetParameters;
-    /// and all estimators
-    void FitRateUMVU(const std::vector<double> &sample) = delete;
-    void FitRateMLE(const std::vector<double> &sample) = delete;
-    void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
-    void FitShapeMM(const std::vector<double> &sample) = delete;
-    void FitRateMM(const std::vector<double> &sample) = delete;
-    void FitShapeAndRateMM(const std::vector<double> &sample) = delete;
-    GammaRand FitRateBayes(const std::vector<double> &sample, const GammaRand &priorDistribution) = delete;
 };
 
 
@@ -276,19 +283,11 @@ private:
  * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β)
  * X ~ Gamma(k, β)
  */
-class RANDLIBSHARED_EXPORT ErlangRand : public GammaRand
+class RANDLIBSHARED_EXPORT ErlangRand : public GammaDistribution
 {
 public:
     ErlangRand(int shape = 1, double rate = 1);
     std::string Name() const override;
-
-private:
-    /// prohibit to use gamma's public setters
-    using GammaRand::SetParameters;
-    /// and estimators of shape
-    void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
-    void FitShapeMM(const std::vector<double> &sample) = delete;
-    void FitShapeAndRateMM(const std::vector<double> &sample) = delete;
 };
 
 

@@ -3,17 +3,12 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 
-GammaRand::GammaRand(double shape, double rate)
+GammaDistribution::GammaDistribution(double shape, double rate)
 {
     SetParameters(shape, rate);
 }
 
-std::string GammaRand::Name() const
-{
-    return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
-}
-
-void GammaRand::SetParameters(double shape, double rate)
+void GammaDistribution::SetParameters(double shape, double rate)
 {
     alpha = shape > 0 ? shape : 1.0;
     
@@ -33,7 +28,7 @@ void GammaRand::SetParameters(double shape, double rate)
     }
 }
 
-double GammaRand::f(const double & x) const
+double GammaDistribution::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -46,7 +41,7 @@ double GammaRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double GammaRand::logf(const double & x) const
+double GammaDistribution::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -62,27 +57,27 @@ double GammaRand::logf(const double & x) const
     return y;
 }
 
-double GammaRand::F(const double & x) const
+double GammaDistribution::F(const double & x) const
 {
     return (x > 0.0) ? RandMath::pgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 0.0;
 }
 
-double GammaRand::logF(const double &x) const
+double GammaDistribution::logF(const double &x) const
 {
     return (x > 0.0) ? RandMath::lpgamma(alpha, x * beta, logAlpha, lgammaAlpha) : -INFINITY;
 }
 
-double GammaRand::S(const double & x) const
+double GammaDistribution::S(const double & x) const
 {
     return (x > 0.0) ? RandMath::qgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 1.0;
 }
 
-double GammaRand::logS(const double &x) const
+double GammaDistribution::logS(const double &x) const
 {
     return (x > 0.0) ? RandMath::lqgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 0.0;
 }
 
-GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
+GammaDistribution::GENERATOR_ID GammaDistribution::getIdOfUsedGenerator(double shape)
 {
     if (shape < 0.34)
         return SMALL_SHAPE;
@@ -95,7 +90,7 @@ GammaRand::GENERATOR_ID GammaRand::getIdOfUsedGenerator(double shape)
     return MARSAGLIA_TSANG;
 }
 
-double GammaRand::variateThroughExponentialSum(int shape)
+double GammaDistribution::variateThroughExponentialSum(int shape)
 {
     double X = 0.0;
     for (int i = 0; i < shape; ++i)
@@ -103,14 +98,14 @@ double GammaRand::variateThroughExponentialSum(int shape)
     return X;
 }
 
-double GammaRand::variateForShapeOneAndAHalf()
+double GammaDistribution::variateForShapeOneAndAHalf()
 {
     double W = ExponentialRand::StandardVariate();
     double N = NormalRand::StandardVariate();
     return W + 0.5 * N * N;
 }
 
-double GammaRand::variateBest() const
+double GammaDistribution::variateBest() const
 {
     /// Algorithm RGS for gamma variates (Best, 1983)
     double X = 0;
@@ -134,7 +129,7 @@ double GammaRand::variateBest() const
 }
 
 
-double GammaRand::variateAhrensDieter(double shape)
+double GammaDistribution::variateAhrensDieter(double shape)
 {
     /// Rejection algorithm GS for gamma variates (Ahrens and Dieter, 1974)
     double X = 0;
@@ -161,7 +156,7 @@ double GammaRand::variateAhrensDieter(double shape)
     return NAN; /// shouldn't end up here
 }
 
-double GammaRand::variateFishman(double shape)
+double GammaDistribution::variateFishman(double shape)
 {
     /// G. Fishman algorithm (shape > 1)
     double W1, W2;
@@ -173,7 +168,7 @@ double GammaRand::variateFishman(double shape)
     return shape * W1;
 }
 
-double GammaRand::variateMarsagliaTsang(double shape)
+double GammaDistribution::variateMarsagliaTsang(double shape)
 {
     /// Marsaglia and Tsang’s Method (shape > 1/3)
     double d = shape - 1.0 / 3;
@@ -195,7 +190,7 @@ double GammaRand::variateMarsagliaTsang(double shape)
     return NAN; /// shouldn't end up here
 }
 
-double GammaRand::StandardVariate(double shape)
+double GammaDistribution::StandardVariate(double shape)
 {
     if (shape <= 0)
         return NAN;
@@ -219,12 +214,12 @@ double GammaRand::StandardVariate(double shape)
     return NAN;
 }
 
-double GammaRand::Variate(double shape, double rate)
+double GammaDistribution::Variate(double shape, double rate)
 {
     return StandardVariate(shape) / rate;
 }
 
-double GammaRand::Variate() const
+double GammaDistribution::Variate() const
 {
     GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
@@ -245,7 +240,7 @@ double GammaRand::Variate() const
     return NAN;
 }
 
-void GammaRand::Sample(std::vector<double> &outputData) const
+void GammaDistribution::Sample(std::vector<double> &outputData) const
 {
     GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
 
@@ -275,42 +270,42 @@ void GammaRand::Sample(std::vector<double> &outputData) const
     }
 }
 
-double GammaRand::Mean() const
+double GammaDistribution::Mean() const
 {
     return alpha * theta;
 }
 
-double GammaRand::GeometricMean() const
+double GammaDistribution::GeometricMean() const
 {
     return RandMath::digamma(alpha) - logBeta;
 }
 
-double GammaRand::Variance() const
+double GammaDistribution::Variance() const
 {
     return alpha * theta * theta;
 }
 
-double GammaRand::GeometricVariance() const
+double GammaDistribution::GeometricVariance() const
 {
     return RandMath::trigamma(alpha);
 }
 
-double GammaRand::Mode() const
+double GammaDistribution::Mode() const
 {
     return (alpha <= 1) ? 0 : (alpha - 1) * theta;
 }
 
-double GammaRand::Skewness() const
+double GammaDistribution::Skewness() const
 {
     return 2.0 / std::sqrt(alpha);
 }
 
-double GammaRand::ExcessKurtosis() const
+double GammaDistribution::ExcessKurtosis() const
 {
     return 6.0 / alpha;
 }
 
-double GammaRand::initRootForSmallP(double r) const
+double GammaDistribution::initRootForSmallP(double r) const
 {
     double root = 0;
     double c[5];
@@ -346,7 +341,7 @@ double GammaRand::initRootForSmallP(double r) const
     return root;
 }
 
-double GammaRand::initRootForLargeP(double logQ) const
+double GammaDistribution::initRootForLargeP(double logQ) const
 {
     /// look for approximate value of x -> INFINITY
     double x = (logQ + lgammaAlpha) / alpha;
@@ -354,7 +349,7 @@ double GammaRand::initRootForLargeP(double logQ) const
     return -alpha * RandMath::Wm1Lambert(x);
 }
 
-double GammaRand::initRootForLargeShape(double p) const
+double GammaDistribution::initRootForLargeShape(double p) const
 {
     if (p == 0.5)
         return alpha;
@@ -368,7 +363,7 @@ double GammaRand::initRootForLargeShape(double p) const
     return lambda * alpha;
 }
 
-double GammaRand::df(double x) const
+double GammaDistribution::df(double x) const
 {
     double z = (alpha - 1) - beta * x;
     double y = (alpha - 2) * std::log(x);
@@ -377,7 +372,7 @@ double GammaRand::df(double x) const
     return z * std::exp(y);
 }
 
-double GammaRand::quantileInitialGuess(double p) const
+double GammaDistribution::quantileInitialGuess(double p) const
 {
     /// Method is taken from
     /// "Efficient and accurate algorithms
@@ -410,7 +405,7 @@ double GammaRand::quantileInitialGuess(double p) const
     return guess / beta;
 }
 
-double GammaRand::quantileInitialGuess1m(double p) const
+double GammaDistribution::quantileInitialGuess1m(double p) const
 {
     if (alpha < 10) {
         double logQ = std::log(p);
@@ -423,7 +418,7 @@ double GammaRand::quantileInitialGuess1m(double p) const
     return quantileInitialGuess(1.0 - p);
 }
 
-double GammaRand::quantileImpl(double p) const
+double GammaDistribution::quantileImpl(double p) const
 {
     double guess = quantileInitialGuess(p);
     if (p < 1e-5) { /// too small p
@@ -455,7 +450,7 @@ double GammaRand::quantileImpl(double p) const
     return NAN;
 }
 
-double GammaRand::quantileImpl1m(double p) const
+double GammaDistribution::quantileImpl1m(double p) const
 {
     double guess = quantileInitialGuess1m(p);
     if (p < 1e-5) { /// too small p
@@ -487,9 +482,15 @@ double GammaRand::quantileImpl1m(double p) const
     return NAN;
 }
 
-std::complex<double> GammaRand::CFImpl(double t) const
+std::complex<double> GammaDistribution::CFImpl(double t) const
 {
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
+}
+
+/// GAMMA
+std::string GammaRand::Name() const
+{
+    return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
 void GammaRand::FitRateUMVU(const std::vector<double> &sample)
@@ -571,7 +572,7 @@ void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
     SetParameters(shape, scale);
 }
 
-GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const GammaRand & priorDistribution)
+GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -584,7 +585,6 @@ GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const Gamma
     SetParameters(alpha, posteriorDistribution.Mean());
     return posteriorDistribution;
 }
-
 
 /// CHI-SQUARED
 ChiSquaredRand::ChiSquaredRand(int degree)
@@ -599,14 +599,14 @@ std::string ChiSquaredRand::Name() const
 
 void ChiSquaredRand::SetDegree(int degree)
 {
-    GammaRand::SetParameters((degree < 1) ? 0.5 : 0.5 * degree, 0.5);
+    GammaDistribution::SetParameters((degree < 1) ? 0.5 : 0.5 * degree, 0.5);
 }
 
 
 /// ERLANG
 ErlangRand::ErlangRand(int shape, double rate)
 {
-    GammaRand::SetParameters(std::max(shape, 1), rate);
+    GammaDistribution::SetParameters(std::max(shape, 1), rate);
 }
 
 std::string ErlangRand::Name() const

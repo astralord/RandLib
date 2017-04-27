@@ -14,7 +14,7 @@
  * Related distributions:
  * X ~ Gamma(1, β)
  */
-class RANDLIBSHARED_EXPORT ExponentialRand : public GammaRand
+class RANDLIBSHARED_EXPORT ExponentialRand : public GammaDistribution
 {
     /// Tables for ziggurat
     static long double stairWidth[257], stairHeight[256];
@@ -29,9 +29,6 @@ public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
-
-protected:
-    using GammaRand::SetParameters;
 
 public:
     void SetRate(double rate);
@@ -54,13 +51,7 @@ private:
 
 public:
     double Entropy() const;
-
     double Moment(int n) const;
-
-    /// Delete GammaRand estimators for shape
-    void FitShapeAndRateMLE(const std::vector<double> &sample) = delete;
-    void FitShapeMM(const std::vector<double> &sample) = delete;
-    void FitShapeAndRateMM(const std::vector<double> &sample) = delete;
 };
 
 #endif // EXPONENTIALRAND_H
