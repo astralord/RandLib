@@ -14,8 +14,8 @@
 class RANDLIBSHARED_EXPORT KumaraswamyRand : public ContinuousDistribution
 {
     double a, b;
-    double aInv; /// 1/a
-    double logA, logB; /// log(a), log(b)
+    /// log(a), log(b)
+    double logA, logB;
 
 public:
     explicit KumaraswamyRand(double shape1, double shape2);

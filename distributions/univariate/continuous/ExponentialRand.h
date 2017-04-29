@@ -14,7 +14,7 @@
  * Related distributions:
  * X ~ Gamma(1, β)
  */
-class RANDLIBSHARED_EXPORT ExponentialRand : public GammaDistribution
+class RANDLIBSHARED_EXPORT ExponentialRand : public ScaledGammaDistribution
 {
     /// Tables for ziggurat
     static long double stairWidth[257], stairHeight[256];
@@ -23,7 +23,7 @@ class RANDLIBSHARED_EXPORT ExponentialRand : public GammaDistribution
     static bool SetupTables();
 
 public:
-    explicit ExponentialRand(double rate = 1);
+    explicit ExponentialRand(double rate = 1) : ScaledGammaDistribution(1, rate) {}
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
@@ -31,8 +31,6 @@ public:
     double MaxValue() const override { return INFINITY; }
 
 public:
-    void SetRate(double rate);
-
     double f(const double & x) const override;
     double logf(const double & x) const override;
     double F(const double & x) const override;

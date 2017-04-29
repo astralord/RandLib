@@ -102,13 +102,15 @@ class RANDLIBSHARED_EXPORT ChiRand : public NakagamiDistribution
 {
 
 public:
-    explicit ChiRand(int degree);
+    explicit ChiRand(int degree) : NakagamiDistribution((degree < 1) ? 0.5 : 0.5 * degree, degree) {}
     std::string Name() const override;
 
-private:
-    using NakagamiDistribution::SetParameters;
-
 public:
+    /**
+     * @brief SetDegree
+     * set degree k
+     * @param degree
+     */
     void SetDegree(int degree);
     /**
      * @brief GetDegree
@@ -138,10 +140,12 @@ public:
     explicit MaxwellBoltzmannRand(double scale);
     std::string Name() const override;
 
-private:
-    using NakagamiDistribution::SetParameters;
-
 public:
+    /**
+     * @brief SetScale
+     * set scale σ
+     * @param scale
+     */
     void SetScale(double scale);
     /**
      * @brief GetScale
@@ -180,10 +184,12 @@ public:
     explicit RayleighRand(double scale = 1);
     std::string Name() const override;
 
-private:
-    using NakagamiDistribution::SetParameters;
-
 public:
+    /**
+     * @brief SetScale
+     * set scale σ
+     * @param scale
+     */
     void SetScale(double scale);
     /**
      * @brief GetScale

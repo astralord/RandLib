@@ -99,11 +99,6 @@ std::string NakagamiRand::Name() const
 
 
 /// CHI
-ChiRand::ChiRand(int degree)
-{
-    SetDegree(degree);
-}
-
 std::string ChiRand::Name() const
 {
     return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
@@ -111,7 +106,7 @@ std::string ChiRand::Name() const
 
 void ChiRand::SetDegree(int degree)
 {
-    NakagamiDistribution::SetParameters(0.5 * degree, degree);
+    NakagamiDistribution::SetParameters((degree < 1) ? 0.5 : 0.5 * degree, degree);
 }
 
 double ChiRand::Skewness() const

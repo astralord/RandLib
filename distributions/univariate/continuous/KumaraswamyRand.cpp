@@ -16,7 +16,6 @@ std::string KumaraswamyRand::Name() const
 void KumaraswamyRand::SetShapes(double shape1, double shape2)
 {
     a = (shape1 > 0) ? shape1 : 1.0;
-    aInv = 1.0 / a;
     logA = std::log(a);
     b = (shape2 > 0) ? shape2 : 1.0;
     logB = std::log(b);
@@ -72,7 +71,7 @@ double KumaraswamyRand::F(const double & x) const
     if (x >= 1.0)
         return 1.0;
     double y = a * std::log(x);
-    y = RandMath::log1mexp(y); /// 1 - x^a
+    y = RandMath::log1mexp(y);
     return -std::expm1(b * y);
 }
 
@@ -100,9 +99,7 @@ void KumaraswamyRand::Sample(std::vector<double> &outputData) const
     for (double & var : outputData) {
         var = 1.0 / var;
         if (var < 1e-5)
-            var = std::exp(std::log1p(-var) * aInv);
-        else
-            var = std::pow(1.0 - var, aInv);
+            var = (var < 1e-5) ? std::exp(std::log1p(-var) / a) : std::pow(1.0 - var, 1.0 / a);
     }
 }
 
@@ -119,13 +116,13 @@ double KumaraswamyRand::Variance() const
 
 double KumaraswamyRand::Median() const
 {
-    return std::pow(-std::expm1(-M_LN2 / b), aInv);
+    return std::pow(-std::expm1(-M_LN2 / b), 1.0 / a);
 }
 
 double KumaraswamyRand::Mode() const
 {
     if (a > 1)
-        return (b > 1) ? std::pow((a - 1) / (a * b - 1), aInv) : 1.0;
+        return (b > 1) ? std::pow((a - 1) / (a * b - 1), 1.0 / a) : 1.0;
     return (b > 1) ? 0.0 : (a > b);
 }
 
@@ -159,7 +156,7 @@ double KumaraswamyRand::quantileImpl(double p) const
         return std::exp(x / a);
     }
     double x = std::pow(1.0 - p, 1.0 / b);
-    return std::pow(1.0 - x, aInv);
+    return std::pow(1.0 - x, 1.0 / a);
 }
 
 double KumaraswamyRand::quantileImpl1m(double p) const
@@ -169,5 +166,5 @@ double KumaraswamyRand::quantileImpl1m(double p) const
         x = std::log1p(-x);
         return std::exp(x / a);
     }
-    return std::pow(1.0 - x, aInv);
+    return std::pow(1.0 - x, 1.0 / a);
 }

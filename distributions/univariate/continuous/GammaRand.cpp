@@ -491,13 +491,18 @@ std::complex<double> GammaDistribution::CFImpl(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
-/// GAMMA
-std::string GammaRand::Name() const
+/// SCALED GAMMA
+void ScaledGammaDistribution::SetRate(double rate)
 {
-    return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
+    SetParameters(alpha, rate);
 }
 
-void GammaRand::FitRateUMVU(const std::vector<double> &sample)
+void ScaledGammaDistribution::SetScale(double scale)
+{
+    SetRate(1.0 / scale);
+}
+
+void ScaledGammaDistribution::FitRateUMVU(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -507,12 +512,32 @@ void GammaRand::FitRateUMVU(const std::vector<double> &sample)
     SetParameters(alpha, coef / mean);
 }
 
-void GammaRand::FitRateMLE(const std::vector<double> &sample)
+void ScaledGammaDistribution::FitRateMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetParameters(alpha, alpha / sampleMean(sample));
+}
+
+GammaRand ScaledGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
+{
+    /// Sanity check
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    double alpha0 = priorDistribution.GetShape();
+    double beta0 = priorDistribution.GetRate();
+    double newAlpha = alpha * sample.size() + alpha0;
+    double newBeta = sampleSum(sample) + beta0;
+    GammaRand posteriorDistribution(newAlpha, newBeta);
+    SetParameters(alpha, posteriorDistribution.Mean());
+    return posteriorDistribution;
+}
+
+/// GAMMA
+std::string GammaRand::Name() const
+{
+    return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
 void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
@@ -556,11 +581,6 @@ void GammaRand::FitShapeMM(const std::vector<double> &sample)
     SetParameters(sampleMean(sample) * beta, beta);
 }
 
-void GammaRand::FitRateMM(const std::vector<double> &sample)
-{
-    FitRateMLE(sample);
-}
-
 void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
 {
     /// Sanity check
@@ -576,26 +596,7 @@ void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
     SetParameters(shape, scale);
 }
 
-GammaRand GammaRand::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double alpha0 = priorDistribution.GetShape();
-    double beta0 = priorDistribution.GetRate();
-    double newAlpha = alpha * sample.size() + alpha0;
-    double newBeta = sampleSum(sample) + beta0;
-    GammaRand posteriorDistribution(newAlpha, newBeta);
-    SetParameters(alpha, posteriorDistribution.Mean());
-    return posteriorDistribution;
-}
-
 /// CHI-SQUARED
-ChiSquaredRand::ChiSquaredRand(int degree)
-{
-    SetDegree(degree);
-}
-
 std::string ChiSquaredRand::Name() const
 {
     return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
@@ -608,11 +609,6 @@ void ChiSquaredRand::SetDegree(int degree)
 
 
 /// ERLANG
-ErlangRand::ErlangRand(int shape, double rate)
-{
-    SetParameters(shape, rate);
-}
-
 std::string ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
