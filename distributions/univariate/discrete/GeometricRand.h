@@ -2,8 +2,6 @@
 #define GEOMETRICRAND_H
 
 #include "NegativeBinomialRand.h"
-#include "../continuous/ExponentialRand.h"
-#include "../continuous/BetaRand.h"
 
 /**
  * @brief The GeometricRand class
@@ -19,7 +17,7 @@
 class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand
 {
 public:
-    explicit GeometricRand(double probability = 0.5);
+    explicit GeometricRand(double probability = 0.5) : PascalRand(1, probability) {}
     std::string Name() const override;
 
 public:
@@ -37,14 +35,6 @@ public:
     int Median() const override;
 
     double Entropy() const;
-
-    /**
-     * @brief FitProbabilityBayes
-     * @param sample
-     * @param priorDistribution
-     * @return posterior distribution
-     */
-    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution);
 };
 
 #endif // GEOMETRICRAND_H

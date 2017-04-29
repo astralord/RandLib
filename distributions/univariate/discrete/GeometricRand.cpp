@@ -1,9 +1,6 @@
 #include "GeometricRand.h"
 #include "../continuous/UniformRand.h"
-
-GeometricRand::GeometricRand(double probability) : PascalRand(1, probability)
-{
-}
+#include "../continuous/ExponentialRand.h"
 
 std::string GeometricRand::Name() const
 {
@@ -42,7 +39,8 @@ int GeometricRand::Variate() const
         return variateGeometricThroughExponential();
     if (genId == TABLE)
         return variateGeometricByTable();
-    return -1; /// unexpected return
+    /// unexpected return
+    return -1;
 }
 
 int GeometricRand::Variate(double probability)
@@ -90,16 +88,4 @@ double GeometricRand::Entropy() const
     double a = -q * log1mProb;
     double b = -p * logProb;
     return (a + b) / (M_LN2 * p);
-}
-
-BetaRand GeometricRand::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
-{
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    int n = sample.size();
-    double alpha = priorDistribution.GetAlpha();
-    double beta = priorDistribution.GetBeta();
-    BetaRand posteriorDistribution(alpha + n, beta + sampleSum(sample));
-    SetProbability(posteriorDistribution.Mean());
-    return posteriorDistribution;
 }

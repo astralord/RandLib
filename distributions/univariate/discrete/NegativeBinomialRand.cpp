@@ -202,15 +202,6 @@ std::complex<double> NegativeBinomialDistribution<T>::CFImpl(double t) const
 }
 
 template< typename T >
-void NegativeBinomialDistribution<T>::FitProbabilityMM(const std::vector<int> &sample)
-{
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    double mean = sampleMean(sample);
-    SetParameters(r, r / (r + mean));
-}
-
-template< typename T >
 int NegativeBinomialDistribution<T>::Mode() const
 {
     return (r > 1) ? std::floor((r - 1) * qDivP) : 0;
@@ -228,6 +219,28 @@ double NegativeBinomialDistribution<T>::ExcessKurtosis() const
     double kurtosis = p / qDivP;
     kurtosis += 6;
     return kurtosis / r;
+}
+
+template< typename T >
+void NegativeBinomialDistribution<T>::FitProbabilityMM(const std::vector<int> &sample)
+{
+    if (!allElementsAreNonNegative(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+    double mean = sampleMean(sample);
+    SetParameters(r, r / (r + mean));
+}
+
+template< typename T >
+BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
+{
+    if (!allElementsAreNonNegative(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+    int n = sample.size();
+    double alpha = priorDistribution.GetAlpha();
+    double beta = priorDistribution.GetBeta();
+    BetaRand posteriorDistribution(alpha + r * n, beta + sampleSum(sample));
+    SetParameters(r, posteriorDistribution.Mean());
+    return posteriorDistribution;
 }
 
 

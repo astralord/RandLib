@@ -13,12 +13,14 @@ class RANDLIBSHARED_EXPORT NoncentralTRand : public ContinuousDistribution
     double nu, mu;
     long double PhiMu, PhimMu;
     double sqrt1p2oNu;
-    int startingPoint; /// starting point at most weight
+    /// starting point at most weight
+    int startingPoint;
     double logHalfMuSq, halfMuSq;
     double lgammaStartingPointpHalf, lgammaStartingPointp1;
 
     struct nuStruct {
-        double halfNu; /// ν itself
+        /// 0.5 ν
+        double halfNu;
         double logHalfNu, lgammaHalfNu;
         double lgamma1, lgamma2;
     } nuCoefs, nup2Coefs;

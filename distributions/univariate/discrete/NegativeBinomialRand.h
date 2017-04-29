@@ -3,8 +3,7 @@
 
 #include "DiscreteDistribution.h"
 #include "PoissonRand.h"
-#include "../continuous/GammaRand.h"
-
+#include "../continuous/BetaRand.h"
 
 /**
  * @brief The NegativeBinomialDistribution class
@@ -88,6 +87,14 @@ public:
      * @param sample
      */
     void FitProbabilityMM(const std::vector<int> & sample);
+
+    /**
+     * @brief FitProbabilityBayes
+     * @param sample
+     * @param priorDistribution
+     * @return posterior distribution
+     */
+    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution);
 };
 
 

@@ -1,6 +1,7 @@
 #include "BetaRand.h"
 #include "../discrete/BernoulliRand.h"
 #include "UniformRand.h"
+#include "ExponentialRand.h"
 
 BetaDistribution::BetaDistribution(double shape1, double shape2)
 {
