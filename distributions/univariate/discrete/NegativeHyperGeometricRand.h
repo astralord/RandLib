@@ -13,7 +13,8 @@
 class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribution
 {
     int N, M, m;
-    double pmfCoef; /// C(N, M)
+    /// C(N, M)
+    double pmfCoef;
     double p0;
 
 public:

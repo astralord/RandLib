@@ -129,21 +129,14 @@ double BetaPrimeRand::quantileImpl1m(double p) const
 std::complex<double> BetaPrimeRand::CFImpl(double t) const
 {
     /// if no singularity - simple numeric integration
-    if (alpha > 1)
+    if (alpha >= 1)
         return UnivariateProbabilityDistribution::CFImpl(t);
 
-    double re = RandMath::integral([this, t] (double x)
+    double re = ExpectedValue([this, t] (double x)
     {
-        if (x <= 0)
-            return 0.0;
-        double y = std::pow(1 + x, -alpha - beta) - 1.0;
-        y *= std::pow(x, alpha - 1);
-        return y;
+        return std::cos(t * x) - 1.0;
     }, 0.0, 1.0);
-
-    re += 1.0 / alpha;
-    re /= GetBetaFunction();
-
+    re += F(1.0);
     re += ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);

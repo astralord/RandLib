@@ -28,9 +28,10 @@ BetaDistribution::GENERATOR_ID BetaDistribution::getIdOfUsedGenerator() const
             return ARCSINE; /// Arcsine method
         else if (RandMath::areClose(alpha, 1.5))
             return REJECTION_UNIFORM; /// Rejection method from uniform distribution
-        else if (alpha > 1)
+        else if (alpha > 1) {
             /// Rejection from uniform or normal distribution
             return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;
+        }
     }
     if (std::min(alpha, beta) > 0.5 && std::max(alpha, beta) > 1)
         return CHENG;
@@ -66,7 +67,6 @@ void BetaDistribution::SetShapes(double shape1, double shape2)
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
-    /// we use log(Gamma(x)) in order to avoid too big numbers
     logBetaFun = -std::lgamma(alpha + beta) + GammaRV1.GetLogGammaFunction() + GammaRV2.GetLogGammaFunction();
     betaFun = std::exp(logBetaFun);
     setCoefficientsForGenerator();
@@ -373,12 +373,22 @@ double BetaDistribution::Mean() const
     return a + bma * mean;
 }
 
+double BetaDistribution::GeometricMean() const
+{
+    return RandMath::digamma(alpha) - RandMath::digamma(alpha + beta);
+}
+
 double BetaDistribution::Variance() const
 {
     double var = alpha + beta;
     var *= var * (var + 1);
     var = alpha * beta / var;
     return bma * bma * var;
+}
+
+double BetaDistribution::GeometricVariance() const
+{
+    return RandMath::trigamma(alpha) - RandMath::trigamma(alpha + beta);
 }
 
 double BetaDistribution::Median() const
@@ -525,11 +535,6 @@ void BetaRand::FitBetaMM(const std::vector<double> &sample)
     shape /= mean - a;
     shape *= alpha;
     SetShapes(alpha, shape);
-}
-
-ArcsineRand::ArcsineRand(double shape, double minValue, double maxValue) :
-    BetaDistribution(1.0 - shape, shape, minValue, maxValue)
-{
 }
 
 std::string ArcsineRand::Name() const

@@ -80,16 +80,16 @@ double FrechetRand::Variance() const
 
 double FrechetRand::quantileImpl(double p) const
 {
-    double x = -std::log(p);
-    x = s / std::pow(x, alphaInv);
-    return x + m;
+    double y = -std::log(p);
+    y = s / std::pow(y, alphaInv);
+    return y + m;
 }
 
 double FrechetRand::quantileImpl1m(double p) const
 {
-    double x = -std::log1p(-p);
-    x = s / std::pow(x, alphaInv);
-    return x + m;
+    double y = -std::log1p(-p);
+    y = s / std::pow(y, alphaInv);
+    return y + m;
 }
 
 double FrechetRand::Median() const

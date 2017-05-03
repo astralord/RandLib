@@ -8,12 +8,16 @@
  * F-distribution
  *
  * Notation: X ~ F(d1, d2)
+ *
+ * Related distributions:
+ * X ~ Beta'(d1/2, d2/2)
  */
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 {
     int d1, d2;
     double pdfCoef;
-    double a, d1_d2, c, d2_d1; /// constants for optimization
+    /// constants for optimization
+    double a, d1_d2, c, d2_d1;
 
     BetaPrimeRand B;
 

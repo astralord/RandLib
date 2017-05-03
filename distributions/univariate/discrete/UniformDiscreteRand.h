@@ -15,8 +15,10 @@
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
     int n, a, b;
-    double nInv; /// 1.0 / n
-    double logN; /// log(n)
+    /// 1.0 / n
+    double nInv;
+    /// log(n)
+    double logN;
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);

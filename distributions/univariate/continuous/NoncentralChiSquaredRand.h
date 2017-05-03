@@ -9,7 +9,12 @@
 /**
  * @brief The NoncentralChiSquaredRand class
  * Noncentral Chi-Squared distribution
- * Notation: X ~ Noncentral-χ^2(k, λ)
+ *
+ * Notation: X ~ χ'^2(k, λ)
+ *
+ * Related distributions:
+ * If X ~ χ'^2(k, 0), then X ~ χ^2(k)
+ * X ~ χ^2(k + 2J), where J ~ Po(λ)
  */
 class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
 {

@@ -58,7 +58,7 @@ double KumaraswamyRand::logf(const double & x) const
     }
 
     double logX = std::log(x);
-    double y = RandMath::log1mexp(a * logX); /// 1-x^a
+    double y = RandMath::log1mexp(a * logX);
     y *= b - 1;
     y += (a - 1) * logX;
     return logA + logB + y;

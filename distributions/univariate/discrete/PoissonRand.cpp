@@ -126,11 +126,6 @@ void PoissonRand::FitRateMLE(const std::vector<int> &sample)
     SetRate(sampleMean(sample));
 }
 
-void PoissonRand::FitRateMM(const std::vector<int> &sample)
-{
-    FitRateMLE(sample);
-}
-
 GammaRand PoissonRand::FitRateBayes(const std::vector<int> &sample, const GammaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))

@@ -492,17 +492,17 @@ std::complex<double> GammaDistribution::CFImpl(double t) const
 }
 
 /// SCALED GAMMA
-void ScaledGammaDistribution::SetRate(double rate)
+void FreeScaleGammaDistribution::SetRate(double rate)
 {
     SetParameters(alpha, rate);
 }
 
-void ScaledGammaDistribution::SetScale(double scale)
+void FreeScaleGammaDistribution::SetScale(double scale)
 {
     SetRate(1.0 / scale);
 }
 
-void ScaledGammaDistribution::FitRateUMVU(const std::vector<double> &sample)
+void FreeScaleGammaDistribution::FitRateUMVU(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -512,7 +512,7 @@ void ScaledGammaDistribution::FitRateUMVU(const std::vector<double> &sample)
     SetParameters(alpha, coef / mean);
 }
 
-void ScaledGammaDistribution::FitRateMLE(const std::vector<double> &sample)
+void FreeScaleGammaDistribution::FitRateMLE(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -520,7 +520,7 @@ void ScaledGammaDistribution::FitRateMLE(const std::vector<double> &sample)
     SetParameters(alpha, alpha / sampleMean(sample));
 }
 
-GammaRand ScaledGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
+GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -538,39 +538,6 @@ GammaRand ScaledGammaDistribution::FitRateBayes(const std::vector<double> &sampl
 std::string GammaRand::Name() const
 {
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
-}
-
-void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-
-    /// Calculate average and log-average
-    double average = sampleMean(sample);
-    long double logAverage = 0.0L;
-    for (double var : sample) {
-        logAverage += std::log(var);
-    }
-    logAverage /= sample.size();
-
-    /// Calculate initial guess for shape
-    double s = std::log(average) - logAverage;
-    double sm3 = s - 3.0, sp12 = 12.0 * s;
-    double shape = sm3 * sm3 + sp12 + sp12;
-    shape = std::sqrt(shape);
-    shape -= sm3;
-    shape /= sp12;
-
-    if (!RandMath::findRoot([s] (double x)
-    {
-        double first = RandMath::digammamLog(x) + s;
-        double second = 1.0 / x - RandMath::trigamma(x);
-        return DoublePair(first, second);
-    }, shape))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
-
-    SetParameters(shape, shape / average);
 }
 
 void GammaRand::FitShapeMM(const std::vector<double> &sample)
@@ -594,6 +561,64 @@ void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
     double shape = mu * mu / var;
     double scale = var / mu;
     SetParameters(shape, scale);
+}
+
+void GammaRand::FitShapeMLE(const std::vector<double> &sample)
+{
+    /// Sanity check
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+
+    /// Calculate log-average
+    long double logAverage = 0.0L;
+    for (double var : sample)
+        logAverage += std::log(var);
+    logAverage /= sample.size();
+
+    /// Calculate initial guess via method of moments
+    double shape = sampleMean(sample) * beta;
+    /// Run root-finding procedure
+    double s = logAverage + logBeta;
+    if (!RandMath::findRoot([s] (double x)
+    {
+        double first = RandMath::digamma(x) - s;
+        double second = RandMath::trigamma(x);
+        return DoublePair(first, second);
+    }, shape))
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+    SetParameters(shape, beta);
+}
+
+void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
+{
+    /// Sanity check
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+
+    /// Calculate average and log-average
+    double average = sampleMean(sample);
+    long double logAverage = 0.0L;
+    for (double var : sample)
+        logAverage += std::log(var);
+    logAverage /= sample.size();
+
+    /// Calculate initial guess for shape
+    double s = std::log(average) - logAverage;
+    double sm3 = s - 3.0, sp12 = 12.0 * s;
+    double shape = sm3 * sm3 + 2 * sp12;
+    shape = std::sqrt(shape);
+    shape -= sm3;
+    shape /= sp12;
+
+    if (!RandMath::findRoot([s] (double x)
+    {
+        double first = RandMath::digammamLog(x) + s;
+        double second = RandMath::trigamma(x) - 1.0 / x;
+        return DoublePair(first, second);
+    }, shape))
+        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+
+    SetParameters(shape, shape / average);
 }
 
 /// CHI-SQUARED

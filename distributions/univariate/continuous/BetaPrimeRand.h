@@ -10,7 +10,7 @@
  * f(x | α, β) = x^{α-1} (1 + x)^{-α - β} / B(α, β),
  * where B(α, β) denotes Beta function
  *
- * Notation: X ~ Beta-Prime(α, β)
+ * Notation: X ~ Beta'(α, β)
  *
  * Related distributions:
  * X / (X + 1) ~ Beta(α, β)

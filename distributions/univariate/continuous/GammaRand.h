@@ -201,13 +201,13 @@ private:
 class RANDLIBSHARED_EXPORT GammaRand;
 
 /**
- * @brief The ScaledGammaDistribution class
+ * @brief The FreeScaleGammaDistribution class
  * Abstract class for Gamma distribution with arbitrary scale/rate
  */
-class RANDLIBSHARED_EXPORT ScaledGammaDistribution : public GammaDistribution
+class RANDLIBSHARED_EXPORT FreeScaleGammaDistribution : public GammaDistribution
 {
 public:
-    ScaledGammaDistribution(double shape, double rate) : GammaDistribution(shape, rate) {}
+    FreeScaleGammaDistribution(double shape, double rate) : GammaDistribution(shape, rate) {}
     /**
      * @brief SetRate
      * set rate β
@@ -246,19 +246,13 @@ public:
  * @brief The GammaRand class
  * Gamma distribution
  */
-class RANDLIBSHARED_EXPORT GammaRand : public ScaledGammaDistribution
+class RANDLIBSHARED_EXPORT GammaRand : public FreeScaleGammaDistribution
 {
 public:
-    GammaRand(double shape = 1, double rate = 1) : ScaledGammaDistribution(shape, rate) {}
+    GammaRand(double shape = 1, double rate = 1) : FreeScaleGammaDistribution(shape, rate) {}
     std::string Name() const override;
 
     using GammaDistribution::SetParameters;
-    /**
-     * @brief FitShapeAndRateMLE
-     * set shape and rate, estimated via maximum-likelihood method
-     * @param sample
-     */
-    void FitShapeAndRateMLE(const std::vector<double> &sample);
     /**
      * @brief FitShapeMM
      * set shape, estimated via method of moments
@@ -271,6 +265,18 @@ public:
      * @param sample
      */
     void FitShapeAndRateMM(const std::vector<double> &sample);
+    /**
+     * @brief FitShapeMLE
+     * set shape, estimated via maximum-likelihood method
+     * @param sample
+     */
+    void FitShapeMLE(const std::vector<double> &sample);
+    /**
+     * @brief FitShapeAndRateMLE
+     * set shape and rate, estimated via maximum-likelihood method
+     * @param sample
+     */
+    void FitShapeAndRateMLE(const std::vector<double> &sample);
 };
 
 
@@ -303,10 +309,10 @@ public:
  * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β)
  * X ~ Gamma(k, β)
  */
-class RANDLIBSHARED_EXPORT ErlangRand : public ScaledGammaDistribution
+class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution
 {
 public:
-    ErlangRand(int shape, double rate) : ScaledGammaDistribution(shape, rate) {}
+    ErlangRand(int shape, double rate) : FreeScaleGammaDistribution(shape, rate) {}
     std::string Name() const override;
     void SetParameters(int shape, double rate);
 };

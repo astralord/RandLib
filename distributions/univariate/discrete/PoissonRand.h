@@ -52,8 +52,19 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
+    /**
+     * @brief FitRateMLE
+     * fit rate λ via maximum-likelihood method
+     * @param sample
+     */
     void FitRateMLE(const std::vector<int> &sample);
-    void FitRateMM(const std::vector<int> &sample);
+    /**
+     * @brief FitRateBayes
+     * fit rate λ via Bayes estimation
+     * @param sample
+     * @param priorDistribution
+     * @return posterior Gamma distribution
+     */
     GammaRand FitRateBayes(const std::vector<int> &sample, const GammaDistribution & priorDistribution);
 };
 

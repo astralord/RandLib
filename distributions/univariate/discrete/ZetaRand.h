@@ -7,14 +7,15 @@
  * @brief The ZetaRand class
  * Zeta distribution
  *
- * P(X = k) = 1 / (k^s * zeta(s))
+ * P(X = k) = 1 / (k^s * ζ(s))
  *
  * Notation: X ~ Zeta(s)
  */
 class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 {
     double s, sm1;
-    double zetaSInv; /// 1.0 / zeta(s)
+    /// 1.0 / ζ(s)
+    double zetaSInv;
     double b;
 public:
     explicit ZetaRand(double exponent = 1.0);

@@ -19,7 +19,8 @@ class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution
 {
     std::vector<double> prob;
     int K;
-    double q; /// q = P(X = 0)
+    /// P(X = 0)
+    double q;
 
 public:
     explicit CategoricalRand(std::vector<double>&& probabilities);

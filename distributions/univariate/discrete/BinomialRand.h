@@ -23,7 +23,7 @@ protected:
 private:
     int n;
     double np;
-    /// log((n + 1)!)
+    /// log(n!)
     double lgammaNp1;
 
     double delta1, delta2;

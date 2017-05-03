@@ -15,7 +15,7 @@
  *
  * Related distributions:
  * 1 − X ~ Beta(β, α)
- * X / (1 - X) ~ Beta-Prime(α, β)
+ * X / (1 - X) ~ Beta'(α, β)
  * X = Y / (Y + Z), where Y ~ Gamma(α) and Z ~ Gamma(β)
  * βX / α(1 - X) ~ F(2α, 2β)
  */
@@ -173,7 +173,17 @@ private:
 
 public:
     double Mean() const override;
+    /**
+     * @brief GeometricMean
+     * @return E[ln(X)]
+     */
+    double GeometricMean() const;
     double Variance() const override;
+    /**
+     * @brief GeometricVariance
+     * @return Var(ln(X))
+     */
+    double GeometricVariance() const;
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
@@ -227,7 +237,7 @@ public:
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
 {
 public:
-    ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1);
+    ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1) : BetaDistribution(1.0 - shape, shape, minValue, maxValue) {}
     std::string Name() const override;
     void SetShape(double shape);
     inline double GetShape() const { return beta; }
