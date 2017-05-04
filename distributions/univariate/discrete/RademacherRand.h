@@ -5,7 +5,7 @@
 #include "../BasicRandGenerator.h"
 
 /**
- * @brief The RademacherRand class
+ * @brief The RademacherRand class <BR>
  * Rademacher distribution
  *
  * P(X = k) = 0.5 * 1_{|k| = 1}

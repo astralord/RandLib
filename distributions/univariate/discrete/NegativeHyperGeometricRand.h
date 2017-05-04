@@ -5,7 +5,7 @@
 #include "BernoulliRand.h"
 
 /**
- * @brief The NegativeHyperGeometricRand class
+ * @brief The NegativeHyperGeometricRand class <BR>
  * Negative hypergeometric distribution
  *
  * Notation: X ~ NHG(N, M, m)

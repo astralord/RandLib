@@ -6,14 +6,14 @@
 #include "../../bivariate/NormalInverseGammaRand.h"
 
 /**
- * @brief The NormalRand class
+ * @brief The NormalRand class <BR>
  * Normal distribution
  *
  * f(x | μ, σ) = 1 / ((2 π σ^2)^(1/2) * exp(-(x - μ)^2 / (2 σ^2))
  *
  * Notation: X ~ N(μ, σ)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ S(2, 0, √2σ, μ)
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
@@ -34,17 +34,17 @@ public:
     void SetScale(double scale);
     void SetVariance(double var);
     /**
-     * @brief GetScale
+     * @fn GetScale
      * @return σ
      */
     inline double GetScale() const { return sigma; }
     /**
-     * @brief GetLogScale
+     * @fn GetLogScale
      * @return log(σ)
      */
     inline double GetLogScale() const { return logGamma - 0.5 * M_LN2; }
     /**
-     * @brief GetPrecision
+     * @fn GetPrecision
      * @return 1/σ^2
      */
     inline double GetPrecision() const { return 1.0 / (sigma * sigma); }
@@ -55,7 +55,7 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
     /**
-     * @brief StandardVariate
+     * @fn StandardVariate
      * @return variate from standard normal distribution
      */
     static double StandardVariate();
@@ -71,43 +71,43 @@ public:
     double Moment(int n) const;
 
     /**
-     * @brief FitMeanMLE
+     * @fn FitMeanMLE
      * set mean, returned by maximium-likelihood estimator
      * @param sample
      */
     void FitMeanMLE(const std::vector<double> &sample);
     /**
-     * @brief FitVarianceMLE
+     * @fn FitVarianceMLE
      * set variance, returned by maximium-likelihood estimator
      * @param sample
      */
     void FitVarianceMLE(const std::vector<double> &sample);
     /**
-     * @brief FitMeanAndVarianceMLE
+     * @fn FitMeanAndVarianceMLE
      * set mean and variance, returned by maximium-likelihood estimator
      * @param sample
      */
     void FitMeanAndVarianceMLE(const std::vector<double> &sample);
     /**
-     * @brief FitMeanUMVU
+     * @fn FitMeanUMVU
      * set mean, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
     void FitMeanUMVU(const std::vector<double> &sample);
     /**
-     * @brief FitVarianceUMVU
+     * @fn FitVarianceUMVU
      * set variance, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
     void FitVarianceUMVU(const std::vector<double> &sample);
     /**
-     * @brief FitMeanAndVarianceUMVU
+     * @fn FitMeanAndVarianceUMVU
      * set mean and variance, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
     void FitMeanAndVarianceUMVU(const std::vector<double> &sample);
     /**
-     * @brief FitMeanAndVarianceUMVU
+     * @fn FitMeanAndVarianceUMVU
      * set mean and variance, returned by uniformly minimum variance unbiased estimator
      * and returns confidence intervals for these parameters
      * @param sample
@@ -117,7 +117,7 @@ public:
      */
     void FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
     /**
-     * @brief FitMeanBayes
+     * @fn FitMeanBayes
      * set mean, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
@@ -125,7 +125,7 @@ public:
      */
     NormalRand FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
     /**
-     * @brief FitVarianceBayes
+     * @fn FitVarianceBayes
      * set variance, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
@@ -133,7 +133,7 @@ public:
      */
     InverseGammaRand FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
     /**
-     * @brief FitMeanAndVarianceBayes
+     * @fn FitMeanAndVarianceBayes
      * set mean and variance, returned by bayesian estimation
      * @param sample
      * @param priorDistribution

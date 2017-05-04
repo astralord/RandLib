@@ -4,14 +4,14 @@
 #include "GammaRand.h"
 
 /**
- * @brief The ExponentialRand class
+ * @brief The ExponentialRand class <BR>
  * Exponential distribution
  *
  * f(x | β) = β exp(-βx)
  *
  * Notation: X ~ Exp(β)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ Gamma(1, β)
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution

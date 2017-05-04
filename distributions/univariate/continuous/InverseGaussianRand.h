@@ -4,17 +4,17 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The InverseGaussianRand class
+ * @brief The InverseGaussianRand class <BR>
  * Inverse Gaussian (Wald) distribution
  *
  * Notation: X ~ IG(μ, λ)
  */
 class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution
 {
-    double mu, lambda;
-
-    double pdfCoef; /// (λ/(2π))^(1/2)
-    double cdfCoef; /// exp(2λ/μ)
+    double mu; ///< mean μ
+    double lambda; ///< shape λ
+    double pdfCoef; ///< (λ/(2π))^(1/2)
+    double cdfCoef; ///< exp(2λ/μ)
 public:
     InverseGaussianRand(double mean = 1, double shape = 1);
 

@@ -5,7 +5,7 @@
 #include "../continuous/GammaRand.h"
 
 /**
- * @brief The PoissonRand class
+ * @brief The PoissonRand class <BR>
  * Poisson distribution
  *
  * P(X = k) = λ^k * exp(-λ) / k!
@@ -14,15 +14,11 @@
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
-    double lambda;
-    /// ln(λ)
-    double logLambda;
-    /// [λ]
-    int floorLambda;
-    /// P(X < [λ])
-    double FFloorLambda;
-    /// P(X = [λ])
-    double PFloorLambda;
+    double lambda; ///< rate λ
+    double logLambda; ///< ln(λ)
+    int floorLambda; ///< [λ]
+    double FFloorLambda; ///< P(X < [λ])
+    double PFloorLambda; ///< P(X = [λ])
 
 public:
     explicit PoissonRand(double rate = 1.0);
@@ -53,13 +49,13 @@ private:
 
 public:
     /**
-     * @brief FitRateMLE
+     * @fn FitRateMLE
      * fit rate λ via maximum-likelihood method
      * @param sample
      */
     void FitRateMLE(const std::vector<int> &sample);
     /**
-     * @brief FitRateBayes
+     * @fn FitRateBayes
      * fit rate λ via Bayes estimation
      * @param sample
      * @param priorDistribution

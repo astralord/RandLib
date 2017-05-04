@@ -55,12 +55,12 @@ double log2mexp(double x)
 }
 
 /**
- * @brief FACTORIAL_TABLESIZE maximum value for input parameter to use table method
+ * @fn FACTORIAL_TABLESIZE maximum value for input parameter to use table method
  */
 constexpr int FACTORIAL_TABLESIZE = 255;
 
 /**
- * @brief FACTORIAL_TABLE (n * 10)! for n from 0 to 25
+ * @fn FACTORIAL_TABLE (n * 10)! for n from 0 to 25
  */
 constexpr long double FACTORIAL_TABLE[] =
 {
@@ -93,7 +93,7 @@ constexpr long double FACTORIAL_TABLE[] =
 };
 
 /**
- * @brief factorialForSmallValue
+ * @fn factorialForSmallValue
  * Get n! using product method with table
  * @param n non-negative integer number
  * @return n!
@@ -134,22 +134,6 @@ long double doubleFactorial(int n)
         return factorial(n + 1) / (n * n_fact);
     }
     return (1 << n) * n_fact;
-}
-
-long double binomialCoef(int n, int k)
-{
-    if (k > n)
-        return 0;
-    if (n > 20) /// to avoid overflow
-        return 1.0 / ((n + 1) * beta(n - k + 1, k + 1));
-    long double n_fact = factorial(n);
-    long double k_fact = factorial(k);
-    long double n_k_fact;
-    if (k == n - k)
-        n_k_fact = k_fact;
-    else
-        n_k_fact = factorial(n - k);
-    return n_fact / (k_fact * n_k_fact);
 }
 
 double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
@@ -262,16 +246,6 @@ double erfcinv(double p)
     return (p > 5e-16) ? erfinvAux2(beta) : erfinvAux1(beta);
 }
 
-double linearInterpolation(double a, double b, double fa, double fb, double x)
-{
-    if (b == a)
-        return fa;
-    double fx = x - a;
-    fx /= (b - a);
-    fx *= (fb - fa);
-    return fx + fa;
-}
-
 double harmonicNumber(double exponent, int number)
 {
     if (number < 1)
@@ -381,7 +355,7 @@ double zetaRiemann(double s)
 }
 
 /**
- * @brief WLambert
+ * @fn WLambert
  * @param x
  * @param w0
  * @param epsilon
@@ -433,7 +407,7 @@ double Wm1Lambert(double x, double epsilon)
 }
 
 /**
- * @brief MarcumPSeries
+ * @fn MarcumPSeries
  * @param mu
  * @param x
  * @param y
@@ -485,7 +459,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
 }
 
 /**
- * @brief MarcumPAsymptoticForLargeXY
+ * @fn MarcumPAsymptoticForLargeXY
  * @param mu
  * @param x
  * @param y
@@ -531,7 +505,7 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
 }
 
 /**
- * @brief MarcumPForMuLessThanOne
+ * @fn MarcumPForMuLessThanOne
  * @param mu
  * @param x
  * @param y

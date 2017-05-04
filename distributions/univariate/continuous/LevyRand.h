@@ -4,16 +4,16 @@
 #include "StableRand.h"
 
 /**
- * @brief The LevyRand class
+ * @brief The LevyRand class <BR>
  * Levy distribution
  *
  * f(x | μ, σ) = ((σ exp(σ / (μ - x)) / (2 π (x - μ)^3))^(1/2)
  *
  * Notation: X ~ Levy(μ, σ)
  *
- * Related distributions:
- * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ)
- * X ~ S(0.5, 1, σ, μ)
+ * Related distributions: <BR>
+ * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ) <BR>
+ * X ~ S(0.5, 1, σ, μ) <BR>
  * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution
@@ -39,7 +39,11 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    /// Maximum likelihood estimators
+    /**
+     * @fn FitScaleMLE
+     * Fit scale using maximum-likelihoood estimator
+     * @param sample
+     */
     void FitScaleMLE(const std::vector<double> &sample);
 };
 

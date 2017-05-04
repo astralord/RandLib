@@ -7,13 +7,13 @@
 #include "../discrete/PoissonRand.h"
 
 /**
- * @brief The NoncentralChiSquaredRand class
+ * @brief The NoncentralChiSquaredRand class <BR>
  * Noncentral Chi-Squared distribution
  *
  * Notation: X ~ χ'^2(k, λ)
  *
- * Related distributions:
- * If X ~ χ'^2(k, 0), then X ~ χ^2(k)
+ * Related distributions: <BR>
+ * If X ~ χ'^2(k, 0), then X ~ χ^2(k) <BR>
  * X ~ χ^2(k + 2J), where J ~ Po(λ)
  */
 class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution

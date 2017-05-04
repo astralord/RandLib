@@ -11,7 +11,8 @@ enum SUPPORT_TYPE {
 };
 
 /**
- * @brief The UnivariateProbabilityDistribution class
+ * @brief The UnivariateProbabilityDistribution class <BR>
+ * Abstract class for all univariate probability distributions
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<T>
@@ -21,57 +22,57 @@ public:
     virtual ~UnivariateProbabilityDistribution() {}
 
     /**
-     * @brief SupportType
+     * @fn SupportType
      * @return type of support
      */
     virtual SUPPORT_TYPE SupportType() const = 0;
 
     /**
-     * @brief isLeftBounded
+     * @fn isLeftBounded
      * @return true if distribution is bounded from the left
      */
     bool isLeftBounded() const;
 
     /**
-     * @brief isRightBounded
+     * @fn isRightBounded
      * @return true if distribution is bounded from the right
      */
     bool isRightBounded() const;
 
     /**
-     * @brief MinValue
+     * @fn MinValue
      * @return minimum possible value that can be achieved by random variable
      */
     virtual T MinValue() const override = 0;
 
     /**
-     * @brief MaxValue
+     * @fn MaxValue
      * @return maximum possible value that can be achieved by random variable
      */
     virtual T MaxValue() const override = 0;
 
     /**
-     * @brief Mean
+     * @fn Mean
      * @return Mathematical expectation
      */
     virtual double Mean() const = 0;
 
     /**
-     * @brief Variance
+     * @fn Variance
      * @return Variance of random variable
      */
     virtual double Variance() const = 0;
 
 private:
     /**
-     * @brief quantileImpl
+     * @fn quantileImpl
      * @param p
      * @return such x that F(x) = p
      */
     virtual T quantileImpl(double p) const = 0;
 
     /**
-     * @brief quantileImpl1m
+     * @fn quantileImpl1m
      * @param p
      * @return such x that F(x) = 1 - p
      */
@@ -79,14 +80,14 @@ private:
 
 protected:
     /**
-     * @brief CFimpl
+     * @fn CFimpl
      * @param t
      * @return Characteristic function (inverse Fourier transform of pdf)
      */
     virtual std::complex<double> CFImpl(double t) const;
 
     /**
-     * @brief ExpectedValue
+     * @fn ExpectedValue
      * @param funPtr pointer on function g(x) with finite support which expected value should be returned
      * @param minPoint min{x | g(x) != 0}
      * @param maxPoint max{x | g(x) != 0}
@@ -95,120 +96,120 @@ protected:
     virtual double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
 public:
     /**
-     * @brief Quantile
+     * @fn Quantile
      * @param p
      * @return quantileImpl(p) if p is in (0, 1)
      */
     double Quantile(double p) const;
 
     /**
-     * @brief Quantile1m
+     * @fn Quantile1m
      * @param p
      * @return quantileImpl1m(p) if p is in (0, 1)
      */
     double Quantile1m(double p) const;
 
     /**
-     * @brief QuantileFunction
+     * @fn QuantileFunction
      * @param p
      * @return fills vector y with Quantile(p)
      */
     void QuantileFunction(const std::vector<double> &p, std::vector<double> &y);
 
     /**
-     * @brief CF
+     * @fn CF
      * @param t
      * @return CFImpl for t != 0 and 1 otherwise
      */
     std::complex<double> CF(double t) const;
 
     /**
-     * @brief CharacteristicFunction
+     * @fn CharacteristicFunction
      * @param x input vector
      * @param y output vector: y = CF(x)
      */
     void CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double>> &y) const;
 
     /**
-     * @brief Hazard
+     * @fn Hazard
      * return hazard function: pdf (or pmf) / (1 - cdf)
      * @param x input parameter
      */
     virtual double Hazard(double x) const = 0;
 
     /**
-     * @brief HazardFunction
+     * @fn HazardFunction
      * @param x input vector
      * @param y output vector: y = Hazard(x)
      */
     void HazardFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
     /**
-     * @brief Median
+     * @fn Median
      * @return such x that F(x) = 0.5
      */
     virtual T Median() const;
 
     /**
-     * @brief Mode
+     * @fn Mode
      * @return the most probable value
      */
     virtual T Mode() const = 0;
 
     /**
-     * @brief Skewness
+     * @fn Skewness
      * @return E[((X - μ) / σ) ^ 3]
      * where mu is central moment and sigma is standard deviation
      */
     virtual double Skewness() const;
 
     /**
-     * @brief Kurtosis
+     * @fn Kurtosis
      * @return unbiased kurtosis = μ_4 / σ ^ 4
      */
     virtual double Kurtosis() const;
 
     /**
-     * @brief ExcessKurtosis
+     * @fn ExcessKurtosis
      * @return E[((X - μ) / σ) ^ 4]  - 3
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
     virtual double ExcessKurtosis() const;
 
     /**
-     * @brief SecondMoment
+     * @fn SecondMoment
      * @return E[X^2]
      */
     virtual double SecondMoment() const;
 
     /**
-     * @brief ThirdMoment
+     * @fn ThirdMoment
      * @return E[X^3]
      */
     virtual double ThirdMoment() const;
 
     /**
-     * @brief FourthMoment
+     * @fn FourthMoment
      * @return E[X^4]
      */
     virtual double FourthMoment() const;
 
     /**
-     * @brief Likelihood
+     * @fn Likelihood
      * @param sample
      * @return product of f(x_i)
      */
     virtual double Likelihood(const std::vector<T> &sample) const = 0;
 
     /**
-     * @brief LogLikelihood
+     * @fn LogLikelihood
      * @param sample
      * @return sum of log(f(x_i))
      */
     virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
 
     /**
-     * @brief allElementsAreNotBiggerThen
+     * @fn allElementsAreNotBiggerThen
      * @param value
      * @param sample
      * @return true if all elements in sample are not bigger than value
@@ -216,7 +217,7 @@ public:
     static bool allElementsAreNotBiggerThen(T value, const std::vector<T> &sample);
 
     /**
-     * @brief allElementsAreNotLessThen
+     * @fn allElementsAreNotLessThen
      * @param value
      * @param sample
      * @return true if all elements in sample are not less than value
@@ -224,35 +225,35 @@ public:
     static bool allElementsAreNotLessThen(T value, const std::vector<T> &sample);
 
     /**
-     * @brief allElementsAreNonNegative
+     * @fn allElementsAreNonNegative
      * @param sample
      * @return true if all elements in sample are non-negative
      */
     static bool allElementsAreNonNegative(const std::vector<T> &sample);
 
     /**
-     * @brief allElementsArePositive
+     * @fn allElementsArePositive
      * @param sample
      * @return true if all elements in sample are positive
      */
     static bool allElementsArePositive(const std::vector<T> &sample);
 
     /**
-     * @brief sum
+     * @fn sum
      * @param sample
      * @return sum of all elements in a sample
      */
     static double sampleSum(const std::vector<T> &sample);
 
     /**
-     * @brief sampleMean
+     * @fn sampleMean
      * @param sample
      * @return arithmetic average
      */
     static double sampleMean(const std::vector<T> &sample);
 
     /**
-     * @brief sampleVariance
+     * @fn sampleVariance
      * @param sample
      * @param mean known (or sample) average
      * @return second central moment
@@ -261,7 +262,7 @@ public:
     static double sampleVariance(const std::vector<T> &sample);
 
     /**
-     * @brief sampleSkewness
+     * @fn sampleSkewness
      * @param sample
      * @param mean
      * @param stdev
@@ -272,14 +273,14 @@ public:
     static double sampleSkewness(const std::vector<T> &sample);
 
     /**
-     * @brief rawMoment
+     * @fn rawMoment
      * @param sample
      * @return k-th raw moment
      */
     static double rawMoment(const std::vector<T> &sample, int k);
 
     /**
-     * @brief centralMoment
+     * @fn centralMoment
      * @param sample
      * @param mean known (or sample) average
      * @return k-th central moment
@@ -288,7 +289,7 @@ public:
     static double centralMoment(const std::vector<T> &sample, int k);
 
     /**
-     * @brief normalisedMoment
+     * @fn normalisedMoment
      * @param sample
      * @param k
      * @param mean

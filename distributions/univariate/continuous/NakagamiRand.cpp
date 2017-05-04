@@ -12,7 +12,7 @@ void NakagamiDistribution::SetParameters(double shape, double spread)
     m = (shape > 0.0) ? shape : 1.0;
     w = (spread > 0.0) ? spread : 1.0;
     Y.SetParameters(m, m / w);
-    lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaFunction();
+    lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaShape();
 }
 
 double NakagamiDistribution::f(const double & x) const

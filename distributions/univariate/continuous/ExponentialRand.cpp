@@ -67,7 +67,8 @@ double ExponentialRand::StandardVariate()
     int iter = 0;
     do {
         int stairId = RandGenerator::variate() & 255;
-        double x = UniformRand::StandardVariate() * stairWidth[stairId]; /// Get horizontal coordinate
+        /// Get horizontal coordinate
+        double x = UniformRand::StandardVariate() * stairWidth[stairId];
         if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
             return x;
         if (stairId == 0) /// if we catch the tail
@@ -76,7 +77,8 @@ double ExponentialRand::StandardVariate()
             return x;
         /// rejection - go back
     } while (++iter <= MAX_ITER_REJECTION);
-    return NAN; /// fail due to some error
+    /// fail due to some error
+    return NAN;
 }
 
 double ExponentialRand::Median() const
@@ -101,7 +103,7 @@ std::complex<double> ExponentialRand::CFImpl(double t) const
 
 double ExponentialRand::Entropy() const
 {
-    return 1.0 - std::log(beta);
+    return 1.0 - logBeta;
 }
 
 double ExponentialRand::Moment(int n) const
@@ -110,5 +112,5 @@ double ExponentialRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return std::exp(RandMath::lfact(n) - n * std::log(beta));
+    return std::exp(RandMath::lfact(n) - n * logBeta);
 }

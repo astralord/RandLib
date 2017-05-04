@@ -5,7 +5,7 @@
 #include "StableRand.h"
 
 /**
- * @brief The GeometricStableRand class
+ * @brief The GeometricStableRand class <BR>
  * Geometric-Stable distribution
  *
  * Notation: X ~ GS(α, β, γ, μ)

@@ -6,7 +6,7 @@
 #include "../continuous/BetaRand.h"
 
 /**
- * @brief The BinomialDistribution class
+ * @brief The BinomialDistribution class <BR>
  * Abstract class for Binomial distribution
  *
  * Notation: X ~ Bin(n, p)
@@ -22,25 +22,22 @@ protected:
 
 private:
     int n;
-    double np;
-    /// log(n!)
-    double lgammaNp1;
+    double np; /// n * p
+    double lgammaNp1; ///< log(n!)
 
     double delta1, delta2;
     double sigma1, sigma2, c;
     double a1, a2, a3, a4;
     double coefa3, coefa4;
 
-    /// min(p, q) and [n * min(p, q)] / n respectively
-    double minpq, pFloor;
-    /// log(pFloor) and log(1 - pFloor)
-    double logPFloor, logQFloor;
-    /// min(p, q) - pFloor
-    double pRes;
-    /// [n * p] and [n * q] if p < 0.5, otherwise - vice versa
-    double npFloor, nqFloor;
-    /// log(P(npFloor))
-    double logPnpInv;
+    double minpq; ///< min(p, q)
+    double pFloor; ///< [n * min(p, q)] / n
+    double logPFloor; ///< log(pFloor)
+    double logQFloor; ///< log(1 - pFloor)
+    double pRes; ///< min(p, q) - pFloor
+    double npFloor; ///< [n * min(p, q)]
+    double nqFloor; ///< [n * max(p, q)]
+    double logPnpInv; ///< log(P([npFloor))
 
     GeometricRand G;
 
@@ -62,7 +59,7 @@ public:
 
 private:
     /**
-     * @brief logProbFloor
+     * @fn logProbFloor
      * @param k
      * @return logarithm of probability to get k if p = pFloor
      */
@@ -106,21 +103,21 @@ private:
 
 public:
     /**
-     * @brief FitProbabilityMLE
+     * @fn FitProbabilityMLE
      * Fit probability p with maximum-likelihood estimation
      * @param sample
      */
     void FitProbabilityMLE(const std::vector<int> &sample);
 
     /**
-     * @brief FitProbabilityMM
+     * @fn FitProbabilityMM
      * Fit probability p, using method of moments
      * @param sample
      */
     void FitProbabilityMM(const std::vector<int> &sample);
 
     /**
-     * @brief FitProbabilityBayes
+     * @fn FitProbabilityBayes
      * Fit probability p with prior assumption p ~ Beta(α, β)
      * @param sample
      * @param priorDistribution
@@ -129,7 +126,7 @@ public:
     BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution & priorDistribution);
 
     /**
-     * @brief FitProbabilityMinimax
+     * @fn FitProbabilityMinimax
      * Fit probability p with minimax estimator
      * @param sample
      * @return posterior distribution
@@ -139,7 +136,7 @@ public:
 
 
 /**
- * @brief The BinomialRand class
+ * @brief The BinomialRand class <BR>
  * Binomial distribution
  */
 class RANDLIBSHARED_EXPORT BinomialRand : public BinomialDistribution

@@ -54,8 +54,7 @@ double LogisticRand::S(const double & x) const
 
 double LogisticRand::Variate() const
 {
-    /// there can be used rejection method from Laplace or Cauchy (Luc Devroye, p. 471)
-    /// or ziggurat
+    /// there can be used rejection method from Laplace or Cauchy (Luc Devroye, p. 471) or ziggurat
     return mu + s * std::log(1.0 / UniformRand::StandardVariate() - 1);
 }
 

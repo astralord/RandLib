@@ -4,7 +4,7 @@
 #include "NakagamiRand.h"
 
 /**
- * @brief The StudentTRand class
+ * @brief The StudentTRand class <BR>
  * Student's t-distribution
  *
  * Notation: X ~ t(ν, μ, σ)

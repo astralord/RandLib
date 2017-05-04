@@ -15,7 +15,7 @@ void InverseGammaRand::SetParameters(double shape, double rate)
     X.SetParameters(shape, rate);
     alpha = X.GetShape();
     beta = X.GetRate();
-    pdfCoef = -X.GetLogGammaFunction() + alpha * X.GetLogRate();
+    pdfCoef = -X.GetLogGammaShape() + alpha * X.GetLogRate();
 }
 
 double InverseGammaRand::f(const double & x) const

@@ -4,14 +4,14 @@
 #include "NegativeBinomialRand.h"
 
 /**
- * @brief The GeometricRand class
+ * @brief The GeometricRand class <BR>
  * Geometric distribution
  *
  * P(X = k) = p (1 - p)^k
  *
  * Notation: X ~ Geometric(p)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ NB(1, p)
  */
 class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand

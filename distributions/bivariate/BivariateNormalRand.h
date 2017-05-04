@@ -5,7 +5,7 @@
 #include "../univariate/continuous/NormalRand.h"
 
 /**
- * @brief The BivariateNormalRand class
+ * @brief The BivariateNormalRand class <BR>
  * Bivariate Gaussian (normal) distribution
  *
  * Notation: X ~ N(μ_1, μ_2, σ_1, ρ, σ_2)

@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The RaisedCosineDistribution class
+ * @brief The RaisedCosineDistribution class <BR>
  * Abstract class for Raised-cosine distribution
  *
  * Notation: X ~ Raised-cosine(μ, s)
@@ -49,7 +49,7 @@ private:
 };
 
 /**
- * @brief The RaisedCosineRand class
+ * @brief The RaisedCosineRand class <BR>
  * Raised-cosine distribution
  */
 class RANDLIBSHARED_EXPORT RaisedCosineRand : public RaisedCosineDistribution
@@ -63,7 +63,7 @@ public:
 };
 
 /**
- * @brief The RaabGreenRand class
+ * @brief The RaabGreenRand class <BR>
  * Raab-Green distribution
  *
  * Notation: X ~ Raab-Green()

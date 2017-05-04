@@ -5,15 +5,15 @@
 #include "../univariate/continuous/ContinuousDistribution.h"
 
 /**
- * @brief The BivariateProbabilityDistribution class
+ * @brief The BivariateProbabilityDistribution class <BR>
+ * Abstract class for all bivariate probability distributions
  */
 template < class T1, class T2 >
 class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public ProbabilityDistribution< DoublePair >
 {
 protected:
-    /// Marginal distributions
-    T1 X;
-    T2 Y;
+    T1 X; ///< 1st marginal distributions
+    T2 Y; ///< 2nd marginal distributions
 public:
     BivariateProbabilityDistribution() {}
     virtual ~BivariateProbabilityDistribution() {}

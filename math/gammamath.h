@@ -9,35 +9,35 @@ namespace RandMath
 {
 
 /**
- * @brief lfact
+ * @fn lfact
  * @param n
  * @return log(n!)
  */
 double lfact(size_t n);
 
 /**
- * @brief digamma
+ * @fn digamma
  * @param x
  * @return digamma(x) = ln(Γ(x))' = d(Γ(x))/Γ(x)
  */
 double digamma(double x);
 
 /**
- * @brief logmdigamma
+ * @fn logmdigamma
  * @param x
  * @return digamma(x) - log(x)
  */
 double digammamLog(double x);
 
 /**
- * @brief trigamma
+ * @fn trigamma
  * @param x
  * @return trigamma(x) = digamma'(x)
  */
 double trigamma(double x);
 
 /**
- * @brief lpgamma
+ * @fn lpgamma
  * Calculate logarithm of lower incomplete gamma function,
  * accelerated by using precalculated value of log(a) and log(Γ(a))
  * @param a
@@ -49,7 +49,7 @@ double trigamma(double x);
 double lpgamma(double a, double x, double logA, double lgammaA);
 
 /**
- * @brief lpgamma
+ * @fn lpgamma
  * Calculate logarithm of lower incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a
@@ -60,7 +60,7 @@ double lpgamma(double a, double x, double logA, double lgammaA);
 double lpgamma(double a, double x, double logX);
 
 /**
- * @brief lpgamma
+ * @fn lpgamma
  * Calculate logarithm of lower incomplete gamma function
  * @param a
  * @param x
@@ -69,7 +69,7 @@ double lpgamma(double a, double x, double logX);
 double lpgamma(double a, double x);
 
 /**
- * @brief pgamma
+ * @fn pgamma
  * Calculate lower regularised incomplete gamma function,
  * accelerated by using precalculated value of log(a) and log(Γ(a))
  * @param a
@@ -81,7 +81,7 @@ double lpgamma(double a, double x);
 double pgamma(double a, double x, double logA, double lgammaA);
 
 /**
- * @brief pgamma
+ * @fn pgamma
  * Calculate lower regularised incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a
@@ -92,7 +92,7 @@ double pgamma(double a, double x, double logA, double lgammaA);
 double pgamma(double a, double x, double logX);
 
  /**
- * @brief pgamma
+ * @fn pgamma
  * Calculate lower regularised incomplete gamma function
  * @param a
  * @param x
@@ -101,7 +101,7 @@ double pgamma(double a, double x, double logX);
 double pgamma(double a, double x);
 
 /**
- * @brief lqgamma
+ * @fn lqgamma
  * Calculate logarithm of upper incomplete gamma function,
  * accelerated by using precalculated values of log(a) and log(Γ(a))
  * @param a
@@ -113,7 +113,7 @@ double pgamma(double a, double x);
 double lqgamma(double a, double x, double logA, double lgammaA);
 
 /**
- * @brief lqgamma
+ * @fn lqgamma
  * Calculate logarithm of upper incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a
@@ -124,7 +124,7 @@ double lqgamma(double a, double x, double logA, double lgammaA);
 double lqgamma(double a, double x, double logX);
 
  /**
- * @brief lqgamma
+ * @fn lqgamma
  * Calculate logarithm of upper incomplete gamma function
  * @param a
  * @param x
@@ -133,7 +133,7 @@ double lqgamma(double a, double x, double logX);
 double lqgamma(double a, double x);
 
 /**
- * @brief lqgamma
+ * @fn lqgamma
  * Calculate upper incomplete gamma function,
  * accelerated by using precalculated values of log(a) and log(Γ(a))
  * @param a
@@ -145,7 +145,7 @@ double lqgamma(double a, double x);
 double qgamma(double a, double x, double logA, double lgammaA);
 
 /**
- * @brief qgamma
+ * @fn qgamma
  * Calculate upper incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a
@@ -156,7 +156,7 @@ double qgamma(double a, double x, double logA, double lgammaA);
 double qgamma(double a, double x, double logX);
 
 /**
- * @brief qgamma
+ * @fn qgamma
  * Calculate upper incomplete gamma function
  * @param a
  * @param x

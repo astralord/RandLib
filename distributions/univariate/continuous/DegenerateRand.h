@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The DegenerateRand class
+ * @brief The DegenerateRand class <BR>
  * Degenerate distribution
  *
  * f(x|a) = δ(a)
@@ -13,7 +13,7 @@
  */
 class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 {
-    double a;
+    double a; ///< value
 
 public:
     explicit DegenerateRand(double value = 0);
@@ -48,17 +48,10 @@ public:
     double Entropy() const;
 
     /**
-     * @brief FitValueMLE
+     * @fn FitValueMLE
      * @param sample
-     * @return
      */
     void FitValueMLE(const std::vector<double> &sample);
-    /**
-     * @brief FitValueMM
-     * @param sample
-     * @return
-     */
-    void FitValueMM(const std::vector<double> &sample);
 };
 
 #endif // DEGENERATERAND_H

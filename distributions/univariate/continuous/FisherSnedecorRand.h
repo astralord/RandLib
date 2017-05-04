@@ -4,12 +4,12 @@
 #include "BetaPrimeRand.h"
 
 /**
- * @brief The FisherSnedecorRand class
+ * @brief The FisherSnedecorRand class <BR>
  * F-distribution
  *
  * Notation: X ~ F(d1, d2)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ Beta'(d1/2, d2/2)
  */
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution

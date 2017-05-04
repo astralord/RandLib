@@ -6,7 +6,7 @@
 #include "../univariate/continuous/InverseGammaRand.h"
 
 /**
- * @brief The NormalInverseGammaRand class
+ * @brief The NormalInverseGammaRand class <BR>
  * Normal-inverse-gamma distribution
  *
  * Notation: X ~ NIG(μ, λ, α, β)

@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The KolmogorovSmirnovRand class
+ * @brief The KolmogorovSmirnovRand class <BR>
  * Kolmogorov-Smirnov distribution
  *
  * Notation: X ~ KS

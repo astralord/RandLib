@@ -4,7 +4,7 @@
 #include "../UnivariateProbabilityDistribution.h"
 
 /**
- * @brief The SingularDistribution class
+ * @brief The SingularDistribution class <BR>
  */
 class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateProbabilityDistribution<double>
 {

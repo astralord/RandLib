@@ -4,14 +4,14 @@
 #include "UniformRand.h"
 
 /**
- * @brief The IrwinHallRand class
+ * @brief The IrwinHallRand class <BR>
  * Irwin-Hall distribution
  *
  * f(x | n) = 0.5 / (n - 1)! * sum_{k=0}^n (-1)^k * C(n,k) * (x - k) ^ (n - 1) * sign(x - k)
  *
  * Notation: X ~ IH(n)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ Y1 + Y2 + ... + Yn, where Yi ~ U(0,1)
  */
 class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution

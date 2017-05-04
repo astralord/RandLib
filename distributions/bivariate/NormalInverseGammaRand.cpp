@@ -19,16 +19,15 @@ void NormalInverseGammaRand::SetParameters(double location, double precision, do
     mu = location;
     lambda = (precision > 0.0) ? precision : 1.0;
 
-    //StudentTRand X(2 * Y.GetShape(), mu, std::sqrt(alpha * lambda / beta));
-    X.SetDegree(2 * shape);
-    X.SetLocation(mu);
-    X.SetScale(std::sqrt(alpha * lambda / beta));
     Y.SetParameters(shape, rate);
     alpha = Y.GetShape();
     beta = Y.GetRate();
+    X.SetDegree(2 * alpha);
+    X.SetLocation(mu);
+    X.SetScale(std::sqrt(alpha * lambda / beta));
 
     pdfCoef = 0.5 * std::log(0.5 * lambda / M_PI);
-    pdfCoef += alpha * std::log(beta) - Y.GetLogGammaFunction();
+    pdfCoef += alpha * Y.GetLogRate() - Y.GetLogGammaShape();
 }
 
 double NormalInverseGammaRand::f(const DoublePair &point) const
@@ -64,7 +63,7 @@ double NormalInverseGammaRand::F(const DoublePair &point) const
     y = std::erfc(y);
     double z = beta / sigmaSq;
     double temp = alpha * std::log(z) - z;
-    y *= std::exp(temp - Y.GetLogGammaFunction());
+    y *= std::exp(temp - Y.GetLogGammaShape());
     y *= 0.5 / sigmaSq;
     return y;
 }

@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The TriangularRand class
+ * @brief The TriangularRand class <BR>
  * Triangular distribution
  *
  * Notation: X ~ Tri(a, b, c)

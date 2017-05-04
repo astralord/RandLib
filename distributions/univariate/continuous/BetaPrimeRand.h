@@ -4,17 +4,17 @@
 #include "BetaRand.h"
 
 /**
- * @brief The BetaPrimeRand class
+ * @brief The BetaPrimeRand class <BR>
  * Beta-prime distribution
  *
- * f(x | α, β) = x^{α-1} (1 + x)^{-α - β} / B(α, β),
+ * f(x | α, β) = x^{α-1} (1 + x)^{-α - β} / B(α, β), <BR>
  * where B(α, β) denotes Beta function
  *
  * Notation: X ~ Beta'(α, β)
  *
- * Related distributions:
- * X / (X + 1) ~ Beta(α, β)
- * X = Y / Z, where Y ~ Gamma(α) and Z ~ Gamma(β)
+ * Related distributions: <BR>
+ * X / (X + 1) ~ Beta(α, β) <BR>
+ * X = Y / Z, where Y ~ Gamma(α) and Z ~ Gamma(β) <BR>
  * X ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
@@ -54,13 +54,13 @@ private:
     std::complex<double> CFImpl(double t) const override;
 public:
     /**
-     * @brief GetBetaFunction
+     * @fn GetBetaFunction
      * @return B(α, β)
      */
     inline double GetBetaFunction() const { return B.GetBetaFunction(); }
 
     /**
-     * @brief GetLogBetaFunction
+     * @fn GetLogBetaFunction
      * @return log(B(α, β))
      */
     inline double GetLogBetaFunction() const { return B.GetLogBetaFunction(); }

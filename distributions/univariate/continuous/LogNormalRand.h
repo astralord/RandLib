@@ -5,12 +5,12 @@
 #include "NormalRand.h"
 
 /**
- * @brief The LogNormalRand class
+ * @brief The LogNormalRand class <BR>
  * Log-Normal distribution
  *
  * Notation X ~ Log-Normal(μ, σ)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * log(X) ~ Normal(μ, σ)
  */
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution

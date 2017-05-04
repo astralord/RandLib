@@ -7,14 +7,15 @@
 #include "randlib_global.h"
 
 /**
- * @brief The ProbabilityDistribution class
+ * @brief The ProbabilityDistribution class <BR>
+ * Abstract class for all probability distributions
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
 protected:
     /**
-     * @brief MAX_ITER_REJECTION
+     * @fn MAX_ITER_REJECTION
      * upper boundary for maximum amount of iterations in rejection methods
      * one hundred should be enough to be sure there is a bug
      * (or rejection method is too slow to be used)
@@ -28,58 +29,58 @@ public:
     virtual ~ProbabilityDistribution() {}
 
     /**
-     * @brief Name
+     * @fn Name
      * @return title of distribution, for instance "Normal(0, 1)"
      */
     virtual std::string Name() const = 0;
 
     /**
-     * @brief MinValue
+     * @fn MinValue
      * @return minimum possible value that can be achieved by random variable
      */
     virtual T MinValue() const = 0;
 
     /**
-     * @brief MaxValue
+     * @fn MaxValue
      * @return maximum possible value that can be achieved by random variable
      */
     virtual T MaxValue() const = 0;
 
     /**
-     * @brief Variate()
+     * @fn Variate()
      * @return random variable
      */
     virtual T Variate() const = 0;
 
     /**
-     * @brief Sample
+     * @fn Sample
      * @param outputData
      */
     virtual void Sample(std::vector<T> &outputData) const;
 
     /**
-     * @brief F
+     * @fn F
      * @param x
      * @return P(X ≤ x)
      */
     virtual double F(const T & x) const = 0;
 
     /**
-     * @brief CumulativeDistributionFunction
+     * @fn CumulativeDistributionFunction
      * @param x input vector
      * @param y output vector: y = P(X ≤ x)
      */
     void CumulativeDistributionFunction(const std::vector<T> &x, std::vector<double> &y) const;
 
     /**
-     * @brief S
+     * @fn S
      * @param x
      * @return P(X > x)
      */
     virtual double S(const T & x) const;
 
     /**
-     * @brief SurvivalFunction
+     * @fn SurvivalFunction
      * @param x input vector
      * @param y output vector: y = P(X > x)
      */

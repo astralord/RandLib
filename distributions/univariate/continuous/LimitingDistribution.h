@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The LimitingDistribution class
+ * @brief The LimitingDistribution class <BR>
  * Abstract distribution, which has common properties of
  * Stable and Geometric-Stable distributions, due to their similarity
  */

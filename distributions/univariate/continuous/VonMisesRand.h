@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The VonMisesRand class
+ * @brief The VonMisesRand class <BR>
  * Von-Mises distribution
  *
  * Notation: X ~ Von-Mises(μ, k)

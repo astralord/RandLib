@@ -5,7 +5,7 @@
 #include "UniformRand.h"
 
 /**
- * @brief The LogisticRand class
+ * @brief The LogisticRand class <BR>
  * Logistic distribution
  *
  * Notation: X ~ Logistic(μ, s)

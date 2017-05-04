@@ -4,16 +4,16 @@
 #include "StableRand.h"
 
 /**
- * @brief The CauchyRand class
+ * @brief The CauchyRand class <BR>
  * Cauchy distribution
  *
  * f(x | μ, σ) = σ / [π (σ^2 + (x - μ)^2)]
  *
  * Notation: X ~ Cauchy(μ, σ)
  *
- * Related distributions:
- * If X ~ Cauchy(0, 1), then μ + σ * X ~ Cauchy(μ, σ)
- * X ~ S(1, 0, σ, μ)
+ * Related distributions: <BR>
+ * If X ~ Cauchy(0, 1), then μ + σ * X ~ Cauchy(μ, σ) <BR>
+ * X ~ S(1, 0, σ, μ) <BR>
  * If X, Y ~ Normal(0, 1), then X / Y ~ Cauchy(0, 1)
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public StableDistribution

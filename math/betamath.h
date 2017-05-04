@@ -8,7 +8,7 @@
 namespace RandMath
 {
 /**
- * @brief logBeta
+ * @fn logBeta
  * Calculate logarithm of beta function
  * @param a
  * @param b
@@ -17,7 +17,7 @@ namespace RandMath
 double logBeta(double a, double b);
 
 /**
- * @brief beta
+ * @fn beta
  * Calculate beta function
  * @param a
  * @param b
@@ -26,7 +26,7 @@ double logBeta(double a, double b);
 double beta(double a, double b);
 
 /**
- * @brief ibeta
+ * @fn ibeta
  * Fast calculation of regularized beta function, using precalculated values
  * @param x
  * @param a
@@ -39,7 +39,7 @@ double beta(double a, double b);
 double ibeta(double x, double a, double b, double logBetaFun, double logX, double log1mX);
 
 /**
- * @brief ibeta
+ * @fn ibeta
  * Calculate regularized beta function
  * @param x
  * @param a

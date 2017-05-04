@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The SechRand class
+ * @brief The SechRand class <BR>
  * Hyperbolic secant distribution
  *
  * Notation: X ~ Sech

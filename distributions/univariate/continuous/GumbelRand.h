@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The GumbelRand class
+ * @brief The GumbelRand class <BR>
  * Gumbel distribution
  *
  * Notation: X ~ Gumbel(μ, β)

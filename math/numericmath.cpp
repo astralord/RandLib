@@ -4,7 +4,7 @@ namespace RandMath
 {
 
 /**
- * @brief adaptiveSimpsonsAux
+ * @fn adaptiveSimpsonsAux
  * auxiliary function for calculation of integral
  * @param funPtr
  * @param a lower boundary
@@ -214,7 +214,7 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
 }
 
 /**
- * @brief parabolicMinimum
+ * @fn parabolicMinimum
  * @param a < b < c
  * @param fa f(a)
  * @param fb f(b)
@@ -232,7 +232,7 @@ double parabolicMinimum(double a, double b, double c, double fa, double fb, doub
 }
 
 /**
- * @brief findBounds
+ * @fn findBounds
  * Search of segment containing minimum of function
  * @param funPtr mapping x |-> f(x)
  * @param abc such points, that a < b < c, f(a) > f(b) and f(c) > f(b)

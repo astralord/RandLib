@@ -4,7 +4,7 @@
 #include "DiscreteDistribution.h"
 
 /**
- * @brief The CategoricalRand class
+ * @brief The CategoricalRand class <BR>
  *
  * P(X = k) = p_k for k = {0, ..., K}
  *
@@ -19,8 +19,7 @@ class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution
 {
     std::vector<double> prob;
     int K;
-    /// P(X = 0)
-    double q;
+    double q; ///< P(X = 0)
 
 public:
     explicit CategoricalRand(std::vector<double>&& probabilities);

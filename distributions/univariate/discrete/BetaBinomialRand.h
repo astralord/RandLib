@@ -6,7 +6,7 @@
 #include <functional>
 
 /**
- * @brief The BetaBinomialRand class
+ * @brief The BetaBinomialRand class <BR>
  * Beta-Binomial distribution
  *
  * Notation: X ~ BB(n, α, β)

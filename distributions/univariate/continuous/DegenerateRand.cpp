@@ -94,8 +94,3 @@ void DegenerateRand::FitValueMLE(const std::vector<double> &sample)
         throw std::invalid_argument(fitError(WRONG_SAMPLE, "All elements should be equal to each other"));
     SetValue(*sampleBegin);
 }
-
-void DegenerateRand::FitValueMM(const std::vector<double> &sample)
-{
-    FitValueMLE(sample);
-}

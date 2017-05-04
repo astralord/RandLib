@@ -4,15 +4,17 @@
 #include "ExponentialRand.h"
 
 /**
- * @brief The ParetoRand class
+ * @brief The ParetoRand class <BR>
  * Pareto distribution
  *
  * Notation: X ~ Pareto(α, σ)
  */
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
-    double sigma, alpha;
-    double logAlpha, logSigma;
+    double alpha; ///< shape α
+    double sigma; ///< scale σ
+    double logAlpha; ///< log(α)
+    double logSigma; ///< log(σ)
 
 public:
     ParetoRand(double shape = 1, double scale = 1);
@@ -60,7 +62,7 @@ public:
     inline double Entropy() const;
 
     /**
-     * @brief FitShapeAndScaleMLE
+     * @fn FitShapeAndScaleMLE
      * @param sample
      */
     void FitShapeAndScaleMLE(const std::vector<double> &sample);

@@ -67,7 +67,7 @@ void BetaDistribution::SetShapes(double shape1, double shape2)
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
-    logBetaFun = -std::lgamma(alpha + beta) + GammaRV1.GetLogGammaFunction() + GammaRV2.GetLogGammaFunction();
+    logBetaFun = -std::lgamma(alpha + beta) + GammaRV1.GetLogGammaShape() + GammaRV2.GetLogGammaShape();
     betaFun = std::exp(logBetaFun);
     setCoefficientsForGenerator();
 }

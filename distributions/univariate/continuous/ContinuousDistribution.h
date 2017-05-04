@@ -4,7 +4,8 @@
 #include "../UnivariateProbabilityDistribution.h"
 
 /**
- * @brief The ContinuousDistribution class
+ * @brief The ContinuousDistribution class <BR>
+ * Abstract class for all continuous distributions
  */
 class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateProbabilityDistribution<double>
 {
@@ -13,21 +14,21 @@ public:
     virtual ~ContinuousDistribution() {}
 
     /**
-     * @brief f
+     * @fn f
      * @param x
      * @return probability density function
      */
     virtual double f(const double & x) const = 0;
 
     /**
-     * @brief logpdf
+     * @fn logf
      * @param x
      * @return logarithm of probability density function
      */
     virtual double logf(const double & x) const = 0;
 
     /**
-     * @brief ProbabilityDensityFunction
+     * @fn ProbabilityDensityFunction
      * fill vector y by f(x)
      * @param x
      * @param y
@@ -47,7 +48,7 @@ public:
     double LogLikelihood(const std::vector<double> &sample) const override;
 
     /**
-     * @brief KolmogorovSmirnovTest
+     * @fn KolmogorovSmirnovTest
      * @param orderStatistic sample sorted in ascending order
      * @param alpha level of test
      * @return true if sample is from this distribution according to asymptotic KS-test, false otherwise

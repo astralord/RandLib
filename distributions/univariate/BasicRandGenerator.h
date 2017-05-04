@@ -5,13 +5,14 @@
 #include <time.h>
 
 enum GeneratorType {
-    JKISS, // 2 ^ 1271
-    JLKISS64 // 2 ^ 250
+    JKISS, ///< period is 2 ^ 1271
+    JLKISS64 ///< period is 2 ^ 250
 };
 
 
 /**
  * @brief The BasicRandGenerator class
+ * Class for generators of random number, spreaded uniformly
  */
 template < char Generator >
 class RANDLIBSHARED_EXPORT BasicRandGenerator

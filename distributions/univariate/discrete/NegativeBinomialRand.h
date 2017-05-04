@@ -6,7 +6,7 @@
 #include "../continuous/BetaRand.h"
 
 /**
- * @brief The NegativeBinomialDistribution class
+ * @brief The NegativeBinomialDistribution class <BR>
  * Abstract class for Negative binomial distribution
  *
  * P(X = k) = C(k + r - 1, k) p^r (1-p)^k
@@ -21,7 +21,8 @@ class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistrib
 {
 protected:
     double p, q;
-    double logProb, log1mProb; /// log(p) and log(q)
+    double logProb; ///< log(p)
+    double log1mProb; ///< log(q)
 
 private:
     T r;
@@ -82,14 +83,14 @@ private:
     std::complex<double> CFImpl(double t) const override;
 public:
     /**
-     * @brief FitProbabilityMM
+     * @fn FitProbabilityMM
      * set probability, estimated via method of moments
      * @param sample
      */
     void FitProbabilityMM(const std::vector<int> & sample);
 
     /**
-     * @brief FitProbabilityBayes
+     * @fn FitProbabilityBayes
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
@@ -99,7 +100,7 @@ public:
 
 
 /**
- * @brief The NegativeBinomialRand class
+ * @brief The NegativeBinomialRand class <BR>
  * Negative binomial distribution
  */
 template < typename T >
@@ -114,20 +115,20 @@ public:
     /// Parameters estimation
     static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
     /**
-     * @brief FitNumberMM
+     * @fn FitNumberMM
      * set number, estimated via method of moments
      * @param sample
      */
     void FitNumberMM(const std::vector<int> &sample);
     /**
-     * @brief FitNumberAndProbabilityMM
+     * @fn FitNumberAndProbabilityMM
      * set number and probability, estimated via method of moments
      * @param sample
      */
     void FitNumberAndProbabilityMM(const std::vector<int> & sample);
 
     /**
-     * @brief FitNumberAndProbabilityMLE
+     * @fn FitNumberAndProbabilityMLE
      * set number and probability, estimated via maximum-likelihood method
      * @param sample
      */

@@ -271,7 +271,7 @@ double lfact(size_t n)
 }
 
 /**
- * @brief digammamLogForLargeX
+ * @fn digammamLogForLargeX
  * @param x
  * @return digamma(x) - log(x) for x > 7
  */

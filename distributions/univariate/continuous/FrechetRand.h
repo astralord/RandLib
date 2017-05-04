@@ -4,18 +4,18 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The FrechetRand class
+ * @brief The FrechetRand class <BR>
  * Frechet distribution
  *
  * Notation: X ~ Frechet(α, s, m)
  */
 class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 {
-    double alpha, s, m;
-    /// 1/α
-    double alphaInv;
-    /// log(α/s)
-    double pdfCoef;
+    double alpha; ///< shape α
+    double s; ///< scale
+    double m; ///< location
+    double alphaInv; ///< 1/α
+    double pdfCoef; ///< log(α/s)
 
 public:
     FrechetRand(double shape, double scale, double location);

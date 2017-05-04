@@ -7,7 +7,7 @@
 #include "../continuous/ParetoRand.h"
 
 /**
- * @brief The YuleRand class
+ * @brief The YuleRand class <BR>
  * Yule distribution
  *
  * Notation: X ~ Yule(ρ)

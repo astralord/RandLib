@@ -5,35 +5,37 @@
 #include "NormalRand.h"
 
 /**
- * @brief The BetaDistribution class
+ * @brief The BetaDistribution class <BR>
  * Abstract class for Beta distribution
  *
- * f(x | α, β) = x^{α-1} (1-x)^{β-1} / B(α, β),
+ * f(x | α, β) = x^{α-1} (1-x)^{β-1} / B(α, β), <BR>
  * where B(α, β) denotes Beta function
  *
  * Notation: X ~ Beta(α, β)
  *
- * Related distributions:
- * 1 − X ~ Beta(β, α)
- * X / (1 - X) ~ Beta'(α, β)
- * X = Y / (Y + Z), where Y ~ Gamma(α) and Z ~ Gamma(β)
+ * Related distributions: <BR>
+ * 1 − X ~ Beta(β, α) <BR>
+ * X / (1 - X) ~ Beta'(α, β) <BR>
+ * X = Y / (Y + Z), where Y ~ Gamma(α) and Z ~ Gamma(β) <BR>
  * βX / α(1 - X) ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution
 {
 protected:
-    /// parameters of distribution
-    double alpha, beta;
-    double a, b, bma, bmaInv, logBma;
+    double alpha; ///< first shape α
+    double beta; ///< second shape β
+    double a; ///< min bound
+    double b; ///< max bound
+    double bma; ///< b-a
+    double bmaInv; ///< 1/(b-a)
+    double logBma; ///< log(b-a)
 
     GammaRand GammaRV1, GammaRV2;
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    /// log(B(α, β)
-    double logBetaFun;
-    /// B(α, β)
-    double betaFun;
+    double logBetaFun; ///< log(B(α, β)
+    double betaFun; ///< B(α, β)
 
     /// coefficients for generators
     double s, t, u;
@@ -61,25 +63,25 @@ private:
     };
 
     /**
-     * @brief getIdOfUsedGenerator
+     * @fn getIdOfUsedGenerator
      * @return id of used variate generator according to the shapes
      */
     GENERATOR_ID getIdOfUsedGenerator() const;
 
     /**
-     * @brief setCoefficientsForGenerator
+     * @fn setCoefficientsForGenerator
      */
     void setCoefficientsForGenerator();
 
 protected:
     /**
-     * @brief SetShapes
+     * @fn SetShapes
      * @param shape1 α
      * @param shape2 β
      */
     void SetShapes(double shape1, double shape2);
     /**
-     * @brief SetSupport
+     * @fn SetSupport
      * @param minValue a
      * @param maxValue b
      */
@@ -87,22 +89,22 @@ protected:
 
 public:
     /**
-     * @brief GetAlpha
-     * @return α
+     * @fn GetAlpha
+     * @return first shape α
      */
     inline double GetAlpha() const { return alpha; }
     /**
-     * @brief GetBeta
-     * @return β
+     * @fn GetBeta
+     * @return second shape β
      */
     inline double GetBeta() const { return beta; }
     /**
-     * @brief GetBetaFunction
+     * @fn GetBetaFunction
      * @return B(α, β)
      */
     inline double GetBetaFunction() const { return betaFun; }
     /**
-     * @brief GetLogBetaFunction
+     * @fn GetLogBetaFunction
      * @return log(B(α, β))
      */
     inline double GetLogBetaFunction() const { return logBetaFun; }
@@ -116,56 +118,56 @@ public:
 
 private:
     /**
-     * @brief variateRejectionUniform
+     * @fn variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
      * @return beta variate for α = β = 1.5
      */
     double variateRejectionUniform() const;
 
     /**
-     * @brief variateRejectionUniform
+     * @fn variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
      * @return beta variate for 1 < α = β < 2 and α != 1.5
      */
     double variateRejectionUniformExtended() const;
 
     /**
-     * @brief variateArcsine
+     * @fn variateArcsine
      * Arcsine beta generator
      * @return beta variate for α = β = 0.5
      */
     double variateArcsine() const;
 
     /**
-     * @brief variateRejectionNormal
+     * @fn variateRejectionNormal
      * Symmetric beta generator via rejection from the normal density
      * @return beta variate for equal shape parameters > 2
      */
     double variateRejectionNormal() const;
 
     /**
-     * @brief variateJohnk
+     * @fn variateJohnk
      * Johnk's beta generator
      * @return beta variate for small shape parameters < 1
      */
     double variateJohnk() const;
 
     /**
-     * @brief variateCheng
+     * @fn variateCheng
      * Cheng's beta generator
      * @return beta variate for max(α, β) > 1 and min(α, β) > 0.5
      */
     double variateCheng() const;
 
     /**
-     * @brief variateAtkinsonWhittaker
+     * @fn variateAtkinsonWhittaker
      * Atkinson-Whittaker beta generator
      * @return beta variate for max(α, β) < 1 and α + β > 1
      */
     double variateAtkinsonWhittaker() const;
 
     /**
-     * @brief variateGammaRatio
+     * @fn variateGammaRatio
      * Gamma ratio beta generator
      * @return beta variate for the rest variations of shapes
      */
@@ -174,13 +176,13 @@ private:
 public:
     double Mean() const override;
     /**
-     * @brief GeometricMean
+     * @fn GeometricMean
      * @return E[ln(X)]
      */
     double GeometricMean() const;
     double Variance() const override;
     /**
-     * @brief GeometricVariance
+     * @fn GeometricVariance
      * @return Var(ln(X))
      */
     double GeometricVariance() const;
@@ -197,7 +199,7 @@ protected:
 };
 
 /**
- * @brief The BetaRand class
+ * @brief The BetaRand class <BR>
  * Beta distribution
  */
 class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution
@@ -211,13 +213,13 @@ public:
     using BetaDistribution::SetSupport;
 
     /**
-     * @brief FitAlphaMM
+     * @fn FitAlphaMM
      * set α, estimated via method of moments
      * @param sample
      */
     void FitAlphaMM(const std::vector<double> &sample);
     /**
-     * @brief FitBetaMM
+     * @fn FitBetaMM
      * set β, estimated via method of moments
      * @param sample
      */
@@ -226,12 +228,12 @@ public:
 
 
 /**
- * @brief The ArcsineRand class
+ * @brief The ArcsineRand class <BR>
  * Arcsine distribution
  *
  * Notation: X ~ Arcsine(α)
  * 
- * Related distributions
+ * Related distributions: <BR>
  * X ~ Beta(1 - α, α)
  */
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
@@ -245,7 +247,7 @@ public:
 
 
 /**
- * @brief The BaldingNicholsRand class
+ * @brief The BaldingNicholsRand class <BR>
  * Balding-Nichols distribution
  *
  * Notation: X ~ Balding-Nichols(F, p)

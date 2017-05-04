@@ -5,7 +5,7 @@
 #include "PoissonRand.h"
 
 /**
- * @brief The SkellamRand class
+ * @brief The SkellamRand class <BR>
  * Skellam distribution
  *
  * Notation: X ~ Skellam(μ1, μ2)

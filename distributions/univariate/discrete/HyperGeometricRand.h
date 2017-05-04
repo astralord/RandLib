@@ -5,7 +5,7 @@
 #include "BernoulliRand.h"
 
 /**
- * @brief The HyperGeometricRand class
+ * @brief The HyperGeometricRand class <BR>
  * Hypergeometric distribution
  *
  * X ~ HG(N, K, n)
@@ -13,8 +13,8 @@
 class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 {
     int N, K, n;
-    double pmfCoef; /// C(N, n)
-    double p0;
+    double pmfCoef; ///< C(N, n)
+    double p0; ///< K/N
 
 public:
     HyperGeometricRand(int totalSize, int drawsNum, int successesNum);

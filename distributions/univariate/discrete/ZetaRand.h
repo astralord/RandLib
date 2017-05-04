@@ -4,7 +4,7 @@
 #include "DiscreteDistribution.h"
 
 /**
- * @brief The ZetaRand class
+ * @brief The ZetaRand class <BR>
  * Zeta distribution
  *
  * P(X = k) = 1 / (k^s * ζ(s))

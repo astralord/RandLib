@@ -5,7 +5,7 @@
 #include "../BasicRandGenerator.h"
 
 /**
- * @brief The UniformDiscreteRand class
+ * @brief The UniformDiscreteRand class <BR>
  * Uniform discrete distribution
  *
  * Notation: X ~ U(a, b)
@@ -14,11 +14,11 @@
  */
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
-    int n, a, b;
-    /// 1.0 / n
-    double nInv;
-    /// log(n)
-    double logN;
+    int n; ///< number of possible outcomes
+    int a; ///< min bound
+    int b; ///< max bound
+    double nInv; ///< 1/n
+    double logN; ///< log(n)
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);

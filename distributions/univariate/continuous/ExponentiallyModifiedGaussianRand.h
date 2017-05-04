@@ -6,7 +6,7 @@
 #include "ExponentialRand.h"
 
 /**
- * @brief The ExponentiallyModifiedGaussianRand class
+ * @brief The ExponentiallyModifiedGaussianRand class <BR>
  * Exponentially-modified Gaussian distribution
  *
  * Notation: X ~ EMG(μ, σ, β)

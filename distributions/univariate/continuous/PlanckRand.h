@@ -5,7 +5,7 @@
 #include "../discrete/ZetaRand.h"
 
 /**
- * @brief The PlanckRand class
+ * @brief The PlanckRand class <BR>
  * Planck distribution
  *
  * Notation: X ~ Planck(a, b)

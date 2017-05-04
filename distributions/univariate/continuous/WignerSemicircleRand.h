@@ -4,7 +4,7 @@
 #include "BetaRand.h"
 
 /**
- * @brief The WignerSemicircleRand class
+ * @brief The WignerSemicircleRand class <BR>
  * Wigner-Semicircle distribution
  *
  * Notation: X ~ Wigner-Sc(R)

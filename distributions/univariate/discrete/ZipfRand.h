@@ -5,7 +5,7 @@
 #include "../continuous/UniformRand.h"
 
 /**
- * @brief The ZipfRand class
+ * @brief The ZipfRand class <BR>
  * Zipf distribution
  *
  * Notation: X ~ Zipf(s, n)

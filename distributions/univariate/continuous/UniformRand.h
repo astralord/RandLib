@@ -4,15 +4,15 @@
 #include "BetaRand.h"
 
 /**
- * @brief The UniformRand class
+ * @brief The UniformRand class <BR>
  * Uniform continuous distribution
  *
  * f(x | a, b) = 1 / (b - a) for a < x < b
  *
  * Notation: X ~ U(a, b)
  *
- * Related distributions:
- * X ~ Beta(1, 1, a, b)
+ * Related distributions: <BR>
+ * X ~ Beta(1, 1, a, b) <BR>
  * (X - a) / (b - a) ~ IH(1)
  */
 class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution
@@ -56,19 +56,61 @@ private:
 public:
     inline double Entropy() const;
 
-    /// Maximum likelihood estimation
+    /**
+     * @fn FitMinimumMLE
+     * fit minimum with maximum-likelihood estimator
+     * @param sample
+     */
     void FitMinimumMLE(const std::vector<double> &sample);
+    /**
+     * @fn FitMaximumMLE
+     * fit maximum with maximum-likelihood estimator
+     * @param sample
+     */
     void FitMaximumMLE(const std::vector<double> &sample);
+    /**
+     * @fn FitSupportMLE
+     * fit support with maximum-likelihood estimator
+     * @param sample
+     */
     void FitSupportMLE(const std::vector<double> &sample);
-    
-    /// Method of moments
+
+    /**
+     * @fn FitMinimumMM
+     * fit minimum with method of moments
+     * @param sample
+     */
     void FitMinimumMM(const std::vector<double> &sample);
+    /**
+     * @fn FitMaximumMM
+     * fit maximum with method of moments
+     * @param sample
+     */
     void FitMaximumMM(const std::vector<double> &sample);
+    /**
+     * @fn FitSupportMM
+     * fit support with method of moments
+     * @param sample
+     */
     void FitSupportMM(const std::vector<double> &sample);
     
-    /// Minimum-variance unbiased estimator
+    /**
+     * @fn FitMinimumUMVU
+     * fit minimum via uniformly-minimum variance unbiased estimator
+     * @param sample
+     */
     void FitMinimumUMVU(const std::vector<double> &sample);
+    /**
+     * @fn FitMaximumUMVU
+     * fit maximum via uniformly-minimum variance unbiased estimator
+     * @param sample
+     */
     void FitMaximumUMVU(const std::vector<double> &sample);
+    /**
+     * @fn FitSupportUMVU
+     * fit support via uniformly-minimum variance unbiased estimator
+     * @param sample
+     */
     void FitSupportUMVU(const std::vector<double> &sample);
 };
 

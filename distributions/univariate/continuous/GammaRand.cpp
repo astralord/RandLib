@@ -363,15 +363,6 @@ double GammaDistribution::initRootForLargeShape(double p) const
     return lambda * alpha;
 }
 
-double GammaDistribution::df(double x) const
-{
-    double z = (alpha - 1) - beta * x;
-    double y = (alpha - 2) * std::log(x);
-    y -= beta * x;
-    y += pdfCoef;
-    return z * std::exp(y);
-}
-
 double GammaDistribution::quantileInitialGuess(double p) const
 {
     /// Method is taken from
@@ -420,6 +411,15 @@ double GammaDistribution::quantileInitialGuess1m(double p) const
             return initRootForLargeP(logQ) / beta;
     }
     return quantileInitialGuess(1.0 - p);
+}
+
+double GammaDistribution::df(double x) const
+{
+    double z = (alpha - 1) - beta * x;
+    double y = (alpha - 2) * std::log(x);
+    y -= beta * x;
+    y += pdfCoef;
+    return z * std::exp(y);
 }
 
 double GammaDistribution::quantileImpl(double p) const

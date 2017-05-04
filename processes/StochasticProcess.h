@@ -19,39 +19,39 @@ public:
     explicit StochasticProcess(double deltaT = 1.0, T initialValue = 0);
 
     /**
-     * @brief reset
+     * @fn reset
      * @param initialValue
      * Set time to 0 and current value to initialValue
      */
     void reset(T initialValue = 0.0);
 
     /**
-     * @brief GetCurrentTime
+     * @fn GetCurrentTime
      * @return current time
      */
     inline double GetCurrentTime() const { return currentTime; }
 
     /**
-     * @brief GetCurrentValue
+     * @fn GetCurrentValue
      * @return current value
      */
     inline T GetCurrentValue() const { return currentValue; }
 
     /**
-     * @brief Next
+     * @fn Next
      * @return next value
      */
     T Next();
 
     /**
-     * @brief Mean
+     * @fn Mean
      * @param t
      * @return Conditional mathematical expectation E[X(t)|X(s)], where s is the current time
      */
     double Mean(double t) const;
 
     /**
-     * @brief Variance
+     * @fn Variance
      * @param t
      * @return Conditional variance Var(X(t)|X(s)), where s is the current time
      */

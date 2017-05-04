@@ -5,7 +5,7 @@
 #include "../discrete/BernoulliRand.h"
 
 /**
- * @brief The CantorRand class
+ * @brief The CantorRand class <BR>
  * Cantor distribution
  *
  * Notation X ~ Cantor()

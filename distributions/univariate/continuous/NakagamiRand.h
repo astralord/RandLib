@@ -4,21 +4,20 @@
 #include "GammaRand.h"
 
 /**
- * @brief The NakagamiDistribution class
+ * @brief The NakagamiDistribution class <BR>
  * Abstract class for Nakagami distribution
  *
  * Notation: X ~ Nakagami(m, w)
  *
- * Related distributions:
- * σX ~ Nakagami(m, wσ^2)
+ * Related distributions: <BR>
+ * σX ~ Nakagami(m, wσ^2) <BR>
  * X^2 ~ Gamma(m, m / w)
  */
 class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
 {
     double m, w;
     GammaRand Y;
-    /// log(Γ(m + 0.5) / Γ(m))
-    double lgammaShapeRatio;
+    double lgammaShapeRatio; ///< log(Γ(m + 0.5) / Γ(m))
 
 public:
     NakagamiDistribution(double shape = 0.5, double spread = 1);
@@ -29,7 +28,7 @@ public:
 
 protected:
     /**
-     * @brief SetParameters
+     * @fn SetParameters
      * @param shape m
      * @param spread w
      */
@@ -37,22 +36,22 @@ protected:
 
 public:
     /**
-     * @brief GetShape
+     * @fn GetShape
      * @return shape m
      */
     inline double GetShape() const { return m; }
     /**
-     * @brief GetSpread
+     * @fn GetSpread
      * @return spread w
      */
     inline double GetSpread() const { return w; }
     /**
-     * @brief GetLogGammaFunction
+     * @fn GetLogGammaFunction
      * @return log(Γ(m))
      */
-    inline double GetLogGammaFunction() const { return Y.GetLogGammaFunction(); }
+    inline double GetLogGammaFunction() const { return Y.GetLogGammaShape(); }
     /**
-     * @brief GetLogGammaShapeRatio
+     * @fn GetLogGammaShapeRatio
      * @return log(Γ(m + 0.5) / Γ(m))
      */
     inline double GetLogGammaShapeRatio() const { return lgammaShapeRatio; }
@@ -75,7 +74,7 @@ protected:
 
 
 /**
- * @brief The NakagamiRand class
+ * @brief The NakagamiRand class <BR>
  * Nakagami distribution
  */
 class RANDLIBSHARED_EXPORT NakagamiRand : public NakagamiDistribution
@@ -88,14 +87,14 @@ public:
 
 
 /**
- * @brief The ChiRand class
+ * @brief The ChiRand class <BR>
  * Chi distribution
  *
  * Notation: X ~ Chi(k)
  *
- * Related distributions:
- * X ~ Nakagami(k/2, k)
- * X^2 ~ Chi-Squared(k)
+ * Related distributions: <BR>
+ * X ~ Nakagami(k/2, k) <BR>
+ * X^2 ~ Chi-Squared(k) <BR>
  * X^2 ~ Gamma(k/2, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiRand : public NakagamiDistribution
@@ -107,13 +106,13 @@ public:
 
 public:
     /**
-     * @brief SetDegree
+     * @fn SetDegree
      * set degree k
      * @param degree
      */
     void SetDegree(int degree);
     /**
-     * @brief GetDegree
+     * @fn GetDegree
      * @return degree k
      */
     inline int GetDegree() const { return 2 * NakagamiDistribution::GetShape(); }
@@ -124,13 +123,13 @@ public:
 
 
 /**
- * @brief The MaxwellBoltzmannRand class
+ * @brief The MaxwellBoltzmannRand class <BR>
  * Maxwell-Boltzmann distribution
  *
  * Notation: X ~ MB(σ)
  *
- * Related distributions:
- * X / σ ~ Chi(3)
+ * Related distributions: <BR>
+ * X / σ ~ Chi(3) <BR>
  * X ~ Nakagami(1.5, 3σ^2)
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiDistribution
@@ -142,13 +141,13 @@ public:
 
 public:
     /**
-     * @brief SetScale
+     * @fn SetScale
      * set scale σ
      * @param scale
      */
     void SetScale(double scale);
     /**
-     * @brief GetScale
+     * @fn GetScale
      * @return scale σ
      */
     double GetScale() const { return sigma; }
@@ -168,7 +167,7 @@ public:
 
 
 /**
- * @brief The RayleighRand class
+ * @brief The RayleighRand class <BR>
  * Rayleigh distribution
  *
  * Notation: X ~ Rayleigh(σ)
@@ -186,13 +185,13 @@ public:
 
 public:
     /**
-     * @brief SetScale
+     * @fn SetScale
      * set scale σ
      * @param scale
      */
     void SetScale(double scale);
     /**
-     * @brief GetScale
+     * @fn GetScale
      * @return scale σ
      */
     double GetScale() const { return sigma; }
@@ -216,13 +215,13 @@ private:
 
 public:
     /**
-     * @brief FitScaleMLE
+     * @fn FitScaleMLE
      * set scale via maximum-likelihood method
      * @param sample
      */
     void FitScaleMLE(const std::vector<double> &sample);
     /**
-     * @brief FitScaleUMVU
+     * @fn FitScaleUMVU
      * set scale, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */

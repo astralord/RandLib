@@ -4,7 +4,7 @@
 #include "DiscreteDistribution.h"
 
 /**
- * @brief The LogarithmicRand class
+ * @brief The LogarithmicRand class <BR>
  * Logarithmic distribution
  *
  * P(X = k) = -p^k / [k log(1 - p)]

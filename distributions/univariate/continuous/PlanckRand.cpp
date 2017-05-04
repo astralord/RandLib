@@ -21,7 +21,7 @@ void PlanckRand::SetParameters(double shape, double scale)
 
     pdfCoef = std::log(Z.GetInverseZetaFunction());
     pdfCoef += ap1 * std::log(b);
-    pdfCoef -= G.GetLogGammaFunction();
+    pdfCoef -= G.GetLogGammaShape();
 }
 
 double PlanckRand::leveledPdf(double t) const

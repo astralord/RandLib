@@ -5,18 +5,18 @@
 #include "GeometricStableRand.h"
 
 /**
- * @brief The LaplaceRand class
+ * @brief The LaplaceRand class <BR>
  * Laplace distribution
  *
  * Notation: X ~ Laplace(m, σ, k)
  *
- * Related distributions:
- * X = m + σ * (Y / k - W * k), where Y, W ~ Exp(1)
+ * Related distributions: <BR>
+ * X = m + σ * (Y / k - W * k), where Y, W ~ Exp(1) <BR>
  * If X ~ Laplace(m, σ, k), then X - m ~ GeometricStable(2, 0, σ, σ(1 - k^2) / k)
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
 {
-    double m;
+    double m; ///< shift
 
 public:
     LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
@@ -64,7 +64,7 @@ public:
 
 private:
     /**
-     * @brief GetAsymmetryFromSkewness
+     * @fn GetAsymmetryFromSkewness
      * @param sample
      * @return numeric solution of equation Skewness() = skewness
      */

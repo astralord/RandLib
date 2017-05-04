@@ -9,7 +9,7 @@ namespace RandMath
 {
 
 /**
- * @brief integral
+ * @fn integral
  * @param funPtr integrand
  * @param a lower boundary
  * @param b upper boundary
@@ -21,7 +21,7 @@ long double integral(const std::function<double (double)> &funPtr, double a, dou
                             double epsilon = 1e-11, int maxRecursionDepth = 11);
 
 /**
- * @brief findRoot
+ * @fn findRoot
  * Newton's root-finding procedure,
  * using first and second derivatives
  * @param funPtr mapping x |-> (f(x), f'(x), f''(x))
@@ -32,7 +32,7 @@ long double integral(const std::function<double (double)> &funPtr, double a, dou
 bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double funTol = 1e-10, double stepTol = 1e-6);
 
 /**
- * @brief findRoot
+ * @fn findRoot
  * Newton's root-finding procedure,
  * using first derivative
  * @param funPtr mapping x |-> (f(x), f'(x))
@@ -43,7 +43,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double funTol = 1e-10, double stepTol = 1e-6);
 
 /**
- * @brief findRoot
+ * @fn findRoot
  * Brent's root-finding procedure
  * @param funPtr mapping x |-> f(x)
  * @param a lower boundary
@@ -55,7 +55,7 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, d
 bool findRoot(const std::function<double (double)> &funPtr, double a, double b, double & root, double epsilon = 1e-8);
 
 /**
- * @brief findMin
+ * @fn findMin
  * Combined Brent's method
  * @param funPtr
  * @param abc lower boundary / middle / upper boundary
@@ -67,7 +67,7 @@ bool findRoot(const std::function<double (double)> &funPtr, double a, double b, 
 bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet &abc, const DoubleTriplet &fabc, double &root, double epsilon = 1e-8);
 
 /**
- * @brief findMin
+ * @fn findMin
  * Combined Brent's method
  * @param funPtr
  * @param closePoint point that is nearby minimum

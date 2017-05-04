@@ -5,7 +5,7 @@
 #include "StudentTRand.h"
 
 /**
- * @brief The NoncentralTRand class
+ * @brief The NoncentralTRand class <BR>
  * Notation: Noncentral-t(ν, μ)
  */
 class RANDLIBSHARED_EXPORT NoncentralTRand : public ContinuousDistribution
@@ -37,12 +37,12 @@ public:
 
     void SetParameters(double degree, double noncentrality);
     /**
-     * @brief GetDegree
+     * @fn GetDegree
      * @return degree ν
      */
     inline double GetDegree() const { return nu; }
     /**
-     * @brief GetNoncentrality
+     * @fn GetNoncentrality
      * @return noncentrality μ
      */
     inline double GetNoncentrality() const { return mu; }
@@ -51,12 +51,12 @@ private:
     double cdfSeries(const double &x, const nuStruct &degreeCoef, double noncentrality) const;
     double cdfComplSeries(const double &x, const nuStruct &degreeCoef, double noncentrality) const;
     /**
-     * @brief logPdfAtZero
+     * @fn logPdfAtZero
      * @return log(f(0))
      */
     double logPdfAtZero() const;
     /**
-     * @brief pdfCommon
+     * @fn pdfCommon
      * @param x
      * @param noncentrality
      * @return pdf for x ≠ 0

@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The WeibullRand class
+ * @brief The WeibullRand class <BR>
  * Weibull distribution
  *
  * Notation: X ~ Weibull(λ, k)

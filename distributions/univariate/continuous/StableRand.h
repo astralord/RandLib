@@ -5,14 +5,14 @@
 #include "LimitingDistribution.h"
 
 /**
- * @brief The StableDistribution class
+ * @brief The StableDistribution class <BR>
  * Abstract class for Stable distribution
  *
- * X ~ S(α, β, γ, μ)
+ * Notation: X ~ S(α, β, γ, μ)
  *
- * Related distributions:
- * If X ~ Normal(μ, σ), then X ~ S(2, 0, √2σ, μ)
- * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ)
+ * Related distributions: <BR>
+ * If X ~ Normal(μ, σ), then X ~ S(2, 0, √2σ, μ) <BR>
+ * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ) <BR>
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
 class RANDLIBSHARED_EXPORT StableDistribution : public LimitingDistribution
@@ -22,10 +22,8 @@ class RANDLIBSHARED_EXPORT StableDistribution : public LimitingDistribution
     /// 1 / (α - 1) and α / (α - 1)
     double alpham1Inv, alpha_alpham1;
 
-    /// a.k.a. infinity for pdf and cdf calculations
-    static constexpr double BIG_NUMBER = 1e9;
-    /// parameter used to identify α close to 2
-    static constexpr double ALMOST_TWO = 1.99999;
+    static constexpr double BIG_NUMBER = 1e9; ///< a.k.a. infinity for pdf and cdf calculations
+    static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
 
     enum DISTRIBUTION_ID {
         /// α = 2
@@ -73,44 +71,44 @@ public:
     /// Probability distribution functions
 protected:
     /**
-     * @brief pdfNormal
+     * @fn pdfNormal
      * @param x
      * @return probability density function of normal distribution
      */
     double pdfNormal(double x) const;
     /**
-     * @brief logpdfNormal
+     * @fn logpdfNormal
      * @param x
      * @return logarithm of probability density function of normal distribution
      */
     double logpdfNormal(double x) const;
     /**
-     * @brief pdfCauchy
+     * @fn pdfCauchy
      * @param x
      * @return probability density function of Cauchy distribution
      */
     double pdfCauchy(double x) const;
     /**
-     * @brief logpdfCauchy
+     * @fn logpdfCauchy
      * @param x
      * @return logarithm of probability density function of Cauchy distribution
      */
     double logpdfCauchy(double x) const;
     /**
-     * @brief pdfLevy
+     * @fn pdfLevy
      * @param x
      * @return probability density function of Levy distribution
      */
     double pdfLevy(double x) const;
     /**
-     * @brief logpdfLevy
+     * @fn logpdfLevy
      * @param x
      * @return logarithm of probability density function of Levy distribution
      */
     double logpdfLevy(double x) const;
 private:
     /**
-     * @brief fastpdfExponentiation
+     * @fn fastpdfExponentiation
      * @param u
      * @return exp(u - exp(u)), accelerated by truncation of input u
      */
@@ -125,12 +123,12 @@ private:
     /// functions for pdf calculation for α ≠ 1
     DoublePair seriesZeroParams;
     /**
-     * @brief pdfAtZero
+     * @fn pdfAtZero
      * @return probability density function for x = 0
      */
     double pdfAtZero() const;
     /**
-     * @brief pdfSeriesExpansionAtZero
+     * @fn pdfSeriesExpansionAtZero
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @param k number of elements in series
@@ -138,7 +136,7 @@ private:
      */
     double pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
     /**
-     * @brief pdfSeriesExpansionAtInf
+     * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @param k number of elements in series
@@ -157,62 +155,62 @@ public:
     /// Cumulative distribution functions
 protected:
     /**
-     * @brief cdfNormal
+     * @fn cdfNormal
      * @param x
      * @return cumulative distribution function of normal distribution
      */
     double cdfNormal(double x) const;
     /**
-     * @brief cdfNormalCompl
+     * @fn cdfNormalCompl
      * @param x
      * @return complementary cumulative distribution function of normal distribution
      */
     double cdfNormalCompl(double x) const;
     /**
-     * @brief cdfCauchy
+     * @fn cdfCauchy
      * @param x
      * @return cumulative distribution function of Cauchy distribution
      */
     double cdfCauchy(double x) const;
     /**
-     * @brief cdfCauchyCompl
+     * @fn cdfCauchyCompl
      * @param x
      * @return complementary cumulative distribution function of Cauchy distribution
      */
     double cdfCauchyCompl(double x) const;
     /**
-     * @brief cdfLevy
+     * @fn cdfLevy
      * @param x
      * @return cumulative distribution function of Levy distribution
      */
     double cdfLevy(double x) const;
     /**
-     * @brief cdfLevyCompl
+     * @fn cdfLevyCompl
      * @param x
      * @return complementary cumulative distribution function of Levy distribution
      */
     double cdfLevyCompl(double x) const;
 private:
     /**
-     * @brief fastcdfExponentiation
+     * @fn fastcdfExponentiation
      * @param u
      * @return exp(-exp(u)), accelerated by truncation of input u
      */
     static double fastcdfExponentiation(double u);
     /**
-     * @brief cdfAtZero
+     * @fn cdfAtZero
      * @param xiAdj adjusted ξ
      * @return cumulative distribution function for x = 0
      */
     double cdfAtZero(double xiAdj) const;
     /**
-     * @brief cdfForUnityExponent
+     * @fn cdfForUnityExponent
      * @param x
      * @return cumulative distribution function for α = 1, β ≠ 0
      */
     double cdfForUnityExponent(double x) const;
     /**
-     * @brief cdfSeriesExpansionAtZero
+     * @fn cdfSeriesExpansionAtZero
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @param k number of elements in series
@@ -220,7 +218,7 @@ private:
      */
     double cdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
     /**
-     * @brief pdfSeriesExpansionAtInf
+     * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @param k number of elements in series
@@ -228,14 +226,14 @@ private:
      */
     double cdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
     /**
-     * @brief cdfIntegralRepresentation
+     * @fn cdfIntegralRepresentation
      * @param absXSt absolute value of standardised x
      * @param xiAdj adjusted ξ
      * @return integral representation of cumulative distribution function for common case of α ≠ 1
      */
     double cdfIntegralRepresentation(double logX, double xiAdj) const;
     /**
-     * @brief cdfForCommonExponent
+     * @fn cdfForCommonExponent
      * @param x
      * @return cumulative distribution function for common case of α ≠ 1
      */
@@ -247,17 +245,17 @@ public:
     /// Variates
 private:
     /**
-     * @brief variateForUnityExponent
+     * @fn variateForUnityExponent
      * @return variate, generated by algorithm for α = 1, β ≠ 0
      */
     double variateForUnityExponent() const;
     /**
-     * @brief variateForCommonExponent
+     * @fn variateForCommonExponent
      * @return variate, generated by algorithm for common case of α ≠ 1
      */
     double variateForCommonExponent() const;
     /**
-     * @brief variateForExponentEqualOneHalf
+     * @fn variateForExponentEqualOneHalf
      * @return variate, generated by algorithm for special case of α = 0.5
      */
     double variateForExponentEqualOneHalf() const;
@@ -278,7 +276,7 @@ private:
 
 
 /**
- * @brief The StableRand class
+ * @brief The StableRand class <BR>
  * Stable distribution
  */
 class RANDLIBSHARED_EXPORT StableRand : public StableDistribution
@@ -291,7 +289,7 @@ public:
 
 
 /**
- * @brief The HoltsmarkRand class
+ * @brief The HoltsmarkRand class <BR>
  * Holtsmark distribution
  *
  * Notation: X ~ Holtsmark(γ, μ)
@@ -308,7 +306,7 @@ public:
 
 
 /**
- * @brief The LandauRand class
+ * @brief The LandauRand class <BR>
  * Landau distribution
  *
  * Notation: X ~ Landau(γ, μ)

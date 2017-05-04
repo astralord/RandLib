@@ -25,7 +25,7 @@ void NegativeBinomialDistribution<T>::SetParameters(T number, double probability
     GammaRV.SetParameters(r, p / q);
     qDivP = GammaRV.GetScale();
     pdfCoef = r * logProb;
-    pdfCoef -= GammaRV.GetLogGammaFunction();
+    pdfCoef -= GammaRV.GetLogGammaShape();
 
     if (GetIdOfUsedGenerator() == TABLE) {
         /// table method

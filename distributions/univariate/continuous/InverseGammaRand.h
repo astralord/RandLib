@@ -4,12 +4,12 @@
 #include "GammaRand.h"
 
 /**
- * @brief The InverseGammaRand class
+ * @brief The InverseGammaRand class <BR>
  * Inverse-Gamma distribution
  *
  * X ~ Inv-Gamma(α, β)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X = 1 / Y, where Y ~ Gamma(α, β)
  */
 class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution
@@ -27,6 +27,8 @@ public:
     void SetParameters(double shape, double rate);
     inline double GetShape() const { return alpha; }
     inline double GetRate() const { return beta; }
+    inline double GetLogShape() const { return X.GetLogShape(); }
+    inline double GetLogRate() const { return X.GetLogRate(); }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;
@@ -46,7 +48,7 @@ private:
     double quantileImpl1m(double p) const override;
 
 public:
-    double GetLogGammaFunction() const { return X.GetLogGammaFunction(); }
+    double GetLogGammaShape() const { return X.GetLogGammaShape(); }
 };
 
 #endif // INVERSEGAMMARAND_H

@@ -4,7 +4,8 @@
 #include "../UnivariateProbabilityDistribution.h"
 
 /**
- *@brief The DiscreteDistribution class
+ *@brief The DiscreteDistribution class <BR>
+ * Abstract class for all discrete distributions
  */
 class RANDLIBSHARED_EXPORT DiscreteDistribution : public virtual UnivariateProbabilityDistribution<int>
 {
@@ -13,21 +14,21 @@ public:
     virtual ~DiscreteDistribution() {}
 
     /**
-     * @brief P
+     * @fn P
      * @param k
      * @return probability to get k
      */
     virtual double P(const int & k) const = 0;
 
     /**
-     * @brief logP
+     * @fn logP
      * @param x
      * @return logarithm of probability to get x
      */
     virtual double logP(const int & x) const = 0;
 
     /**
-     * @brief ProbabilityMassFunction
+     * @fn ProbabilityMassFunction
      * fill vector y with P(x)
      * @param x
      * @param y
@@ -48,7 +49,7 @@ public:
     double LogLikelihood(const std::vector<int> &sample) const override;
 
     /**
-     * @brief PearsonChiSquaredTest
+     * @fn PearsonChiSquaredTest
      * @param orderStatistic sample sorted in ascending order
      * @param alpha level of test
      * @param numberOfEstimatedParameters zero by default

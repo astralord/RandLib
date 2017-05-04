@@ -4,7 +4,7 @@
 #include "ContinuousDistribution.h"
 
 /**
- * @brief The KumaraswamyRand class
+ * @brief The KumaraswamyRand class <BR>
  * Kumaraswamy distribution
  *
  * f(x|a,b) = abx^{a-1} (1-x^a)^{b-1}

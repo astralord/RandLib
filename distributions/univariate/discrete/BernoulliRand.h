@@ -4,15 +4,15 @@
 #include "BinomialRand.h"
 
 /**
- * @brief The BernoulliRand class
+ * @brief The BernoulliRand class <BR>
  * Bernoulli distribution
  *
  * P(X = k) = p * 1_{k = 1} + (1 - p) * 1_{k = 0}
  *
  * Notation: X ~ Bernoulli(p)
  *
- * Related distributions:
- * X ~ Binomial(1, p)
+ * Related distributions: <BR>
+ * X ~ Binomial(1, p) <BR>
  * 2X - 1 ~ Rademacher
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution
