@@ -14,7 +14,6 @@ void IrwinHallRand::SetNumber(int number)
 {
     n = std::max(1, number);
     cdfCoef = 0.5 / RandMath::factorial(n);
-    pdfCoef = n * cdfCoef;
 }
 
 double IrwinHallRand::f(const double & x) const
@@ -22,16 +21,22 @@ double IrwinHallRand::f(const double & x) const
     if (x < 0 || x > n)
         return 0.0;
 
+    /// Check simplest cases
+    if (n == 1)
+        return 1.0;
+    if (n == 2)
+        return (x <= 1.0) ? x : 2.0 - x;
+    /// General case
     double sum = 0.0;
-    for (int i = 0; i <= n; ++i)
-    {
-        double y = x - i;
-        double add = RandMath::binomialCoef(n, i);
-        add *= std::pow(y, n - 1);
-        add *= RandMath::sign(y);
+    int last = std::floor(x);
+    for (int i = 0; i <= last; ++i) {
+        double add = (n - 1) * std::log(x - i);
+        add -= RandMath::lfact(i);
+        add -= RandMath::lfact(n - i);
+        add = std::exp(add);
         sum += (i % 2) ? -add : add;
     }
-    return pdfCoef * sum;
+    return n * sum;
 }
 
 double IrwinHallRand::logf(const double & x) const
@@ -46,18 +51,26 @@ double IrwinHallRand::F(const double & x) const
     if (x >= n)
         return 1.0;
 
+    /// Check simplest cases
+    if (n == 1)
+        return x;
+    if (n == 2) {
+        if (x <= 1.0)
+            return 0.5 * x * x;
+        double temp = 2.0 - x;
+        return 1.0 - 0.5 * temp * temp;
+    }
+    /// General case
     double sum = 0.0;
-    for (int i = 0; i <= n; ++i)
-    {
-        // TODO: use log-scale
-        double y = x - i;
-        double add = RandMath::binomialCoef(n, i);
-        add *= std::pow(y, n);
-        add *= RandMath::sign(y);
+    int last = std::floor(x);
+    for (int i = 0; i <= last; ++i) {
+        double add = n * std::log(x - i);
+        add -= RandMath::lfact(i);
+        add -= RandMath::lfact(n - i);
+        add = std::exp(add);
         sum += (i % 2) ? -add : add;
     }
-
-    return 0.5 + cdfCoef * sum;
+    return sum;
 }
 
 double IrwinHallRand::Variate() const
