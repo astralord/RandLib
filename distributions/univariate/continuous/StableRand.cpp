@@ -720,6 +720,16 @@ double StableDistribution::variateForCommonExponent() const
     return mu + gamma * X;
 }
 
+double StableDistribution::variateForExponentEqualOneHalf() const
+{
+    double Z1 = NormalRand::StandardVariate(), Z2 = NormalRand::StandardVariate();
+    double temp1 = (1.0 + beta) / Z1, temp2 = (1.0 - beta) / Z2;
+    double var = temp1 - temp2;
+    var *= temp1 + temp2;
+    var *= 0.25;
+    return mu + gamma * var;
+}
+
 double StableDistribution::Variate() const
 {
     switch (distributionId) {
@@ -732,7 +742,7 @@ double StableDistribution::Variate() const
     case UNITY_EXPONENT:
         return variateForUnityExponent();
     case COMMON:
-        return variateForCommonExponent();
+        return (alpha == 0.5) ? variateForExponentEqualOneHalf() : variateForCommonExponent();
     default:
         return NAN; /// unexpected return
     }
@@ -769,8 +779,14 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
     }
         break;
     case COMMON: {
-        for (double &var : outputData)
-            var = variateForCommonExponent();
+        if (alpha == 0.5) {
+            for (double &var : outputData)
+                var = variateForExponentEqualOneHalf();
+        }
+        else {
+            for (double &var : outputData)
+                var = variateForCommonExponent();
+        }
     }
         break;
     default:
