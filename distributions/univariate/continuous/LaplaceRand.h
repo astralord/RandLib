@@ -16,7 +16,7 @@
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
 {
-    double m; ///< shift
+    double m = 0; ///< shift
 
 public:
     LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);

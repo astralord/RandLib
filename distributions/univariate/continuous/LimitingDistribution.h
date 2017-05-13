@@ -11,14 +11,13 @@
 class RANDLIBSHARED_EXPORT LimitingDistribution : public ContinuousDistribution
 {
 protected:
-    double alpha, beta, mu, gamma;
-    double alphaInv;
-
-    /// log(γ)
-    double logGamma;
-
-    /// log(γπ/2)
-    double logGammaPi_2;
+    double alpha = 2; ///< characteristic exponent α
+    double beta = 0; ///< skewness β
+    double mu = 0; ///< location μ
+    double gamma = M_SQRT2; ///< scale γ
+    double alphaInv = M_SQRT1_2; /// 1/α
+    double logGamma = -0.5 * M_LN2; ///< log(γ)
+    double logGammaPi_2 = M_LNPI - 1.5 * M_LN2; ///< log(γπ/2)
 
 public:
     LimitingDistribution(double exponent, double skewness, double scale = 1, double location = 0);

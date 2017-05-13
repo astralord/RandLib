@@ -14,11 +14,11 @@
  */
 class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
 {
-    double lambda; ///< rate λ
-    double logLambda; ///< ln(λ)
-    int floorLambda; ///< [λ]
-    double FFloorLambda; ///< P(X < [λ])
-    double PFloorLambda; ///< P(X = [λ])
+    double lambda = 1; ///< rate λ
+    double logLambda = 0; ///< ln(λ)
+    int floorLambda = 1; ///< [λ]
+    double FFloorLambda = 2 * M_1_E; ///< P(X < [λ])
+    double PFloorLambda = M_1_E; ///< P(X = [λ])
 
 public:
     explicit PoissonRand(double rate = 1.0);

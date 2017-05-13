@@ -11,13 +11,11 @@
  */
 class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
 {
-    double mu, k;
-    /// log(I_0(k))
-    double logI0k;
-     /// generator coefficient
-    double s;
-    /// cdf coefficient
-    int p;
+    double mu = 0; ///< location μ
+    double k = 1; ///< concentration
+    double logI0k = 1; ///< log(I_0(k)), where I_0 stands for modified Bessel function of the first kind of order 0
+    double s = M_PI / M_E; ///< generator coefficient
+    int p = 12; /// coefficient for faster cdf calculation
     static constexpr double CK = 10.5;
 
 public:

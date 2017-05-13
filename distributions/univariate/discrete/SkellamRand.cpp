@@ -1,24 +1,24 @@
 #include "SkellamRand.h"
 #include "../continuous/NoncentralChiSquaredRand.h"
 
-SkellamRand::SkellamRand(double mean1, double mean2)
+SkellamRand::SkellamRand(double rate1, double rate2)
 {
-    SetMeans(mean1, mean2);
+    SetRates(rate1, rate2);
 }
 
 std::string SkellamRand::Name() const
 {
-    return "Skellam(" + toStringWithPrecision(GetFirstMean()) + ", " + toStringWithPrecision(GetSecondMean()) + ")";
+    return "Skellam(" + toStringWithPrecision(GetFirstRate()) + ", " + toStringWithPrecision(GetSecondRate()) + ")";
 }
 
-void SkellamRand::SetMeans(double mean1, double mean2)
+void SkellamRand::SetRates(double rate1, double rate2)
 {
-    X.SetRate(mean1);
+    X.SetRate(rate1);
     mu1 = X.GetRate();
     logMu1 = std::log(mu1);
     sqrtMu1 = std::sqrt(mu1);
 
-    Y.SetRate(mean2);
+    Y.SetRate(rate2);
     mu2 = Y.GetRate();
     logMu2 = std::log(mu2);
     sqrtMu2 = std::sqrt(mu2);

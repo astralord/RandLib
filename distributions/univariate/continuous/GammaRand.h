@@ -21,17 +21,19 @@
 class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution
 {
 protected:
-    double alpha; ///< shape α
-    double beta; ///< rate β
-    double theta; ///< scale θ = 1/β
-    double lgammaAlpha; ///< log(Γ(α))
-    double pdfCoef; ///< α * log(β) - log(Γ(α))
-    double logAlpha; ///< log(α)
-    double logBeta; ///< log(β)
+    double alpha = 1; ///< shape α
+    double beta = 1; ///< rate β
+    double theta = 1; ///< scale θ = 1/β
+    double lgammaAlpha = 0; ///< log(Γ(α))
+    double pdfCoef = 0; ///< α * log(β) - log(Γ(α))
+    double logAlpha = 0; ///< log(α)
+    double logBeta = 0; ///< log(β)
 
 private:
     /// constants for faster sampling
-    double t, b;
+    struct genCoef_t {
+        double t, b;
+    } genCoef = {0, 0};
 
 public:
     GammaDistribution(double shape, double rate);

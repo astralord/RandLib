@@ -11,10 +11,10 @@
  */
 class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution
 {
-    double mu; ///< mean μ
-    double lambda; ///< shape λ
-    double pdfCoef; ///< (λ/(2π))^(1/2)
-    double cdfCoef; ///< exp(2λ/μ)
+    double mu = 1; ///< mean μ
+    double lambda = 1; ///< shape λ
+    double pdfCoef = M_SQRT1_2 / M_SQRTPI; ///< (λ/(2π))^(1/2)
+    double cdfCoef = M_E * M_E; ///< exp(2λ/μ)
 public:
     InverseGaussianRand(double mean = 1, double shape = 1);
 

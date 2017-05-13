@@ -19,8 +19,10 @@
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
 {
-    double alpha, beta;
-    BetaRand B;
+    double alpha = 1; ///< first shape α
+    double beta = 1; ///< second shape β
+    BetaRand B{};
+
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
     std::string Name() const override;

@@ -11,11 +11,11 @@
  */
 class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
 {
-    double alpha; ///< shape α
-    double s; ///< scale
-    double m; ///< location
-    double alphaInv; ///< 1/α
-    double pdfCoef; ///< log(α/s)
+    double alpha = 1; ///< shape α
+    double s = 1; ///< scale
+    double m = 0; ///< location
+    double alphaInv = 1; ///< 1/α
+    double pdfCoef = 0; ///< log(α/s)
 
 public:
     FrechetRand(double shape, double scale, double location);

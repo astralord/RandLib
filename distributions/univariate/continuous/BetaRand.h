@@ -22,23 +22,25 @@
 class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution
 {
 protected:
-    double alpha; ///< first shape α
-    double beta; ///< second shape β
-    double a; ///< min bound
-    double b; ///< max bound
-    double bma; ///< b-a
-    double bmaInv; ///< 1/(b-a)
-    double logBma; ///< log(b-a)
+    double alpha = 1; ///< first shape α
+    double beta = 1; ///< second shape β
+    double a = 0; ///< min bound
+    double b = 1; ///< max bound
+    double bma = 1; ///< b-a
+    double bmaInv = 1; ///< 1/(b-a)
+    double logBma = 0; ///< log(b-a)
 
-    GammaRand GammaRV1, GammaRV2;
+    GammaRand GammaRV1{}, GammaRV2{};
 
 private:
     static constexpr double edgeForGenerators = 8.0;
-    double logBetaFun; ///< log(B(α, β)
-    double betaFun; ///< B(α, β)
+    double logBetaFun = 0; ///< log(B(α, β)
+    double betaFun = 1; ///< B(α, β)
 
     /// coefficients for generators
-    double s, t, u;
+    struct genCoef_t {
+        double s, t, u;
+    } genCoef = {0, 0, 0};
 
 public:
     BetaDistribution(double shape1 = 1, double shape2 = 1);
@@ -257,7 +259,7 @@ public:
  */
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution
 {
-    double p, F;
+    double F = 0.5, p = 0.5;
 public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
     std::string Name() const override;

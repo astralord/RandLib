@@ -13,7 +13,6 @@ std::string IrwinHallRand::Name() const
 void IrwinHallRand::SetNumber(int number)
 {
     n = std::max(1, number);
-    cdfCoef = 0.5 / RandMath::factorial(n);
 }
 
 double IrwinHallRand::f(const double & x) const

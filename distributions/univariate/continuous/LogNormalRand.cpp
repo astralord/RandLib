@@ -186,18 +186,18 @@ void LogNormalRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     long double logMean = 0.0L;
-    long double logVariance = 0.0L;
+    long double logSqDev = 0.0L;
     for (double var : sample) {
         double logVar = std::log(var);
         logMean += logVar;
-        logVariance += logVar * logVar;
+        logSqDev += logVar * logVar;
     }
     logMean /= n;
-    logVariance /= n;
-    logVariance -= logMean * logMean;
+    logSqDev /= n;
+    logSqDev -= logMean * logMean;
 
     SetLocation(logMean);
-    SetScale(std::sqrt(logVariance));
+    SetScale(std::sqrt(logSqDev));
 }
 
 NormalRand LogNormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)

@@ -16,11 +16,13 @@
  */
 class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution
 {
-    NormalRand X;
-    ExponentialRand Y;
+    NormalRand X{};
+    ExponentialRand Y{};
 
-    /// auxiliary variables
-    double a, b, c, v;
+    double a = 1; ///< μ + βσ^2
+    double b = M_SQRT1_2; ///< 1 / (√2 * σ)
+    double c = 0.5; ///< μ + βσ^2 / 2
+    double v = 1; /// βσ
 
 public:
     explicit ExponentiallyModifiedGaussianRand(double location = 0, double variance = 1, double rate = 1);

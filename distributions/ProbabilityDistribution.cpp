@@ -75,7 +75,7 @@ std::string ProbabilityDistribution<T>::fitError(ProbabilityDistribution::FIT_ER
         error += "Sample is too small. ";
         break;
     case WRONG_LEVEL:
-        error += "Level alpha should be positive and less than one. ";
+        error += "Significance level should be positive and less than one. ";
         break;
     case UNDEFINED_ERROR:
     default:

@@ -11,8 +11,9 @@
  */
 class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {
-    double mu, beta;
-    double logBeta;
+    double mu = 0; ///< location μ
+    double beta = 1; ///< scale β
+    double logBeta = 0; ///< log(β)
 public:
     GumbelRand(double location, double scale);
 

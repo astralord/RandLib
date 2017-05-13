@@ -12,8 +12,9 @@
  */
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {
-    double mu, s;
-    double logS;
+    double mu = 0; ///< location μ
+    double s = 1; ///< scale s
+    double logS = 0; ///< log(s)
 
 public:
     LogisticRand(double location = 0, double scale = 1);

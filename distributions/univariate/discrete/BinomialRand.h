@@ -17,29 +17,31 @@
 class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution
 {
 protected:
-    double p, q;
-    double logProb, log1mProb;
+    double p = 1; ///< probability of success
+    double q = 0; ///< probability of failure
+    double logProb = 0; ///< log(p)
+    double log1mProb = -INFINITY; ///< log(q)
 
 private:
-    int n;
-    double np; /// n * p
-    double lgammaNp1; ///< log(n!)
+    int n = 1; ///< number of experiments
+    double np = 1; ///< n * p
+    double lgammaNp1 = 0; ///< log(n!)
 
-    double delta1, delta2;
-    double sigma1, sigma2, c;
-    double a1, a2, a3, a4;
-    double coefa3, coefa4;
+    double delta1{}, delta2{};
+    double sigma1{}, sigma2{}, c{};
+    double a1{}, a2{}, a3{}, a4{};
+    double coefa3{}, coefa4{};
 
-    double minpq; ///< min(p, q)
-    double pFloor; ///< [n * min(p, q)] / n
-    double logPFloor; ///< log(pFloor)
-    double logQFloor; ///< log(1 - pFloor)
-    double pRes; ///< min(p, q) - pFloor
-    double npFloor; ///< [n * min(p, q)]
-    double nqFloor; ///< [n * max(p, q)]
-    double logPnpInv; ///< log(P([npFloor))
+    double minpq = 0; ///< min(p, q)
+    double pFloor = 0; ///< [n * min(p, q)] / n
+    double logPFloor = -INFINITY; ///< log(pFloor)
+    double logQFloor = 0; ///< log(1 - pFloor)
+    double pRes = 0; ///< min(p, q) - pFloor
+    double npFloor = 0; ///< [n * min(p, q)]
+    double nqFloor = n; ///< [n * max(p, q)]
+    double logPnpInv = -INFINITY; ///< log(P([npFloor))
 
-    GeometricRand G;
+    GeometricRand G{};
 
 public:
     BinomialDistribution(int number, double probability);

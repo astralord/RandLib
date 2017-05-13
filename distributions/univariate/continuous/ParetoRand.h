@@ -11,10 +11,10 @@
  */
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
-    double alpha; ///< shape α
-    double sigma; ///< scale σ
-    double logAlpha; ///< log(α)
-    double logSigma; ///< log(σ)
+    double alpha = 1; ///< shape α
+    double sigma = 1; ///< scale σ
+    double logAlpha = 0; ///< log(α)
+    double logSigma = 0; ///< log(σ)
 
 public:
     ParetoRand(double shape = 1, double scale = 1);

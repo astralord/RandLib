@@ -14,8 +14,8 @@
  */
 class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 {
-    double ro;
-    double lgamma1pRo;
+    double ro = 0; ///< shape ρ
+    double lgamma1pRo = 0; /// log(Γ(1 + ρ))
     
     ParetoRand X;
 public:

@@ -12,10 +12,11 @@
  */
 class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribution
 {
-    int N, M, m;
-    /// C(N, M)
-    double pmfCoef;
-    double p0;
+    int N = 1; ///< size of population
+    int M = 1; ///< total amount of successes
+    int m = 1; ///< limiting number of successes
+    double pmfCoef = 1; ///< C(N, M)
+    double p0 = 1;
 
 public:
     NegativeHyperGeometricRand(int totalSize, int totalSuccessesNum, int limitSuccessesNum);

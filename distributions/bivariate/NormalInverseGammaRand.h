@@ -13,9 +13,11 @@
  */
 class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution<StudentTRand, InverseGammaRand>
 {
-    double mu, lambda;
-    double alpha, beta;
-    double pdfCoef;
+    double mu = 0; ///< location μ
+    double lambda = 1; ///< precision λ
+    double alpha = 1; ///< first shape α
+    double beta = 1; ///< second shape β
+    double pdfCoef = 0.5 * (M_LNPI - M_LN2); ///< coefficient for faster pdf calculation
 
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);

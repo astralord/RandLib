@@ -81,7 +81,7 @@ long double factorial(double n);
  * @fn doubleFactorial
  * Calculate n!!
  * @param n
- * @return
+ * @return n!!
  */
 long double doubleFactorial(int n);
 

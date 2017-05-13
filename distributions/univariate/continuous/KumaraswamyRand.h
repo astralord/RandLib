@@ -13,9 +13,10 @@
  */
 class RANDLIBSHARED_EXPORT KumaraswamyRand : public ContinuousDistribution
 {
-    double a, b;
-    /// log(a), log(b)
-    double logA, logB;
+    double a = 1; ///< first shape
+    double b = 1; ///< second shape
+    double logA = 0; ///< log(a)
+    double logB = 0; ///< log(b)
 
 public:
     explicit KumaraswamyRand(double shape1, double shape2);
@@ -25,8 +26,8 @@ public:
     double MaxValue() const override { return 1; }
 
     void SetShapes(double shape1, double shape2);
-    inline double GetA() const { return a; }
-    inline double GetB() const { return b; }
+    inline double GetFirstShape() const { return a; }
+    inline double GetSecondShape() const { return b; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

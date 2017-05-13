@@ -14,11 +14,11 @@
  * Notation: X ~ N(μ, σ)
  *
  * Related distributions: <BR>
- * X ~ S(2, 0, √2σ, μ)
+ * X ~ S(2, 0, σ/√2, μ)
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 {
-    double sigma;
+    double sigma = 1;
 
     /// Tables for ziggurat
     static long double stairWidth[257], stairHeight[256];
@@ -113,9 +113,9 @@ public:
      * @param sample
      * @param confidenceIntervalForMean
      * @param confidenceIntervalForVariance
-     * @param alpha
+     * @param significanceLevel
      */
-    void FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha);
+    void FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel);
     /**
      * @fn FitMeanBayes
      * set mean, returned by bayesian estimation

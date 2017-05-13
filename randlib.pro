@@ -68,25 +68,12 @@ SOURCES += \
     distributions/univariate/continuous/LimitingDistribution.cpp \
     distributions/bivariate/BivariateNormalRand.cpp \
     distributions/univariate/continuous/DegenerateRand.cpp \
-    processes/StochasticProcess.cpp \
-    processes/BrownianMotion.cpp \
-    processes/GeometricBrownianMotion.cpp \
-    processes/PoissonProcess.cpp \
-    processes/CompoundPoissonProcess.cpp \
-    processes/StableProcess.cpp \
-    processes/OrnsteinUhlenbeckProcess.cpp \
-    processes/JumpDiffusionProcess.cpp \
-    processes/CauchyProcess.cpp \
-    processes/CoxIngersollRossProcess.cpp \
-    processes/HestonProcess.cpp \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp \
-    processes/StudentTProcess.cpp \
     distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
     distributions/univariate/continuous/InverseGaussianRand.cpp \
     distributions/univariate/discrete/CategoricalRand.cpp \
     distributions/univariate/continuous/KumaraswamyRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquaredRand.cpp \
-    distributions/univariate/continuous/NoncentralTRand.cpp \
     distributions/univariate/continuous/KolmogorovSmirnovRand.cpp \
     math/BetaMath.cpp \
     math/GammaMath.cpp \
@@ -150,28 +137,14 @@ HEADERS +=\
     distributions/univariate/continuous/LimitingDistribution.h \
     distributions/bivariate/BivariateNormalRand.h \
     distributions/univariate/continuous/DegenerateRand.h \
-    processes/StochasticProcess.h \
-    processes/BrownianMotion.h \
-    processes/GeometricBrownianMotion.h \
-    processes/PoissonProcess.h \
     distributions/Distributions.h \
-    processes/Processes.h \
     RandLib.h \
-    processes/CompoundPoissonProcess.h \
-    processes/StableProcess.h \
-    processes/OrnsteinUhlenbeckProcess.h \
-    processes/JumpDiffusionProcess.h \
-    processes/CauchyProcess.h \
-    processes/CoxIngersollRossProcess.h \
-    processes/HestonProcess.h \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h \
-    processes/StudentTProcess.h \
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \
     distributions/univariate/continuous/InverseGaussianRand.h \
     distributions/univariate/discrete/CategoricalRand.h \
     distributions/univariate/continuous/KumaraswamyRand.h \
     distributions/univariate/continuous/NoncentralChiSquaredRand.h \
-    distributions/univariate/continuous/NoncentralTRand.h \
     distributions/univariate/continuous/KolmogorovSmirnovRand.h \
     math/BetaMath.h \
     math/GammaMath.h \

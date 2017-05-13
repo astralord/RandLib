@@ -176,16 +176,16 @@ void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample)
     SetVariance(n * s / (n - 1));
 }
 
-void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double alpha)
+void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel)
 {
     size_t n = sample.size();
 
-    if (alpha <= 0 || alpha > 1)
-        throw std::invalid_argument(fitError(WRONG_LEVEL, "Alpha is equal to " + toStringWithPrecision(alpha)));
+    if (significanceLevel <= 0 || significanceLevel > 1)
+        throw std::invalid_argument(fitError(WRONG_LEVEL, "Alpha is equal to " + toStringWithPrecision(significanceLevel)));
 
     FitMeanAndVarianceUMVU(sample);
 
-    double halfAlpha = 0.5 * alpha;
+    double halfAlpha = 0.5 * significanceLevel;
 
     /// calculate confidence interval for mean
     StudentTRand t(n - 1);
@@ -195,10 +195,10 @@ void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, Doubl
 
     /// calculate confidence interval for variance
     double shape = 0.5 * n - 0.5;
-    GammaRand gamma(shape, shape);
+    GammaRand Gamma(shape, shape);
     double sigmaSq = sigma * sigma;
-    confidenceIntervalForVariance.first = sigmaSq / gamma.Quantile1m(halfAlpha);
-    confidenceIntervalForVariance.second = sigmaSq / gamma.Quantile(halfAlpha);
+    confidenceIntervalForVariance.first = sigmaSq / Gamma.Quantile1m(halfAlpha);
+    confidenceIntervalForVariance.second = sigmaSq / Gamma.Quantile(halfAlpha);
 }
 
 NormalRand NormalRand::FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
@@ -216,11 +216,11 @@ NormalRand NormalRand::FitMeanBayes(const std::vector<double> &sample, const Nor
 InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution)
 {
     double halfN = 0.5 * sample.size();
-    double alpha = priorDistribution.GetShape();
-    double beta = priorDistribution.GetRate();
-    double newAlpha = alpha + halfN;
-    double newBeta = beta + halfN * sampleVariance(sample, mu);
-    InverseGammaRand posteriorDistribution(newAlpha, newBeta);
+    double alphaPrior = priorDistribution.GetShape();
+    double betaPrior = priorDistribution.GetRate();
+    double alphaPosterior = alphaPrior + halfN;
+    double betaPosterior = betaPrior + halfN * sampleVariance(sample, mu);
+    InverseGammaRand posteriorDistribution(alphaPosterior, betaPosterior);
     SetVariance(posteriorDistribution.Mean());
     return posteriorDistribution;
 }
@@ -228,19 +228,19 @@ InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample,
 NormalInverseGammaRand NormalRand::FitMeanAndVarianceBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
-    double alpha = priorDistribution.GetShape();
-    double beta = priorDistribution.GetRate();
-    double mu0 = priorDistribution.GetLocation();
-    double lambda = priorDistribution.GetPrecision();
+    double alphaPrior = priorDistribution.GetShape();
+    double betaPrior = priorDistribution.GetRate();
+    double muPrior = priorDistribution.GetLocation();
+    double lambdaPrior = priorDistribution.GetPrecision();
     double sum = sampleSum(sample), average = sum / n;
-    double newLambda = lambda + n;
-    double newMu0 = (lambda * mu0 + sum) / newLambda;
+    double lambdaPosterior = lambdaPrior + n;
+    double muPosterior = (lambdaPrior * muPrior + sum) / lambdaPosterior;
     double halfN = 0.5 * n;
-    double newAlpha = alpha + halfN;
+    double alphaPosterior = alphaPrior + halfN;
     double variance = sampleVariance(sample, average);
-    double aux = mu0 - average;
-    double newBeta = beta + halfN * (variance + lambda / newLambda * aux * aux);
-    NormalInverseGammaRand posteriorDistribution(newMu0, newLambda, newAlpha, newBeta);
+    double aux = muPrior - average;
+    double betaPosterior = betaPrior + halfN * (variance + lambdaPrior / lambdaPosterior * aux * aux);
+    NormalInverseGammaRand posteriorDistribution(muPosterior, lambdaPosterior, alphaPosterior, betaPosterior);
     DoublePair mean = posteriorDistribution.Mean();
     SetLocation(mean.first);
     SetVariance(mean.second);

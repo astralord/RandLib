@@ -13,7 +13,7 @@
  */
 class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 {
-    double a; ///< value
+    double a = 0; ///< value
 
 public:
     explicit DegenerateRand(double value = 0);

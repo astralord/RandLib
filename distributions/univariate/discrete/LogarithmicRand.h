@@ -13,9 +13,9 @@
  */
 class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution
 {
-    double p;
-    /// log(p), log(q)
-    double logProb, log1mProb;
+    double p = 1; ///< parameter of distribution
+    double logProb = 0; ///< log(p)
+    double log1mProb = -INFINITY; ///< log(q)
 public:
     explicit LogarithmicRand(double probability);
     std::string Name() const override;

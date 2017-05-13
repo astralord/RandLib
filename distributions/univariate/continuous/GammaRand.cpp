@@ -22,9 +22,9 @@ void GammaDistribution::SetParameters(double shape, double rate)
 
     if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
         /// set constants for generator
-        t = 0.5 * std::log1p(-alpha);
-        t = 0.07 + 0.75 * std::exp(t);
-        b = 1.0 + std::exp(-t) * alpha / t;
+        genCoef.t = 0.5 * std::log1p(-alpha);
+        genCoef.t = 0.07 + 0.75 * std::exp(genCoef.t);
+        genCoef.b = 1.0 + std::exp(-genCoef.t) * alpha / genCoef.t;
     }
 }
 
@@ -111,16 +111,16 @@ double GammaDistribution::variateBest() const
     double X = 0;
     int iter = 0;
     do {
-        double V = b * UniformRand::StandardVariate();
+        double V = genCoef.b * UniformRand::StandardVariate();
         double W = UniformRand::StandardVariate();
         if (V <= 1) {
-            X = t * std::pow(V, 1.0 / alpha);
+            X = genCoef.t * std::pow(V, 1.0 / alpha);
             if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
                 return X;
         }
         else {
-            X = -std::log(t * (b - V) / alpha);
-            double Y = X / t;
+            X = -std::log(genCoef.t * (genCoef.b - V) / alpha);
+            double Y = X / genCoef.t;
             if (W * (alpha + Y - alpha * Y) <= 1 || W <= std::pow(Y, alpha - 1))
                 return X;
         }

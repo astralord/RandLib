@@ -29,10 +29,10 @@ void GeometricStableRand::SetParameters(double exponent, double skewness, double
     Z.SetParameters(alpha, beta);
 
     if (alpha == 2) {
-        double sigma2 = gamma + gamma;
-        k = mu * mu + sigma2 * sigma2;
+        double gamma2 = gamma + gamma;
+        k = mu * mu + gamma2 * gamma2;
         k = std::sqrt(k) - mu;
-        k /= sigma2;
+        k /= gamma2;
         kInv = 1.0 / k;
         kSq = k * k;
         pdfCoef = std::log(gamma * (k + kInv));
@@ -394,7 +394,6 @@ double GeometricStableRand::Mode() const
 double GeometricStableRand::Skewness() const
 {
     if (alpha == 2) {
-        double kSq = k * k;
         double k4 = kSq * kSq;
         double k6 = k4 * kSq;
         double z = (k4 + 1);

@@ -20,17 +20,18 @@ template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
 {
 protected:
-    double p, q;
-    double logProb; ///< log(p)
-    double log1mProb; ///< log(q)
+    double p = 1; ///< probability of failure
+    double q = 0; ///< probability of success
+    double logProb = 0; ///< log(p)
+    double log1mProb = -INFINITY; ///< log(q)
 
 private:
-    T r;
-    double pdfCoef;
-    double qDivP; /// q / p
+    T r = 1; /// number of failures until the experiment is stopped
+    double pdfCoef = 0;
+    double qDivP = 0; ///< q / p
     static constexpr int tableSize = 16;
     double table[tableSize];
-    GammaRand GammaRV;
+    GammaRand GammaRV{};
 
 public:
     NegativeBinomialDistribution(T number, double probability);

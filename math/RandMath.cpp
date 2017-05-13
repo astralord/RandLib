@@ -569,10 +569,10 @@ double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double
             return 0.0;
         if (t == 0.0)
             return (mum1 == 0) ? 0.5 * std::exp(-x) : 0.0;
-        double y = RandMath::logModifiedBesselFirstKind(2 * std::sqrt(x * t), mum1);
+        double logBesseli = RandMath::logModifiedBesselFirstKind(2 * std::sqrt(x * t), mum1);
         double z = 0.5 * mum1 * (std::log(t) - logX);
         double h = t + x;
-        return std::exp(y + z - h);
+        return std::exp(logBesseli + z - h);
     }, 0, y);
 }
 

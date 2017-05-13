@@ -14,11 +14,10 @@
  */
 class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution
 {
-    double R, RSq;
-    /// log(R^2)
-    double logRSq;
-    /// for sampling
-    BetaRand X;
+    double R = 1; ///< radius
+    double RSq = 1; ///< R^2
+    double logRSq = 0; /// log(R^2)
+    BetaRand X{};
     
 public:
     explicit WignerSemicircleRand(double radius);

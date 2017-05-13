@@ -16,9 +16,8 @@
  */
 class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
 {
-    int n;
-    UniformRand U;
-    double cdfCoef;
+    int n = 1; ///< parameter of distribution
+    UniformRand U{};
 public:
     explicit IrwinHallRand(int number);
 

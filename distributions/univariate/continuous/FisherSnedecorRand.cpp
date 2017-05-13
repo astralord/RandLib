@@ -83,11 +83,12 @@ double FisherSnedecorRand::Variance() const
 {
     if (d2 <= 4)
         return INFINITY;
-    double numerator = 2 * d2 * d2 * (d1 + d2 - 2);
-    double denominator = d2 - 2;
-    denominator *= denominator;
-    denominator *= d1 * (d2 - 4);
-    return numerator / denominator;
+    double variance = d2;
+    variance /= d2 - 2;
+    variance *= variance;
+    variance *= 2 * (d1 + d2 - 2);
+    variance /= d1 * (d2 - 4);
+    return variance;
 }
 
 double FisherSnedecorRand::Median() const
@@ -106,12 +107,12 @@ double FisherSnedecorRand::Skewness() const
 {
     if (d2 <= 6)
         return INFINITY;
-    double skewness = 8 * (d2 - 4);
+    double skewness = 8.0 * (d2 - 4.0);
     double aux = d1 + d2 - 2;
     skewness /= d1 * aux;
     skewness = std::sqrt(skewness);
     skewness *= d1 + aux;
-    skewness /= d2 - 6;
+    skewness /= d2 - 6.0;
     return skewness;
 }
 

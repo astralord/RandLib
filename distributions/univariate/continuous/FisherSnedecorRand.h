@@ -14,12 +14,16 @@
  */
 class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 {
-    int d1, d2;
-    double pdfCoef;
+    int d1 = 2; ///< first degree
+    int d2 = 2; ///< second degree
     /// constants for optimization
-    double a, d1_d2, c, d2_d1;
+    double a = 0; ///< d1 / 2 - 1;
+    double d1_d2 = 1; ///< d1 / d2
+    double c = -2; ///< -(d1 + d2) / 2;
+    double d2_d1 = 1; ///< d2 / d1
+    double pdfCoef = 0; /// < (a + 1) * log(d1_d2) - log(B(d1/2, d2/2))
 
-    BetaPrimeRand B;
+    BetaPrimeRand B{};
 
 public:
     FisherSnedecorRand(int degree1, int degree2);

@@ -11,13 +11,13 @@
  */
 class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
 {
-    double a, b, c;
-    /// (c - a) / (b - a)
-    double constForGenerator;
-    /// (b - a) * (c - a)
-    double coefGenerator1;
-    /// (b - a) * (b - c)
-    double coefGenerator2;
+    double a = 0; ///< min value
+    double b = 2; ///< max value
+    double c = 1; ///< mode
+    double constForGenerator = 1; ///< (c - a) / (b - a)
+    double coefGenerator1 = 1; ///< (b - a) * (c - a)
+    double coefGenerator2 = 1; ///< (b - a) * (b - c)
+
     void SetConstantsForGenerator();
 
 public:
@@ -29,9 +29,6 @@ public:
     double MaxValue() const override { return b; }
 
     void SetParameters(double lowerLimit, double mode, double upperLimit);
-    inline double GetLowerLimit() const { return a; }
-    inline double GetMode() const { return c; }
-    inline double GetUpperLimit() const { return b; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

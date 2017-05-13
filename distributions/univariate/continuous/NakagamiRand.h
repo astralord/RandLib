@@ -15,9 +15,10 @@
  */
 class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
 {
-    double m, w;
-    GammaRand Y;
-    double lgammaShapeRatio; ///< log(Γ(m + 0.5) / Γ(m))
+    double m = 0.5; ///< shape
+    double w = 1; ///< spread
+    GammaRand Y {};
+    double lgammaShapeRatio = 0; ///< log(Γ(m + 0.5) / Γ(m))
 
 public:
     NakagamiDistribution(double shape = 0.5, double spread = 1);
@@ -134,7 +135,7 @@ public:
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiDistribution
 {
-    double sigma;
+    double sigma = 1; ///< scale σ
 public:
     explicit MaxwellBoltzmannRand(double scale);
     std::string Name() const override;
@@ -178,7 +179,7 @@ public:
  */
 class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiDistribution
 {
-    double sigma;
+    double sigma = 1; ///< scale σ
 public:
     explicit RayleighRand(double scale = 1);
     std::string Name() const override;

@@ -8,13 +8,17 @@
  * @brief The BivariateNormalRand class <BR>
  * Bivariate Gaussian (normal) distribution
  *
- * Notation: X ~ N(μ_1, μ_2, σ_1, ρ, σ_2)
+ * Notation: X ~ N(μ1, μ2, σ1, ρ, σ2)
  */
 class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<NormalRand, NormalRand>
 {
-    double mu1, mu2;
-    double sigma1, sigma2, rho;
-    double pdfCoef, sqrt1mroSq;
+    double mu1 = 0; ///< first location μ1
+    double mu2 = 0; ///< second location μ2
+    double sigma1 = 1; ///< first scale σ1
+    double sigma2 = 1; ///< second scale σ2
+    double rho = 0; ///< correlation coefficient ρ
+    double pdfCoef = 1 + M_LN2 + M_LNPI; ///< coefficient for faster pdf calculation
+    double sqrt1mroSq = 1; ///< √(1 - ρ)
 
 public:
     BivariateNormalRand(double location1, double location2, double scale1, double correlation, double scale2);

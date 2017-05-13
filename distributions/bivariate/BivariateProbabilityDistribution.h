@@ -12,8 +12,8 @@ template < class T1, class T2 >
 class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public ProbabilityDistribution< DoublePair >
 {
 protected:
-    T1 X; ///< 1st marginal distributions
-    T2 Y; ///< 2nd marginal distributions
+    T1 X{}; ///< 1st marginal distributions
+    T2 Y{}; ///< 2nd marginal distributions
 public:
     BivariateProbabilityDistribution() {}
     virtual ~BivariateProbabilityDistribution() {}

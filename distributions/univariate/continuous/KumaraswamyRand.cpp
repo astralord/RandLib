@@ -9,8 +9,8 @@ KumaraswamyRand::KumaraswamyRand(double shape1, double shape2)
 
 std::string KumaraswamyRand::Name() const
 {
-    return "Kumaraswamy(" + toStringWithPrecision(GetA()) + ", "
-                          + toStringWithPrecision(GetB()) + ")";
+    return "Kumaraswamy(" + toStringWithPrecision(GetFirstShape()) + ", "
+                          + toStringWithPrecision(GetSecondShape()) + ")";
 }
 
 void KumaraswamyRand::SetShapes(double shape1, double shape2)

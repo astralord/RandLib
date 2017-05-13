@@ -20,13 +20,13 @@ void ExponentiallyModifiedGaussianRand::SetParameters(double location, double va
 
     double mu = X.GetLocation();
     double sigma = X.GetScale();
-    double lambda = Y.GetRate();
+    double beta = Y.GetRate();
     double var = sigma * sigma;
-    a = 0.5 * lambda * var;
+    a = 0.5 * beta * var;
     c = mu + a;
     a += c;
     b = M_SQRT1_2 / sigma;
-    v = lambda * sigma;
+    v = beta * sigma;
 }
 
 double ExponentiallyModifiedGaussianRand::f(const double & x) const

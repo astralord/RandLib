@@ -9,18 +9,18 @@
  *
  * Notation: X ~ t(ν, μ, σ)
  * If X ~ t(1, μ, σ), then X ~ Cauchy(μ, σ)
+ * X -> Normal(μ, σ) for t -> ∞
  */
 class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
 {
-    double nu;
-    double mu, sigma;
-    double logSigma;
-    NakagamiRand Y;
-    double pdfCoef;
-    /// 0.5 * (ν + 1)
-    double nup1Half;
-    /// log(B(0.5 * ν, 0.5))
-    double logBetaFun;
+    double nu = 1; ///< degree ν
+    double mu = 0; ///< location μ
+    double sigma = 1; ///< scale σ
+    double logSigma = 0; ///< log(σ)
+    NakagamiRand Y{};
+    double pdfCoef = -M_LNPI; ///< coefficient for faster pdf calculation
+    double nup1Half = 1; ///< 0.5 * (ν + 1)
+    double logBetaFun = M_LNPI; ///< log(B(0.5 * ν, 0.5))
 
 public:
     explicit StudentTRand(double degree = 1.0, double location = 0.0, double scale = 1.0);
@@ -55,8 +55,6 @@ private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
     std::complex<double> CFImpl(double t) const override;
-
-    friend class NoncentralTRand;
 };
 
 #endif // STUDENTTRAND_H

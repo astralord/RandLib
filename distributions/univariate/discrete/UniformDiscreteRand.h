@@ -14,11 +14,11 @@
  */
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
-    int n; ///< number of possible outcomes
-    int a; ///< min bound
-    int b; ///< max bound
-    double nInv; ///< 1/n
-    double logN; ///< log(n)
+    int n = 1; ///< number of possible outcomes
+    int a = 0; ///< min bound
+    int b = 0; ///< max bound
+    double nInv = 1; ///< 1/n
+    double logN = 0; ///< log(n)
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);

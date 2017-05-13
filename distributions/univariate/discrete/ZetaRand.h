@@ -13,10 +13,10 @@
  */
 class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 {
-    double s, sm1;
-    /// 1.0 / ζ(s)
-    double zetaSInv;
-    double b;
+    double s = 2; ///< exponent
+    double sm1 = 1; ///< s - 1
+    double zetaSInv = 6.0 / M_PI_SQ; ///< 1.0 / ζ(s), where ζ stands for Riemann zeta-function
+    double b = 0.5; ///< 1 - 2^(1-s)
 public:
     explicit ZetaRand(double exponent = 1.0);
     std::string Name() const override;

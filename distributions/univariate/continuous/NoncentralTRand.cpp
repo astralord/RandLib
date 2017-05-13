@@ -368,7 +368,7 @@ double NoncentralTRand::Skewness() const
     thirdMoment = 0.25 * std::exp(thirdMoment);
     thirdMoment *= mu * (3.0 + mu * mu);
     double denominator = std::pow(var, 1.5);
-    return (thirdMoment - 3 * mean * var - std::pow(mean, 3)) / denominator;
+    return (thirdMoment - 3 * mean * var - std::pow(mean, 3)) / denominator;  // TODO: Wikipedia lies, re-check
 }
 
 double NoncentralTRand::ExcessKurtosis() const
@@ -387,7 +387,7 @@ double NoncentralTRand::ExcessKurtosis() const
     kurtosis += 6 * mean * mean * nu * (1.0 + mu * mu) / (nu - 2);
     kurtosis -= 3 * std::pow(mean, 4);
     double var = Variance();
-    return kurtosis / (var * var);
+    return kurtosis / (var * var);  // TODO: Wikipedia lies, re-check
 }
 
 double NoncentralTRand::quantileImpl(double p) const

@@ -11,9 +11,10 @@
  */
 class RANDLIBSHARED_EXPORT RaisedCosineDistribution : public ContinuousDistribution
 {
-    double mu, s;
-    double s_pi;
-    double log2S;
+    double mu = 0; ///< location μ
+    double s = M_PI; ///< scale
+    double s_pi = 1; ///< s / π
+    double log2S = M_LN2 + M_LNPI; ///< log(2s)
 public:
     RaisedCosineDistribution(double location, double scale);
 

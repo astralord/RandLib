@@ -11,16 +11,20 @@
  * Notation: X ~ S(α, β, γ, μ)
  *
  * Related distributions: <BR>
- * If X ~ Normal(μ, σ), then X ~ S(2, 0, √2σ, μ) <BR>
+ * If X ~ Normal(μ, σ), then X ~ S(2, 0, σ/√2, μ) <BR>
  * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ) <BR>
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
 class RANDLIBSHARED_EXPORT StableDistribution : public LimitingDistribution
 {
-    /// coefficients for common α
-    double xi, omega, zeta;
-    /// 1 / (α - 1) and α / (α - 1)
-    double alpham1Inv, alpha_alpham1;
+    using LimitingDistribution::alpha;
+    using LimitingDistribution::beta;
+
+    double zeta = 0; ///< ζ = -β * tan(πα/2)
+    double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
+    double xi = 0; ///< ξ = atan(-ζ) / α;
+    double alpham1Inv = 1; ///< 1 / (α - 1)
+    double alpha_alpham1 = 2; ///< α / (α - 1)
 
     static constexpr double BIG_NUMBER = 1e9; ///< a.k.a. infinity for pdf and cdf calculations
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
@@ -38,13 +42,12 @@ class RANDLIBSHARED_EXPORT StableDistribution : public LimitingDistribution
         COMMON
     };
 
-    DISTRIBUTION_ID distributionId;
+    DISTRIBUTION_ID distributionId = NORMAL; ///< id of distribution (Gaussian by default)
 
 protected:
-    /// hashed coefficient for faster pdf calculations
-    double pdfCoef;
-    /// boundaries k such that for |x| > k we can use tail approximation
-    double pdftailBound, cdftailBound;
+    double pdfCoef = 0.5 * (M_LN2 + M_LNPI); ///< hashed coefficient for faster pdf calculations
+    double pdftailBound = INFINITY; /// boundary k such that for |x| > k we can use pdf tail approximation
+    double cdftailBound = INFINITY; /// boundary k such that for |x| > k we can use cdf tail approximation
 
 public:
     StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
@@ -121,7 +124,7 @@ private:
     double pdfForUnityExponent(double x) const;
 
     /// functions for pdf calculation for α ≠ 1
-    DoublePair seriesZeroParams;
+    DoublePair seriesZeroParams{};
     /**
      * @fn pdfAtZero
      * @return probability density function for x = 0

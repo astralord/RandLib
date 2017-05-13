@@ -15,22 +15,25 @@
  */
 class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 {
-    double mu1, mu2;
-    double logMu1, logMu2;
-    double sqrtMu1, sqrtMu2;
+    double mu1 = 1; ///< first rate μ1
+    double mu2 = 1; ///< second rate μ2
+    double logMu1 = 0; ///< log(μ1)
+    double logMu2 = 0; ///< log(μ2)
+    double sqrtMu1 = 1; ///< √μ1
+    double sqrtMu2 = 1; ///< √μ2
 
-    PoissonRand X, Y;
+    PoissonRand X{}, Y{};
 
 public:
-    SkellamRand(double mean1, double mean2);
+    SkellamRand(double rate1, double rate2);
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     int MinValue() const override { return INT_MIN; }
     int MaxValue() const override { return INT_MAX; }
 
-    void SetMeans(double mean1, double mean2);
-    inline double GetFirstMean() const { return mu1; }
-    inline double GetSecondMean() const { return mu2; }
+    void SetRates(double rate1, double rate2);
+    inline double GetFirstRate() const { return mu1; }
+    inline double GetSecondRate() const { return mu2; }
 
     double P(const int & k) const override;
     double logP(const int & k) const override;

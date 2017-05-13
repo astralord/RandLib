@@ -147,8 +147,8 @@ bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderSt
     /// Sanity checks
     if (lowerBoundary >= upperBoundary)
         throw std::invalid_argument("Lower boundary should be less than upper one");
-    for (size_t i = 1; i != n; ++i) {
-        if (orderStatistic[i] < orderStatistic[i - 1])
+    for (size_t j = 1; j != n; ++j) {
+        if (orderStatistic[i] < orderStatistic[j - 1])
             throw std::invalid_argument("Sample should be sorted in ascending order");
     }
     if (orderStatistic[0] < this->MinValue())

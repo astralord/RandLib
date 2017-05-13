@@ -32,7 +32,7 @@ double CantorRand::F(const double & x) const
     double v = 0.5, d = 0.5, delta = 1.0;
     while (delta > MIN_POSITIVE)
     {
-        double delta = (b - a) / 3.0;
+        delta = (b - a) / 3.0;
         if (x < a + delta)
         {
             b = a + delta;

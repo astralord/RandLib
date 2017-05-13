@@ -12,11 +12,12 @@
  */
 class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
 {
-    double a, b;
-    double pdfCoef;
+    double a = 1; ///< shape
+    double b = 1; ///< scale
+    double pdfCoef = M_LN2 + M_LN3 - 2 * M_LNPI; ///< coefficient for faster pdf calculations
 
-    ZetaRand Z;
-    GammaRand G;
+    ZetaRand Z{};
+    GammaRand G{};
 
 public:
     PlanckRand(double shape, double scale);

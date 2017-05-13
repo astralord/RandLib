@@ -43,21 +43,21 @@ void BetaDistribution::setCoefficientsForGenerator()
     GENERATOR_ID id = getIdOfUsedGenerator();
     if (id == REJECTION_NORMAL) {
         double alpham1 = alpha - 1;
-        s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
-        t = 1.0 / std::sqrt(8 * alpha - 4);
+        genCoef.s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
+        genCoef.t = 1.0 / std::sqrt(8 * alpha - 4);
     }
     else if (id == CHENG) {
-        s = alpha + beta;
-        t = std::min(alpha, beta);
-        if (t > 1)
-            t = std::sqrt((2 * alpha * beta - s) / (s - 2));
-        u = alpha + t;
+        genCoef.s = alpha + beta;
+        genCoef.t = std::min(alpha, beta);
+        if (genCoef.t > 1)
+            genCoef.t = std::sqrt((2 * alpha * beta - genCoef.s) / (genCoef.s - 2));
+        genCoef.u = alpha + genCoef.t;
     }
     else if (id == ATKINSON_WHITTAKER) {
-        t = std::sqrt(alpha * (1 - alpha));
-        t /= (t + std::sqrt(beta * (1 - beta)));
-        s = beta * t;
-        s /= (s + alpha * (1 - t));
+        genCoef.t = std::sqrt(alpha * (1 - alpha));
+        genCoef.t /= (genCoef.t + std::sqrt(beta * (1 - beta)));
+        genCoef.s = beta * genCoef.t;
+        genCoef.s /= (genCoef.s + alpha * (1 - genCoef.t));
     }
 }
 
@@ -193,13 +193,13 @@ double BetaDistribution::variateCheng() const
     do {
         double U = UniformRand::StandardVariate();
         double V = UniformRand::StandardVariate();
-        double X = std::log(U / (1 - U)) / t;
+        double X = std::log(U / (1 - U)) / genCoef.t;
         Y = alpha * std::exp(X);
         R = 1.0 / (beta + Y);
         T = 4 * U * U * V;
         T = std::log(T);
-        T -= u * X;
-        T -= s * std::log(s * R);
+        T -= genCoef.u * X;
+        T -= genCoef.s * std::log(genCoef.s * R);
     } while (T > 0);
     return Y * R;
 }
@@ -210,14 +210,14 @@ double BetaDistribution::variateAtkinsonWhittaker() const
     do {
         double U = UniformRand::StandardVariate();
         double W = ExponentialRand::StandardVariate();
-        if (U <= s) {
-            double X = t * std::pow(U / s, 1.0 / alpha);
-            if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - t)))
+        if (U <= genCoef.s) {
+            double X = genCoef.t * std::pow(U / genCoef.s, 1.0 / alpha);
+            if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - genCoef.t)))
                 return X;
         }
         else {
-            double X = 1.0 - (1.0 - t) * std::pow((1.0 - U) / (1.0 - s), 1.0 / beta);
-            if (W >= (1.0 - alpha) * std::log(X / t))
+            double X = 1.0 - (1.0 - genCoef.t) * std::pow((1.0 - U) / (1.0 - genCoef.s), 1.0 / beta);
+            if (W >= (1.0 - alpha) * std::log(X / genCoef.t))
                 return X;
         }
     } while (++iter <= MAX_ITER_REJECTION);
@@ -243,16 +243,16 @@ double BetaDistribution::variateRejectionNormal() const
             Z = N * N;
         } while (Z >= alpha2m1);
 
-        double W = ExponentialRand::StandardVariate() + s;
+        double W = ExponentialRand::StandardVariate() + genCoef.s;
         double aux = 0.5 - alpham1 / (alpha2m1 - Z);
         aux *= Z;
         if (W + aux >= 0)
-            return 0.5 + N * t;
+            return 0.5 + N * genCoef.t;
         aux = std::log1p(-Z / alpha2m1);
         aux *= alpham1;
         aux += W + 0.5 * Z;
         if (aux >= 0)
-            return 0.5 + N * t;
+            return 0.5 + N * genCoef.t;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
@@ -478,10 +478,10 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
             return 0.0;
         if (x <= 0)
             return -cosZm1;
-        double f = std::cos(z * x) - 1;
-        f *= std::pow(x, alpha - 1);
-        f -= cosZm1;
-        return std::pow(1.0 - x, beta - 1) * f;
+        double y = std::cos(z * x) - 1;
+        y *= std::pow(x, alpha - 1);
+        y -= cosZm1;
+        return std::pow(1.0 - x, beta - 1) * y;
     }, 0, 1);
     re += betaFun;
     re += cosZm1 / beta;
@@ -491,10 +491,10 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
             return 0.0;
         if (x <= 0)
             return -sinZ;
-        double f = std::sin(z * x);
-        f *= std::pow(x, alpha - 1);
-        f -= sinZ;
-        return std::pow(1.0 - x, beta - 1) * f;
+        double y = std::sin(z * x);
+        y *= std::pow(x, alpha - 1);
+        y -= sinZ;
+        return std::pow(1.0 - x, beta - 1) * y;
     }, 0, 1);
     im += sinZ / beta;
 
