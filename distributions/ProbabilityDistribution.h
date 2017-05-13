@@ -4,7 +4,7 @@
 #include <string>
 
 #include "math/RandMath.h"
-#include "randlib_global.h"
+#include "RandLib_Global.h"
 
 /**
  * @brief The ProbabilityDistribution class <BR>

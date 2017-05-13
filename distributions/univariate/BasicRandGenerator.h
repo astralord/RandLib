@@ -1,7 +1,7 @@
 #ifndef BASICRANDGENERATOR_H
 #define BASICRANDGENERATOR_H
 
-#include "randlib_global.h"
+#include "RandLib_Global.h"
 #include <time.h>
 
 enum GeneratorType {

@@ -1,0 +1,747 @@
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> cov-build 8.7.0 (build b452b3f2c8 p-lodi-push-28091.612)
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> Coverity Build Capture (64-bit) version 8.7.0 on Windows 8.1 (Unknown Edition number 100), 64-bit (build 9600)
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> Internal version numbers: b452b3f2c8 p-lodi-push-28091.612
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> Dumping from hostname : ASAMARINPC
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> Platform info: Windows 8.1 (Unknown Edition number 100), 64-bit (build 9600)
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> cov-build command: cov-build --dir cov-int mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib 
+2017-05-13T11:48:54.836691Z|cov-build|6896|info|> cov-build expanded command: cov-build --dir cov-int mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> build command: C:\Qt\Tools\mingw492_32\bin\mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> thunk command: mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_CAPTURE_IGNORE to MSPDBSVR.EXE
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_BUILD_COMMAND to "C:\Qt\Tools\mingw492_32\bin\mingw32-make.exe"  in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_ORIG_BUILD_COMMAND to mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_COV_BUILD_COMMAND to cov-build --dir cov-int mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set UseSharedCompilation to false.
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_CAPTURE_CHCMDLINE_TYPE to inject
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_BIN to C:/Users/ASamarin/Desktop/cov-analysis-win64-8.7.0/bin
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_SITE_CC to apt;c++;cc;cl;clang;clang++;csc;csc2;devenv;g++;g++-3;g++-4;gcc;gcc-3;gcc-4;java;javac;javaw;ld;link;msbuild
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_TEMP to C:/Users/ASamarin/AppData/Local/Temp/cov-ASamarin/987e36f94bae568654820c2488688619
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_COMMON_TEMP to C:/Users/ASamarin/AppData/Local/Temp
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_IDIR to C:/Users/ASamarin/Desktop/Stochastic_Engineer/RandLib/cov-int
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_OUTPUT to pipe:\\.\pipe\cov-log-1ce9f63258362f0f7e004c3c1a1c6d22.s
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_LOG to pipe:\\.\pipe\cov-log-1ce9f63258362f0f7e004c3c1a1c6d22.m
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_OUTPUT_ENCODING to windows-1251
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_SYSTEM_ENCODING to windows-1251
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_EMIT to C:/Users/ASamarin/Desktop/Stochastic_Engineer/RandLib/cov-int/emit
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_EMIT to C:/Users/ASamarin/Desktop/Stochastic_Engineer/RandLib/cov-int/emit
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_ENABLE_JAVA_PARSE_ERROR_RECOVERY to 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Append to PATH C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\jars
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Setting COVERITY_LD_LIBRARY_PATH to C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\jars
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_JAVA_CONFIG to javac#TEMPLATE##java#TEMPLATE##apt#TEMPLATE##javaw#TEMPLATE###
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Set COVERITY_USING_CYGWIN to False
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Dumping configuration:
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> User/default configuration:
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: command-line
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: prevent
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: dir Value: C:\Users\ASamarin\Desktop\Stochastic_Engineer\RandLib\cov-int
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-gcc-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-g++-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-gcc-config-1/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-gcc-config-2/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-g++-config-1/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-g++-config-2/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-ld-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-gcc-config-3/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-g++-config-3/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-javac-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-java-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-apt-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-javaw-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-jsp-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-android-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-web-app-config-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-msvc-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-msvc_devenv-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-msvc_msbuild-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-msvc_link-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-csc-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-csc-config-1/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-clangcc-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-clangcxx-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-javascript-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-html-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-ruby-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-php-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: include Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config/template-python-config-0/coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-0\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: gcc
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: gcc
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: gcc-gcc-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-gcc-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-gcc-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: 220ab2f621b426ef21b5bff0d14bd626
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-0\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: g++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: g++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-g++-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-0/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-g++-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-0/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: d8da15d655e23f85d5c6ae35de65d439
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-1\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: gcc-3
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: gcc
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: gcc-gcc-3-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-1/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-gcc-3-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-1/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-gcc-3-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-1/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: 6a6dc6f1a6c9360514c721c673fa1951
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-2\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: gcc-4
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: gcc
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: gcc-gcc-4-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-2/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-gcc-4-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-2/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-gcc-4-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-2/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: 6f1a220d892e908cc9817e94bdeb7bc5
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-1\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: g++-3
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: g++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-g++-3-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-1/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-g++-3-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-1/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: ada4013796c1b19ed1fe7ebb4197cd2d
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-2\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: g++-4
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: g++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-g++-4-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-2/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-g++-4-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-2/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: deb1268a1fd912fa66d290aac3a8d6e1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-ld-config-0\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: ld
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: ld
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: ld-ld-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-ld-config-0/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: a31ebdf549aecdabc7c15e5c23be5e63
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-3\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: cc
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: gcc
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: gcc-cc-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-3/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-cc-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-3/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-cc-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-gcc-config-3/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: 5ab1d465abf1e699248ecdb7fe5931c0
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-3\coverity_config.xml
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_name Value: c++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_translator Value: g++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: comp_generic Value: gnu
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++-c++-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-3/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: id Value: g++cc-c++-.*
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-g++-config-3/../user_nodefs.h
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|>   Node: md5 Value: 92107d6a420ac9dd06caaaf4fa667276
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.867893Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-javac-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: javac
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: javac
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Static Java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: javac-javac-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 4dff82855a5f75486f23dc3987a065c8
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-java-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Static Java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: java-java-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 670e0eff61ca6e268d4c53f998738922
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-apt-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: apt
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: apt
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Static Java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: apt-apt-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 0c3c17692884987df5fe47566993553e
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-javaw-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: javaw
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: javaw
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Static Java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: javaw-javaw-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: aa3bf49b5164470df847ce74b96aa069
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-jsp-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-jsp-0
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: jsp
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.(jsp|jspx)$
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: jsp-cov-filesystem-capture-jsp-0-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 425f5b1409471a4a55890e518ffea917
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-android-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-android-0
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: android
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.xml$
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: android-cov-filesystem-capture-android-0-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 07be021ce31fbf4d039bdd2f06118c8b
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-web-app-config-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-web-app-config-0
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: web-app-config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: java
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: file_include_pattern Value: a^
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: web-app-config-cov-filesystem-capture-web-app-config-0-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: d9eb77898431b05afa429cabaa9b74e7
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: cl
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: msvc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: msvc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: msvc-cl-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_instrument_config_version
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: 3
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_deployment_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_header_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/sdk/runtime/ta-runtime
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_name
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: x64
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: libci-runtime-x64.lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: x86
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: libci-runtime-x86.lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: msvc_cxx-cl-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_instrument_config_version
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: 3
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_deployment_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_header_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/sdk/runtime/ta-runtime
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_name
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: x64
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: libci-runtime-x64.lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: x86
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: libci-runtime-x86.lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: e9df99bd2b2bbeb8c18d116a3fee10c2
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc_devenv-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: devenv
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: msvc_devenv
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: msvc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: msvc_devenv-devenv-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc_devenv-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 1bd6116a591fe1eeb03a04d0299f415d
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc_msbuild-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: msbuild
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: msvc_msbuild
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: msvc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: msvc_msbuild-msbuild-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc_msbuild-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 90758a4508778ab76c418f64362bed29
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc_link-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: link
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: msvc_link
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: msvc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: msvc_link-link-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-msvc_link-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_instrument_config_version
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: 3
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_deployment_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_header_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/sdk/runtime/ta-runtime
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_name
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: x64
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: libci-runtime-x64.lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: x86
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: libci-runtime-x86.lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: instrument_variable
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: var_name Value: cov_lib_path
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>           Node: cond_platform_value
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: platform_name Value: all
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>             Node: var_value Value: /Users/mllaguno/Downloads/scan/8.7.0/capture_tarballs/cov-analysis-macosx-8.7.0/lib
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: dd791517e4a338a05324d2a98f7580c4
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-csc-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: csc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: csc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C#
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: csc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: csc-csc-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: fe090f9c5ade85b6791417ae28e7af34
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-csc-config-1\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: csc2
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: csc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C#
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: csc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: csc-csc2-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 977437d947559cc8595a296b529da4b3
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcc-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: clang
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: clangcc
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: clang
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: clangcc-clang-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: clangcxx-clang-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: clangcxxcc-clang-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: clangobjc-clang-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: id Value: clangobjcxx-clang-.*
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcc-config-0/../user_nodefs.h
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: md5 Value: 15fd1279f5d22c97f5ebadaac9bf1e6b
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcxx-config-0\coverity_config.xml
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_name Value: clang++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_translator Value: clangcxx
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_lang Value: C/C++
+2017-05-13T11:48:54.883511Z|cov-build|6896|info|>         Node: comp_generic Value: clang
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: clangcxx-clang++-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcxx-config-0/../user_nodefs.h
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: clangcxxcc-clang++-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcxx-config-0/../user_nodefs.h
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: clangobjc-clang++-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcxx-config-0/../user_nodefs.h
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: clangobjcxx-clang++-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: opt_preinclude_file Value: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-clangcxx-config-0/../user_nodefs.h
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: md5 Value: a5fffed9db920f7281ac5687f6514630
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-javascript-config-0\coverity_config.xml
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-javascript-0
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_translator Value: javascript
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_generic Value: javascript
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.js$
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: javascript-cov-filesystem-capture-javascript-0-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: md5 Value: 563da12bfde10684a4edb4df8bb3bff2
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-html-config-0\coverity_config.xml
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-html-0
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_translator Value: html
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_generic Value: javascript
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.(html|htm)$
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: html-cov-filesystem-capture-html-0-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: md5 Value: 19397d11982615e58d756dc918e6d3c2
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-ruby-config-0\coverity_config.xml
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-ruby-0
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_translator Value: ruby
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_generic Value: ruby
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.rb$
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: ruby-cov-filesystem-capture-ruby-0-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: md5 Value: e05b5d016abf502f4374682646f80501
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-php-config-0\coverity_config.xml
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-php-0
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_translator Value: php
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_generic Value: php
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.php$
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: php-cov-filesystem-capture-php-0-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: md5 Value: 8bf88b4c45e978fe7f5e31c6d61cde3a
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Configuration read from: C:\Users\ASamarin\Desktop\cov-analysis-win64-8.7.0\config\template-python-config-0\coverity_config.xml
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> Node: coverity
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: cit_version Value: 1
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>     Node: build
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: compiler
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: template_compiler Value: true
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_name Value: cov-filesystem-capture-python-0
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_translator Value: python
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_lang Value: Non Compiled
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: comp_generic Value: python
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: file_include_pattern Value: ^.*\.py$
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>       Node: options
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: id Value: python-cov-filesystem-capture-python-0-.*
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>         Node: begin_command_line_config
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|>   Node: md5 Value: 4498fd410774a9faa0109aad2e182841
+2017-05-13T11:48:54.899136Z|cov-build|6896|info|> 
+2017-05-13T11:48:54.914761Z|cov-internal-capture|7752|info|> Running build command: "C:\Qt\Tools\mingw492_32\bin\mingw32-make.exe"  in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib
+2017-05-13T11:48:54.914761Z|cov-internal-capture|7752|info|> Launching in directory C:/Users/ASamarin/Desktop/Stochastic_Engineer/RandLib
+2017-05-13T11:48:54.930386Z|cov-internal-capture|7752|info|> EXECUTING: "C:\Qt\Tools\mingw492_32\bin\mingw32-make.exe"  in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> 
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> Build time (cov-build overall): 00:00:01.064294
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> 
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> [WARNING] Build command mingw32-make.exe in C:\Users\ASamarin\Desktop\Stochastic_Engineer\bin\RandLib exited with code 2. Please verify that the build completed successfully.
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> [WARNING] No files were emitted. This may be due to a problem with your configuration
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> or because no files were actually compiled by your build command.
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|> Please make sure you have configured the compilers actually used in the compilation.
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|>  For more details, please look at: 
+2017-05-13T11:48:55.307174Z|cov-build|6896|info|>     C:/Users/ASamarin/Desktop/Stochastic_Engineer/RandLib/cov-int/build-log.txt
+2017-05-13T11:48:55.322787Z|cov-build|6896|info|> 
