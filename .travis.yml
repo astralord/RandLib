@@ -1,4 +1,4 @@
 language: cpp
-script: randlib.pro
-compiler:
-   - gcc
+script:
+ - qmake randlib.pro
+ - make
