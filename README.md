@@ -100,7 +100,6 @@ Implemented distributions (under titles special cases are listed):
     * Maxwell-Boltzmann distribution
     * Rayleigh distribution
   * Noncentral Chi-Squared distribution
-  * Noncentral t-distribution
   * Pareto distribution
   * Planck distribution
   * Raised-cosine distribution
