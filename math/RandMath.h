@@ -7,6 +7,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <numeric>
 
 #include "Constants.h"
 #include "GammaMath.h"
