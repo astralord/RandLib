@@ -14,4 +14,3 @@ install:
 script: 
   - qmake
   - make
-  - ./randlib
