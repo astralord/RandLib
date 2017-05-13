@@ -2,6 +2,7 @@
 #define CONSTANTS_H
 
 #include <cmath>
+#include <climits>
 
 constexpr long double MIN_POSITIVE = 1e-21l;
 
