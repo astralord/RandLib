@@ -1,2 +1,4 @@
-build: randlib.pro
 language: cpp
+script: randlib.pro
+compiler:
+   - gcc
