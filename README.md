@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/StochasticEngineer/RandLib.svg?branch=master)](https://travis-ci.org/StochasticEngineer/RandLib)
 <a href="https://scan.coverity.com/projects/randlib">
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/12703/badge.svg"/>
