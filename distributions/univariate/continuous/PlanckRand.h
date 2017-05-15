@@ -17,7 +17,7 @@ class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
     double pdfCoef = M_LN2 + M_LN3 - 2 * M_LNPI; ///< coefficient for faster pdf calculations
 
     ZetaRand Z{};
-    GammaRand G{};
+    GammaRand G{2};
 
 public:
     PlanckRand(double shape, double scale);

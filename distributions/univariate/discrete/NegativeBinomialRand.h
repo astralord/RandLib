@@ -20,15 +20,15 @@ template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
 {
 protected:
-    double p = 1; ///< probability of failure
-    double q = 0; ///< probability of success
-    double logProb = 0; ///< log(p)
-    double log1mProb = -INFINITY; ///< log(q)
+    double p = 0.5; ///< probability of failure
+    double q = 0.5; ///< probability of success
+    double logProb = -M_LN2; ///< log(p)
+    double log1mProb = -M_LN2; ///< log(q)
 
 private:
-    T r = 1; /// number of failures until the experiment is stopped
-    double pdfCoef = 0;
-    double qDivP = 0; ///< q / p
+    T r = 1; ///< number of failures until the experiment is stopped
+    double pdfCoef = -M_LN2; ///< coefficient for faster pdf calculation
+    double qDivP = 1; ///< q / p
     static constexpr int tableSize = 16;
     double table[tableSize];
     GammaRand GammaRV{};
@@ -89,7 +89,6 @@ public:
      * @param sample
      */
     void FitProbabilityMM(const std::vector<int> & sample);
-
     /**
      * @fn FitProbabilityBayes
      * @param sample
@@ -127,7 +126,6 @@ public:
      * @param sample
      */
     void FitNumberAndProbabilityMM(const std::vector<int> & sample);
-
     /**
      * @fn FitNumberAndProbabilityMLE
      * set number and probability, estimated via maximum-likelihood method

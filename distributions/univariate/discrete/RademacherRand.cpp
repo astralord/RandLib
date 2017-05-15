@@ -68,6 +68,16 @@ double RademacherRand::ExcessKurtosis() const
     return -2.0;
 }
 
+int RademacherRand::quantileImpl(double p) const
+{
+    return (p <= 0.5) ? -1 : 1;
+}
+
+int RademacherRand::quantileImpl1m(double p) const
+{
+    return (p >= 0.5) ? -1 : 1;
+}
+
 double RademacherRand::Entropy()
 {
     return M_LN2;

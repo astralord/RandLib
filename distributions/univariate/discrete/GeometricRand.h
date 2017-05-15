@@ -14,10 +14,10 @@
  * Related distributions: <BR>
  * X ~ NB(1, p)
  */
-class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand
+class RANDLIBSHARED_EXPORT GeometricRand : public NegativeBinomialDistribution<int>
 {
 public:
-    explicit GeometricRand(double probability = 0.5) : PascalRand(1, probability) {}
+    explicit GeometricRand(double probability = 0.5) : NegativeBinomialDistribution<int>(1, probability) {}
     std::string Name() const override;
 
 public:

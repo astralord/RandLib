@@ -37,6 +37,8 @@ public:
     double ExcessKurtosis() const override;
 
 private:
+    int quantileImpl(double p) const override;
+    int quantileImpl1m(double p) const override;
     std::complex<double> CFImpl(double t) const override;
 
 public:

@@ -188,17 +188,17 @@ void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, Doubl
     double halfAlpha = 0.5 * significanceLevel;
 
     /// calculate confidence interval for mean
-    StudentTRand t(n - 1);
-    double interval = t.Quantile1m(halfAlpha) * sigma / std::sqrt(n);
+    StudentTRand tRV(n - 1);
+    double interval = tRV.Quantile1m(halfAlpha) * sigma / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
     double shape = 0.5 * n - 0.5;
-    GammaRand Gamma(shape, shape);
+    GammaRand GammaRV(shape, shape);
     double sigmaSq = sigma * sigma;
-    confidenceIntervalForVariance.first = sigmaSq / Gamma.Quantile1m(halfAlpha);
-    confidenceIntervalForVariance.second = sigmaSq / Gamma.Quantile(halfAlpha);
+    confidenceIntervalForVariance.first = sigmaSq / GammaRV.Quantile1m(halfAlpha);
+    confidenceIntervalForVariance.second = sigmaSq / GammaRV.Quantile(halfAlpha);
 }
 
 NormalRand NormalRand::FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
