@@ -80,7 +80,6 @@ SOURCES += \
     math/NumericMath.cpp
 
 HEADERS +=\
-    randlib_global.h \
     distributions/ProbabilityDistribution.h \
     distributions/univariate/BasicRandGenerator.h \
     distributions/univariate/continuous/BetaRand.h \
@@ -148,7 +147,8 @@ HEADERS +=\
     distributions/univariate/continuous/KolmogorovSmirnovRand.h \
     math/BetaMath.h \
     math/GammaMath.h \
-    math/NumericMath.h
+    math/NumericMath.h \
+    RandLib_global.h
 
 unix {
     target.path = /usr/lib

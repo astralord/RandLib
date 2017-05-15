@@ -4,7 +4,7 @@
 
 BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1, probability)
 {
-    boundary = q * RandGenerator::maxValue();
+    boundary = q * RandGenerator::MaxValue();
 }
 
 std::string BernoulliRand::Name() const
@@ -15,7 +15,7 @@ std::string BernoulliRand::Name() const
 void BernoulliRand::SetProbability(double probability)
 {
     SetParameters(1, probability);
-    boundary = q * RandGenerator::maxValue();
+    boundary = q * RandGenerator::MaxValue();
 }
 
 double BernoulliRand::P(const int & k) const
@@ -40,7 +40,7 @@ double BernoulliRand::S(const int & k) const
 
 int BernoulliRand::Variate() const
 {
-    return RandGenerator::variate() > boundary;
+    return RandGenerator::Variate() > boundary;
 }
 
 int BernoulliRand::Variate(double p)
@@ -57,7 +57,7 @@ int BernoulliRand::StandardVariate()
     {
         /// refresh
         decimals = maxDecimals;
-        X = RandGenerator::variate();
+        X = RandGenerator::Variate();
     }
     else
     {

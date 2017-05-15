@@ -5,8 +5,8 @@
 #include <time.h>
 
 enum GeneratorType {
-    JKISS, ///< period is 2 ^ 1271
-    JLKISS64 ///< period is 2 ^ 250
+    JKISS, ///< period is 2^1271
+    JLKISS64 ///< period is 2^250
 };
 
 
@@ -21,9 +21,9 @@ class RANDLIBSHARED_EXPORT BasicRandGenerator
 public:
     BasicRandGenerator() {}
 
-    static unsigned long long variate();
+    static unsigned long long Variate();
 
-    static constexpr unsigned long long maxValue() {
+    static constexpr unsigned long long MaxValue() {
         return (Generator == JLKISS64) ? 18446744073709551615ULL : 4294967295UL;
     }
     static size_t maxDecimals();

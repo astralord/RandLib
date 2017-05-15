@@ -4,6 +4,9 @@
 #include "ProbabilityDistribution.h"
 #include "univariate/BasicRandGenerator.h"
 
+/// UNIVARIATE
+#include "univariate/UnivariateProbabilityDistribution.h"
+
 /// CONTINUOUS
 #include "univariate/continuous/ContinuousDistribution.h"
 #include "univariate/continuous/BetaPrimeRand.h"

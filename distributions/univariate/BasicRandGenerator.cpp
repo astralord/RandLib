@@ -1,7 +1,7 @@
 #include "BasicRandGenerator.h"
 
 template <>
-unsigned long long BasicRandGenerator<JLKISS64>::variate()
+unsigned long long BasicRandGenerator<JLKISS64>::Variate()
 {
     static unsigned long long X = 123456789123ULL ^ time(0);
     static unsigned long long Y = 987654321987ULL;
@@ -26,7 +26,7 @@ unsigned long long BasicRandGenerator<JLKISS64>::variate()
 }
 
 template <>
-unsigned long long BasicRandGenerator<JKISS>::variate()
+unsigned long long BasicRandGenerator<JKISS>::Variate()
 {
     static unsigned int X = 123456789 ^ time(0);
     static unsigned int C = 6543217;
@@ -51,7 +51,7 @@ template < char Generator >
 size_t BasicRandGenerator<Generator>::maxDecimals()
 {
     size_t num = 0;
-    unsigned long long maxRand = maxValue();
+    unsigned long long maxRand = MaxValue();
     while (maxRand != 0)
     {
         ++num;

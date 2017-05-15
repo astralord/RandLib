@@ -14,8 +14,6 @@
 #include "BetaMath.h"
 #include "NumericMath.h"
 
-#include "RandLib_global.h"
-
 namespace RandMath
 {
 /**

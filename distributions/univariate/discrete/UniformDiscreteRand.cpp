@@ -44,7 +44,7 @@ double UniformDiscreteRand::F(const int & k) const
 
 int UniformDiscreteRand::Variate() const
 {
-    double x = (RandGenerator::variate() % n);
+    double x = (RandGenerator::Variate() % n);
     return a + x;
 }
 

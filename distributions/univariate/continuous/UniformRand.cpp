@@ -78,7 +78,7 @@ double UniformRand::StandardVariate()
     return x / 4294967296.0;
 #else
     /// generates a random number on interval (0,1)
-    double x = RandGenerator::variate();
+    double x = RandGenerator::Variate();
     x += 0.5;
     x /= 4294967296.0;
     return x;
