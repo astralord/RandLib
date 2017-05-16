@@ -1,6 +1,7 @@
 #include "NegativeBinomialRand.h"
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
+#include "PoissonRand.h"
 
 template< typename T >
 NegativeBinomialDistribution<T>::NegativeBinomialDistribution(T number, double probability)
@@ -9,16 +10,10 @@ NegativeBinomialDistribution<T>::NegativeBinomialDistribution(T number, double p
 }
 
 template< typename T >
-void NegativeBinomialDistribution<T>::SetValidParameters(T number, double probability)
+void NegativeBinomialDistribution<T>::SetParameters(T number, double probability)
 {
     r = (number > 0) ? number : 1;
     p = (probability > 1.0 || probability < 0.0) ? 0.5 : probability;
-}
-
-template< typename T >
-void NegativeBinomialDistribution<T>::SetParameters(T number, double probability)
-{
-    SetValidParameters(number, probability);
     q = 1.0 - p;
     logProb = std::log(p);
     log1mProb = std::log1p(-p);
@@ -307,5 +302,5 @@ void NegativeBinomialRand<double>::FitNumberAndProbabilityMLE(const std::vector<
     SetParameters(guess, guess / (guess + mean));
 }
 
-template class NegativeBinomialRand<int>;
-template class NegativeBinomialRand<double>;
+template class NegativeBinomialDistribution<int>;
+template class NegativeBinomialDistribution<double>;

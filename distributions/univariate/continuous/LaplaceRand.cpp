@@ -28,8 +28,10 @@ void LaplaceRand::SetAsymmetry(double asymmetry)
         k = 1.0;
     kInv = 1.0 / k;
     kSq = k * k;
-    pdfCoef = std::log(gamma * (k + kInv));
-    cdfCoef = -std::log1p(kSq);
+    log1pKsq = std::log1p(kSq);
+    double logK = std::log(k);
+    pdfCoef = logGamma + log1pKsq - logK;
+    cdfCoef = 2 * logK - log1pKsq;
     mu = (1.0 - kSq) * gamma * kInv;
 }
 

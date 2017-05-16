@@ -19,8 +19,9 @@ protected:
     double k = 1; ///< asymmetry coefficient
     double kInv = 1; ///< 1 / k
     double kSq = 1; ///< k^2
+    double log1pKsq = M_LN2; ///< log(1 + k * k)
     double pdfCoef = M_LN2; ///< log(γ * (k + 1 / k))
-    double cdfCoef = M_LN2; ///< log(1 + k * k)
+    double cdfCoef = -M_LN2; ///< 2 * log(k) - log(1 + k^2)
 
 public:
     GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);

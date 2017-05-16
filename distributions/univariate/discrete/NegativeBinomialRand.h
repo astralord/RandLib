@@ -2,7 +2,6 @@
 #define NEGATIVEBINOMIALRAND_H
 
 #include "DiscreteDistribution.h"
-#include "PoissonRand.h"
 #include "../continuous/BetaRand.h"
 
 /**
@@ -38,9 +37,6 @@ public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return INT_MAX; }
-
-private:
-    void SetValidParameters(T number, double probability);
 
 protected:
     void SetParameters(T number, double probability);
