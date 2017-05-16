@@ -42,7 +42,7 @@ public:
      * @fn GetLogScale
      * @return log(σ)
      */
-    inline double GetLogScale() const { return logGamma - 0.5 * M_LN2; }
+    inline double GetLogScale() const { return StableDistribution::GetLogScale() - 0.5 * M_LN2; }
     /**
      * @fn GetPrecision
      * @return 1/σ^2

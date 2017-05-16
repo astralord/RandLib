@@ -2,7 +2,7 @@
 #define STABLERAND_H
 
 #include <functional>
-#include "LimitingDistribution.h"
+#include "ContinuousDistribution.h"
 
 /**
  * @brief The StableDistribution class <BR>
@@ -15,16 +15,23 @@
  * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ) <BR>
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
-class RANDLIBSHARED_EXPORT StableDistribution : public LimitingDistribution
+class RANDLIBSHARED_EXPORT StableDistribution : public ContinuousDistribution
 {
-    using LimitingDistribution::alpha;
-    using LimitingDistribution::beta;
+protected:
+    double alpha = 2; ///< characteristic exponent α
+    double beta = 0; ///< skewness β
+    double mu = 0; ///< location μ
+    double gamma = M_SQRT2; ///< scale γ
+    double logGamma = -0.5 * M_LN2; ///< log(γ)
 
+private:
+    double alphaInv = 0.5; /// 1/α
     double zeta = 0; ///< ζ = -β * tan(πα/2)
     double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
     double xi = 0; ///< ξ = atan(-ζ) / α;
     double alpham1Inv = 1; ///< 1 / (α - 1)
     double alpha_alpham1 = 2; ///< α / (α - 1)
+    double logGammaPi_2 = M_LNPI - 1.5 * M_LN2; ///< log(γπ/2)
 
     static constexpr double BIG_NUMBER = 1e9; ///< a.k.a. infinity for pdf and cdf calculations
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
@@ -53,15 +60,7 @@ public:
     StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableDistribution() {}
 
-    SUPPORT_TYPE SupportType() const override {
-        if (alpha < 1) {
-            if (beta == 1)
-                return RIGHTSEMIFINITE_T;
-            if (beta == -1)
-                return LEFTSEMIFINITE_T;
-        }
-        return INFINITE_T;
-    }
+    SUPPORT_TYPE SupportType() const override;
     double MinValue() const override { return (alpha < 1 && beta == 1) ? mu : -INFINITY; }
     double MaxValue() const override { return (alpha < 1 && beta == -1) ? mu : INFINITY; }
 
@@ -69,7 +68,14 @@ protected:
     void SetParameters(double exponent, double skewness);
 
 public:
+    void SetLocation(double location);
     void SetScale(double scale);
+
+    inline double GetExponent() const { return alpha; }
+    inline double GetSkewness() const { return beta; }
+    inline double GetScale() const { return gamma; }
+    inline double GetLocation() const { return mu; }
+    inline double GetLogScale() const { return logGamma; }
 
     /// Probability distribution functions
 protected:
@@ -267,6 +273,7 @@ public:
     void Sample(std::vector<double> &outputData) const override;
 
 public:
+    double Mean() const override;
     double Variance() const override;
     double Median() const override;
     double Mode() const override;
@@ -285,7 +292,7 @@ private:
 class RANDLIBSHARED_EXPORT StableRand : public StableDistribution
 {
 public:
-    StableRand(double exponent, double skewness, double scale = 1, double location = 0) : StableDistribution(exponent, skewness, scale, location) {}
+    StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution(exponent, skewness, scale, location) {}
     std::string Name() const override;
     using StableDistribution::SetParameters;
 };

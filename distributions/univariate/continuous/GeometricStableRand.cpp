@@ -4,79 +4,110 @@
 #include "UniformRand.h"
 #include "CauchyRand.h"
 
-GeometricStableRand::GeometricStableRand(double exponent, double skewness, double scale, double location)
-    : LimitingDistribution(exponent, skewness, scale, location),
-      Z(exponent, skewness)
+ShiftedGeometricStableDistribution::ShiftedGeometricStableDistribution(double exponent, double skewness, double scale, double location, double shift)
 {
-    SetParameters(exponent, skewness, scale, location);
+    SetParameters(exponent, skewness);
+    SetScale(scale);
+    SetLocation(location);
+    SetShift(shift);
 }
 
-std::string GeometricStableRand::Name() const
+void ShiftedGeometricStableDistribution::SetParameters(double exponent, double skewness)
 {
-    return "Geometric Stable("
-            + toStringWithPrecision(GetExponent()) + ", "
-            + toStringWithPrecision(GetSkewness()) + ", "
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+    Z.SetParameters(exponent, skewness);
+    alpha = Z.GetExponent();
+    beta = Z.GetSkewness();
 }
 
-void GeometricStableRand::SetParameters(double exponent, double skewness, double scale, double location)
+void ShiftedGeometricStableDistribution::SetLocation(double location)
 {
-    LimitingDistribution::SetParameters(exponent, skewness);
-    LimitingDistribution::SetScale(scale);
-    LimitingDistribution::SetLocation(location);
+    mu = location;
+}
 
-    Z.SetParameters(alpha, beta);
+void ShiftedGeometricStableDistribution::SetShift(double shift)
+{
+    m = shift;
+}
 
-    if (alpha == 2) {
-        double gamma2 = 2 * gamma;
-        k = mu * mu + gamma2 * gamma2;
-        k = std::sqrt(k) - mu;
-        k /= gamma2;
-        kInv = 1.0 / k;
-        kSq = k * k;
-        log1pKsq = std::log1p(kSq);
-        double logK = std::log(k);
-        pdfCoef = logGamma + log1pKsq - logK;
-        cdfCoef = 2 * logK - log1pKsq;
+void ShiftedGeometricStableDistribution::SetScale(double scale)
+{
+    gamma = (scale > 0.0) ? scale : M_SQRT2;
+    logGamma = std::log(gamma);
+}
+
+void ShiftedGeometricStableDistribution::SetAsymmetry(double asymmetry)
+{
+    kappa = asymmetry;
+    if (kappa <= 0)
+        kappa = 1.0;
+    kappaInv = 1.0 / kappa;
+    kappaSq = kappa * kappa;
+    log1pKappaSq = std::log1p(kappaSq);
+    double logK = std::log(kappa);
+    pdfCoef = logGamma + log1pKappaSq - logK;
+    cdfCoef = 2 * logK - log1pKappaSq;
+}
+
+SUPPORT_TYPE ShiftedGeometricStableDistribution::SupportType() const
+{
+    if (alpha < 1) {
+        if (beta == 1 && mu >= 0)
+            return RIGHTSEMIFINITE_T;
+        if (beta == -1 && mu <= 0)
+            return LEFTSEMIFINITE_T;
     }
+    return INFINITE_T;
 }
 
-double GeometricStableRand::pdfLaplace(double x) const
+double ShiftedGeometricStableDistribution::MinValue() const
+{
+    if (alpha < 1 && beta == 1 && mu >= 0)
+        return m;
+    return -INFINITY;
+}
+
+double ShiftedGeometricStableDistribution::MaxValue() const
+{
+    if (alpha < 1 && beta == -1 && mu <= 0)
+        return m;
+    return INFINITY;
+}
+
+double ShiftedGeometricStableDistribution::pdfLaplace(double x) const
 {
     return std::exp(logpdfLaplace(x));
 }
 
-double GeometricStableRand::logpdfLaplace(double x) const
+double ShiftedGeometricStableDistribution::logpdfLaplace(double x) const
 {
     double y = x / gamma;
-    y *= (x < 0) ? kInv : -k;
+    y *= (x < 0) ? kappaInv : -kappa;
     return y - pdfCoef;
 }
 
-double GeometricStableRand::cdfLaplace(double x) const
+double ShiftedGeometricStableDistribution::cdfLaplace(double x) const
 {
     double y = x / gamma;
     if (x < 0) {
-        y *= kInv;
+        y *= kappaInv;
         y += cdfCoef;
         return std::exp(y);
     }
-    return -std::expm1(-log1pKsq - k * y);
+    return -std::expm1(-log1pKappaSq - kappa * y);
 }
 
-double GeometricStableRand::cdfLaplaceCompl(double x) const
+double ShiftedGeometricStableDistribution::cdfLaplaceCompl(double x) const
 {
     double y = x / gamma;
     if (x < 0) {
-        y *= kInv;
+        y *= kappaInv;
         y += cdfCoef;
         return -std::expm1(y);
     }
-    return std::exp(-log1pKsq - k * y);
+    return std::exp(-log1pKappaSq - kappa * y);
 }
 
-double GeometricStableRand::pdfByLevy(double x) const
+double ShiftedGeometricStableDistribution::pdfByLevy(double x) const
 {
     if (mu == 0) {
         /// Invert parameter for case of -Levy
@@ -147,7 +178,7 @@ double GeometricStableRand::pdfByLevy(double x) const
     return y / (gamma * M_SQRT2PI);
 }
 
-double GeometricStableRand::pdfByCauchy(double x) const
+double ShiftedGeometricStableDistribution::pdfByCauchy(double x) const
 {
     // TODO: find analytical solution, maybe using residue technique
     // otherwise, use peak, which is t = exp(x / sqrt(mu^2 + sigma^2))
@@ -167,7 +198,7 @@ double GeometricStableRand::pdfByCauchy(double x) const
     }, 0, 1);
 }
 
-double GeometricStableRand::f(const double & x) const
+double ShiftedGeometricStableDistribution::f(const double & x) const
 {
     /// Laplace case
     if (alpha == 2)
@@ -240,12 +271,12 @@ double GeometricStableRand::f(const double & x) const
     0, 1);
 }
 
-double GeometricStableRand::logf(const double & x) const
+double ShiftedGeometricStableDistribution::logf(const double & x) const
 {
-    return std::log(f(x));
+    return (alpha == 2) ? logpdfLaplace(x) : std::log(f(x));
 }
 
-double GeometricStableRand::F(const double & x) const
+double ShiftedGeometricStableDistribution::F(const double & x) const
 {
     if (alpha == 2)
         return cdfLaplace(x);
@@ -271,21 +302,21 @@ double GeometricStableRand::F(const double & x) const
     0, 1);
 }
 
-double GeometricStableRand::variateForUnityExponent() const
+double ShiftedGeometricStableDistribution::variateForUnityExponent() const
 {
     double W = ExponentialRand::StandardVariate();
     double X = Z.Variate();
     return W * (mu + gamma * X + 2 * gamma * std::log(gamma * W) / M_PI);
 }
 
-double GeometricStableRand::variateForCommonExponent() const
+double ShiftedGeometricStableDistribution::variateForCommonExponent() const
 {
     double W = ExponentialRand::StandardVariate();
     double X = Z.Variate();
     return mu * W + std::pow(W, alphaInv) * gamma * X;
 }
 
-double GeometricStableRand::variateByLevy(bool positive) const
+double ShiftedGeometricStableDistribution::variateByLevy(bool positive) const
 {
     double W = ExponentialRand::StandardVariate();
     double X = LevyRand::StandardVariate();
@@ -296,17 +327,17 @@ double GeometricStableRand::variateByLevy(bool positive) const
     return X * W;
 }
 
-double GeometricStableRand::variateByCauchy() const
+double ShiftedGeometricStableDistribution::variateByCauchy() const
 {
     double W = ExponentialRand::StandardVariate();
     double X = CauchyRand::Variate(mu, gamma);
     return X * W;
 }
 
-double GeometricStableRand::Variate() const
+double ShiftedGeometricStableDistribution::Variate() const
 {
     if (alpha == 2)
-        return (mu == 0) ? LaplaceRand::Variate(0, gamma) : LaplaceRand::Variate(0, gamma, k);
+        return (mu == 0) ? LaplaceRand::Variate(0, gamma) : LaplaceRand::Variate(0, gamma, kappa);
     if (alpha == 0.5) {
         if (beta == 1)
             return variateByLevy(true);
@@ -318,7 +349,7 @@ double GeometricStableRand::Variate() const
     return variateForCommonExponent();
 }
 
-void GeometricStableRand::Sample(std::vector<double> &outputData) const
+void ShiftedGeometricStableDistribution::Sample(std::vector<double> &outputData) const
 {
     if (alpha == 2) {
         if (mu == 0) {
@@ -327,7 +358,7 @@ void GeometricStableRand::Sample(std::vector<double> &outputData) const
         }
         else {
             for (double &var : outputData)
-                var = LaplaceRand::Variate(0, gamma, k);
+                var = LaplaceRand::Variate(0, gamma, kappa);
         }
     }
     else if (alpha == 0.5 && std::fabs(beta) == 1) {
@@ -356,48 +387,61 @@ void GeometricStableRand::Sample(std::vector<double> &outputData) const
     }
 }
 
-double GeometricStableRand::Variance() const
+double ShiftedGeometricStableDistribution::Mean() const
+{
+    if (alpha > 1)
+        return m + mu;
+    if (beta == 1)
+        return INFINITY;
+    return (beta == -1) ? -INFINITY : NAN;
+}
+
+double ShiftedGeometricStableDistribution::Variance() const
 {
     if (alpha == 2) {
-        double y = gamma * gamma / kSq;
-        return (1.0 + kSq * kSq) * y;
+        double y = gamma * gamma / kappaSq;
+        return (1.0 + kappaSq * kappaSq) * y;
     }
     return INFINITY;
 }
 
-std::complex<double> GeometricStableRand::CFImpl(double t) const
+std::complex<double> ShiftedGeometricStableDistribution::CFImpl(double t) const
 {
-    return 1.0 / (1.0 + psi(t));
+    // TODO: elaborate LAPLACE CASE
+    double x = (alpha == 1) ? beta * M_2_PI * std::log(t) : beta * std::tan(M_PI_2 * alpha);
+    double re = std::pow(gamma * t, alpha);
+    std::complex<double> psi = std::complex<double>(re, re * x - mu * t);
+    return 1.0 / (1.0 + psi);
 }
 
-double GeometricStableRand::Median() const
+double ShiftedGeometricStableDistribution::Median() const
 {
     if (alpha == 2) {
-        if (k > 1) {
-            double y = std::log1p(1.0 / kSq) - M_LN2;
-            return gamma * k * y;
+        if (kappa > 1) {
+            double y = std::log1p(1.0 / kappaSq) - M_LN2;
+            return m + gamma * kappa * y;
         }
         else {
-            double y = std::log1p(kSq) - M_LN2;
-            return -gamma / k * y;
+            double y = std::log1p(kappaSq) - M_LN2;
+            return m - gamma / kappa * y;
         }
     }
     return ContinuousDistribution::Median();
 }
 
-double GeometricStableRand::Mode() const
+double ShiftedGeometricStableDistribution::Mode() const
 {
     // TODO: calculate mode for more cases
     if (alpha == 1 || alpha == 2)
-        return 0.0;
+        return m;
     return ContinuousDistribution::Mode();
 }
 
-double GeometricStableRand::Skewness() const
+double ShiftedGeometricStableDistribution::Skewness() const
 {
     if (alpha == 2) {
-        double k4 = kSq * kSq;
-        double k6 = k4 * kSq;
+        double k4 = kappaSq * kappaSq;
+        double k6 = k4 * kappaSq;
         double z = (k4 + 1);
         z *= std::sqrt(z);
         double y = 2 * (1 - k6);
@@ -406,13 +450,51 @@ double GeometricStableRand::Skewness() const
     return NAN;
 }
 
-double GeometricStableRand::ExcessKurtosis() const
+double ShiftedGeometricStableDistribution::ExcessKurtosis() const
 {
     if (alpha == 2)
     {
-        if (k == 1)
+        if (kappa == 1)
             return 3.0;
         return NAN; // TODO!
     }
     return NAN;
+}
+
+std::string GeometricStableRand::Name() const
+{
+    return "Geometric Stable("
+            + toStringWithPrecision(GetExponent()) + ", "
+            + toStringWithPrecision(GetSkewness()) + ", "
+            + toStringWithPrecision(GetScale()) + ", "
+            + toStringWithPrecision(GetLocation()) + ")";
+}
+
+void GeometricStableRand::ChangeAsymmetry()
+{
+    if (alpha != 2)
+        return;
+    double gamma2 = 2 * gamma;
+    double asymmetry = mu * mu + gamma2 * gamma2;
+    asymmetry = std::sqrt(asymmetry) - mu;
+    asymmetry /= gamma2;
+    SetAsymmetry(asymmetry);
+}
+
+void GeometricStableRand::SetParameters(double exponent, double skewness)
+{
+    ShiftedGeometricStableDistribution::SetParameters(exponent, skewness);
+    ChangeAsymmetry();
+}
+
+void GeometricStableRand::SetLocation(double location)
+{
+    ShiftedGeometricStableDistribution::SetLocation(location);
+    ChangeAsymmetry();
+}
+
+void GeometricStableRand::SetScale(double scale)
+{
+    ShiftedGeometricStableDistribution::SetScale(scale);
+    ChangeAsymmetry();
 }

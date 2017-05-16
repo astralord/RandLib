@@ -65,7 +65,6 @@ SOURCES += \
     distributions/bivariate/BivariateProbabilityDistribution.cpp \
     distributions/bivariate/NormalInverseGammaRand.cpp \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
-    distributions/univariate/continuous/LimitingDistribution.cpp \
     distributions/bivariate/BivariateNormalRand.cpp \
     distributions/univariate/continuous/DegenerateRand.cpp \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.cpp \
@@ -133,7 +132,6 @@ HEADERS +=\
     distributions/bivariate/BivariateProbabilityDistribution.h \
     distributions/bivariate/NormalInverseGammaRand.h \
     distributions/univariate/discrete/BetaBinomialRand.h \
-    distributions/univariate/continuous/LimitingDistribution.h \
     distributions/bivariate/BivariateNormalRand.h \
     distributions/univariate/continuous/DegenerateRand.h \
     distributions/Distributions.h \

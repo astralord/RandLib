@@ -6,16 +6,29 @@
 #include "ExponentialRand.h"
 
 StableDistribution::StableDistribution(double exponent, double skewness, double scale, double location)
-    : LimitingDistribution(exponent, skewness, scale, location)
 {
     SetParameters(exponent, skewness);
     SetScale(scale);
     SetLocation(location);
 }
 
+SUPPORT_TYPE StableDistribution::SupportType() const
+{
+    if (alpha < 1) {
+        if (beta == 1)
+            return RIGHTSEMIFINITE_T;
+        if (beta == -1)
+            return LEFTSEMIFINITE_T;
+    }
+    return INFINITE_T;
+}
+
 void StableDistribution::SetParameters(double exponent, double skewness)
 {
-    LimitingDistribution::SetParameters(exponent, skewness);
+    alpha = std::min(std::max(exponent, 0.1), 2.0);
+    alphaInv = 1.0 / alpha;
+    beta = std::min(skewness, 1.0);
+    beta = std::max(beta, -1.0);
 
     /// Set id of distribution
     if (alpha == 2.0)
@@ -39,6 +52,7 @@ void StableDistribution::SetParameters(double exponent, double skewness)
     else if (distributionId == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (gamma * std::fabs(beta));
         pdftailBound = std::sqrt(2e4 / M_PI * M_E);
+        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
     }
     else if (distributionId == COMMON) {
         if (beta != 0.0) {
@@ -66,9 +80,15 @@ void StableDistribution::SetParameters(double exponent, double skewness)
     }
 }
 
+void StableDistribution::SetLocation(double location)
+{
+    mu = location;
+}
+
 void StableDistribution::SetScale(double scale)
 {
-    LimitingDistribution::SetScale(scale);
+    gamma = scale > 0 ? scale : M_SQRT2;
+    logGamma = std::log(gamma);
     if (distributionId == NORMAL)
         pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
     else if (distributionId == LEVY)
@@ -794,6 +814,15 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
     }
 }
 
+double StableDistribution::Mean() const
+{
+    if (alpha > 1)
+        return mu;
+    if (beta == 1)
+        return INFINITY;
+    return (beta == -1) ? -INFINITY : NAN;
+}
+
 double StableDistribution::Variance() const
 {
     return (distributionId == NORMAL) ? 2 * gamma * gamma : INFINITY;
@@ -826,7 +855,11 @@ double StableDistribution::ExcessKurtosis() const
 
 std::complex<double> StableDistribution::CFImpl(double t) const
 {
-    return std::exp(-psi(t));
+    // TODO: elaborate different cases, -zeta is not always defined!!!
+    double x = (alpha == 1) ? beta * M_2_PI * std::log(t) : -zeta;
+    double re = std::pow(gamma * t, alpha);
+    std::complex<double> psi = std::complex<double>(re, re * x - mu * t);
+    return std::exp(-psi);
 }
 
 std::string StableRand::Name() const

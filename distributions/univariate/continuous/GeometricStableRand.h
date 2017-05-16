@@ -1,58 +1,54 @@
 #ifndef GEOMETRICSTABLERAND_H
 #define GEOMETRICSTABLERAND_H
 
-#include "LimitingDistribution.h"
 #include "StableRand.h"
 
 /**
- * @brief The GeometricStableRand class <BR>
- * Geometric-Stable distribution
- *
- * Notation: X ~ GS(α, β, γ, μ)
+ * @brief The ShiftedGeometricStableDistribution class
+ * Abstract class that unites in itself Asymmetric Laplace
+ * and Geometric-Stable distributions
  */
-class RANDLIBSHARED_EXPORT GeometricStableRand : public LimitingDistribution
+class RANDLIBSHARED_EXPORT ShiftedGeometricStableDistribution : public ContinuousDistribution
 {
-    StableRand Z;
+    StableRand Z{};
 
 protected:
+    double alpha = 2; ///< characteristic exponent α
+    double alphaInv = 0.5; /// 1/α
+    double beta = 0; ///< skewness β
+    double mu = 0; ///< location μ
+    double m = 0; ///< shift m
+    double gamma = M_SQRT2; ///< scale γ
+    double logGamma = -0.5 * M_LN2; ///< log(γ)
+
     /// parameters for α = 2
-    double k = 1; ///< asymmetry coefficient
-    double kInv = 1; ///< 1 / k
-    double kSq = 1; ///< k^2
-    double log1pKsq = M_LN2; ///< log(1 + k * k)
-    double pdfCoef = M_LN2; ///< log(γ * (k + 1 / k))
-    double cdfCoef = -M_LN2; ///< 2 * log(k) - log(1 + k^2)
+    double kappa = 1; ///< asymmetry coefficient κ
+    double kappaInv = 1; ///< 1 / κ
+    double kappaSq = 1; ///< κ^2
+    double log1pKappaSq = M_LN2; ///< log(1 + κ * κ)
+    double pdfCoef = M_LN2; ///< log(γ * (κ + 1 / κ))
+    double cdfCoef = -M_LN2; ///< 2 * log(κ) - log(1 + κ^2)
 
 public:
-    GeometricStableRand(double exponent, double skewness, double scale = 1, double location = 0);
-    virtual ~GeometricStableRand() {}
+    ShiftedGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
+    virtual ~ShiftedGeometricStableDistribution() {}
 
-    std::string Name() const override;
-
-    SUPPORT_TYPE SupportType() const override {
-        if (alpha < 1) {
-            if (beta == 1 && mu >= 0)
-                return RIGHTSEMIFINITE_T;
-            if (beta == -1 && mu <= 0)
-                return LEFTSEMIFINITE_T;
-        }
-        return INFINITE_T;
-    }
-
-    double MinValue() const override {
-        if (alpha < 1 && beta == 1 && mu >= 0)
-            return 0;
-        return -INFINITY;
-    }
-
-    double MaxValue() const override {
-        if (alpha < 1 && beta == -1 && mu <= 0)
-            return 0;
-        return INFINITY;
-    }
+protected:
+    void SetParameters(double exponent, double skewness);
+    void SetLocation(double location);
+    void SetShift(double shift);
+    void SetScale(double scale);
+    void SetAsymmetry(double asymmetry);
 
 public:
-    void SetParameters(double exponent, double skewness, double scale, double location);
+    inline double GetExponent() const { return alpha; }
+    inline double GetSkewness() const { return beta; }
+    inline double GetScale() const { return gamma; }
+    inline double GetLogScale() const { return logGamma; }
+
+    SUPPORT_TYPE SupportType() const override;
+    double MinValue() const override;
+    double MaxValue() const override;
 
 protected:
     double pdfLaplace(double x) const;
@@ -78,6 +74,7 @@ public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 
+    double Mean() const override;
     double Variance() const override;
     double Median() const override;
     double Mode() const override;
@@ -86,6 +83,31 @@ public:
 
 private:
     std::complex<double> CFImpl(double t) const override;
+};
+
+
+/**
+ * @brief The GeometricStableRand class <BR>
+ * Geometric-Stable distribution
+ *
+ * Notation: X ~ GS(α, β, γ, μ)
+ *
+ * If X ~ Laplace(m, γ, κ), then X - m ~ GS(2, β, γ, (1/κ - κ) * γ) with arbitrary β
+ */
+class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution
+{
+public:
+    GeometricStableRand(double exponent, double skewness, double scale, double location) : ShiftedGeometricStableDistribution(exponent, skewness, scale, location) {}
+    virtual ~GeometricStableRand() {}
+
+    std::string Name() const override;
+private:
+    void ChangeAsymmetry();
+public:
+    void SetParameters(double exponent, double skewness);
+    void SetLocation(double location);
+    void SetScale(double scale);
+    inline double GetLocation() const { return mu; }
 };
 
 #endif // GEOMETRICSTABLERAND_H

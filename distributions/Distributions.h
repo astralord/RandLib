@@ -27,7 +27,6 @@
 #include "univariate/continuous/KumaraswamyRand.h"
 #include "univariate/continuous/LaplaceRand.h"
 #include "univariate/continuous/LevyRand.h"
-#include "univariate/continuous/LimitingDistribution.h"
 #include "univariate/continuous/LogisticRand.h"
 #include "univariate/continuous/LogNormalRand.h"
 #include "univariate/continuous/NakagamiRand.h"

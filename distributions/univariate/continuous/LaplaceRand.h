@@ -8,13 +8,13 @@
  * @brief The LaplaceRand class <BR>
  * Laplace distribution
  *
- * Notation: X ~ Laplace(m, σ, k)
+ * Notation: X ~ Laplace(m, γ, κ)
  *
  * Related distributions: <BR>
- * X = m + σ * (Y / k - W * k), where Y, W ~ Exp(1) <BR>
- * If X ~ Laplace(m, σ, k), then X - m ~ GeometricStable(2, 0, σ, σ(1 - k^2) / k)
+ * X = m + γ * (Y / κ - W * κ), where Y, W ~ Exp(1) <BR>
+ * X - m ~ GeometricStable(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
  */
-class RANDLIBSHARED_EXPORT LaplaceRand : public GeometricStableRand
+class RANDLIBSHARED_EXPORT LaplaceRand : public ShiftedGeometricStableDistribution
 {
     double m = 0; ///< shift
 
@@ -22,10 +22,15 @@ public:
     LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
     std::string Name() const override;
 
-    void SetShift(double shift);
+    using ShiftedGeometricStableDistribution::SetShift;
+private:
+    void ChangeLocation();
+public:
+    void SetScale(double scale);
     void SetAsymmetry(double asymmetry);
+
     inline double GetShift() const { return m; }
-    inline double GetAsymmetry() const { return k; }
+    inline double GetAsymmetry() const { return kappa; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;
@@ -36,10 +41,6 @@ public:
     static double Variate(double location, double scale);
     static double Variate(double location, double scale, double asymmetry);
     void Sample(std::vector<double> &outputData) const override;
-
-    double Mean() const override;
-    double Median() const override;
-    double Mode() const override;
 
 private:
     double quantileImpl(double p) const override;
