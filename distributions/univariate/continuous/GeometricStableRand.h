@@ -19,7 +19,7 @@ protected:
     double mu = 0; ///< location μ
     double m = 0; ///< shift m
     double gamma = M_SQRT2; ///< scale γ
-    double logGamma = -0.5 * M_LN2; ///< log(γ)
+    double logGamma = 0.5 * M_LN2; ///< log(γ)
 
     /// parameters for α = 2
     double kappa = 1; ///< asymmetry coefficient κ
