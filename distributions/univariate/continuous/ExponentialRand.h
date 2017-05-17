@@ -12,7 +12,7 @@
  * Notation: X ~ Exp(β)
  *
  * Related distributions: <BR>
- * X ~ Gamma(1, β)
+ * X ~ Γ(1, β)
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution
 {
