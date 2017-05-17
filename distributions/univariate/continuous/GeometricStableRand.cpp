@@ -417,14 +417,8 @@ std::complex<double> ShiftedGeometricStableDistribution::CFImpl(double t) const
 double ShiftedGeometricStableDistribution::Median() const
 {
     if (alpha == 2) {
-        if (kappa > 1) {
-            double y = std::log1p(1.0 / kappaSq) - M_LN2;
-            return m + gamma * kappa * y;
-        }
-        else {
-            double y = std::log1p(kappaSq) - M_LN2;
-            return m - gamma / kappa * y;
-        }
+        double y = std::log1p(1.0 / kappaSq) - M_LN2;
+        return m + gamma * kappa * y;
     }
     return ContinuousDistribution::Median();
 }

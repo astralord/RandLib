@@ -23,6 +23,16 @@ SUPPORT_TYPE StableDistribution::SupportType() const
     return INFINITE_T;
 }
 
+double StableDistribution::MinValue() const
+{
+    return (alpha < 1 && beta == 1) ? mu : -INFINITY;
+}
+
+double StableDistribution::MaxValue() const
+{
+    return (alpha < 1 && beta == -1) ? mu : INFINITY;
+}
+
 void StableDistribution::SetParameters(double exponent, double skewness)
 {
     alpha = std::min(std::max(exponent, 0.1), 2.0);

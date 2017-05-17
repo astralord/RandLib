@@ -220,7 +220,7 @@ int BinomialDistribution::variateWaiting(int number) const
     /// sum of geometrically distributed variables
     int X = -1, sum = 0;
     do {
-        sum += G.Variate() + 1.0;
+        sum += G.Variate() + 1;
         ++X;
     } while (sum <= number);
     return X;

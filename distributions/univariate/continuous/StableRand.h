@@ -22,10 +22,10 @@ protected:
     double beta = 0; ///< skewness β
     double mu = 0; ///< location μ
     double gamma = M_SQRT2; ///< scale γ
-    double logGamma = -0.5 * M_LN2; ///< log(γ)
+    double logGamma = 0.5 * M_LN2; ///< log(γ)
 
 private:
-    double alphaInv = 0.5; /// 1/α
+    double alphaInv = 0.5; ///< 1/α
     double zeta = 0; ///< ζ = -β * tan(πα/2)
     double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
     double xi = 0; ///< ξ = atan(-ζ) / α;
@@ -61,8 +61,8 @@ public:
     virtual ~StableDistribution() {}
 
     SUPPORT_TYPE SupportType() const override;
-    double MinValue() const override { return (alpha < 1 && beta == 1) ? mu : -INFINITY; }
-    double MaxValue() const override { return (alpha < 1 && beta == -1) ? mu : INFINITY; }
+    double MinValue() const override;
+    double MaxValue() const override;
 
 protected:
     void SetParameters(double exponent, double skewness);

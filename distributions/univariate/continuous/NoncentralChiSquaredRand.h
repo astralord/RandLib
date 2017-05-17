@@ -19,11 +19,11 @@
 class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
 {
     double k = 1; ///< degree
-    double lambda = 0; ///< noncentrality λ
+    double lambda = 2; ///< noncentrality λ
     double halfK = 0.5; ///< k / 2
-    double halfLambda = 0; ///< λ / 2
-    double sqrtLambda = 0; ///< √λ
-    double logLambda = -INFINITY; ///< log(λ)
+    double halfLambda = 1; ///< λ / 2
+    double sqrtLambda = M_SQRT2; ///< √λ
+    double logLambda = M_LN2; ///< log(λ)
 
     PoissonRand Y{};
 

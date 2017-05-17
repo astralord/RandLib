@@ -16,16 +16,14 @@
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public ShiftedGeometricStableDistribution
 {
-    double m = 0; ///< shift
-
 public:
     LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
     std::string Name() const override;
 
-    using ShiftedGeometricStableDistribution::SetShift;
 private:
     void ChangeLocation();
 public:
+    using ShiftedGeometricStableDistribution::SetShift;
     void SetScale(double scale);
     void SetAsymmetry(double asymmetry);
 

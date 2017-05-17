@@ -11,7 +11,7 @@ std::string LaplaceRand::Name() const
 {
     return "Laplace(" + toStringWithPrecision(GetShift()) + ", "
                       + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetAsymmetry()) + ")";
+                      + toStringWithPrecision(GetAsymmetry()) + ")";
 }
 
 void LaplaceRand::ChangeLocation()
@@ -186,7 +186,7 @@ void LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
         return;
     }
 
-    double sigmaN = gamma * sample.size();
+    double gammaN = gamma * sample.size();
     double root = 1.0;
     double minBound, maxBound;
     if (xPlus < -xMinus) {
@@ -198,12 +198,12 @@ void LaplaceRand::FitAsymmetryMLE(const std::vector<double> &sample)
         maxBound = 1.0;
     }
 
-    if (!RandMath::findRoot([sample, xPlus, xMinus, sigmaN] (double t)
+    if (!RandMath::findRoot([sample, xPlus, xMinus, gammaN] (double t)
     {
         double tSq = t * t;
         double y = 1.0 - tSq;
         y /= (t * (tSq + 1.0));
-        y *= sigmaN;
+        y *= gammaN;
         y += xMinus / tSq - xPlus;
         return y;
     }, minBound, maxBound, root))
