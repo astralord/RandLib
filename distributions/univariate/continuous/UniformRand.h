@@ -12,7 +12,7 @@
  * Notation: X ~ U(a, b)
  *
  * Related distributions: <BR>
- * X ~ Beta(1, 1, a, b) <BR>
+ * X ~ B(1, 1, a, b) <BR>
  * (X - a) / (b - a) ~ IH(1)
  */
 class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution
