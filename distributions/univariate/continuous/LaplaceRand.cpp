@@ -137,7 +137,7 @@ void LaplaceRand::FitLocationMLE(const std::vector<double> &sample)
     /// we use root-finding algorithm for median search
     double minVar = *std::min_element(sample.begin(), sample.end());
     double maxVar = *std::max_element(sample.begin(), sample.end());
-    double median = sampleMean(sample);
+    double median = 0.5 * (minVar + maxVar);
 
     if (!RandMath::findRoot([this, sample] (double med)
     {
