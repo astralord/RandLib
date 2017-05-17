@@ -5,7 +5,6 @@
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/12703/badge.svg"/>
 </a>
-[![license: MIT](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 
 With RandLib one can easily work with probability distributions.
 * Fast sampling. For instance, generate million variates from standard normal distribution:
