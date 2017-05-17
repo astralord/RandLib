@@ -8,15 +8,15 @@
  * @brief The BetaDistribution class <BR>
  * Abstract class for Beta distribution
  *
- * f(x | α, β) = x^{α-1} (1-x)^{β-1} / B(α, β), <BR>
- * where B(α, β) denotes Beta function
+ * f(x | α, β) = y^{α-1} (1-y)^{β-1} / B(α, β), <BR>
+ * where y = (x-a)/(b-a) and B(α, β) denotes Beta function
  *
- * Notation: X ~ Beta(α, β)
+ * Notation: X ~ B(α, β, a, b) or X ~ B(α, β) for a=0 and b=1
  *
- * Related distributions: <BR>
- * 1 − X ~ Beta(β, α) <BR>
- * X / (1 - X) ~ Beta'(α, β) <BR>
- * X = Y / (Y + Z), where Y ~ Gamma(α) and Z ~ Gamma(β) <BR>
+ * Related distributions (a=0, b=1): <BR>
+ * 1 − X ~ B(β, α) <BR>
+ * X / (1 - X) ~ B'(α, β) <BR>
+ * X = Y / (Y + Z), where Y ~ Γ(α) and Z ~ Γ(β) <BR>
  * βX / α(1 - X) ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution
@@ -236,7 +236,7 @@ public:
  * Notation: X ~ Arcsine(α)
  * 
  * Related distributions: <BR>
- * X ~ Beta(1 - α, α)
+ * X ~ B(1 - α, α, 0, 1)
  */
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
 {
@@ -255,7 +255,7 @@ public:
  * Notation: X ~ Balding-Nichols(F, p)
  *
  * Related distributions
- * X ~ Beta(p * F', (1 - p) * F') for F' = (1 - F) / F
+ * X ~ B(p * F', (1 - p) * F', 0, 1) for F' = (1 - F) / F
  */
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution
 {
