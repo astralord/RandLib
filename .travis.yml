@@ -2,8 +2,7 @@ language: cpp
 compiler: gcc
 env:
   global:
-  - secure: tZEjNOdwW2JFXNPCNJEP2SvGY2aWTLOuYlOh4Camkq4RKAiG3en2HcGshL8XzubQxj0pyKUpgy3sRcRNJ0kucsGg8Yuc7LOyYEa15qBcfqW7t9npu8oPopFZ+JtHv+SpXwxRqjdZiB5PM7wIAv5JIza6PO3iEy2gQ5na1D3/QhIcjHOr6O3kT3yukAPVDAWZ/7RFRDPoZ0tUbhOsgCExMBnxz5x6x04WHSma2Bhie7R2T5NR6FO7aMG6oLFONGZJppSvSZGsizLbU/JoU992vZPQXu6ogL2j6OWhIfWc2SLHLVsIo7j5aLyRF19QVBzmJwr+qnTJ/Y8OstUjkcNAWhSSSwtY6lWXWmRMZPVUAUzsfVtkD8EH+70p0hvqTZqaBC5w2aex0et2j/wAy+R7vSln+aD0UcN5p0A9JwKwYIIFIE2zWA1xeBmmTAgfOyS98b6/iYvkVxtulTOgyYTuLaO2UcN7AERkkgr3o8xYYy6bdcAQTgrgUJM0OgCVdTO9Yxh7++kxljpio88sqKZoGQO6mgrldT4ly5lTnlWdHbZqbsKPnDSh5t5wtNCRfx/S38QqYloRLlZSIH2V+j0JY8sbGmo43XuUZjqV3EJ0JUtfjJxJPINyW/2wrq7Klit4oc44GuY0c2L/Vvzs6KkBZYwYlUY5BCgxdfnWRI0zWsw=
-
+    secure: TDeE58CIszIR3Ux9C8Q6h690j34NXNhB5NuGNY6/Ks3wZWld2ddUAssA74iKf16G9q7HHhfGurOjtYHWMOMoLwFaYP+EZhiaNwUz7PSobb8qKRyGXythmn3zDrU7DYJ+Jgve+P5CTuLCj+xCXyynNlpZrmAhvjyQrRrooMe49tus+jQFcygStINZ2h2oj4H0hC5as/mfb7WazwhexNVYXtOaNQjLDKlXiC2MqTF8dmyneomRkFC87FZa498Kj78j5TZtnavxyuj5/gKUnc2DV6XWr7PwikklnHL37h8rA/HiJrRmaL18Y/3wq/Pn9VTOExaDMBs97PxNiMiq6HZph8rRl8pMkSFSPpSo7Oa4Y7721vFiD30mlAJU9qalpJDJosLZKA+5POlrLhtKXdqCUKVu+W4k7qfOuZfcoQ+dpvoCV/0QYvCYf6ilwXLmrBQr9ki9mZaNpbq8oWyoQCQYJiGobmNEQfgUqSR/u+cNoHllxHu6CU/d2BRYKlLsj89UhttfNbcGDFYnJJKtUWBrYW/L4xqPpcMzbcmC0LZGXO9E25ScwLHN6Kw7kyZpNzG/VDBXf+Q/RU2eppse09DXSMbaGCT/x4daVmKnLVVDzYLhnRxwckpsP28oFuXMV4PEirpIRY+vB1DYPgw/LbVTR2gTjtJa4g4X881fQ6d2oLY=
 addons:
   coverity_scan:
     project:
@@ -13,7 +12,6 @@ addons:
     build_command_prepend: "./configure; make clean"
     build_command: make -j 4
     branch_pattern: coverity_scan
-
 before_install:
 - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 - sudo apt-get update -qq
