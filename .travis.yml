@@ -1,6 +1,22 @@
 language: cpp
 compiler: gcc
 
+env:
+  global:
+    # Coverity Scan token
+    - secure: "sqP69UyMz2kqeuJK3iUSuw"
+
+# Coverity Scan
+addons:
+  coverity_scan:
+    project:
+      name: "RandLib"
+      description: "Build submitted via Travis CI"
+    notification_email: samarin_ad@mail.ru
+    build_command_prepend: "./configure; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
+
 before_install:
   # C++14
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -14,3 +30,4 @@ install:
 script: 
   - qmake
   - make
+  
