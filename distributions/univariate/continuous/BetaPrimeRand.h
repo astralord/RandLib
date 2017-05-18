@@ -10,11 +10,11 @@
  * f(x | α, β) = x^{α-1} (1 + x)^{-α - β} / B(α, β), <BR>
  * where B(α, β) denotes Beta function
  *
- * Notation: X ~ Beta'(α, β)
+ * Notation: X ~ B'(α, β)
  *
  * Related distributions: <BR>
- * X / (X + 1) ~ Beta(α, β) <BR>
- * X = Y / Z, where Y ~ Gamma(α) and Z ~ Gamma(β) <BR>
+ * X / (X + 1) ~ B(α, β) <BR>
+ * X = Y / Z, where Y ~ Γ(α) and Z ~ Γ(β) <BR>
  * X ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution

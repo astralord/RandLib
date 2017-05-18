@@ -10,13 +10,13 @@
  * f(x | α, β) = β^α / Γ(α) * x^(α-1) * exp(-βx),
  * where Γ(α) denotes Gamma function
  *
- * Notation X ~ Gamma(α, β)
+ * Notation X ~ Γ(α, β)
  *
  * Related distributions: <BR>
- * σX ~ Gamma(α, σβ) <BR>
- * If X ~ Gamma(1, β), then X ~ Exp(β) <BR>
- * If X ~ Gamma(0.5 * n, 0.5), then X ~ Chi^2(n) <BR>
- * If X ~ Gamma(k, β) for integer k, then X ~ Erlang(k, β)
+ * σX ~ Γ(α, σβ) <BR>
+ * If X ~ Γ(1, β), then X ~ Exp(β) <BR>
+ * If X ~ Γ(0.5 * n, 0.5), then X ~ Chi^2(n) <BR>
+ * If X ~ Γ(k, β) for integer k, then X ~ Erlang(k, β)
  */
 class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution
 {
@@ -300,7 +300,7 @@ public:
  * Notation: X ~ Chi^2(n)
  *
  * Related distributions:
- * X ~ Gamma(0.5 * n, 0.5)
+ * X ~ Γ(0.5 * n, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {
@@ -320,7 +320,7 @@ public:
  *
  * Related distributions:
  * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β)
- * X ~ Gamma(k, β)
+ * X ~ Γ(k, β)
  */
 class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution
 {
