@@ -211,7 +211,6 @@ double GammaDistribution::StandardVariate(double shape)
     default:
         return NAN;
     }
-    return NAN;
 }
 
 double GammaDistribution::Variate(double shape, double rate)
@@ -237,7 +236,6 @@ double GammaDistribution::Variate() const
     default:
         return NAN;
     }
-    return NAN;
 }
 
 void GammaDistribution::Sample(std::vector<double> &outputData) const

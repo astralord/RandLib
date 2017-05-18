@@ -56,10 +56,10 @@ protected:
     double pdftailBound = INFINITY; /// boundary k such that for |x| > k we can use pdf tail approximation
     double cdftailBound = INFINITY; /// boundary k such that for |x| > k we can use cdf tail approximation
 
-public:
     StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableDistribution() {}
 
+public:
     SUPPORT_TYPE SupportType() const override;
     double MinValue() const override;
     double MaxValue() const override;

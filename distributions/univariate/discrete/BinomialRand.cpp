@@ -207,9 +207,11 @@ int BinomialDistribution::variateRejection() const
             reject = false;
         }
 
-        X += npFloor;
-        if (!reject && X >= 0 && X <= n && V <= logProbFloor(X) - logPnpInv)
-            return X;
+        if (!reject) {
+            X += npFloor;
+            if (X >= 0 && X <= n && V <= logProbFloor(X) - logPnpInv)
+                return X;
+        }
     } while (++iter <= MAX_ITER_REJECTION);
     return -1;
 }

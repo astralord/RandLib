@@ -17,10 +17,11 @@ enum SUPPORT_TYPE {
 template < typename T >
 class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<T>
 {
-public:
+protected:
     UnivariateProbabilityDistribution();
     virtual ~UnivariateProbabilityDistribution() {}
 
+public:
     /**
      * @fn SupportType
      * @return type of support

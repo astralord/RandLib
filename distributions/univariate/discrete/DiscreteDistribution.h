@@ -9,10 +9,11 @@
  */
 class RANDLIBSHARED_EXPORT DiscreteDistribution : public virtual UnivariateProbabilityDistribution<int>
 {
-public:
+protected:
     DiscreteDistribution() {}
     virtual ~DiscreteDistribution() {}
 
+public:
     /**
      * @fn P
      * @param k

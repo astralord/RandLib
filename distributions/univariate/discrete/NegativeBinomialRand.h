@@ -32,8 +32,10 @@ private:
     double table[tableSize];
     GammaRand GammaRV{};
 
-public:
+protected:
     NegativeBinomialDistribution(T number, double probability);
+
+public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return INT_MAX; }

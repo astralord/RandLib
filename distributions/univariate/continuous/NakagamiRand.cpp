@@ -352,16 +352,12 @@ void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
     }
     else
     {
-        // TODO: use log-scale
-        /// works faster for small n
-        double factNm1 = RandMath::factorial(n - 1);
-        double factN = n * factNm1;
-        int pow2n = 1 << n; /// < 2^15
-        double coef = factNm1 * factN;
-        coef *= M_1_SQRTPI * std::sqrt(n);
-        coef /= RandMath::factorial(n << 1);
-        coef *= pow2n * pow2n;
-        SetScale(coef * std::sqrt(sigmaBiasedSq));
+        double scale = RandMath::lfact(n - 1);
+        scale += RandMath::lfact(n);
+        scale += 0.5 * std::log(n / M_PI * sigmaBiasedSq);
+        scale += 2 * n * M_LN2;
+        scale -= RandMath::lfact(2 * n);
+        SetScale(scale);
     }
 }
 

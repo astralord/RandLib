@@ -24,10 +24,10 @@ protected:
 
     std::string toStringWithPrecision(const double a_value, const int n = 6) const;
 
-public:
     ProbabilityDistribution();
     virtual ~ProbabilityDistribution() {}
 
+public:
     /**
      * @fn Name
      * @return title of distribution, for instance "Normal(0, 1)"

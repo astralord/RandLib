@@ -9,10 +9,11 @@
  */
 class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateProbabilityDistribution<double>
 {
-public:
+protected:
     ContinuousDistribution() {}
     virtual ~ContinuousDistribution() {}
 
+public:
     /**
      * @fn f
      * @param x

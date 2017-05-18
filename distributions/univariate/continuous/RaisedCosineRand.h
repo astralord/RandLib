@@ -15,9 +15,11 @@ class RANDLIBSHARED_EXPORT RaisedCosineDistribution : public ContinuousDistribut
     double s = M_PI; ///< scale
     double s_pi = 1; ///< s / π
     double log2S = M_LN2 + M_LNPI; ///< log(2s)
-public:
+
+protected:
     RaisedCosineDistribution(double location, double scale);
 
+public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return mu - s; }
     double MaxValue() const override { return mu + s; }

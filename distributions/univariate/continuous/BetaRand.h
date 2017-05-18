@@ -42,11 +42,12 @@ private:
         double s, t, u;
     } genCoef = {0, 0, 0};
 
-public:
+protected:
     BetaDistribution(double shape1 = 1, double shape2 = 1);
     BetaDistribution(double shape1, double shape2, double minValue, double maxValue);
     virtual ~BetaDistribution() {}
 
+public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }

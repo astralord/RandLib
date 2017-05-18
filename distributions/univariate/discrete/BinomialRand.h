@@ -43,8 +43,10 @@ private:
 
     GeometricRand G{};
 
-public:
+protected:
     BinomialDistribution(int number, double probability);
+
+public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return n; }

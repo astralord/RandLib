@@ -20,9 +20,10 @@ class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
     GammaRand Y {};
     double lgammaShapeRatio = 0; ///< log(Γ(m + 0.5) / Γ(m))
 
-public:
+protected:
     NakagamiDistribution(double shape = 0.5, double spread = 1);
 
+public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

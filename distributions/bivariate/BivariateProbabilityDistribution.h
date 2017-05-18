@@ -14,9 +14,10 @@ class RANDLIBSHARED_EXPORT BivariateProbabilityDistribution : public Probability
 protected:
     T1 X{}; ///< 1st marginal distributions
     T2 Y{}; ///< 2nd marginal distributions
-public:
     BivariateProbabilityDistribution() {}
     virtual ~BivariateProbabilityDistribution() {}
+
+public:
     virtual double f(const DoublePair &point) const = 0;
     virtual double logf(const DoublePair &point) const = 0;
 

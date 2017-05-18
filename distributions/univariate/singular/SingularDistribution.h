@@ -5,10 +5,11 @@
 
 /**
  * @brief The SingularDistribution class <BR>
+ * Abstract class for all singular distributions
  */
 class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateProbabilityDistribution<double>
 {
-public:
+protected:
     SingularDistribution();
     virtual ~SingularDistribution() {}
 

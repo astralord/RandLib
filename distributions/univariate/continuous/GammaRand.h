@@ -35,10 +35,11 @@ private:
         double t, b;
     } genCoef = {0, 0};
 
-public:
+protected:
     GammaDistribution(double shape, double rate);
     virtual ~GammaDistribution() {}
 
+public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
@@ -216,8 +217,10 @@ class RANDLIBSHARED_EXPORT GammaRand;
  */
 class RANDLIBSHARED_EXPORT FreeScaleGammaDistribution : public GammaDistribution
 {
-public:
+protected:
     FreeScaleGammaDistribution(double shape, double rate) : GammaDistribution(shape, rate) {}
+
+public:
     /**
      * @fn SetRate
      * set rate β

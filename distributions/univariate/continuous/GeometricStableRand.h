@@ -29,11 +29,9 @@ protected:
     double pdfCoef = M_LN2; ///< log(γ * (κ + 1 / κ))
     double cdfCoef = -M_LN2; ///< 2 * log(κ) - log(1 + κ^2)
 
-public:
     ShiftedGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
     virtual ~ShiftedGeometricStableDistribution() {}
 
-protected:
     void SetParameters(double exponent, double skewness);
     void SetLocation(double location);
     void SetShift(double shift);
