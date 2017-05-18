@@ -9,7 +9,7 @@ env:
 addons:
   coverity_scan:
     project:
-      name: "RandLib"
+      name: "StochasticEngineer/RandLib"
       description: "Build submitted via Travis CI"
     notification_email: samarin_ad@mail.ru
     build_command_prepend: "./configure; make clean"
