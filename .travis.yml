@@ -4,7 +4,7 @@ compiler: gcc
 env:
   global:
     # Coverity Scan token
-    - secure: "tp20/kxZwKItDUz6CTX4oGQR2EA+TOwPxKuxmsGwZIHms/0U9xor+BVzo99NH4GTi0421hxbhFsrY+SGwoanoaVup04Z/+zzp01dUqBaWkFzoL7SGB/otOFDJ3qPh9N2yzREaKGMLlVrL9SJF7UE5ZxP2kcKltAoCVUZ9zKwDk4tZU4f4UgRP5BFhJncVGf+xDqteDCwHzJT68Q+KxqPuhOr3r74HTJfgvKM+ycmronTekxe5AvyU5boGAPGJhArgz/W3j12ZoJxgZFj996g2nvAsNRvsnpO/dtQq5/sOfbtGLqOaGjs4AYyB5JrjeQJZM1kwXAIgC3L793jqD0miBlMLqJjyjw3lOP0mzS5oeDPxB0dX7LmTvLExZq+H0Dxlflwe22nTMLXor4KB4lB/60x3034/YRdYIPiDgxuF3qcjbB8RcpUTfYUZ8bh9qWKP5S6awLOMYyoYxVEUF9hibxVohY48U/lma9v51Fim2zeuh2Z+7W7aFK3FE4VAkf5wNhAIzv2T33/kRyfLI0ARdJX9M9pdJjegwDtQ9+7WWTfXJ9i9uqL2stL0nJDulUxWb+0PwsQPUMSgug0yqrWL5np5wgNKvDTbKCxXsjlFcncFJIhuhQ91D+h75ouY3sff9bUwbq0OTpV7vWg4KJz3Hp9xK3hGAdYed2c+1+6dNU="
+    - secure: "IGBcmXyyPz9qKgxPkh-zkg"
 
 # Coverity Scan
 addons:
