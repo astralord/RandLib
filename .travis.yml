@@ -1,33 +1,23 @@
 language: cpp
 compiler: gcc
-
 env:
   global:
-    # Coverity Scan token
-    - secure: "sqP69UyMz2kqeuJK3iUSuw"
-
-# Coverity Scan
+  - secure: tZEjNOdwW2JFXNPCNJEP2SvGY2aWTLOuYlOh4Camkq4RKAiG3en2HcGshL8XzubQxj0pyKUpgy3sRcRNJ0kucsGg8Yuc7LOyYEa15qBcfqW7t9npu8oPopFZ+JtHv+SpXwxRqjdZiB5PM7wIAv5JIza6PO3iEy2gQ5na1D3/QhIcjHOr6O3kT3yukAPVDAWZ/7RFRDPoZ0tUbhOsgCExMBnxz5x6x04WHSma2Bhie7R2T5NR6FO7aMG6oLFONGZJppSvSZGsizLbU/JoU992vZPQXu6ogL2j6OWhIfWc2SLHLVsIo7j5aLyRF19QVBzmJwr+qnTJ/Y8OstUjkcNAWhSSSwtY6lWXWmRMZPVUAUzsfVtkD8EH+70p0hvqTZqaBC5w2aex0et2j/wAy+R7vSln+aD0UcN5p0A9JwKwYIIFIE2zWA1xeBmmTAgfOyS98b6/iYvkVxtulTOgyYTuLaO2UcN7AERkkgr3o8xYYy6bdcAQTgrgUJM0OgCVdTO9Yxh7++kxljpio88sqKZoGQO6mgrldT4ly5lTnlWdHbZqbsKPnDSh5t5wtNCRfx/S38QqYloRLlZSIH2V+j0JY8sbGmo43XuUZjqV3EJ0JUtfjJxJPINyW/2wrq7Klit4oc44GuY0c2L/Vvzs6KkBZYwYlUY5BCgxdfnWRI0zWsw=
 addons:
   coverity_scan:
     project:
-      name: "RandLib"
-      description: "Build submitted via Travis CI"
+      name: RandLib
+      description: Build submitted via Travis CI
     notification_email: samarin_ad@mail.ru
     build_command_prepend: "./configure; make clean"
-    build_command:   "make -j 4"
+    build_command: make -j 4
     branch_pattern: coverity_scan
-
 before_install:
-  # C++14
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-
-install: 
-  # C++14
-  - sudo apt-get install -qq g++-5
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90
-
-script: 
-  - qmake
-  - make
-  
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+- sudo apt-get update -qq
+install:
+- sudo apt-get install -qq g++-5
+- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90
+script:
+- qmake
+- make
