@@ -867,10 +867,45 @@ double StableDistribution::ExcessKurtosis() const
     return (distributionId == NORMAL)  ? 0 : NAN;
 }
 
+std::complex<double> StableDistribution::cfNormal(double t) const
+{
+    double gammaT = gamma * t;
+    std::complex<double> y(-gammaT * gammaT, mu * t);
+    return std::exp(y);
+}
+
+std::complex<double> StableDistribution::cfCauchy(double t) const
+{
+    std::complex<double> y(-gamma * t, mu * t);
+    return std::exp(y);
+}
+
+std::complex<double> StableDistribution::cfLevy(double t) const
+{
+    std::complex<double> y(0.0, -2 * gamma * t);
+    y = -std::sqrt(y);
+    y += std::complex<double>(0.0, mu * t);
+    return std::exp(y);
+}
+
 std::complex<double> StableDistribution::CFImpl(double t) const
 {
-    // TODO: elaborate different cases, -zeta is not always defined!!!
-    double x = (alpha == 1) ? beta * M_2_PI * std::log(t) : -zeta;
+    double x = 0;
+    switch (distributionId) {
+    case NORMAL:
+        return cfNormal(t);
+    case CAUCHY:
+        return cfCauchy(t);
+    case LEVY: {
+        std::complex<double> phi = cfLevy(t);
+        return (beta > 0) ? phi : std::conj(phi);
+    }
+    case UNITY_EXPONENT:
+        x = beta * M_2_PI * std::log(t);
+        break;
+    default:
+        x = -zeta;
+    }
     double re = std::pow(gamma * t, alpha);
     std::complex<double> psi = std::complex<double>(re, re * x - mu * t);
     return std::exp(-psi);

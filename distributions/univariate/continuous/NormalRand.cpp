@@ -117,8 +117,7 @@ void NormalRand::Sample(std::vector<double> &outputData) const
 
 std::complex<double> NormalRand::CFImpl(double t) const
 {
-    double sigmaT = sigma * t;
-    return std::exp(std::complex<double>(-0.5 * sigmaT * sigmaT, mu * t));
+    return cfNormal(t);
 }
 
 double NormalRand::quantileImpl(double p) const

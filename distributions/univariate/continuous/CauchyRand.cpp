@@ -48,8 +48,7 @@ double CauchyRand::StandardVariate()
     
 std::complex<double> CauchyRand::CFImpl(double t) const
 {
-    std::complex<double> x(-gamma * t, mu * t);
-    return std::exp(x);
+    return cfCauchy(t);
 }
 
 double CauchyRand::quantileImpl(double p) const

@@ -50,14 +50,6 @@ double LevyRand::StandardVariate()
     return 1.0 / (rv * rv);
 }
 
-std::complex<double> LevyRand::CFImpl(double t) const
-{
-    std::complex<double> y(0.0, -2 * gamma * t);
-    y = -std::sqrt(y);
-    y += std::complex<double>(0.0, mu * t);
-    return std::exp(y);
-}
-
 double LevyRand::quantileImpl(double p) const
 {
     double y = RandMath::erfcinv(p);
@@ -68,6 +60,11 @@ double LevyRand::quantileImpl1m(double p) const
 {
     double y = RandMath::erfinv(p);
     return mu + 0.5 * gamma / (y * y);
+}
+
+std::complex<double> LevyRand::CFImpl(double t) const
+{
+    return cfLevy(t);
 }
 
 void LevyRand::FitScaleMLE(const std::vector<double> &sample)
