@@ -7,9 +7,7 @@
 
 StableDistribution::StableDistribution(double exponent, double skewness, double scale, double location)
 {
-    SetParameters(exponent, skewness);
-    SetScale(scale);
-    SetLocation(location);
+    SetParameters(exponent, skewness, scale, location);
 }
 
 SUPPORT_TYPE StableDistribution::SupportType() const
@@ -33,12 +31,15 @@ double StableDistribution::MaxValue() const
     return (alpha < 1 && beta == -1) ? mu : INFINITY;
 }
 
-void StableDistribution::SetParameters(double exponent, double skewness)
+void StableDistribution::SetParameters(double exponent, double skewness, double scale, double location)
 {
     alpha = std::min(std::max(exponent, 0.1), 2.0);
     alphaInv = 1.0 / alpha;
     beta = std::min(skewness, 1.0);
     beta = std::max(beta, -1.0);
+    mu = location;
+    gamma = scale > 0 ? scale : M_SQRT2;
+    logGamma = std::log(gamma);
 
     /// Set id of distribution
     if (alpha == 2.0)
@@ -51,7 +52,6 @@ void StableDistribution::SetParameters(double exponent, double skewness)
         distributionId = COMMON;
 
     alpha_alpham1 = alpha / (alpha - 1.0);
-    alpham1Inv = alpha_alpham1 - 1.0;
 
     if (distributionId == NORMAL)
         pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
@@ -105,6 +105,10 @@ void StableDistribution::SetScale(double scale)
         pdfCoef = logGamma - M_LN2 - M_LNPI;
     else if (distributionId == CAUCHY)
         pdfCoef = -logGamma - M_LNPI;
+    else if (distributionId == UNITY_EXPONENT) {
+        pdfCoef = 0.5 / (gamma * std::fabs(beta));
+        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
+    }
     else if (distributionId == COMMON)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
 }
@@ -158,9 +162,9 @@ double StableDistribution::logpdfLevy(double x) const
 
 double StableDistribution::fastpdfExponentiation(double u)
 {
-    if (u > 5 || u < -150)
+    if (u > 5 || u < -50)
         return 0.0;
-    return (u < -50) ? std::exp(u) : std::exp(u - std::exp(u));
+    return (u < -25) ? std::exp(u) : std::exp(u - std::exp(u));
 }
 
 double StableDistribution::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
@@ -397,7 +401,7 @@ double StableDistribution::integrandAuxForCommonExponent(double theta, double xA
     double sinThetaAdj = std::sin(thetaAdj);
     double y = std::log(std::cos(theta));
     y -= alpha * std::log(sinThetaAdj);
-    y *= alpham1Inv;
+    y /= alpha - 1.0;
     y += std::log(std::cos(thetaAdj - theta));
     y += xAdj;
     return std::isfinite(y) ? y : limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
@@ -575,7 +579,7 @@ double StableDistribution::fastcdfExponentiation(double u)
 {
     if (u > 5.0)
         return 0.0;
-    else if (u < -150.0)
+    else if (u < -50.0)
         return 1.0;
     double y = std::exp(u);
     return std::exp(-y);

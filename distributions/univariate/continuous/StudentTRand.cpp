@@ -159,7 +159,7 @@ double StudentTRand::Variance() const
 
 std::complex<double> StudentTRand::CFImpl(double t) const
 {
-    double x = std::sqrt(nu) * std::fabs(t * sigma); // value of sqrt(nu) can be hashed
+    double x = std::sqrt(nu) * t * sigma; // value of sqrt(nu) can be hashed
     double vHalf = 0.5 * nu;
     double y = vHalf * std::log(x);
     y -= Y.GetLogGammaFunction();

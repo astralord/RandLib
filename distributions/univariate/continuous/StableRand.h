@@ -29,7 +29,6 @@ private:
     double zeta = 0; ///< ζ = -β * tan(πα/2)
     double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
     double xi = 0; ///< ξ = atan(-ζ) / α;
-    double alpham1Inv = 1; ///< 1 / (α - 1)
     double alpha_alpham1 = 2; ///< α / (α - 1)
     double logGammaPi_2 = M_LNPI - 1.5 * M_LN2; ///< log(γπ/2)
 
@@ -37,16 +36,11 @@ private:
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
 
     enum DISTRIBUTION_ID {
-        /// α = 2
-        NORMAL,
-        /// α = 0.5, |β| = 1
-        LEVY,
-        /// α = 1, β = 0
-        CAUCHY,
-        /// α = 1, β ≠ 0
-        UNITY_EXPONENT,
-        /// the rest
-        COMMON
+        NORMAL, ///< α = 2
+        LEVY, ///< α = 0.5, |β| = 1
+        CAUCHY, ///< α = 1, β = 0
+        UNITY_EXPONENT, ///< α = 1, β ≠ 0
+        COMMON ///< the rest
     };
 
     DISTRIBUTION_ID distributionId = NORMAL; ///< id of distribution (Gaussian by default)
@@ -65,7 +59,7 @@ public:
     double MaxValue() const override;
 
 protected:
-    void SetParameters(double exponent, double skewness);
+    void SetParameters(double exponent, double skewness, double scale = 1, double location = 0);
 
 public:
     void SetLocation(double location);

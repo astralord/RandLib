@@ -40,8 +40,6 @@ void BivariateNormalRand::SetCovariance(double scale1, double correlation, doubl
 
 double BivariateNormalRand::f(const DoublePair &point) const
 {
-    if (rho == 0.0) /// f(x, y) = f(x)f(y)
-        return X.f(point.first) * Y.f(point.second);
     double xAdj = (point.first - mu1) / sigma1, yAdj = (point.second - mu2) / sigma2;
     if (rho == 1.0) /// f(x, y) = δ(xAdj - yAdj)
         return (xAdj - yAdj == 0) ? INFINITY : 0.0;

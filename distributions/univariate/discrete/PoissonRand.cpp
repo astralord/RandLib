@@ -101,7 +101,7 @@ std::complex<double> PoissonRand::CFImpl(double t) const
 int PoissonRand::Median() const
 {
     /// this value is approximate
-    return std::floor(lambda + 1.0 / 3 - 0.02 / lambda);
+    return std::max(std::floor(lambda + 1.0 / 3 - 0.02 / lambda), 0.0);
 }
 
 int PoissonRand::Mode() const
