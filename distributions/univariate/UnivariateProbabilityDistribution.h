@@ -90,8 +90,8 @@ protected:
     /**
      * @fn ExpectedValue
      * @param funPtr pointer on function g(x) with finite support which expected value should be returned
-     * @param minPoint min{x | g(x) != 0}
-     * @param maxPoint max{x | g(x) != 0}
+     * @param minPoint min{x | g(x) ≠ 0}
+     * @param maxPoint max{x | g(x) ≠ 0}
      * @return E[g(x)]
      */
     virtual double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
@@ -257,7 +257,7 @@ public:
      * @fn sampleVariance
      * @param sample
      * @param mean known (or sample) average
-     * @return second central moment
+     * @return sample second central moment
      */
     static double sampleVariance(const std::vector<T> &sample, double mean);
     static double sampleVariance(const std::vector<T> &sample);
@@ -267,11 +267,22 @@ public:
      * @param sample
      * @param mean
      * @param stdev
-     * @return
+     * @return sample skewness
      */
     static double sampleSkewness(const std::vector<T> &sample, double mean, double stdev);
     static double sampleSkewness(const std::vector<T> &sample, double mean);
     static double sampleSkewness(const std::vector<T> &sample);
+
+    /**
+     * @fn sampleKurtosis
+     * @param sample
+     * @param mean
+     * @param variance
+     * @return sample kurtosis
+     */
+    static double sampleKurtosis(const std::vector<T> &sample, double mean, double stdev);
+    static double sampleKurtosis(const std::vector<T> &sample, double mean);
+    static double sampleKurtosis(const std::vector<T> &sample);
 
     /**
      * @fn rawMoment

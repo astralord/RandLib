@@ -854,7 +854,10 @@ double StableDistribution::Mode() const
 
 double StableDistribution::Median() const
 {
-    return (beta == 0) ? mu : ContinuousDistribution::Median();
+    /// For symmetric and normal distributions mode is μ
+    if (beta == 0 || distributionId == NORMAL)
+        return mu;
+    return ContinuousDistribution::Median();
 }
 
 double StableDistribution::Skewness() const

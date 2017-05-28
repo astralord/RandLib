@@ -94,7 +94,7 @@ double InverseGammaRand::ExcessKurtosis() const
 {
     if (alpha <= 4)
         return INFINITY;
-    double numerator = 30 * alpha - 66;
+    double numerator = 30 * alpha - 66.0;
     double denominator = (alpha - 3) * (alpha - 4);
     return numerator / denominator;
 }

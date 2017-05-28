@@ -124,8 +124,9 @@ double UnivariateProbabilityDistribution<T>::Skewness() const
 
     double sum = ExpectedValue([this, mu] (double x)
     {
-        double skew = x - mu;
-        return skew * skew * skew;
+        double xmmu = x - mu;
+        double skewness = xmmu * xmmu * xmmu;
+        return skewness;
     }, this->MinValue(), this->MaxValue());
 
     return sum / std::pow(var, 1.5);
@@ -141,9 +142,10 @@ double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
 
     double sum = ExpectedValue([this, mu] (double x)
     {
-        double kurtosis = x - mu;
-        kurtosis *= kurtosis;
-        return kurtosis * kurtosis;
+        double xmmu = x - mu;
+        double kurtosisSqrt = xmmu * xmmu;
+        double kurtosis = kurtosisSqrt * kurtosisSqrt;
+        return kurtosis;
     }, this->MinValue(), this->MaxValue());
 
     return sum / (var * var) - 3;
@@ -273,6 +275,24 @@ template< typename T >
 double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample)
 {
     return normalisedMoment(sample, 3);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleKurtosis(const std::vector<T> &sample, double mean, double stdev)
+{
+    return normalisedMoment(sample, 4, mean, stdev);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleKurtosis(const std::vector<T> &sample, double mean)
+{
+    return normalisedMoment(sample, 4, mean);
+}
+
+template< typename T >
+double UnivariateProbabilityDistribution<T>::sampleKurtosis(const std::vector<T> &sample)
+{
+    return normalisedMoment(sample, 4);
 }
 
 template< typename T >

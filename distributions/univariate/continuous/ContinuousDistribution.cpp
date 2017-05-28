@@ -112,7 +112,7 @@ double ContinuousDistribution::Mode() const
     double root = 0;
     RandMath::findMin([this] (double x)
     {
-        return -f(x);
+        return -logf(x);
     }, guess, root);
     return root;
 }

@@ -83,7 +83,7 @@ int BetaBinomialRand::Mode() const
     int index = 0;
     for (int i = 0; i <= n; ++i)
     {
-        double value = P(i);
+        double value = logP(i);
         if (maxValue < value)
         {
             maxValue = value;

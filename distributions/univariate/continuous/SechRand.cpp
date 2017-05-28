@@ -78,7 +78,7 @@ double SechRand::Skewness() const
     return 0.0;
 }
 
-double SechRand::Kurtosis() const
+double SechRand::ExcessKurtosis() const
 {
     return 2.0;
 }

@@ -130,7 +130,7 @@ double FrechetRand::ExcessKurtosis() const
     double numerator = w - 4 * z * x + 3 * y * y;
     double denominator = y - x * x;
     denominator *= denominator;
-    return numerator / denominator;
+    return numerator / denominator - 6.0;
 }
 
 double FrechetRand::Entropy() const

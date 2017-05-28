@@ -222,6 +222,6 @@ double StudentTRand::Skewness() const
 double StudentTRand::ExcessKurtosis() const
 {
     if (nu > 4)
-        return 6 / (nu - 4);
+        return 6.0 / (nu - 4);
     return (nu > 2) ? INFINITY : NAN;
 }

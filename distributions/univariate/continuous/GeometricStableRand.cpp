@@ -6,17 +6,18 @@
 
 ShiftedGeometricStableDistribution::ShiftedGeometricStableDistribution(double exponent, double skewness, double scale, double location, double shift)
 {
-    SetParameters(exponent, skewness);
-    SetScale(scale);
-    SetLocation(location);
-    SetShift(shift);
+    SetParameters(exponent, skewness, scale, location, shift);
 }
 
-void ShiftedGeometricStableDistribution::SetParameters(double exponent, double skewness)
+void ShiftedGeometricStableDistribution::SetParameters(double exponent, double skewness, double scale, double location, double shift)
 {
     Z.SetParameters(exponent, skewness);
     alpha = Z.GetExponent();
     beta = Z.GetSkewness();
+    gamma = (scale > 0.0) ? scale : M_SQRT2;
+    logGamma = std::log(gamma);
+    mu = location;
+    m = shift;
 }
 
 void ShiftedGeometricStableDistribution::SetLocation(double location)

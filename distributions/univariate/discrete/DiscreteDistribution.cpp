@@ -12,22 +12,22 @@ void DiscreteDistribution::ProbabilityMassFunction(const std::vector<int> &x, st
 
 int DiscreteDistribution::Mode() const
 {
-    /// Works only for unimodal and monotone from start point to mode distributions
+    /// Works only for unimodal and monotone from starting point to the mode distributions
     int x = Median();
-    double prob = P(x), newProb = P(x + 1);
-    if (prob < newProb) {
+    double logProb = logP(x), newLogProb = logP(x + 1);
+    if (logProb < newLogProb) {
         do {
             ++x;
-            prob = newProb;
-            newProb = P(x + 1);
-        } while (prob < newProb);
+            logProb = newLogProb;
+            newLogProb = logP(x + 1);
+        } while (logProb < newLogProb);
     }
     else {
-        newProb = P(x - 1);
-        while (prob < newProb) {
+        newLogProb = logP(x - 1);
+        while (logProb < newLogProb) {
             --x;
-            prob = newProb;
-            newProb = P(x - 1);
+            logProb = newLogProb;
+            newLogProb = logP(x - 1);
         }
     }
     return x;
