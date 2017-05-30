@@ -193,6 +193,7 @@ private:
     double initRootForLargeP(double logQ) const;
     double initRootForSmallShape(double p) const;
     double initRootForLargeShape(double p) const;
+    double initRootForLargeShape1m(double p) const;
     double quantileInitialGuess(double p) const;
     double quantileInitialGuess1m(double p) const;
 

@@ -354,10 +354,18 @@ double GammaDistribution::initRootForLargeShape(double p) const
     double x = RandMath::erfcinv(2 * p);
     double lambda = x * x / alpha + 1;
     lambda = -std::exp(-lambda);
-    if (x < 0)
-        lambda = -RandMath::Wm1Lambert(lambda);
-    else
-        lambda = -RandMath::W0Lambert(lambda);
+    lambda = (x < 0) ? -RandMath::Wm1Lambert(lambda) : -RandMath::W0Lambert(lambda);
+    return lambda * alpha;
+}
+
+double GammaDistribution::initRootForLargeShape1m(double p) const
+{
+    if (p == 0.5)
+        return alpha;
+    double x = -RandMath::erfcinv(2 * p);
+    double lambda = x * x / alpha + 1;
+    lambda = -std::exp(-lambda);
+    lambda = (x < 0) ? -RandMath::Wm1Lambert(lambda) : -RandMath::W0Lambert(lambda);
     return lambda * alpha;
 }
 
@@ -407,6 +415,9 @@ double GammaDistribution::quantileInitialGuess1m(double p) const
         /// if p -> 0
         if (logQ < std::min(maxBoundary1, maxBoundary2))
             return initRootForLargeP(logQ) / beta;
+    }
+    else {
+        return initRootForLargeShape1m(p) / beta;
     }
     return quantileInitialGuess(1.0 - p);
 }
