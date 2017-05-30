@@ -122,12 +122,12 @@ std::complex<double> NormalRand::CFImpl(double t) const
 
 double NormalRand::quantileImpl(double p) const
 {
-    return mu - sigma * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return quantileNormal(p);
 }
 
 double NormalRand::quantileImpl1m(double p) const
 {
-    return mu + sigma * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return quantileNormal1m(p);
 }
 
 double NormalRand::Moment(int n) const

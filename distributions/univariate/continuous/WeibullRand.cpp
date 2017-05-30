@@ -16,6 +16,7 @@ void WeibullRand::SetParameters(double scale, double shape)
     lambda = (scale <= 0.0) ? 1.0 : scale;
     k = (shape <= 0.0) ? 1.0 : shape;
     kInv = 1.0 / k;
+    logk_lambda = std::log(k / lambda);
 }
 
 double WeibullRand::f(const double & x) const
@@ -41,8 +42,9 @@ double WeibullRand::logf(const double & x) const
             return -std::log(lambda); // hash
         return (k > 1) ? -INFINITY : INFINITY;
     }
-    // TODO: replace and merge with frechet
-    return std::log(f(x));
+    double xAdj = x / lambda;
+    double xAdjPow = std::pow(xAdj, k - 1);
+    return logk_lambda + (k - 1) * std::log(xAdj) - xAdj * xAdjPow;
 }
 
 double WeibullRand::F(const double & x) const

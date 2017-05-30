@@ -4,6 +4,7 @@
 #include "NormalRand.h"
 #include "UniformRand.h"
 #include "ExponentialRand.h"
+#include <functional>
 
 StableDistribution::StableDistribution(double exponent, double skewness, double scale, double location)
 {
@@ -768,7 +769,7 @@ double StableDistribution::Variate() const
 {
     switch (distributionId) {
     case NORMAL:
-        return mu + M_SQRT2 * gamma* NormalRand::StandardVariate();
+        return mu + M_SQRT2 * gamma * NormalRand::StandardVariate();
     case CAUCHY:
         return CauchyRand::Variate(mu, gamma);
     case LEVY:
@@ -868,6 +869,66 @@ double StableDistribution::Skewness() const
 double StableDistribution::ExcessKurtosis() const
 {
     return (distributionId == NORMAL)  ? 0 : NAN;
+}
+
+double StableDistribution::quantileNormal(double p) const
+{
+    return mu - 2 * gamma * RandMath::erfcinv(2 * p);
+}
+
+double StableDistribution::quantileNormal1m(double p) const
+{
+    return mu + 2 * gamma * RandMath::erfcinv(2 * p);
+}
+
+double StableDistribution::quantileCauchy(double p) const
+{
+    return mu - gamma / std::tan(M_PI * p);
+}
+
+double StableDistribution::quantileCauchy1m(double p) const
+{
+    return mu + gamma / std::tan(M_PI * p);
+}
+
+double StableDistribution::quantileLevy(double p) const
+{
+    double y = RandMath::erfcinv(p);
+    return mu + 0.5 * gamma / (y * y);
+}
+
+double StableDistribution::quantileLevy1m(double p) const
+{
+    double y = RandMath::erfinv(p);
+    return mu + 0.5 * gamma / (y * y);
+}
+
+double StableDistribution::quantileImpl(double p) const
+{
+    switch (distributionId) {
+    case NORMAL:
+        return quantileNormal(p);
+    case CAUCHY:
+        return quantileCauchy(p);
+    case LEVY:
+        return (beta > 0) ? quantileLevy(p) : 2 * mu - quantileLevy1m(p);
+    default:
+        return ContinuousDistribution::quantileImpl(p);
+    }
+}
+
+double StableDistribution::quantileImpl1m(double p) const
+{
+    switch (distributionId) {
+    case NORMAL:
+        return quantileNormal1m(p);
+    case CAUCHY:
+        return quantileCauchy1m(p);
+    case LEVY:
+        return (beta > 0) ? quantileLevy1m(p) : 2 * mu - quantileLevy(p);
+    default:
+        return ContinuousDistribution::quantileImpl1m(p);
+    }
 }
 
 std::complex<double> StableDistribution::cfNormal(double t) const

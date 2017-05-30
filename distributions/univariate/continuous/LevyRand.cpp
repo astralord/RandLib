@@ -52,14 +52,12 @@ double LevyRand::StandardVariate()
 
 double LevyRand::quantileImpl(double p) const
 {
-    double y = RandMath::erfcinv(p);
-    return mu + 0.5 * gamma / (y * y);
+    return quantileLevy(p);
 }
 
 double LevyRand::quantileImpl1m(double p) const
 {
-    double y = RandMath::erfinv(p);
-    return mu + 0.5 * gamma / (y * y);
+    return quantileLevy1m(p);
 }
 
 std::complex<double> LevyRand::CFImpl(double t) const

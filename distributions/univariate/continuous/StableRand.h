@@ -1,7 +1,6 @@
 #ifndef STABLERAND_H
 #define STABLERAND_H
 
-#include <functional>
 #include "ContinuousDistribution.h"
 
 /**
@@ -273,6 +272,18 @@ public:
     double Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+
+protected:
+    double quantileNormal(double p) const;
+    double quantileNormal1m(double p) const;
+    double quantileCauchy(double p) const;
+    double quantileCauchy1m(double p) const;
+    double quantileLevy(double p) const;
+    double quantileLevy1m(double p) const;
+
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
 
 protected:
     std::complex<double> cfNormal(double t) const;

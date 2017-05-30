@@ -1,4 +1,5 @@
 ﻿#include "RandMath.h"
+#include <functional>
 
 namespace RandMath
 {
@@ -545,14 +546,47 @@ double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, doubl
     return I;
 }
 
+double MarcumQIntegrand(double theta, double xi, double sqrt1pXiSq, double mu, double y)
+{
+    double sinTheta = std::sin(theta);
+    double theta_sinTheta = theta / sinTheta;
+    double rho = std::hypot(theta_sinTheta, xi);
+    double theta_sinThetapRho = theta_sinTheta + rho;
+    double r = 0.5 * theta_sinThetapRho / y;
+    double cosTheta = std::cos(theta);
+    double psi = cosTheta * rho - sqrt1pXiSq;
+    double frac = theta_sinThetapRho / (1.0 + sqrt1pXiSq);
+    psi -= std::log(frac);
+    double numerator = (sinTheta - theta * cosTheta) / (sinTheta * rho);
+    numerator += cosTheta - r;
+    numerator *= r;
+    double denominator = r * r - 2.0 * r * cosTheta + 1.0;
+    double f = numerator / denominator;
+    return std::exp(mu * psi) * f;
+}
+
+double MarcumQIntergralRepresentation(double mu, double x, double y, double sqrtX, double sqrtY)
+{
+    double xi = 2.0 * sqrtX * sqrtY / mu;
+    double sqrt1pXiSq = std::sqrt(1.0 + xi * xi);
+    double yPrime = y / mu;
+    double s0 = 0.5 * (1.0 + sqrt1pXiSq) / yPrime;
+    double phi = x / s0 + y * s0 - std::log(s0) * mu;
+    std::function<double (double)> integrandPtr = std::bind(&MarcumQIntegrand, std::placeholders::_1, xi, sqrt1pXiSq, mu, yPrime);
+    double integral = RandMath::integral(integrandPtr, -M_PI, M_PI);
+    return 0.5 * std::exp(-x - y + phi) / M_PI * integral;
+}
+
 double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
 {
-    // TODO: hash values of sqrt(x), sqrt(y), log(x), log(y) if possible
+    /* 1 - ok
+     * 2 - ok
+     * 3 - no
+     * 4 - no
+     * 5 - not yet
+     * */
     if (x < 0.0 || y <= 0.0)
         return 0.0;
-
-    if (mu < 1.0)
-        return MarcumPForMuLessThanOne(mu, x, y, logX, logY);
 
     if (x < 30)
         return MarcumPSeries(mu, x, y, logX, logY);
@@ -560,6 +594,12 @@ double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double
     double xi = 2 * sqrtX * sqrtY;
     if (xi > 30 && mu * mu < 2 * xi)
         return MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
+
+    double temp = std::sqrt(4 * x + 2 * mu);
+    double f1 = x + mu - temp, f2 = x + mu + temp;
+    if (y > f1 && y < f2)
+        // IF mu > 135
+        return 1.0 - MarcumQIntergralRepresentation(mu, x, y, sqrtX, sqrtY);
 
     // TODO: implement the rest techniques
 
@@ -583,16 +623,17 @@ double MarcumP(double mu, double x, double y)
     return MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
 
-double MarcumQ(double mu, double x, double y)
-{
-    // TODO: implement and use, when mu + x > y
-    return 1.0 - MarcumP(mu, x, y);
-}
-
 double MarcumQ(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
 {
     // TODO: implement and use, when mu + x > y
     return 1.0 - MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
+}
+
+double MarcumQ(double mu, double x, double y)
+{
+    double sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
+    double logX = std::log(x), logY = std::log(y);
+    return MarcumQ(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
 
 }
