@@ -436,7 +436,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
         first += npmu * lognpmu;
         first -= C;
         double second = logn + lognpmu - logXY;
-        double third = 2.0 / n;
+        double third = 1.0 / n + 1.0 / npmu;
         return DoubleTriplet(first, second, third);
     }, root))
         /// unexpected return
@@ -446,16 +446,32 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
     double sum = 0.0;
     /// sanity check
     int n0 = std::max(std::ceil(root), 5.0);
-    double P = pgamma(mu + n0, y, logY);
+    double mpn0 = mu + n0;
+    double P = pgamma(mpn0, y, logY);
+    double diffP = (mpn0 - 1) * logY - y - std::lgamma(mpn0);
+    diffP = std::exp(diffP);
     for (int n = n0; n > 0; --n) {
-        double term = n * logX - x;
-        term = std::exp(term - lfact(n)) * P;
+        double term = n * logX - x - lfact(n);
+        double mupnm1 = mu + n - 1;
+        term = std::exp(term) * P;
         sum += term;
-        // check if diffP can be calculated via recursion
-        double diffP = (mu + n - 1) * logY - y - std::lgamma(mu + n);
-        P += std::exp(diffP);
+        if (n % 5 == 0) {
+            /// every 5 iterations we recalculate P and diffP
+            /// in order to achieve enough accuracy
+            P = pgamma(mupnm1, y, logY);
+            diffP = (mupnm1 - 1) * logY - y - std::lgamma(mupnm1);
+            diffP = std::exp(diffP);
+        }
+        else {
+            /// otherwise we use recurrent relations
+            P += diffP;
+            diffP *= mupnm1 / y;
+        }
     }
-    sum += std::exp(-x) * P;
+    /// add the last 0-term
+    double lastTerm = lpgamma(mu, y, logY) - x;
+    lastTerm = std::exp(lastTerm);
+    sum += lastTerm;
     return sum;
 }
 

@@ -500,7 +500,6 @@ std::complex<double> GammaDistribution::CFImpl(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
-/// SCALED GAMMA
 void FreeScaleGammaDistribution::SetRate(double rate)
 {
     SetParameters(alpha, rate);
@@ -543,7 +542,6 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     return posteriorDistribution;
 }
 
-/// GAMMA
 std::string GammaRand::Name() const
 {
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
@@ -630,7 +628,6 @@ void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
     SetParameters(shape, shape / average);
 }
 
-/// CHI-SQUARED
 std::string ChiSquaredRand::Name() const
 {
     return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
@@ -642,7 +639,6 @@ void ChiSquaredRand::SetDegree(int degree)
 }
 
 
-/// ERLANG
 std::string ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
