@@ -290,8 +290,9 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
     return y0 + sum * M_1_PI / alpha;
 }
 
-double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const
+double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) const
 {
+    static constexpr int k = 10; /// number of elements in the series
     double rhoPi = M_PI_2 + xiAdj;
     rhoPi *= alpha;
     double sum = 0.0;
@@ -452,7 +453,7 @@ double StableDistribution::pdfForCommonExponent(double x) const
 
     /// If x is large enough we use tail approximation
     if (logAbsX > pdftailBound && alpha <= ALMOST_TWO)
-        return pdfSeriesExpansionAtInf(logAbsX, xiAdj, 10) / gamma;
+        return pdfSeriesExpansionAtInf(logAbsX, xiAdj) / gamma;
 
     double xAdj = alpha_alpham1 * logAbsX;
 
@@ -636,8 +637,9 @@ double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, i
     return y0 + sum * M_1_PI * alphaInv;
 }
 
-double StableDistribution::cdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const
+double StableDistribution::cdfSeriesExpansionAtInf(double logX, double xiAdj) const
 {
+    static constexpr int k = 10; /// number of elements in the series
     double rhoPi = M_PI_2 + xiAdj;
     rhoPi *= alpha;
     double sum = 0.0;
@@ -676,7 +678,7 @@ double StableDistribution::cdfForCommonExponent(double x) const
             return cdfSeriesExpansionAtZero(logAbsX, xi, seriesZeroParams.first);
         /// If x is large enough we use tail approximation
         if (logAbsX > cdftailBound)
-            return 1.0 - cdfSeriesExpansionAtInf(logAbsX, xi, 10);
+            return 1.0 - cdfSeriesExpansionAtInf(logAbsX, xi);
         if (alpha > 1.0)
             return 1.0 - cdfIntegralRepresentation(logAbsX, xi);
         return (beta == -1.0) ? 1.0 : cdfAtZero(xi) + cdfIntegralRepresentation(logAbsX, xi);
@@ -686,7 +688,7 @@ double StableDistribution::cdfForCommonExponent(double x) const
     if (logAbsX < seriesZeroParams.second)
         return 1.0 - cdfSeriesExpansionAtZero(logAbsX, -xi, seriesZeroParams.first);
     if (logAbsX > cdftailBound)
-        return cdfSeriesExpansionAtInf(logAbsX, -xi, 10);
+        return cdfSeriesExpansionAtInf(logAbsX, -xi);
     if (alpha > 1.0)
         return cdfIntegralRepresentation(logAbsX, -xi);
     return (beta == 1.0) ? 0.0 : cdfAtZero(xi) - cdfIntegralRepresentation(logAbsX, -xi);

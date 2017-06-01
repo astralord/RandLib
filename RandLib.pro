@@ -71,7 +71,6 @@ SOURCES += \
     distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
     distributions/univariate/continuous/InverseGaussianRand.cpp \
     distributions/univariate/discrete/CategoricalRand.cpp \
-    distributions/univariate/continuous/KumaraswamyRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquaredRand.cpp \
     distributions/univariate/continuous/KolmogorovSmirnovRand.cpp \
     math/BetaMath.cpp \
@@ -140,7 +139,6 @@ HEADERS +=\
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \
     distributions/univariate/continuous/InverseGaussianRand.h \
     distributions/univariate/discrete/CategoricalRand.h \
-    distributions/univariate/continuous/KumaraswamyRand.h \
     distributions/univariate/continuous/NoncentralChiSquaredRand.h \
     distributions/univariate/continuous/KolmogorovSmirnovRand.h \
     math/BetaMath.h \

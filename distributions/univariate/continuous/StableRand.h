@@ -141,10 +141,9 @@ private:
      * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
-     * @param k number of elements in series
      * @return series expansion of probability density function for large x
      */
-    double pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
+    double pdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     double pdfTaylorExpansionTailNearCauchy(double x) const; /// ~ f(x, α) - f(x, 1)
     double limitCaseForIntegrandAuxForCommonExponent(double theta, double xiAdj) const;
     double integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const;
@@ -223,10 +222,9 @@ private:
      * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
-     * @param k number of elements in series
      * @return series expansion of cumulative distribution function for large x
      */
-    double cdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
+    double cdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     /**
      * @fn cdfIntegralRepresentation
      * @param absXSt absolute value of standardised x
