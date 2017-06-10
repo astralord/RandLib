@@ -204,6 +204,13 @@ private:
      * @return f'(x)
      */
     double df(double x) const;
+    /**
+     * @fn dfDivf
+     * derivative of pdf, divided by pdf
+     * @param x
+     * @return f'(x) / f(x)
+     */
+    double dfDivf(double x) const;
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 

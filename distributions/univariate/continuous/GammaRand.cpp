@@ -431,6 +431,11 @@ double GammaDistribution::df(double x) const
     return z * std::exp(y);
 }
 
+double GammaDistribution::dfDivf(double x) const
+{
+    return x / (alpha - 1 - beta * x);
+}
+
 double GammaDistribution::quantileImpl(double p) const
 {
     double guess = quantileInitialGuess(p);
@@ -439,11 +444,12 @@ double GammaDistribution::quantileImpl(double p) const
         if (RandMath::findRoot([this, logP] (double x)
         {
            if (x <= 0)
-               return DoublePair(-INFINITY, 0);
+               return DoubleTriplet(-INFINITY, 0, 0);
             double logCdf = logF(x), logPdf = logf(x);
             double first = logCdf - logP;
             double second = std::exp(logPdf - logCdf);
-            return DoublePair(first, second);
+            double third = second * (dfDivf(x) - second);
+            return DoubleTriplet(first, second, third);
         }, guess))
             return guess;
         /// if we can't find quantile, then probably something bad has happened
@@ -471,11 +477,12 @@ double GammaDistribution::quantileImpl1m(double p) const
         if (RandMath::findRoot([this, logP] (double x)
         {
            if (x <= 0)
-               return DoublePair(logP, 0);
+               return DoubleTriplet(logP, 0, 0);
             double logCcdf = logS(x), logPdf = logf(x);
             double first = logP - logCcdf;
             double second = std::exp(logPdf - logCcdf);
-            return DoublePair(first, second);
+            double third = second * (dfDivf(x) + second);
+            return DoubleTriplet(first, second, third);
         }, guess))
             return guess;
         /// if we can't find quantile, then probably something bad has happened
