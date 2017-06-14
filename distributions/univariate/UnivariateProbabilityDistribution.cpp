@@ -72,9 +72,6 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 template< typename T >
 std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) const
 {
-    if (t == 0.0)
-        return 1.0;
-
     T leftBound = this->MinValue(), rightBound = this->MaxValue();
     if (leftBound == rightBound)
         return std::complex<double>(std::cos(t * leftBound), std::sin(t * leftBound));
@@ -167,7 +164,7 @@ double UnivariateProbabilityDistribution<T>::ThirdMoment() const
 
     double moment = skewness * std::sqrt(variance) * variance;
     moment += mean * mean * mean;
-    moment += mean * variance;
+    moment += 3 * mean * variance;
     return moment;
 }
 

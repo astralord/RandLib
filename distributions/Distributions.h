@@ -28,6 +28,7 @@
 #include "univariate/continuous/LevyRand.h"
 #include "univariate/continuous/LogisticRand.h"
 #include "univariate/continuous/LogNormalRand.h"
+#include "univariate/continuous/MarchenkoPasturRand.h"
 #include "univariate/continuous/NakagamiRand.h"
 #include "univariate/continuous/NoncentralChiSquaredRand.h"
 #include "univariate/continuous/NormalRand.h"

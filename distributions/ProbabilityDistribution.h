@@ -17,10 +17,10 @@ protected:
     /**
      * @fn MAX_ITER_REJECTION
      * upper boundary for maximum amount of iterations in rejection methods
-     * one hundred should be enough to be sure there is a bug
+     * one thousand should be enough to be sure there is a bug
      * (or rejection method is too slow to be used)
      */
-    static constexpr double MAX_ITER_REJECTION = 100;
+    static constexpr double MAX_ITER_REJECTION = 1000;
 
     std::string toStringWithPrecision(const double a_value, const int n = 6) const;
 
