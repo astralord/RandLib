@@ -86,7 +86,7 @@ double ZipfRand::Variance() const
 
 int ZipfRand::Mode() const
 {
-    return 1.0;
+    return 1;
 }
 
 std::complex<double> ZipfRand::CFImpl(double t) const

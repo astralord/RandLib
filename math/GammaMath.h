@@ -16,6 +16,14 @@ namespace RandMath
 double lfact(size_t n);
 
 /**
+ * @fn binom
+ * @param n
+ * @param k
+ * @return binomial coefficient
+ */
+double binom(size_t n, size_t k);
+
+/**
  * @fn digamma
  * @param x
  * @return digamma(x) = ln(Γ(x))' = d(Γ(x))/Γ(x)

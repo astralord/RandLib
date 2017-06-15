@@ -193,6 +193,7 @@ private:
     double initRootForLargeP(double logQ) const;
     double initRootForSmallShape(double p) const;
     double initRootForLargeShape(double p) const;
+    double initRootForLargeShape1m(double p) const;
     double quantileInitialGuess(double p) const;
     double quantileInitialGuess1m(double p) const;
 
@@ -203,6 +204,13 @@ private:
      * @return f'(x)
      */
     double df(double x) const;
+    /**
+     * @fn dfDivf
+     * derivative of pdf, divided by pdf
+     * @param x
+     * @return f'(x) / f(x)
+     */
+    double dfDivf(double x) const;
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 

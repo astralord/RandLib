@@ -102,7 +102,7 @@ std::complex<double> TriangularRand::CFImpl(double t) const
     std::complex<double> z(cma * std::cos(bt), cma * std::sin(bt));
     std::complex<double> numerator = x - y + z;
     /// in order to avoid numerical errors
-    if (std::fabs(t) < 1e-10 && std::fabs(numerator.real()) < 1e-10)
+    if (t < 1e-10 && std::fabs(numerator.real()) < 1e-10)
         return 1;
     double denominator = bma * cma * bmc * t * t;
     std::complex<double> frac = -numerator / denominator;

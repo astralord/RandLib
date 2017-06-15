@@ -32,7 +32,7 @@ protected:
     ShiftedGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
     virtual ~ShiftedGeometricStableDistribution() {}
 
-    void SetParameters(double exponent, double skewness);
+    void SetParameters(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.);
     void SetLocation(double location);
     void SetShift(double shift);
     void SetScale(double scale);

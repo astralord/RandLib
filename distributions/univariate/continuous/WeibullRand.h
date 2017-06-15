@@ -14,6 +14,7 @@ class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
     double lambda = 1; ///< scale λ
     double k = 1; ///< shape k
     double kInv = 1; /// 1 /k
+    double logk_lambda = 0; /// log(k/λ)
 
 public:
     WeibullRand(double scale = 1, double shape = 1);

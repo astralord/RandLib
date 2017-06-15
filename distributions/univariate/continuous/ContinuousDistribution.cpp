@@ -112,7 +112,7 @@ double ContinuousDistribution::Mode() const
     double root = 0;
     RandMath::findMin([this] (double x)
     {
-        return -f(x);
+        return -logf(x);
     }, guess, root);
     return root;
 }
@@ -220,7 +220,8 @@ double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) 
 
 bool ContinuousDistribution::KolmogorovSmirnovTest(const std::vector<double> &orderStatistic, double alpha) const
 {
-    double K = KolmogorovSmirnovRand::Quantile1m(alpha);
+    KolmogorovSmirnovRand KSRand;
+    double K = KSRand.Quantile1m(alpha);
     size_t n = orderStatistic.size();
     double interval = K / std::sqrt(n);
     double nInv = 1.0 / n;

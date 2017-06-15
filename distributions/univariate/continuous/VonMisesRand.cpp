@@ -128,7 +128,7 @@ std::complex<double> VonMisesRand::CFImpl(double t) const
     double tmu = t * mu;
     double cosTmu = std::cos(tmu), sinTmu = std::sin(tmu);
     std::complex<double> y(cosTmu, sinTmu);
-    double z = RandMath::logModifiedBesselFirstKind(k, std::fabs(t)) - logI0k;
+    double z = RandMath::logModifiedBesselFirstKind(k, t) - logI0k;
     return y * std::exp(z);
 }
 

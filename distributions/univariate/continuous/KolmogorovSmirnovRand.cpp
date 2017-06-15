@@ -11,36 +11,6 @@ std::string KolmogorovSmirnovRand::Name() const
     return "Kolmogorov-Smirnov";
 }
 
-double KolmogorovSmirnovRand::PDF(double x)
-{
-    if (x <= 0.0)
-        return 0.0;
-    double sum = 0.0, addon = 0.0;
-    int k = 1;
-    double xSq = x * x;
-    if (x < 1.0) {
-        double aux = 0.125 / xSq;
-        do {
-            double temp = M_PI * (2 * k - 1);
-            temp *= temp;
-            addon = temp - 4 * xSq;
-            addon *= std::exp(-temp * aux);
-            sum += addon;
-            ++k;
-        } while (addon > MIN_POSITIVE * sum);
-        return M_SQRT2PI * sum * 0.25 / std::pow(x, 4);
-    }
-    /// x > 1.0
-    do {
-        int temp = k * k;
-        addon = std::exp(-2 * temp * xSq);
-        addon *= temp;
-        sum += (k & 1) ? addon : -addon;
-        ++k;
-    } while (addon > MIN_POSITIVE * sum);
-    return 8 * sum * x;
-}
-
 double KolmogorovSmirnovRand::L(double x)
 {
     if (x <= 0.0)
@@ -74,19 +44,34 @@ double KolmogorovSmirnovRand::K(double x)
     return 2 * sum;
 }
 
-double KolmogorovSmirnovRand::CDF(double x)
-{
-    return (x > 1.0) ? 1.0 - K(x) : L(x);
-}
-
-double KolmogorovSmirnovRand::CDFCompl(double x)
-{
-    return (x > 1.0) ? K(x) : 1.0 - L(x);
-}
-
 double KolmogorovSmirnovRand::f(const double & x) const
 {
-    return PDF(x);
+    if (x <= 0.0)
+        return 0.0;
+    double sum = 0.0, addon = 0.0;
+    int k = 1;
+    double xSq = x * x;
+    if (x < 1.0) {
+        double aux = 0.125 / xSq;
+        do {
+            double temp = M_PI * (2 * k - 1);
+            temp *= temp;
+            addon = temp - 4 * xSq;
+            addon *= std::exp(-temp * aux);
+            sum += addon;
+            ++k;
+        } while (addon > MIN_POSITIVE * sum);
+        return M_SQRT2PI * sum * 0.25 / std::pow(x, 4);
+    }
+    /// x > 1.0
+    do {
+        int temp = k * k;
+        addon = std::exp(-2 * temp * xSq);
+        addon *= temp;
+        sum += (k & 1) ? addon : -addon;
+        ++k;
+    } while (addon > MIN_POSITIVE * sum);
+    return 8 * sum * x;
 }
 
 double KolmogorovSmirnovRand::logf(const double & x) const
@@ -96,12 +81,22 @@ double KolmogorovSmirnovRand::logf(const double & x) const
 
 double KolmogorovSmirnovRand::F(const double & x) const
 {
-    return CDF(x);
+    return (x > 1.0) ? 1.0 - K(x) : L(x);
 }
 
 double KolmogorovSmirnovRand::S(const double & x) const
 {
-    return CDFCompl(x);
+    return (x > 1.0) ? K(x) : 1.0 - L(x);
+}
+
+double KolmogorovSmirnovRand::logF(const double & x) const
+{
+    return (x > 1.0) ? std::log1p(-K(x)) : std::log(L(x));
+}
+
+double KolmogorovSmirnovRand::logS(const double & x) const
+{
+    return (x > 1.0) ? std::log(K(x)) : std::log1p(-L(x));
 }
 
 double KolmogorovSmirnovRand::truncatedGammaVariate() const
@@ -200,52 +195,54 @@ double KolmogorovSmirnovRand::Median() const
     return 0.82757355518990761;
 }
 
-double KolmogorovSmirnovRand::Quantile(double p)
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    if (p == 0)
-        return 0.0;
-    if (p == 1)
-        return INFINITY;
-    double guess = std::sqrt(-0.5 * std::log(0.5 - 0.5 * p));
-    if (RandMath::findRoot([p] (double x)
-    {
-        double first = CDF(x) - p;
-        double second = PDF(x);
-        return DoublePair(first, second);
-    }, guess))
-        return guess;
-    return NAN;
-}
-
-double KolmogorovSmirnovRand::Quantile1m(double p)
-{
-    if (p < 0 || p > 1)
-        return NAN;
-    if (p == 0)
-        return INFINITY;
-    if (p == 1)
-        return 0.0;
-    double guess = std::sqrt(-0.5 * std::log(0.5 * p));
-    if (RandMath::findRoot([p] (double x)
-    {
-        double first = p - CDFCompl(x);
-        double second = PDF(x);
-        return DoublePair(first, second);
-    }, guess))
-        return guess;
-    return NAN;
-}
-
 double KolmogorovSmirnovRand::quantileImpl(double p) const
 {
-    return KolmogorovSmirnovRand::Quantile(p);
+    double guess = std::sqrt(-0.5 * (std::log1p(-p) - M_LN2));
+    if (p < 1e-5) {
+        double logP = std::log(p);
+        if (RandMath::findRoot([this, logP] (double x)
+        {
+            double logCdf = logF(x), logPdf = logf(x);
+            double first = logCdf - logP;
+            double second = std::exp(logPdf - logCdf);
+            return DoublePair(first, second);
+        }, guess))
+            return guess;
+        return NAN;
+    }
+    if (RandMath::findRoot([p, this] (double x)
+    {
+        double first = F(x) - p;
+        double second = f(x);
+        return DoublePair(first, second);
+    }, guess))
+        return guess;
+    return NAN;
 }
 
 double KolmogorovSmirnovRand::quantileImpl1m(double p) const
 {
-    return KolmogorovSmirnovRand::Quantile1m(p);
+    double guess = std::sqrt(-0.5 * std::log(0.5 * p));
+    if (p < 1e-5) {
+        double logP = std::log(p);
+        if (RandMath::findRoot([this, logP] (double x)
+        {
+            double logCcdf = logS(x), logPdf = logf(x);
+            double first = logP - logCcdf;
+            double second = std::exp(logPdf - logCcdf);
+            return DoublePair(first, second);
+        }, guess))
+            return guess;
+        return NAN;
+    }
+    if (RandMath::findRoot([p, this] (double x)
+    {
+        double first = p - S(x);
+        double second = f(x);
+        return DoublePair(first, second);
+    }, guess))
+        return guess;
+    return NAN;
 }
 
 

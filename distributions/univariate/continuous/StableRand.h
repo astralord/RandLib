@@ -1,7 +1,6 @@
 #ifndef STABLERAND_H
 #define STABLERAND_H
 
-#include <functional>
 #include "ContinuousDistribution.h"
 
 /**
@@ -29,7 +28,6 @@ private:
     double zeta = 0; ///< ζ = -β * tan(πα/2)
     double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
     double xi = 0; ///< ξ = atan(-ζ) / α;
-    double alpham1Inv = 1; ///< 1 / (α - 1)
     double alpha_alpham1 = 2; ///< α / (α - 1)
     double logGammaPi_2 = M_LNPI - 1.5 * M_LN2; ///< log(γπ/2)
 
@@ -37,16 +35,11 @@ private:
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
 
     enum DISTRIBUTION_ID {
-        /// α = 2
-        NORMAL,
-        /// α = 0.5, |β| = 1
-        LEVY,
-        /// α = 1, β = 0
-        CAUCHY,
-        /// α = 1, β ≠ 0
-        UNITY_EXPONENT,
-        /// the rest
-        COMMON
+        NORMAL, ///< α = 2
+        LEVY, ///< α = 0.5, |β| = 1
+        CAUCHY, ///< α = 1, β = 0
+        UNITY_EXPONENT, ///< α = 1, β ≠ 0
+        COMMON ///< the rest
     };
 
     DISTRIBUTION_ID distributionId = NORMAL; ///< id of distribution (Gaussian by default)
@@ -65,7 +58,7 @@ public:
     double MaxValue() const override;
 
 protected:
-    void SetParameters(double exponent, double skewness);
+    void SetParameters(double exponent, double skewness, double scale = 1, double location = 0);
 
 public:
     void SetLocation(double location);
@@ -148,10 +141,9 @@ private:
      * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
-     * @param k number of elements in series
      * @return series expansion of probability density function for large x
      */
-    double pdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
+    double pdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     double pdfTaylorExpansionTailNearCauchy(double x) const; /// ~ f(x, α) - f(x, 1)
     double limitCaseForIntegrandAuxForCommonExponent(double theta, double xiAdj) const;
     double integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const;
@@ -230,10 +222,9 @@ private:
      * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
-     * @param k number of elements in series
      * @return series expansion of cumulative distribution function for large x
      */
-    double cdfSeriesExpansionAtInf(double logX, double xiAdj, int k) const;
+    double cdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     /**
      * @fn cdfIntegralRepresentation
      * @param absXSt absolute value of standardised x
@@ -280,6 +271,22 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+protected:
+    double quantileNormal(double p) const;
+    double quantileNormal1m(double p) const;
+    double quantileCauchy(double p) const;
+    double quantileCauchy1m(double p) const;
+    double quantileLevy(double p) const;
+    double quantileLevy1m(double p) const;
+
+private:
+    double quantileImpl(double p) const override;
+    double quantileImpl1m(double p) const override;
+
+protected:
+    std::complex<double> cfNormal(double t) const;
+    std::complex<double> cfCauchy(double t) const;
+    std::complex<double> cfLevy(double t) const;
 private:
     std::complex<double> CFImpl(double t) const override;
 };

@@ -28,7 +28,7 @@ public:
     double Median() const override;
     double Mode() const override;
     double Skewness() const override;
-    double Kurtosis() const override;
+    double ExcessKurtosis() const override;
 
 private:
     double quantileImpl(double p) const;

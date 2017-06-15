@@ -117,18 +117,17 @@ void NormalRand::Sample(std::vector<double> &outputData) const
 
 std::complex<double> NormalRand::CFImpl(double t) const
 {
-    double sigmaT = sigma * t;
-    return std::exp(std::complex<double>(-0.5 * sigmaT * sigmaT, mu * t));
+    return cfNormal(t);
 }
 
 double NormalRand::quantileImpl(double p) const
 {
-    return mu - sigma * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return quantileNormal(p);
 }
 
 double NormalRand::quantileImpl1m(double p) const
 {
-    return mu + sigma * M_SQRT2 * RandMath::erfcinv(2 * p);
+    return quantileNormal1m(p);
 }
 
 double NormalRand::Moment(int n) const

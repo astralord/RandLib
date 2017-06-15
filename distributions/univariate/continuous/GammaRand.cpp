@@ -354,10 +354,18 @@ double GammaDistribution::initRootForLargeShape(double p) const
     double x = RandMath::erfcinv(2 * p);
     double lambda = x * x / alpha + 1;
     lambda = -std::exp(-lambda);
-    if (x < 0)
-        lambda = -RandMath::Wm1Lambert(lambda);
-    else
-        lambda = -RandMath::W0Lambert(lambda);
+    lambda = (x < 0) ? -RandMath::Wm1Lambert(lambda) : -RandMath::W0Lambert(lambda);
+    return lambda * alpha;
+}
+
+double GammaDistribution::initRootForLargeShape1m(double p) const
+{
+    if (p == 0.5)
+        return alpha;
+    double x = -RandMath::erfcinv(2 * p);
+    double lambda = x * x / alpha + 1;
+    lambda = -std::exp(-lambda);
+    lambda = (x < 0) ? -RandMath::Wm1Lambert(lambda) : -RandMath::W0Lambert(lambda);
     return lambda * alpha;
 }
 
@@ -408,6 +416,9 @@ double GammaDistribution::quantileInitialGuess1m(double p) const
         if (logQ < std::min(maxBoundary1, maxBoundary2))
             return initRootForLargeP(logQ) / beta;
     }
+    else {
+        return initRootForLargeShape1m(p) / beta;
+    }
     return quantileInitialGuess(1.0 - p);
 }
 
@@ -420,6 +431,11 @@ double GammaDistribution::df(double x) const
     return z * std::exp(y);
 }
 
+double GammaDistribution::dfDivf(double x) const
+{
+    return x / (alpha - 1 - beta * x);
+}
+
 double GammaDistribution::quantileImpl(double p) const
 {
     double guess = quantileInitialGuess(p);
@@ -428,11 +444,12 @@ double GammaDistribution::quantileImpl(double p) const
         if (RandMath::findRoot([this, logP] (double x)
         {
            if (x <= 0)
-               return DoublePair(-INFINITY, 0);
+               return DoubleTriplet(-INFINITY, 0, 0);
             double logCdf = logF(x), logPdf = logf(x);
             double first = logCdf - logP;
             double second = std::exp(logPdf - logCdf);
-            return DoublePair(first, second);
+            double third = second * (dfDivf(x) - second);
+            return DoubleTriplet(first, second, third);
         }, guess))
             return guess;
         /// if we can't find quantile, then probably something bad has happened
@@ -460,11 +477,12 @@ double GammaDistribution::quantileImpl1m(double p) const
         if (RandMath::findRoot([this, logP] (double x)
         {
            if (x <= 0)
-               return DoublePair(logP, 0);
+               return DoubleTriplet(logP, 0, 0);
             double logCcdf = logS(x), logPdf = logf(x);
             double first = logP - logCcdf;
             double second = std::exp(logPdf - logCcdf);
-            return DoublePair(first, second);
+            double third = second * (dfDivf(x) + second);
+            return DoubleTriplet(first, second, third);
         }, guess))
             return guess;
         /// if we can't find quantile, then probably something bad has happened
@@ -489,7 +507,6 @@ std::complex<double> GammaDistribution::CFImpl(double t) const
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
-/// SCALED GAMMA
 void FreeScaleGammaDistribution::SetRate(double rate)
 {
     SetParameters(alpha, rate);
@@ -532,7 +549,6 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     return posteriorDistribution;
 }
 
-/// GAMMA
 std::string GammaRand::Name() const
 {
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
@@ -619,7 +635,6 @@ void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
     SetParameters(shape, shape / average);
 }
 
-/// CHI-SQUARED
 std::string ChiSquaredRand::Name() const
 {
     return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
@@ -631,7 +646,6 @@ void ChiSquaredRand::SetDegree(int degree)
 }
 
 
-/// ERLANG
 std::string ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";

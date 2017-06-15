@@ -71,12 +71,12 @@ SOURCES += \
     distributions/univariate/discrete/NegativeHyperGeometricRand.cpp \
     distributions/univariate/continuous/InverseGaussianRand.cpp \
     distributions/univariate/discrete/CategoricalRand.cpp \
-    distributions/univariate/continuous/KumaraswamyRand.cpp \
     distributions/univariate/continuous/NoncentralChiSquaredRand.cpp \
     distributions/univariate/continuous/KolmogorovSmirnovRand.cpp \
     math/BetaMath.cpp \
     math/GammaMath.cpp \
-    math/NumericMath.cpp
+    math/NumericMath.cpp \
+    distributions/univariate/continuous/MarchenkoPasturRand.cpp
 
 HEADERS +=\
     distributions/ProbabilityDistribution.h \
@@ -140,13 +140,13 @@ HEADERS +=\
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \
     distributions/univariate/continuous/InverseGaussianRand.h \
     distributions/univariate/discrete/CategoricalRand.h \
-    distributions/univariate/continuous/KumaraswamyRand.h \
     distributions/univariate/continuous/NoncentralChiSquaredRand.h \
     distributions/univariate/continuous/KolmogorovSmirnovRand.h \
     math/BetaMath.h \
     math/GammaMath.h \
     math/NumericMath.h \
-    RandLib_global.h
+    RandLib_global.h \
+    distributions/univariate/continuous/MarchenkoPasturRand.h
 
 unix {
     target.path = /usr/lib

@@ -51,7 +51,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
     /// Sanity check
     funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
     stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
-    static constexpr int MAX_ITER = 1e4;
+    static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
     double step = stepTol + 1;
@@ -93,7 +93,7 @@ bool findRoot(const std::function<DoublePair (double)> &funPtr, double &root, do
     /// Sanity check
     funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
     stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
-    static constexpr int MAX_ITER = 1e4;
+    static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
     double step = stepTol + 1;

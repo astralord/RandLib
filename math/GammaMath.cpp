@@ -270,6 +270,22 @@ double lfact(size_t n)
     return (n > LOGFACTORIAL_TABLESIZE) ? std::lgamma(n + 1) : LOGFACTORIAL_TABLE[n];
 }
 
+double binom(size_t n, size_t k)
+{
+    /// first check trivial cases
+    if (k == 0 || k == n)
+        return 1.0;
+    if (k == 1 || k == n - 1)
+        return n;
+    if (k == 2 || k == n - 2)
+        return 0.5 * n * (n - 1);
+    /// next run general procedure
+    double lfactn = lfact(n);
+    double lfactk = lfact(k);
+    double lfactnmk = lfact(n - k);
+    return std::exp(lfactn - lfactk - lfactnmk);
+}
+
 /**
  * @fn digammamLogForLargeX
  * @param x

@@ -9,9 +9,9 @@
  * @brief The NormalRand class <BR>
  * Normal distribution
  *
- * f(x | μ, σ) = 1 / ((2 π σ^2)^(1/2) * exp(-(x - μ)^2 / (2 σ^2))
+ * f(x | μ, σ^2) = 1 / ((2 π σ^2)^(1/2) * exp(-(x - μ)^2 / (2 σ^2))
  *
- * Notation: X ~ N(μ, σ)
+ * Notation: X ~ N(μ, σ^2)
  *
  * Related distributions: <BR>
  * X ~ S(2, 0, σ/√2, μ)
@@ -69,6 +69,8 @@ private:
 
 public:
     double Moment(int n) const;
+    double ThirdMoment() const override { return Moment(3); }
+    double FourthMoment() const override { return Moment(4); }
 
     /**
      * @fn FitMeanMLE

@@ -19,16 +19,15 @@ public:
     double MaxValue() const override { return INFINITY; }
 
 private:
-    static double PDF(double x);
     static double L(double x);
     static double K(double x);
-    static double CDF(double x);
-    static double CDFCompl(double x);
 public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
     double F(const double & x) const override;
     double S(const double & x) const override;
+    double logF(const double & x) const;
+    double logS(const double & x) const;
 
 private:
     double truncatedGammaVariate() const;
@@ -42,9 +41,6 @@ public:
     double Mode() const override;
     double Median() const override;
 
-public:
-    static double Quantile(double p);
-    static double Quantile1m(double p);
 private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
