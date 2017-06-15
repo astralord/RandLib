@@ -32,14 +32,12 @@ void MarchenkoPasturRand::SetParameters(double ratio, double scale)
     else if (genId == SMALL_RATIO) {
         BetaRV.SetShapes(0.5, 1.5);
         BetaRV.SetSupport(0, b);
-        M = (1.0 + sqrtLambda) * std::pow(lambda, 0.25);
-        M = 0.5 * b / M;
+        M = 0.25 * b / sqrtLambda;
     }
     else if (genId == LARGE_RATIO) {
         BetaRV.SetShapes(0.5, 1.5);
         BetaRV.SetSupport(0, b);
-        M = (1.0 + sqrtLambda) * std::pow(lambda, 1.25);
-        M = 0.5 * b / M;
+        M = 0.25 * b / (lambda * lambda * sqrtLambda);
     }
     else {
         BetaRV.SetShapes(1.5, 1.5);
@@ -145,11 +143,11 @@ double MarchenkoPasturRand::S(const double &x) const
 
 MarchenkoPasturRand::GENERATOR_ID MarchenkoPasturRand::getIdOfUsedGenerator() const
 {
-    if (lambda < 0.32)
+    if (lambda < 0.3)
         return TINY_RATIO;
     if (lambda <= 1.0)
         return SMALL_RATIO;
-    return (lambda > 3.0) ? HUGE_RATIO : LARGE_RATIO;
+    return (lambda > 3.3) ? HUGE_RATIO : LARGE_RATIO;
 }
 
 double MarchenkoPasturRand::variateForTinyRatio() const
@@ -158,7 +156,7 @@ double MarchenkoPasturRand::variateForTinyRatio() const
     do {
         double X = BetaRV.Variate();
         double U = UniformRand::StandardVariate();
-        if (U < a / X)
+        if (U < M / X)
             return X;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
@@ -170,8 +168,8 @@ double MarchenkoPasturRand::variateForSmallRatio() const
     do {
         double X = BetaRV.Variate();
         double U = UniformRand::StandardVariate();
-        double ratio = M * std::sqrt((X - a) / X);
-        if (U < ratio)
+        double ratio = M * (1.0 - a / X);
+        if (U * U < ratio)
             return X;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
@@ -179,31 +177,12 @@ double MarchenkoPasturRand::variateForSmallRatio() const
 
 double MarchenkoPasturRand::variateForLargeRatio() const
 {
-    if (UniformRand::StandardVariate() > 1.0 / lambda)
-        return 0.0;
-    int iter = 0;
-    do {
-        double X = BetaRV.Variate();
-        double U = UniformRand::StandardVariate();
-        double ratio = M * std::sqrt((X - a) / X);
-        if (U < ratio)
-            return X;
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN; /// fail due to some error
+    return (UniformRand::StandardVariate() > 1.0 / lambda) ? 0.0 : variateForSmallRatio();
 }
 
 double MarchenkoPasturRand::variateForHugeRatio() const
 {
-    if (UniformRand::StandardVariate() > 1.0 / lambda)
-        return 0.0;
-    int iter = 0;
-    do {
-        double X = BetaRV.Variate();
-        double U = UniformRand::StandardVariate();
-        if (U < M / X)
-            return X;
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN; /// fail due to some error
+    return (UniformRand::StandardVariate() > 1.0 / lambda) ? 0.0 : variateForTinyRatio();
 }
 
 double MarchenkoPasturRand::Variate() const
