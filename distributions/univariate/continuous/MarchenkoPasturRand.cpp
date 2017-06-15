@@ -24,25 +24,17 @@ void MarchenkoPasturRand::SetParameters(double ratio, double scale)
     sigmaSq = (scale > 0) ? scale : 1.0;
 
     GENERATOR_ID genId = getIdOfUsedGenerator();
-    if (genId == TINY_RATIO) {
+    if (genId == TINY_RATIO || genId == HUGE_RATIO) {
         BetaRV.SetShapes(1.5, 1.5);
         BetaRV.SetSupport(a, b);
-        M = a;
+        M = std::min(a / lambda, a);
     }
-    else if (genId == SMALL_RATIO) {
+    else {
         BetaRV.SetShapes(0.5, 1.5);
         BetaRV.SetSupport(0, b);
         M = 0.25 * b / sqrtLambda;
-    }
-    else if (genId == LARGE_RATIO) {
-        BetaRV.SetShapes(0.5, 1.5);
-        BetaRV.SetSupport(0, b);
-        M = 0.25 * b / (lambda * lambda * sqrtLambda);
-    }
-    else {
-        BetaRV.SetShapes(1.5, 1.5);
-        BetaRV.SetSupport(a, b);
-        M = a / lambda;
+        if (lambda > 1)
+            M /= lambda * lambda;
     }
 }
 
