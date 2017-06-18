@@ -12,7 +12,8 @@
  * Notation: X ~ Bin(n, p)
  *
  * Related distributions:
- * if X ~ Bin(1, p), then X ~ Bernoulli(p)
+ * If X ~ Bin(1, p), then X ~ Bernoulli(p) <BR>
+ * X ~ Multin(n, 1 - p, p)
  */
 class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution
 {
@@ -25,7 +26,7 @@ protected:
 private:
     int n = 1; ///< number of experiments
     double np = 0.5; ///< n * p
-    double lgammaNp1 = 0; ///< log(n!)
+    double lfactn = 0; ///< log(n!)
 
     double delta1{}, delta2{};
     double sigma1{}, sigma2{}, c{};
@@ -100,7 +101,8 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-    inline double GetLogFactorialN() const { return lgammaNp1; }
+    inline double GetLogFactorialN() const { return lfactn; }
+    inline double GetLogProbability() const { return logProb; }
 
 private:
     std::complex<double> CFImpl(double t) const override;
@@ -146,7 +148,7 @@ public:
 class RANDLIBSHARED_EXPORT BinomialRand : public BinomialDistribution
 {
 public:
-    BinomialRand(int number, double probability) : BinomialDistribution(number, probability) {}
+    BinomialRand(int number = 1, double probability = 0.5) : BinomialDistribution(number, probability) {}
     std::string Name() const override;
     using BinomialDistribution::SetParameters;
 };

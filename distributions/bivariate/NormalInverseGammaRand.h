@@ -1,7 +1,7 @@
 #ifndef NORMALINVERSEGAMMARAND_H
 #define NORMALINVERSEGAMMARAND_H
 
-#include "BivariateProbabilityDistribution.h"
+#include "ContinuousBivariateDistribution.h"
 #include "../univariate/continuous/StudentTRand.h"
 #include "../univariate/continuous/InverseGammaRand.h"
 
@@ -11,7 +11,7 @@
  *
  * Notation: X ~ NIG(μ, λ, α, β)
  */
-class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityDistribution<StudentTRand, InverseGammaRand>
+class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDistribution<StudentTRand, InverseGammaRand>
 {
     double mu = 0; ///< location μ
     double lambda = 1; ///< precision λ
@@ -22,8 +22,6 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public BivariateProbabilityD
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);
     std::string Name() const override;
-    DoublePair MinValue() const { return DoublePair(-INFINITY, 0); }
-    DoublePair MaxValue() const { return DoublePair(INFINITY, INFINITY); }
 
     void SetParameters(double location, double precision, double shape, double rate);
     inline double GetLocation() const { return mu; }

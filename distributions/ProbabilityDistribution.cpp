@@ -90,3 +90,4 @@ template class ProbabilityDistribution<int>;
 
 /// Bivariate
 template class ProbabilityDistribution<DoublePair>;
+template class ProbabilityDistribution<IntPair>;

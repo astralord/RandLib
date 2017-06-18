@@ -81,7 +81,7 @@ void BinomialDistribution::SetParameters(int number, double probability)
     p = std::max(p, 0.0);
     q = 1.0 - p;
     np = n * p;
-    lgammaNp1 = RandMath::lfact(n);
+    lfactn = RandMath::lfact(n);
     logProb = std::log(p);
     log1mProb = std::log1p(-p);
     SetGeneratorConstants();
@@ -89,7 +89,7 @@ void BinomialDistribution::SetParameters(int number, double probability)
 
 double BinomialDistribution::logProbFloor(int k) const
 {
-    double y = lgammaNp1;
+    double y = lfactn;
     y -= RandMath::lfact(n - k - 1);
     y -= RandMath::lfact(k - 1);
     y += k * logPFloor;
@@ -106,7 +106,7 @@ double BinomialDistribution::logP(const int & k) const
 {
     if (k < 0 || k > n)
         return -INFINITY;
-    double y = lgammaNp1;
+    double y = lfactn;
     y -= RandMath::lfact(n - k);
     y -= RandMath::lfact(k);
     y += k * logProb;
@@ -123,7 +123,7 @@ double BinomialDistribution::F(const int & k) const
     int nmk = n - k, kp1 = k + 1;
     double logBetaFun = RandMath::lfact(n - k - 1);
     logBetaFun += RandMath::lfact(k);
-    logBetaFun -= lgammaNp1;
+    logBetaFun -= lfactn;
     return RandMath::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 

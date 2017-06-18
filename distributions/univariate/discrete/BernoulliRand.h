@@ -13,6 +13,7 @@
  *
  * Related distributions: <BR>
  * X ~ Binomial(1, p) <BR>
+ * X ~ Multin(1, 1 - p, p) <BR>
  * 2X - 1 ~ Rademacher
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution

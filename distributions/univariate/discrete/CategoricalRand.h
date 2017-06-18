@@ -6,20 +6,19 @@
 /**
  * @brief The CategoricalRand class <BR>
  *
- * P(X = k) = p_k for k = {0, ..., K}
+ * P(X = k) = p_k for k = {0, ..., K-1}
  *
- * Notation: X ~ Cat(p_0, p_1, ..., p_K, K)
+ * Notation: X ~ Cat(p_0, ..., p_{K-1})
  *
  * Related distributions:
- * X ~ Multin(1, p_0, p_1, ..., p_K, K)
- * If X ~ Bernoulli(p), then X ~ Cat(1-p, p, 2)
- * If X ~ Uniform-Discrete(0, K), then X ~ Cat(p, ..., p, K) with p = 1 / (K + 1)
+ * X ~ Multin(1, p_0, ..., p_{K-1})
+ * If X ~ Bernoulli(p), then X ~ Cat(1 - p, p)
+ * If X ~ Uniform-Discrete(0, K), then X ~ Cat(p, ..., p) with p = 1 / (K + 1)
  */
 class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution
 {
-    std::vector<double> prob{};
-    int K = 1; /// number of possible outcomes, excluding 0
-    double q = 0.5; ///< P(X = 0)
+    std::vector<double> prob{1.0}; ///< vector of probabilities
+    int K = 1; ///< number of possible outcomes
 
 public:
     explicit CategoricalRand(std::vector<double>&& probabilities);

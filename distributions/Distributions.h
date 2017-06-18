@@ -68,7 +68,7 @@
 #include "univariate/singular/CantorRand.h"
 
 /// BIVARIATE
-#include "bivariate/BivariateProbabilityDistribution.h"
+#include "bivariate/ContinuousBivariateDistribution.h"
 #include "bivariate/NormalInverseGammaRand.h"
 #include "bivariate/BivariateNormalRand.h"
 

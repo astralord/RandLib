@@ -1,45 +1,36 @@
 #include "CategoricalRand.h"
 #include "../continuous/UniformRand.h"
 
-CategoricalRand::CategoricalRand(std::vector<double>&& probabilities) :
-    K(1), q(0.5)
+CategoricalRand::CategoricalRand(std::vector<double>&& probabilities)
 {
     SetProbabilities(std::move(probabilities));
 }
 
 std::string CategoricalRand::Name() const
 {
-    std::string str = "Categorical(" + toStringWithPrecision(q) + ", ";
-    for (double p : prob)
-        str += toStringWithPrecision(p) + ", ";
-    return str + toStringWithPrecision(K) + ")";
+    std::string str = "Categorical(";
+    for (int i = 0; i != K - 1; ++i)
+        str += toStringWithPrecision(prob[i]) + ", ";
+    return str + toStringWithPrecision(prob[K - 1]) + ")";
 }
 
 void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
 {
-    long double sum = 0.0L;
-    for (double var : probabilities) {
-        sum += var;
-    }
-    if (probabilities.size() <= 0.0 || sum > 1.0) {
+    if (probabilities.size() == 0 || std::accumulate(probabilities.begin(), probabilities.end(), 0.0) != 1.0) {
         /// we set default value,
-        /// which is standard Bernoulli distribution
-        prob = {0.5};
-        sum = 0.5;
+        /// which is degenerate distribution
+        prob = {1.0};
     }
     else {
         prob = std::move(probabilities);
     }
 
     K = prob.size();
-    q = 1.0 - sum;
 }
 
 double CategoricalRand::P(const int & k) const
 {
-    if (k < 0 || k > K)
-        return 0.0;
-    return (k == 0) ? q : prob[k - 1];
+    return (k < 0 || k > K) ? 0.0 : prob[k];
 }
 
 double CategoricalRand::logP(const int & k) const
@@ -53,10 +44,15 @@ double CategoricalRand::F(const int & k) const
         return 0.0;
     if (k >= K)
         return 1.0;
-    double sum = q;
-    for (int i = 0; i != k; ++i) {
-        sum += prob[i];
+    if (2 * k <= K) {
+        double sum = 0.0;
+        for (int i = 0; i <= k; ++i)
+            sum += prob[i];
+        return sum;
     }
+    double sum = 1.0;
+    for (int i = K - 1; i > k; --i)
+        sum -= prob[i];
     return sum;
 }
 
@@ -69,16 +65,16 @@ int CategoricalRand::Variate() const
 double CategoricalRand::Mean() const
 {
     double sum = 0.0;
-    for (int i = 0; i != K; ++i)
-        sum += (i + 1) * prob[i];
+    for (int i = 1; i != K; ++i)
+        sum += i * prob[i];
     return sum;
 }
 
 double CategoricalRand::Variance() const
 {
     double mean = 0.0, secMom = 0.0;
-    for (int i = 1; i <= K; ++i) {
-        double aux = i * prob[i - 1];
+    for (int i = 1; i != K; ++i) {
+        double aux = i * prob[i];
         mean += aux;
         secMom += i * aux;
     }
@@ -88,16 +84,16 @@ double CategoricalRand::Variance() const
 int CategoricalRand::Mode() const
 {
     auto maxProbIt = std::max_element(prob.begin(), prob.end());
-    return (*maxProbIt <= q) ? 0 : std::distance(prob.begin(), maxProbIt) + 1;
+    return std::distance(prob.begin(), maxProbIt);
 }
 
 int CategoricalRand::quantileImpl(double p) const
 {
-    double sum = q;
+    double sum = 0.0;
     for (int i = 0; i != K; ++i) {
-        if (sum > p)
-            return i;
         sum += prob[i];
+        if (sum >= p)
+            return i;
     }
     return K;
 }
@@ -106,21 +102,20 @@ int CategoricalRand::quantileImpl1m(double p) const
 {
     double sum = prob[K - 1];
     for (int i = K - 2; i >= 0; --i) {
-        if (sum > p)
-            return i;
         sum += prob[i];
+        if (sum >= p)
+            return i;
     }
     return 0.0;
 }
 
 std::complex<double> CategoricalRand::CFImpl(double t) const
 {
-    double re = q;
+    double re = 0.0;
     double im = 0.0;
     for (int i = 0; i != K; ++i) {
-        double ip1 = i + 1;
-        re += prob[i] * std::cos(t * ip1);
-        im += prob[i] * std::sin(t * ip1);
+        re += prob[i] * std::cos(t * i);
+        im += prob[i] * std::sin(t * i);
     }
     return std::complex<double>(re, im);
 }
