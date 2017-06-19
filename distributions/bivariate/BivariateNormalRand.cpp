@@ -1,10 +1,10 @@
 #include "BivariateNormalRand.h"
 
 
-BivariateNormalRand::BivariateNormalRand(double location1, double location2, double scale1, double correlation, double scale2)
+BivariateNormalRand::BivariateNormalRand(double location1, double location2, double scale1, double scale2, double correlation)
 {
     SetLocations(location1, location2);
-    SetCovariance(scale1, correlation, scale2);
+    SetCovariance(scale1, scale2, correlation);
 }
 
 std::string BivariateNormalRand::Name() const
@@ -24,7 +24,7 @@ void BivariateNormalRand::SetLocations(double location1, double location2)
     Y.SetLocation(mu2);
 }
 
-void BivariateNormalRand::SetCovariance(double scale1, double correlation, double scale2)
+void BivariateNormalRand::SetCovariance(double scale1, double scale2, double correlation)
 {
     sigma1 = scale1 > 0.0 ? scale1 : 1.0;
     sigma2 = scale2 > 0.0 ? scale2 : 1.0;

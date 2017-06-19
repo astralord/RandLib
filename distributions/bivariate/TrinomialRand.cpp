@@ -52,6 +52,7 @@ double TrinomialRand::F(const IntPair &point) const
         return Y.F(y);
     if (y >= n)
         return X.F(x);
+    // TODO: P(X<x, Y<y) = sum(P(X<x|Y=j)*P(Y=j))
     double sum = 0.0;
     for (int i = 0; i <= x; ++i) {
         for (int j = 0; j <= y; ++j)

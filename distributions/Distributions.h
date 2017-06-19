@@ -71,5 +71,6 @@
 #include "bivariate/ContinuousBivariateDistribution.h"
 #include "bivariate/NormalInverseGammaRand.h"
 #include "bivariate/BivariateNormalRand.h"
+#include "bivariate/TrinomialRand.h"
 
 #endif // RANDLIB_H

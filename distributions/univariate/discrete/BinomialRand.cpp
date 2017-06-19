@@ -363,7 +363,7 @@ void BinomialDistribution::FitProbabilityMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    if (!allElementsAreNotBiggerThen(n, sample))
+    if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     SetParameters(n, sampleMean(sample) / n);
 }
@@ -377,7 +377,7 @@ BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sampl
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    if (!allElementsAreNotBiggerThen(n, sample))
+    if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();
     double sum = sampleSum(sample);

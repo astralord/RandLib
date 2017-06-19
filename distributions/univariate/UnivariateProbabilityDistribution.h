@@ -133,8 +133,8 @@ public:
 
     /**
      * @fn Hazard
-     * return hazard function: pdf (or pmf) / (1 - cdf)
      * @param x input parameter
+     * @return hazard function
      */
     virtual double Hazard(double x) const = 0;
 
@@ -160,7 +160,7 @@ public:
     /**
      * @fn Skewness
      * @return E[((X - μ) / σ) ^ 3]
-     * where mu is central moment and sigma is standard deviation
+     * where μ is central moment and σ is standard deviation
      */
     virtual double Skewness() const;
 
@@ -198,32 +198,32 @@ public:
     /**
      * @fn Likelihood
      * @param sample
-     * @return product of f(x_i)
+     * @return likelihood function
      */
     virtual double Likelihood(const std::vector<T> &sample) const = 0;
 
     /**
      * @fn LogLikelihood
      * @param sample
-     * @return sum of log(f(x_i))
+     * @return logarithm of likelihood function
      */
     virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
 
     /**
-     * @fn allElementsAreNotBiggerThen
+     * @fn allElementsAreNotBiggerThan
      * @param value
      * @param sample
      * @return true if all elements in sample are not bigger than value
      */
-    static bool allElementsAreNotBiggerThen(T value, const std::vector<T> &sample);
+    static bool allElementsAreNotBiggerThan(T value, const std::vector<T> &sample);
 
     /**
-     * @fn allElementsAreNotLessThen
+     * @fn allElementsAreNotLessThan
      * @param value
      * @param sample
      * @return true if all elements in sample are not less than value
      */
-    static bool allElementsAreNotLessThen(T value, const std::vector<T> &sample);
+    static bool allElementsAreNotLessThan(T value, const std::vector<T> &sample);
 
     /**
      * @fn allElementsAreNonNegative

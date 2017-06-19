@@ -513,9 +513,9 @@ std::string BetaRand::Name() const
 
 void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThen(a, sample))
+    if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    if (!allElementsAreNotBiggerThen(b, sample))
+    if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
     double mean = sampleMean(sample);
     double shape = mean - a;
@@ -526,9 +526,9 @@ void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 
 void BetaRand::FitBetaMM(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThen(a, sample))
+    if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    if (!allElementsAreNotBiggerThen(b, sample))
+    if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
     double mean = sampleMean(sample);
     double shape = b - mean;

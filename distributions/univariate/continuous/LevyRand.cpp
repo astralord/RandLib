@@ -68,7 +68,7 @@ std::complex<double> LevyRand::CFImpl(double t) const
 void LevyRand::FitScaleMLE(const std::vector<double> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNotLessThen(mu, sample))
+    if (!allElementsAreNotLessThan(mu, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(mu)));
     long double invSum = 0.0;
     for (double var : sample)
