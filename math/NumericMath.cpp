@@ -38,7 +38,9 @@ long double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, do
 long double integral(const std::function<double (double)> &funPtr, double a, double b, double epsilon, int maxRecursionDepth)
 {
     // TODO: redo to adaptive Gauss-Kronrod quadrature
-    if (a >= b)
+    if (a > b)
+        return -integral(funPtr, b, a, epsilon, maxRecursionDepth);
+    if (a == b)
         return 0.0;
     double c = .5 * (a + b), h = (b - a) / 6.0;
     double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);
