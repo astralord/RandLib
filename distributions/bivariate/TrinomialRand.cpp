@@ -14,12 +14,21 @@ std::string TrinomialRand::Name() const
 
 void TrinomialRand::SetParameters(int number, double probability1, double probability2)
 {
-    X.SetParameters(number, probability1);
-    Y.SetParameters(number, probability2);
+    double p1 = probability1, p2 = probability2;
+    /// sanity check (probabilities should be positive
+    /// and their sum should be not greater than 1)
+    if (probability1 < 0.0 || probability2 < 0.0 || probability1 + probability2 > 1.0)
+    {
+        p1 = 1.0 / 3;
+        p2 = 1.0 / 3;
+    }
 
-    n = X.GetNumber();
-    log1mProb = std::log1p(-X.GetProbability() - Y.GetProbability());
-    p2_1mp1 = Y.GetProbability() / (1.0 - X.GetProbability());
+    n = std::max(number, 1);
+    X.SetParameters(n, p1);
+    Y.SetParameters(n, p2);
+
+    log1mProb = std::log1p(-p1 - p2);
+    p2_1mp1 = p2 / (1.0 - p1);
 }
 
 double TrinomialRand::P(const IntPair &point) const
@@ -31,15 +40,16 @@ double TrinomialRand::P(const IntPair &point) const
 double TrinomialRand::logP(const IntPair &point) const
 {
     int x = point.first, y = point.second;
-    if (x < 0 || x > n || y < 0 || y > n)
+    if (x < 0 || y < 0 || x + y > n)
         return -INFINITY;
+    int nmxmy = n - x - y;
     double res = X.GetLogFactorialN();
     res -= RandMath::lfact(x);
     res -= RandMath::lfact(y);
-    res -= RandMath::lfact(n - x - y);
+    res -= RandMath::lfact(nmxmy);
     res += x * X.GetLogProbability();
     res += y * Y.GetLogProbability();
-    res += (n - x - y) * log1mProb;
+    res += nmxmy * log1mProb;
     return res;
 }
 
@@ -52,11 +62,24 @@ double TrinomialRand::F(const IntPair &point) const
         return Y.F(y);
     if (y >= n)
         return X.F(x);
-    // TODO: P(X<x, Y<y) = sum(P(X<x|Y=j)*P(Y=j))
     double sum = 0.0;
+    double p1 = X.GetProbability(), p2 = Y.GetProbability();
+    if (x > y) {
+        double ratio = (1 - p2 - p1) / (1 - p2);
+        for (int i = 0; i <= y; ++i) {
+            int nmimx = n - i - x;
+            double prob1 = (nmimx > 0) ? RandMath::ibeta(ratio, nmimx, x + 1) : 1.0;
+            double prob2 = Y.P(i);
+            sum += prob1 * prob2;
+        }
+        return sum;
+    }
+    double ratio = (1 - p1 - p2) / (1 - p1);
     for (int i = 0; i <= x; ++i) {
-        for (int j = 0; j <= y; ++j)
-            sum += P(DoublePair(i, j));
+        int nmimy = n - i - y;
+        double prob1 = (nmimy > 0) ? RandMath::ibeta(ratio, nmimy, y + 1) : 1.0;
+        double prob2 = X.P(i);
+        sum += prob1 * prob2;
     }
     return sum;
 }

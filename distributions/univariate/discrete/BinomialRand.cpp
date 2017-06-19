@@ -121,7 +121,7 @@ double BinomialDistribution::F(const int & k) const
     if (k >= n)
         return 1.0;
     int nmk = n - k, kp1 = k + 1;
-    double logBetaFun = RandMath::lfact(n - k - 1);
+    double logBetaFun = RandMath::lfact(n - kp1);
     logBetaFun += RandMath::lfact(k);
     logBetaFun -= lfactn;
     return RandMath::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);

@@ -70,12 +70,10 @@ double BivariateNormalRand::F(const DoublePair &point) const
     double p1, p2 = 0.0;
     double x = point.first, y = point.second;
     double xAdj = (x - mu1) / sigma1, yAdj = (y - mu2) / sigma2;
-    if (rho > 0) {
+    if (rho > 0)
         p1 = (xAdj < yAdj) ? X.F(x) : Y.F(y);
-    }
-    else {
+    else
         p1 = std::max(X.F(x) - Y.F(-y), 0.0);
-    }
     if (std::fabs(rho) < 1.0) {
         double lowLimit = std::asin(rho);
         double highLimit = RandMath::sign(rho) * M_PI_2;

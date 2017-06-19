@@ -101,8 +101,21 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
+    /**
+     * @fn GetLogFactorialN
+     * @return log(n!)
+     */
     inline double GetLogFactorialN() const { return lfactn; }
+    /**
+     * @fn GetLogProbability
+     * @return log(p)
+     */
     inline double GetLogProbability() const { return logProb; }
+    /**
+     * @fn GetLog1mProbability
+     * @return log(1-p)
+     */
+    inline double GetLog1mProbability() const { return log1mProb; }
 
 private:
     std::complex<double> CFImpl(double t) const override;
