@@ -55,7 +55,7 @@ double UniformDiscreteRand::Mean() const
 
 double UniformDiscreteRand::Variance() const
 {
-    return (n * n - 1.0) / 12;
+    return ((double)n * n - 1.0) / 12;
 }
 
 int UniformDiscreteRand::Median() const
@@ -65,7 +65,8 @@ int UniformDiscreteRand::Median() const
 
 int UniformDiscreteRand::Mode() const
 {
-    return 0.5;
+    /// this can be any value in [a, b]
+    return b;
 }
 
 double UniformDiscreteRand::Skewness() const
@@ -75,7 +76,7 @@ double UniformDiscreteRand::Skewness() const
 
 double UniformDiscreteRand::ExcessKurtosis() const
 {
-    double res = 2.0 / (n * n - 1);
+    double res = 2.0 / ((double)n * n - 1);
     ++res;
     return -1.2 * res;
 }

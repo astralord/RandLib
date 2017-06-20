@@ -93,10 +93,8 @@ IntPair TrinomialRand::Variate() const
 
 double TrinomialRand::Correlation() const
 {
-    double p1 = X.GetProbability(), p2 = Y.GetProbability();
-    double corr = p1 * p2;
-    corr /= 1.0 - p1;
-    corr /= 1.0 - p2;
-    return -std::sqrt(corr);
+    double logp1 = X.GetLogProbability(), logp2 = Y.GetLogProbability();
+    double log1mp1 = X.GetLog1mProbability(), log1mp2 = Y.GetLog1mProbability();
+    return -std::exp(logp1 + logp2 - log1mp1 - log1mp2);
 }
 

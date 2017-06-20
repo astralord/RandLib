@@ -233,7 +233,8 @@ double MarchenkoPasturRand::Moment(int n) const
         for (int k = 0; k != n; ++k) {
             double addon = RandMath::binom(n - 1, k);
             addon *= addon;
-            addon /= (n - k) * (k + 1);
+            addon /= n - k;
+            addon /= k + 1;
             addon *= n * std::pow(lambda, k);
             sum += addon;
         }

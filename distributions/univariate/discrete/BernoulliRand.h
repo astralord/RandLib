@@ -33,7 +33,7 @@ public:
     double F(const int & k) const override;
     double S(const int & k) const override;
     int Variate() const override;
-    static int Variate(double p);
+    static int Variate(double probability);
     static int StandardVariate();
     void Sample(std::vector<int> &outputData) const override;
 

@@ -112,7 +112,7 @@ double BetaBinomialRand::ExcessKurtosis() const
     double alphaPBeta = alpha + beta;
     double alphaBetaN = alpha * beta * n;
     double res = alpha * beta * (n - 2);
-    res += 2 * n * n;
+    res += 2 * (double)n * n;
     res -= alphaBetaN * (6 - n) / alphaPBeta;
     res -= 6 * alphaBetaN * n / (alphaPBeta * alphaPBeta);
     res *= 3;

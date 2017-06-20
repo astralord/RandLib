@@ -43,9 +43,9 @@ int BernoulliRand::Variate() const
     return RandGenerator::Variate() > boundary;
 }
 
-int BernoulliRand::Variate(double p)
+int BernoulliRand::Variate(double probability)
 {
-    return UniformRand::StandardVariate() <= p;
+    return UniformRand::StandardVariate() <= probability;
 }
 
 int BernoulliRand::StandardVariate()

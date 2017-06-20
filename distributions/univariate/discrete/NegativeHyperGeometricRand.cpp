@@ -85,14 +85,18 @@ int NegativeHyperGeometricRand::Variate() const
 
 double NegativeHyperGeometricRand::Mean() const
 {
-    return m * (N - M) / (M + 1);
+    double mean = m;
+    mean *= N - M;
+    mean /= M + 1;
+    return mean;
 }
 
 double NegativeHyperGeometricRand::Variance() const
 {
     double Mp1 = M + 1;
     double var = 1 - m / Mp1;
-    var *= (N + 1) * (N - M);
+    var *= N + 1;
+    var *= N - M;
     var /= Mp1 * (Mp1 + 1);
     return m * var;
 }

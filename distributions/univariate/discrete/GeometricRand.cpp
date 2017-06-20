@@ -54,9 +54,9 @@ int GeometricRand::Variate(double probability)
 
     double U = UniformRand::StandardVariate();
     int x = 0;
-    double prod = probability, sum = prod, q = 1 - probability;
+    double prod = probability, sum = prod, qprob = 1.0 - probability;
     while (U > sum) {
-        prod *= q;
+        prod *= qprob;
         sum += prod;
         ++x;
     }
