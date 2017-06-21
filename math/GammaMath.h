@@ -9,11 +9,30 @@ namespace RandMath
 {
 
 /**
+ * @fn factorial
+ * Calculate n! using table values for small n <= 255
+ * and built-in gamma function for large n > 255
+ * @param n non-negative integer number
+ * @return n!
+ */
+long double factorial(double n);
+
+/**
+ * @fn doubleFactorial
+ * Calculate n!!
+ * @param n non-negative integer number
+ * @return n!!
+ */
+long double doubleFactorial(int n);
+
+/**
  * @fn lfact
- * @param n
+ * Calculate log(n!) using table values for small n <= 255
+ * and built-in lgamma function for large n > 255
+ * @param n non-negative integer number
  * @return log(n!)
  */
-double lfact(size_t n);
+long double lfact(size_t n);
 
 /**
  * @fn binom
@@ -21,7 +40,7 @@ double lfact(size_t n);
  * @param k
  * @return binomial coefficient
  */
-double binom(size_t n, size_t k);
+long double binom(size_t n, size_t k);
 
 /**
  * @fn digamma

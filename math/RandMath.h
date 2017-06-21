@@ -68,23 +68,6 @@ double logexpm1(double x);
 double log2mexp(double x);
 
 /**
- * @fn factorial
- * Calculate n! using table values for small n <= 255
- * and built-in gamma function for large n > 255
- * @param n non-negative integer number
- * @return n!
- */
-long double factorial(double n);
-
-/**
- * @fn doubleFactorial
- * Calculate n!!
- * @param n
- * @return n!!
- */
-long double doubleFactorial(int n);
-
-/**
  * @fn erfinv
  * @param p
  * @return inverse error function: such x that erf(x) = p
