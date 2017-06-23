@@ -14,7 +14,7 @@ void BinomialDistribution::SetGeneratorConstants()
     minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
     pFloor = npFloor / n;
-    pRes = (RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor);
+    pRes = RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor;
 
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == BERNOULLI_SUM)
@@ -90,8 +90,8 @@ void BinomialDistribution::SetParameters(int number, double probability)
 double BinomialDistribution::logProbFloor(int k) const
 {
     double y = lfactn;
-    y -= RandMath::lfact(n - k - 1);
-    y -= RandMath::lfact(k - 1);
+    y -= RandMath::lfact(n - k);
+    y -= RandMath::lfact(k);
     y += k * logPFloor;
     y += (n - k) * logQFloor;
     return y;
@@ -239,12 +239,12 @@ int BinomialDistribution::Variate() const
     }
     case REJECTION:
     {
-        /// if X ~ Bin(n, p') and Y ~ Bin(n - Y, (p - p') / (1 - p'))
+        /// if X ~ Bin(n, p') and Y ~ Bin(n - X, (p - p') / (1 - p'))
         /// then Z = X + Y ~ Bin(n, p)
-        int Y = variateRejection();
+        int Z = variateRejection();
         if (pRes > 0)
-            Y += variateWaiting(n - Y);
-        return (p > 0.5) ? n - Y : Y;
+            Z += variateWaiting(n - Z);
+        return (p > 0.5) ? n - Z : Z;
     }
     case BERNOULLI_SUM:
     default:

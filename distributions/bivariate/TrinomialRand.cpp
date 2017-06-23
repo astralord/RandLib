@@ -28,6 +28,7 @@ void TrinomialRand::SetParameters(int number, double probability1, double probab
     Y.SetParameters(n, p2);
 
     log1mProb = std::log1p(-p1 - p2);
+    p1_1mp2 = p1 / (1.0 - p2);
     p2_1mp1 = p2 / (1.0 - p1);
 }
 
@@ -86,8 +87,13 @@ double TrinomialRand::F(const IntPair &point) const
 
 IntPair TrinomialRand::Variate() const
 {
-    int x = X.Variate();
-    int y = BinomialRand::Variate(n - x, p2_1mp1);
+    if (X.GetProbability() > Y.GetProbability()) {
+        int x = X.Variate();
+        int y = BinomialRand::Variate(n - x, p2_1mp1);
+        return IntPair(x, y);
+    }
+    int y = Y.Variate();
+    int x = BinomialRand::Variate(n - y, p1_1mp2);
     return IntPair(x, y);
 }
 

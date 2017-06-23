@@ -35,9 +35,10 @@ double LogarithmicRand::betaFun(int a) const
     /// calculate B(p, a, 0),
     /// where B(x, a, b) denotes incomplete beta function,
     /// using series expansion (converges for x < 1)
-    double denom = a;
-    double sum = 1.0 / a, add = 1;
-    int i = 1;
+    double denom = a + 1;
+    double sum = p * p / (a + 2) + p / (a + 1) + 1.0 / a;
+    double add = 1;
+    int i = 3;
     do {
         add = std::exp(i * logProb) / (++denom);
         sum += add;

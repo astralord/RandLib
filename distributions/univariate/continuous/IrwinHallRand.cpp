@@ -87,7 +87,8 @@ double IrwinHallRand::Mean() const
 
 double IrwinHallRand::Variance() const
 {
-    return static_cast<double>(n) / 12;
+    static constexpr double M_1_12 = 0.08333333333333;
+    return n * M_1_12;
 }
 
 std::complex<double> IrwinHallRand::CFImpl(double t) const

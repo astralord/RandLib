@@ -79,18 +79,35 @@ double BetaBinomialRand::Variance() const
 
 int BetaBinomialRand::Mode() const
 {
-    double maxValue = 0.0;
-    int index = 0;
-    for (int i = 0; i <= n; ++i)
-    {
-        double value = logP(i);
-        if (maxValue < value)
+    /// for small n we use direct comparison of probabilities
+    if (n < 30) {
+        double maxValue = logP(0);
+        int index = 0;
+        for (int i = 1; i <= n; ++i)
         {
-            maxValue = value;
-            index = i;
+            double value = logP(i);
+            if (maxValue < value)
+            {
+                maxValue = value;
+                index = i;
+            }
         }
+        return index;
     }
-    return index;
+    /// otherwise use numerical procedure to solve f'(x)=0
+    double guess = n * B.Mean();
+    double alpha = B.GetAlpha(), beta = B.GetBeta();
+    if (RandMath::findRoot([this, alpha, beta] (double x)
+    {
+        double y = RandMath::digamma(x + alpha);
+        y -= RandMath::digamma(n - x + beta);
+        y -= RandMath::digamma(x + 1);
+        y += RandMath::digamma(n - x + 1);
+        return y;
+    }, 0, n, guess))
+        return std::round(guess);
+    /// if we can't find quantile, then probably something bad has happened
+    return -1;
 }
 
 double BetaBinomialRand::Skewness() const

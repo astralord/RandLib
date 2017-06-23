@@ -2,17 +2,21 @@
 
 namespace RandMath {
 
-
-double logBeta(double a, double b)
+long double logBeta(double a, double b)
 {
     if (a <= 0 || b <= 0)
         return NAN;
-    double lgammaA = std::lgamma(a);
-    double lgammaB = (a == b) ? lgammaA : std::lgamma(b);
-    return lgammaA + lgammaB - std::lgamma(a + b);
+    bool aIsInteger = areClose(a, std::round(a));
+    bool bIsInteger = areClose(b, std::round(b));
+    long double lgammaA = aIsInteger ? lfact(a - 1) : std::lgammal(a);
+    long double lgammaB = lgammaA;
+    if (a != b)
+        lgammaB = bIsInteger ? lfact(b - 1) : std::lgammal(b);
+    long double lgammaApB = (bIsInteger && bIsInteger) ? lfact(a + b - 1) : std::lgammal(a + b);
+    return lgammaA + lgammaB - lgammaApB;
 }
 
-double beta(double a, double b)
+long double beta(double a, double b)
 {
     return std::exp(logBeta(a, b));
 }

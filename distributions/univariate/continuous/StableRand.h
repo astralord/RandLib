@@ -64,13 +64,32 @@ public:
     void SetLocation(double location);
     void SetScale(double scale);
 
+    /**
+     * @fn GetExponent
+     * @return characteristic exponent α
+     */
     inline double GetExponent() const { return alpha; }
+    /**
+     * @fn GetSkewness
+     * @return skewness parameter β
+     */
     inline double GetSkewness() const { return beta; }
+    /**
+     * @fn GetScale
+     * @return scale parameter γ
+     */
     inline double GetScale() const { return gamma; }
+    /**
+     * @fn GetLocation
+     * @return location parameter μ
+     */
     inline double GetLocation() const { return mu; }
+    /**
+     * @fn GetLogScale
+     * @return logarithm of the scale parameter γ
+     */
     inline double GetLogScale() const { return logGamma; }
 
-    /// Probability distribution functions
 protected:
     /**
      * @fn pdfNormal
@@ -108,6 +127,7 @@ protected:
      * @return logarithm of probability density function of Levy distribution
      */
     double logpdfLevy(double x) const;
+
 private:
     /**
      * @fn fastpdfExponentiation
@@ -153,7 +173,6 @@ public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
 
-    /// Cumulative distribution functions
 protected:
     /**
      * @fn cdfNormal
@@ -242,7 +261,6 @@ public:
     double F(const double & x) const override;
     double S(const double & x) const override;
 
-    /// Variates
 private:
     /**
      * @fn variateForUnityExponent
@@ -272,11 +290,41 @@ public:
     double ExcessKurtosis() const override;
 
 protected:
+    /**
+     * @fn quantileNormal
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile for Gaussian distribution
+     */
     double quantileNormal(double p) const;
+    /**
+     * @fn quantileNormal1m
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile of 1-p for Gaussian distribution
+     */
     double quantileNormal1m(double p) const;
+    /**
+     * @fn quantileCauchy
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile for Cauchy distribution
+     */
     double quantileCauchy(double p) const;
+    /**
+     * @fn quantileCauchy1m
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile of 1-p for Cauchy distribution
+     */
     double quantileCauchy1m(double p) const;
+    /**
+     * @fn quantileLevy
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile for Levy distribution
+     */
     double quantileLevy(double p) const;
+    /**
+     * @fn quantileLevy1m
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile of 1-p for Levy distribution
+     */
     double quantileLevy1m(double p) const;
 
 private:
@@ -284,8 +332,23 @@ private:
     double quantileImpl1m(double p) const override;
 
 protected:
+    /**
+     * @fn cfNormal
+     * @param t positive parameter
+     * @return characteristic function for Gaussian distribution
+     */
     std::complex<double> cfNormal(double t) const;
+    /**
+     * @fn cfCauchy
+     * @param t positive parameter
+     * @return characteristic function for Cauchy distribution
+     */
     std::complex<double> cfCauchy(double t) const;
+    /**
+     * @fn cfLevy
+     * @param t positive parameter
+     * @return characteristic function for Levy distribution
+     */
     std::complex<double> cfLevy(double t) const;
 private:
     std::complex<double> CFImpl(double t) const override;

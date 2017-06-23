@@ -16,7 +16,6 @@ class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
 {
     int d1 = 2; ///< first degree
     int d2 = 2; ///< second degree
-    /// constants for optimization
     double a = 0; ///< d1 / 2 - 1;
     double d1_d2 = 1; ///< d1 / d2
     double c = -2; ///< -(d1 + d2) / 2;

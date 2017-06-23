@@ -10,7 +10,7 @@ bool areClose(double a, double b, double eps)
         return true;
     double fa = std::fabs(a);
     double fb = std::fabs(b);
-    return (std::fabs(b - a) < eps * std::max(fa, fb));
+    return std::fabs(b - a) < eps * std::max(fa, fb);
 }
 
 int sign(double x)

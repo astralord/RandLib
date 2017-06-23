@@ -443,7 +443,7 @@ double GammaDistribution::quantileImpl(double p) const
         double logP = std::log(p);
         if (RandMath::findRoot([this, logP] (double x)
         {
-           if (x <= 0)
+            if (x <= 0)
                return DoubleTriplet(-INFINITY, 0, 0);
             double logCdf = logF(x), logPdf = logf(x);
             double first = logCdf - logP;
