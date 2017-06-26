@@ -12,7 +12,7 @@ long double logBeta(double a, double b)
     long double lgammaB = lgammaA;
     if (a != b)
         lgammaB = bIsInteger ? lfact(b - 1) : std::lgammal(b);
-    long double lgammaApB = (bIsInteger && bIsInteger) ? lfact(a + b - 1) : std::lgammal(a + b);
+    long double lgammaApB = (aIsInteger && bIsInteger) ? lfact(a + b - 1) : std::lgammal(a + b);
     return lgammaA + lgammaB - lgammaApB;
 }
 
