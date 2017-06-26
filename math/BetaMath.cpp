@@ -6,13 +6,14 @@ long double logBeta(double a, double b)
 {
     if (a <= 0 || b <= 0)
         return NAN;
-    bool aIsInteger = areClose(a, std::round(a));
-    bool bIsInteger = areClose(b, std::round(b));
-    long double lgammaA = aIsInteger ? lfact(a - 1) : std::lgammal(a);
+    double apb = a + b;
+    int roundA = std::round(a), roundB = std::round(b);
+    int roundApB = std::round(apb); 
+    long double lgammaA = areClose(a, roundA) ? lfact(roundA - 1) : std::lgammal(a);
     long double lgammaB = lgammaA;
     if (a != b)
-        lgammaB = bIsInteger ? lfact(b - 1) : std::lgammal(b);
-    long double lgammaApB = (aIsInteger && bIsInteger) ? lfact(a + b - 1) : std::lgammal(a + b);
+        lgammaB = areClose(b, roundB) ? lfact(roundB - 1) : std::lgammal(b);
+    long double lgammaApB = areClose(apb, roundApB) ? lfact(roundApB - 1) : std::lgammal(apb);
     return lgammaA + lgammaB - lgammaApB;
 }
 
