@@ -24,7 +24,7 @@ public:
     std::string Name() const override;
 
     void SetParameters(int number, double probability1, double probability2);
-    inline int GetNumber() const { return X.GetNumber(); }
+    inline int GetNumber() const { return n; }
     inline double GetFirstProbability() const { return X.GetProbability(); }
     inline double GetSecondProbability() const { return Y.GetProbability(); }
 

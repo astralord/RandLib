@@ -90,18 +90,20 @@ double erfcinv(double p);
 double harmonicNumber(double exponent, int number);
 
 /**
- * @fn modifiedBessel
+ * @fn logModifiedBesselFirstKind
+ * Calculates logarithm of modified Bessel function of the 1st kind
  * @param x
  * @param n
- * @return I_n(x)
+ * @return log(I_n(x))
  */
 double logModifiedBesselFirstKind(double x, double nu);
 
 /**
- * @fn modifiedBesselSecondKind
+ * @fn logModifiedBesselSecondKind
+ * Calculates logarithm of modified Bessel function of the 2nd kind
  * @param x
  * @param n
- * @return K_n(x)
+ * @return log(K_n(x))
  */
 double logModifiedBesselSecondKind(double x, double nu);
 
