@@ -66,7 +66,7 @@ int UniformDiscreteRand::Median() const
 int UniformDiscreteRand::Mode() const
 {
     /// this can be any value in [a, b]
-    return b;
+    return 0.5 * (a + b);
 }
 
 double UniformDiscreteRand::Skewness() const
@@ -76,9 +76,12 @@ double UniformDiscreteRand::Skewness() const
 
 double UniformDiscreteRand::ExcessKurtosis() const
 {
-    double res = 2.0 / ((double)n * n - 1);
-    ++res;
-    return -1.2 * res;
+    double kurt = n;
+    kurt *= n;
+    --kurt;
+    kurt = 2.0 / kurt;
+    ++kurt;
+    return 1.2 * kurt;
 }
 
 std::complex<double> UniformDiscreteRand::CFImpl(double t) const
@@ -87,9 +90,9 @@ std::complex<double> UniformDiscreteRand::CFImpl(double t) const
     double bp1t = (b + 1) * t;
     double reNum = std::cos(at) - std::cos(bp1t);
     double imNum = std::sin(at) - std::sin(bp1t);
-    std::complex<double> numen(reNum, imNum);
-    std::complex<double>denom(1.0 - std::cos(t), -std::sin(t));
-    return nInv * numen / denom;
+    std::complex<double> numerator(reNum, imNum);
+    std::complex<double> denominator(1.0 - std::cos(t), -std::sin(t));
+    return nInv * numerator / denominator;
 }
 
 double UniformDiscreteRand::Entropy() const

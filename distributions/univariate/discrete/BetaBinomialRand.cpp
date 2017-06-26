@@ -94,7 +94,7 @@ int BetaBinomialRand::Mode() const
         }
         return index;
     }
-    /// otherwise use numerical procedure to solve f'(x)=0
+    /// otherwise use numerical procedure to solve the equation f'(x) = 0
     double guess = n * B.Mean();
     double alpha = B.GetAlpha(), beta = B.GetBeta();
     if (RandMath::findRoot([this, alpha, beta] (double x)

@@ -53,7 +53,7 @@ double VonMisesRand::cdfSeries(double x) const
     return V;
 }
 
-double VonMisesRand::cdfErfc(double x) const
+double VonMisesRand::cdfErfcAux(double x) const
 {
     /// Normal cdf approximation
     double c = 24.0 * k;
@@ -65,8 +65,19 @@ double VonMisesRand::cdfErfc(double x) const
     double y = (c - 2 * twoZSq - 16.0) / 3.0;
     y = ((twoZSq + 1.75) * twoZSq + 83.5) / v - y;
     y *= y;
-    double arg = z * (1.0 - twoZSq / y);
+    return z * (1.0 - twoZSq / y);
+}
+
+double VonMisesRand::cdfErfc(double x) const
+{
+    double arg = cdfErfcAux(x);
     return 0.5 * std::erfc(arg);
+}
+
+double VonMisesRand::ccdfErfc(double x) const
+{
+    double arg = cdfErfcAux(x);
+    return 0.5 * std::erfc(-arg);
 }
 
 double VonMisesRand::f(const double & x) const
@@ -92,6 +103,17 @@ double VonMisesRand::F(const double & x) const
     double xAdj = x - mu;
     xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
     return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
+}
+
+double VonMisesRand::S(const double &x) const
+{
+    if (x <= mu - M_PI)
+        return 1.0;
+    if (x >= mu + M_PI)
+        return 0.0;
+    double xAdj = x - mu;
+    xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
+    return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
 }
 
 double VonMisesRand::Variate() const
