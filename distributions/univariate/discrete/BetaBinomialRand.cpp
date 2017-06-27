@@ -117,8 +117,8 @@ double BetaBinomialRand::Skewness() const
     double alphaPBeta = alpha + beta;
     double res = (1 + alphaPBeta) / (n * alpha * beta * (alphaPBeta + n));
     res = std::sqrt(res);
-    res *= (alphaPBeta + n + n) * (beta - alpha);
-    res /= (alphaPBeta + 2);
+    res *= (alphaPBeta + 2 * n) * (beta - alpha);
+    res /= alphaPBeta + 2;
     return res;
 }
 

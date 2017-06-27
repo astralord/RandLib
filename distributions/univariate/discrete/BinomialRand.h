@@ -87,6 +87,7 @@ private:
 
     int variateRejection() const;
     int variateWaiting(int number) const;
+    static int variateWaiting(int number, double probability);
     static int variateBernoulliSum(int number, double probability);
 
 public:

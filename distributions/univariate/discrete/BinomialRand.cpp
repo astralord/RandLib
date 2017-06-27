@@ -228,6 +228,16 @@ int BinomialDistribution::variateWaiting(int number) const
     return X;
 }
 
+int BinomialDistribution::variateWaiting(int number, double probability)
+{
+    int X = -1, sum = 0;
+    do {
+        sum += GeometricRand::Variate(probability) + 1;
+        ++X;
+    } while (sum <= number);
+    return X;
+}
+
 int BinomialDistribution::Variate() const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
@@ -269,7 +279,11 @@ int BinomialDistribution::variateBernoulliSum(int number, double probability)
 
 int BinomialDistribution::Variate(int number, double probability)
 {
-    return variateBernoulliSum(number, probability);
+    if (number < 10)
+        return variateBernoulliSum(number, probability);
+    if (probability < 0.5)
+        return variateWaiting(number, probability);
+    return number - variateWaiting(number, 1.0 - probability);
 }
 
 void BinomialDistribution::Sample(std::vector<int> &outputData) const
