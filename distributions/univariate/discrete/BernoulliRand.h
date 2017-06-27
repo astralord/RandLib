@@ -13,6 +13,7 @@
  *
  * Related distributions: <BR>
  * X ~ Binomial(1, p) <BR>
+ * X ~ Multin(1, 1 - p, p) <BR>
  * 2X - 1 ~ Rademacher
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution
@@ -32,7 +33,7 @@ public:
     double F(const int & k) const override;
     double S(const int & k) const override;
     int Variate() const override;
-    static int Variate(double p);
+    static int Variate(double probability);
     static int StandardVariate();
     void Sample(std::vector<int> &outputData) const override;
 

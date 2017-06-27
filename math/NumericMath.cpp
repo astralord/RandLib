@@ -17,8 +17,8 @@ namespace RandMath
  * @param bottom
  * @return
  */
-long double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
-                                          double epsilon, double S, double fa, double fb, double fc, int bottom)
+double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
+                           double epsilon, double S, double fa, double fb, double fc, int bottom)
 {
     double c = .5 * (a + b), h = (b - a) / 12.0;
     double d = .5 * (a + c), e = .5 * (c + b);
@@ -35,10 +35,12 @@ long double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, do
            adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
-long double integral(const std::function<double (double)> &funPtr, double a, double b, double epsilon, int maxRecursionDepth)
+double integral(const std::function<double (double)> &funPtr, double a, double b, double epsilon, int maxRecursionDepth)
 {
     // TODO: redo to adaptive Gauss-Kronrod quadrature
-    if (a >= b)
+    if (a > b)
+        return -integral(funPtr, b, a, epsilon, maxRecursionDepth);
+    if (a == b)
         return 0.0;
     double c = .5 * (a + b), h = (b - a) / 6.0;
     double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);

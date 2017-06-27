@@ -292,7 +292,7 @@ void NegativeBinomialRand<double>::FitNumberAndProbabilityMLE(const std::vector<
             first += RandMath::digamma(var + x);
             second += RandMath::trigamma(var + x);
         }
-        first -= n * (RandMath::digamma(x) - std::log(x / (x + mean)));
+        first -= n * (RandMath::digammamLog(x) + std::log(x + mean));
         second -= n * (RandMath::trigamma(x) - mean / (x * (mean + x)));
         return DoublePair(first, second);
     }, guess))

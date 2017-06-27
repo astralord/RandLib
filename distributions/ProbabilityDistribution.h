@@ -15,7 +15,7 @@ class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
 protected:
     /**
-     * @fn MAX_ITER_REJECTION
+     * @brief MAX_ITER_REJECTION
      * upper boundary for maximum amount of iterations in rejection methods
      * one thousand should be enough to be sure there is a bug
      * (or rejection method is too slow to be used)

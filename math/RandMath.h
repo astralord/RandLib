@@ -68,23 +68,6 @@ double logexpm1(double x);
 double log2mexp(double x);
 
 /**
- * @fn factorial
- * Calculate n! using table values for small n <= 255
- * and built-in gamma function for large n > 255
- * @param n non-negative integer number
- * @return n!
- */
-long double factorial(double n);
-
-/**
- * @fn doubleFactorial
- * Calculate n!!
- * @param n
- * @return n!!
- */
-long double doubleFactorial(int n);
-
-/**
  * @fn erfinv
  * @param p
  * @return inverse error function: such x that erf(x) = p
@@ -107,18 +90,20 @@ double erfcinv(double p);
 double harmonicNumber(double exponent, int number);
 
 /**
- * @fn modifiedBessel
+ * @fn logModifiedBesselFirstKind
+ * Calculates logarithm of modified Bessel function of the 1st kind
  * @param x
  * @param n
- * @return I_n(x)
+ * @return log(I_n(x))
  */
 double logModifiedBesselFirstKind(double x, double nu);
 
 /**
- * @fn modifiedBesselSecondKind
+ * @fn logModifiedBesselSecondKind
+ * Calculates logarithm of modified Bessel function of the 2nd kind
  * @param x
  * @param n
- * @return K_n(x)
+ * @return log(K_n(x))
  */
 double logModifiedBesselSecondKind(double x, double nu);
 

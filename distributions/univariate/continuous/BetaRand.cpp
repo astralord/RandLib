@@ -103,20 +103,20 @@ double BetaDistribution::f(const double & x) const
 
 double BetaDistribution::logf(const double & x) const
 {
-    if (x < a || x > b)
+    /// Standardize
+    double xSt = (x - a) / bma;
+    if (xSt < 0.0 || xSt > 1.0)
         return -INFINITY;
-    if (x == a) {
+    if (xSt == 0.0) {
         if (alpha == 1)
             return std::log(beta / bma);
         return (alpha > 1) ? -INFINITY : INFINITY;
     }
-    if (x == b) {
+    if (xSt == 1.0) {
         if (beta == 1)
             return std::log(alpha / bma);
         return (beta > 1) ? -INFINITY : INFINITY;
     }
-    /// Standardize
-    double xSt = (x - a) / bma;
     double y = (alpha - 1) * std::log(xSt);
     y += (beta - 1) * std::log1p(-xSt);
     return y - logBetaFun - logBma;
@@ -513,9 +513,9 @@ std::string BetaRand::Name() const
 
 void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThen(a, sample))
+    if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    if (!allElementsAreNotBiggerThen(b, sample))
+    if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
     double mean = sampleMean(sample);
     double shape = mean - a;
@@ -526,9 +526,9 @@ void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 
 void BetaRand::FitBetaMM(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThen(a, sample))
+    if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    if (!allElementsAreNotBiggerThen(b, sample))
+    if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
     double mean = sampleMean(sample);
     double shape = b - mean;

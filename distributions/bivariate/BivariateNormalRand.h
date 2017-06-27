@@ -1,7 +1,7 @@
 #ifndef BIVARIATENORMALRAND_H
 #define BIVARIATENORMALRAND_H
 
-#include "BivariateProbabilityDistribution.h"
+#include "ContinuousBivariateDistribution.h"
 #include "../univariate/continuous/NormalRand.h"
 
 /**
@@ -10,7 +10,7 @@
  *
  * Notation: X ~ N(μ1, μ2, σ1, ρ, σ2)
  */
-class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDistribution<NormalRand, NormalRand>
+class RANDLIBSHARED_EXPORT BivariateNormalRand : public ContinuousBivariateDistribution<NormalRand, NormalRand>
 {
     double mu1 = 0; ///< first location μ1
     double mu2 = 0; ///< second location μ2
@@ -21,13 +21,11 @@ class RANDLIBSHARED_EXPORT BivariateNormalRand : public BivariateProbabilityDist
     double sqrt1mroSq = 1; ///< √(1 - ρ)
 
 public:
-    BivariateNormalRand(double location1, double location2, double scale1, double correlation, double scale2);
+    BivariateNormalRand(double location1, double location2, double scale1, double scale2, double correlation);
     std::string Name() const override;
-    DoublePair MinValue() const { return DoublePair(-INFINITY, -INFINITY); }
-    DoublePair MaxValue() const { return DoublePair(INFINITY, INFINITY); }
 
     void SetLocations(double location1, double location2);
-    void SetCovariance(double scale1, double correlation, double scale2);
+    void SetCovariance(double scale1, double scale2, double correlation);
     inline DoublePair GetLocation() { return Mean(); }
     inline double GetFirstLocation() const { return mu1; }
     inline double GetSecondLocation() const { return mu2; }

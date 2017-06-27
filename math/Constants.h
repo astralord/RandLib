@@ -8,6 +8,7 @@ constexpr long double MIN_POSITIVE = 1e-21l;
 
 typedef std::pair <double, double> DoublePair;
 typedef std::tuple <double, double, double> DoubleTriplet;
+typedef std::pair <int, int> IntPair;
 
 #ifndef INFINITY
 #include <limits>

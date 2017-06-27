@@ -76,7 +76,7 @@ void FisherSnedecorRand::Sample(std::vector<double> &outputData) const
 
 double FisherSnedecorRand::Mean() const
 {
-    return (d2 > 2) ? d2 / (d2 - 2) : INFINITY;
+    return (d2 > 2) ? 1 + 2.0 / (d2 - 2) : INFINITY;
 }
 
 double FisherSnedecorRand::Variance() const
@@ -87,7 +87,8 @@ double FisherSnedecorRand::Variance() const
     variance /= d2 - 2;
     variance *= variance;
     variance *= 2 * (d1 + d2 - 2);
-    variance /= d1 * (d2 - 4);
+    variance /= d1;
+    variance /= d2 - 4;
     return variance;
 }
 
@@ -123,9 +124,11 @@ double FisherSnedecorRand::ExcessKurtosis() const
     double kurtosis = d2 - 2;
     kurtosis *= kurtosis;
     kurtosis *= d2 - 4;
-    kurtosis /= d1 * (d1 + d2 - 2);
+    kurtosis /= d1;
+    kurtosis /= d1 + d2 - 2;
     kurtosis += 5 * d2 - 22;
-    kurtosis /= (d2 - 6) * (d2 - 8);
+    kurtosis /= d2 - 6;
+    kurtosis /= d2 - 8;
     return 12.0 * kurtosis;
 }
 

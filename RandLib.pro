@@ -62,7 +62,6 @@ SOURCES += \
     distributions/univariate/continuous/IrwinHallRand.cpp \
     distributions/univariate/continuous/InverseGammaRand.cpp \
     distributions/univariate/UnivariateProbabilityDistribution.cpp \
-    distributions/bivariate/BivariateProbabilityDistribution.cpp \
     distributions/bivariate/NormalInverseGammaRand.cpp \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
     distributions/bivariate/BivariateNormalRand.cpp \
@@ -76,7 +75,11 @@ SOURCES += \
     math/BetaMath.cpp \
     math/GammaMath.cpp \
     math/NumericMath.cpp \
-    distributions/univariate/continuous/MarchenkoPasturRand.cpp
+    distributions/univariate/continuous/MarchenkoPasturRand.cpp \
+    distributions/bivariate/ContinuousBivariateDistribution.cpp \
+    distributions/bivariate/DiscreteBivariateDistribution.cpp \
+    distributions/bivariate/BivariateDistribution.cpp \
+    distributions/bivariate/TrinomialRand.cpp
 
 HEADERS +=\
     distributions/ProbabilityDistribution.h \
@@ -129,7 +132,6 @@ HEADERS +=\
     distributions/univariate/continuous/IrwinHallRand.h \
     distributions/univariate/continuous/InverseGammaRand.h \
     distributions/univariate/UnivariateProbabilityDistribution.h \
-    distributions/bivariate/BivariateProbabilityDistribution.h \
     distributions/bivariate/NormalInverseGammaRand.h \
     distributions/univariate/discrete/BetaBinomialRand.h \
     distributions/bivariate/BivariateNormalRand.h \
@@ -146,7 +148,11 @@ HEADERS +=\
     math/GammaMath.h \
     math/NumericMath.h \
     RandLib_global.h \
-    distributions/univariate/continuous/MarchenkoPasturRand.h
+    distributions/univariate/continuous/MarchenkoPasturRand.h \
+    distributions/bivariate/ContinuousBivariateDistribution.h \
+    distributions/bivariate/DiscreteBivariateDistribution.h \
+    distributions/bivariate/BivariateDistribution.h \
+    distributions/bivariate/TrinomialRand.h
 
 unix {
     target.path = /usr/lib

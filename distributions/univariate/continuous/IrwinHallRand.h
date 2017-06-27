@@ -12,11 +12,11 @@
  * Notation: X ~ IH(n)
  *
  * Related distributions: <BR>
- * X ~ Y1 + Y2 + ... + Yn, where Yi ~ U(0,1)
+ * X ~ Y_1 + Y_2 + ... + Y_n, where Y_i ~ U(0,1)
  */
 class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
 {
-    int n = 1; ///< parameter of distribution
+    int n = 1; ///< parameter of the distribution
     UniformRand U{};
 public:
     explicit IrwinHallRand(int number);

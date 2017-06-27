@@ -153,14 +153,14 @@ double ParetoRand::ExcessKurtosis() const
 
 double ParetoRand::quantileImpl(double p) const
 {
-    double y = alpha * logSigma - std::log1p(-p);
-    return std::exp(y / alpha);
+    double y = logSigma - std::log1p(-p) / alpha;
+    return std::exp(y);
 }
 
 double ParetoRand::quantileImpl1m(double p) const
 {
-    double y = alpha * logSigma - std::log(p);
-    return std::exp(y / alpha);
+    double y = logSigma - std::log(p) / alpha;
+    return std::exp(y);
 }
 
 double ParetoRand::Entropy() const

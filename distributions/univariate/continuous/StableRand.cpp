@@ -870,7 +870,7 @@ double StableDistribution::Skewness() const
 
 double StableDistribution::ExcessKurtosis() const
 {
-    return (distributionId == NORMAL)  ? 0 : NAN;
+    return (distributionId == NORMAL) ? 0 : NAN;
 }
 
 double StableDistribution::quantileNormal(double p) const

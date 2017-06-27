@@ -14,7 +14,7 @@ double ContinuousDistribution::quantileImpl(double p) const
 {
     double guess = 0.0;
     SUPPORT_TYPE supp = SupportType();
-    if (supp == FINITE_T && p > 1e-6) {
+    if (supp == FINITE_T && p > 1e-5) {
         if (RandMath::findRoot([this, p] (double x)
         {
             return F(x) - p;
@@ -62,7 +62,7 @@ double ContinuousDistribution::quantileImpl1m(double p) const
     SUPPORT_TYPE supp = SupportType();
     /// we use this method only for sufficient large p
     /// in order to avoid underflow
-    if (supp == FINITE_T && p > 1e-6) {
+    if (supp == FINITE_T && p > 1e-5) {
         if (RandMath::findRoot([this, p] (double x)
         {
             return S(x) - p;

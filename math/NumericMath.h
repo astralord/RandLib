@@ -17,7 +17,7 @@ namespace RandMath
  * @param maxRecursionDepth how deep should the algorithm go
  * @return
  */
-long double integral(const std::function<double (double)> &funPtr, double a, double b,
+double integral(const std::function<double (double)> &funPtr, double a, double b,
                             double epsilon = 1e-11, int maxRecursionDepth = 11);
 
 /**

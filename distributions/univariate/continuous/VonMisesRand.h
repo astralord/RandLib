@@ -33,12 +33,15 @@ public:
 
 private:
     double cdfSeries(double x) const;
+    double cdfErfcAux(double x) const;
     double cdfErfc(double x) const;
+    double ccdfErfc(double x) const;
 
 public:
     double f(const double & x) const override;
     double logf(const double & x) const override;
     double F(const double & x) const override;
+    double S(const double & x) const override;
     double Variate() const override;
 
     double Mean() const override;

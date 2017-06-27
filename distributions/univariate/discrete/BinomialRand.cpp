@@ -14,7 +14,7 @@ void BinomialDistribution::SetGeneratorConstants()
     minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
     pFloor = npFloor / n;
-    pRes = (RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor);
+    pRes = RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor;
 
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == BERNOULLI_SUM)
@@ -81,7 +81,7 @@ void BinomialDistribution::SetParameters(int number, double probability)
     p = std::max(p, 0.0);
     q = 1.0 - p;
     np = n * p;
-    lgammaNp1 = RandMath::lfact(n);
+    lfactn = RandMath::lfact(n);
     logProb = std::log(p);
     log1mProb = std::log1p(-p);
     SetGeneratorConstants();
@@ -89,9 +89,9 @@ void BinomialDistribution::SetParameters(int number, double probability)
 
 double BinomialDistribution::logProbFloor(int k) const
 {
-    double y = lgammaNp1;
-    y -= RandMath::lfact(n - k - 1);
-    y -= RandMath::lfact(k - 1);
+    double y = lfactn;
+    y -= RandMath::lfact(n - k);
+    y -= RandMath::lfact(k);
     y += k * logPFloor;
     y += (n - k) * logQFloor;
     return y;
@@ -106,7 +106,7 @@ double BinomialDistribution::logP(const int & k) const
 {
     if (k < 0 || k > n)
         return -INFINITY;
-    double y = lgammaNp1;
+    double y = lfactn;
     y -= RandMath::lfact(n - k);
     y -= RandMath::lfact(k);
     y += k * logProb;
@@ -121,9 +121,9 @@ double BinomialDistribution::F(const int & k) const
     if (k >= n)
         return 1.0;
     int nmk = n - k, kp1 = k + 1;
-    double logBetaFun = RandMath::lfact(n - k - 1);
+    double logBetaFun = RandMath::lfact(n - kp1);
     logBetaFun += RandMath::lfact(k);
-    logBetaFun -= lgammaNp1;
+    logBetaFun -= lfactn;
     return RandMath::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 
@@ -228,6 +228,16 @@ int BinomialDistribution::variateWaiting(int number) const
     return X;
 }
 
+int BinomialDistribution::variateWaiting(int number, double probability)
+{
+    int X = -1, sum = 0;
+    do {
+        sum += GeometricRand::Variate(probability) + 1;
+        ++X;
+    } while (sum <= number);
+    return X;
+}
+
 int BinomialDistribution::Variate() const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
@@ -239,12 +249,12 @@ int BinomialDistribution::Variate() const
     }
     case REJECTION:
     {
-        /// if X ~ Bin(n, p') and Y ~ Bin(n - Y, (p - p') / (1 - p'))
+        /// if X ~ Bin(n, p') and Y ~ Bin(n - X, (p - p') / (1 - p'))
         /// then Z = X + Y ~ Bin(n, p)
-        int Y = variateRejection();
+        int Z = variateRejection();
         if (pRes > 0)
-            Y += variateWaiting(n - Y);
-        return (p > 0.5) ? n - Y : Y;
+            Z += variateWaiting(n - Z);
+        return (p > 0.5) ? n - Z : Z;
     }
     case BERNOULLI_SUM:
     default:
@@ -269,7 +279,11 @@ int BinomialDistribution::variateBernoulliSum(int number, double probability)
 
 int BinomialDistribution::Variate(int number, double probability)
 {
-    return variateBernoulliSum(number, probability);
+    if (number < 10)
+        return variateBernoulliSum(number, probability);
+    if (probability < 0.5)
+        return variateWaiting(number, probability);
+    return number - variateWaiting(number, 1.0 - probability);
 }
 
 void BinomialDistribution::Sample(std::vector<int> &outputData) const
@@ -363,7 +377,7 @@ void BinomialDistribution::FitProbabilityMLE(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    if (!allElementsAreNotBiggerThen(n, sample))
+    if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     SetParameters(n, sampleMean(sample) / n);
 }
@@ -377,7 +391,7 @@ BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sampl
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    if (!allElementsAreNotBiggerThen(n, sample))
+    if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();
     double sum = sampleSum(sample);
