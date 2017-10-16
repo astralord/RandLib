@@ -196,18 +196,18 @@ public:
     virtual double FourthMoment() const;
 
     /**
-     * @fn Likelihood
+     * @fn LikelihoodFunction
      * @param sample
-     * @return likelihood function
+     * @return likelihood function for given sample
      */
-    virtual double Likelihood(const std::vector<T> &sample) const = 0;
+    virtual double LikelihoodFunction(const std::vector<T> &sample) const = 0;
 
     /**
-     * @fn LogLikelihood
+     * @fn LogLikelihoodFunction
      * @param sample
-     * @return logarithm of likelihood function
+     * @return logarithm of likelihood function for given sample
      */
-    virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
+    virtual double LogLikelihoodFunction(const std::vector<T> &sample) const = 0;
 
     /**
      * @fn allElementsAreNotBiggerThan

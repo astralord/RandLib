@@ -331,14 +331,14 @@ double ShiftedGeometricStableDistribution::variateByLevy(bool positive) const
 double ShiftedGeometricStableDistribution::variateByCauchy() const
 {
     double W = ExponentialRand::StandardVariate();
-    double X = CauchyRand::Variate(mu, gamma);
+    double X = mu + gamma * CauchyRand::StandardVariate();
     return X * W;
 }
 
 double ShiftedGeometricStableDistribution::Variate() const
 {
     if (alpha == 2)
-        return (mu == 0) ? LaplaceRand::Variate(0, gamma) : LaplaceRand::Variate(0, gamma, kappa);
+        return (mu == 0) ? gamma * LaplaceRand::StandardVariate() : LaplaceRand::Variate(0, gamma, kappa);
     if (alpha == 0.5) {
         if (beta == 1)
             return variateByLevy(true);
@@ -355,7 +355,7 @@ void ShiftedGeometricStableDistribution::Sample(std::vector<double> &outputData)
     if (alpha == 2) {
         if (mu == 0) {
             for (double &var : outputData)
-                var = LaplaceRand::Variate(0, gamma);
+                var = gamma * LaplaceRand::StandardVariate();
         }
         else {
             for (double &var : outputData)

@@ -3,12 +3,6 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 
-BetaDistribution::BetaDistribution(double shape1, double shape2)
-{
-    SetShapes(shape1, shape2);
-    SetSupport(0, 1);
-}
-
 BetaDistribution::BetaDistribution(double shape1, double shape2, double minValue, double maxValue)
 {
     SetShapes(shape1, shape2);

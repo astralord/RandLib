@@ -202,7 +202,7 @@ double ContinuousDistribution::Hazard(double x) const
     return f(x) / S(x);
 }
 
-double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const
+double ContinuousDistribution::LikelihoodFunction(const std::vector<double> &sample) const
 {
     double res = 1.0;
     for (const double & var : sample)
@@ -210,7 +210,7 @@ double ContinuousDistribution::Likelihood(const std::vector<double> &sample) con
     return res;
 }
 
-double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) const
+double ContinuousDistribution::LogLikelihoodFunction(const std::vector<double> &sample) const
 {
     double res = 0.0;
     for (const double & var : sample)

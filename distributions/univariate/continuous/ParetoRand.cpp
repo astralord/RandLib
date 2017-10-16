@@ -77,7 +77,7 @@ double ParetoRand::StandardVariate(double shape)
 
 double ParetoRand::Variate(double shape, double scale)
 {
-    return scale * StandardVariate(shape);
+    return (shape <= 0.0 || scale <= 0.0) ? NAN : scale * StandardVariate(shape);
 }
 
 double ParetoRand::Variate() const

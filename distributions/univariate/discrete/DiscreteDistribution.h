@@ -46,8 +46,8 @@ private:
 public:
     double Hazard(double x) const override;
 
-    double Likelihood(const std::vector<int> &sample) const override;
-    double LogLikelihood(const std::vector<int> &sample) const override;
+    double LikelihoodFunction(const std::vector<int> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<int> &sample) const override;
 
     /**
      * @fn PearsonChiSquaredTest

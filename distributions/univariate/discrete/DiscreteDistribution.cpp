@@ -113,7 +113,7 @@ double DiscreteDistribution::Hazard(double x) const
     return P(x) / S(x);
 }
 
-double DiscreteDistribution::Likelihood(const std::vector<int> &sample) const
+double DiscreteDistribution::LikelihoodFunction(const std::vector<int> &sample) const
 {
     double res = 1.0;
     for (const int & var : sample )
@@ -121,7 +121,7 @@ double DiscreteDistribution::Likelihood(const std::vector<int> &sample) const
     return res;
 }
 
-double DiscreteDistribution::LogLikelihood(const std::vector<int> &sample) const
+double DiscreteDistribution::LogLikelihoodFunction(const std::vector<int> &sample) const
 {
     double res = 0.0;
     for (const int & var : sample )

@@ -39,11 +39,6 @@ double LevyRand::Variate() const
     return mu + rv;
 }
 
-double LevyRand::Variate(double location, double scale)
-{
-    return location + scale * StandardVariate();
-}
-
 double LevyRand::StandardVariate()
 {
     double rv = NormalRand::StandardVariate();

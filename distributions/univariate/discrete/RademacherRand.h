@@ -12,7 +12,7 @@
  *
  * Notation: X ~ Rademacher
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If Y ~ Bernoulli(0.5), then 2Y - 1 ~ Rademacher
  */
 class RANDLIBSHARED_EXPORT RademacherRand : public DiscreteDistribution

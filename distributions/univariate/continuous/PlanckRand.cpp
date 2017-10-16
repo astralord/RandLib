@@ -80,7 +80,7 @@ double PlanckRand::F(const double & x) const
         0, x);
     }
 
-    /// split F(x) on two integrals
+    /// split F(x) by two integrals
     double aux = pdfCoef + a * std::log(x);
     double integral1 = std::exp(aux) / (b * a);
     double integral2 = RandMath::integral([this] (double t)
@@ -137,7 +137,7 @@ std::complex<double> PlanckRand::CFImpl(double t) const
         return ContinuousDistribution::CFImpl(t);
 
     /// We have singularity point at 0 for real part,
-    /// so we split the integral on two intervals:
+    /// so we split the integral in two intervals:
     /// First one from 0 to 1, for which we integrate
     /// numerically leveled pdf and add known solution for level.
     /// Second one from 1 to infinity, for which we use

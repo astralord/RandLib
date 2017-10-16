@@ -38,7 +38,6 @@ public:
     double S(const double & x) const override;
 
     static double StandardVariate();
-    static double Variate(double location, double scale);
     double Variate() const override;
 
     double Mean() const override;

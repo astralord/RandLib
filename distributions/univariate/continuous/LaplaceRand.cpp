@@ -53,18 +53,18 @@ double LaplaceRand::S(const double & x) const
 
 double LaplaceRand::Variate() const
 {
-    return (kappa == 1) ? LaplaceRand::Variate(m, gamma) : LaplaceRand::Variate(m, gamma, kappa);
+    return (kappa == 1) ? m + gamma * LaplaceRand::StandardVariate() : LaplaceRand::Variate(m, gamma, kappa);
 }
 
-double LaplaceRand::Variate(double location, double scale)
+double LaplaceRand::StandardVariate()
 {
-    bool sign = BernoulliRand::StandardVariate();
-    double W = scale * ExponentialRand::StandardVariate();
-    return location + (sign ? W : -W);
+    double W = ExponentialRand::StandardVariate();
+    return BernoulliRand::StandardVariate() ? W : -W;
 }
 
 double LaplaceRand::Variate(double location, double scale, double asymmetry)
 {
+    // TODO: set sanity check here or make this function private
     double x = ExponentialRand::StandardVariate() / asymmetry;
     double y = ExponentialRand::StandardVariate() * asymmetry;;
     return location + scale * (x - y);
@@ -74,7 +74,7 @@ void LaplaceRand::Sample(std::vector<double> &outputData) const
 {
     if (kappa == 1) {
         for (double & var : outputData)
-            var = LaplaceRand::Variate(m, gamma);
+            var = m + gamma * LaplaceRand::StandardVariate();
     }
     else {
         for (double & var : outputData)

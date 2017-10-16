@@ -11,7 +11,7 @@
  *
  * Notation: X ~ BB(n, α, β)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If X ~ Binomial(n, p), where p ~ Beta(α, β), then X ~ BB(n, α, β)
  */
 class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution

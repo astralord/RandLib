@@ -43,8 +43,7 @@ private:
     } genCoef = {0, 0, 0};
 
 protected:
-    BetaDistribution(double shape1 = 1, double shape2 = 1);
-    BetaDistribution(double shape1, double shape2, double minValue, double maxValue);
+    BetaDistribution(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
     virtual ~BetaDistribution() {}
 
 public:
@@ -208,8 +207,7 @@ protected:
 class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution
 {
 public:
-    BetaRand(double shape1 = 1, double shape2 = 1) : BetaDistribution(shape1, shape2) {}
-    BetaRand(double shape1, double shape2, double minValue, double maxValue) : BetaDistribution(shape1, shape2, minValue, maxValue) {}
+    BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1) : BetaDistribution(shape1, shape2, minValue, maxValue) {}
     std::string Name() const override;
 
     using BetaDistribution::SetShapes;
@@ -255,7 +253,7 @@ public:
  *
  * Notation: X ~ Balding-Nichols(F, p)
  *
- * Related distributions
+ * Related distributions: <BR>
  * X ~ B(p * F', (1 - p) * F', 0, 1) for F' = (1 - F) / F
  */
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution

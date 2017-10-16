@@ -48,7 +48,7 @@ void UniformRand::Sample(std::vector<double> &outputData) const
 
 double UniformRand::Variate(double minValue, double maxValue)
 {
-    return minValue + StandardVariate() * (maxValue - minValue);
+    return (minValue < maxValue) ? minValue + StandardVariate() * (maxValue - minValue) : NAN;
 }
 
 double UniformRand::StandardVariate()

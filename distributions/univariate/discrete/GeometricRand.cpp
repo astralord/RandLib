@@ -45,6 +45,9 @@ int GeometricRand::Variate() const
 
 int GeometricRand::Variate(double probability)
 {
+    if (probability > 1.0 || probability < 0.0)
+        return -1;
+
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
         double rate = -std::log1p(-probability);

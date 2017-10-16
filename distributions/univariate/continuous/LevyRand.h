@@ -29,7 +29,6 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
 
-    static double Variate(double location, double scale);
     static double StandardVariate();
 
 private:

@@ -51,6 +51,11 @@ protected:
      * @param rate β
      */
     void SetParameters(double shape, double rate);
+    /**
+     * @brief SetShape
+     * @param shape α
+     */
+    void SetShape(double shape);
 
 public:
     /**
@@ -274,6 +279,7 @@ public:
     std::string Name() const override;
 
     using GammaDistribution::SetParameters;
+    using GammaDistribution::SetShape;
     /**
      * @fn FitShapeMM
      * set shape, estimated via method of moments
@@ -307,13 +313,13 @@ public:
  *
  * Notation: X ~ Chi^2(n)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ Γ(0.5 * n, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {
 public:
-    explicit ChiSquaredRand(int degree) : GammaDistribution((degree < 1) ? 0.5 : 0.5 * degree, 0.5) {}
+    explicit ChiSquaredRand(size_t degree = 1) : GammaDistribution((degree < 1) ? 0.5 : 0.5 * degree, 0.5) {}
     std::string Name() const override;
     void SetDegree(int degree);
     inline int GetDegree() const { return static_cast<int>(2 * alpha); }
@@ -326,16 +332,17 @@ public:
  *
  * Notation: X ~ Erlang(k, β)
  *
- * Related distributions:
- * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β)
+ * Related distributions: <BR>
+ * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β) <BR>
  * X ~ Γ(k, β)
  */
 class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution
 {
 public:
-    ErlangRand(int shape, double rate) : FreeScaleGammaDistribution(shape, rate) {}
+    ErlangRand(int shape = 1, double rate = 1) : FreeScaleGammaDistribution(shape, rate) {}
     std::string Name() const override;
     void SetParameters(int shape, double rate);
+    void SetShape(int shape);
 };
 
 

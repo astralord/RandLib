@@ -5,12 +5,12 @@
 #include "../univariate/discrete/BinomialRand.h"
 
 /**
- * @brief The TrinomialRand class
+ * @brief The TrinomialRand class <BR>
  * Trinomial distribution
  *
  * Notation: X ~ Trin(n, p_1, p_2)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ Multin(n, 1 - p_1 - p_2, p_1, p_2)
  */
 class RANDLIBSHARED_EXPORT TrinomialRand : public DiscreteBivariateDistribution<BinomialRand, BinomialRand>

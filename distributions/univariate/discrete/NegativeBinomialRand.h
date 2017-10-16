@@ -12,7 +12,7 @@
  *
  * Notation: X ~ NB(r, p)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If X ~ NB(1, p), then X ~ Geometric(p)
  */
 template < typename T >

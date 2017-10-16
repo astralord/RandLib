@@ -10,7 +10,7 @@
  *
  * Notation: X ~ Skellam(μ1, μ2)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If Y ~ Po(μ1) and Z ~ Po(μ2) then Y - Z ~ Skellam(μ1, μ2)
  */
 class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution

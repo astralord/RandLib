@@ -243,7 +243,7 @@ template< typename T >
 double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T> &sample, double mean)
 {
     long double sum = 0.0l;
-    for (const double & var : sample) {
+    for (const T & var : sample) {
         double temp = var - mean;
         sum += temp * temp;
     }

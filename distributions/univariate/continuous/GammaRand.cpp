@@ -28,6 +28,11 @@ void GammaDistribution::SetParameters(double shape, double rate)
     }
 }
 
+void GammaDistribution::SetShape(double shape)
+{
+    SetParameters(shape, beta);
+}
+
 double GammaDistribution::f(const double & x) const
 {
     if (x < 0.0)
@@ -215,7 +220,7 @@ double GammaDistribution::StandardVariate(double shape)
 
 double GammaDistribution::Variate(double shape, double rate)
 {
-    return StandardVariate(shape) / rate;
+    return (shape <= 0.0 || rate <= 0.0) ? NAN : StandardVariate(shape) / rate;
 }
 
 double GammaDistribution::Variate() const
@@ -654,4 +659,9 @@ std::string ErlangRand::Name() const
 void ErlangRand::SetParameters(int shape, double rate)
 {
     GammaDistribution::SetParameters(std::max(shape, 1), rate);
+}
+
+void ErlangRand::SetShape(int shape)
+{
+    SetParameters(shape, beta);
 }

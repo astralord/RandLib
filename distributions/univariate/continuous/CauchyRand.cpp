@@ -31,11 +31,6 @@ double CauchyRand::Variate() const
     return mu + gamma * StandardVariate();
 }
 
-double CauchyRand::Variate(double location, double scale)
-{
-    return location + scale * StandardVariate();
-}
-
 double CauchyRand::StandardVariate()
 {
     double x, y;

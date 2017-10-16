@@ -51,13 +51,13 @@ double GumbelRand::S(const double & x) const
 
 double GumbelRand::Variate() const
 {
-    return GumbelRand::Variate(mu, beta);
+    return mu + beta * GumbelRand::StandardVariate();
 }
 
-double GumbelRand::Variate(double location, double scale)
+double GumbelRand::StandardVariate()
 {
     double w = ExponentialRand::StandardVariate();
-    return location - scale * std::log(w);
+    return -std::log(w);
 }
 
 double GumbelRand::Mean() const

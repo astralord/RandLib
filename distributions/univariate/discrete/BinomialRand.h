@@ -11,7 +11,7 @@
  *
  * Notation: X ~ Bin(n, p)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If X ~ Bin(1, p), then X ~ Bernoulli(p) <BR>
  * X ~ Multin(n, 1 - p, p)
  */

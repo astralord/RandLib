@@ -279,6 +279,14 @@ int BinomialDistribution::variateBernoulliSum(int number, double probability)
 
 int BinomialDistribution::Variate(int number, double probability)
 {
+    /// sanity check
+    if (number < 0 || probability < 0.0 || probability > 1.0)
+        return -1;
+    if (probability == 0.0)
+        return 0;
+    if (probability == 1.0)
+        return number;
+
     if (number < 10)
         return variateBernoulliSum(number, probability);
     if (probability < 0.5)

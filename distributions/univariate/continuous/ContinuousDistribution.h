@@ -45,8 +45,8 @@ protected:
 
 public:
     double Hazard(double x) const override;
-    double Likelihood(const std::vector<double> &sample) const override;
-    double LogLikelihood(const std::vector<double> &sample) const override;
+    double LikelihoodFunction(const std::vector<double> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<double> &sample) const override;
 
     /**
      * @fn KolmogorovSmirnovTest

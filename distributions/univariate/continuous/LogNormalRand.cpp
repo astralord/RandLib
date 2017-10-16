@@ -52,11 +52,6 @@ double LogNormalRand::StandardVariate()
     return std::exp(NormalRand::StandardVariate());
 }
 
-double LogNormalRand::Variate(double location, double scale)
-{
-    return std::exp(location + scale * NormalRand::StandardVariate());
-}
-
 double LogNormalRand::Variate() const
 {
     return std::exp(X.Variate());
