@@ -240,24 +240,22 @@ public:
      * @param rate
      */
     void SetRate(double rate);
+
     /**
      * @fn SetScale
      * set scale θ = 1/β
      * @param scale
      */
     void SetScale(double scale);
+
     /**
-     * @fn FitRateUMVU
-     * set rate, returned by uniformly minimum variance unbiased estimator
+     * @fn FitRate
+     * set rate, estimated via maximum-likelihood method if unbiased = false,
+     * otherwise set rate, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
-    void FitRateUMVU(const std::vector<double> &sample);
-    /**
-     * @fn FitRateMLE
-     * set rate, estimated via maximum-likelihood method
-     * @param sample
-     */
-    void FitRateMLE(const std::vector<double> &sample);
+    void FitRate(const std::vector<double> &sample, bool unbiased = false);
+
     /**
      * @fn FitRateBayes
      * set rate, returned by bayesian estimation
@@ -280,30 +278,20 @@ public:
 
     using GammaDistribution::SetParameters;
     using GammaDistribution::SetShape;
+
     /**
-     * @fn FitShapeMM
-     * set shape, estimated via method of moments
-     * @param sample
-     */
-    void FitShapeMM(const std::vector<double> &sample);
-    /**
-     * @fn FitShapeAndRateMM
-     * set shape and rate, estimated via method of moments
-     * @param sample
-     */
-    void FitShapeAndRateMM(const std::vector<double> &sample);
-    /**
-     * @fn FitShapeMLE
+     * @fn FitShape
      * set shape, estimated via maximum-likelihood method
      * @param sample
      */
-    void FitShapeMLE(const std::vector<double> &sample);
+    void FitShape(const std::vector<double> &sample);
+
     /**
-     * @fn FitShapeAndRateMLE
+     * @fn Fit
      * set shape and rate, estimated via maximum-likelihood method
      * @param sample
      */
-    void FitShapeAndRateMLE(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample);
 };
 
 

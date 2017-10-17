@@ -522,22 +522,14 @@ void FreeScaleGammaDistribution::SetScale(double scale)
     SetRate(1.0 / scale);
 }
 
-void FreeScaleGammaDistribution::FitRateUMVU(const std::vector<double> &sample)
+void FreeScaleGammaDistribution::FitRate(const std::vector<double> &sample, bool unbiased)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mean = sampleMean(sample);
-    double coef = alpha - 1.0 / sample.size();
+    double coef = alpha - (unbiased ? 1.0 / sample.size() : 0.0);
     SetParameters(alpha, coef / mean);
-}
-
-void FreeScaleGammaDistribution::FitRateMLE(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetParameters(alpha, alpha / sampleMean(sample));
 }
 
 GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
@@ -559,30 +551,7 @@ std::string GammaRand::Name() const
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
-void GammaRand::FitShapeMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetParameters(sampleMean(sample) * beta, beta);
-}
-
-void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    size_t n = sample.size();
-    if (n <= 1)
-        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-    double mu = sampleMean(sample);
-    double var = sampleVariance(sample, mu);
-    double shape = mu * mu / var;
-    double scale = var / mu;
-    SetParameters(shape, scale);
-}
-
-void GammaRand::FitShapeMLE(const std::vector<double> &sample)
+void GammaRand::FitShape(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -608,7 +577,7 @@ void GammaRand::FitShapeMLE(const std::vector<double> &sample)
     SetParameters(shape, beta);
 }
 
-void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
+void GammaRand::Fit(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))

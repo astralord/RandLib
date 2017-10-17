@@ -123,18 +123,11 @@ private:
 
 public:
     /**
-     * @fn FitProbabilityMLE
+     * @fn FitProbability
      * Fit probability p with maximum-likelihood estimation
      * @param sample
      */
-    void FitProbabilityMLE(const std::vector<int> &sample);
-
-    /**
-     * @fn FitProbabilityMM
-     * Fit probability p, using method of moments
-     * @param sample
-     */
-    void FitProbabilityMM(const std::vector<int> &sample);
+    void FitProbability(const std::vector<int> &sample);
 
     /**
      * @fn FitProbabilityBayes

@@ -124,40 +124,7 @@ double LogNormalRand::logVariance(const std::vector<double> &sample, double mu)
     return logSum / n;
 }
 
-void LogNormalRand::FitLocationMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double average = sampleMean(sample);
-    double var = X.Variance();
-    SetLocation(std::log(average) - 0.5 * var);
-}
-
-void LogNormalRand::FitScaleMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double average = sampleMean(sample);
-    double mu = X.GetLocation();
-    double aux = std::log(average) - mu;
-    SetScale(std::sqrt(aux + aux));
-}
-
-void LogNormalRand::FitLocationAndScaleMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double average = sampleMean(sample);
-    double secondMoment = rawMoment(sample, 2);
-    double averageSq = average * average;
-    SetLocation(0.5 * std::log(averageSq * averageSq / secondMoment));
-    SetScale(std::sqrt(std::log(secondMoment / averageSq)));
-}
-
-void LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
+void LogNormalRand::FitLocation(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -165,7 +132,7 @@ void LogNormalRand::FitLocationMLE(const std::vector<double> &sample)
     SetLocation(logAverage(sample));
 }
 
-void LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
+void LogNormalRand::FitScale(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -174,7 +141,7 @@ void LogNormalRand::FitScaleMLE(const std::vector<double> &sample)
     SetScale(std::sqrt(logVariance(sample, mu)));
 }
 
-void LogNormalRand::FitLocationAndScaleMLE(const std::vector<double> &sample)
+void LogNormalRand::Fit(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -227,7 +194,7 @@ InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample,
     return posteriorDistribution;
 }
 
-NormalInverseGammaRand LogNormalRand::FitLocationAndScaleBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand LogNormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))

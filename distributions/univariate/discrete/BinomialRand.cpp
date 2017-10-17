@@ -381,18 +381,13 @@ double BinomialDistribution::ExcessKurtosis() const
     return y / n;
 }
 
-void BinomialDistribution::FitProbabilityMLE(const std::vector<int> &sample)
+void BinomialDistribution::FitProbability(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     SetParameters(n, sampleMean(sample) / n);
-}
-
-void BinomialDistribution::FitProbabilityMM(const std::vector<int> &sample)
-{
-    FitProbabilityMLE(sample);
 }
 
 BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)

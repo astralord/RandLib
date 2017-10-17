@@ -114,26 +114,8 @@ double LogisticRand::ExcessKurtosis() const
     return 1.2;
 }
 
-/// Method of moments
-void LogisticRand::FitLocationMM(const std::vector<double> &sample)
-{
-    SetLocation(sampleMean(sample));
-}
-
-void LogisticRand::FitScaleMM(const std::vector<double> &sample)
-{
-    double var = sampleVariance(sample, mu);
-    SetScale(std::sqrt(3 * var) / M_PI);
-}
-
-void LogisticRand::FitLocationAndScaleMM(const std::vector<double> &sample)
-{
-    FitLocationMM(sample);
-    FitScaleMM(sample);
-}
-
 /// Maximum-likelihood
-void LogisticRand::FitLocationMLE(const std::vector<double> &sample)
+void LogisticRand::FitLocation(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();
     double root = 0;

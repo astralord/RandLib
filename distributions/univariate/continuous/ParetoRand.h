@@ -62,10 +62,10 @@ public:
     inline double Entropy() const;
 
     /**
-     * @fn FitShapeAndScaleMLE
+     * @fn Fit
      * @param sample
      */
-    void FitShapeAndScaleMLE(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample);
 };
 
 #endif // PARETORAND_H

@@ -172,8 +172,14 @@ int PoissonRand::Variate() const
 
 int PoissonRand::Variate(double rate)
 {
+    /// check validness of parameter
     if (rate <= 0.0)
         return -1;
+    if (rate > 1000) {
+        /// approximate with normal distribution
+        double X = NormalRand::StandardVariate();
+        return std::floor(rate + std::sqrt(rate) * X);
+    }
     int k = -1;
     double s = 0;
     do {

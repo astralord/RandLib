@@ -57,61 +57,23 @@ public:
     inline double Entropy() const;
 
     /**
-     * @fn FitMinimumMLE
+     * @fn FitMinimum
      * fit minimum with maximum-likelihood estimator
      * @param sample
      */
-    void FitMinimumMLE(const std::vector<double> &sample);
+    void FitMinimum(const std::vector<double> &sample, bool unbiased = false);
     /**
-     * @fn FitMaximumMLE
+     * @fn FitMaximum
      * fit maximum with maximum-likelihood estimator
      * @param sample
      */
-    void FitMaximumMLE(const std::vector<double> &sample);
+    void FitMaximum(const std::vector<double> &sample, bool unbiased = false);
     /**
-     * @fn FitSupportMLE
+     * @fn Fit
      * fit support with maximum-likelihood estimator
      * @param sample
      */
-    void FitSupportMLE(const std::vector<double> &sample);
-
-    /**
-     * @fn FitMinimumMM
-     * fit minimum with method of moments
-     * @param sample
-     */
-    void FitMinimumMM(const std::vector<double> &sample);
-    /**
-     * @fn FitMaximumMM
-     * fit maximum with method of moments
-     * @param sample
-     */
-    void FitMaximumMM(const std::vector<double> &sample);
-    /**
-     * @fn FitSupportMM
-     * fit support with method of moments
-     * @param sample
-     */
-    void FitSupportMM(const std::vector<double> &sample);
-    
-    /**
-     * @fn FitMinimumUMVU
-     * fit minimum via uniformly-minimum variance unbiased estimator
-     * @param sample
-     */
-    void FitMinimumUMVU(const std::vector<double> &sample);
-    /**
-     * @fn FitMaximumUMVU
-     * fit maximum via uniformly-minimum variance unbiased estimator
-     * @param sample
-     */
-    void FitMaximumUMVU(const std::vector<double> &sample);
-    /**
-     * @fn FitSupportUMVU
-     * fit support via uniformly-minimum variance unbiased estimator
-     * @param sample
-     */
-    void FitSupportUMVU(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample, bool unbiased = false);
 };
 
 #endif // UNIFORMRAND_H

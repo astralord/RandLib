@@ -139,68 +139,105 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
 }
 
-void NormalRand::FitMeanMLE(const std::vector<double> &sample)
+void NormalRand::FitLocation(const std::vector<double> &sample)
 {
     SetLocation(sampleMean(sample));
 }
 
-void NormalRand::FitVarianceMLE(const std::vector<double> &sample)
+void NormalRand::FitLocation(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel)
+{
+    if (significanceLevel <= 0 || significanceLevel > 1)
+        throw std::invalid_argument(fitError(WRONG_LEVEL, "Input level is equal to " + toStringWithPrecision(significanceLevel)));
+
+    FitLocation(sample);
+
+    int n = sample.size();
+    NormalRand NormalRV(0, 1);
+    double halfAlpha = 0.5 * significanceLevel;
+    double interval = NormalRV.Quantile1m(halfAlpha) * sigma / std::sqrt(n);
+    confidenceInterval.first = mu - interval;
+    confidenceInterval.second = mu + interval;
+}
+
+void NormalRand::FitVariance(const std::vector<double> &sample)
 {
     SetVariance(sampleVariance(sample, mu));
 }
 
-void NormalRand::FitMeanAndVarianceMLE(const std::vector<double> &sample)
+void NormalRand::FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased)
 {
-    FitMeanMLE(sample);
-    FitVarianceMLE(sample);
-}
-
-void NormalRand::FitMeanUMVU(const std::vector<double> &sample)
-{
-    FitMeanMLE(sample);
-}
-
-void NormalRand::FitVarianceUMVU(const std::vector<double> &sample)
-{
-    FitVarianceMLE(sample);
-}
-
-void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample)
-{
-    int n = sample.size();
-    if (n <= 1)
-        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-    FitMeanMLE(sample);
-    double s = sampleVariance(sample, mu);
-    SetVariance(n * s / (n - 1));
-}
-
-void NormalRand::FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel)
-{
-    size_t n = sample.size();
-
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(fitError(WRONG_LEVEL, "Alpha is equal to " + toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(fitError(WRONG_LEVEL, "Input level is equal to " + toStringWithPrecision(significanceLevel)));
 
-    FitMeanAndVarianceUMVU(sample);
+    FitVariance(sample);
 
+    size_t n = sample.size();
     double halfAlpha = 0.5 * significanceLevel;
+    ChiSquaredRand ChiSqRV(n);
+    double numerator = sigma * sigma * (unbiased ? n : (n - 1));
+    confidenceInterval.first = numerator / ChiSqRV.Quantile1m(halfAlpha);
+    confidenceInterval.second = numerator / ChiSqRV.Quantile(halfAlpha);
+}
 
+void NormalRand::FitScale(const std::vector<double> &sample, bool unbiased)
+{
+    if (unbiased == true) {
+        size_t n = sample.size();
+        double halfN = 0.5 * n;
+        double s = sampleVariance(sample);
+        s *= halfN;
+        s = std::log(s);
+        s += std::log(halfN);
+        s *= 0.5;
+        s += std::lgamma(halfN + 0.5);
+        s -= std::lgamma(halfN);
+        SetScale(std::exp(s));
+    }
+    else {
+        FitVariance(sample);
+    }
+}
+
+void NormalRand::Fit(const std::vector<double> &sample, bool unbiased)
+{
+    if (unbiased == true) {
+        size_t n = sample.size();
+        if (n <= 1)
+            throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
+        FitLocation(sample);
+        double s = sampleVariance(sample, mu);
+        SetVariance(n * s / (n - 1));
+    }
+    else {
+        FitLocation(sample);
+        FitVariance(sample);
+    }
+}
+
+void NormalRand::Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased)
+{
+    if (significanceLevel <= 0 || significanceLevel > 1)
+        throw std::invalid_argument(fitError(WRONG_LEVEL, "Input level is equal to " + toStringWithPrecision(significanceLevel)));
+
+    Fit(sample, unbiased);
+
+    size_t n = sample.size();
+    double sigmaAdj = unbiased ? sigma : (sigma * n) / (n - 1);
     /// calculate confidence interval for mean
+    double halfAlpha = 0.5 * significanceLevel;
     StudentTRand tRV(n - 1);
-    double interval = tRV.Quantile1m(halfAlpha) * sigma / std::sqrt(n);
+    double interval = tRV.Quantile1m(halfAlpha) * sigmaAdj / std::sqrt(n);
     confidenceIntervalForMean.first = mu - interval;
     confidenceIntervalForMean.second = mu + interval;
 
     /// calculate confidence interval for variance
-    double shape = 0.5 * n - 0.5;
-    GammaRand GammaRV(shape, shape);
-    double sigmaSq = sigma * sigma;
-    confidenceIntervalForVariance.first = sigmaSq / GammaRV.Quantile1m(halfAlpha);
-    confidenceIntervalForVariance.second = sigmaSq / GammaRV.Quantile(halfAlpha);
+    ChiSquaredRand ChiSqRV(n - 1);
+    double numerator = (n - 1) * sigmaAdj * sigmaAdj;
+    confidenceIntervalForVariance.first = numerator / ChiSqRV.Quantile1m(halfAlpha);
+    confidenceIntervalForVariance.second = numerator / ChiSqRV.Quantile(halfAlpha);
 }
 
-NormalRand NormalRand::FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
+NormalRand NormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
 {
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
@@ -224,7 +261,7 @@ InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample,
     return posteriorDistribution;
 }
 
-NormalInverseGammaRand NormalRand::FitMeanAndVarianceBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
 {
     size_t n = sample.size();
     double alphaPrior = priorDistribution.GetShape();

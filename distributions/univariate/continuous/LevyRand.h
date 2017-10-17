@@ -39,11 +39,11 @@ private:
 
 public:
     /**
-     * @fn FitScaleMLE
+     * @fn FitScale
      * Fit scale using maximum-likelihoood estimator
      * @param sample
      */
-    void FitScaleMLE(const std::vector<double> &sample);
+    void FitScale(const std::vector<double> &sample);
 };
 
 #endif // LEVYRAND_H

@@ -168,7 +168,7 @@ double ParetoRand::Entropy() const
     return logSigma - logAlpha + 1.0 / alpha + 1;
 }
 
-void ParetoRand::FitShapeAndScaleMLE(const std::vector<double> &sample)
+void ParetoRand::Fit(const std::vector<double> &sample)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)

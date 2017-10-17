@@ -49,37 +49,16 @@ private:
 public:
     double Entropy() const;
 
-    /// Maximum likelihood estimation
     /// One parameter
-    void FitLocationMLE(const std::vector<double> &sample);
-    void FitScaleMLE(const std::vector<double> &sample);
-    void FitAsymmetryMLE(const std::vector<double> &sample);
+    void FitLocation(const std::vector<double> &sample);
+    void FitScale(const std::vector<double> &sample);
+    void FitAsymmetry(const std::vector<double> &sample);
     /// Two parameters
-    void FitLocationAndScaleMLE(const std::vector<double> &sample);
-    void FitLocationAndAsymmetryMLE(const std::vector<double> &sample);
-    void FitScaleAndAsymmetryMLE(const std::vector<double> &sample);
+    void FitLocationAndScale(const std::vector<double> &sample);
+    void FitLocationAndAsymmetry(const std::vector<double> &sample);
+    void FitScaleAndAsymmetry(const std::vector<double> &sample);
     /// All parameters
-    void FitLocationScaleAndAsymmetryMLE(const std::vector<double> &sample);
-
-private:
-    /**
-     * @fn GetAsymmetryFromSkewness
-     * @param sample
-     * @return numeric solution of equation Skewness() = skewness
-     */
-    double GetAsymmetryFromSkewness(double skewness);
-public:
-    /// Method of moments
-    /// One parameter
-    void FitLocationMM(const std::vector<double> &sample);
-    void FitScaleMM(const std::vector<double> &sample);
-    void FitAsymmetryMM(const std::vector<double> &sample);
-    /// Two parameters
-    void FitLocationAndScaleMM(const std::vector<double> &sample);
-    void FitLocationAndAsymmetryMM(const std::vector<double> &sample);
-    void FitScaleAndAsymmetryMM(const std::vector<double> &sample);
-    /// All parameters
-    void FitLocationScaleAndAsymmetryMM(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample);
 };
 
 #endif // LAPLACERAND_H

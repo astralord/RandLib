@@ -317,24 +317,18 @@ double RayleighRand::ExcessKurtosis() const
     return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
 }
 
-void RayleighRand::FitScaleMLE(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double sigmaSq = 0.5 * rawMoment(sample, 2);
-    SetScale(std::sqrt(sigmaSq));
-}
-
-void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
+void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double sigmaBiasedSq = 0.5 * rawMoment(sample, 2);
+    if (unbiased == false) {
+        SetScale(std::sqrt(sigmaBiasedSq));
+    }
     /// Calculate unbiased sigma
-    if (n > 100) {
+    else if (n > 100) {
         double coef = 1.0 / (640 * std::pow(n, 5));
         coef -= 1.0 / (192 * std::pow(n, 3));
         coef += 0.125 / n;
@@ -360,4 +354,3 @@ void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
         SetScale(scale);
     }
 }
-
