@@ -110,17 +110,20 @@ double PlanckRand::Mean() const
     return Z.GetInverseZetaFunction() * y;
 }
 
+double PlanckRand::SecondMoment() const
+{
+    double secondMoment = (a + 1) * (a + 2);
+    secondMoment /= (b * b);
+    secondMoment *= RandMath::zetaRiemann(a + 3);
+    secondMoment *= Z.GetInverseZetaFunction();
+    return secondMoment;
+}
+
 double PlanckRand::Variance() const
 {
     double mean = Mean();
-    double y = (a + 1) * (a + 2);
-    y /= (b * b);
-    y *= RandMath::zetaRiemann(a + 3);
-    y *= Z.GetInverseZetaFunction();
-    return y - mean * mean;
+    return SecondMoment() - mean * mean;
 }
-
-// TODO: implement also skewness and kurtosis, as analytical solution is known
 
 double PlanckRand::Mode() const
 {
@@ -129,6 +132,50 @@ double PlanckRand::Mode() const
     double y = -a * std::exp(-a);
     y = RandMath::W0Lambert(y);
     return (y + a) / b;
+}
+
+double PlanckRand::ThirdMoment() const
+{
+    double thirdMoment = (a + 3) * (a + 2) * (a + 1);
+    thirdMoment /= (b * b * b);
+    thirdMoment *= RandMath::zetaRiemann(a + 4);
+    thirdMoment *= Z.GetInverseZetaFunction();
+    return thirdMoment;
+}
+
+double PlanckRand::Skewness() const
+{
+    double mean = Mean();
+    double secondMoment = SecondMoment();
+    double thirdMoment = ThirdMoment();
+    double meanSq = mean * mean;
+    double variance = secondMoment - meanSq;
+    double numerator = thirdMoment - 3 * mean * variance - mean * meanSq;
+    double denominator = std::pow(variance, 1.5);
+    return numerator / denominator;
+}
+
+double PlanckRand::FourthMoment() const
+{
+    double fourthMoment = (a + 4) * (a + 3) * (a + 2) * (a + 1);
+    double bSq = b * b;
+    fourthMoment /= (bSq * bSq);
+    fourthMoment *= RandMath::zetaRiemann(a + 5);
+    fourthMoment *= Z.GetInverseZetaFunction();
+    return fourthMoment;
+}
+
+double PlanckRand::ExcessKurtosis() const
+{
+    double mean = Mean();
+    double secondMoment = SecondMoment();
+    double thirdMoment = ThirdMoment();
+    double fourthMoment = FourthMoment();
+    double meanSq = mean * mean;
+    double variance = secondMoment - meanSq;
+    double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
+    double denominator = variance * variance;
+    return numerator / denominator - 3.0;
 }
 
 std::complex<double> PlanckRand::CFImpl(double t) const

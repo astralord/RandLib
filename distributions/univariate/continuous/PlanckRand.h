@@ -8,7 +8,13 @@
  * @brief The PlanckRand class <BR>
  * Planck distribution
  *
+ * f(x | a, b) = g(a + 1) * (x ^ a) / (exp(b * x) - 1)
+ * where g(y) = b ^ y / (Γ(y) * ζ(y))
+ *
  * Notation: X ~ Planck(a, b)
+ *
+ * Related distributions: <BR>
+ * If G ~ Gamma(a + 1, b) and Z ~ Zeta(a + 1), then G / Z ~ Planck(a, b)
  */
 class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
 {
@@ -42,8 +48,13 @@ public:
     void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
+    double SecondMoment() const override;
     double Variance() const override;
     double Mode() const override;
+    double ThirdMoment() const override;
+    double Skewness() const override;
+    double FourthMoment() const override;
+    double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;
