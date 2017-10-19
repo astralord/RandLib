@@ -4,6 +4,8 @@
 #include "GammaRand.h"
 
 // TODO: implement CF (it can be done in terms of hypergeometric functions)
+// TODO: implement skewness and kurtosis
+
 /**
  * @brief The NakagamiDistribution class <BR>
  * Abstract class for Nakagami distribution

@@ -273,7 +273,7 @@ public:
     /**
      * @brief GetSampleStatistics
      * @param sample
-     * @return sample mean, variance, skewness and kurtosis
+     * @return sample mean, variance, skewness and excess kurtosis
      */
     static std::tuple<double, double, double, double> GetSampleStatistics(const std::vector<T> &sample);
 };

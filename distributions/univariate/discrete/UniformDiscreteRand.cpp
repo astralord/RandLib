@@ -81,7 +81,7 @@ double UniformDiscreteRand::ExcessKurtosis() const
     --kurt;
     kurt = 2.0 / kurt;
     ++kurt;
-    return 1.2 * kurt;
+    return -1.2 * kurt;
 }
 
 std::complex<double> UniformDiscreteRand::CFImpl(double t) const

@@ -267,17 +267,71 @@ DoublePair UnivariateProbabilityDistribution<T>::GetSampleMeanAndVariance(const 
 template< typename T >
 std::tuple<double, double, double, double> UnivariateProbabilityDistribution<T>::GetSampleStatistics(const std::vector<T> &sample)
 {
-    // TODO: implement method of Knuth and Welford for skewness and kurtosis also!
-    DoublePair mv = GetSampleMeanAndVariance(sample);
-    size_t n = sample.size();
-    long double skewness = 0.0l, kurtosis = 0.0l;
-    for (double var : sample) {
-        skewness += std::pow(var - mv.first, 3);
-        kurtosis += std::pow(var - mv.first, 4);
+    /// Terriberry's extension for skewness and kurtosis
+    long double M1{}, M2{}, M3{}, M4{};
+    long double m1{}, m2{}, m3{}, m4{};
+    size_t n = sample.size(), k = 0;
+    size_t t = 0;
+    static constexpr size_t BIG_NUMBER = 10000;
+    for (const T & var : sample) {
+        ++k;
+        long double delta = var - m1;
+        long double delta_k = delta / k;
+        long double delta_kSq = delta_k * delta_k;
+        long double term1 = delta * delta_k * (k - 1);
+        m1 += delta_k;
+        m4 += term1 * delta_kSq * (k * k - 3 * k + 3) + 6 * delta_kSq * m2 - 4 * delta_k * m3;
+        m3 += term1 * delta_k * (k - 2) - 3 * delta_k * m2;
+        m2 += term1;
+
+        /// This looks like a hack and unfortunately it is. The reason of it is that the algorithm
+        /// can become unstable for sufficiently large k. For now we restart the algorithm when
+        /// k reaches some big number. In the future this can be parallelized for faster implementation.
+        if (k >= BIG_NUMBER) {
+            long double Delta = m1 - M1;
+            long double DeltaSq = Delta * Delta;
+            size_t tp1 = t + 1;
+            /// M4
+            M4 += m4 + (DeltaSq * DeltaSq * t * (t * t - t + 1) * BIG_NUMBER) / (tp1 * tp1 * tp1);
+            M4 += 6 * DeltaSq * (t * t * m2 + M2) / (tp1 * tp1);
+            M4 += 4 * Delta * (t * m3 - M3) / tp1;
+            /// M3
+            M3 += m3 + (DeltaSq * Delta * t * (t - 1) * BIG_NUMBER) / (tp1 * tp1);
+            M3 += 3 * Delta * (t * m2 - M2) / tp1;
+            /// M2 and M1
+            M2 += m2 + (DeltaSq * t) / tp1;
+            M1 += Delta / tp1;
+            k = 0;
+            m1 = 0;
+            m2 = 0;
+            m3 = 0;
+            m4 = 0;
+            ++t;
+        }
     }
-    skewness /= (n * std::pow(mv.second, 1.5));
-    kurtosis /= (n * std::pow(mv.second, 2));
-    return std::make_tuple(mv.first, mv.second, skewness, kurtosis);
+
+    /// If something left - add the residue
+    double res = static_cast<double>(k) / BIG_NUMBER;
+    if (res != 0) {
+        long double Delta = m1 - M1;
+        long double DeltaSq = Delta * Delta;
+        double tpres = t + res;
+        /// M4
+        M4 += m4 + (DeltaSq * DeltaSq * t * res * (t * t - res * t + res * res) * BIG_NUMBER) / (tpres * tpres * tpres);
+        M4 += 6 * DeltaSq * (t * t * m2 + res * res * M2) / (tpres * tpres);
+        M4 += 4 * Delta * (t * m3 - res * M3) / tpres;
+        /// M3
+        M3 += m3 + (DeltaSq * Delta * t * res * (t - res) * BIG_NUMBER) / (tpres * tpres);
+        M3 += 3 * Delta * (t * m2 - res * M2) / tpres;
+        /// M2 and M1
+        M2 += m2 + (DeltaSq * t * res) / tpres;
+        M1 += Delta * res / tpres;
+    }
+
+    double variance = M2 / n;
+    double skewness = std::sqrt(n) * M3 / std::pow(M2, 1.5);
+    double exkurtosis = (n * M4) / (M2 * M2) - 3.0;
+    return std::make_tuple(M1, variance, skewness, exkurtosis);
 }
 
 template class UnivariateProbabilityDistribution<double>;
