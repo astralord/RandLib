@@ -527,7 +527,7 @@ void FreeScaleGammaDistribution::FitRate(const std::vector<double> &sample, bool
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double mean = sampleMean(sample);
+    double mean = GetSampleMean(sample);
     double coef = alpha - (unbiased ? 1.0 / sample.size() : 0.0);
     SetParameters(alpha, coef / mean);
 }
@@ -540,7 +540,7 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();
     double newAlpha = alpha * sample.size() + alpha0;
-    double newBeta = sampleSum(sample) + beta0;
+    double newBeta = GetSampleSum(sample) + beta0;
     GammaRand posteriorDistribution(newAlpha, newBeta);
     SetParameters(alpha, posteriorDistribution.Mean());
     return posteriorDistribution;
@@ -564,7 +564,7 @@ void GammaRand::FitShape(const std::vector<double> &sample)
     logAverage /= sample.size();
 
     /// Calculate initial guess via method of moments
-    double shape = sampleMean(sample) * beta;
+    double shape = GetSampleMean(sample) * beta;
     /// Run root-finding procedure
     double s = logAverage + logBeta;
     if (!RandMath::findRoot([s] (double x)
@@ -584,7 +584,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate average and log-average
-    double average = sampleMean(sample);
+    double average = GetSampleMean(sample);
     long double logAverage = 0.0L;
     for (double var : sample)
         logAverage += std::log(var);

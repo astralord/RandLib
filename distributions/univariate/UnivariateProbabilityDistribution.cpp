@@ -227,20 +227,20 @@ double UnivariateProbabilityDistribution<T>::Kurtosis() const
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleSum(const std::vector<T> &sample)
+double UnivariateProbabilityDistribution<T>::GetSampleSum(const std::vector<T> &sample)
 {
     return std::accumulate(sample.begin(), sample.end(), 0.0);
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleMean(const std::vector<T> &sample)
+double UnivariateProbabilityDistribution<T>::GetSampleMean(const std::vector<T> &sample)
 {
     size_t n = sample.size();
-    return (n > 0) ? sampleSum(sample) / n : 0.0;
+    return (n > 0) ? GetSampleSum(sample) / n : 0.0;
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T> &sample, double mean)
+double UnivariateProbabilityDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
 {
     long double sum = 0.0l;
     for (const T & var : sample) {
@@ -251,111 +251,33 @@ double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T>
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleVariance(const std::vector<T> &sample)
+DoublePair UnivariateProbabilityDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
 {
-    return sampleVariance(sample, sampleMean(sample));
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample, double mean, double stdev)
-{
-    return normalisedMoment(sample, 3, mean, stdev);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample, double mean)
-{
-    return normalisedMoment(sample, 3, mean);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleSkewness(const std::vector<T> &sample)
-{
-    return normalisedMoment(sample, 3);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleKurtosis(const std::vector<T> &sample, double mean, double stdev)
-{
-    return normalisedMoment(sample, 4, mean, stdev);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleKurtosis(const std::vector<T> &sample, double mean)
-{
-    return normalisedMoment(sample, 4, mean);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::sampleKurtosis(const std::vector<T> &sample)
-{
-    return normalisedMoment(sample, 4);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::rawMoment(const std::vector<T> &sample, int k)
-{
-    int n = sample.size();
-    if (n <= 0 || k < 0)
-        return 0.0;
-    long double sum = 0.0l;
-    switch(k) {
-        case 0:
-            return n;
-        case 1:
-            return sampleMean(sample);
-        case 2:
-            return std::inner_product(sample.begin(), sample.end(), sample.begin(), 0.0);
-        default:
-            for (double var : sample)
-                sum += std::pow(var, k);
+    /// Welford's stable method
+    long double m = 0.0l, v = 0.0l;
+    size_t n = sample.size();
+    for (size_t i = 0; i < n; ++i) {
+        long double diff = sample[i] - m;
+        m += diff / (i + 1);
+        v += diff * (sample[i] - m);
     }
-    return sum / n;
+    return std::make_pair(m, v / n);
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::centralMoment(const std::vector<T> &sample, int k, double mean)
+std::tuple<double, double, double, double> UnivariateProbabilityDistribution<T>::GetSampleStatistics(const std::vector<T> &sample)
 {
-    int n = sample.size();
-    if (n <= 0 || k <= 1)
-        return 0.0;
-    if (k == 2)
-        return sampleVariance(sample, mean);
-    long double sum = 0.0l;
-    for (double var : sample)
-        sum += std::pow(var - mean, k);
-    return sum / n;
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::centralMoment(const std::vector<T> &sample, int k)
-{
-    return (k == 1) ? 0.0 : centralMoment(sample, k, sampleMean(sample));
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::normalisedMoment(const std::vector<T> &sample, int k, double mean, double stdev)
-{
-    return (k == 2) ? 1.0 : centralMoment(sample, k, mean) / std::pow(stdev, k);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::normalisedMoment(const std::vector<T> &sample, int k, double mean)
-{
-    if (k == 2)
-        return 1.0;
-    double variance = sampleVariance(sample, mean);
-    return centralMoment(sample, k, mean) / std::pow(variance, 0.5 * k);
-}
-
-template< typename T >
-double UnivariateProbabilityDistribution<T>::normalisedMoment(const std::vector<T> &sample, int k)
-{
-    if (k == 2)
-        return 1.0;
-    double mean = sampleMean(sample);
-    double variance = sampleVariance(sample, mean);
-    return centralMoment(sample, k, mean) / std::pow(variance, 0.5 * k);
+    // TODO: implement method of Knuth and Welford for skewness and kurtosis also!
+    DoublePair mv = GetSampleMeanAndVariance(sample);
+    size_t n = sample.size();
+    long double skewness = 0.0l, kurtosis = 0.0l;
+    for (double var : sample) {
+        skewness += std::pow(var - mv.first, 3);
+        kurtosis += std::pow(var - mv.first, 4);
+    }
+    skewness /= (n * std::pow(mv.second, 1.5));
+    kurtosis /= (n * std::pow(mv.second, 2));
+    return std::make_tuple(mv.first, mv.second, skewness, kurtosis);
 }
 
 template class UnivariateProbabilityDistribution<double>;

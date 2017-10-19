@@ -323,7 +323,9 @@ void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
-    double sigmaBiasedSq = 0.5 * rawMoment(sample, 2);
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    double rawMoment = stats.second + stats.first * stats.first;
+    double sigmaBiasedSq = 0.5 * rawMoment;
     if (unbiased == false) {
         SetScale(std::sqrt(sigmaBiasedSq));
     }

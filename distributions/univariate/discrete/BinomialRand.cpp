@@ -387,7 +387,7 @@ void BinomialDistribution::FitProbability(const std::vector<int> &sample)
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
-    SetParameters(n, sampleMean(sample) / n);
+    SetParameters(n, GetSampleMean(sample) / n);
 }
 
 BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
@@ -397,7 +397,7 @@ BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sampl
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();
-    double sum = sampleSum(sample);
+    double sum = GetSampleSum(sample);
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
     BetaRand posteriorDistribution(sum + alpha, N * n - sum + beta);

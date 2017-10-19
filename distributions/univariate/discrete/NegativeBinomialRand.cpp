@@ -224,7 +224,7 @@ BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
-    BetaRand posteriorDistribution(alpha + r * n, beta + sampleSum(sample));
+    BetaRand posteriorDistribution(alpha + r * n, beta + GetSampleSum(sample));
     SetParameters(r, posteriorDistribution.Mean());
     return posteriorDistribution;
 }
@@ -246,7 +246,8 @@ void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
-    double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    double mean = stats.first, variance = stats.second;
     /// Method can't be applied in the case of too small variance
     if (variance <= mean)
         throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));

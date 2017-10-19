@@ -242,7 +242,7 @@ void PoissonRand::Fit(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    SetRate(sampleMean(sample));
+    SetRate(GetSampleMean(sample));
 }
 
 void PoissonRand::Fit(const std::vector<int> &sample, DoublePair &confidenceInterval, double significanceLevel)
@@ -267,7 +267,7 @@ GammaRand PoissonRand::FitBayes(const std::vector<int> &sample, const GammaDistr
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
-    GammaRand posteriorDistribution(alpha + sampleSum(sample), beta + sample.size());
+    GammaRand posteriorDistribution(alpha + GetSampleSum(sample), beta + sample.size());
     SetRate(posteriorDistribution.Mean());
     return posteriorDistribution;
 }

@@ -141,7 +141,7 @@ double NormalRand::Moment(int n) const
 
 void NormalRand::FitLocation(const std::vector<double> &sample)
 {
-    SetLocation(sampleMean(sample));
+    SetLocation(GetSampleMean(sample));
 }
 
 void NormalRand::FitLocation(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel)
@@ -161,7 +161,7 @@ void NormalRand::FitLocation(const std::vector<double> &sample, DoublePair &conf
 
 void NormalRand::FitVariance(const std::vector<double> &sample)
 {
-    SetVariance(sampleVariance(sample, mu));
+    SetVariance(GetSampleVariance(sample, mu));
 }
 
 void NormalRand::FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased)
@@ -184,7 +184,7 @@ void NormalRand::FitScale(const std::vector<double> &sample, bool unbiased)
     if (unbiased == true) {
         size_t n = sample.size();
         double halfN = 0.5 * n;
-        double s = sampleVariance(sample);
+        double s = GetSampleVariance(sample, mu);
         s *= halfN;
         s = std::log(s);
         s += std::log(halfN);
@@ -200,18 +200,16 @@ void NormalRand::FitScale(const std::vector<double> &sample, bool unbiased)
 
 void NormalRand::Fit(const std::vector<double> &sample, bool unbiased)
 {
+    double adjustment = 1.0;
     if (unbiased == true) {
         size_t n = sample.size();
         if (n <= 1)
             throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-        FitLocation(sample);
-        double s = sampleVariance(sample, mu);
-        SetVariance(n * s / (n - 1));
+        adjustment = static_cast<double>(n) / (n - 1);
     }
-    else {
-        FitLocation(sample);
-        FitVariance(sample);
-    }
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    SetLocation(stats.first);
+    SetVariance(stats.second * adjustment);
 }
 
 void NormalRand::Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased)
@@ -242,7 +240,7 @@ NormalRand NormalRand::FitLocationBayes(const std::vector<double> &sample, const
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
     double tau = GetPrecision();
-    double numerator = sampleSum(sample) * tau + tau0 * mu0;
+    double numerator = GetSampleSum(sample) * tau + tau0 * mu0;
     double denominator = sample.size() * tau + tau0;
     NormalRand posteriorDistribution(numerator / denominator, 1.0 / denominator);
     SetLocation(posteriorDistribution.Mean());
@@ -255,7 +253,7 @@ InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample,
     double alphaPrior = priorDistribution.GetShape();
     double betaPrior = priorDistribution.GetRate();
     double alphaPosterior = alphaPrior + halfN;
-    double betaPosterior = betaPrior + halfN * sampleVariance(sample, mu);
+    double betaPosterior = betaPrior + halfN * GetSampleVariance(sample, mu);
     InverseGammaRand posteriorDistribution(alphaPosterior, betaPosterior);
     SetVariance(posteriorDistribution.Mean());
     return posteriorDistribution;
@@ -268,14 +266,13 @@ NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, c
     double betaPrior = priorDistribution.GetRate();
     double muPrior = priorDistribution.GetLocation();
     double lambdaPrior = priorDistribution.GetPrecision();
-    double sum = sampleSum(sample), average = sum / n;
+    DoublePair stats = GetSampleMeanAndVariance(sample);
     double lambdaPosterior = lambdaPrior + n;
-    double muPosterior = (lambdaPrior * muPrior + sum) / lambdaPosterior;
+    double muPosterior = (lambdaPrior * muPrior + n * stats.first) / lambdaPosterior;
     double halfN = 0.5 * n;
     double alphaPosterior = alphaPrior + halfN;
-    double variance = sampleVariance(sample, average);
-    double aux = muPrior - average;
-    double betaPosterior = betaPrior + halfN * (variance + lambdaPrior / lambdaPosterior * aux * aux);
+    double aux = muPrior - stats.first;
+    double betaPosterior = betaPrior + halfN * (stats.second + lambdaPrior / lambdaPosterior * aux * aux);
     NormalInverseGammaRand posteriorDistribution(muPosterior, lambdaPosterior, alphaPosterior, betaPosterior);
     DoublePair mean = posteriorDistribution.Mean();
     SetLocation(mean.first);
