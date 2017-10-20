@@ -130,7 +130,7 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
 {
     /// if no singularity - simple numeric integration
     if (alpha >= 1)
-        return UnivariateProbabilityDistribution::CFImpl(t);
+        return UnivariateDistribution::CFImpl(t);
 
     double re = ExpectedValue([this, t] (double x)
     {

@@ -461,7 +461,7 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
 {
     /// if we don't have singularity points, we can use direct integration
     if (alpha >= 1 && beta >= 1)
-        return UnivariateProbabilityDistribution::CFImpl(t);
+        return UnivariateDistribution::CFImpl(t);
 
     double z = bma * t;
     double sinZ = std::sin(z);

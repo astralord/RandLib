@@ -5,7 +5,7 @@
 #include "univariate/BasicRandGenerator.h"
 
 /// UNIVARIATE
-#include "univariate/UnivariateProbabilityDistribution.h"
+#include "univariate/UnivariateDistribution.h"
 
 /// CONTINUOUS
 #include "univariate/continuous/ContinuousDistribution.h"
@@ -40,9 +40,12 @@
 #include "univariate/continuous/StudentTRand.h"
 #include "univariate/continuous/UniformRand.h"
 #include "univariate/continuous/TriangularRand.h"
-#include "univariate/continuous/VonMisesRand.h"
 #include "univariate/continuous/WeibullRand.h"
 #include "univariate/continuous/WignerSemicircleRand.h"
+
+/// CIRCULAR
+#include "univariate/continuous/circular/VonMisesRand.h"
+#include "univariate/continuous/circular/WrappedExponentialRand.h"
 
 /// DISCRETE
 #include "univariate/discrete/DiscreteDistribution.h"

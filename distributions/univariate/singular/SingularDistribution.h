@@ -1,13 +1,13 @@
 #ifndef SingularDistribution_H
 #define SingularDistribution_H
 
-#include "../UnivariateProbabilityDistribution.h"
+#include "../UnivariateDistribution.h"
 
 /**
  * @brief The SingularDistribution class <BR>
  * Abstract class for all singular distributions
  */
-class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateProbabilityDistribution<double>
+class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateDistribution<double>
 {
 protected:
     SingularDistribution();

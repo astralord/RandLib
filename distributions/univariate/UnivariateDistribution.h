@@ -1,5 +1,5 @@
-#ifndef UNIVARIATEPROBABILITYDISTRIBUTION_H
-#define UNIVARIATEPROBABILITYDISTRIBUTION_H
+#ifndef UNIVARIATEDISTRIBUTION_H
+#define UNIVARIATEDISTRIBUTION_H
 
 #include "../ProbabilityDistribution.h"
 
@@ -11,15 +11,15 @@ enum SUPPORT_TYPE {
 };
 
 /**
- * @brief The UnivariateProbabilityDistribution class <BR>
+ * @brief The UnivariateDistribution class <BR>
  * Abstract class for all univariate probability distributions
  */
 template < typename T >
-class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<T>
+class RANDLIBSHARED_EXPORT UnivariateDistribution : public ProbabilityDistribution<T>
 {
 protected:
-    UnivariateProbabilityDistribution();
-    virtual ~UnivariateProbabilityDistribution() {}
+    UnivariateDistribution();
+    virtual ~UnivariateDistribution() {}
 
 public:
     /**
@@ -39,18 +39,6 @@ public:
      * @return true if distribution is bounded from the right
      */
     bool isRightBounded() const;
-
-    /**
-     * @fn MinValue
-     * @return minimum possible value that can be achieved by random variable
-     */
-    virtual T MinValue() const override = 0;
-
-    /**
-     * @fn MaxValue
-     * @return maximum possible value that can be achieved by random variable
-     */
-    virtual T MaxValue() const override = 0;
 
     /**
      * @fn Mean
@@ -278,4 +266,4 @@ public:
     static std::tuple<double, double, double, double> GetSampleStatistics(const std::vector<T> &sample);
 };
 
-#endif // UNIVARIATEPROBABILITYDISTRIBUTION_H
+#endif // UNIVARIATEDISTRIBUTION_H

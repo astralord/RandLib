@@ -1,26 +1,26 @@
-#include "UnivariateProbabilityDistribution.h"
+#include "UnivariateDistribution.h"
 
 template< typename T >
-UnivariateProbabilityDistribution<T>::UnivariateProbabilityDistribution()
+UnivariateDistribution<T>::UnivariateDistribution()
 {
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::isLeftBounded() const
+bool UnivariateDistribution<T>::isLeftBounded() const
 {
     SUPPORT_TYPE supp = SupportType();
     return (supp == RIGHTSEMIFINITE_T || supp == FINITE_T);
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::isRightBounded() const
+bool UnivariateDistribution<T>::isRightBounded() const
 {
     SUPPORT_TYPE supp = SupportType();
     return (supp == LEFTSEMIFINITE_T || supp == FINITE_T);
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::Quantile(double p) const
+double UnivariateDistribution<T>::Quantile(double p) const
 {
     if (p < 0.0 || p > 1.0)
         return NAN;
@@ -37,7 +37,7 @@ double UnivariateProbabilityDistribution<T>::Quantile(double p) const
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::Quantile1m(double p) const
+double UnivariateDistribution<T>::Quantile1m(double p) const
 {
     if (p < 0.0 || p > 1.0)
         return NAN;
@@ -54,7 +54,7 @@ double UnivariateProbabilityDistribution<T>::Quantile1m(double p) const
 }
 
 template< typename T >
-void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
+void UnivariateDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
 {
     int size = std::min(p.size(), y.size());
     for (int i = 0; i != size; ++i)
@@ -62,7 +62,7 @@ void UnivariateProbabilityDistribution<T>::QuantileFunction(const std::vector<do
 }
 
 template< typename T >
-std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
+std::complex<double> UnivariateDistribution<T>::CF(double t) const
 {
     if (t == 0.0)
         return 1.0;
@@ -70,7 +70,7 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CF(double t) const
 }
 
 template< typename T >
-std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) const
+std::complex<double> UnivariateDistribution<T>::CFImpl(double t) const
 {
     T leftBound = this->MinValue(), rightBound = this->MaxValue();
     if (leftBound == rightBound)
@@ -90,7 +90,7 @@ std::complex<double> UnivariateProbabilityDistribution<T>::CFImpl(double t) cons
 }
 
 template< typename T >
-void UnivariateProbabilityDistribution<T>::CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
+void UnivariateDistribution<T>::CharacteristicFunction(const std::vector<double> &t, std::vector<std::complex<double> > &y) const
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)
@@ -98,7 +98,7 @@ void UnivariateProbabilityDistribution<T>::CharacteristicFunction(const std::vec
 }
 
 template< typename T >
-void UnivariateProbabilityDistribution<T>::HazardFunction(const std::vector<double> &x, std::vector<double> &y) const
+void UnivariateDistribution<T>::HazardFunction(const std::vector<double> &x, std::vector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
@@ -106,13 +106,13 @@ void UnivariateProbabilityDistribution<T>::HazardFunction(const std::vector<doub
 }
 
 template< typename T >
-T UnivariateProbabilityDistribution<T>::Median() const
+T UnivariateDistribution<T>::Median() const
 {
     return quantileImpl(0.5);
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::Skewness() const
+double UnivariateDistribution<T>::Skewness() const
 {
     double var = Variance();
     if (!std::isfinite(var))
@@ -130,7 +130,7 @@ double UnivariateProbabilityDistribution<T>::Skewness() const
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
+double UnivariateDistribution<T>::ExcessKurtosis() const
 {
     double var = Variance();
     if (!std::isfinite(var))
@@ -149,14 +149,14 @@ double UnivariateProbabilityDistribution<T>::ExcessKurtosis() const
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::SecondMoment() const
+double UnivariateDistribution<T>::SecondMoment() const
 {
     double mean = Mean();
     return mean * mean + Variance();
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::ThirdMoment() const
+double UnivariateDistribution<T>::ThirdMoment() const
 {
     double mean = Mean();
     double variance = Variance();
@@ -169,7 +169,7 @@ double UnivariateProbabilityDistribution<T>::ThirdMoment() const
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::FourthMoment() const
+double UnivariateDistribution<T>::FourthMoment() const
 {
     double mean = Mean();
     double variance = Variance();
@@ -185,7 +185,7 @@ double UnivariateProbabilityDistribution<T>::FourthMoment() const
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::allElementsAreNotBiggerThan(T value, const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsAreNotBiggerThan(T value, const std::vector<T> &sample)
 {
     for (const T & var : sample) {
         if (var > value)
@@ -195,7 +195,7 @@ bool UnivariateProbabilityDistribution<T>::allElementsAreNotBiggerThan(T value, 
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::allElementsAreNotLessThan(T value, const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsAreNotLessThan(T value, const std::vector<T> &sample)
 {
     for (const T & var : sample) {
         if (var < value)
@@ -205,13 +205,13 @@ bool UnivariateProbabilityDistribution<T>::allElementsAreNotLessThan(T value, co
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::allElementsAreNonNegative(const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsAreNonNegative(const std::vector<T> &sample)
 {
     return allElementsAreNotLessThan(0, sample);
 }
 
 template< typename T >
-bool UnivariateProbabilityDistribution<T>::allElementsArePositive(const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsArePositive(const std::vector<T> &sample)
 {
     for (const T & var : sample) {
         if (var <= 0)
@@ -221,26 +221,26 @@ bool UnivariateProbabilityDistribution<T>::allElementsArePositive(const std::vec
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::Kurtosis() const
+double UnivariateDistribution<T>::Kurtosis() const
 {
     return ExcessKurtosis() + 3.0;
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::GetSampleSum(const std::vector<T> &sample)
+double UnivariateDistribution<T>::GetSampleSum(const std::vector<T> &sample)
 {
     return std::accumulate(sample.begin(), sample.end(), 0.0);
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::GetSampleMean(const std::vector<T> &sample)
+double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
 {
     size_t n = sample.size();
     return (n > 0) ? GetSampleSum(sample) / n : 0.0;
 }
 
 template< typename T >
-double UnivariateProbabilityDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
+double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
 {
     long double sum = 0.0l;
     for (const T & var : sample) {
@@ -251,7 +251,7 @@ double UnivariateProbabilityDistribution<T>::GetSampleVariance(const std::vector
 }
 
 template< typename T >
-DoublePair UnivariateProbabilityDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
+DoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
 {
     /// Welford's stable method
     long double m = 0.0l, v = 0.0l;
@@ -265,7 +265,7 @@ DoublePair UnivariateProbabilityDistribution<T>::GetSampleMeanAndVariance(const 
 }
 
 template< typename T >
-std::tuple<double, double, double, double> UnivariateProbabilityDistribution<T>::GetSampleStatistics(const std::vector<T> &sample)
+std::tuple<double, double, double, double> UnivariateDistribution<T>::GetSampleStatistics(const std::vector<T> &sample)
 {
     /// Terriberry's extension for skewness and kurtosis
     long double M1{}, M2{}, M3{}, M4{};
@@ -334,5 +334,5 @@ std::tuple<double, double, double, double> UnivariateProbabilityDistribution<T>:
     return std::make_tuple(M1, variance, skewness, exkurtosis);
 }
 
-template class UnivariateProbabilityDistribution<double>;
-template class UnivariateProbabilityDistribution<int>;
+template class UnivariateDistribution<double>;
+template class UnivariateDistribution<int>;
