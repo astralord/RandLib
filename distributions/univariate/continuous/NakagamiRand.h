@@ -4,7 +4,6 @@
 #include "GammaRand.h"
 
 // TODO: implement CF (it can be done in terms of hypergeometric functions)
-// TODO: implement skewness and kurtosis
 
 /**
  * @brief The NakagamiDistribution class <BR>
@@ -71,6 +70,9 @@ public:
     double Mean() const override;
     double Variance() const override;
     double Mode() const override;
+    double Skewness() const override;
+    double FourthMoment() const override;
+    double ExcessKurtosis() const override;
 
 protected:
     double quantileImpl(double p) const override;
