@@ -13,7 +13,7 @@
  *
  * Related distributions: <BR>
  * If X ~ Cauchy(0, 1), then μ + σ * X ~ Cauchy(μ, σ) <BR>
- * X ~ S(1, 0, σ, μ) <BR>
+ * X ~ Stable(1, 0, σ, μ) <BR>
  * If X, Y ~ Normal(0, 1), then X / Y ~ Cauchy(0, 1)
  */
 class RANDLIBSHARED_EXPORT CauchyRand : public StableDistribution

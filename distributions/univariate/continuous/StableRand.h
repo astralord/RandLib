@@ -7,7 +7,7 @@
  * @brief The StableDistribution class <BR>
  * Abstract class for Stable distribution
  *
- * Notation: X ~ S(α, β, γ, μ)
+ * Notation: X ~ Stable(α, β, γ, μ)
  *
  * Related distributions: <BR>
  * If X ~ Normal(μ, σ), then X ~ S(2, 0, σ/√2, μ) <BR>

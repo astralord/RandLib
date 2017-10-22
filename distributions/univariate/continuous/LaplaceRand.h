@@ -5,27 +5,20 @@
 #include "GeometricStableRand.h"
 
 /**
- * @brief The LaplaceRand class <BR>
- * Laplace distribution
- *
- * Notation: X ~ Laplace(m, γ, κ)
- *
- * Related distributions: <BR>
- * X = m + γ * (Y / κ - W * κ), where Y, W ~ Exp(1) <BR>
- * X - m ~ GeometricStable(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
+ * @brief The AsymmetricLaplaceDistribution class <BR>
+ * Abstract parent class for Laplace and Asymmetric Laplace distributions
  */
-class RANDLIBSHARED_EXPORT LaplaceRand : public ShiftedGeometricStableDistribution
+class RANDLIBSHARED_EXPORT AsymmetricLaplaceDistribution : public ShiftedGeometricStableDistribution
 {
 public:
-    LaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1);
-    std::string Name() const override;
+    AsymmetricLaplaceDistribution(double shift = 0, double scale = 1, double asymmetry = 1);
 
-private:
+protected:
     void ChangeLocation();
+
 public:
     using ShiftedGeometricStableDistribution::SetShift;
     void SetScale(double scale);
-    void SetAsymmetry(double asymmetry);
 
     inline double GetShift() const { return m; }
     inline double GetAsymmetry() const { return kappa; }
@@ -36,8 +29,6 @@ public:
     double S(const double & x) const override;
 
     double Variate() const override;
-    static double StandardVariate();
-    static double Variate(double location, double scale, double asymmetry);
     void Sample(std::vector<double> &outputData) const override;
 
 private:
@@ -49,16 +40,58 @@ private:
 public:
     double Entropy() const;
 
-    /// One parameter
-    void FitLocation(const std::vector<double> &sample);
+    void FitShift(const std::vector<double> &sample);
     void FitScale(const std::vector<double> &sample);
+
+protected:
+    void FitShiftAndScale(const std::vector<double> &sample);
+};
+
+
+/**
+ * @brief The AsymmetricLaplaceRand class <BR>
+ * Asymmetric Laplace distribution
+ *
+ * Notation: X ~ Asymmetric-Laplace(m, γ, κ)
+ *
+ * Related distributions: <BR>
+ * X = m + γ * (Y / κ - W * κ), where Y, W ~ Exp(1) <BR>
+ * X - m ~ Geometric-Stable(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
+ */
+class RANDLIBSHARED_EXPORT AsymmetricLaplaceRand : public AsymmetricLaplaceDistribution
+{
+public:
+    AsymmetricLaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1) : AsymmetricLaplaceDistribution(shift, scale, asymmetry) {}
+    std::string Name() const override;
+    void SetAsymmetry(double asymmetry);
+    static double StandardVariate(double asymmetry);
+
+    using AsymmetricLaplaceDistribution::FitShiftAndScale;
+
     void FitAsymmetry(const std::vector<double> &sample);
-    /// Two parameters
-    void FitLocationAndScale(const std::vector<double> &sample);
-    void FitLocationAndAsymmetry(const std::vector<double> &sample);
+    void FitShiftAndAsymmetry(const std::vector<double> &sample);
     void FitScaleAndAsymmetry(const std::vector<double> &sample);
-    /// All parameters
     void Fit(const std::vector<double> &sample);
+};
+
+
+/**
+ * @brief The LaplaceRand class <BR>
+ * Laplace distribution
+ *
+ * Notation: X ~ Laplace(m, γ)
+ *
+ * Related distributions: <BR>
+ * X = m + γ * (Y - W), where Y, W ~ Exp(1) <BR>
+ * X - m ~ Geometric-Stable(2, β, γ, 0) with arbitrary β
+ */
+class RANDLIBSHARED_EXPORT LaplaceRand : public AsymmetricLaplaceDistribution
+{
+public:
+    LaplaceRand(double shift = 0, double scale = 1) : AsymmetricLaplaceDistribution(shift, scale, 1.0) {}
+    std::string Name() const override;
+    static double StandardVariate();
+    void Fit(const std::vector<double> &sample) { FitShiftAndScale(sample); }
 };
 
 #endif // LAPLACERAND_H

@@ -1,76 +1,51 @@
 #include "LaplaceRand.h"
 #include "../discrete/BernoulliRand.h"
 
-LaplaceRand::LaplaceRand(double shift, double scale, double asymmetry)
+AsymmetricLaplaceDistribution::AsymmetricLaplaceDistribution(double shift, double scale, double asymmetry)
     : ShiftedGeometricStableDistribution(2.0, 0.0, scale, 0.0, shift)
-{
-    SetAsymmetry(asymmetry);
-}
-
-std::string LaplaceRand::Name() const
-{
-    return "Laplace(" + toStringWithPrecision(GetShift()) + ", "
-                      + toStringWithPrecision(GetScale()) + ", "
-                      + toStringWithPrecision(GetAsymmetry()) + ")";
-}
-
-void LaplaceRand::ChangeLocation()
-{
-    SetLocation((1.0 - kappaSq) * gamma * kappaInv);
-}
-
-void LaplaceRand::SetScale(double scale)
-{
-    ShiftedGeometricStableDistribution::SetScale(scale);
-    ChangeLocation();
-}
-
-void LaplaceRand::SetAsymmetry(double asymmetry)
 {
     ShiftedGeometricStableDistribution::SetAsymmetry(asymmetry);
     ChangeLocation();
 }
 
-double LaplaceRand::f(const double & x) const
+void AsymmetricLaplaceDistribution::ChangeLocation()
+{
+    SetLocation((1.0 - kappaSq) * gamma * kappaInv);
+}
+
+void AsymmetricLaplaceDistribution::SetScale(double scale)
+{
+    ShiftedGeometricStableDistribution::SetScale(scale);
+    ChangeLocation();
+}
+
+double AsymmetricLaplaceDistribution::f(const double & x) const
 {
     return pdfLaplace(x - m);
 }
 
-double LaplaceRand::logf(const double & x) const
+double AsymmetricLaplaceDistribution::logf(const double & x) const
 {
     return logpdfLaplace(x - m);
 }
 
-double LaplaceRand::F(const double & x) const
+double AsymmetricLaplaceDistribution::F(const double & x) const
 {
     return cdfLaplace(x - m);
 }
 
-double LaplaceRand::S(const double & x) const
+double AsymmetricLaplaceDistribution::S(const double & x) const
 {
     return cdfLaplaceCompl(x - m);
 }
 
-double LaplaceRand::Variate() const
+double AsymmetricLaplaceDistribution::Variate() const
 {
-    return (kappa == 1) ? m + gamma * LaplaceRand::StandardVariate() : LaplaceRand::Variate(m, gamma, kappa);
+    double X = (kappa == 1) ? LaplaceRand::StandardVariate() : AsymmetricLaplaceRand::StandardVariate(kappa);
+    return m + gamma * X;
 }
 
-double LaplaceRand::StandardVariate()
-{
-    double W = ExponentialRand::StandardVariate();
-    return BernoulliRand::StandardVariate() ? W : -W;
-}
-
-double LaplaceRand::Variate(double location, double scale, double asymmetry)
-{
-    // TODO: set sanity check here or make this function private
-    double x = ExponentialRand::StandardVariate() / asymmetry;
-    double y = ExponentialRand::StandardVariate() * asymmetry;;
-    return location + scale * (x - y);
-}
-
-void LaplaceRand::Sample(std::vector<double> &outputData) const
+void AsymmetricLaplaceDistribution::Sample(std::vector<double> &outputData) const
 {
     if (kappa == 1) {
         for (double & var : outputData)
@@ -78,11 +53,11 @@ void LaplaceRand::Sample(std::vector<double> &outputData) const
     }
     else {
         for (double & var : outputData)
-            var = LaplaceRand::Variate(m, gamma, kappa);
+            var = m + gamma * AsymmetricLaplaceRand::StandardVariate(kappa);
     }
 }
 
-std::complex<double> LaplaceRand::CFImpl(double t) const
+std::complex<double> AsymmetricLaplaceDistribution::CFImpl(double t) const
 {
     double bt = gamma * t;
     double btSq = bt * bt;
@@ -92,7 +67,7 @@ std::complex<double> LaplaceRand::CFImpl(double t) const
     return x * y * z / denominator;
 }
 
-double LaplaceRand::quantileImpl(double p) const
+double AsymmetricLaplaceDistribution::quantileImpl(double p) const
 {
     if (p < kappaSq / (1 + kappaSq)) {
         double q = p * (1.0 / kappaSq + 1.0);
@@ -108,7 +83,7 @@ double LaplaceRand::quantileImpl(double p) const
     }
 }
 
-double LaplaceRand::quantileImpl1m(double p) const
+double AsymmetricLaplaceDistribution::quantileImpl1m(double p) const
 {
     if (p > 1.0 / (1 + kappaSq)) {
         double q = (1.0 - p) * (1.0 / kappaSq + 1.0);
@@ -124,13 +99,13 @@ double LaplaceRand::quantileImpl1m(double p) const
     }
 }
 
-double LaplaceRand::Entropy() const
+double AsymmetricLaplaceDistribution::Entropy() const
 {
     double y = kappaInv + kappa;
     return std::log1p(gamma * y);
 }
 
-void LaplaceRand::FitLocation(const std::vector<double> &sample)
+void AsymmetricLaplaceDistribution::FitShift(const std::vector<double> &sample)
 {
     /// Calculate median (considering asymmetry)
     /// we use root-finding algorithm for median search
@@ -156,7 +131,7 @@ void LaplaceRand::FitLocation(const std::vector<double> &sample)
     SetShift(median);
 }
 
-void LaplaceRand::FitScale(const std::vector<double> &sample)
+void AsymmetricLaplaceDistribution::FitScale(const std::vector<double> &sample)
 {
     double deviation = 0.0;
     for (const double & x : sample) {
@@ -170,7 +145,33 @@ void LaplaceRand::FitScale(const std::vector<double> &sample)
     SetScale(deviation);
 }
 
-void LaplaceRand::FitAsymmetry(const std::vector<double> &sample)
+void AsymmetricLaplaceDistribution::FitShiftAndScale(const std::vector<double> &sample)
+{
+    FitShift(sample);
+    FitScale(sample);
+}
+
+std::string AsymmetricLaplaceRand::Name() const
+{
+    return "Asymmetric-Laplace(" + toStringWithPrecision(GetShift()) + ", "
+                                 + toStringWithPrecision(GetScale()) + ", "
+            + toStringWithPrecision(GetAsymmetry()) + ")";
+}
+
+void AsymmetricLaplaceRand::SetAsymmetry(double asymmetry)
+{
+    ShiftedGeometricStableDistribution::SetAsymmetry(asymmetry);
+    ChangeLocation();
+}
+
+double AsymmetricLaplaceRand::StandardVariate(double asymmetry)
+{
+    double x = ExponentialRand::StandardVariate() / asymmetry;
+    double y = ExponentialRand::StandardVariate() * asymmetry;
+    return x - y;
+}
+
+void AsymmetricLaplaceRand::FitAsymmetry(const std::vector<double> &sample)
 {
     double xPlus = 0.0, xMinus = 0.0;
     for (const double & x : sample) {
@@ -211,19 +212,13 @@ void LaplaceRand::FitAsymmetry(const std::vector<double> &sample)
     SetAsymmetry(root);
 }
 
-void LaplaceRand::FitLocationAndScale(const std::vector<double> &sample)
+void AsymmetricLaplaceRand::FitShiftAndAsymmetry(const std::vector<double> &sample)
 {
-    FitLocation(sample);
-    FitScale(sample);
-}
-
-void LaplaceRand::FitLocationAndAsymmetry(const std::vector<double> &sample)
-{
-    FitLocation(sample);
+    FitShift(sample);
     FitAsymmetry(sample);
 }
 
-void LaplaceRand::FitScaleAndAsymmetry(const std::vector<double> &sample)
+void AsymmetricLaplaceRand::FitScaleAndAsymmetry(const std::vector<double> &sample)
 {
     int n = sample.size();
     double xPlus = 0.0, xMinus = 0.0;
@@ -253,8 +248,21 @@ void LaplaceRand::FitScaleAndAsymmetry(const std::vector<double> &sample)
     SetAsymmetry(std::pow(xMinus / xPlus, 0.25));
 }
 
-void LaplaceRand::Fit(const std::vector<double> &sample)
+void AsymmetricLaplaceRand::Fit(const std::vector<double> &sample)
 {
-    FitLocation(sample);
+    FitShift(sample);
     FitScaleAndAsymmetry(sample);
+}
+
+
+std::string LaplaceRand::Name() const
+{
+    return "Laplace(" + toStringWithPrecision(GetShift()) + ", "
+                      + toStringWithPrecision(GetScale()) + ")";
+}
+
+double LaplaceRand::StandardVariate()
+{
+    double W = ExponentialRand::StandardVariate();
+    return BernoulliRand::StandardVariate() ? W : -W;
 }

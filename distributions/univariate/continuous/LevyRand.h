@@ -13,7 +13,7 @@
  *
  * Related distributions: <BR>
  * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ) <BR>
- * X ~ S(0.5, 1, σ, μ) <BR>
+ * X ~ Stable(0.5, 1, σ, μ) <BR>
  * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution

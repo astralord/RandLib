@@ -14,7 +14,7 @@
  * Notation: X ~ N(μ, σ^2)
  *
  * Related distributions: <BR>
- * X ~ S(2, 0, σ/√2, μ)
+ * X ~ Stable(2, 0, σ/√2, μ)
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 {

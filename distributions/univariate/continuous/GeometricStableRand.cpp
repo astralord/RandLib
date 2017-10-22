@@ -337,8 +337,10 @@ double ShiftedGeometricStableDistribution::variateByCauchy() const
 
 double ShiftedGeometricStableDistribution::Variate() const
 {
-    if (alpha == 2)
-        return (mu == 0) ? gamma * LaplaceRand::StandardVariate() : LaplaceRand::Variate(0, gamma, kappa);
+    if (alpha == 2) {
+        double X = (kappa == 1.0) ? LaplaceRand::StandardVariate() : AsymmetricLaplaceRand::StandardVariate(kappa);
+        return gamma * X;
+    }
     if (alpha == 0.5) {
         if (beta == 1)
             return variateByLevy(true);
@@ -353,13 +355,13 @@ double ShiftedGeometricStableDistribution::Variate() const
 void ShiftedGeometricStableDistribution::Sample(std::vector<double> &outputData) const
 {
     if (alpha == 2) {
-        if (mu == 0) {
+        if (kappa == 1.0) {
             for (double &var : outputData)
                 var = gamma * LaplaceRand::StandardVariate();
         }
         else {
             for (double &var : outputData)
-                var = LaplaceRand::Variate(0, gamma, kappa);
+                var = gamma * AsymmetricLaplaceRand::StandardVariate(kappa);
         }
     }
     else if (alpha == 0.5 && std::fabs(beta) == 1) {
@@ -400,16 +402,18 @@ double ShiftedGeometricStableDistribution::Mean() const
 double ShiftedGeometricStableDistribution::Variance() const
 {
     if (alpha == 2) {
-        double y = gamma * gamma / kappaSq;
-        return (1.0 + kappaSq * kappaSq) * y;
+        return mu * mu + 2 * gamma * gamma;
     }
     return INFINITY;
 }
 
 std::complex<double> ShiftedGeometricStableDistribution::CFImpl(double t) const
 {
-    // TODO: elaborate LAPLACE CASE
-    double x = (alpha == 1) ? beta * M_2_PI * std::log(t) : beta * std::tan(M_PI_2 * alpha);
+    double x = 0;
+    if (alpha != 2 && beta != 0) {
+        x = (alpha == 1) ? M_2_PI * std::log(t) : std::tan(M_PI_2 * alpha);
+        x *= beta;
+    }
     double re = std::pow(gamma * t, alpha);
     std::complex<double> psi = std::complex<double>(re, re * x - mu * t);
     return 1.0 / (1.0 + psi);
@@ -449,9 +453,9 @@ double ShiftedGeometricStableDistribution::ExcessKurtosis() const
 {
     if (alpha == 2)
     {
-        if (kappa == 1)
-            return 3.0;
-        return NAN; // TODO!
+        double denominator = kappaSq + kappaInv * kappaInv;
+        denominator *= denominator;
+        return 6.0 - 12.0 / denominator;
     }
     return NAN;
 }
