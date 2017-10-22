@@ -11,7 +11,7 @@
  * Notation X ~ Log-Normal(μ, σ)
  *
  * Related distributions: <BR>
- * log(X) ~ Normal(μ, σ)
+ * ln(X) ~ Normal(μ, σ)
  */
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 {

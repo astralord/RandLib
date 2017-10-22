@@ -58,19 +58,22 @@ public:
 
     /**
      * @fn FitMinimum
-     * fit minimum with maximum-likelihood estimator
+     * fit minimum with maximum-likelihood estimator if unbiased parameter is false,
+     * otherwise fit minimum using UMVU estimator
      * @param sample
      */
     void FitMinimum(const std::vector<double> &sample, bool unbiased = false);
     /**
      * @fn FitMaximum
-     * fit maximum with maximum-likelihood estimator
+     * fit maximum with maximum-likelihood estimator if unbiased parameter is false,
+     * otherwise fit maximum using UMVU estimator
      * @param sample
      */
     void FitMaximum(const std::vector<double> &sample, bool unbiased = false);
     /**
      * @fn Fit
-     * fit support with maximum-likelihood estimator
+     * fit support with maximum-likelihood estimator if unbiased parameter is false,
+     * otherwise fit support using UMVU estimator
      * @param sample
      */
     void Fit(const std::vector<double> &sample, bool unbiased = false);

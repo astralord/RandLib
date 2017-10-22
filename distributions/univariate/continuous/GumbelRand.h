@@ -8,6 +8,9 @@
  * Gumbel distribution
  *
  * Notation: X ~ Gumbel(μ, β)
+ *
+ * Related distributions: <BR>
+ * exp(-(X - μ) / β) ~ Exp(1)
  */
 class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {

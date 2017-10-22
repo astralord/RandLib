@@ -15,7 +15,7 @@
  * Related distributions: <BR>
  * σX ~ Γ(α, σβ) <BR>
  * If X ~ Γ(1, β), then X ~ Exp(β) <BR>
- * If X ~ Γ(0.5 * n, 0.5), then X ~ Chi^2(n) <BR>
+ * If X ~ Γ(0.5 * n, 0.5), then X ~ χ^2(n) <BR>
  * If X ~ Γ(k, β) for integer k, then X ~ Erlang(k, β)
  */
 class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution
@@ -97,18 +97,15 @@ public:
     double logS(const double & x) const;
     
 private:
+
     enum GENERATOR_ID {
-        /// Erlang distribution for α = 1, 2, 3
-        INTEGER_SHAPE,
-        /// α = 1.5
-        ONE_AND_A_HALF_SHAPE,
-        /// α < 0.34
-        SMALL_SHAPE,
-        /// 1 < α < 1.2
-        FISHMAN,
-        /// 0.34 < α < 1 or α >= 1.2
-        MARSAGLIA_TSANG
+        INTEGER_SHAPE, ///< Erlang distribution for α = 1, 2, 3
+        ONE_AND_A_HALF_SHAPE, ///< α = 1.5
+        SMALL_SHAPE, ///< α < 0.34
+        FISHMAN, ///< 1 < α < 1.2
+        MARSAGLIA_TSANG ///< 0.34 < α < 1 or α >= 1.2
     };
+
     /**
      * @fn getIdOfUsedGenerator
      * @param shape α
@@ -299,7 +296,7 @@ public:
  * @brief The ChiSquaredRand class <BR>
  * Chi-squared distribution
  *
- * Notation: X ~ Chi^2(n)
+ * Notation: X ~ χ^2(n)
  *
  * Related distributions: <BR>
  * X ~ Γ(0.5 * n, 0.5)

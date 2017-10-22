@@ -11,7 +11,7 @@
  *
  * Notation: X ~ EMG(μ, σ, β)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X = Y + Z, where Y ~ Normal(μ, σ) and Z ~ Exp(β)
  */
 class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution

@@ -37,6 +37,9 @@ public:
     int Mode() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
+    double Moment(int n) const;
+    double ThirdMoment() const override { return Moment(3); }
+    double FourthMoment() const override { return Moment(4); }
 
     inline double GetInverseZetaFunction() const { return zetaSInv; }
 };

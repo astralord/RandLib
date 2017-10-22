@@ -35,9 +35,14 @@ int DiscreteDistribution::Mode() const
 
 int DiscreteDistribution::quantileImpl(double p) const
 {
-    // TODO: make sample quantile as starting point
-    double mean = Mean();
-    int down = static_cast<int>(std::floor(mean)), up = down + 1;
+    /// We use quantile from sample as an initial guess
+    static constexpr int SAMPLE_SIZE = 128;
+    static std::vector<int> sample(SAMPLE_SIZE);
+    this->Sample(sample);
+    int index = p * SAMPLE_SIZE;
+    std::nth_element(sample.begin(), sample.begin() + index, sample.end());
+    int guess = sample[index];
+    int down = static_cast<int>(std::floor(guess)), up = down + 1;
     double fu = F(up), fd = F(down);
     /// go up
     while (fu < p) {
@@ -56,8 +61,14 @@ int DiscreteDistribution::quantileImpl(double p) const
 
 int DiscreteDistribution::quantileImpl1m(double p) const
 {
-    double mean = Mean();
-    int down = static_cast<int>(std::floor(mean)), up = down + 1;
+    /// We use quantile from sample as an initial guess
+    static constexpr int SAMPLE_SIZE = 128;
+    static std::vector<int> sample(SAMPLE_SIZE);
+    this->Sample(sample);
+    int index = p * SAMPLE_SIZE;
+    std::nth_element(sample.begin(), sample.begin() + index, sample.end(), std::greater<>());
+    int guess = sample[index];
+    int down = static_cast<int>(std::floor(guess)), up = down + 1;
     double su = S(up), sd = S(down);
     /// go up
     while (su > p) {
@@ -131,16 +142,6 @@ double DiscreteDistribution::LogLikelihoodFunction(const std::vector<int> &sampl
 
 bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, int lowerBoundary, int upperBoundary, size_t numberOfEstimatedParameters) const
 {
-    /// We wrote chi-squared test only for discrete distribution,
-    /// as this is much more complicated for continuous one.
-    /// The problem is ambiguity of grouping sample into intervals.
-    /// In the case when parameters are estimated by maximum-likelihood
-    /// estimator, using original observations, statistics might not
-    /// follow asymptotic chi-square distribution and that leads to
-    /// serious underestimate of the error of the first kind.
-    /// For more details look: "The use of MLE in chi-square tests for goodness of fit"
-    /// by Herman Chernoff and E.L. Lehmann
-
     size_t n = orderStatistic.size(), i = 0, k = 0;
     double nInv = 1.0 / n, sum = 0.0;
 
@@ -159,9 +160,9 @@ bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderSt
     /// Lower interval
     int x = orderStatistic[0];
     if (lowerBoundary > this->MinValue()) {
-        // TODO: use binary search here
-        while (i < n && x <= lowerBoundary)
-            x = orderStatistic[++i];
+        auto upIt = std::upper_bound(orderStatistic.begin(), orderStatistic.end(), lowerBoundary);
+        i += upIt - orderStatistic.begin();
+        x = orderStatistic[i];
         double prob = nInv * i, expectedProb = this->F(lowerBoundary);
         double addon = prob - expectedProb;
         addon *= addon;
@@ -205,7 +206,5 @@ bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderSt
 
 bool DiscreteDistribution::PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, size_t numberOfEstimatedParameters) const
 {
-    /// In this function user won't set upper and lower intervals for tails.
-    /// However it might be useful to group rare events for chi-squared test to give better results
     return PearsonChiSquaredTest(orderStatistic, alpha, this->MinValue(), this->MaxValue(), numberOfEstimatedParameters);
 }

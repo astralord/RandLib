@@ -9,6 +9,9 @@
  * Logistic distribution
  *
  * Notation: X ~ Logistic(μ, s)
+ *
+ * Related distributions: <BR>
+ * 1 / (exp((X - μ) / s) + 1) ~ U(0, 1)
  */
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {

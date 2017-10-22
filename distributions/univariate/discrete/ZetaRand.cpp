@@ -91,6 +91,19 @@ double ZetaRand::ExcessKurtosis() const
 {
     if (s <= 5)
         return INFINITY;
-    return DiscreteDistribution::ExcessKurtosis(); // TODO: implement
+    double mean = Mean();
+    double secondMoment = SecondMoment();
+    double thirdMoment = ThirdMoment();
+    double fourthMoment = FourthMoment();
+    double meanSq = mean * mean;
+    double variance = secondMoment - meanSq;
+    double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
+    double denominator = variance * variance;
+    return numerator / denominator - 3.0;
+}
+
+double ZetaRand::Moment(int n) const
+{
+    return (s > n + 1) ? zetaSInv * RandMath::zetaRiemann(s - n) : INFINITY;
 }
 

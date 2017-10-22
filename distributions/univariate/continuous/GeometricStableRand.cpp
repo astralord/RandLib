@@ -137,7 +137,7 @@ double ShiftedGeometricStableDistribution::pdfByLevy(double x) const
         double h1 = 1 - h;
         double r = x / (mu * c);
         if (a < 0 && c < 0)
-            return -2 / (gamma * h * h1) * std::exp(r * (h0 - c));
+            return -2.0 / (gamma * h * h1) * std::exp(r * (h0 - c));
         double K = h1 - c;
         K = std::exp(r * K);
         K /= 2 * gamma * c * h;

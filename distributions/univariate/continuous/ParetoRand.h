@@ -8,6 +8,9 @@
  * Pareto distribution
  *
  * Notation: X ~ Pareto(α, σ)
+ *
+ * Related distributions: <BR>
+ * ln(X / σ) ~ Exp(α)
  */
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {

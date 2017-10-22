@@ -14,6 +14,7 @@
  *
  * Related distributions: <BR>
  * If X ~ NB(1, p), then X ~ Geometric(p)
+ * If Y ~ Γ(r, p / (1 - p), then Po(Y) ~ NB(r, p)
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
