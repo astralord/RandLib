@@ -3,12 +3,6 @@
 #include "UniformRand.h"
 #include "ExponentialRand.h"
 
-BetaDistribution::BetaDistribution(double shape1, double shape2)
-{
-    SetShapes(shape1, shape2);
-    SetSupport(0, 1);
-}
-
 BetaDistribution::BetaDistribution(double shape1, double shape2, double minValue, double maxValue)
 {
     SetShapes(shape1, shape2);
@@ -467,7 +461,7 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
 {
     /// if we don't have singularity points, we can use direct integration
     if (alpha >= 1 && beta >= 1)
-        return UnivariateProbabilityDistribution::CFImpl(t);
+        return UnivariateDistribution::CFImpl(t);
 
     double z = bma * t;
     double sinZ = std::sin(z);
@@ -517,7 +511,7 @@ void BetaRand::FitAlphaMM(const std::vector<double> &sample)
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    double mean = sampleMean(sample);
+    double mean = GetSampleMean(sample);
     double shape = mean - a;
     shape /= b - mean;
     shape *= beta;
@@ -530,7 +524,7 @@ void BetaRand::FitBetaMM(const std::vector<double> &sample)
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    double mean = sampleMean(sample);
+    double mean = GetSampleMean(sample);
     double shape = b - mean;
     shape /= mean - a;
     shape *= alpha;

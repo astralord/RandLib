@@ -81,7 +81,7 @@ double UniformDiscreteRand::ExcessKurtosis() const
     --kurt;
     kurt = 2.0 / kurt;
     ++kurt;
-    return 1.2 * kurt;
+    return -1.2 * kurt;
 }
 
 std::complex<double> UniformDiscreteRand::CFImpl(double t) const
@@ -100,7 +100,7 @@ double UniformDiscreteRand::Entropy() const
     return logN;
 }
 
-double UniformDiscreteRand::Likelihood(const std::vector<int> &sample) const
+double UniformDiscreteRand::LikelihoodFunction(const std::vector<int> &sample) const
 {
     for (const int & var : sample) {
         if (var < a || var > b)
@@ -109,7 +109,7 @@ double UniformDiscreteRand::Likelihood(const std::vector<int> &sample) const
     return std::pow(n, -sample.size());
 }
 
-double UniformDiscreteRand::LogLikelihood(const std::vector<int> &sample) const
+double UniformDiscreteRand::LogLikelihoodFunction(const std::vector<int> &sample) const
 {
     for (const int & var : sample) {
         if (var < a || var > b)

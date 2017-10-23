@@ -28,6 +28,11 @@ void GammaDistribution::SetParameters(double shape, double rate)
     }
 }
 
+void GammaDistribution::SetShape(double shape)
+{
+    SetParameters(shape, beta);
+}
+
 double GammaDistribution::f(const double & x) const
 {
     if (x < 0.0)
@@ -215,7 +220,7 @@ double GammaDistribution::StandardVariate(double shape)
 
 double GammaDistribution::Variate(double shape, double rate)
 {
-    return StandardVariate(shape) / rate;
+    return (shape <= 0.0 || rate <= 0.0) ? NAN : StandardVariate(shape) / rate;
 }
 
 double GammaDistribution::Variate() const
@@ -517,22 +522,14 @@ void FreeScaleGammaDistribution::SetScale(double scale)
     SetRate(1.0 / scale);
 }
 
-void FreeScaleGammaDistribution::FitRateUMVU(const std::vector<double> &sample)
+void FreeScaleGammaDistribution::FitRate(const std::vector<double> &sample, bool unbiased)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double mean = sampleMean(sample);
-    double coef = alpha - 1.0 / sample.size();
+    double mean = GetSampleMean(sample);
+    double coef = alpha - (unbiased ? 1.0 / sample.size() : 0.0);
     SetParameters(alpha, coef / mean);
-}
-
-void FreeScaleGammaDistribution::FitRateMLE(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetParameters(alpha, alpha / sampleMean(sample));
 }
 
 GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
@@ -543,7 +540,7 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();
     double newAlpha = alpha * sample.size() + alpha0;
-    double newBeta = sampleSum(sample) + beta0;
+    double newBeta = GetSampleSum(sample) + beta0;
     GammaRand posteriorDistribution(newAlpha, newBeta);
     SetParameters(alpha, posteriorDistribution.Mean());
     return posteriorDistribution;
@@ -554,30 +551,7 @@ std::string GammaRand::Name() const
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
-void GammaRand::FitShapeMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetParameters(sampleMean(sample) * beta, beta);
-}
-
-void GammaRand::FitShapeAndRateMM(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    size_t n = sample.size();
-    if (n <= 1)
-        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-    double mu = sampleMean(sample);
-    double var = sampleVariance(sample, mu);
-    double shape = mu * mu / var;
-    double scale = var / mu;
-    SetParameters(shape, scale);
-}
-
-void GammaRand::FitShapeMLE(const std::vector<double> &sample)
+void GammaRand::FitShape(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -590,7 +564,7 @@ void GammaRand::FitShapeMLE(const std::vector<double> &sample)
     logAverage /= sample.size();
 
     /// Calculate initial guess via method of moments
-    double shape = sampleMean(sample) * beta;
+    double shape = GetSampleMean(sample) * beta;
     /// Run root-finding procedure
     double s = logAverage + logBeta;
     if (!RandMath::findRoot([s] (double x)
@@ -603,14 +577,14 @@ void GammaRand::FitShapeMLE(const std::vector<double> &sample)
     SetParameters(shape, beta);
 }
 
-void GammaRand::FitShapeAndRateMLE(const std::vector<double> &sample)
+void GammaRand::Fit(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate average and log-average
-    double average = sampleMean(sample);
+    double average = GetSampleMean(sample);
     long double logAverage = 0.0L;
     for (double var : sample)
         logAverage += std::log(var);
@@ -654,4 +628,9 @@ std::string ErlangRand::Name() const
 void ErlangRand::SetParameters(int shape, double rate)
 {
     GammaDistribution::SetParameters(std::max(shape, 1), rate);
+}
+
+void ErlangRand::SetShape(int shape)
+{
+    SetParameters(shape, beta);
 }

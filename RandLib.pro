@@ -47,7 +47,7 @@ SOURCES += \
     distributions/univariate/discrete/HyperGeometricRand.cpp \
     distributions/univariate/discrete/ZipfRand.cpp \
     distributions/univariate/discrete/YuleRand.cpp \
-    distributions/univariate/continuous/VonMisesRand.cpp \
+    distributions/univariate/continuous/circular/VonMisesRand.cpp \
     distributions/univariate/continuous/SechRand.cpp \
     distributions/univariate/continuous/WignerSemicircleRand.cpp \
     distributions/univariate/continuous/GumbelRand.cpp \
@@ -61,7 +61,6 @@ SOURCES += \
     distributions/univariate/continuous/PlanckRand.cpp \
     distributions/univariate/continuous/IrwinHallRand.cpp \
     distributions/univariate/continuous/InverseGammaRand.cpp \
-    distributions/univariate/UnivariateProbabilityDistribution.cpp \
     distributions/bivariate/NormalInverseGammaRand.cpp \
     distributions/univariate/discrete/BetaBinomialRand.cpp \
     distributions/bivariate/BivariateNormalRand.cpp \
@@ -79,7 +78,10 @@ SOURCES += \
     distributions/bivariate/ContinuousBivariateDistribution.cpp \
     distributions/bivariate/DiscreteBivariateDistribution.cpp \
     distributions/bivariate/BivariateDistribution.cpp \
-    distributions/bivariate/TrinomialRand.cpp
+    distributions/bivariate/TrinomialRand.cpp \
+    distributions/univariate/continuous/circular/CircularDistribution.cpp \
+    distributions/univariate/UnivariateDistribution.cpp \
+    distributions/univariate/continuous/circular/WrappedExponentialRand.cpp
 
 HEADERS +=\
     distributions/ProbabilityDistribution.h \
@@ -116,7 +118,7 @@ HEADERS +=\
     distributions/univariate/discrete/HyperGeometricRand.h \
     distributions/univariate/discrete/ZipfRand.h \
     distributions/univariate/discrete/YuleRand.h \
-    distributions/univariate/continuous/VonMisesRand.h \
+    distributions/univariate/continuous/circular/VonMisesRand.h \
     math/Constants.h \
     distributions/univariate/continuous/SechRand.h \
     distributions/univariate/continuous/WignerSemicircleRand.h \
@@ -131,7 +133,6 @@ HEADERS +=\
     distributions/univariate/continuous/PlanckRand.h \
     distributions/univariate/continuous/IrwinHallRand.h \
     distributions/univariate/continuous/InverseGammaRand.h \
-    distributions/univariate/UnivariateProbabilityDistribution.h \
     distributions/bivariate/NormalInverseGammaRand.h \
     distributions/univariate/discrete/BetaBinomialRand.h \
     distributions/bivariate/BivariateNormalRand.h \
@@ -152,7 +153,10 @@ HEADERS +=\
     distributions/bivariate/ContinuousBivariateDistribution.h \
     distributions/bivariate/DiscreteBivariateDistribution.h \
     distributions/bivariate/BivariateDistribution.h \
-    distributions/bivariate/TrinomialRand.h
+    distributions/bivariate/TrinomialRand.h \
+    distributions/univariate/continuous/circular/CircularDistribution.h \
+    distributions/univariate/UnivariateDistribution.h \
+    distributions/univariate/continuous/circular/WrappedExponentialRand.h
 
 unix {
     target.path = /usr/lib

@@ -1,20 +1,14 @@
 #include "VonMisesRand.h"
-#include "UniformRand.h"
+#include "../UniformRand.h"
 
-VonMisesRand::VonMisesRand(double location, double concentration)
+VonMisesRand::VonMisesRand(double location, double concentration) : CircularDistribution(location)
 {
-    SetLocation(location);
     SetConcentration(concentration);
 }
 
 std::string VonMisesRand::Name() const
 {
     return "von Mises(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetConcentration()) + ")";
-}
-
-void VonMisesRand::SetLocation(double location)
-{
-    mu = location;
 }
 
 void VonMisesRand::SetConcentration(double concentration)
@@ -82,36 +76,36 @@ double VonMisesRand::ccdfErfc(double x) const
 
 double VonMisesRand::f(const double & x) const
 {
-    return (x < mu - M_PI || x > mu + M_PI) ? 0.0 : std::exp(logf(x));
+    return (x < loc - M_PI || x > loc + M_PI) ? 0.0 : std::exp(logf(x));
 }
 
 double VonMisesRand::logf(const double & x) const
 {
-    if (x < mu - M_PI || x > mu + M_PI)
+    if (x < loc - M_PI || x > loc + M_PI)
         return -INFINITY;
-    double y = k * std::cos(x - mu) - logI0k;
+    double y = k * std::cos(x - loc) - logI0k;
     y -= M_LNPI + M_LN2;
     return y;
 }
 
 double VonMisesRand::F(const double & x) const
 {
-    if (x <= mu - M_PI)
+    if (x <= loc - M_PI)
         return 0.0;
-    if (x >= mu + M_PI)
+    if (x >= loc + M_PI)
         return 1.0;
-    double xAdj = x - mu;
+    double xAdj = x - loc;
     xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
     return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
 }
 
 double VonMisesRand::S(const double &x) const
 {
-    if (x <= mu - M_PI)
+    if (x <= loc - M_PI)
         return 1.0;
-    if (x >= mu + M_PI)
+    if (x >= loc + M_PI)
         return 0.0;
-    double xAdj = x - mu;
+    double xAdj = x - loc;
     xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
     return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
 }
@@ -126,46 +120,38 @@ double VonMisesRand::Variate() const
         double theta = s * V / U;
         if ((std::fabs(theta) <= M_PI) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
-            return mu + theta;
+            return loc + theta;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 
-double VonMisesRand::Mean() const
+double VonMisesRand::CircularMean() const
 {
-    return mu;
+    return loc;
 }
 
-double VonMisesRand::Variance() const
+double VonMisesRand::CircularVariance() const
 {
-    return 2 * RandMath::integral([this] (double t)
-    {
-        return t * t * VonMisesRand::f(t + mu);
-    },
-    0, M_PI);
+    double var = RandMath::logModifiedBesselFirstKind(k, 1);
+    var -= logI0k;
+    return -std::expm1(var);
 }
 
 std::complex<double> VonMisesRand::CFImpl(double t) const
 {
-    double tmu = t * mu;
-    double cosTmu = std::cos(tmu), sinTmu = std::sin(tmu);
-    std::complex<double> y(cosTmu, sinTmu);
+    double tloc = t * loc;
+    double cosTloc = std::cos(tloc), sinTloc = std::sin(tloc);
+    std::complex<double> y(cosTloc, sinTloc);
     double z = RandMath::logModifiedBesselFirstKind(k, t) - logI0k;
     return y * std::exp(z);
 }
 
 double VonMisesRand::Median() const
 {
-    return mu;
+    return loc;
 }
 
 double VonMisesRand::Mode() const
 {
-    return mu;
+    return loc;
 }
-
-double VonMisesRand::Skewness() const
-{
-    return 0.0;
-}
-

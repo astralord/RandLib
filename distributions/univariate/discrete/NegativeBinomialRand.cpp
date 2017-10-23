@@ -217,15 +217,6 @@ double NegativeBinomialDistribution<T>::ExcessKurtosis() const
 }
 
 template< typename T >
-void NegativeBinomialDistribution<T>::FitProbabilityMM(const std::vector<int> &sample)
-{
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    double mean = sampleMean(sample);
-    SetParameters(r, r / (r + mean));
-}
-
-template< typename T >
 BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
@@ -233,7 +224,7 @@ BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
-    BetaRand posteriorDistribution(alpha + r * n, beta + sampleSum(sample));
+    BetaRand posteriorDistribution(alpha + r * n, beta + GetSampleSum(sample));
     SetParameters(r, posteriorDistribution.Mean());
     return posteriorDistribution;
 }
@@ -245,41 +236,18 @@ std::string NegativeBinomialRand<T>::Name() const
     return "Negative Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
-template< >
-void NegativeBinomialRand<double>::FitNumberMM(const std::vector<int> &sample)
-{
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    double mean = sampleMean(sample);
-    SetParameters(mean * p / q, p);
-}
-
 template< typename T >
 constexpr char NegativeBinomialRand<T>::TOO_SMALL_VARIANCE[];
 
 template< >
-void NegativeBinomialRand<double>::FitNumberAndProbabilityMM(const std::vector<int> &sample)
-{
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
-    size_t n = sample.size();
-    if (n <= 1)
-        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-    double mean = sampleMean(sample);
-    double variance = sampleVariance(sample, mean);
-    if (variance <= mean)
-        throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
-    SetParameters(mean * mean / (variance - mean), mean / variance);
-}
-
-template< >
-void NegativeBinomialRand<double>::FitNumberAndProbabilityMLE(const std::vector<int> &sample)
+void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
 {
     /// Check positivity of sample
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
-    double mean = sampleMean(sample), variance = sampleVariance(sample, mean);
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    double mean = stats.first, variance = stats.second;
     /// Method can't be applied in the case of too small variance
     if (variance <= mean)
         throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));

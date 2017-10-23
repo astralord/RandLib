@@ -8,6 +8,9 @@
  * Gumbel distribution
  *
  * Notation: X ~ Gumbel(μ, β)
+ *
+ * Related distributions: <BR>
+ * exp(-(X - μ) / β) ~ Exp(1)
  */
 class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
 {
@@ -32,7 +35,7 @@ public:
     double F(const double & x) const override;
     double S(const double & x) const override;
     double Variate() const override;
-    static double Variate(double location, double scale);
+    static double StandardVariate();
 
     double Mean() const override;
     double Variance() const override;

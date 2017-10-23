@@ -39,11 +39,6 @@ double LevyRand::Variate() const
     return mu + rv;
 }
 
-double LevyRand::Variate(double location, double scale)
-{
-    return location + scale * StandardVariate();
-}
-
 double LevyRand::StandardVariate()
 {
     double rv = NormalRand::StandardVariate();
@@ -65,7 +60,7 @@ std::complex<double> LevyRand::CFImpl(double t) const
     return cfLevy(t);
 }
 
-void LevyRand::FitScaleMLE(const std::vector<double> &sample)
+void LevyRand::FitScale(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNotLessThan(mu, sample))

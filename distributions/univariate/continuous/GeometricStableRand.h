@@ -25,7 +25,7 @@ protected:
     double kappa = 1; ///< asymmetry coefficient κ
     double kappaInv = 1; ///< 1 / κ
     double kappaSq = 1; ///< κ^2
-    double log1pKappaSq = M_LN2; ///< log(1 + κ * κ)
+    double log1pKappaSq = M_LN2; ///< log(1 + κ^2)
     double pdfCoef = M_LN2; ///< log(γ * (κ + 1 / κ))
     double cdfCoef = -M_LN2; ///< 2 * log(κ) - log(1 + κ^2)
 
@@ -88,9 +88,9 @@ private:
  * @brief The GeometricStableRand class <BR>
  * Geometric-Stable distribution
  *
- * Notation: X ~ GS(α, β, γ, μ)
+ * Notation: X ~ Geometric-Stable(α, β, γ, μ)
  *
- * If X ~ Laplace(m, γ, κ), then X - m ~ GS(2, β, γ, (1/κ - κ) * γ) with arbitrary β
+ * If X ~ Laplace(m, γ, κ), then X - m ~ Geometric-Stable(2, β, γ, (1/κ - κ) * γ) with arbitrary β
  */
 class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution
 {

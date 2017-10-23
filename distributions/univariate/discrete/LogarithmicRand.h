@@ -29,6 +29,12 @@ public:
     double P(const int & k) const override;
     double logP(const int & k) const override;
 private:
+    /**
+     * @brief betaFun
+     * @param a
+     * @return B(p, a, 0), where B(x, a, b) denotes incomplete beta function,
+     * using series expansion (converges for x < 1)
+     */
     double betaFun(int a) const;
 public:
     double F(const int & k) const override;

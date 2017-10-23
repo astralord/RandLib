@@ -8,6 +8,9 @@
  * Pareto distribution
  *
  * Notation: X ~ Pareto(α, σ)
+ *
+ * Related distributions: <BR>
+ * ln(X / σ) ~ Exp(α)
  */
 class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
 {
@@ -62,10 +65,10 @@ public:
     inline double Entropy() const;
 
     /**
-     * @fn FitShapeAndScaleMLE
+     * @fn Fit
      * @param sample
      */
-    void FitShapeAndScaleMLE(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample);
 };
 
 #endif // PARETORAND_H

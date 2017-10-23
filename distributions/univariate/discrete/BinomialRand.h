@@ -11,7 +11,7 @@
  *
  * Notation: X ~ Bin(n, p)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If X ~ Bin(1, p), then X ~ Bernoulli(p) <BR>
  * X ~ Multin(n, 1 - p, p)
  */
@@ -123,18 +123,11 @@ private:
 
 public:
     /**
-     * @fn FitProbabilityMLE
+     * @fn FitProbability
      * Fit probability p with maximum-likelihood estimation
      * @param sample
      */
-    void FitProbabilityMLE(const std::vector<int> &sample);
-
-    /**
-     * @fn FitProbabilityMM
-     * Fit probability p, using method of moments
-     * @param sample
-     */
-    void FitProbabilityMM(const std::vector<int> &sample);
+    void FitProbability(const std::vector<int> &sample);
 
     /**
      * @fn FitProbabilityBayes

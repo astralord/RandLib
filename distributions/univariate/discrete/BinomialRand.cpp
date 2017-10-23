@@ -279,6 +279,14 @@ int BinomialDistribution::variateBernoulliSum(int number, double probability)
 
 int BinomialDistribution::Variate(int number, double probability)
 {
+    /// sanity check
+    if (number < 0 || probability < 0.0 || probability > 1.0)
+        return -1;
+    if (probability == 0.0)
+        return 0;
+    if (probability == 1.0)
+        return number;
+
     if (number < 10)
         return variateBernoulliSum(number, probability);
     if (probability < 0.5)
@@ -373,18 +381,13 @@ double BinomialDistribution::ExcessKurtosis() const
     return y / n;
 }
 
-void BinomialDistribution::FitProbabilityMLE(const std::vector<int> &sample)
+void BinomialDistribution::FitProbability(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
-    SetParameters(n, sampleMean(sample) / n);
-}
-
-void BinomialDistribution::FitProbabilityMM(const std::vector<int> &sample)
-{
-    FitProbabilityMLE(sample);
+    SetParameters(n, GetSampleMean(sample) / n);
 }
 
 BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
@@ -394,7 +397,7 @@ BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sampl
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();
-    double sum = sampleSum(sample);
+    double sum = GetSampleSum(sample);
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
     BetaRand posteriorDistribution(sum + alpha, N * n - sum + beta);

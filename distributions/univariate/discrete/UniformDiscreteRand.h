@@ -10,7 +10,7 @@
  *
  * Notation: X ~ U(a, b)
  *
- * P(X = k) = 1_{k \in [a, b]} / (b - a + 1)
+ * P(X = k) = 1 / (b - a + 1) for a <= k <= b
  */
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
@@ -46,8 +46,8 @@ private:
 
 public:
     double Entropy() const;
-    double Likelihood(const std::vector<int> &sample) const override;
-    double LogLikelihood(const std::vector<int> &sample) const override;
+    double LikelihoodFunction(const std::vector<int> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<int> &sample) const override;
 };
 
 #endif // UNIFORM_DISCRETE_RAND_H

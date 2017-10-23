@@ -1,13 +1,13 @@
 #ifndef CONTINUOUS_DISTRIBUTION_H
 #define CONTINUOUS_DISTRIBUTION_H
 
-#include "../UnivariateProbabilityDistribution.h"
+#include "../UnivariateDistribution.h"
 
 /**
  * @brief The ContinuousDistribution class <BR>
  * Abstract class for all continuous distributions
  */
-class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateProbabilityDistribution<double>
+class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateDistribution<double>
 {
 protected:
     ContinuousDistribution() {}
@@ -45,8 +45,8 @@ protected:
 
 public:
     double Hazard(double x) const override;
-    double Likelihood(const std::vector<double> &sample) const override;
-    double LogLikelihood(const std::vector<double> &sample) const override;
+    double LikelihoodFunction(const std::vector<double> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<double> &sample) const override;
 
     /**
      * @fn KolmogorovSmirnovTest

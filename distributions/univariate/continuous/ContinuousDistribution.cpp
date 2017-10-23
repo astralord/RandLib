@@ -43,7 +43,7 @@ double ContinuousDistribution::quantileImpl(double p) const
         return NAN;
     }
 
-    std::sort(sample.begin(), sample.end());
+    std::nth_element(sample.begin(), sample.begin() + index, sample.end());
     guess = sample[index];
 
     if (RandMath::findRoot([this, p] (double x)
@@ -91,9 +91,10 @@ double ContinuousDistribution::quantileImpl1m(double p) const
         return NAN;
     }
 
-    /// Sort in desceding order
-    std::sort(sample.begin(), sample.end(), std::greater<>());
+    /// Partially sort in desceding order
+    std::nth_element(sample.begin(), sample.begin() + index, sample.end(), std::greater<>());
     guess = sample[index];
+
     if (RandMath::findRoot([this, p] (double x)
     {
         double first = p - S(x);
@@ -202,7 +203,7 @@ double ContinuousDistribution::Hazard(double x) const
     return f(x) / S(x);
 }
 
-double ContinuousDistribution::Likelihood(const std::vector<double> &sample) const
+double ContinuousDistribution::LikelihoodFunction(const std::vector<double> &sample) const
 {
     double res = 1.0;
     for (const double & var : sample)
@@ -210,7 +211,7 @@ double ContinuousDistribution::Likelihood(const std::vector<double> &sample) con
     return res;
 }
 
-double ContinuousDistribution::LogLikelihood(const std::vector<double> &sample) const
+double ContinuousDistribution::LogLikelihoodFunction(const std::vector<double> &sample) const
 {
     double res = 0.0;
     for (const double & var : sample)

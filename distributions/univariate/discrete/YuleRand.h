@@ -11,6 +11,9 @@
  * Yule distribution
  *
  * Notation: X ~ Yule(ρ)
+ *
+ * Related distributions: <BR>
+ * If Y ~ Pareto(ρ, 1) and Z ~ Geometric(1 / Y), then Z + 1 ~ Yule(ρ)
  */
 class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
 {

@@ -15,7 +15,7 @@
  * Related distributions: <BR>
  * σX ~ Γ(α, σβ) <BR>
  * If X ~ Γ(1, β), then X ~ Exp(β) <BR>
- * If X ~ Γ(0.5 * n, 0.5), then X ~ Chi^2(n) <BR>
+ * If X ~ Γ(0.5 * n, 0.5), then X ~ χ^2(n) <BR>
  * If X ~ Γ(k, β) for integer k, then X ~ Erlang(k, β)
  */
 class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution
@@ -51,6 +51,11 @@ protected:
      * @param rate β
      */
     void SetParameters(double shape, double rate);
+    /**
+     * @brief SetShape
+     * @param shape α
+     */
+    void SetShape(double shape);
 
 public:
     /**
@@ -92,18 +97,15 @@ public:
     double logS(const double & x) const;
     
 private:
+
     enum GENERATOR_ID {
-        /// Erlang distribution for α = 1, 2, 3
-        INTEGER_SHAPE,
-        /// α = 1.5
-        ONE_AND_A_HALF_SHAPE,
-        /// α < 0.34
-        SMALL_SHAPE,
-        /// 1 < α < 1.2
-        FISHMAN,
-        /// 0.34 < α < 1 or α >= 1.2
-        MARSAGLIA_TSANG
+        INTEGER_SHAPE, ///< Erlang distribution for α = 1, 2, 3
+        ONE_AND_A_HALF_SHAPE, ///< α = 1.5
+        SMALL_SHAPE, ///< α < 0.34
+        FISHMAN, ///< 1 < α < 1.2
+        MARSAGLIA_TSANG ///< 0.34 < α < 1 or α >= 1.2
     };
+
     /**
      * @fn getIdOfUsedGenerator
      * @param shape α
@@ -235,24 +237,22 @@ public:
      * @param rate
      */
     void SetRate(double rate);
+
     /**
      * @fn SetScale
      * set scale θ = 1/β
      * @param scale
      */
     void SetScale(double scale);
+
     /**
-     * @fn FitRateUMVU
-     * set rate, returned by uniformly minimum variance unbiased estimator
+     * @fn FitRate
+     * set rate, estimated via maximum-likelihood method if unbiased = false,
+     * otherwise set rate, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
-    void FitRateUMVU(const std::vector<double> &sample);
-    /**
-     * @fn FitRateMLE
-     * set rate, estimated via maximum-likelihood method
-     * @param sample
-     */
-    void FitRateMLE(const std::vector<double> &sample);
+    void FitRate(const std::vector<double> &sample, bool unbiased = false);
+
     /**
      * @fn FitRateBayes
      * set rate, returned by bayesian estimation
@@ -274,30 +274,21 @@ public:
     std::string Name() const override;
 
     using GammaDistribution::SetParameters;
+    using GammaDistribution::SetShape;
+
     /**
-     * @fn FitShapeMM
-     * set shape, estimated via method of moments
-     * @param sample
-     */
-    void FitShapeMM(const std::vector<double> &sample);
-    /**
-     * @fn FitShapeAndRateMM
-     * set shape and rate, estimated via method of moments
-     * @param sample
-     */
-    void FitShapeAndRateMM(const std::vector<double> &sample);
-    /**
-     * @fn FitShapeMLE
+     * @fn FitShape
      * set shape, estimated via maximum-likelihood method
      * @param sample
      */
-    void FitShapeMLE(const std::vector<double> &sample);
+    void FitShape(const std::vector<double> &sample);
+
     /**
-     * @fn FitShapeAndRateMLE
+     * @fn Fit
      * set shape and rate, estimated via maximum-likelihood method
      * @param sample
      */
-    void FitShapeAndRateMLE(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample);
 };
 
 
@@ -305,15 +296,15 @@ public:
  * @brief The ChiSquaredRand class <BR>
  * Chi-squared distribution
  *
- * Notation: X ~ Chi^2(n)
+ * Notation: X ~ χ^2(n)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * X ~ Γ(0.5 * n, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {
 public:
-    explicit ChiSquaredRand(int degree) : GammaDistribution((degree < 1) ? 0.5 : 0.5 * degree, 0.5) {}
+    explicit ChiSquaredRand(size_t degree = 1) : GammaDistribution((degree < 1) ? 0.5 : 0.5 * degree, 0.5) {}
     std::string Name() const override;
     void SetDegree(int degree);
     inline int GetDegree() const { return static_cast<int>(2 * alpha); }
@@ -326,16 +317,17 @@ public:
  *
  * Notation: X ~ Erlang(k, β)
  *
- * Related distributions:
- * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β)
+ * Related distributions: <BR>
+ * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β) <BR>
  * X ~ Γ(k, β)
  */
 class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution
 {
 public:
-    ErlangRand(int shape, double rate) : FreeScaleGammaDistribution(shape, rate) {}
+    ErlangRand(int shape = 1, double rate = 1) : FreeScaleGammaDistribution(shape, rate) {}
     std::string Name() const override;
     void SetParameters(int shape, double rate);
+    void SetShape(int shape);
 };
 
 

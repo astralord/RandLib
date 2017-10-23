@@ -3,6 +3,8 @@
 
 #include "GammaRand.h"
 
+// TODO: implement CF (it can be done in terms of hypergeometric functions)
+
 /**
  * @brief The NakagamiDistribution class <BR>
  * Abstract class for Nakagami distribution
@@ -11,7 +13,7 @@
  *
  * Related distributions: <BR>
  * σX ~ Nakagami(m, wσ^2) <BR>
- * X^2 ~ Gamma(m, m / w)
+ * X^2 ~ Γ(m, m / w)
  */
 class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
 {
@@ -68,6 +70,9 @@ public:
     double Mean() const override;
     double Variance() const override;
     double Mode() const override;
+    double Skewness() const override;
+    double FourthMoment() const override;
+    double ExcessKurtosis() const override;
 
 protected:
     double quantileImpl(double p) const override;
@@ -92,12 +97,12 @@ public:
  * @brief The ChiRand class <BR>
  * Chi distribution
  *
- * Notation: X ~ Chi(k)
+ * Notation: X ~ χ(k)
  *
  * Related distributions: <BR>
  * X ~ Nakagami(k/2, k) <BR>
- * X^2 ~ Chi-Squared(k) <BR>
- * X^2 ~ Gamma(k/2, 0.5)
+ * X^2 ~ χ^2(k) <BR>
+ * X^2 ~ Γ(k/2, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiRand : public NakagamiDistribution
 {
@@ -131,7 +136,7 @@ public:
  * Notation: X ~ MB(σ)
  *
  * Related distributions: <BR>
- * X / σ ~ Chi(3) <BR>
+ * X / σ ~ χ(3) <BR>
  * X ~ Nakagami(1.5, 3σ^2)
  */
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiDistribution
@@ -175,7 +180,7 @@ public:
  * Notation: X ~ Rayleigh(σ)
  *
  * Related distributions:
- * X / σ ~ Chi(2)
+ * X / σ ~ χ(2)
  * X ~ Nakagami(1, 2σ^2)
  */
 class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiDistribution
@@ -217,17 +222,12 @@ private:
 
 public:
     /**
-     * @fn FitScaleMLE
-     * set scale via maximum-likelihood method
+     * @fn FitScale
+     * set scale via maximum-likelihood method if unbiased = false,
+     * otherwise set scale, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
-    void FitScaleMLE(const std::vector<double> &sample);
-    /**
-     * @fn FitScaleUMVU
-     * set scale, returned by uniformly minimum variance unbiased estimator
-     * @param sample
-     */
-    void FitScaleUMVU(const std::vector<double> &sample);
+    void FitScale(const std::vector<double> &sample, bool unbiased = false);
 };
 
 

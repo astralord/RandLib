@@ -13,7 +13,7 @@
  *
  * Related distributions: <BR>
  * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ) <BR>
- * X ~ S(0.5, 1, σ, μ) <BR>
+ * X ~ Stable(0.5, 1, σ, μ) <BR>
  * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
  */
 class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution
@@ -29,7 +29,6 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
 
-    static double Variate(double location, double scale);
     static double StandardVariate();
 
 private:
@@ -40,11 +39,11 @@ private:
 
 public:
     /**
-     * @fn FitScaleMLE
+     * @fn FitScale
      * Fit scale using maximum-likelihoood estimator
      * @param sample
      */
-    void FitScaleMLE(const std::vector<double> &sample);
+    void FitScale(const std::vector<double> &sample);
 };
 
 #endif // LEVYRAND_H

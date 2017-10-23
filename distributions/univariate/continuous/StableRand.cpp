@@ -773,9 +773,9 @@ double StableDistribution::Variate() const
     case NORMAL:
         return mu + M_SQRT2 * gamma * NormalRand::StandardVariate();
     case CAUCHY:
-        return CauchyRand::Variate(mu, gamma);
+        return mu + gamma * CauchyRand::StandardVariate();
     case LEVY:
-        return mu + RandMath::sign(beta) * LevyRand::Variate(0, gamma);
+        return mu + RandMath::sign(beta) * gamma * LevyRand::StandardVariate();
     case UNITY_EXPONENT:
         return variateForUnityExponent();
     case COMMON:
@@ -796,13 +796,13 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
         break;
     case CAUCHY: {
         for (double &var : outputData)
-            var = CauchyRand::Variate(mu, gamma);
+            var = mu + gamma * CauchyRand::StandardVariate();
     }
         break;
     case LEVY: {
         if (beta > 0) {
             for (double &var : outputData)
-                var = LevyRand::Variate(mu, gamma);
+                var = mu + gamma * LevyRand::StandardVariate();
         }
         else {
             for (double &var : outputData)

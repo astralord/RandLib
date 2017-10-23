@@ -1,5 +1,5 @@
-#ifndef UNIVARIATEPROBABILITYDISTRIBUTION_H
-#define UNIVARIATEPROBABILITYDISTRIBUTION_H
+#ifndef UNIVARIATEDISTRIBUTION_H
+#define UNIVARIATEDISTRIBUTION_H
 
 #include "../ProbabilityDistribution.h"
 
@@ -11,15 +11,15 @@ enum SUPPORT_TYPE {
 };
 
 /**
- * @brief The UnivariateProbabilityDistribution class <BR>
+ * @brief The UnivariateDistribution class <BR>
  * Abstract class for all univariate probability distributions
  */
 template < typename T >
-class RANDLIBSHARED_EXPORT UnivariateProbabilityDistribution : public ProbabilityDistribution<T>
+class RANDLIBSHARED_EXPORT UnivariateDistribution : public ProbabilityDistribution<T>
 {
 protected:
-    UnivariateProbabilityDistribution();
-    virtual ~UnivariateProbabilityDistribution() {}
+    UnivariateDistribution();
+    virtual ~UnivariateDistribution() {}
 
 public:
     /**
@@ -39,18 +39,6 @@ public:
      * @return true if distribution is bounded from the right
      */
     bool isRightBounded() const;
-
-    /**
-     * @fn MinValue
-     * @return minimum possible value that can be achieved by random variable
-     */
-    virtual T MinValue() const override = 0;
-
-    /**
-     * @fn MaxValue
-     * @return maximum possible value that can be achieved by random variable
-     */
-    virtual T MaxValue() const override = 0;
 
     /**
      * @fn Mean
@@ -196,19 +184,20 @@ public:
     virtual double FourthMoment() const;
 
     /**
-     * @fn Likelihood
+     * @fn LikelihoodFunction
      * @param sample
-     * @return likelihood function
+     * @return likelihood function for given sample
      */
-    virtual double Likelihood(const std::vector<T> &sample) const = 0;
+    virtual double LikelihoodFunction(const std::vector<T> &sample) const = 0;
 
     /**
-     * @fn LogLikelihood
+     * @fn LogLikelihoodFunction
      * @param sample
-     * @return logarithm of likelihood function
+     * @return logarithm of likelihood function for given sample
      */
-    virtual double LogLikelihood(const std::vector<T> &sample) const = 0;
+    virtual double LogLikelihoodFunction(const std::vector<T> &sample) const = 0;
 
+protected:
     /**
      * @fn allElementsAreNotBiggerThan
      * @param value
@@ -239,78 +228,42 @@ public:
      */
     static bool allElementsArePositive(const std::vector<T> &sample);
 
+public:
     /**
-     * @fn sum
+     * @fn GetSampleSum
      * @param sample
      * @return sum of all elements in a sample
      */
-    static double sampleSum(const std::vector<T> &sample);
+    static double GetSampleSum(const std::vector<T> &sample);
 
     /**
-     * @fn sampleMean
+     * @fn GetSampleMean
      * @param sample
      * @return arithmetic average
      */
-    static double sampleMean(const std::vector<T> &sample);
+    static double GetSampleMean(const std::vector<T> &sample);
 
     /**
-     * @fn sampleVariance
+     * @fn GetSampleVariance
      * @param sample
-     * @param mean known (or sample) average
+     * @param known mean
      * @return sample second central moment
      */
-    static double sampleVariance(const std::vector<T> &sample, double mean);
-    static double sampleVariance(const std::vector<T> &sample);
+    static double GetSampleVariance(const std::vector<T> &sample, double mean);
 
     /**
-     * @fn sampleSkewness
+     * @brief GetSampleMeanAndVariance
      * @param sample
-     * @param mean
-     * @param stdev
-     * @return sample skewness
+     * @return sample mean and variance
      */
-    static double sampleSkewness(const std::vector<T> &sample, double mean, double stdev);
-    static double sampleSkewness(const std::vector<T> &sample, double mean);
-    static double sampleSkewness(const std::vector<T> &sample);
+    static DoublePair GetSampleMeanAndVariance(const std::vector<T> &sample);
 
     /**
-     * @fn sampleKurtosis
+     * @brief GetSampleStatistics
      * @param sample
-     * @param mean
-     * @param variance
-     * @return sample kurtosis
+     * @return sample mean, variance, skewness and excess kurtosis
      */
-    static double sampleKurtosis(const std::vector<T> &sample, double mean, double stdev);
-    static double sampleKurtosis(const std::vector<T> &sample, double mean);
-    static double sampleKurtosis(const std::vector<T> &sample);
-
-    /**
-     * @fn rawMoment
-     * @param sample
-     * @return k-th raw moment
-     */
-    static double rawMoment(const std::vector<T> &sample, int k);
-
-    /**
-     * @fn centralMoment
-     * @param sample
-     * @param mean known (or sample) average
-     * @return k-th central moment
-     */
-    static double centralMoment(const std::vector<T> &sample, int k, double mean);
-    static double centralMoment(const std::vector<T> &sample, int k);
-
-    /**
-     * @fn normalisedMoment
-     * @param sample
-     * @param k
-     * @param mean
-     * @param stdev
-     * @return
-     */
-    static double normalisedMoment(const std::vector<T> &sample, int k, double mean, double stdev);
-    static double normalisedMoment(const std::vector<T> &sample, int k, double mean);
-    static double normalisedMoment(const std::vector<T> &sample, int k);
+    static std::tuple<double, double, double, double> GetSampleStatistics(const std::vector<T> &sample);
 };
 
-#endif // UNIVARIATEPROBABILITYDISTRIBUTION_H
+#endif // UNIVARIATEDISTRIBUTION_H

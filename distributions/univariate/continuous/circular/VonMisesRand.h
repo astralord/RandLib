@@ -1,7 +1,7 @@
 #ifndef VONMISESRAND_H
 #define VONMISESRAND_H
 
-#include "ContinuousDistribution.h"
+#include "CircularDistribution.h"
 
 /**
  * @brief The VonMisesRand class <BR>
@@ -9,9 +9,8 @@
  *
  * Notation: X ~ Von-Mises(μ, k)
  */
-class RANDLIBSHARED_EXPORT VonMisesRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT VonMisesRand : public CircularDistribution
 {
-    double mu = 0; ///< location μ
     double k = 1; ///< concentration
     double logI0k = 1; ///< log(I_0(k)), where I_0 stands for modified Bessel function of the first kind of order 0
     double s = M_PI / M_E; ///< generator coefficient
@@ -22,13 +21,8 @@ public:
     VonMisesRand(double location, double concentration);
 
     std::string Name() const override;
-    SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    double MinValue() const override { return mu - M_PI; }
-    double MaxValue() const override { return mu + M_PI; }
 
-    void SetLocation(double location);
     void SetConcentration(double concentration);
-    inline double GetLocation() const { return mu; }
     inline double GetConcentration() const { return k; }
 
 private:
@@ -44,11 +38,10 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    double CircularMean() const override;
+    double CircularVariance() const override;
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

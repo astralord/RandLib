@@ -20,12 +20,12 @@ double SingularDistribution::Mode() const
     return NAN;
 }
 
-double SingularDistribution::Likelihood(const std::vector<double> &) const
+double SingularDistribution::LikelihoodFunction(const std::vector<double> &) const
 {
     return NAN;
 }
 
-double SingularDistribution::LogLikelihood(const std::vector<double> &) const
+double SingularDistribution::LogLikelihoodFunction(const std::vector<double> &) const
 {
     return NAN;
 }

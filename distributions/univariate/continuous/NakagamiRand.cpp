@@ -64,7 +64,7 @@ void NakagamiDistribution::Sample(std::vector<double> &outputData) const
 double NakagamiDistribution::Mean() const
 {
     double y = lgammaShapeRatio;
-    y += 0.5 * std::log(w / m);
+    y -= 0.5 * Y.GetLogRate();
     return std::exp(y);
 }
 
@@ -79,6 +79,37 @@ double NakagamiDistribution::Mode() const
 {
     double mode = 0.5 * w / m;
     return std::sqrt(std::max(w - mode, 0.0));
+}
+
+double NakagamiDistribution::Skewness() const
+{
+    double thirdMoment = lgammaShapeRatio;
+    thirdMoment -= 1.5 * Y.GetLogRate();
+    thirdMoment = (m + 0.5) * std::exp(thirdMoment);
+    double mean = Mean();
+    double variance = Variance();
+    return (thirdMoment - mean * (3 * variance + mean * mean)) / std::pow(variance, 1.5);
+}
+
+double NakagamiDistribution::FourthMoment() const
+{
+    double fourthMoment = w / m;
+    fourthMoment *= fourthMoment;
+    fourthMoment *= m * (m + 1);
+    return fourthMoment;
+}
+
+double NakagamiDistribution::ExcessKurtosis() const
+{
+    double mean = Mean();
+    double secondMoment = SecondMoment();
+    double thirdMoment = ThirdMoment();
+    double fourthMoment = FourthMoment();
+    double meanSq = mean * mean;
+    double variance = secondMoment - meanSq;
+    double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
+    double denominator = variance * variance;
+    return numerator / denominator - 3.0;
 }
 
 double NakagamiDistribution::quantileImpl(double p) const
@@ -314,27 +345,24 @@ double RayleighRand::Skewness() const
 
 double RayleighRand::ExcessKurtosis() const
 {
-    return (6 * M_PI - 16.0 / (M_PI - 4)) / (M_PI - 4);
+    double temp = 4 - M_PI;
+    return -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
 }
 
-void RayleighRand::FitScaleMLE(const std::vector<double> &sample)
-{
-    /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double sigmaSq = 0.5 * rawMoment(sample, 2);
-    SetScale(std::sqrt(sigmaSq));
-}
-
-void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
+void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
-    double sigmaBiasedSq = 0.5 * rawMoment(sample, 2);
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    double rawMoment = stats.second + stats.first * stats.first;
+    double sigmaBiasedSq = 0.5 * rawMoment;
+    if (unbiased == false) {
+        SetScale(std::sqrt(sigmaBiasedSq));
+    }
     /// Calculate unbiased sigma
-    if (n > 100) {
+    else if (n > 100) {
         double coef = 1.0 / (640 * std::pow(n, 5));
         coef -= 1.0 / (192 * std::pow(n, 3));
         coef += 0.125 / n;
@@ -360,4 +388,3 @@ void RayleighRand::FitScaleUMVU(const std::vector<double> &sample)
         SetScale(scale);
     }
 }
-

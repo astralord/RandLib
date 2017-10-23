@@ -9,6 +9,9 @@
  * Logistic distribution
  *
  * Notation: X ~ Logistic(μ, s)
+ *
+ * Related distributions: <BR>
+ * 1 / (exp((X - μ) / s) + 1) ~ U(0, 1)
  */
 class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
 {
@@ -50,13 +53,8 @@ private:
 public:
     double Entropy() const;
 
-    /// Method of moments
-    void FitLocationMM(const std::vector<double> &sample);
-    void FitScaleMM(const std::vector<double> &sample);
-    void FitLocationAndScaleMM(const std::vector<double> &sample);
-
     /// Maximum-likelihood
-    void FitLocationMLE(const std::vector<double> &sample);
+    void FitLocation(const std::vector<double> &sample);
 };
 
 #endif // LOGISTICRAND_H

@@ -14,7 +14,7 @@
  * Notation: X ~ N(μ, σ^2)
  *
  * Related distributions: <BR>
- * X ~ S(2, 0, σ/√2, μ)
+ * X ~ Stable(2, 0, σ/√2, μ)
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 {
@@ -73,41 +73,68 @@ public:
     double FourthMoment() const override { return Moment(4); }
 
     /**
-     * @fn FitMeanMLE
-     * set mean, returned by maximium-likelihood estimator
+     * @fn FitLocation
+     * set location, returned by maximium-likelihood estimator
      * @param sample
      */
-    void FitMeanMLE(const std::vector<double> &sample);
+    void FitLocation(const std::vector<double> &sample);
+
     /**
-     * @fn FitVarianceMLE
+     * @brief FitLocation
+     * set location, returned by maximium-likelihood estimator
+     * and return confidenceInterval for given significance level
+     * @param sample
+     * @param confidenceInterval
+     * @param significanceLevel
+     */
+    void FitLocation(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel);
+
+    /**
+     * @fn FitVariance
      * set variance, returned by maximium-likelihood estimator
      * @param sample
      */
-    void FitVarianceMLE(const std::vector<double> &sample);
+    void FitVariance(const std::vector<double> &sample);
+
     /**
-     * @fn FitMeanAndVarianceMLE
-     * set mean and variance, returned by maximium-likelihood estimator
+     * @brief FitVariance
      * @param sample
+     * @param confidenceInterval
+     * @param significanceLevel
+     * @param unbiased
      */
-    void FitMeanAndVarianceMLE(const std::vector<double> &sample);
+    void FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased = false);
+
     /**
-     * @fn FitMeanUMVU
-     * set mean, returned by uniformly minimum variance unbiased estimator
+     * @brief FitScale
+     * set scale, returned via maximum-likelihood estimation or unbiased estimator
+     * (which might be different from the unbiased estimator of variance)
      * @param sample
+     * @param unbiased
      */
-    void FitMeanUMVU(const std::vector<double> &sample);
+    void FitScale(const std::vector<double> &sample, bool unbiased = false);
+
     /**
-     * @fn FitVarianceUMVU
-     * set variance, returned by uniformly minimum variance unbiased estimator
+     * @fn Fit
+     * set parameters, returned by maximium-likelihood estimator if unbiased = false,
+     * otherwise set parameters via UMVU estimator
      * @param sample
+     * @param unbiased
      */
-    void FitVarianceUMVU(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample, bool unbiased = false);
+
     /**
-     * @fn FitMeanAndVarianceUMVU
-     * set mean and variance, returned by uniformly minimum variance unbiased estimator
+     * @brief Fit
+     * set parameters, returned by maximium-likelihood estimator if unbiased = false,
+     * otherwise set parameters via UMVU estimator, and return confidence intervals for given significance level
      * @param sample
+     * @param confidenceIntervalForMean
+     * @param confidenceIntervalForVariance
+     * @param significanceLevel
+     * @param unbiased
      */
-    void FitMeanAndVarianceUMVU(const std::vector<double> &sample);
+    void Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased = false);
+
     /**
      * @fn FitMeanAndVarianceUMVU
      * set mean and variance, returned by uniformly minimum variance unbiased estimator
@@ -118,14 +145,16 @@ public:
      * @param significanceLevel
      */
     void FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel);
+
     /**
-     * @fn FitMeanBayes
-     * set mean, returned by bayesian estimation
+     * @fn FitLocationBayes
+     * set location, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
      */
-    NormalRand FitMeanBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
+    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
+
     /**
      * @fn FitVarianceBayes
      * set variance, returned by bayesian estimation
@@ -134,14 +163,15 @@ public:
      * @return posterior distribution
      */
     InverseGammaRand FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
+
     /**
-     * @fn FitMeanAndVarianceBayes
-     * set mean and variance, returned by bayesian estimation
+     * @fn FitBayes
+     * set parameters, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
      * @return posterior distribution
      */
-    NormalInverseGammaRand FitMeanAndVarianceBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
+    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
 };
 
 #endif // NORMALRAND_H

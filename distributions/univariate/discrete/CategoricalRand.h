@@ -10,9 +10,9 @@
  *
  * Notation: X ~ Cat(p_0, ..., p_{K-1})
  *
- * Related distributions:
- * X ~ Multin(1, p_0, ..., p_{K-1})
- * If X ~ Bernoulli(p), then X ~ Cat(1 - p, p)
+ * Related distributions: <BR>
+ * X ~ Multin(1, p_0, ..., p_{K-1}) <BR>
+ * If X ~ Bernoulli(p), then X ~ Cat(1 - p, p) <BR>
  * If X ~ Uniform-Discrete(0, K), then X ~ Cat(p, ..., p) with p = 1 / (K + 1)
  */
 class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution

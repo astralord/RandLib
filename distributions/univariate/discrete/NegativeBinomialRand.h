@@ -12,8 +12,9 @@
  *
  * Notation: X ~ NB(r, p)
  *
- * Related distributions:
+ * Related distributions: <BR>
  * If X ~ NB(1, p), then X ~ Geometric(p)
+ * If Y ~ Γ(r, p / (1 - p), then Po(Y) ~ NB(r, p)
  */
 template < typename T >
 class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
@@ -82,12 +83,6 @@ private:
     std::complex<double> CFImpl(double t) const override;
 public:
     /**
-     * @fn FitProbabilityMM
-     * set probability, estimated via method of moments
-     * @param sample
-     */
-    void FitProbabilityMM(const std::vector<int> & sample);
-    /**
      * @fn FitProbabilityBayes
      * @param sample
      * @param priorDistribution
@@ -110,26 +105,14 @@ public:
 
     using NegativeBinomialDistribution<T>::SetParameters;
 
-    /// Parameters estimation
     static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
+
     /**
-     * @fn FitNumberMM
-     * set number, estimated via method of moments
-     * @param sample
-     */
-    void FitNumberMM(const std::vector<int> &sample);
-    /**
-     * @fn FitNumberAndProbabilityMM
-     * set number and probability, estimated via method of moments
-     * @param sample
-     */
-    void FitNumberAndProbabilityMM(const std::vector<int> & sample);
-    /**
-     * @fn FitNumberAndProbabilityMLE
+     * @fn Fit
      * set number and probability, estimated via maximum-likelihood method
      * @param sample
      */
-    void FitNumberAndProbabilityMLE(const std::vector<int> &sample);
+    void Fit(const std::vector<int> &sample);
 };
 
 

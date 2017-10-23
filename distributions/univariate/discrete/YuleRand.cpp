@@ -64,6 +64,8 @@ int YuleRand::Variate() const
 
 int YuleRand::Variate(double shape)
 {
+    if (shape <= 0.0)
+        return -1;
     double prob = 1.0 / ParetoRand::StandardVariate(shape);
     return GeometricRand::Variate(prob) + 1;
 }

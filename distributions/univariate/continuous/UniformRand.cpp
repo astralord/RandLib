@@ -48,7 +48,7 @@ void UniformRand::Sample(std::vector<double> &outputData) const
 
 double UniformRand::Variate(double minValue, double maxValue)
 {
-    return minValue + StandardVariate() * (maxValue - minValue);
+    return (minValue < maxValue) ? minValue + StandardVariate() * (maxValue - minValue) : NAN;
 }
 
 double UniformRand::StandardVariate()
@@ -140,111 +140,64 @@ double UniformRand::Entropy() const
     return (b == a) ? -INFINITY : std::log(bma);
 }
 
-void UniformRand::FitMinimumMLE(const std::vector<double> &sample)
-{
-    if (!allElementsAreNotBiggerThan(b, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    double minVar = *std::min_element(sample.begin(), sample.end());
-    SetSupport(minVar, b);
-}
-
-void UniformRand::FitMaximumMLE(const std::vector<double> &sample)
-{
-    if (!allElementsAreNotLessThan(a, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    double maxVar = *std::max_element(sample.begin(), sample.end());
-    SetSupport(a, maxVar);
-}
-
-void UniformRand::FitSupportMLE(const std::vector<double> &sample)
-{
-    double minVar = *std::min_element(sample.begin(), sample.end());
-    double maxVar = *std::max_element(sample.begin(), sample.end());
-    SetSupport(minVar, maxVar);
-}
-
 constexpr char UniformRand::TOO_LARGE_A[];
 constexpr char UniformRand::TOO_SMALL_B[];
 
-void UniformRand::FitMinimumMM(const std::vector<double> &sample)
+void UniformRand::FitMinimum(const std::vector<double> &sample, bool unbiased)
 {
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    double m = sampleMean(sample);
-    double leftBound = 2 * m - b;
-    if (!allElementsAreNotLessThan(leftBound, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(leftBound)));
-    SetSupport(leftBound, b);
+    double minVar = *std::min_element(sample.begin(), sample.end());
+
+    if (unbiased == true) {
+        int n = sample.size();
+        /// E[min] = b - n / (n + 1) * (b - a)
+        double minVarAdj = (minVar * (n + 1) - b) / n;
+        if (!allElementsAreNotLessThan(minVarAdj, sample))
+            throw std::runtime_error(fitError(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
+        SetSupport(minVarAdj, b);
+    }
+    else {
+        SetSupport(minVar, b);
+    }
 }
 
-void UniformRand::FitMaximumMM(const std::vector<double> &sample)
+void UniformRand::FitMaximum(const std::vector<double> &sample, bool unbiased)
 {
     if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    double m = sampleMean(sample);
-    double rightBound = 2 * m - a;
-    if (!allElementsAreNotBiggerThan(rightBound, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(rightBound)));
-    SetSupport(a, rightBound);
-}
-
-void UniformRand::FitSupportMM(const std::vector<double> &sample)
-{
-    size_t n = sample.size();
-    if (n <= 1)
-        throw std::invalid_argument(fitError(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
-    double mean = sampleMean(sample);
-    double var = n * sampleVariance(sample, mean) / (n - 1);
-    double s = std::sqrt(3 * var);
-    double leftBound = mean - s, rightBound = mean + s;
-    if (!allElementsAreNotLessThan(leftBound, sample))
-        throw std::invalid_argument(fitError(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(leftBound)));
-    if (!allElementsAreNotBiggerThan(rightBound, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(rightBound)));
-    SetSupport(leftBound, rightBound);
-}
-
-void UniformRand::FitMinimumUMVU(const std::vector<double> &sample)
-{
-    if (!allElementsAreNotBiggerThan(b, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    int n = sample.size();
-    double minVar = *std::min_element(sample.begin(), sample.end());
-    
-    /// E[min] = b - n / (n + 1) * (b - a)
-    double minVarAdj = (minVar * (n + 1) - b) / n;
-    if (!allElementsAreNotLessThan(minVarAdj, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
-    SetSupport(minVarAdj, b);
-}
-
-void UniformRand::FitMaximumUMVU(const std::vector<double> &sample)
-{
-    if (!allElementsAreNotLessThan(a, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    int n = sample.size();
     double maxVar = *std::max_element(sample.begin(), sample.end());
 
-    /// E[max] = (b - a) * n / (n + 1) + a
-    double maxVarAdj = (maxVar * (n + 1) - a) / n;
-    if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));
-    SetSupport(a, maxVarAdj);
+    if (unbiased == true) {
+        int n = sample.size();
+        /// E[max] = (b - a) * n / (n + 1) + a
+        double maxVarAdj = (maxVar * (n + 1) - a) / n;
+        if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
+            throw std::runtime_error(fitError(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));
+        SetSupport(a, maxVarAdj);
+    }
+    else {
+        SetSupport(a, maxVar);
+    }
 }
 
-void UniformRand::FitSupportUMVU(const std::vector<double> &sample)
+void UniformRand::Fit(const std::vector<double> &sample, bool unbiased)
 {
-    int n = sample.size();
     double minVar = *std::min_element(sample.begin(), sample.end());
     double maxVar = *std::max_element(sample.begin(), sample.end());
-
-    /// E[min] = b - n / (n + 1) * (b - a)
-    double minVarAdj = (minVar * n - maxVar) / (n - 1);
-    /// E[max] = (b - a) * n / (n + 1) + a
-    double maxVarAdj = (maxVar * n - minVar) / (n - 1);
-    if (!allElementsAreNotLessThan(minVarAdj, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
-    if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
-        throw std::runtime_error(fitError(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));
-    SetSupport(minVarAdj, maxVarAdj);
+    if (unbiased == true) {
+        int n = sample.size();
+        /// E[min] = b - n / (n + 1) * (b - a)
+        double minVarAdj = (minVar * n - maxVar) / (n - 1);
+        /// E[max] = (b - a) * n / (n + 1) + a
+        double maxVarAdj = (maxVar * n - minVar) / (n - 1);
+        if (!allElementsAreNotLessThan(minVarAdj, sample))
+            throw std::runtime_error(fitError(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
+        if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
+            throw std::runtime_error(fitError(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));
+        SetSupport(minVarAdj, maxVarAdj);
+    }
+    else {
+        SetSupport(minVar, maxVar);
+    }
 }
