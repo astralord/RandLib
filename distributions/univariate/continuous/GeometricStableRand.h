@@ -55,6 +55,7 @@ protected:
     double cdfLaplaceCompl(double x) const;
 
 private:
+    double xi(double x) const;
     double pdfByLevy(double x) const;
     double pdfByCauchy(double x) const;
 

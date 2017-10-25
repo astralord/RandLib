@@ -108,61 +108,81 @@ double ShiftedGeometricStableDistribution::cdfLaplaceCompl(double x) const
     return std::exp(-log1pKappaSq - kappa * y);
 }
 
+double ShiftedGeometricStableDistribution::xi(double x) const
+{
+    /// We assume that x > 0
+    if (x < 10) {
+        double y = x * x;
+        y += std::log(x * std::erfc(x));
+        return std::exp(y);
+    }
+    /// Use Taylor expansion
+    double log2xSq = std::log(2 * x * x);
+    double sum = 0.0;
+    static constexpr int N = 10;
+    for (int n = 1; n != N; ++n) {
+        double add = RandMath::ldfact(2 * n - 1);
+        add -= n * log2xSq;
+        add = std::exp(add);
+        sum += (n & 1) ? -add : add;
+    }
+    return (1.0 + sum) / M_SQRTPI;
+}
+
 double ShiftedGeometricStableDistribution::pdfByLevy(double x) const
 {
     if (mu == 0) {
         /// Invert parameter for case of -Levy
         x *= beta;
         double halfSigmaInv = 0.5 / gamma;
-        double z = halfSigmaInv * x;
-        double sqrtZ = std::sqrt(z);
-        double y = -std::erfc(sqrtZ);
-        y *= std::exp(z);
-        y += M_1_SQRTPI / sqrtZ;
-        y *= halfSigmaInv;
-        return y;
+        double z = std::sqrt(halfSigmaInv * x);
+        double y = M_1_SQRTPI - xi(z);
+        return 0.5 * y / (gamma * z);
     }
 
-    /// If mu != 0
+    if (x == 0) {
+        return std::fabs(1.0 / mu);
+    }
+
     double a = x / gamma, c = mu / gamma;
     if (beta < 0) {
         a = -a;
         c = -c;
     }
-    if (a < 0 && c >= 0)
-        return 0.0;
+
+    if (a < 0) {
+        if (c >= 0.0)
+            return 0.0;
+        double h = std::sqrt(1 - 2 * c); // can be hashed
+        double hm1 = h - 1;
+        double y = 2 * a / (hm1 * hm1);
+        y -= std::log(gamma * hm1 * h);
+        y += M_LN2;
+        return std::exp(y);
+    }
+
+    double sqrt2a = std::sqrt(2 * a);
+
     if (c < 0.5) {
-        double h = std::sqrt(1 - 2 * c);
-        double h0 = 1 + h;
-        double h1 = 1 - h;
-        double r = x / (mu * c);
-        if (a < 0 && c < 0)
-            return -2.0 / (gamma * h * h1) * std::exp(r * (h0 - c));
-        double K = h1 - c;
-        K = std::exp(r * K);
-        K /= 2 * gamma * c * h;
-        double p =  std::exp(r * h);
-        double temp = std::sqrt(0.5 * a) / c;
-        double g = h0 * temp;
-        double q = h1 * temp;
-        double y = p;
-        /// if c is in (0, 0.5)
-        if (c > 0) {
-            /// g can be too small while p is too big
-            y *= std::erfc(g);
-        }
-        else {
-            y *= -std::erfc(-g);
-        }
-        y *= h0 * p;
-        y -= h1 * std::erfc(q);
-        y *= K;
+        double h = std::sqrt(1 - 2 * c); // can be hashed
+        double term1 = RandMath::sign(c) * sqrt2a / (1 - h);
+        double term2 = sqrt2a / (1 + h);
+        double y = xi(term1);
+        y -= xi(term2);
+        y /= h * gamma * sqrt2a;
         return y;
     }
 
-    /// we do numerical integration in this case
+    if (c == 0.5) {
+        double y = xi(sqrt2a);
+        y *= (8.0 * a + 2.0) / sqrt2a;
+        y -= 4 * sqrt2a / M_SQRTPI;
+        return y / gamma;
+    }
+
+    /// we do numerical integration in the case of c > 0.5
     // (as I wasn't able to handle complex integrals)
-    double adivc = a / c;
+    double adivc = x / mu;
     double y = RandMath::integral([this, a, c, adivc] (double t)
     {
         if (t <= 0 || t >= adivc)
@@ -281,6 +301,7 @@ double ShiftedGeometricStableDistribution::F(const double & x) const
 {
     if (alpha == 2)
         return cdfLaplace(x);
+    // TODO: everything is wrong here, re-check!
     return RandMath::integral([this, x] (double z)
     {
         if (z <= 0)

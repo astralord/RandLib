@@ -35,6 +35,13 @@ long double doubleFactorial(int n);
 long double lfact(size_t n);
 
 /**
+ * @brief ldoublefact
+ * @param n
+ * @return log(n!!)
+ */
+long double ldfact(size_t n);
+
+/**
  * @fn binom
  * Calculate binomial coefficient
  * @param n non-negative integer

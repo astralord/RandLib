@@ -77,12 +77,12 @@ long double factorial(double n)
 
 long double doubleFactorial(int n)
 {
-    long double n_fact = factorial(n);
+    long double nFact = factorial(n);
     if (n & 1) {
         n <<= 1;
-        return factorial(n + 1) / (n * n_fact);
+        return factorial(n + 1) / (n * nFact);
     }
-    return (1 << n) * n_fact;
+    return (1 << n) * nFact;
 }
 
 constexpr long double LOGFACTORIAL_TABLE[] =
@@ -350,6 +350,15 @@ constexpr size_t LOGFACTORIAL_TABLESIZE = 255;
 long double lfact(size_t n)
 {
     return (n > LOGFACTORIAL_TABLESIZE) ? std::lgammal(n + 1) : LOGFACTORIAL_TABLE[n];
+}
+
+long double ldfact(size_t n)
+{
+    if (n & 1) {
+        return lfact(n) - ldfact(n - 1);
+    }
+    size_t k = n >> 1;
+    return k * M_LN2 + lfact(k);
 }
 
 long double binom(size_t n, size_t k)
