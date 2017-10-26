@@ -170,7 +170,6 @@ double StableDistribution::fastpdfExponentiation(double u)
 
 double StableDistribution::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
 {
-    /// We got numerical error, need to investigate to which extreme point we are closer
     if (theta > 0.0) {
         if (beta > 0.0)
             return BIG_NUMBER;

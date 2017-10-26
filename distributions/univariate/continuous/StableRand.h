@@ -7,7 +7,7 @@
  * @brief The StableDistribution class <BR>
  * Abstract class for Stable distribution
  *
- * Notation: X ~ Stable(α, β, γ, μ)
+ * Notation: X ~ S(α, β, γ, μ)
  *
  * Related distributions: <BR>
  * If X ~ Normal(μ, σ), then X ~ S(2, 0, σ/√2, μ) <BR>
@@ -136,13 +136,34 @@ private:
      */
     static double fastpdfExponentiation(double u);
 
-    /// functions for pdf calculation for α = 1
+    /**
+     * @brief limitCaseForIntegrandAuxForUnityExponent
+     * @param theta
+     * @param xAdj
+     * @return large values in the case of closeness to extreme points
+     */
     double limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const;
+    /**
+     * @brief integrandAuxForUnityExponent
+     * @param theta
+     * @param xAdj
+     * @return supplementary value for the integrand used in pdf calculations for α = 1
+     */
     double integrandAuxForUnityExponent(double theta, double xAdj) const;
+    /**
+     * @brief integrandForUnityExponent
+     * @param theta
+     * @param xAdj
+     * @return the value of the integrand used for calculations of pdf for α = 1
+     */
     double integrandForUnityExponent(double theta, double xAdj) const;
+    /**
+     * @brief pdfForUnityExponent
+     * @param x
+     * @return value of probability density function for α = 1
+     */
     double pdfForUnityExponent(double x) const;
 
-    /// functions for pdf calculation for α ≠ 1
     DoublePair seriesZeroParams{};
     /**
      * @fn pdfAtZero
@@ -164,10 +185,40 @@ private:
      * @return series expansion of probability density function for large x
      */
     double pdfSeriesExpansionAtInf(double logX, double xiAdj) const;
-    double pdfTaylorExpansionTailNearCauchy(double x) const; /// ~ f(x, α) - f(x, 1)
+    /**
+     * @brief pdfTaylorExpansionTailNearCauchy
+     * @param x
+     * @return the Taylor approximated difference ~ f(x, α) - f(x, 1)
+     */
+    double pdfTaylorExpansionTailNearCauchy(double x) const;
+    /**
+     * @brief limitCaseForIntegrandAuxForGeneralExponent
+     * @param theta
+     * @param xiAdj
+     * @return large values in the case of closeness to extreme points
+     */
     double limitCaseForIntegrandAuxForGeneralExponent(double theta, double xiAdj) const;
+    /**
+     * @brief integrandAuxForGeneralExponent
+     * @param theta
+     * @param xAdj
+     * @param xiAdj
+     * @return supplementary value for the integrand used in pdf calculations for α ≠ 1
+     */
     double integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const;
+    /**
+     * @brief integrandFoGeneralExponent
+     * @param theta
+     * @param xAdj
+     * @param xiAdj
+     * @return the value of the integrand used for calculations of pdf for α ≠ 1
+     */
     double integrandFoGeneralExponent(double theta, double xAdj, double xiAdj) const;
+    /**
+     * @brief pdfForGeneralExponent
+     * @param x
+     * @return value of probability density function for α ≠ 1
+     */
     double pdfForGeneralExponent(double x) const;
 public:    
     double f(const double & x) const override;
@@ -350,6 +401,7 @@ protected:
      * @return characteristic function for Levy distribution
      */
     std::complex<double> cfLevy(double t) const;
+
 private:
     std::complex<double> CFImpl(double t) const override;
 };

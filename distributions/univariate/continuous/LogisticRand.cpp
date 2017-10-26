@@ -114,7 +114,6 @@ double LogisticRand::ExcessKurtosis() const
     return 1.2;
 }
 
-/// Maximum-likelihood
 void LogisticRand::FitLocation(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();

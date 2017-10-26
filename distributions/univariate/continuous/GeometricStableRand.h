@@ -113,9 +113,9 @@ protected:
  * @brief The GeometricStableRand class <BR>
  * Geometric-Stable distribution
  *
- * Notation: X ~ Geometric-Stable(α, β, γ, μ)
+ * Notation: X ~ GS(α, β, γ, μ)
  *
- * If X ~ Laplace(m, γ, κ), then X - m ~ Geometric-Stable(2, β, γ, (1/κ - κ) * γ) with arbitrary β
+ * If X ~ Laplace(m, γ, κ), then X - m ~ GS(2, β, γ, (1/κ - κ) * γ) with arbitrary β
  */
 class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution
 {
