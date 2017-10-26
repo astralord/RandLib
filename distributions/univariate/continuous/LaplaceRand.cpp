@@ -69,34 +69,12 @@ std::complex<double> AsymmetricLaplaceDistribution::CFImpl(double t) const
 
 double AsymmetricLaplaceDistribution::quantileImpl(double p) const
 {
-    if (p < kappaSq / (1 + kappaSq)) {
-        double q = p * (1.0 / kappaSq + 1.0);
-        q = std::log(q);
-        q *= kappa * gamma;
-        return m + q;
-    }
-    else {
-        double q = (kappaSq + 1) * (1 - p);
-        q = std::log(q);
-        q *= gamma / kappa;
-        return m - q;
-    }
+    return quantileLaplace(p);
 }
 
 double AsymmetricLaplaceDistribution::quantileImpl1m(double p) const
 {
-    if (p > 1.0 / (1 + kappaSq)) {
-        double q = (1.0 - p) * (1.0 / kappaSq + 1.0);
-        q = std::log(q);
-        q *= kappa * gamma;
-        return m + q;
-    }
-    else {
-        double q = (kappaSq + 1) * p;
-        q = std::log(q);
-        q *= gamma / kappa;
-        return m - q;
-    }
+    return quantileLaplace1m(p);
 }
 
 double AsymmetricLaplaceDistribution::Entropy() const

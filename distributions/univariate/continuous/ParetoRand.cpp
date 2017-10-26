@@ -61,7 +61,7 @@ double ParetoRand::variateForAlphaTwo()
     return 1.0 / std::sqrt(UniformRand::StandardVariate());
 }
 
-double ParetoRand::variateForCommonAlpha(double shape)
+double ParetoRand::variateForGeneralAlpha(double shape)
 {
     return std::exp(ExponentialRand::StandardVariate() / shape);
 }
@@ -72,7 +72,7 @@ double ParetoRand::StandardVariate(double shape)
         return variateForAlphaOne();
     if (RandMath::areClose(shape, 2.0))
         return variateForAlphaTwo();
-    return variateForCommonAlpha(shape);
+    return variateForGeneralAlpha(shape);
 }
 
 double ParetoRand::Variate(double shape, double scale)
@@ -97,7 +97,7 @@ void ParetoRand::Sample(std::vector<double> &outputData) const
     }
     else {
         for (double &var : outputData)
-            var = sigma * variateForCommonAlpha(alpha);
+            var = sigma * variateForGeneralAlpha(alpha);
     }
 }
 

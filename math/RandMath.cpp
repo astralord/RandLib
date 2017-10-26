@@ -165,6 +165,26 @@ double erfcinv(double p)
     return (p > 5e-16) ? erfinvAux2(beta) : erfinvAux1(beta);
 }
 
+double xexpxsqerfc(double x)
+{
+    static constexpr int MAX_X = 10;
+    static constexpr int N = 10;
+    if (x < MAX_X) {
+        double y = x * x;
+        y += std::log(std::erfc(x));
+        return x * std::exp(y);
+    }
+    double log2xSq = std::log(2 * x * x);
+    double sum = 0.0;
+    for (int n = 1; n != N; ++n) {
+        double add = RandMath::ldfact(2 * n - 1);
+        add -= n * log2xSq;
+        add = std::exp(add);
+        sum += (n & 1) ? -add : add;
+    }
+    return (1.0 + sum) / M_SQRTPI;
+}
+
 double harmonicNumber(double exponent, int number)
 {
     if (number < 1)
@@ -569,6 +589,5 @@ double MarcumQ(double mu, double x, double y)
     double logX = std::log(x), logY = std::log(y);
     return MarcumQ(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
-
 }
 

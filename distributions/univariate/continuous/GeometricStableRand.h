@@ -38,6 +38,18 @@ protected:
     void SetScale(double scale);
     void SetAsymmetry(double asymmetry);
 
+    enum DISTRIBUTION_TYPE {
+        LAPLACE, ///< α = 2, μ = 0
+        ASYMMETRIC_LAPLACE, ///< α = 2, μ ≠ 0
+        CAUCHY, ///< α = 1, β = 0
+        LEVY, ///< α = 0.5, |β| = 1
+        UNITY_EXPONENT, ///< α = 1, β ≠ 0
+        ONEHALF_EXPONENT, ///< α = 0.5, |β| ≠ 1
+        GENERAL ///< the rest
+    };
+
+    DISTRIBUTION_TYPE distributionType = LAPLACE; ///< type of distribution (Laplace by default)
+
 public:
     inline double GetExponent() const { return alpha; }
     inline double GetSkewness() const { return beta; }
@@ -55,7 +67,6 @@ protected:
     double cdfLaplaceCompl(double x) const;
 
 private:
-    double xi(double x) const;
     double pdfByLevy(double x) const;
     double pdfByCauchy(double x) const;
 
@@ -65,10 +76,10 @@ public:
     double F(const double & x) const override;
 
 private:
-    double variateForUnityExponent() const;
-    double variateForCommonExponent() const;
-    double variateByLevy(bool positive) const;
-    double variateByCauchy() const;
+    double variateForUnityExponent(double z) const;
+    double variateForGeneralExponent(double z) const;
+    double variateForOneHalfExponent(double z) const;
+    double variateByCauchy(double z) const;
 public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
@@ -80,7 +91,20 @@ public:
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
-private:
+protected:
+    /**
+     * @fn quantileLaplace
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile for (Asymmetric) Laplace distribution
+     */
+    double quantileLaplace(double p) const;
+    /**
+     * @fn quantileLaplace1m
+     * @param p input parameter in the interval (0, 1)
+     * @return quantile of 1-p for (Asymmetric) Laplace distribution
+     */
+    double quantileLaplace1m(double p) const;
+
     std::complex<double> CFImpl(double t) const override;
 };
 
@@ -96,7 +120,7 @@ private:
 class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution
 {
 public:
-    GeometricStableRand(double exponent, double skewness, double scale, double location) : ShiftedGeometricStableDistribution(exponent, skewness, scale, location) {}
+    GeometricStableRand(double exponent, double skewness, double scale, double location);
     virtual ~GeometricStableRand() {}
 
     std::string Name() const override;

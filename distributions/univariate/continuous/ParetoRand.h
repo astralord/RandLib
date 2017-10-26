@@ -42,7 +42,7 @@ public:
 private:
     static double variateForAlphaOne();
     static double variateForAlphaTwo();
-    static double variateForCommonAlpha(double shape);
+    static double variateForGeneralAlpha(double shape);
 
 public:
     static double StandardVariate(double shape);

@@ -82,6 +82,13 @@ double erfinv(double p);
 double erfcinv(double p);
 
 /**
+ * @brief xexpxsqerfc
+ * @param x
+ * @return x * exp(x^2) * erfc(x)
+ */
+double xexpxsqerfc(double x);
+
+/**
  * @fn harmonicNumber
  * @param exponent
  * @param number
