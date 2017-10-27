@@ -18,11 +18,11 @@
  */
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 {
-    double sigma = 1;
+    double sigma = 1; ///< scale σ
 
-    /// Tables for ziggurat
-    static long double stairWidth[257], stairHeight[256];
-    static constexpr long double x1 = 3.6541528853610088l;
+    static long double stairWidth[257]; ///< width of ziggurat's stairs
+    static long double stairHeight[256]; ///< height of ziggurat's stairs
+    static constexpr long double x1 = 3.6541528853610088l; ///< starting point for ziggurat's setup
     static const bool dummy;
     static bool SetupTables();
 
@@ -134,17 +134,6 @@ public:
      * @param unbiased
      */
     void Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased = false);
-
-    /**
-     * @fn FitMeanAndVarianceUMVU
-     * set mean and variance, returned by uniformly minimum variance unbiased estimator
-     * and returns confidence intervals for these parameters
-     * @param sample
-     * @param confidenceIntervalForMean
-     * @param confidenceIntervalForVariance
-     * @param significanceLevel
-     */
-    void FitMeanAndVarianceUMVU(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel);
 
     /**
      * @fn FitLocationBayes
