@@ -24,7 +24,7 @@ protected:
     double log1mProb = -M_LN2; ///< log(q)
 
 private:
-    int n = 1; ///< number of experiments
+    size_t n = 1; ///< number of experiments
     double np = 0.5; ///< n * p
     double lfactn = 0; ///< log(n!)
 
@@ -45,7 +45,7 @@ private:
     GeometricRand G{};
 
 protected:
-    BinomialDistribution(int number, double probability);
+    BinomialDistribution(size_t number, double probability);
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
@@ -56,10 +56,10 @@ private:
     void SetGeneratorConstants();
 
 protected:
-    void SetParameters(int number, double probability);
+    void SetParameters(size_t number, double probability);
 
 public:
-    inline double GetNumber() const { return n; }
+    inline size_t GetNumber() const { return n; }
     inline double GetProbability() const { return p; }
 
 private:

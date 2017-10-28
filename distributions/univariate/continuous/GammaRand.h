@@ -304,10 +304,10 @@ public:
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {
 public:
-    explicit ChiSquaredRand(size_t degree = 1) : GammaDistribution((degree < 1) ? 0.5 : 0.5 * degree, 0.5) {}
+    explicit ChiSquaredRand(size_t degree = 1) : GammaDistribution(0.5 * degree, 0.5) {}
     std::string Name() const override;
-    void SetDegree(int degree);
-    inline int GetDegree() const { return static_cast<int>(2 * alpha); }
+    void SetDegree(size_t degree);
+    inline size_t GetDegree() const { return static_cast<int>(2 * alpha); }
 };
 
 
@@ -326,8 +326,8 @@ class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution
 public:
     ErlangRand(int shape = 1, double rate = 1) : FreeScaleGammaDistribution(shape, rate) {}
     std::string Name() const override;
-    void SetParameters(int shape, double rate);
-    void SetShape(int shape);
+    void SetParameters(size_t shape, double rate);
+    void SetShape(size_t shape);
 };
 
 

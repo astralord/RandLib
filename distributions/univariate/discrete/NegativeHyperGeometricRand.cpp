@@ -1,6 +1,6 @@
 #include "NegativeHyperGeometricRand.h"
 
-NegativeHyperGeometricRand::NegativeHyperGeometricRand(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
+NegativeHyperGeometricRand::NegativeHyperGeometricRand(size_t totalSize, size_t totalSuccessesNum, size_t limitSuccessesNum)
 {
     SetParameters(totalSize, totalSuccessesNum, limitSuccessesNum);
 }
@@ -12,15 +12,18 @@ std::string NegativeHyperGeometricRand::Name() const
                                       + toStringWithPrecision(m) + ")";
 }
 
-void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
+void NegativeHyperGeometricRand::SetParameters(size_t totalSize, size_t totalSuccessesNum, size_t limitSuccessesNum)
 {
-    N = std::max(0, totalSize);
+    if (totalSuccessesNum > totalSize)
+        throw std::invalid_argument("Total size should be larger than total successes number in Negative-HyperGeometric distribution");
+    if (limitSuccessesNum > totalSuccessesNum)
+        throw std::invalid_argument("Total successes number should be larger than limit successes number in Negative-HyperGeometric distribution");
 
-    M = std::max(0, totalSuccessesNum);
-    M = std::min(N, M);
+    N = totalSize;
 
-    m = std::max(0, limitSuccessesNum);
-    m = std::min(M, m);
+    M = totalSuccessesNum;
+
+    m = limitSuccessesNum;
 
     p0 = static_cast<double>(M) / N;
     pmfCoef = RandMath::lfact(M);

@@ -13,10 +13,15 @@ std::string NoncentralChiSquaredRand::Name() const
 
 void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality)
 {
-    k = (degree <= 0.0) ? 1.0 : degree;
+    if (degree <= 0.0)
+        throw std::invalid_argument("Degree of Noncentral Chi-Squared distribution should be positive");
+    if (noncentrality <= 0.0)
+        throw std::invalid_argument("Noncentrality of Noncentral Chi-Squared distribution should be positive");
+
+    k = degree;
     halfK = 0.5 * k;
 
-    lambda = (noncentrality <= 0.0) ? 1.0 : noncentrality;
+    lambda = noncentrality;
     halfLambda = 0.5 * lambda;
     sqrtLambda = std::sqrt(lambda);
     logLambda = std::log(lambda);

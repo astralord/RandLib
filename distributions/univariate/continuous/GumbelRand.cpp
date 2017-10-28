@@ -19,7 +19,9 @@ void GumbelRand::SetLocation(double location)
 
 void GumbelRand::SetScale(double scale)
 {
-    beta = scale > 0.0 ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Gumbel distribution should be positive");
+    beta = scale;
     logBeta = std::log(beta);
 }
 

@@ -16,19 +16,19 @@
  */
 class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution
 {
-    int n = 1; ///< number of experiments
+    size_t n = 1; ///< number of experiments
     double pmfCoef = 0; ///< log(n!) - log(Γ(α + β + n)) - log(B(α, β))
     BetaRand B{};
 
 public:
-    BetaBinomialRand(int number, double shape1, double shape2);
+    BetaBinomialRand(size_t number, double shape1, double shape2);
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return n; }
 
-    void SetParameters(int number, double shape1, double shape2);
-    inline int GetNumber() const { return n; }
+    void SetParameters(size_t number, double shape1, double shape2);
+    inline size_t GetNumber() const { return n; }
     inline double GetAlpha() const { return B.GetAlpha(); }
     inline double GetBeta() const { return B.GetBeta(); }
 

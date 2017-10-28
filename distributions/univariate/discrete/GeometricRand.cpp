@@ -9,6 +9,8 @@ std::string GeometricRand::Name() const
 
 void GeometricRand::SetProbability(double probability)
 {
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Probability parameter of Geometric distribution should in interval [0, 1]");
     SetParameters(1, probability);
 }
 

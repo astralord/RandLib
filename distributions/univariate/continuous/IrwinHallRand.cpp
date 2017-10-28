@@ -1,6 +1,6 @@
 #include "IrwinHallRand.h"
 
-IrwinHallRand::IrwinHallRand(int number)
+IrwinHallRand::IrwinHallRand(size_t number)
 {
     SetNumber(number);
 }
@@ -10,9 +10,9 @@ std::string IrwinHallRand::Name() const
     return "Irwin-Hall(" + toStringWithPrecision(GetNumber()) + ")";
 }
 
-void IrwinHallRand::SetNumber(int number)
+void IrwinHallRand::SetNumber(size_t number)
 {
-    n = std::max(1, number);
+    n = number;
 }
 
 double IrwinHallRand::f(const double & x) const

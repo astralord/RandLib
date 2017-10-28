@@ -1,7 +1,7 @@
 #include "ZipfRand.h"
 #include "../continuous/UniformRand.h"
 
-ZipfRand::ZipfRand(double exponent, int number)
+ZipfRand::ZipfRand(double exponent, size_t number)
 {
     SetParameters(exponent, number);
 }
@@ -12,10 +12,12 @@ std::string ZipfRand::Name() const
                    + toStringWithPrecision(GetNumber()) + ")";
 }
 
-void ZipfRand::SetParameters(double exponent, int number)
+void ZipfRand::SetParameters(double exponent, size_t number)
 {
-    s = exponent <= 1.0 ? 2.0 : exponent;
-    n = number < 1 ? 1 : number;
+    if (exponent <= 1.0)
+        throw std::invalid_argument("Exponent of Zeta distribution should be larger than 1");
+    s = exponent;
+    n = number;
 
     invHarmonicNumber = 1.0 / RandMath::harmonicNumber(s, n);
 

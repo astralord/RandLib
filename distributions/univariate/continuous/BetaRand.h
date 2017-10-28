@@ -53,15 +53,15 @@ public:
 
 private:
     enum GENERATOR_ID {
-        UNIFORM,
-        ARCSINE,
-        CHENG,
-        REJECTION_UNIFORM,
-        REJECTION_UNIFORM_EXTENDED,
-        REJECTION_NORMAL,
-        JOHNK,
-        ATKINSON_WHITTAKER,
-        GAMMA_RATIO
+        UNIFORM, ///< standard uniform variate
+        ARCSINE, ///< arcsine method
+        CHENG, ///< Cheng's method
+        REJECTION_UNIFORM, ///< rejection method from uniform distribution for specific value of shapes α = β = 1.5
+        REJECTION_UNIFORM_EXTENDED, ///< rejection method from uniform distribution accelerated by using exponential distribution
+        REJECTION_NORMAL, ///< rejection method normal distribution
+        JOHNK, ///< Johnk's method
+        ATKINSON_WHITTAKER, ///< Atkinson-Whittaker's method
+        GAMMA_RATIO ///< ratio of two gamma variables
     };
 
     /**

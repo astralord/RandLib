@@ -12,8 +12,12 @@ NegativeBinomialDistribution<T>::NegativeBinomialDistribution(T number, double p
 template< typename T >
 void NegativeBinomialDistribution<T>::SetParameters(T number, double probability)
 {
+    if (r <= 0.0)
+        throw std::invalid_argument("Number-parameter of Negative-Binomial distribution should be positive");
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Probability parameter of Negative-Binomial distribution should in interval [0, 1]");
     r = (number > 0) ? number : 1;
-    p = (probability > 1.0 || probability < 0.0) ? 0.5 : probability;
+    p = probability;
     q = 1.0 - p;
     logProb = std::log(p);
     log1mProb = std::log1p(-p);
@@ -220,7 +224,7 @@ template< typename T >
 BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
@@ -244,13 +248,13 @@ void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
 {
     /// Check positivity of sample
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
     DoublePair stats = GetSampleMeanAndVariance(sample);
     double mean = stats.first, variance = stats.second;
     /// Method can't be applied in the case of too small variance
     if (variance <= mean)
-        throw std::invalid_argument(fitError(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
+        throw std::invalid_argument(fitErrorDescription(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
     double guess = mean * mean / (variance - mean);
     size_t n = sample.size();
     if (!RandMath::findRoot([sample, mean, n] (double x)
@@ -264,9 +268,9 @@ void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
         second -= n * (RandMath::trigamma(x) - mean / (x * (mean + x)));
         return DoublePair(first, second);
     }, guess))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding algorithm"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding algorithm"));
     if (guess <= 0.0)
-        throw std::runtime_error(fitError(WRONG_RETURN, "Number should be positive, but returned value is " + toStringWithPrecision(guess)));
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Number should be positive, but returned value is " + toStringWithPrecision(guess)));
     SetParameters(guess, guess / (guess + mean));
 }
 

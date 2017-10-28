@@ -13,7 +13,9 @@ std::string VonMisesRand::Name() const
 
 void VonMisesRand::SetConcentration(double concentration)
 {
-    k = (concentration > 0.0) ? concentration : 1.0;
+    if (concentration <= 0.0)
+        throw std::invalid_argument("Concentration parameter of von Mises distribution should be positive");
+    k = concentration;
     logI0k = RandMath::logModifiedBesselFirstKind(k, 0);
     s = (k > 1.3) ? 1.0 / std::sqrt(k) : M_PI * std::exp(-k);
     if (k < CK) {

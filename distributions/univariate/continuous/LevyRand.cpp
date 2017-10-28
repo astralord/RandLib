@@ -64,7 +64,7 @@ void LevyRand::FitScale(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNotLessThan(mu, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(mu)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(mu)));
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);

@@ -15,6 +15,8 @@ void AsymmetricLaplaceDistribution::ChangeLocation()
 
 void AsymmetricLaplaceDistribution::SetScale(double scale)
 {
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Laplace distribution should be positive");
     ShiftedGeometricStableDistribution::SetScale(scale);
     ChangeLocation();
 }
@@ -104,7 +106,7 @@ void AsymmetricLaplaceDistribution::FitShift(const std::vector<double> &sample)
     },
     minVar, maxVar, median
     ))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetShift(median);
 }
@@ -185,7 +187,7 @@ void AsymmetricLaplaceRand::FitAsymmetry(const std::vector<double> &sample)
         y += xMinus / tSq - xPlus;
         return y;
     }, minBound, maxBound, root))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetAsymmetry(root);
 }
@@ -211,11 +213,11 @@ void AsymmetricLaplaceRand::FitScaleAndAsymmetry(const std::vector<double> &samp
 
     if (xMinus == 0) {
         /// X ~ Exp(1 / xPlus)
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
     if (xPlus == 0) {
         /// -X ~ Exp(1 / xMinus)
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
 
     double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);

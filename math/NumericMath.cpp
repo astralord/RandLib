@@ -57,9 +57,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
     static constexpr double MAX_STEP = 10;
     int iter = 0;
     double step = stepTol + 1;
-    DoubleTriplet y = funPtr(root);
-    double f, fx, fxx;
-    std::tie(f, fx, fxx) = y;
+    auto [f, fx, fxx] = funPtr(root);
     if (std::fabs(f) < MIN_POSITIVE)
         return true;
     do {
@@ -71,8 +69,7 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double &root,
         step = std::min(MAX_STEP, std::max(-MAX_STEP, numerator / denominator));
         do {
             root = oldRoot - alpha * step;
-            y = funPtr(root);
-            std::tie(f, fx, fxx) = y;
+            std::tie(f, fx, fxx) = funPtr(root);
             if (std::fabs(f) < MIN_POSITIVE)
                 return true;
             alpha *= 0.5;
@@ -235,12 +232,12 @@ double parabolicMinimum(double a, double b, double c, double fa, double fb, doub
 
 /**
  * @fn findBounds
- * Search of segment containing minimum of function
+ * Search of segment that contains the minimum of function
  * @param funPtr mapping x |-> f(x)
  * @param abc such points, that a < b < c, f(a) > f(b) and f(c) > f(b)
  * @param fabc values of a, b and c
  * @param startPoint
- * @return true when segment is found
+ * @return true when segment is found, segment itself and its function values
  */
 bool findBounds(const std::function<double (double)> &funPtr, DoubleTriplet &abc, DoubleTriplet &fabc, double startPoint)
 {
@@ -345,13 +342,10 @@ bool findBounds(const std::function<double (double)> &funPtr, DoubleTriplet &abc
     }
 }
 
-bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet & abc, const DoubleTriplet & fabc, double &root, double epsilon)
+bool findMin(const std::function<double (double)> &funPtr, const DoubleTriplet & abc, double &fx, double &root, double epsilon)
 {
     static constexpr double K = 0.5 * (3 - M_SQRT5);
-    double a, x, c;
-    std::tie(a, x, c) = abc;
-    double fa, fx, fc;
-    std::tie(fa, fx, fc) = fabc;
+    auto [a, x, c] = abc;
     double w = x, v = x, fw = fx, fv = fx;
     double d = c - a, e = d;
     double u = a - 1;
@@ -433,7 +427,7 @@ bool findMin(const std::function<double (double)> &funPtr, double closePoint, do
     DoubleTriplet abc, fabc;
     if (!findBounds(funPtr, abc, fabc, closePoint))
         return false;
-    return findMin(funPtr, abc, fabc, root, epsilon);
+    return findMin(funPtr, abc, std::get<1>(fabc), root, epsilon);
 }
 
 }

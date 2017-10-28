@@ -2,7 +2,7 @@
 #include "BinomialRand.h"
 #include <thread>
 
-BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
+BetaBinomialRand::BetaBinomialRand(size_t number, double shape1, double shape2)
 {
     SetParameters(number, shape1, shape2);
 }
@@ -14,9 +14,11 @@ std::string BetaBinomialRand::Name() const
                             + toStringWithPrecision(GetBeta()) + ")";
 }
 
-void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
+void BetaBinomialRand::SetParameters(size_t number, double shape1, double shape2)
 {
-    n = std::max(number, 1);
+    if (shape1 <= 0.0 || shape2 <= 0.0)
+        throw std::invalid_argument("Shape parameters of Beta-Binomial distribution should be positive");
+    n = number;
     B.SetShapes(shape1, shape2);
     pmfCoef = RandMath::lfact(n);
     pmfCoef -= std::lgamma(B.GetAlpha() + B.GetBeta() + n);

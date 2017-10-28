@@ -14,6 +14,8 @@ std::string BernoulliRand::Name() const
 
 void BernoulliRand::SetProbability(double probability)
 {
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Probability parameter of Bernoulli distribution should in interval [0, 1]");
     SetParameters(1, probability);
     boundary = q * RandGenerator::MaxValue();
 }

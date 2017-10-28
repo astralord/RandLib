@@ -20,7 +20,9 @@ std::string StudentTRand::Name() const
 
 void StudentTRand::SetDegree(double degree)
 {
-    nu = degree > 0 ? degree : 1;
+    if (degree <= 0.0)
+        throw std::invalid_argument("Degree of t-distribution should be positive");
+    nu = degree;
     Y.SetParameters(0.5 * nu, 1.0);
 
     nup1Half = 0.5 * (nu + 1);
@@ -37,7 +39,9 @@ void StudentTRand::SetLocation(double location)
 
 void StudentTRand::SetScale(double scale)
 {
-    sigma = scale > 0 ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of t-distribution should be positive");
+    sigma = scale;
     logSigma = std::log(sigma);
 }
 

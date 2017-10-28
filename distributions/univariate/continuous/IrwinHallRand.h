@@ -16,18 +16,18 @@
  */
 class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
 {
-    int n = 1; ///< parameter of the distribution
+    size_t n = 1; ///< parameter of the distribution
     UniformRand U{};
 public:
-    explicit IrwinHallRand(int number);
+    explicit IrwinHallRand(size_t number);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return n; }
 
-    void SetNumber(int number);
-    inline int GetNumber() const { return n; }
+    void SetNumber(size_t number);
+    inline size_t GetNumber() const { return n; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

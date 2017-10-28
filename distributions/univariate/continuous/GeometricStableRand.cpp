@@ -11,15 +11,19 @@ ShiftedGeometricStableDistribution::ShiftedGeometricStableDistribution(double ex
 
 void ShiftedGeometricStableDistribution::SetParameters(double exponent, double skewness, double scale, double location, double shift)
 {
-    Z.SetParameters(exponent, skewness);
+    if (exponent < 0.1 || exponent > 2.0)
+        throw std::invalid_argument("Exponent of Geometric-Stable distribution should be in the interval [0.1, 2]");
+    if (std::fabs(skewness) > 1.0)
+        throw std::invalid_argument("Skewness of Geometric-Stable distribution should be in the interval [-1, 1]");
 
-    alpha = Z.GetExponent();
+    alpha = exponent;
     alphaInv = 1.0 / alpha;
-    beta = Z.GetSkewness();
-    gamma = (scale > 0.0) ? scale : M_SQRT2;
-    logGamma = std::log(gamma);
-    mu = location;
-    m = shift;
+    beta = skewness;
+    Z.SetParameters(alpha, beta);
+
+    SetScale(scale);
+    SetLocation(location);
+    SetShift(shift);
 
     if (alpha == 2.0)
         distributionType = (mu == 0.0) ? LAPLACE : ASYMMETRIC_LAPLACE;
@@ -43,15 +47,17 @@ void ShiftedGeometricStableDistribution::SetShift(double shift)
 
 void ShiftedGeometricStableDistribution::SetScale(double scale)
 {
-    gamma = (scale > 0.0) ? scale : M_SQRT2;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Geometric-Stable distribution should be positive");
+    gamma = scale;
     logGamma = std::log(gamma);
 }
 
 void ShiftedGeometricStableDistribution::SetAsymmetry(double asymmetry)
 {
+    if (asymmetry <= 0.0)
+        throw std::invalid_argument("Asymmetry parameter of Laplace distribution should be positive");
     kappa = asymmetry;
-    if (kappa <= 0)
-        kappa = 1.0;
     kappaInv = 1.0 / kappa;
     kappaSq = kappa * kappa;
     log1pKappaSq = std::log1p(kappaSq);

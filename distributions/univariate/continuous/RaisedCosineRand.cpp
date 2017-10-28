@@ -14,7 +14,9 @@ void RaisedCosineDistribution::SetLocation(double location)
 
 void RaisedCosineDistribution::SetScale(double scale)
 {
-    s = scale > 0.0 ? scale : M_PI;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Raised-Cosine distribution should be positive");
+    s = scale;
     s_pi = s * M_1_PI;
     log2S = std::log(2 * s);
 }

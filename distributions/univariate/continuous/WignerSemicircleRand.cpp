@@ -12,9 +12,11 @@ std::string WignerSemicircleRand::Name() const
 
 void WignerSemicircleRand::SetRadius(double radius)
 {
-    R = (radius > 0.0) ? radius : 1.0;
-    logRSq = std::log(R * R);
+    if (radius <= 0.0)
+        throw std::invalid_argument("Radius of Wigner-Semicircle distribution should be positive");
+    R = radius;
     RSq = R * R;
+    logRSq = std::log(RSq);
 }
 
 double WignerSemicircleRand::f(const double & x) const

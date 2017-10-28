@@ -14,9 +14,11 @@ std::string ZetaRand::Name() const
 
 void ZetaRand::SetExponent(double exponent)
 {
-    s = exponent <= 1.0 ? 2.0 : exponent;
+    if (exponent <= 1.0)
+        throw std::invalid_argument("Exponent of Zeta distribution should be larger than 1");
+    s = exponent;
     sm1 = s - 1.0;
-    zetaSInv = 1.0 / RandMath::zetaRiemann(s);
+    zetaSInv = 1.0 / std::riemann_zeta(s);
     b = -std::expm1(-sm1 * M_LN2);
 }
 
@@ -53,7 +55,7 @@ int ZetaRand::Variate() const
 
 double ZetaRand::Mean() const
 {
-    return (s > 2) ? zetaSInv * RandMath::zetaRiemann(sm1) : INFINITY;
+    return (s > 2) ? zetaSInv * std::riemann_zeta(sm1) : INFINITY;
 }
 
 double ZetaRand::Variance() const
@@ -61,7 +63,7 @@ double ZetaRand::Variance() const
     if (s <= 3)
         return INFINITY;
     double y = Mean();
-    double z = zetaSInv * RandMath::zetaRiemann(s - 2);
+    double z = zetaSInv * std::riemann_zeta(s - 2);
     return z - y * y;
 }
 
@@ -74,9 +76,9 @@ double ZetaRand::Skewness() const
 {
     if (s <= 4)
         return INFINITY;
-    double z1 = RandMath::zetaRiemann(sm1), z1Sq = z1 * z1;
-    double z2 = RandMath::zetaRiemann(s - 2);
-    double z3 = RandMath::zetaRiemann(s - 3);
+    double z1 = std::riemann_zeta(sm1), z1Sq = z1 * z1;
+    double z2 = std::riemann_zeta(s - 2);
+    double z3 = std::riemann_zeta(s - 3);
     double z = 1.0 / zetaSInv, zSq = z * z;
     double numerator = zSq * z3;
     numerator -= 3 * z2 * z1 * z;
@@ -104,6 +106,6 @@ double ZetaRand::ExcessKurtosis() const
 
 double ZetaRand::Moment(int n) const
 {
-    return (s > n + 1) ? zetaSInv * RandMath::zetaRiemann(s - n) : INFINITY;
+    return (s > n + 1) ? zetaSInv * std::riemann_zeta(s - n) : INFINITY;
 }
 

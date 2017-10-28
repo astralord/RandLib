@@ -15,17 +15,14 @@ BetaDistribution::GENERATOR_ID BetaDistribution::getIdOfUsedGenerator() const
         return ATKINSON_WHITTAKER;
 
     if (RandMath::areClose(alpha, beta)) {
-        /// Generators for symmetric density
         if (RandMath::areClose(alpha, 1.0))
-            return UNIFORM; /// Standard uniform variate
+            return UNIFORM;
         else if (RandMath::areClose(alpha, 0.5))
-            return ARCSINE; /// Arcsine method
+            return ARCSINE;
         else if (RandMath::areClose(alpha, 1.5))
-            return REJECTION_UNIFORM; /// Rejection method from uniform distribution
-        else if (alpha > 1) {
-            /// Rejection from uniform or normal distribution
+            return REJECTION_UNIFORM;
+        else if (alpha > 1)
             return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;
-        }
     }
     if (std::min(alpha, beta) > 0.5 && std::max(alpha, beta) > 1)
         return CHENG;
@@ -57,6 +54,8 @@ void BetaDistribution::setCoefficientsForGenerator()
 
 void BetaDistribution::SetShapes(double shape1, double shape2)
 {
+    if (shape1 <= 0 || shape2 <= 0)
+        throw std::invalid_argument("Shapes of Beta distribution should be positive");
     GammaRV1.SetParameters(shape1, 1);
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
@@ -68,11 +67,11 @@ void BetaDistribution::SetShapes(double shape1, double shape2)
 
 void BetaDistribution::SetSupport(double minValue, double maxValue)
 {
+    if (minValue <= maxValue)
+        throw std::invalid_argument("Minimal value of Beta distribution should be less than maximum value");
+
     a = minValue;
     b = maxValue;
-    /// Sanity check
-    if (a >= b)
-        b = a + 1.0;
     bma = b - a;
     bmaInv = 1.0 / bma;
     logBma = std::log(bma);
@@ -153,8 +152,6 @@ double BetaDistribution::variateArcsine() const
 
 double BetaDistribution::variateRejectionUniform() const
 {
-    /// Rejection method from uniform distribution
-    /// boosted for specific value of shapes α = β = 1.5
     int iter = 0;
     do {
         double U = UniformRand::StandardVariate();
@@ -167,8 +164,6 @@ double BetaDistribution::variateRejectionUniform() const
 
 double BetaDistribution::variateRejectionUniformExtended() const
 {
-    /// Rejection method from uniform distribution
-    /// boosted by using exponential distribution
     int iter = 0;
     static constexpr double M_LN4 = M_LN2 + M_LN2;
     do {
@@ -508,9 +503,9 @@ std::string BetaRand::Name() const
 void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 {
     if (!allElementsAreNotLessThan(a, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
     double mean = GetSampleMean(sample);
     double shape = mean - a;
     shape /= b - mean;
@@ -521,9 +516,9 @@ void BetaRand::FitAlphaMM(const std::vector<double> &sample)
 void BetaRand::FitBetaMM(const std::vector<double> &sample)
 {
     if (!allElementsAreNotLessThan(a, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
     double mean = GetSampleMean(sample);
     double shape = b - mean;
     shape /= mean - a;

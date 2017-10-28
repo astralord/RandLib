@@ -34,12 +34,18 @@ double StableDistribution::MaxValue() const
 
 void StableDistribution::SetParameters(double exponent, double skewness, double scale, double location)
 {
-    alpha = std::min(std::max(exponent, 0.1), 2.0);
+    if (exponent < 0.1 || exponent > 2.0)
+        throw std::invalid_argument("Exponent of Stable distribution should be in the interval [0.1, 2]");
+    if (std::fabs(skewness) > 1.0)
+        throw std::invalid_argument("Skewness of Stable distribution should be in the interval [-1, 1]");
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Stable distribution should be positive");
+
+    alpha = exponent;
     alphaInv = 1.0 / alpha;
-    beta = std::min(skewness, 1.0);
-    beta = std::max(beta, -1.0);
+    beta = skewness;
     mu = location;
-    gamma = scale > 0 ? scale : M_SQRT2;
+    gamma = scale;
     logGamma = std::log(gamma);
 
     /// Set id of distribution
@@ -98,7 +104,9 @@ void StableDistribution::SetLocation(double location)
 
 void StableDistribution::SetScale(double scale)
 {
-    gamma = scale > 0 ? scale : M_SQRT2;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Stable distribution should be positive");
+    gamma = scale;
     logGamma = std::log(gamma);
     if (distributionType == NORMAL)
         pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;

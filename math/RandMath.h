@@ -115,13 +115,6 @@ double logModifiedBesselFirstKind(double x, double nu);
 double logModifiedBesselSecondKind(double x, double nu);
 
 /**
- * @fn zetaRiemann
- * @param s
- * @return Riemann zeta function
- */
-double zetaRiemann(double s);
-
-/**
  * @fn W0Lambert
  * @param x
  * @param epsilon

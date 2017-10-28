@@ -58,7 +58,7 @@ template < typename T >
 constexpr char ProbabilityDistribution<T>::LOWER_LIMIT_VIOLATION[];
 
 template < typename T >
-std::string ProbabilityDistribution<T>::fitError(ProbabilityDistribution::FIT_ERROR_TYPE fet, const std::string &explanation)
+std::string ProbabilityDistribution<T>::fitErrorDescription(ProbabilityDistribution::FIT_ERROR_TYPE fet, const std::string &explanation)
 {
     std::string error = this->Name() + ": ";
     switch (fet) {
