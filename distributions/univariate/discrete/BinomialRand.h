@@ -24,7 +24,7 @@ protected:
     double log1mProb = -M_LN2; ///< log(q)
 
 private:
-    size_t n = 1; ///< number of experiments
+    int n = 1; ///< number of experiments
     double np = 0.5; ///< n * p
     double lfactn = 0; ///< log(n!)
 
