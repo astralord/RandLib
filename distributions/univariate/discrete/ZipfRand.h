@@ -13,7 +13,7 @@
 class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
 {
     double s = 1; ///< exponent
-    size_t n = 1; ///< number
+    int n = 1; ///< number
     double invHarmonicNumber = 1; /// 1 / H(s, n)
 
     static constexpr int tableSize = 16;
