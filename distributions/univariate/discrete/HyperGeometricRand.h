@@ -12,9 +12,9 @@
  */
 class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 {
-    size_t N = 1; ///< population size
-    size_t K = 1; /// number of possible successes
-    size_t n = 1; /// number of draws
+    int N = 1; ///< population size
+    int K = 1; /// number of possible successes
+    int n = 1; /// number of draws
     double pmfCoef = 1; ///< C(N, n)
     double p0 = 1; ///< K/N
 

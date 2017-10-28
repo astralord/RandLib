@@ -16,7 +16,7 @@
  */
 class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution
 {
-    size_t n = 1; ///< number of experiments
+    int n = 1; ///< number of experiments
     double pmfCoef = 0; ///< log(n!) - log(Γ(α + β + n)) - log(B(α, β))
     BetaRand B{};
 
