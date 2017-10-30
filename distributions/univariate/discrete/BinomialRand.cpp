@@ -4,7 +4,7 @@
 #include "../continuous/ExponentialRand.h"
 #include "BernoulliRand.h"
 
-BinomialDistribution::BinomialDistribution(size_t number, double probability)
+BinomialDistribution::BinomialDistribution(int number, double probability)
 {
     SetParameters(number, probability);
 }
@@ -74,10 +74,12 @@ void BinomialDistribution::SetGeneratorConstants()
     logPnpInv = logProbFloor(npFloor);
 }
 
-void BinomialDistribution::SetParameters(size_t number, double probability)
+void BinomialDistribution::SetParameters(int number, double probability)
 {
     if (probability < 0.0 || probability > 1.0)
         throw std::invalid_argument("Probability parameter of Binomial distribution should in interval [0, 1]");
+    if (number <= 0)
+        throw std::invalid_argument("Number of Binomial distribution should be positive");
     n = number;
     p = probability;
     q = 1.0 - p;

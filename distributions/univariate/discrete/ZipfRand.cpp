@@ -1,7 +1,7 @@
 #include "ZipfRand.h"
 #include "../continuous/UniformRand.h"
 
-ZipfRand::ZipfRand(double exponent, size_t number)
+ZipfRand::ZipfRand(double exponent, int number)
 {
     SetParameters(exponent, number);
 }
@@ -12,10 +12,12 @@ std::string ZipfRand::Name() const
                    + toStringWithPrecision(GetNumber()) + ")";
 }
 
-void ZipfRand::SetParameters(double exponent, size_t number)
+void ZipfRand::SetParameters(double exponent, int number)
 {
     if (exponent <= 1.0)
-        throw std::invalid_argument("Exponent of Zeta distribution should be larger than 1");
+        throw std::invalid_argument("Exponent of Zipf distribution should be larger than 1");
+    if (number <= 0)
+        throw std::invalid_argument("Number of Zipf distribution should be positive");
     s = exponent;
     n = number;
 

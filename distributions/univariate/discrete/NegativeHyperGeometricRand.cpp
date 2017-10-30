@@ -1,6 +1,6 @@
 #include "NegativeHyperGeometricRand.h"
 
-NegativeHyperGeometricRand::NegativeHyperGeometricRand(size_t totalSize, size_t totalSuccessesNum, size_t limitSuccessesNum)
+NegativeHyperGeometricRand::NegativeHyperGeometricRand(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
 {
     SetParameters(totalSize, totalSuccessesNum, limitSuccessesNum);
 }
@@ -12,8 +12,10 @@ std::string NegativeHyperGeometricRand::Name() const
                                       + toStringWithPrecision(m) + ")";
 }
 
-void NegativeHyperGeometricRand::SetParameters(size_t totalSize, size_t totalSuccessesNum, size_t limitSuccessesNum)
+void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
 {
+    if (totalSize <= 0 || totalSuccessesNum <= 0 || limitSuccessesNum <= 0)
+        throw std::invalid_argument("All parameters of Negative-HyperGeometric distribution should be positive");
     if (totalSuccessesNum > totalSize)
         throw std::invalid_argument("Total size should be larger than total successes number in Negative-HyperGeometric distribution");
     if (limitSuccessesNum > totalSuccessesNum)

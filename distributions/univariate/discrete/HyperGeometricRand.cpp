@@ -1,6 +1,6 @@
 #include "HyperGeometricRand.h"
 
-HyperGeometricRand::HyperGeometricRand(size_t totalSize, size_t drawsNum, size_t successesNum)
+HyperGeometricRand::HyperGeometricRand(int totalSize, int drawsNum, int successesNum)
 {
     SetParameters(totalSize, drawsNum, successesNum);
 }
@@ -12,8 +12,10 @@ std::string HyperGeometricRand::Name() const
                              + toStringWithPrecision(K) + ")";
 }
 
-void HyperGeometricRand::SetParameters(size_t totalSize, size_t drawsNum, size_t successesNum)
+void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successesNum)
 {
+    if (totalSize <= 0 || drawsNum <= 0 || successesNum <= 0)
+        throw std::invalid_argument("All parameters of HyperGeometric distribution should be positive");
     if (drawsNum > totalSize)
         throw std::invalid_argument("Total size should be larger than draws number in HyperGeometric distribution");
     if (successesNum > totalSize)

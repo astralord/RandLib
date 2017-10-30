@@ -14,16 +14,13 @@ std::string TrinomialRand::Name() const
 
 void TrinomialRand::SetParameters(int number, double probability1, double probability2)
 {
-    double p1 = probability1, p2 = probability2;
-    /// sanity check (probabilities should be positive
-    /// and their sum should be not greater than 1)
     if (probability1 < 0.0 || probability2 < 0.0 || probability1 + probability2 > 1.0)
-    {
-        p1 = 1.0 / 3;
-        p2 = 1.0 / 3;
-    }
+        throw std::invalid_argument("Probabilities of Trinomial distribution should be positive and their sum should be be not greater than 1");
+    if (number <= 0)
+        throw std::invalid_argument("Number of Trinomial distribution should be positive");
 
-    n = std::max(number, 1);
+    double p1 = probability1, p2 = probability2;
+    n = number;
     X.SetParameters(n, p1);
     Y.SetParameters(n, p2);
 

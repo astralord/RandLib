@@ -45,7 +45,7 @@ private:
     GeometricRand G{};
 
 protected:
-    BinomialDistribution(size_t number, double probability);
+    BinomialDistribution(int number, double probability);
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
@@ -56,10 +56,10 @@ private:
     void SetGeneratorConstants();
 
 protected:
-    void SetParameters(size_t number, double probability);
+    void SetParameters(int number, double probability);
 
 public:
-    inline size_t GetNumber() const { return n; }
+    inline int GetNumber() const { return n; }
     inline double GetProbability() const { return p; }
 
 private:

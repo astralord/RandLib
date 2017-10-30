@@ -22,7 +22,9 @@ std::string NormalRand::Name() const
 
 void NormalRand::SetScale(double scale)
 {
-    sigma = scale > 0 ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Normal distribution should be positive");
+    sigma = scale;
     StableDistribution::SetScale(sigma * M_SQRT1_2);
 }
 
@@ -138,7 +140,7 @@ double NormalRand::Moment(int n) const
         return 0;
     if (n == 0)
         return 1;
-    return (n & 1) ? std::pow(sigma, n) * RandMath::doubleFactorial(n - 1) : 0;
+    return (n & 1) ? std::exp(n * this->GetLogScale() + RandMath::ldfact(n - 1)) : 0.0;
 }
 
 void NormalRand::FitLocation(const std::vector<double> &sample)

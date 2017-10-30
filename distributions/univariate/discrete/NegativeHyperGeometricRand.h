@@ -19,16 +19,16 @@ class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribut
     double p0 = 1; ///< M / N
 
 public:
-    NegativeHyperGeometricRand(size_t totalSize, size_t totalSuccessesNum, size_t limitSuccessesNum);
+    NegativeHyperGeometricRand(int totalSize, int totalSuccessesNum, int limitSuccessesNum);
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return N - M; }
 
-    void SetParameters(size_t totalSize, size_t totalSuccessesNum, size_t limitSuccessesNum);
-    inline size_t GetTotalSize() { return N; }
-    inline size_t GetTotalSuccessesNum() { return M; }
-    inline size_t GetLimitSuccessesNum() { return m; }
+    void SetParameters(int totalSize, int totalSuccessesNum, int limitSuccessesNum);
+    inline int GetTotalSize() { return N; }
+    inline int GetTotalSuccessesNum() { return M; }
+    inline int GetLimitSuccessesNum() { return m; }
 
     double P(const int & k) const override;
     double logP(const int & k) const override;

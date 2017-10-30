@@ -21,15 +21,15 @@ class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
     double table[tableSize];
 
 public:
-    ZipfRand(double exponent, size_t number);
+    ZipfRand(double exponent, int number);
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 1; }
     int MaxValue() const override { return n; }
 
-    void SetParameters(double exponent, size_t number);
+    void SetParameters(double exponent, int number);
     inline double GetExponent() const { return s; }
-    inline size_t GetNumber() const { return n; }
+    inline int GetNumber() const { return n; }
 
     double P(const int & k) const override;
     double logP(const int & k) const override;

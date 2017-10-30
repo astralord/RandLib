@@ -16,8 +16,15 @@ std::string NormalInverseGammaRand::Name() const
 
 void NormalInverseGammaRand::SetParameters(double location, double precision, double shape, double rate)
 {
+    if (precision <= 0.0)
+        throw std::invalid_argument("Precision of Normal-Inverse-Gamma distribution should be positive");
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Normal-Inverse-Gamma distribution should be positive");
+    if (rate <= 0.0)
+        throw std::invalid_argument("Rate of Normal-Inverse-Gamma distribution should be positive");
+
     mu = location;
-    lambda = (precision > 0.0) ? precision : 1.0;
+    lambda = precision;
 
     Y.SetParameters(shape, rate);
     alpha = Y.GetShape();

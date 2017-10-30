@@ -26,8 +26,8 @@ public:
     double MinValue() const override { return 0; }
     double MaxValue() const override { return n; }
 
-    void SetNumber(size_t number);
-    inline size_t GetNumber() const { return n; }
+    void SetNumber(int number);
+    inline int GetNumber() const { return n; }
 
     double f(const double & x) const override;
     double logf(const double & x) const override;

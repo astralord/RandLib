@@ -58,5 +58,5 @@ double CauchyRand::quantileImpl1m(double p) const
 
 double CauchyRand::Entropy() const
 {
-    return std::log(4 * gamma * M_PI);
+    return 2 * M_LN2 + logGamma + M_LNPI;
 }
