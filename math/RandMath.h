@@ -97,22 +97,22 @@ double xexpxsqerfc(double x);
 double harmonicNumber(double exponent, int number);
 
 /**
- * @fn logModifiedBesselFirstKind
+ * @fn logBesselI
  * Calculates logarithm of modified Bessel function of the 1st kind
  * @param nu
  * @param x
  * @return log(I_ν(x))
  */
-double logBesselI(double nu, double x);
+long double logBesselI(double nu, double x);
 
 /**
- * @fn logModifiedBesselSecondKind
+ * @fn logBesselK
  * Calculates logarithm of modified Bessel function of the 2nd kind
  * @param nu
  * @param x
  * @return log(K_ν(x))
  */
-double logBesselK(double nu, double x);
+long double logBesselK(double nu, double x);
 
 /**
  * @fn W0Lambert
