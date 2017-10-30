@@ -351,7 +351,6 @@ double ShiftedGeometricStableDistribution::Variate() const
     case UNITY_EXPONENT:
         return variateForUnityExponent(Z.Variate());
     case GENERAL:
-    default:
         return variateForGeneralExponent(Z.Variate());
     }
     return NAN;
