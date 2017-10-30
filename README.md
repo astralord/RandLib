@@ -6,7 +6,9 @@
        src="https://scan.coverity.com/projects/12703/badge.svg"/>
 </a>
 
-With RandLib one can easily work with probability distributions.
+With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is C++17 compiler support.
+
+What can you do with RandLib? Here are some useful examples:
 * Fast sampling. For instance, generate million variates from standard normal distribution:
 ```c++
 NormalRand distribution(0, 1);
