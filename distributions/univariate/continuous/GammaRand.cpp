@@ -10,6 +10,11 @@ GammaDistribution::GammaDistribution(double shape, double rate)
 
 void GammaDistribution::SetParameters(double shape, double rate)
 {
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Gamma distribution should be positive");
+    if (rate <= 0.0)
+        throw std::invalid_argument("Rate of Gamma distribution should be positive");
+
     alpha = shape > 0 ? shape : 1.0;
     
     beta = (rate > 0.0) ? rate : 1.0;
@@ -526,7 +531,7 @@ void FreeScaleGammaDistribution::FitRate(const std::vector<double> &sample, bool
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mean = GetSampleMean(sample);
     double coef = alpha - (unbiased ? 1.0 / sample.size() : 0.0);
     SetParameters(alpha, coef / mean);
@@ -536,7 +541,7 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double alpha0 = priorDistribution.GetShape();
     double beta0 = priorDistribution.GetRate();
     double newAlpha = alpha * sample.size() + alpha0;
@@ -555,7 +560,7 @@ void GammaRand::FitShape(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate log-average
     long double logAverage = 0.0L;
@@ -573,7 +578,7 @@ void GammaRand::FitShape(const std::vector<double> &sample)
         double second = RandMath::trigamma(x);
         return DoublePair(first, second);
     }, shape))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetParameters(shape, beta);
 }
 
@@ -581,7 +586,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate average and log-average
     double average = GetSampleMean(sample);
@@ -604,7 +609,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
         double second = RandMath::trigamma(x) - 1.0 / x;
         return DoublePair(first, second);
     }, shape))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetParameters(shape, shape / average);
 }
@@ -614,9 +619,9 @@ std::string ChiSquaredRand::Name() const
     return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
 }
 
-void ChiSquaredRand::SetDegree(int degree)
+void ChiSquaredRand::SetDegree(size_t degree)
 {
-    GammaDistribution::SetParameters((degree < 1) ? 0.5 : 0.5 * degree, 0.5);
+    GammaDistribution::SetParameters(0.5 * degree, 0.5);
 }
 
 
@@ -625,12 +630,12 @@ std::string ErlangRand::Name() const
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
 
-void ErlangRand::SetParameters(int shape, double rate)
+void ErlangRand::SetParameters(size_t shape, double rate)
 {
-    GammaDistribution::SetParameters(std::max(shape, 1), rate);
+    GammaDistribution::SetParameters(shape, rate);
 }
 
-void ErlangRand::SetShape(int shape)
+void ErlangRand::SetShape(size_t shape)
 {
     SetParameters(shape, beta);
 }

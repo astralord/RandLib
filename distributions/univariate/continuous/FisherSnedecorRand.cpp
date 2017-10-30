@@ -12,8 +12,11 @@ std::string FisherSnedecorRand::Name() const
 
 void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
 {
-    d1 = std::max(degree1, 1);
-    d2 = std::max(degree2, 1);
+    if (degree1 <= 0 || degree2 <= 0)
+        throw std::invalid_argument("Degrees of F-distribution should be positive");
+
+    d1 = degree1;
+    d2 = degree2;
 
     B.SetParameters(0.5 * d1, 0.5 * d2);
 

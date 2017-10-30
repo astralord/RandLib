@@ -19,6 +19,8 @@ void LogNormalRand::SetLocation(double location)
 
 void LogNormalRand::SetScale(double scale)
 {
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of LogNormal distribution should be positive");
     X.SetScale(scale);
     expHalfSigmaSq = std::exp(0.5 * X.Variance());
 }
@@ -128,7 +130,7 @@ void LogNormalRand::FitLocation(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     SetLocation(logAverage(sample));
 }
 
@@ -136,7 +138,7 @@ void LogNormalRand::FitScale(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mu = X.GetLocation();
     SetScale(std::sqrt(logVariance(sample, mu)));
 }
@@ -145,7 +147,7 @@ void LogNormalRand::Fit(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     long double logMean = 0.0L;
     long double logSqDev = 0.0L;
@@ -166,7 +168,7 @@ NormalRand LogNormalRand::FitLocationBayes(const std::vector<double> &sample, co
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
@@ -182,7 +184,7 @@ InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample,
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
@@ -198,7 +200,7 @@ NormalInverseGammaRand LogNormalRand::FitBayes(const std::vector<double> &sample
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();

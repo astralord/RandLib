@@ -14,13 +14,18 @@ std::string NegativeHyperGeometricRand::Name() const
 
 void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
 {
-    N = std::max(0, totalSize);
+    if (totalSize <= 0 || totalSuccessesNum <= 0 || limitSuccessesNum <= 0)
+        throw std::invalid_argument("All parameters of Negative-HyperGeometric distribution should be positive");
+    if (totalSuccessesNum > totalSize)
+        throw std::invalid_argument("Total size should be larger than total successes number in Negative-HyperGeometric distribution");
+    if (limitSuccessesNum > totalSuccessesNum)
+        throw std::invalid_argument("Total successes number should be larger than limit successes number in Negative-HyperGeometric distribution");
 
-    M = std::max(0, totalSuccessesNum);
-    M = std::min(N, M);
+    N = totalSize;
 
-    m = std::max(0, limitSuccessesNum);
-    m = std::min(M, m);
+    M = totalSuccessesNum;
+
+    m = limitSuccessesNum;
 
     p0 = static_cast<double>(M) / N;
     pmfCoef = RandMath::lfact(M);

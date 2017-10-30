@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
     int n = 1; ///< parameter of the distribution
     UniformRand U{};
 public:
-    explicit IrwinHallRand(int number);
+    explicit IrwinHallRand(size_t number);
 
     std::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }

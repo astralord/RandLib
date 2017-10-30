@@ -26,9 +26,13 @@ void BivariateNormalRand::SetLocations(double location1, double location2)
 
 void BivariateNormalRand::SetCovariance(double scale1, double scale2, double correlation)
 {
-    sigma1 = scale1 > 0.0 ? scale1 : 1.0;
-    sigma2 = scale2 > 0.0 ? scale2 : 1.0;
-    rho = std::fabs(correlation) > 1.0 ? 0.0 : correlation;
+    if (scale1 <= 0.0 || scale2 <= 0.0)
+        throw std::invalid_argument("Scales of Bivariate-Normal distribution should be positive");
+    if (std::fabs(correlation) > 1.0)
+        throw std::invalid_argument("Correlation of Bivariate-Normal distribution should be in interval [-1, 1]");
+    sigma1 = scale1;
+    sigma2 = scale2;
+    rho = correlation;
 
     X.SetScale(sigma1);
     Y.SetScale(sigma2);

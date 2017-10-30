@@ -1,12 +1,15 @@
 # RandLib
 
-[![Build Status](https://travis-ci.org/StochasticEngineer/RandLib.svg?branch=coverity_scan)](https://travis-ci.org/StochasticEngineer/RandLib)
+
+[![Build Status](https://travis-ci.org/Quanteeks/RandLib.svg?branch=master)](https://travis-ci.org/Quanteeks/RandLib)
 <a href="https://scan.coverity.com/projects/randlib">
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/12703/badge.svg"/>
 </a>
 
-With RandLib one can easily work with probability distributions.
+With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is C++17 compiler support.
+
+What can you do with RandLib? Here are some useful examples:
 * Fast sampling. For instance, generate million variates from standard normal distribution:
 ```c++
 NormalRand distribution(0, 1);

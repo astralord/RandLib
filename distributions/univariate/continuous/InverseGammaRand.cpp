@@ -12,6 +12,10 @@ std::string InverseGammaRand::Name() const
 
 void InverseGammaRand::SetParameters(double shape, double rate)
 {
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Inverse-Gamma distribution should be positive");
+    if (rate <= 0.0)
+        throw std::invalid_argument("Rate of Inverse-Gamma distribution should be positive");
     X.SetParameters(shape, rate);
     alpha = X.GetShape();
     beta = X.GetRate();

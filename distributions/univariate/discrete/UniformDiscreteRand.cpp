@@ -12,11 +12,11 @@ std::string UniformDiscreteRand::Name() const
 
 void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
 {
+    if (minValue >= maxValue)
+        throw std::invalid_argument("Minimal value of Uniform discrete distribution should be less than maximum value");
+
     a = minValue;
     b = maxValue;
-
-    if (b < a)
-        b = a + 1;
 
     n = b - a + 1;
     nInv = 1.0 / n;

@@ -27,6 +27,7 @@ public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return (lambda < 1) ? sigmaSq * a : 0; }
     double MaxValue() const override { return sigmaSq * b; }
+
     double f(const double & x) const override;
     double logf(const double & x) const override;
 

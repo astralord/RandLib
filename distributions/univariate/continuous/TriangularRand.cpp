@@ -16,15 +16,13 @@ std::string TriangularRand::Name() const
 
 void TriangularRand::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
+    if (lowerLimit >= mode)
+        throw std::invalid_argument("Lower limit of Triangular distribution should be larger than mode");
+    if (mode >= upperLimit)
+        throw std::invalid_argument("Upper limit of Triangular distribution should be smaller than mode");
     a = lowerLimit;
-    if (mode > a)
-        c = mode;
-    else
-        c = a + 1.0;
-    if (upperLimit > c)
-        b = upperLimit;
-    else
-        b = c + 1.0;
+    c = mode;
+    b = upperLimit;
     SetConstantsForGenerator();
 }
 

@@ -56,7 +56,7 @@ protected:
  *
  * Related distributions: <BR>
  * X = m + γ * (Y / κ - W * κ), where Y, W ~ Exp(1) <BR>
- * X - m ~ Geometric-Stable(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
+ * X - m ~ GS(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
  */
 class RANDLIBSHARED_EXPORT AsymmetricLaplaceRand : public AsymmetricLaplaceDistribution
 {
@@ -83,7 +83,7 @@ public:
  *
  * Related distributions: <BR>
  * X = m + γ * (Y - W), where Y, W ~ Exp(1) <BR>
- * X - m ~ Geometric-Stable(2, β, γ, 0) with arbitrary β
+ * X - m ~ GS(2, β, γ, 0) with arbitrary β
  */
 class RANDLIBSHARED_EXPORT LaplaceRand : public AsymmetricLaplaceDistribution
 {

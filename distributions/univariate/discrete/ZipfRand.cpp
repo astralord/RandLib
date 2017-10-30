@@ -14,8 +14,12 @@ std::string ZipfRand::Name() const
 
 void ZipfRand::SetParameters(double exponent, int number)
 {
-    s = exponent <= 1.0 ? 2.0 : exponent;
-    n = number < 1 ? 1 : number;
+    if (exponent <= 1.0)
+        throw std::invalid_argument("Exponent of Zipf distribution should be larger than 1");
+    if (number <= 0)
+        throw std::invalid_argument("Number of Zipf distribution should be positive");
+    s = exponent;
+    n = number;
 
     invHarmonicNumber = 1.0 / RandMath::harmonicNumber(s, n);
 

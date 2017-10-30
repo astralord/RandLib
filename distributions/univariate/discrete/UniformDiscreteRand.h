@@ -14,7 +14,7 @@
  */
 class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 {
-    int n = 1; ///< number of possible outcomes
+    size_t n = 1; ///< number of possible outcomes
     int a = 0; ///< min bound
     int b = 0; ///< max bound
     double nInv = 1; ///< 1/n

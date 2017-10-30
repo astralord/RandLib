@@ -13,6 +13,9 @@ std::string SkellamRand::Name() const
 
 void SkellamRand::SetRates(double rate1, double rate2)
 {
+    if (rate1 <= 0.0 || rate2 <= 0.0)
+        throw std::invalid_argument("Rates of Skellam distribution should be positive");
+
     X.SetRate(rate1);
     mu1 = X.GetRate();
     logMu1 = std::log(mu1);
@@ -31,7 +34,7 @@ double SkellamRand::P(const int & k) const
 
 double SkellamRand::logP(const int & k) const
 {
-    double y = RandMath::logModifiedBesselFirstKind(2 * sqrtMu1 * sqrtMu2, k);
+    double y = RandMath::logBesselI(k, 2 * sqrtMu1 * sqrtMu2);
     y += 0.5 * k * (logMu1 - logMu2);
     y -= mu1 + mu2;
     return y;

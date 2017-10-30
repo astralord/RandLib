@@ -1,6 +1,6 @@
 #include "IrwinHallRand.h"
 
-IrwinHallRand::IrwinHallRand(int number)
+IrwinHallRand::IrwinHallRand(size_t number)
 {
     SetNumber(number);
 }
@@ -12,7 +12,9 @@ std::string IrwinHallRand::Name() const
 
 void IrwinHallRand::SetNumber(int number)
 {
-    n = std::max(1, number);
+    if (number <= 0)
+        throw std::invalid_argument("Number of Irwin-Hall distribution should be positive");
+    n = number;
 }
 
 double IrwinHallRand::f(const double & x) const

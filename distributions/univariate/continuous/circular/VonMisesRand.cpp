@@ -13,8 +13,10 @@ std::string VonMisesRand::Name() const
 
 void VonMisesRand::SetConcentration(double concentration)
 {
-    k = (concentration > 0.0) ? concentration : 1.0;
-    logI0k = RandMath::logModifiedBesselFirstKind(k, 0);
+    if (concentration <= 0.0)
+        throw std::invalid_argument("Concentration parameter of von Mises distribution should be positive");
+    k = concentration;
+    logI0k = RandMath::logBesselI(0, k);
     s = (k > 1.3) ? 1.0 / std::sqrt(k) : M_PI * std::exp(-k);
     if (k < CK) {
         /// set coefficients for cdf
@@ -132,7 +134,7 @@ double VonMisesRand::CircularMean() const
 
 double VonMisesRand::CircularVariance() const
 {
-    double var = RandMath::logModifiedBesselFirstKind(k, 1);
+    double var = RandMath::logBesselI(1, k);
     var -= logI0k;
     return -std::expm1(var);
 }
@@ -142,7 +144,7 @@ std::complex<double> VonMisesRand::CFImpl(double t) const
     double tloc = t * loc;
     double cosTloc = std::cos(tloc), sinTloc = std::sin(tloc);
     std::complex<double> y(cosTloc, sinTloc);
-    double z = RandMath::logModifiedBesselFirstKind(k, t) - logI0k;
+    double z = RandMath::logBesselI(t, k) - logI0k;
     return y * std::exp(z);
 }
 

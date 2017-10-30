@@ -16,11 +16,8 @@ std::string CategoricalRand::Name() const
 
 void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
 {
-    if (probabilities.size() == 0 || std::accumulate(probabilities.begin(), probabilities.end(), 0.0) != 1.0) {
-        /// we set default value,
-        /// which is degenerate distribution
-        prob = {1.0};
-    }
+    if (probabilities.size() == 0 || std::accumulate(probabilities.begin(), probabilities.end(), 0.0) != 1.0)
+        throw std::invalid_argument("Probability parameters of Categorical distribution should sum to 1");
     else {
         prob = std::move(probabilities);
     }

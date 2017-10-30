@@ -20,7 +20,9 @@ std::string StudentTRand::Name() const
 
 void StudentTRand::SetDegree(double degree)
 {
-    nu = degree > 0 ? degree : 1;
+    if (degree <= 0.0)
+        throw std::invalid_argument("Degree of t-distribution should be positive");
+    nu = degree;
     Y.SetParameters(0.5 * nu, 1.0);
 
     nup1Half = 0.5 * (nu + 1);
@@ -37,7 +39,9 @@ void StudentTRand::SetLocation(double location)
 
 void StudentTRand::SetScale(double scale)
 {
-    sigma = scale > 0 ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of t-distribution should be positive");
+    sigma = scale;
     logSigma = std::log(sigma);
 }
 
@@ -164,7 +168,7 @@ std::complex<double> StudentTRand::CFImpl(double t) const
     double y = vHalf * std::log(x);
     y -= Y.GetLogGammaFunction();
     y -= (vHalf - 1) * M_LN2;
-    y += RandMath::logModifiedBesselSecondKind(x, vHalf);
+    y += RandMath::logBesselK(vHalf, x);
     double costmu = std::cos(t * mu), sintmu = std::sin(t * mu);
     std::complex<double> cf(costmu, sintmu);
     return std::exp(y) * cf;

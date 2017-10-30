@@ -14,8 +14,12 @@ std::string InverseGaussianRand::Name() const
 
 void InverseGaussianRand::SetParameters(double mean, double shape)
 {
-    mu = (mean > 0.0) ? mean : 1.0;
-    lambda = (shape > 0.0) ? shape : 1.0;
+    if (mean <= 0.0)
+        throw std::invalid_argument("Mean of Inverse-Gaussian distribution should be positive");
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Inverse-Gaussian distribution should be positive");
+    mu = mean;
+    lambda = shape;
 
     pdfCoef = 0.5 * std::log(0.5 * lambda * M_1_PI);
     cdfCoef = std::exp(2 * lambda / mu);

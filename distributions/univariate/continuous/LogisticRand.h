@@ -53,7 +53,11 @@ private:
 public:
     double Entropy() const;
 
-    /// Maximum-likelihood
+    /**
+     * @brief FitLocation
+     * fit location parameter via maximum-likelihood
+     * @param sample
+     */
     void FitLocation(const std::vector<double> &sample);
 };
 

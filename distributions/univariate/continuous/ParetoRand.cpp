@@ -14,13 +14,17 @@ std::string ParetoRand::Name() const
 
 void ParetoRand::SetShape(double shape)
 {
-    alpha = (shape > 0.0) ? shape : 1.0;
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Pareto distribution should be positive");
+    alpha = shape;
     logAlpha = std::log(alpha);
 }
 
 void ParetoRand::SetScale(double scale)
 {
-    sigma = (scale > 0.0) ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Pareto distribution should be positive");
+    sigma = scale;
     logSigma = std::log(sigma);
 }
 
@@ -61,7 +65,7 @@ double ParetoRand::variateForAlphaTwo()
     return 1.0 / std::sqrt(UniformRand::StandardVariate());
 }
 
-double ParetoRand::variateForCommonAlpha(double shape)
+double ParetoRand::variateForGeneralAlpha(double shape)
 {
     return std::exp(ExponentialRand::StandardVariate() / shape);
 }
@@ -72,7 +76,7 @@ double ParetoRand::StandardVariate(double shape)
         return variateForAlphaOne();
     if (RandMath::areClose(shape, 2.0))
         return variateForAlphaTwo();
-    return variateForCommonAlpha(shape);
+    return variateForGeneralAlpha(shape);
 }
 
 double ParetoRand::Variate(double shape, double scale)
@@ -97,7 +101,7 @@ void ParetoRand::Sample(std::vector<double> &outputData) const
     }
     else {
         for (double &var : outputData)
-            var = sigma * variateForCommonAlpha(alpha);
+            var = sigma * variateForGeneralAlpha(alpha);
     }
 }
 
@@ -172,7 +176,7 @@ void ParetoRand::Fit(const std::vector<double> &sample)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, "All elements in the sample should be positive"));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "All elements in the sample should be positive"));
 
     /// Calculate alpha
     double logAverage = 0.0;

@@ -18,8 +18,7 @@
  */
 class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution
 {
-    /// coefficient for faster random number generation
-    unsigned long long boundary = 0;
+    unsigned long long boundary = 0;///< coefficient for faster random number generation
 
 public:
     explicit BernoulliRand(double probability = 0.5);

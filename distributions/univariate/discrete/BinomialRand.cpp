@@ -76,9 +76,12 @@ void BinomialDistribution::SetGeneratorConstants()
 
 void BinomialDistribution::SetParameters(int number, double probability)
 {
-    n = std::max(number, 1);
-    p = std::min(probability, 1.0);
-    p = std::max(p, 0.0);
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Probability parameter of Binomial distribution should in interval [0, 1]");
+    if (number <= 0)
+        throw std::invalid_argument("Number of Binomial distribution should be positive");
+    n = number;
+    p = probability;
     q = 1.0 - p;
     np = n * p;
     lfactn = RandMath::lfact(n);
@@ -384,18 +387,18 @@ double BinomialDistribution::ExcessKurtosis() const
 void BinomialDistribution::FitProbability(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     SetParameters(n, GetSampleMean(sample) / n);
 }
 
 BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
     int N = sample.size();
     double sum = GetSampleSum(sample);
     double alpha = priorDistribution.GetAlpha();

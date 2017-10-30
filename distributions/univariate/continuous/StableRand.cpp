@@ -34,38 +34,44 @@ double StableDistribution::MaxValue() const
 
 void StableDistribution::SetParameters(double exponent, double skewness, double scale, double location)
 {
-    alpha = std::min(std::max(exponent, 0.1), 2.0);
+    if (exponent < 0.1 || exponent > 2.0)
+        throw std::invalid_argument("Exponent of Stable distribution should be in the interval [0.1, 2]");
+    if (std::fabs(skewness) > 1.0)
+        throw std::invalid_argument("Skewness of Stable distribution should be in the interval [-1, 1]");
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Stable distribution should be positive");
+
+    alpha = exponent;
     alphaInv = 1.0 / alpha;
-    beta = std::min(skewness, 1.0);
-    beta = std::max(beta, -1.0);
+    beta = skewness;
     mu = location;
-    gamma = scale > 0 ? scale : M_SQRT2;
+    gamma = scale;
     logGamma = std::log(gamma);
 
     /// Set id of distribution
     if (alpha == 2.0)
-        distributionId = NORMAL;
+        distributionType = NORMAL;
     else if (alpha == 1.0)
-        distributionId = (beta == 0.0) ? CAUCHY : UNITY_EXPONENT;
+        distributionType = (beta == 0.0) ? CAUCHY : UNITY_EXPONENT;
     else if (alpha == 0.5 && std::fabs(beta) == 1.0)
-        distributionId = LEVY;
+        distributionType = LEVY;
     else
-        distributionId = COMMON;
+        distributionType = GENERAL;
 
     alpha_alpham1 = alpha / (alpha - 1.0);
 
-    if (distributionId == NORMAL)
+    if (distributionType == NORMAL)
         pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
-    else if (distributionId == LEVY)
+    else if (distributionType == LEVY)
         pdfCoef = logGamma - M_LN2 - M_LNPI;
-    else if (distributionId == CAUCHY)
+    else if (distributionType == CAUCHY)
         pdfCoef = -logGamma - M_LNPI;
-    else if (distributionId == UNITY_EXPONENT) {
+    else if (distributionType == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (gamma * std::fabs(beta));
         pdftailBound = std::sqrt(2e4 / M_PI * M_E);
         logGammaPi_2 = logGamma + M_LNPI - M_LN2;
     }
-    else if (distributionId == COMMON) {
+    else if (distributionType == GENERAL) {
         if (beta != 0.0) {
             zeta = -beta * std::tan(M_PI_2 * alpha);
             omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
@@ -98,19 +104,21 @@ void StableDistribution::SetLocation(double location)
 
 void StableDistribution::SetScale(double scale)
 {
-    gamma = scale > 0 ? scale : M_SQRT2;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Stable distribution should be positive");
+    gamma = scale;
     logGamma = std::log(gamma);
-    if (distributionId == NORMAL)
+    if (distributionType == NORMAL)
         pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
-    else if (distributionId == LEVY)
+    else if (distributionType == LEVY)
         pdfCoef = logGamma - M_LN2 - M_LNPI;
-    else if (distributionId == CAUCHY)
+    else if (distributionType == CAUCHY)
         pdfCoef = -logGamma - M_LNPI;
-    else if (distributionId == UNITY_EXPONENT) {
+    else if (distributionType == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (gamma * std::fabs(beta));
         logGammaPi_2 = logGamma + M_LNPI - M_LN2;
     }
-    else if (distributionId == COMMON)
+    else if (distributionType == GENERAL)
         pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
 }
 
@@ -170,7 +178,6 @@ double StableDistribution::fastpdfExponentiation(double u)
 
 double StableDistribution::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
 {
-    /// We got numerical error, need to investigate to which extreme point we are closer
     if (theta > 0.0) {
         if (beta > 0.0)
             return BIG_NUMBER;
@@ -387,7 +394,7 @@ double StableDistribution::pdfTaylorExpansionTailNearCauchy(double x) const
     return tail;
 }
 
-double StableDistribution::limitCaseForIntegrandAuxForCommonExponent(double theta, double xiAdj) const
+double StableDistribution::limitCaseForIntegrandAuxForGeneralExponent(double theta, double xiAdj) const
 {
     /// We got numerical error, need to investigate to which extreme point we are closer
     if (theta < 0.5 * (M_PI_2 - xiAdj))
@@ -395,10 +402,10 @@ double StableDistribution::limitCaseForIntegrandAuxForCommonExponent(double thet
     return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
 }
 
-double StableDistribution::integrandAuxForCommonExponent(double theta, double xAdj, double xiAdj) const
+double StableDistribution::integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const
 {
     if (std::fabs(theta) >= M_PI_2 || theta <= -xiAdj)
-        return limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
+        return limitCaseForIntegrandAuxForGeneralExponent(theta, xiAdj);
     double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = std::sin(thetaAdj);
     double y = std::log(std::cos(theta));
@@ -406,20 +413,20 @@ double StableDistribution::integrandAuxForCommonExponent(double theta, double xA
     y /= alpha - 1.0;
     y += std::log(std::cos(thetaAdj - theta));
     y += xAdj;
-    return std::isfinite(y) ? y : limitCaseForIntegrandAuxForCommonExponent(theta, xiAdj);
+    return std::isfinite(y) ? y : limitCaseForIntegrandAuxForGeneralExponent(theta, xiAdj);
 }
 
-double StableDistribution::integrandForCommonExponent(double theta, double xAdj, double xiAdj) const
+double StableDistribution::integrandFoGeneralExponent(double theta, double xAdj, double xiAdj) const
 {
     if (std::fabs(theta) >= M_PI_2)
         return 0.0;
     if (theta <= -xiAdj)
         return 0.0;
-    double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
+    double u = integrandAuxForGeneralExponent(theta, xAdj, xiAdj);
     return fastpdfExponentiation(u);
 }
 
-double StableDistribution::pdfForCommonExponent(double x) const
+double StableDistribution::pdfForGeneralExponent(double x) const
 {
     /// Standardize
     double xSt = (x - mu) / gamma;
@@ -459,20 +466,19 @@ double StableDistribution::pdfForCommonExponent(double x) const
 
     /// Search for the peak of the integrand
     double theta0;
-    std::function<double (double)> funPtr = std::bind(&StableDistribution::integrandAuxForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
+    std::function<double (double)> funPtr = std::bind(&StableDistribution::integrandAuxForGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
     RandMath::findRoot(funPtr, -xiAdj, M_PI_2, theta0);
 
     /// If theta0 is too close to π/2 or -xiAdj then we can still underestimate the integral
     int maxRecursionDepth = 11;
-    double closeness = M_PI_2 - theta0;
-    closeness = std::min(closeness, theta0 + xiAdj);
+    double closeness = std::min(M_PI_2 - theta0, theta0 + xiAdj);
     if (closeness < 0.1)
         maxRecursionDepth = 20;
     else if (closeness < 0.2)
         maxRecursionDepth = 15;
 
     /// Calculate sum of two integrals
-    std::function<double (double)> integrandPtr = std::bind(&StableDistribution::integrandForCommonExponent, this, std::placeholders::_1, xAdj, xiAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableDistribution::integrandFoGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
     double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0, 1e-11, maxRecursionDepth);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2, 1e-11, maxRecursionDepth);
     double res = pdfCoef * (int1 + int2) / absXSt;
@@ -493,7 +499,7 @@ double StableDistribution::pdfForCommonExponent(double x) const
 
 double StableDistribution::f(const double & x) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return pdfNormal(x);
     case CAUCHY:
@@ -502,8 +508,8 @@ double StableDistribution::f(const double & x) const
         return (beta > 0) ? pdfLevy(x) : pdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
         return pdfForUnityExponent(x);
-    case COMMON:
-        return pdfForCommonExponent(x);
+    case GENERAL:
+        return pdfForGeneralExponent(x);
     default:
         return NAN; /// unexpected return
     }
@@ -511,7 +517,7 @@ double StableDistribution::f(const double & x) const
 
 double StableDistribution::logf(const double & x) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return logpdfNormal(x);
     case CAUCHY:
@@ -520,8 +526,8 @@ double StableDistribution::logf(const double & x) const
         return (beta > 0) ? logpdfLevy(x) : logpdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
         return std::log(pdfForUnityExponent(x));
-    case COMMON:
-        return std::log(pdfForCommonExponent(x));
+    case GENERAL:
+        return std::log(pdfForGeneralExponent(x));
     default:
         return NAN; /// unexpected return
     }
@@ -660,13 +666,13 @@ double StableDistribution::cdfIntegralRepresentation(double logX, double xiAdj) 
     double xAdj = alpha_alpham1 * logX;
     return M_1_PI * RandMath::integral([this, xAdj, xiAdj] (double theta)
     {
-        double u = integrandAuxForCommonExponent(theta, xAdj, xiAdj);
+        double u = integrandAuxForGeneralExponent(theta, xAdj, xiAdj);
         return fastcdfExponentiation(u);
     },
     -xiAdj, M_PI_2);
 }
 
-double StableDistribution::cdfForCommonExponent(double x) const
+double StableDistribution::cdfForGeneralExponent(double x) const
 {
     double xSt = (x - mu) / gamma; /// Standardize
     if (xSt == 0)
@@ -696,7 +702,7 @@ double StableDistribution::cdfForCommonExponent(double x) const
 
 double StableDistribution::F(const double & x) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return cdfNormal(x);
     case CAUCHY:
@@ -705,8 +711,8 @@ double StableDistribution::F(const double & x) const
         return (beta > 0) ? cdfLevy(x) : cdfLevyCompl(2 * mu - x);
     case UNITY_EXPONENT:
         return cdfForUnityExponent(x);
-    case COMMON:
-        return cdfForCommonExponent(x);
+    case GENERAL:
+        return cdfForGeneralExponent(x);
     default:
         return NAN; /// unexpected return
     }
@@ -714,7 +720,7 @@ double StableDistribution::F(const double & x) const
 
 double StableDistribution::S(const double & x) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return cdfNormalCompl(x);
     case CAUCHY:
@@ -723,8 +729,8 @@ double StableDistribution::S(const double & x) const
         return (beta > 0) ? cdfLevyCompl(x) : cdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
         return 1.0 - cdfForUnityExponent(x);
-    case COMMON:
-        return 1.0 - cdfForCommonExponent(x);
+    case GENERAL:
+        return 1.0 - cdfForGeneralExponent(x);
     default:
         return NAN; /// unexpected return
     }
@@ -744,7 +750,7 @@ double StableDistribution::variateForUnityExponent() const
     return mu + gamma * X;
 }
 
-double StableDistribution::variateForCommonExponent() const
+double StableDistribution::variateForGeneralExponent() const
 {
     double U = UniformRand::Variate(-M_PI_2, M_PI_2);
     double W = ExponentialRand::StandardVariate();
@@ -769,7 +775,7 @@ double StableDistribution::variateForExponentEqualOneHalf() const
 
 double StableDistribution::Variate() const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return mu + M_SQRT2 * gamma * NormalRand::StandardVariate();
     case CAUCHY:
@@ -778,8 +784,8 @@ double StableDistribution::Variate() const
         return mu + RandMath::sign(beta) * gamma * LevyRand::StandardVariate();
     case UNITY_EXPONENT:
         return variateForUnityExponent();
-    case COMMON:
-        return (alpha == 0.5) ? variateForExponentEqualOneHalf() : variateForCommonExponent();
+    case GENERAL:
+        return (alpha == 0.5) ? variateForExponentEqualOneHalf() : variateForGeneralExponent();
     default:
         return NAN; /// unexpected return
     }
@@ -787,7 +793,7 @@ double StableDistribution::Variate() const
 
 void StableDistribution::Sample(std::vector<double> &outputData) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL: {
         double stdev = M_SQRT2 * gamma;
         for (double &var : outputData)
@@ -815,14 +821,14 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
             var = variateForUnityExponent();
     }
         break;
-    case COMMON: {
+    case GENERAL: {
         if (alpha == 0.5) {
             for (double &var : outputData)
                 var = variateForExponentEqualOneHalf();
         }
         else {
             for (double &var : outputData)
-                var = variateForCommonExponent();
+                var = variateForGeneralExponent();
         }
     }
         break;
@@ -842,15 +848,15 @@ double StableDistribution::Mean() const
 
 double StableDistribution::Variance() const
 {
-    return (distributionId == NORMAL) ? 2 * gamma * gamma : INFINITY;
+    return (distributionType == NORMAL) ? 2 * gamma * gamma : INFINITY;
 }
 
 double StableDistribution::Mode() const
 {
     /// For symmetric and normal distributions mode is μ
-    if (beta == 0 || distributionId == NORMAL)
+    if (beta == 0 || distributionType == NORMAL)
         return mu;
-    if (distributionId == LEVY)
+    if (distributionType == LEVY)
         return mu + beta * gamma / 3.0;
     return ContinuousDistribution::Mode();
 }
@@ -858,19 +864,19 @@ double StableDistribution::Mode() const
 double StableDistribution::Median() const
 {
     /// For symmetric and normal distributions mode is μ
-    if (beta == 0 || distributionId == NORMAL)
+    if (beta == 0 || distributionType == NORMAL)
         return mu;
     return ContinuousDistribution::Median();
 }
 
 double StableDistribution::Skewness() const
 {
-    return (distributionId == NORMAL) ? 0 : NAN;
+    return (distributionType == NORMAL) ? 0 : NAN;
 }
 
 double StableDistribution::ExcessKurtosis() const
 {
-    return (distributionId == NORMAL) ? 0 : NAN;
+    return (distributionType == NORMAL) ? 0 : NAN;
 }
 
 double StableDistribution::quantileNormal(double p) const
@@ -907,7 +913,7 @@ double StableDistribution::quantileLevy1m(double p) const
 
 double StableDistribution::quantileImpl(double p) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return quantileNormal(p);
     case CAUCHY:
@@ -921,7 +927,7 @@ double StableDistribution::quantileImpl(double p) const
 
 double StableDistribution::quantileImpl1m(double p) const
 {
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return quantileNormal1m(p);
     case CAUCHY:
@@ -957,7 +963,7 @@ std::complex<double> StableDistribution::cfLevy(double t) const
 std::complex<double> StableDistribution::CFImpl(double t) const
 {
     double x = 0;
-    switch (distributionId) {
+    switch (distributionType) {
     case NORMAL:
         return cfNormal(t);
     case CAUCHY:

@@ -18,7 +18,9 @@ void LogisticRand::SetLocation(double location)
 
 void LogisticRand::SetScale(double scale)
 {
-    s = (scale <= 0.0) ? 1.0 : scale;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Logistic distribution should be positive");
+    s = scale;
     logS = std::log(s);
 }
 
@@ -114,7 +116,6 @@ double LogisticRand::ExcessKurtosis() const
     return 1.2;
 }
 
-/// Maximum-likelihood
 void LogisticRand::FitLocation(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();
@@ -133,6 +134,6 @@ void LogisticRand::FitLocation(const std::vector<double> &sample)
         f1 -= nHalf;
         return DoublePair(f1, f2);
     }, root))
-        throw std::runtime_error(fitError(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetLocation(root);
 }

@@ -15,7 +15,8 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
 {
     double s = 2; ///< exponent
     double sm1 = 1; ///< s - 1
-    double zetaSInv = 6.0 / M_PI_SQ; ///< 1.0 / ζ(s), where ζ stands for Riemann zeta-function
+    double zetaS = M_PI_SQ / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
+    double logZetaS = 2 * M_LNPI - M_LN2 - M_LN3;///< ln(ζ(s))
     double b = 0.5; ///< 1 - 2^(1-s)
 public:
     explicit ZetaRand(double exponent = 2.0);
@@ -41,7 +42,8 @@ public:
     double ThirdMoment() const override { return Moment(3); }
     double FourthMoment() const override { return Moment(4); }
 
-    inline double GetInverseZetaFunction() const { return zetaSInv; }
+    inline double GetZetaFunction() const { return zetaS; }
+    inline double GetLogZetaFunction() const { return logZetaS; }
 };
 
 #endif // ZETARAND_H

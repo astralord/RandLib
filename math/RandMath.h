@@ -82,6 +82,13 @@ double erfinv(double p);
 double erfcinv(double p);
 
 /**
+ * @brief xexpxsqerfc
+ * @param x
+ * @return x * exp(x^2) * erfc(x)
+ */
+double xexpxsqerfc(double x);
+
+/**
  * @fn harmonicNumber
  * @param exponent
  * @param number
@@ -92,27 +99,20 @@ double harmonicNumber(double exponent, int number);
 /**
  * @fn logModifiedBesselFirstKind
  * Calculates logarithm of modified Bessel function of the 1st kind
+ * @param nu
  * @param x
- * @param n
- * @return log(I_n(x))
+ * @return log(I_ν(x))
  */
-double logModifiedBesselFirstKind(double x, double nu);
+double logBesselI(double nu, double x);
 
 /**
  * @fn logModifiedBesselSecondKind
  * Calculates logarithm of modified Bessel function of the 2nd kind
+ * @param nu
  * @param x
- * @param n
- * @return log(K_n(x))
+ * @return log(K_ν(x))
  */
-double logModifiedBesselSecondKind(double x, double nu);
-
-/**
- * @fn zetaRiemann
- * @param s
- * @return Riemann zeta function
- */
-double zetaRiemann(double s);
+double logBesselK(double nu, double x);
 
 /**
  * @fn W0Lambert

@@ -13,8 +13,12 @@ std::string WeibullRand::Name() const
 
 void WeibullRand::SetParameters(double scale, double shape)
 {
-    lambda = (scale <= 0.0) ? 1.0 : scale;
-    k = (shape <= 0.0) ? 1.0 : shape;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Weibull distribution should be positive");
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Weibull distribution should be positive");
+    lambda = scale;
+    k = shape;
     kInv = 1.0 / k;
     logk_lambda = std::log(k / lambda);
 }
@@ -39,7 +43,7 @@ double WeibullRand::logf(const double & x) const
         return -INFINITY;
     if (x == 0) {
         if (k == 1)
-            return -std::log(lambda); // hash
+            return logk_lambda;
         return (k > 1) ? -INFINITY : INFINITY;
     }
     double xAdj = x / lambda;

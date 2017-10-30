@@ -91,6 +91,6 @@ void DegenerateRand::Fit(const std::vector<double> &sample)
 {
     auto sampleBegin = sample.begin();
     if (!std::equal(sampleBegin, sample.end(), sampleBegin))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, "All elements should be equal to each other"));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "All elements should be equal to each other"));
     SetValue(*sampleBegin);
 }

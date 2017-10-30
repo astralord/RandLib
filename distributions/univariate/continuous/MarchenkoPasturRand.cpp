@@ -14,14 +14,18 @@ std::string MarchenkoPasturRand::Name() const
 
 void MarchenkoPasturRand::SetParameters(double ratio, double scale)
 {
-    lambda = (ratio > 0) ? ratio : 1.0;
+    if (ratio <= 0.0)
+        throw std::invalid_argument("Ratio parameter of Marchenko-Pastur distribution should be positive");
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Marchenko-Pastur distribution should be positive");
+    lambda = ratio;
     double sqrtLambda = std::sqrt(lambda);
     a = 1.0 - sqrtLambda;
     a *= a;
     b = 1.0 + sqrtLambda;
     b *= b;
 
-    sigmaSq = (scale > 0) ? scale : 1.0;
+    sigmaSq = scale;
 
     GENERATOR_ID genId = getIdOfUsedGenerator();
     if (genId == TINY_RATIO || genId == HUGE_RATIO) {

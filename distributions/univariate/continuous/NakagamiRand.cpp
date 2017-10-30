@@ -9,8 +9,12 @@ NakagamiDistribution::NakagamiDistribution(double shape, double spread)
 
 void NakagamiDistribution::SetParameters(double shape, double spread)
 {
-    m = (shape > 0.0) ? shape : 1.0;
-    w = (spread > 0.0) ? spread : 1.0;
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Nakagami distribution should be positive");
+    if (spread <= 0.0)
+        throw std::invalid_argument("Spread of Nakagami distribution should be positive");
+    m = shape;
+    w = spread;
     Y.SetParameters(m, m / w);
     lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaShape();
 }
@@ -353,7 +357,7 @@ void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitError(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     size_t n = sample.size();
     DoublePair stats = GetSampleMeanAndVariance(sample);
     double rawMoment = stats.second + stats.first * stats.first;

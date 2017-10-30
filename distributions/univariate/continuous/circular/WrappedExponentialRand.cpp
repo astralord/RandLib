@@ -13,7 +13,9 @@ std::string WrappedExponentialRand::Name() const
 
 void WrappedExponentialRand::SetRate(double rate)
 {
-    lambda = rate > 0 ? rate : 1.0;
+    if (lambda <= 0.0)
+        throw std::invalid_argument("Rate parameter of Wrapped Exponential distribution should be positive");
+    lambda = rate;
     logLambda = std::log(lambda);
     scaledLambda = 2 * M_PI * lambda;
     expmScaledLambda = std::exp(-scaledLambda);

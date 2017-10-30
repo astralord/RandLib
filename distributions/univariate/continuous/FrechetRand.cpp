@@ -15,9 +15,13 @@ std::string FrechetRand::Name() const
 
 void FrechetRand::SetParameters(double shape, double scale, double location)
 {
-    alpha = shape > 0.0 ? shape : 1.0;
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Frechet distribution should be positive");
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Frechet distribution should be positive");
+    alpha = shape;
     alphaInv = 1.0 / alpha;
-    s = scale > 0.0 ? scale : 1.0;
+    s = scale;
     pdfCoef = std::log(alpha / s);
     m = location;
 }

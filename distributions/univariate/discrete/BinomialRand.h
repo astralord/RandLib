@@ -59,7 +59,7 @@ protected:
     void SetParameters(int number, double probability);
 
 public:
-    inline double GetNumber() const { return n; }
+    inline int GetNumber() const { return n; }
     inline double GetProbability() const { return p; }
 
 private:

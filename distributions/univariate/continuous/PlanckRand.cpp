@@ -12,14 +12,18 @@ std::string PlanckRand::Name() const
 
 void PlanckRand::SetParameters(double shape, double scale)
 {
-    a = (shape > 0) ? shape : 1.0;
-    b = (scale > 0) ? scale : 1.0;
+    if (shape <= 0.0)
+        throw std::invalid_argument("Shape of Planck distribution should be positive");
+    if (scale <= 0.0)
+        throw std::invalid_argument("Scale of Planck distribution should be positive");
+    a = shape;
+    b = scale;
 
     double ap1 = a + 1;
     Z.SetExponent(ap1);
     G.SetParameters(ap1, b);
 
-    pdfCoef = std::log(Z.GetInverseZetaFunction());
+    pdfCoef = -Z.GetLogZetaFunction();
     pdfCoef += ap1 * std::log(b);
     pdfCoef -= G.GetLogGammaShape();
 }
@@ -106,16 +110,16 @@ void PlanckRand::Sample(std::vector<double> &outputData) const
 double PlanckRand::Mean() const
 {
     double y = (a + 1) / b;
-    y *= RandMath::zetaRiemann(a + 2);
-    return Z.GetInverseZetaFunction() * y;
+    y *= std::riemann_zeta(a + 2);
+    return y / Z.GetZetaFunction();
 }
 
 double PlanckRand::SecondMoment() const
 {
     double secondMoment = (a + 1) * (a + 2);
     secondMoment /= (b * b);
-    secondMoment *= RandMath::zetaRiemann(a + 3);
-    secondMoment *= Z.GetInverseZetaFunction();
+    secondMoment *= std::riemann_zeta(a + 3);
+    secondMoment /= Z.GetZetaFunction();
     return secondMoment;
 }
 
@@ -138,8 +142,8 @@ double PlanckRand::ThirdMoment() const
 {
     double thirdMoment = (a + 3) * (a + 2) * (a + 1);
     thirdMoment /= (b * b * b);
-    thirdMoment *= RandMath::zetaRiemann(a + 4);
-    thirdMoment *= Z.GetInverseZetaFunction();
+    thirdMoment *= std::riemann_zeta(a + 4);
+    thirdMoment /= Z.GetZetaFunction();
     return thirdMoment;
 }
 
@@ -160,8 +164,8 @@ double PlanckRand::FourthMoment() const
     double fourthMoment = (a + 4) * (a + 3) * (a + 2) * (a + 1);
     double bSq = b * b;
     fourthMoment /= (bSq * bSq);
-    fourthMoment *= RandMath::zetaRiemann(a + 5);
-    fourthMoment *= Z.GetInverseZetaFunction();
+    fourthMoment *= std::riemann_zeta(a + 5);
+    fourthMoment /= Z.GetZetaFunction();
     return fourthMoment;
 }
 

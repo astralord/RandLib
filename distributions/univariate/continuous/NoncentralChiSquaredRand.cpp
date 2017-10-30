@@ -13,10 +13,15 @@ std::string NoncentralChiSquaredRand::Name() const
 
 void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality)
 {
-    k = (degree <= 0.0) ? 1.0 : degree;
+    if (degree <= 0.0)
+        throw std::invalid_argument("Degree of Noncentral Chi-Squared distribution should be positive");
+    if (noncentrality <= 0.0)
+        throw std::invalid_argument("Noncentrality of Noncentral Chi-Squared distribution should be positive");
+
+    k = degree;
     halfK = 0.5 * k;
 
-    lambda = (noncentrality <= 0.0) ? 1.0 : noncentrality;
+    lambda = noncentrality;
     halfLambda = 0.5 * lambda;
     sqrtLambda = std::sqrt(lambda);
     logLambda = std::log(lambda);
@@ -47,7 +52,7 @@ double NoncentralChiSquaredRand::logf(const double & x) const
         return (k > 2) ? -INFINITY : INFINITY;
     }
     double halfKm1 = halfK - 1;
-    double y = RandMath::logModifiedBesselFirstKind(std::sqrt(lambda * x), halfKm1);
+    double y = RandMath::logBesselI(halfKm1, std::sqrt(lambda * x));
     double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
     return y + 0.5 * z - M_LN2;
