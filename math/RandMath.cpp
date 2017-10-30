@@ -248,17 +248,12 @@ double logBesselK(double nu, double x)
     if (x == 0.0)
         return INFINITY;
 
-    if (nu == 0.5)
+    double besselk = 0;
+    if (nu == 0.5 || (besselk = std::cyl_bessel_kl(nu, x)) == 0)
         return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
 
-    double besselk = std::cyl_bessel_kl(nu, x);
-    if (besselk == 0) {
-        return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
-    }
-
-    if (!std::isfinite(besselk)) {
+    if (!std::isfinite(besselk))
         return (nu == 0) ? std::log(-std::log(x)) : std::lgamma(nu) - M_LN2 - nu * std::log(0.5 * x);
-    }
 
     return std::log(besselk);
 }
