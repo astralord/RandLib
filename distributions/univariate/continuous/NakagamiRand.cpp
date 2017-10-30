@@ -38,7 +38,7 @@ double NakagamiDistribution::logf(const double & x) const
     if (x == 0) {
         if (m > 0.5)
             return 0-INFINITY;
-        return (m < 0.5) ? INFINITY : 0.5 * std::log(M_2_PI / w);
+        return (m < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(w));
     }
     return std::log(2 * x) + Y.logf(x * x);
 }
@@ -334,7 +334,8 @@ double RayleighRand::quantileImpl1m(double p) const
 
 double RayleighRand::Median() const
 {
-    return sigma * std::sqrt(M_LN2 + M_LN2);
+    static constexpr double medianCoef = std::sqrt(M_LN2 + M_LN2);
+    return sigma * medianCoef;
 }
 
 double RayleighRand::Mode() const
@@ -344,13 +345,15 @@ double RayleighRand::Mode() const
 
 double RayleighRand::Skewness() const
 {
-    return 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    static constexpr double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    return skewness;
 }
 
 double RayleighRand::ExcessKurtosis() const
 {
-    double temp = 4 - M_PI;
-    return -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    static constexpr double temp = 4 - M_PI;
+    static constexpr double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    return kurtosis;
 }
 
 void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
