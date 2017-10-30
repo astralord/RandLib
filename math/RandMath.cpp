@@ -174,7 +174,7 @@ double xexpxsqerfc(double x)
         y += std::log(std::erfc(x));
         return x * std::exp(y);
     }
-    double log2xSq = std::log(2 * x * x);
+    double log2xSq = M_LN2 + 2 * std::log(x);
     double sum = 0.0;
     for (int n = 1; n != N; ++n) {
         double add = RandMath::ldfact(2 * n - 1);
@@ -199,7 +199,7 @@ double harmonicNumber(double exponent, int number)
     return res;
 }
 
-double logBesselI(double nu, double x)
+long double logBesselI(double nu, double x)
 {
     if (x < 0) {
         double roundNu = std::round(nu);
@@ -221,7 +221,7 @@ double logBesselI(double nu, double x)
 
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
-        double y = 0.5 * std::log(M_2_PI / x);
+        long double y = 0.5 * (M_LN2 - M_LNPI - std::log(x));
         y -= M_LN2;
         y += x;
         y += (nu > 0) ? RandMath::log1pexp(-2 * x) : RandMath::log1mexp(-2 * x);
@@ -230,17 +230,17 @@ double logBesselI(double nu, double x)
 
     if (nu < 0) {
         /// I(−ν, x) = I(ν, x) + 2 / π sin(πν) K(ν, x)
-        double besseli = std::cyl_bessel_il(-nu, x);
-        double sinPiNu = std::sin(M_PI * nu);
-        double y = (sinPiNu == 0) ? besseli : besseli - M_2_PI * sinPiNu * std::cyl_bessel_kl(-nu, x);
+        long double besseli = std::cyl_bessel_il(-nu, x);
+        long double sinPiNu = std::sin(M_PI * nu);
+        long double y = (sinPiNu == 0) ? besseli : besseli - M_2_PI * sinPiNu * std::cyl_bessel_kl(-nu, x);
         return std::log(y);
     }
 
-    double besseli = std::cyl_bessel_il(nu, x);
+    long double besseli = std::cyl_bessel_il(nu, x);
     return std::isfinite(besseli) ? std::log(besseli) : x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
 }
 
-double logBesselK(double nu, double x)
+long double logBesselK(double nu, double x)
 {
     if (nu < 0.0)
         return NAN; /// K(-ν, x) = -K(ν, x) < 0
@@ -248,7 +248,7 @@ double logBesselK(double nu, double x)
     if (x == 0.0)
         return INFINITY;
 
-    double besselk = 0;
+    long double besselk = 0;
     if (nu == 0.5 || (besselk = std::cyl_bessel_kl(nu, x)) == 0)
         return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
 
