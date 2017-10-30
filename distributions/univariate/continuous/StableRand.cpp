@@ -471,8 +471,7 @@ double StableDistribution::pdfForGeneralExponent(double x) const
 
     /// If theta0 is too close to π/2 or -xiAdj then we can still underestimate the integral
     int maxRecursionDepth = 11;
-    double closeness = M_PI_2 - theta0;
-    closeness = std::min(closeness, theta0 + xiAdj);
+    double closeness = std::min(M_PI_2 - theta0, theta0 + xiAdj);
     if (closeness < 0.1)
         maxRecursionDepth = 20;
     else if (closeness < 0.2)
