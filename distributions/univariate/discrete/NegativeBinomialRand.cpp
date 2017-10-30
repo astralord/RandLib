@@ -234,10 +234,16 @@ BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<
 }
 
 
-template< typename T >
-std::string NegativeBinomialRand<T>::Name() const
+template< >
+std::string NegativeBinomialRand<int>::Name() const
 {
-    return "Negative Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+    return "Pascal" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+}
+
+template< >
+std::string NegativeBinomialRand<double>::Name() const
+{
+    return "Polya(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
 template< typename T >
