@@ -67,7 +67,7 @@ void BetaDistribution::SetShapes(double shape1, double shape2)
 
 void BetaDistribution::SetSupport(double minValue, double maxValue)
 {
-    if (minValue <= maxValue)
+    if (minValue >= maxValue)
         throw std::invalid_argument("Minimal value of Beta distribution should be less than maximum value");
 
     a = minValue;

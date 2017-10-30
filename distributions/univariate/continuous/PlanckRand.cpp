@@ -23,7 +23,7 @@ void PlanckRand::SetParameters(double shape, double scale)
     Z.SetExponent(ap1);
     G.SetParameters(ap1, b);
 
-    pdfCoef = std::log(Z.GetInverseZetaFunction());
+    pdfCoef = -Z.GetLogZetaFunction();
     pdfCoef += ap1 * std::log(b);
     pdfCoef -= G.GetLogGammaShape();
 }
@@ -111,7 +111,7 @@ double PlanckRand::Mean() const
 {
     double y = (a + 1) / b;
     y *= std::riemann_zeta(a + 2);
-    return Z.GetInverseZetaFunction() * y;
+    return y / Z.GetZetaFunction();
 }
 
 double PlanckRand::SecondMoment() const
@@ -119,7 +119,7 @@ double PlanckRand::SecondMoment() const
     double secondMoment = (a + 1) * (a + 2);
     secondMoment /= (b * b);
     secondMoment *= std::riemann_zeta(a + 3);
-    secondMoment *= Z.GetInverseZetaFunction();
+    secondMoment /= Z.GetZetaFunction();
     return secondMoment;
 }
 
@@ -143,7 +143,7 @@ double PlanckRand::ThirdMoment() const
     double thirdMoment = (a + 3) * (a + 2) * (a + 1);
     thirdMoment /= (b * b * b);
     thirdMoment *= std::riemann_zeta(a + 4);
-    thirdMoment *= Z.GetInverseZetaFunction();
+    thirdMoment /= Z.GetZetaFunction();
     return thirdMoment;
 }
 
@@ -165,7 +165,7 @@ double PlanckRand::FourthMoment() const
     double bSq = b * b;
     fourthMoment /= (bSq * bSq);
     fourthMoment *= std::riemann_zeta(a + 5);
-    fourthMoment *= Z.GetInverseZetaFunction();
+    fourthMoment /= Z.GetZetaFunction();
     return fourthMoment;
 }
 

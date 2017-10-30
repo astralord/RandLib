@@ -168,7 +168,7 @@ std::complex<double> StudentTRand::CFImpl(double t) const
     double y = vHalf * std::log(x);
     y -= Y.GetLogGammaFunction();
     y -= (vHalf - 1) * M_LN2;
-    y += RandMath::logModifiedBesselSecondKind(x, vHalf);
+    y += RandMath::logBesselK(vHalf, x);
     double costmu = std::cos(t * mu), sintmu = std::sin(t * mu);
     std::complex<double> cf(costmu, sintmu);
     return std::exp(y) * cf;

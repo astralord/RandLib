@@ -199,16 +199,14 @@ double harmonicNumber(double exponent, int number)
     return res;
 }
 
-double logModifiedBesselFirstKind(double x, double nu)
+double logBesselI(double nu, double x)
 {
-    // TODO: in c++17, use implemented series for too small (x ~< nu / 2) and too large x > ?
-    // otherwise, it is better to use log(besseli(x, n))
     if (x < 0) {
         double roundNu = std::round(nu);
         bool nuIsInt = areClose(nu, roundNu);
         if (nuIsInt) {
             int nuInt = roundNu;
-            return (nuInt % 2) ? NAN : logModifiedBesselFirstKind(-x, nu);
+            return (nuInt % 2) ? NAN : logBesselI(nu, -x);
         }
         return -INFINITY;
     }
@@ -230,55 +228,39 @@ double logModifiedBesselFirstKind(double x, double nu)
         return y;
     }
 
-    /// small x
-    if (x < 2 * nu)
-    {
-        double addon = 1.0, sum = 0.0;
-        int i = 1;
-        double logHalfx = std::log(0.5 * x);
-        do {
-            addon = 2 * i * logHalfx;
-            addon -= std::lgamma(nu + i + 1);
-            addon = std::exp(addon - lfact(i));
-            sum += addon;
-            ++i;
-        } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
-        double y = std::log(sum + 1.0 / std::tgamma(nu + 1));
-        y += nu * logHalfx;
-        return y;
+    if (nu < 0) {
+        /// I(−ν, x) = I(ν, x) + 2 / π sin(πν) K(ν, x)
+        double besseli = std::cyl_bessel_il(-nu, x);
+        double sinPiNu = std::sin(M_PI * nu);
+        double y = (sinPiNu == 0) ? besseli : besseli - M_2_PI * sinPiNu * std::cyl_bessel_kl(-nu, x);
+        return std::log(y);
     }
 
-    double addon = 1.0;
-    double sum = 1.0;
-    double denominator = 0.125 / x;
-    double n2Sq = 4.0 * nu * nu;
-    double i = 1.0, j = 1.0;
-    do {
-        double numerator = j * j - n2Sq;
-        double frac = numerator * denominator / i;
-        if (frac > 1)
-            break;
-        addon *= frac;
-        sum += addon;
-        ++i;
-        j += 2;
-    } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
-    double y = x;
-    y -= 0.5 * std::log(2 * M_PI * x);
-    y += std::log(sum);
-    return y;
+    double besseli = std::cyl_bessel_il(nu, x);
+    return std::isfinite(besseli) ? std::log(besseli) : x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
 }
 
-double logModifiedBesselSecondKind(double x, double nu)
+double logBesselK(double nu, double x)
 {
-    if (nu == 0.5)
-        return 0.5 * std::log(M_PI_2 / x) - x;
+    if (nu < 0.0)
+        return NAN; /// K(-ν, x) = -K(ν, x) < 0
 
-    double y = std::exp(logModifiedBesselFirstKind(x, -nu)); // besseli
-    y -= std::exp(logModifiedBesselFirstKind(x, nu)); // besseli
-    y /= std::sin(nu * M_PI);
-    y *= M_PI_2;
-    return std::log(y);
+    if (x == 0.0)
+        return INFINITY;
+
+    if (nu == 0.5)
+        return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
+
+    double besselk = std::cyl_bessel_kl(nu, x);
+    if (besselk == 0) {
+        return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
+    }
+
+    if (!std::isfinite(besselk)) {
+        return (nu == 0) ? std::log(-std::log(x)) : std::lgamma(nu) - M_LN2 - nu * std::log(0.5 * x);
+    }
+
+    return std::log(besselk);
 }
 
 /**
@@ -478,7 +460,7 @@ double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, doubl
         exponent -= aux;
 
         /// Calculate log(2f(t))
-        double logBessel = RandMath::logModifiedBesselFirstKind(2 * std::sqrt(x * t), mum1);
+        double logBessel = RandMath::logBesselI(mum1, 2 * std::sqrt(x * t));
         double z = mum1 * (log2T - log2x);
         double log2F = 0.5 * z - t - x + logBessel;
 
@@ -551,7 +533,7 @@ double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double
             return 0.0;
         if (t == 0.0)
             return (mum1 == 0) ? 0.5 * std::exp(-x) : 0.0;
-        double logBesseli = RandMath::logModifiedBesselFirstKind(2 * std::sqrt(x * t), mum1);
+        double logBesseli = RandMath::logBesselI(mum1, 2 * std::sqrt(x * t));
         double z = 0.5 * mum1 * (std::log(t) - logX);
         double h = t + x;
         return std::exp(logBesseli + z - h);

@@ -99,20 +99,20 @@ double harmonicNumber(double exponent, int number);
 /**
  * @fn logModifiedBesselFirstKind
  * Calculates logarithm of modified Bessel function of the 1st kind
+ * @param nu
  * @param x
- * @param n
- * @return log(I_n(x))
+ * @return log(I_ν(x))
  */
-double logModifiedBesselFirstKind(double x, double nu);
+double logBesselI(double nu, double x);
 
 /**
  * @fn logModifiedBesselSecondKind
  * Calculates logarithm of modified Bessel function of the 2nd kind
+ * @param nu
  * @param x
- * @param n
- * @return log(K_n(x))
+ * @return log(K_ν(x))
  */
-double logModifiedBesselSecondKind(double x, double nu);
+double logBesselK(double nu, double x);
 
 /**
  * @fn W0Lambert

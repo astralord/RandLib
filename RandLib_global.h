@@ -5,8 +5,8 @@
     #define Q_DECL_EXPORT __declspec(dllexport)
     #define Q_DECL_IMPORT __declspec(dllimport)
 #else
-    #define Q_DECL_EXPORT
-    #define Q_DECL_IMPORT
+    #define Q_DECL_EXPORT __attribute__((visibility("default")))
+    #define Q_DECL_IMPORT __attribute__((visibility("default")))
 #endif
 
 #ifdef RANDLIB_LIBRARY

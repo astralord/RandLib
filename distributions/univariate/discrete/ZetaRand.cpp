@@ -18,23 +18,24 @@ void ZetaRand::SetExponent(double exponent)
         throw std::invalid_argument("Exponent of Zeta distribution should be larger than 1");
     s = exponent;
     sm1 = s - 1.0;
-    zetaSInv = 1.0 / std::riemann_zeta(s);
+    zetaS = std::riemann_zeta(s);
+    logZetaS = std::log(zetaS);
     b = -std::expm1(-sm1 * M_LN2);
 }
 
 double ZetaRand::P(const int & k) const
 {
-    return (k < 1) ? 0.0 : zetaSInv / std::pow(k, s);
+    return (k < 1) ? 0.0 : std::exp(logP(k));
 }
 
 double ZetaRand::logP(const int & k) const
 {
-    return (k < 1) ? -INFINITY : std::log(zetaSInv) - s * std::log(k); // log(1/zeta(s)) can be hashed
+    return (k < 1) ? -INFINITY : -logZetaS - s * std::log(k);
 }
 
 double ZetaRand::F(const int & k) const
 {
-    return (k < 1) ? 0.0 : zetaSInv * RandMath::harmonicNumber(s, k);
+    return (k < 1) ? 0.0 : RandMath::harmonicNumber(s, k) / zetaS;
 }
 
 int ZetaRand::Variate() const
@@ -55,7 +56,7 @@ int ZetaRand::Variate() const
 
 double ZetaRand::Mean() const
 {
-    return (s > 2) ? zetaSInv * std::riemann_zeta(sm1) : INFINITY;
+    return (s > 2) ? std::riemann_zeta(sm1) / zetaS : INFINITY;
 }
 
 double ZetaRand::Variance() const
@@ -63,7 +64,7 @@ double ZetaRand::Variance() const
     if (s <= 3)
         return INFINITY;
     double y = Mean();
-    double z = zetaSInv * std::riemann_zeta(s - 2);
+    double z = std::riemann_zeta(s - 2) / zetaS;
     return z - y * y;
 }
 
@@ -79,7 +80,7 @@ double ZetaRand::Skewness() const
     double z1 = std::riemann_zeta(sm1), z1Sq = z1 * z1;
     double z2 = std::riemann_zeta(s - 2);
     double z3 = std::riemann_zeta(s - 3);
-    double z = 1.0 / zetaSInv, zSq = z * z;
+    double z = zetaS, zSq = z * z;
     double numerator = zSq * z3;
     numerator -= 3 * z2 * z1 * z;
     numerator += 2 * z1 * z1Sq;
@@ -106,6 +107,6 @@ double ZetaRand::ExcessKurtosis() const
 
 double ZetaRand::Moment(int n) const
 {
-    return (s > n + 1) ? zetaSInv * std::riemann_zeta(s - n) : INFINITY;
+    return (s > n + 1) ? std::riemann_zeta(s - n) / zetaS : INFINITY;
 }
 

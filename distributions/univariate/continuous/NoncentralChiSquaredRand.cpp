@@ -52,7 +52,7 @@ double NoncentralChiSquaredRand::logf(const double & x) const
         return (k > 2) ? -INFINITY : INFINITY;
     }
     double halfKm1 = halfK - 1;
-    double y = RandMath::logModifiedBesselFirstKind(std::sqrt(lambda * x), halfKm1);
+    double y = RandMath::logBesselI(halfKm1, std::sqrt(lambda * x));
     double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
     return y + 0.5 * z - M_LN2;
