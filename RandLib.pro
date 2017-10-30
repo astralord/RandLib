@@ -1,5 +1,3 @@
-CONFIG -= qt
-
 TARGET = RandLib
 TEMPLATE = lib
 DESTDIR = ../bin/RandLib
