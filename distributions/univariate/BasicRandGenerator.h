@@ -23,6 +23,10 @@ public:
 
     static unsigned long long Variate();
 
+    static constexpr unsigned long long MinValue() {
+        return 0;
+    }
+
     static constexpr unsigned long long MaxValue() {
         return (Generator == JLKISS64) ? 18446744073709551615ULL : 4294967295UL;
     }
@@ -30,7 +34,7 @@ public:
 };
 
 #ifdef JLKISS64RAND
-typedef BasicRandGenerator<JLKISS64RAND> RandGenerator;
+typedef BasicRandGenerator<JLKISS64> RandGenerator;
 #else
 typedef BasicRandGenerator<JKISS> RandGenerator;
 #endif
