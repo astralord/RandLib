@@ -2,7 +2,7 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 
-std::string GeometricRand::Name() const
+String GeometricRand::Name() const
 {
     return "Geometric(" + toStringWithPrecision(GetProbability()) + ")";
 }
@@ -10,7 +10,7 @@ std::string GeometricRand::Name() const
 void GeometricRand::SetProbability(double probability)
 {
     if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Probability parameter of Geometric distribution should in interval [0, 1]");
+        throw std::invalid_argument("Geometric distribution: probability parameter should in interval [0, 1]");
     SetParameters(1, probability);
 }
 

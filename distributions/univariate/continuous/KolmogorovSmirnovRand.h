@@ -13,7 +13,7 @@ class RANDLIBSHARED_EXPORT KolmogorovSmirnovRand : public ContinuousDistribution
 {
 public:
     KolmogorovSmirnovRand();
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

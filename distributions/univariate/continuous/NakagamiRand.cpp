@@ -10,9 +10,9 @@ NakagamiDistribution::NakagamiDistribution(double shape, double spread)
 void NakagamiDistribution::SetParameters(double shape, double spread)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Nakagami distribution should be positive");
+        throw std::invalid_argument("Nakagami distribution: shape should be positive");
     if (spread <= 0.0)
-        throw std::invalid_argument("Spread of Nakagami distribution should be positive");
+        throw std::invalid_argument("Nakagami distribution: spread should be positive");
     m = shape;
     w = spread;
     Y.SetParameters(m, m / w);
@@ -38,7 +38,7 @@ double NakagamiDistribution::logf(const double & x) const
     if (x == 0) {
         if (m > 0.5)
             return 0-INFINITY;
-        return (m < 0.5) ? INFINITY : 0.5 * std::log(M_2_PI / w);
+        return (m < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(w));
     }
     return std::log(2 * x) + Y.logf(x * x);
 }
@@ -127,21 +127,28 @@ double NakagamiDistribution::quantileImpl1m(double p) const
 }
 
 /// NAKAGAMI
-std::string NakagamiRand::Name() const
+String NakagamiRand::Name() const
 {
     return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
 }
 
 
 /// CHI
-std::string ChiRand::Name() const
+ChiRand::ChiRand(int degree)
+{
+    SetDegree(degree);
+}
+
+String ChiRand::Name() const
 {
     return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
 }
 
 void ChiRand::SetDegree(int degree)
 {
-    NakagamiDistribution::SetParameters((degree < 1) ? 0.5 : 0.5 * degree, degree);
+    if (degree < 1)
+        throw std::invalid_argument("Chi distribution: degree parameter should be positive");
+    NakagamiDistribution::SetParameters(0.5 * degree, degree);
 }
 
 double ChiRand::Skewness() const
@@ -172,14 +179,16 @@ MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale)
     SetScale(scale);
 }
 
-std::string MaxwellBoltzmannRand::Name() const
+String MaxwellBoltzmannRand::Name() const
 {
     return "Maxwell-Boltzmann(" + toStringWithPrecision(GetScale()) + ")";
 }
 
 void MaxwellBoltzmannRand::SetScale(double scale)
 {
-    sigma = (scale > 0.0) ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Maxwell-Boltzmann distribution: scale should be positive");
+    sigma = scale;
     NakagamiDistribution::SetParameters(1.5, 3 * sigma * sigma);
 }
 
@@ -265,14 +274,15 @@ RayleighRand::RayleighRand(double scale)
     SetScale(scale);
 }
 
-std::string RayleighRand::Name() const
+String RayleighRand::Name() const
 {
     return "Rayleigh(" + toStringWithPrecision(GetScale()) + ")";
 }
 
 void RayleighRand::SetScale(double scale)
 {
-    sigma = (scale > 0.0) ? scale : 1.0;
+    if (scale <= 0.0)
+        throw std::invalid_argument("Rayleigh distribution: scale should be positive");
     NakagamiDistribution::SetParameters(1, 2 * sigma * sigma);
 }
 
@@ -334,7 +344,8 @@ double RayleighRand::quantileImpl1m(double p) const
 
 double RayleighRand::Median() const
 {
-    return sigma * std::sqrt(M_LN2 + M_LN2);
+    static constexpr double medianCoef = std::sqrt(M_LN2 + M_LN2);
+    return sigma * medianCoef;
 }
 
 double RayleighRand::Mode() const
@@ -344,13 +355,15 @@ double RayleighRand::Mode() const
 
 double RayleighRand::Skewness() const
 {
-    return 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    static constexpr double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    return skewness;
 }
 
 double RayleighRand::ExcessKurtosis() const
 {
-    double temp = 4 - M_PI;
-    return -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    static constexpr double temp = 4 - M_PI;
+    static constexpr double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    return kurtosis;
 }
 
 void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)

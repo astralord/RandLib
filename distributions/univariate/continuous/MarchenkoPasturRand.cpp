@@ -6,7 +6,7 @@ MarchenkoPasturRand::MarchenkoPasturRand(double ratio, double scale)
     SetParameters(ratio, scale);
 }
 
-std::string MarchenkoPasturRand::Name() const
+String MarchenkoPasturRand::Name() const
 {
     return "Marchenko-Pastur(" + toStringWithPrecision(GetRatio()) + ", "
             + toStringWithPrecision(GetScale()) + ")";
@@ -15,9 +15,9 @@ std::string MarchenkoPasturRand::Name() const
 void MarchenkoPasturRand::SetParameters(double ratio, double scale)
 {
     if (ratio <= 0.0)
-        throw std::invalid_argument("Ratio parameter of Marchenko-Pastur distribution should be positive");
+        throw std::invalid_argument("Marchenko-Pastur distribution: ratio parameter should be positive");
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Marchenko-Pastur distribution should be positive");
+        throw std::invalid_argument("Marchenko-Pastur distribution: scale should be positive");
     lambda = ratio;
     double sqrtLambda = std::sqrt(lambda);
     a = 1.0 - sqrtLambda;

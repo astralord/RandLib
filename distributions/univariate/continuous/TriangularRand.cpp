@@ -6,7 +6,7 @@ TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit
     SetParameters(lowerLimit, mode, upperLimit);
 }
 
-std::string TriangularRand::Name() const
+String TriangularRand::Name() const
 {
     return "Triangular("
             + toStringWithPrecision(MinValue()) + ", "
@@ -17,9 +17,9 @@ std::string TriangularRand::Name() const
 void TriangularRand::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
     if (lowerLimit >= mode)
-        throw std::invalid_argument("Lower limit of Triangular distribution should be larger than mode");
+        throw std::invalid_argument("Triangular distribution: lower limit should be larger than mode");
     if (mode >= upperLimit)
-        throw std::invalid_argument("Upper limit of Triangular distribution should be smaller than mode");
+        throw std::invalid_argument("Triangular distribution: upper limit should be smaller than mode");
     a = lowerLimit;
     c = mode;
     b = upperLimit;

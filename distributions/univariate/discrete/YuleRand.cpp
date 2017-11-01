@@ -6,7 +6,7 @@ X(shape, 1.0)
     SetShape(shape);
 }
 
-std::string YuleRand::Name() const
+String YuleRand::Name() const
 {
     return "Yule(" + toStringWithPrecision(GetShape()) + ")";
 }
@@ -14,7 +14,7 @@ std::string YuleRand::Name() const
 void YuleRand::SetShape(double shape)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Yule distribution should be positive");
+        throw std::invalid_argument("Yule distribution: shape should be positive");
     ro = shape;
     lgamma1pRo = std::lgamma(ro + 1);
     X.SetShape(ro);

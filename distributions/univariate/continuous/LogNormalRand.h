@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
 public:
     LogNormalRand(double location = 0, double squaredScale = 1);
 
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

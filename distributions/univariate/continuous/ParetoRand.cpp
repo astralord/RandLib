@@ -7,7 +7,7 @@ ParetoRand::ParetoRand(double shape, double scale)
     SetScale(scale);
 }
 
-std::string ParetoRand::Name() const
+String ParetoRand::Name() const
 {
     return "Pareto(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
@@ -15,7 +15,7 @@ std::string ParetoRand::Name() const
 void ParetoRand::SetShape(double shape)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Pareto distribution should be positive");
+        throw std::invalid_argument("Pareto distribution: shape should be positive");
     alpha = shape;
     logAlpha = std::log(alpha);
 }
@@ -23,7 +23,7 @@ void ParetoRand::SetShape(double shape)
 void ParetoRand::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Pareto distribution should be positive");
+        throw std::invalid_argument("Pareto distribution: scale should be positive");
     sigma = scale;
     logSigma = std::log(sigma);
 }

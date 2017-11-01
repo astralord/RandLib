@@ -6,7 +6,7 @@ long double ExponentialRand::stairWidth[257] = {0};
 long double ExponentialRand::stairHeight[256] = {0};
 bool ExponentialRand::dummy = ExponentialRand::SetupTables();
 
-std::string ExponentialRand::Name() const
+String ExponentialRand::Name() const
 {
     return "Exponential(" + toStringWithPrecision(GetRate()) + ")";
 }

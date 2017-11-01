@@ -5,7 +5,7 @@ WignerSemicircleRand::WignerSemicircleRand(double radius)
     SetRadius(radius);
 }
 
-std::string WignerSemicircleRand::Name() const
+String WignerSemicircleRand::Name() const
 {
     return "Wigner Semicircle(" + toStringWithPrecision(GetRadius()) + ")";
 }
@@ -13,7 +13,7 @@ std::string WignerSemicircleRand::Name() const
 void WignerSemicircleRand::SetRadius(double radius)
 {
     if (radius <= 0.0)
-        throw std::invalid_argument("Radius of Wigner-Semicircle distribution should be positive");
+        throw std::invalid_argument("Wigner-Semicircle distribution: radius should be positive");
     R = radius;
     RSq = R * R;
     logRSq = std::log(RSq);

@@ -7,7 +7,7 @@ BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1, proba
     boundary = q * RandGenerator::MaxValue();
 }
 
-std::string BernoulliRand::Name() const
+String BernoulliRand::Name() const
 {
     return "Bernoulli(" + toStringWithPrecision(GetProbability()) + ")";
 }
@@ -15,7 +15,7 @@ std::string BernoulliRand::Name() const
 void BernoulliRand::SetProbability(double probability)
 {
     if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Probability parameter of Bernoulli distribution should in interval [0, 1]");
+        throw std::invalid_argument("Bernoulli distribution: probability parameter should in interval [0, 1]");
     SetParameters(1, probability);
     boundary = q * RandGenerator::MaxValue();
 }

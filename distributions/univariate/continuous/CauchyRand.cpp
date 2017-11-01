@@ -6,7 +6,7 @@ CauchyRand::CauchyRand(double location, double scale)
 {
 }
 
-std::string CauchyRand::Name() const
+String CauchyRand::Name() const
 {
     return "Cauchy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }

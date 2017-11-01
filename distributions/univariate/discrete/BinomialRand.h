@@ -156,7 +156,7 @@ class RANDLIBSHARED_EXPORT BinomialRand : public BinomialDistribution
 {
 public:
     BinomialRand(int number = 1, double probability = 0.5) : BinomialDistribution(number, probability) {}
-    std::string Name() const override;
+    String Name() const override;
     using BinomialDistribution::SetParameters;
 };
 

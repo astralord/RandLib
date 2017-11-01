@@ -5,7 +5,7 @@ IrwinHallRand::IrwinHallRand(size_t number)
     SetNumber(number);
 }
 
-std::string IrwinHallRand::Name() const
+String IrwinHallRand::Name() const
 {
     return "Irwin-Hall(" + toStringWithPrecision(GetNumber()) + ")";
 }
@@ -13,7 +13,7 @@ std::string IrwinHallRand::Name() const
 void IrwinHallRand::SetNumber(int number)
 {
     if (number <= 0)
-        throw std::invalid_argument("Number of Irwin-Hall distribution should be positive");
+        throw std::invalid_argument("Irwin-Hall distribution: number should be positive");
     n = number;
 }
 

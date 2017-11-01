@@ -17,7 +17,7 @@ class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
 
 public:
     explicit DegenerateRand(double value = 0);
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return a; }

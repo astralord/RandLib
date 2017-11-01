@@ -123,7 +123,7 @@ public:
     GeometricStableRand(double exponent, double skewness, double scale, double location);
     virtual ~GeometricStableRand() {}
 
-    std::string Name() const override;
+    String Name() const override;
 private:
     void ChangeAsymmetry();
 public:

@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public CircularDistribution
 public:
     VonMisesRand(double location, double concentration);
 
-    std::string Name() const override;
+    String Name() const override;
 
     void SetConcentration(double concentration);
     inline double GetConcentration() const { return k; }

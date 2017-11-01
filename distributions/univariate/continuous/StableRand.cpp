@@ -35,11 +35,17 @@ double StableDistribution::MaxValue() const
 void StableDistribution::SetParameters(double exponent, double skewness, double scale, double location)
 {
     if (exponent < 0.1 || exponent > 2.0)
-        throw std::invalid_argument("Exponent of Stable distribution should be in the interval [0.1, 2]");
+        throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2]");
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Skewness of Stable distribution should be in the interval [-1, 1]");
+        throw std::invalid_argument("Stable distribution: skewness of should be in the interval [-1, 1]");
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Stable distribution should be positive");
+        throw std::invalid_argument("Stable distribution: scale should be positive");
+
+    /// the following errors should be removed soon
+    if (exponent != 1.0 && std::fabs(exponent - 1.0) < 0.01 && skewness != 0.0)
+        throw std::invalid_argument("Stable distribution: exponent close to 1 with non-zero skewness is not yet supported");
+    if (exponent == 1.0 && skewness != 0.0 && std::fabs(skewness) < 0.01)
+        throw std::invalid_argument("Stable distribution: skewness close to 0 with exponent equal to 1 is not yet supported");
 
     alpha = exponent;
     alphaInv = 1.0 / alpha;
@@ -68,7 +74,7 @@ void StableDistribution::SetParameters(double exponent, double skewness, double 
         pdfCoef = -logGamma - M_LNPI;
     else if (distributionType == UNITY_EXPONENT) {
         pdfCoef = 0.5 / (gamma * std::fabs(beta));
-        pdftailBound = std::sqrt(2e4 / M_PI * M_E);
+        pdftailBound = 0; // not in the use for now
         logGammaPi_2 = logGamma + M_LNPI - M_LN2;
     }
     else if (distributionType == GENERAL) {
@@ -176,6 +182,17 @@ double StableDistribution::fastpdfExponentiation(double u)
     return (u < -25) ? std::exp(u) : std::exp(u - std::exp(u));
 }
 
+
+double StableDistribution::pdfShortTailExpansionForUnityExponent(double x) const
+{
+    if (x > 10)
+        return 0.0;
+    double xm1 = x - 1.0;
+    double y = 0.5 * xm1 - std::exp(xm1);
+    y -= 0.5 * (M_LN2 + M_LNPI);
+    return std::exp(y);
+}
+
 double StableDistribution::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
 {
     if (theta > 0.0) {
@@ -213,13 +230,6 @@ double StableDistribution::pdfForUnityExponent(double x) const
     double xSt = (x - mu) / gamma;
     double xAdj = -M_PI_2 * xSt / beta - logGammaPi_2;
 
-    // TODO: this limit is not available anymore, re-check
-    if (std::fabs(xSt) > pdftailBound) {
-        double y = 1.0 / (M_PI * xSt * xSt);
-        y *= (xSt > 0) ? (1 + beta) : (1 - beta);
-        return y;
-    }
-
     /// We squeeze boudaries for too peaked integrands
     double boundary = RandMath::atan(M_2_PI * beta * (5.0 - xAdj));
     double upperBoundary = (beta > 0.0) ? boundary : M_PI_2;
@@ -249,6 +259,18 @@ double StableDistribution::pdfForUnityExponent(double x) const
     double int1 = RandMath::integral(integrandPtr, lowerBoundary, theta0, 1e-11, maxRecursionDepth);
     double int2 = RandMath::integral(integrandPtr, theta0, upperBoundary, 1e-11, maxRecursionDepth);
     return pdfCoef * (int1 + int2);
+}
+
+double StableDistribution::pdfShortTailExpansionForGeneralExponent(double logX) const
+{
+    double logAlpha = std::log(alpha);
+    double log1mAlpha = (alpha < 1) ? std::log1p(-alpha) : std::log(alpha - 1);
+    double temp = logX - logAlpha;
+    double y = std::exp(alpha_alpham1 * temp);
+    y *= -std::fabs(1.0 - alpha);
+    double z = (1.0 - 0.5 * alpha) / (alpha - 1) * temp;
+    z -= 0.5 * (M_LN2 + M_LNPI + logAlpha + log1mAlpha);
+    return std::exp(y + z);
 }
 
 double StableDistribution::pdfAtZero() const
@@ -299,7 +321,7 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
 
 double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) const
 {
-    static constexpr int k = 10; /// number of elements in the series
+    static constexpr int k = 10; ///< number of elements in the series
     double rhoPi = M_PI_2 + xiAdj;
     rhoPi *= alpha;
     double sum = 0.0;
@@ -317,7 +339,6 @@ double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) co
 
 double StableDistribution::pdfTaylorExpansionTailNearCauchy(double x) const
 {
-    // TODO: recheck derivatives (there are some typos in the paper)
     double xSq = x * x;
     double y = 1.0 + xSq;
     double ySq = y * y;
@@ -455,12 +476,18 @@ double StableDistribution::pdfForGeneralExponent(double x) const
     double logAbsX = std::log(absXSt) - omega;
 
     /// If x is too close to 0, we do series expansion avoiding numerical problems
-    if (logAbsX < seriesZeroParams.second)
+    if (logAbsX < seriesZeroParams.second) {
+        if (alpha < 1 && std::fabs(beta) == 1)
+            return pdfShortTailExpansionForGeneralExponent(logAbsX);
         return pdfSeriesExpansionAtZero(logAbsX, xiAdj, seriesZeroParams.first) / gamma;
+    }
 
     /// If x is large enough we use tail approximation
-    if (logAbsX > pdftailBound && alpha <= ALMOST_TWO)
+    if (logAbsX > pdftailBound && alpha <= ALMOST_TWO) {
+        if (alpha > 1 && std::fabs(beta) == 1)
+            return pdfShortTailExpansionForGeneralExponent(logAbsX);
         return pdfSeriesExpansionAtInf(logAbsX, xiAdj) / gamma;
+    }
 
     double xAdj = alpha_alpham1 * logAbsX;
 
@@ -983,7 +1010,7 @@ std::complex<double> StableDistribution::CFImpl(double t) const
     return std::exp(-psi);
 }
 
-std::string StableRand::Name() const
+String StableRand::Name() const
 {
     return "Stable("
             + toStringWithPrecision(GetExponent()) + ", "
@@ -992,7 +1019,7 @@ std::string StableRand::Name() const
             + toStringWithPrecision(GetLocation()) + ")";
 }
 
-std::string HoltsmarkRand::Name() const
+String HoltsmarkRand::Name() const
 {
     return "Holtsmark("
             + toStringWithPrecision(GetScale()) + ", "
@@ -1000,7 +1027,7 @@ std::string HoltsmarkRand::Name() const
 }
 
 
-std::string LandauRand::Name() const
+String LandauRand::Name() const
 {
     return "Landau("
             + toStringWithPrecision(GetScale()) + ", "

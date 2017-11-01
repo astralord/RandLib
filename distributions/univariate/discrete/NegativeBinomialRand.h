@@ -101,7 +101,7 @@ class RANDLIBSHARED_EXPORT NegativeBinomialRand : public NegativeBinomialDistrib
 {
 public:
     NegativeBinomialRand(T number, double probability) : NegativeBinomialDistribution<T>(number, probability) {}
-    std::string Name() const override;
+    String Name() const override;
 
     using NegativeBinomialDistribution<T>::SetParameters;
 

@@ -5,7 +5,7 @@ UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
     SetBoundaries(minValue, maxValue);
 }
 
-std::string UniformDiscreteRand::Name() const
+String UniformDiscreteRand::Name() const
 {
     return "Uniform Discrete(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
 }
@@ -13,7 +13,7 @@ std::string UniformDiscreteRand::Name() const
 void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
 {
     if (minValue >= maxValue)
-        throw std::invalid_argument("Minimal value of Uniform discrete distribution should be less than maximum value");
+        throw std::invalid_argument("Uniform discrete distribution: minimal value should be less than maximum value");
 
     a = minValue;
     b = maxValue;
@@ -21,6 +21,9 @@ void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
     n = b - a + 1;
     nInv = 1.0 / n;
     logN = std::log(n);
+
+    unsigned long long MAX_RAND = RandGenerator::MaxValue();
+    MAX_RAND_UNBIASED = MAX_RAND - MAX_RAND % n - 1;
 }
 
 double UniformDiscreteRand::P(const int & k) const
@@ -44,8 +47,11 @@ double UniformDiscreteRand::F(const int & k) const
 
 int UniformDiscreteRand::Variate() const
 {
-    double x = (RandGenerator::Variate() % n);
-    return a + x;
+    unsigned long intVar;
+    do {
+        intVar = RandGenerator::Variate();
+    } while (intVar > MAX_RAND_UNBIASED);
+    return a + (intVar % n);
 }
 
 double UniformDiscreteRand::Mean() const
@@ -55,7 +61,9 @@ double UniformDiscreteRand::Mean() const
 
 double UniformDiscreteRand::Variance() const
 {
-    return ((double)n * n - 1.0) / 12;
+    double nm1 = n - 1;
+    double np1 = n + 1;
+    return nm1 * np1 / 12;
 }
 
 int UniformDiscreteRand::Median() const

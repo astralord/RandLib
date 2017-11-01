@@ -5,7 +5,7 @@ NoncentralChiSquaredRand::NoncentralChiSquaredRand(double degree, double noncent
     SetParameters(degree, noncentrality);
 }
 
-std::string NoncentralChiSquaredRand::Name() const
+String NoncentralChiSquaredRand::Name() const
 {
     return "Noncentral Chi-Squared(" + toStringWithPrecision(GetDegree()) + ", "
             + toStringWithPrecision(GetNoncentrality()) + ")";
@@ -14,9 +14,9 @@ std::string NoncentralChiSquaredRand::Name() const
 void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality)
 {
     if (degree <= 0.0)
-        throw std::invalid_argument("Degree of Noncentral Chi-Squared distribution should be positive");
+        throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
     if (noncentrality <= 0.0)
-        throw std::invalid_argument("Noncentrality of Noncentral Chi-Squared distribution should be positive");
+        throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
 
     k = degree;
     halfK = 0.5 * k;

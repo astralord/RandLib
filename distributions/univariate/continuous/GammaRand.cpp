@@ -11,9 +11,9 @@ GammaDistribution::GammaDistribution(double shape, double rate)
 void GammaDistribution::SetParameters(double shape, double rate)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Gamma distribution should be positive");
+        throw std::invalid_argument("Gamma distribution: shape should be positive");
     if (rate <= 0.0)
-        throw std::invalid_argument("Rate of Gamma distribution should be positive");
+        throw std::invalid_argument("Gamma distribution: rate should be positive");
 
     alpha = shape > 0 ? shape : 1.0;
     
@@ -551,7 +551,7 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     return posteriorDistribution;
 }
 
-std::string GammaRand::Name() const
+String GammaRand::Name() const
 {
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
@@ -614,7 +614,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
     SetParameters(shape, shape / average);
 }
 
-std::string ChiSquaredRand::Name() const
+String ChiSquaredRand::Name() const
 {
     return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
 }
@@ -625,7 +625,7 @@ void ChiSquaredRand::SetDegree(size_t degree)
 }
 
 
-std::string ErlangRand::Name() const
+String ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }

@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT GeometricRand : public NegativeBinomialDistribution<i
 {
 public:
     explicit GeometricRand(double probability = 0.5) : NegativeBinomialDistribution<int>(1, probability) {}
-    std::string Name() const override;
+    String Name() const override;
 
 public:
     void SetProbability(double probability);

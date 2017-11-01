@@ -77,9 +77,9 @@ void BinomialDistribution::SetGeneratorConstants()
 void BinomialDistribution::SetParameters(int number, double probability)
 {
     if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Probability parameter of Binomial distribution should in interval [0, 1]");
+        throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1]");
     if (number <= 0)
-        throw std::invalid_argument("Number of Binomial distribution should be positive");
+        throw std::invalid_argument("Binomial distribution: number should be positive");
     n = number;
     p = probability;
     q = 1.0 - p;
@@ -415,7 +415,7 @@ BetaRand BinomialDistribution::FitProbabilityMinimax(const std::vector<int> &sam
     return FitProbabilityBayes(sample, B);
 }
 
-std::string BinomialRand::Name() const
+String BinomialRand::Name() const
 {
     return "Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
 }

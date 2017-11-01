@@ -27,7 +27,7 @@ class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public Continuous
 public:
     explicit ExponentiallyModifiedGaussianRand(double location = 0, double variance = 1, double rate = 1);
 
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     double MinValue() const override { return -INFINITY; }
     double MaxValue() const override { return INFINITY; }

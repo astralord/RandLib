@@ -19,10 +19,11 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
     int b = 0; ///< max bound
     double nInv = 1; ///< 1/n
     double logN = 0; ///< log(n)
+    unsigned long long MAX_RAND_UNBIASED = RandGenerator::MaxValue();///< constant for unbiased generator
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return a; }
     int MaxValue() const override { return b; }

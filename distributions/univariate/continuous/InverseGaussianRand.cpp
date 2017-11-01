@@ -7,7 +7,7 @@ InverseGaussianRand::InverseGaussianRand(double mean, double shape)
     SetParameters(mean, shape);
 }
 
-std::string InverseGaussianRand::Name() const
+String InverseGaussianRand::Name() const
 {
     return "Inverse-Gaussian(" + toStringWithPrecision(GetMean()) + ", " + toStringWithPrecision(GetShape()) + ")";
 }
@@ -15,9 +15,9 @@ std::string InverseGaussianRand::Name() const
 void InverseGaussianRand::SetParameters(double mean, double shape)
 {
     if (mean <= 0.0)
-        throw std::invalid_argument("Mean of Inverse-Gaussian distribution should be positive");
+        throw std::invalid_argument("Inverse-Gaussian distribution: mean should be positive");
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Inverse-Gaussian distribution should be positive");
+        throw std::invalid_argument("Inverse-Gaussian distribution: shape should be positive");
     mu = mean;
     lambda = shape;
 

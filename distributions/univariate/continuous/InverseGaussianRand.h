@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution
 public:
     InverseGaussianRand(double mean = 1, double shape = 1);
 
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

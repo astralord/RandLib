@@ -23,7 +23,7 @@ class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
     ParetoRand X;
 public:
     explicit YuleRand(double shape);
-    std::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     int MinValue() const override { return 1; }
     int MaxValue() const override { return INT_MAX; }

@@ -6,7 +6,7 @@ LogNormalRand::LogNormalRand(double location, double squaredScale)
     SetScale(squaredScale > 0.0 ? std::sqrt(squaredScale) : 1.0);
 }
 
-std::string LogNormalRand::Name() const
+String LogNormalRand::Name() const
 {
     return "Log-Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
@@ -20,7 +20,7 @@ void LogNormalRand::SetLocation(double location)
 void LogNormalRand::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of LogNormal distribution should be positive");
+        throw std::invalid_argument("Log-Normal distribution: scale should be positive");
     X.SetScale(scale);
     expHalfSigmaSq = std::exp(0.5 * X.Variance());
 }

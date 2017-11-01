@@ -13,9 +13,9 @@ template< typename T >
 void NegativeBinomialDistribution<T>::SetParameters(T number, double probability)
 {
     if (r <= 0.0)
-        throw std::invalid_argument("Number-parameter of Negative-Binomial distribution should be positive");
+        throw std::invalid_argument("Negative-Binomial distribution: number parameter should be positive");
     if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Probability parameter of Negative-Binomial distribution should in interval [0, 1]");
+        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should in interval [0, 1]");
     r = (number > 0) ? number : 1;
     p = probability;
     q = 1.0 - p;
@@ -235,13 +235,13 @@ BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<
 
 
 template< >
-std::string NegativeBinomialRand<int>::Name() const
+String NegativeBinomialRand<int>::Name() const
 {
     return "Pascal" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
 template< >
-std::string NegativeBinomialRand<double>::Name() const
+String NegativeBinomialRand<double>::Name() const
 {
     return "Polya(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }

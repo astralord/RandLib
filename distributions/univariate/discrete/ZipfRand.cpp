@@ -6,7 +6,7 @@ ZipfRand::ZipfRand(double exponent, int number)
     SetParameters(exponent, number);
 }
 
-std::string ZipfRand::Name() const
+String ZipfRand::Name() const
 {
     return "Zipf(" + toStringWithPrecision(GetExponent()) + ", "
                    + toStringWithPrecision(GetNumber()) + ")";
@@ -15,9 +15,9 @@ std::string ZipfRand::Name() const
 void ZipfRand::SetParameters(double exponent, int number)
 {
     if (exponent <= 1.0)
-        throw std::invalid_argument("Exponent of Zipf distribution should be larger than 1");
+        throw std::invalid_argument("Zipf distribution: exponent should be larger than 1");
     if (number <= 0)
-        throw std::invalid_argument("Number of Zipf distribution should be positive");
+        throw std::invalid_argument("Zipf distribution: number should be positive");
     s = exponent;
     n = number;
 

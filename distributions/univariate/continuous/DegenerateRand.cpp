@@ -5,7 +5,7 @@ DegenerateRand::DegenerateRand(double value)
     SetValue(value);
 }
 
-std::string DegenerateRand::Name() const
+String DegenerateRand::Name() const
 {
     return "Degenerate";
 }

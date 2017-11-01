@@ -12,9 +12,9 @@ ShiftedGeometricStableDistribution::ShiftedGeometricStableDistribution(double ex
 void ShiftedGeometricStableDistribution::SetParameters(double exponent, double skewness, double scale, double location, double shift)
 {
     if (exponent < 0.1 || exponent > 2.0)
-        throw std::invalid_argument("Exponent of Geometric-Stable distribution should be in the interval [0.1, 2]");
+        throw std::invalid_argument("Geometric-Stable distribution: exponent should be in the interval [0.1, 2]");
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Skewness of Geometric-Stable distribution should be in the interval [-1, 1]");
+        throw std::invalid_argument("Geometric-Stable distribution: skewness should be in the interval [-1, 1]");
 
     alpha = exponent;
     alphaInv = 1.0 / alpha;
@@ -48,7 +48,7 @@ void ShiftedGeometricStableDistribution::SetShift(double shift)
 void ShiftedGeometricStableDistribution::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Geometric-Stable distribution should be positive");
+        throw std::invalid_argument("Geometric-Stable distribution: scale should be positive");
     gamma = scale;
     logGamma = std::log(gamma);
 }
@@ -56,7 +56,7 @@ void ShiftedGeometricStableDistribution::SetScale(double scale)
 void ShiftedGeometricStableDistribution::SetAsymmetry(double asymmetry)
 {
     if (asymmetry <= 0.0)
-        throw std::invalid_argument("Asymmetry parameter of Laplace distribution should be positive");
+        throw std::invalid_argument("Asymmetric-Laplace distribution: asymmetry parameter should be positive");
     kappa = asymmetry;
     kappaInv = 1.0 / kappa;
     kappaSq = kappa * kappa;
@@ -351,7 +351,6 @@ double ShiftedGeometricStableDistribution::Variate() const
     case UNITY_EXPONENT:
         return variateForUnityExponent(Z.Variate());
     case GENERAL:
-    default:
         return variateForGeneralExponent(Z.Variate());
     }
     return NAN;
@@ -505,7 +504,7 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
     ChangeAsymmetry();
 }
 
-std::string GeometricStableRand::Name() const
+String GeometricStableRand::Name() const
 {
     return "Geometric Stable("
             + toStringWithPrecision(GetExponent()) + ", "

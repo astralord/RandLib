@@ -6,7 +6,7 @@ FrechetRand::FrechetRand(double shape, double scale, double location)
     SetParameters(shape, scale, location);
 }
 
-std::string FrechetRand::Name() const
+String FrechetRand::Name() const
 {
     return "Frechet(" + toStringWithPrecision(GetShape()) + ", "
                       + toStringWithPrecision(GetScale()) + ", "
@@ -16,9 +16,9 @@ std::string FrechetRand::Name() const
 void FrechetRand::SetParameters(double shape, double scale, double location)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Frechet distribution should be positive");
+        throw std::invalid_argument("Frechet distribution: shape should be positive");
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Frechet distribution should be positive");
+        throw std::invalid_argument("Frechet distribution: scale should be positive");
     alpha = shape;
     alphaInv = 1.0 / alpha;
     s = scale;

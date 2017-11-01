@@ -28,7 +28,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 
 public:
     NormalRand(double mean = 0, double var = 1);
-    std::string Name() const override;
+    String Name() const override;
 
 public:
     void SetScale(double scale);

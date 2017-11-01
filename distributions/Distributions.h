@@ -15,7 +15,7 @@
 #include "univariate/continuous/DegenerateRand.h"
 #include "univariate/continuous/ExponentialRand.h"
 #include "univariate/continuous/ExponentiallyModifiedGaussianRand.h"
-#include "univariate/continuous/FisherSnedecorRand.h"
+#include "univariate/continuous/FisherFRand.h"
 #include "univariate/continuous/FrechetRand.h"
 #include "univariate/continuous/GammaRand.h"
 #include "univariate/continuous/GeometricStableRand.h"

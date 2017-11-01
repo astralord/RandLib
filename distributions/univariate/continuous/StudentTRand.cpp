@@ -9,11 +9,11 @@ StudentTRand::StudentTRand(double degree, double location, double scale)
     SetScale(scale);
 }
 
-std::string StudentTRand::Name() const
+String StudentTRand::Name() const
 {
     if (mu == 0.0 && sigma == 1.0)
-        return "Student's t(" + toStringWithPrecision(GetDegree()) + ")";
-    return "Student's t(" + toStringWithPrecision(GetDegree()) + ", "
+        return "Student-t(" + toStringWithPrecision(GetDegree()) + ")";
+    return "Student-t(" + toStringWithPrecision(GetDegree()) + ", "
                           + toStringWithPrecision(GetLocation()) + ", "
                           + toStringWithPrecision(GetScale()) + ")";
 }
@@ -21,7 +21,7 @@ std::string StudentTRand::Name() const
 void StudentTRand::SetDegree(double degree)
 {
     if (degree <= 0.0)
-        throw std::invalid_argument("Degree of t-distribution should be positive");
+        throw std::invalid_argument("Student-t distribution: degree parameter should be positive");
     nu = degree;
     Y.SetParameters(0.5 * nu, 1.0);
 
@@ -40,7 +40,7 @@ void StudentTRand::SetLocation(double location)
 void StudentTRand::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of t-distribution should be positive");
+        throw std::invalid_argument("Student-t distribution: scale should be positive");
     sigma = scale;
     logSigma = std::log(sigma);
 }

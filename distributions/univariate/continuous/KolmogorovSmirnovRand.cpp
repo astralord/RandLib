@@ -6,7 +6,7 @@ KolmogorovSmirnovRand::KolmogorovSmirnovRand()
 {
 }
 
-std::string KolmogorovSmirnovRand::Name() const
+String KolmogorovSmirnovRand::Name() const
 {
     return "Kolmogorov-Smirnov";
 }

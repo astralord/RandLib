@@ -6,7 +6,7 @@ WrappedExponentialRand::WrappedExponentialRand(double rate) : CircularDistributi
     SetRate(rate);
 }
 
-std::string WrappedExponentialRand::Name() const
+String WrappedExponentialRand::Name() const
 {
     return "Wrapped Exponential(" + toStringWithPrecision(GetRate()) + ")";
 }
@@ -14,7 +14,7 @@ std::string WrappedExponentialRand::Name() const
 void WrappedExponentialRand::SetRate(double rate)
 {
     if (lambda <= 0.0)
-        throw std::invalid_argument("Rate parameter of Wrapped Exponential distribution should be positive");
+        throw std::invalid_argument("Wrapped Exponential distribution: rate parameter should be positive");
     lambda = rate;
     logLambda = std::log(lambda);
     scaledLambda = 2 * M_PI * lambda;
