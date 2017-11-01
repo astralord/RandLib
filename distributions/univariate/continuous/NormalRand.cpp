@@ -15,7 +15,7 @@ NormalRand::NormalRand(double mean, double var)
     SetVariance(var);
 }
 
-std::string NormalRand::Name() const
+std::__cxx11::string NormalRand::Name() const
 {
     return "Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(Variance()) + ")";
 }
@@ -23,7 +23,7 @@ std::string NormalRand::Name() const
 void NormalRand::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Normal distribution should be positive");
+        throw std::invalid_argument("Normal distribution: scale should be positive");
     sigma = scale;
     StableDistribution::SetScale(sigma * M_SQRT1_2);
 }

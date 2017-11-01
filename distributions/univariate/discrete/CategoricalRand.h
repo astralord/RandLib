@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution
 
 public:
     explicit CategoricalRand(std::vector<double>&& probabilities);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return K; }

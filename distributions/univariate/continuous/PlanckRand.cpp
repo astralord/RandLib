@@ -5,7 +5,7 @@ PlanckRand::PlanckRand(double shape, double scale)
     SetParameters(shape, scale);
 }
 
-std::string PlanckRand::Name() const
+std::__cxx11::string PlanckRand::Name() const
 {
     return "Planck(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
@@ -13,9 +13,9 @@ std::string PlanckRand::Name() const
 void PlanckRand::SetParameters(double shape, double scale)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Planck distribution should be positive");
+        throw std::invalid_argument("Planck distribution: shape should be positive");
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Planck distribution should be positive");
+        throw std::invalid_argument("Planck distribution: scale should be positive");
     a = shape;
     b = scale;
 

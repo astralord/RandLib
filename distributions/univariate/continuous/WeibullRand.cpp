@@ -6,7 +6,7 @@ WeibullRand::WeibullRand(double scale, double shape)
     SetParameters(scale, shape);
 }
 
-std::string WeibullRand::Name() const
+std::__cxx11::string WeibullRand::Name() const
 {
     return "Weibull(" + toStringWithPrecision(GetScale()) + ", " + toStringWithPrecision(GetShape()) + ")";
 }
@@ -14,9 +14,9 @@ std::string WeibullRand::Name() const
 void WeibullRand::SetParameters(double scale, double shape)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Weibull distribution should be positive");
+        throw std::invalid_argument("Weibull distribution: scale should be positive");
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Weibull distribution should be positive");
+        throw std::invalid_argument("Weibull distribution: shape should be positive");
     lambda = scale;
     k = shape;
     kInv = 1.0 / k;

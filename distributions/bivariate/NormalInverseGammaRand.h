@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDi
 
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
 
     void SetParameters(double location, double precision, double shape, double rate);
     inline double GetLocation() const { return mu; }

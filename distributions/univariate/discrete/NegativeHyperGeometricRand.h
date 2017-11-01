@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribut
 
 public:
     NegativeHyperGeometricRand(int totalSize, int totalSuccessesNum, int limitSuccessesNum);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
     int MaxValue() const override { return N - M; }

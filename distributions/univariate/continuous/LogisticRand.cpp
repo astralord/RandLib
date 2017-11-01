@@ -6,7 +6,7 @@ LogisticRand::LogisticRand(double location, double scale)
     SetScale(scale);
 }
 
-std::string LogisticRand::Name() const
+std::__cxx11::string LogisticRand::Name() const
 {
     return "Logistic(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
@@ -19,7 +19,7 @@ void LogisticRand::SetLocation(double location)
 void LogisticRand::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Logistic distribution should be positive");
+        throw std::invalid_argument("Logistic distribution: scale of should be positive");
     s = scale;
     logS = std::log(s);
 }

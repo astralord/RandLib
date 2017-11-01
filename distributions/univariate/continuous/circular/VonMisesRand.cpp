@@ -6,7 +6,7 @@ VonMisesRand::VonMisesRand(double location, double concentration) : CircularDist
     SetConcentration(concentration);
 }
 
-std::string VonMisesRand::Name() const
+std::__cxx11::string VonMisesRand::Name() const
 {
     return "von Mises(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetConcentration()) + ")";
 }
@@ -14,7 +14,7 @@ std::string VonMisesRand::Name() const
 void VonMisesRand::SetConcentration(double concentration)
 {
     if (concentration <= 0.0)
-        throw std::invalid_argument("Concentration parameter of von Mises distribution should be positive");
+        throw std::invalid_argument("von Mises distribution: concentration parameter should be positive");
     k = concentration;
     logI0k = RandMath::logBesselI(0, k);
     s = (k > 1.3) ? 1.0 / std::sqrt(k) : M_PI * std::exp(-k);

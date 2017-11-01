@@ -6,7 +6,7 @@ SkellamRand::SkellamRand(double rate1, double rate2)
     SetRates(rate1, rate2);
 }
 
-std::string SkellamRand::Name() const
+std::__cxx11::string SkellamRand::Name() const
 {
     return "Skellam(" + toStringWithPrecision(GetFirstRate()) + ", " + toStringWithPrecision(GetSecondRate()) + ")";
 }
@@ -14,7 +14,7 @@ std::string SkellamRand::Name() const
 void SkellamRand::SetRates(double rate1, double rate2)
 {
     if (rate1 <= 0.0 || rate2 <= 0.0)
-        throw std::invalid_argument("Rates of Skellam distribution should be positive");
+        throw std::invalid_argument("Skellam distribution: rates should be positive");
 
     X.SetRate(rate1);
     mu1 = X.GetRate();

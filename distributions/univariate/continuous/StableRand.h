@@ -415,7 +415,7 @@ class RANDLIBSHARED_EXPORT StableRand : public StableDistribution
 {
 public:
     StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution(exponent, skewness, scale, location) {}
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     using StableDistribution::SetParameters;
 };
 
@@ -433,7 +433,7 @@ class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableDistribution
 {
 public:
     HoltsmarkRand(double scale = 1, double location = 0) : StableDistribution(1.5, 0.0, scale, location) {}
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
 };
 
 
@@ -450,7 +450,7 @@ class RANDLIBSHARED_EXPORT LandauRand : public StableDistribution
 {
 public:
     LandauRand(double scale = 1, double location = 0) : StableDistribution(1.0, 1.0, scale, location) {}
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
 };
 
 #endif // STABLERAND_H

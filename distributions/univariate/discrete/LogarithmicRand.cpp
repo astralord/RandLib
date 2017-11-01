@@ -6,7 +6,7 @@ LogarithmicRand::LogarithmicRand(double probability)
     SetProbability(probability);
 }
 
-std::string LogarithmicRand::Name() const
+std::__cxx11::string LogarithmicRand::Name() const
 {
     return "Logarithmic(" + toStringWithPrecision(GetProbability()) + ")";
 }
@@ -14,7 +14,7 @@ std::string LogarithmicRand::Name() const
 void LogarithmicRand::SetProbability(double probability)
 {
     if (probability <= 0.0 || probability >= 1.0)
-        throw std::invalid_argument("Probability parameter of Logarithmic distribution should in interval (0, 1)");
+        throw std::invalid_argument("Logarithmic distribution: probability parameter should in interval (0, 1)");
     p = probability;
     logProb = std::log(p);
     log1mProb = std::log1p(-p);

@@ -16,7 +16,7 @@ void AsymmetricLaplaceDistribution::ChangeLocation()
 void AsymmetricLaplaceDistribution::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Laplace distribution should be positive");
+        throw std::invalid_argument("Laplace distribution: scale should be positive");
     ShiftedGeometricStableDistribution::SetScale(scale);
     ChangeLocation();
 }
@@ -131,7 +131,7 @@ void AsymmetricLaplaceDistribution::FitShiftAndScale(const std::vector<double> &
     FitScale(sample);
 }
 
-std::string AsymmetricLaplaceRand::Name() const
+std::__cxx11::string AsymmetricLaplaceRand::Name() const
 {
     return "Asymmetric-Laplace(" + toStringWithPrecision(GetShift()) + ", "
                                  + toStringWithPrecision(GetScale()) + ", "
@@ -235,7 +235,7 @@ void AsymmetricLaplaceRand::Fit(const std::vector<double> &sample)
 }
 
 
-std::string LaplaceRand::Name() const
+std::__cxx11::string LaplaceRand::Name() const
 {
     return "Laplace(" + toStringWithPrecision(GetShift()) + ", "
                       + toStringWithPrecision(GetScale()) + ")";

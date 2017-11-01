@@ -7,7 +7,7 @@ BivariateNormalRand::BivariateNormalRand(double location1, double location2, dou
     SetCovariance(scale1, scale2, correlation);
 }
 
-std::string BivariateNormalRand::Name() const
+std::__cxx11::string BivariateNormalRand::Name() const
 {
     return "Bivariate Normal( (" + toStringWithPrecision(GetFirstLocation()) + ", "
                                + toStringWithPrecision(GetSecondLocation()) + "), ("

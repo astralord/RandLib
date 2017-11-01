@@ -6,7 +6,7 @@ UniformRand::UniformRand(double minValue, double maxValue) :
 {
 }
 
-std::string UniformRand::Name() const
+std::__cxx11::string UniformRand::Name() const
 {
     return "Uniform(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
 }
@@ -57,24 +57,24 @@ double UniformRand::StandardVariate()
     /// generates a random number on [0,1) with 53-bit resolution, using 2 32-bit integer variate
     double x;
     unsigned int a, b;
-    a = RandGenerator::variate() >> 6; /// Upper 26 bits
-    b = RandGenerator::variate() >> 5; /// Upper 27 bits
+    a = RandGenerator::Variate() >> 6; /// Upper 26 bits
+    b = RandGenerator::Variate() >> 5; /// Upper 27 bits
     x = (a * 134217728.0 + b) / 9007199254740992.0;
     return x;
 #elif defined(JLKISS64RAND)
     /// generates a random number on [0,1) with 53-bit resolution, using 64-bit integer variate
     double x;
-    unsigned long long a = RandGenerator::variate();
+    unsigned long long a = RandGenerator::Variate();
     a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bit
     *(reinterpret_cast<unsigned long long *>(&x)) = a; /// Make a double from bits
     return x - 1.0;
 #elif defined(UNICLOSEDRAND)
     /// generates a random number on interval [0,1]
-    double x = RandGenerator::variate();
+    double x = RandGenerator::Variate();
     return x / 4294967295.0;
 #elif defined(UNIHALFCLOSEDRAND)
     /// generates a random number on interval [0,1)
-    double x = RandGenerator::variate();
+    double x = RandGenerator::Variate();
     return x / 4294967296.0;
 #else
     /// generates a random number on interval (0,1)

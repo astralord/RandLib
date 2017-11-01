@@ -1,10 +1,10 @@
-#ifndef FISHERSNEDECORRAND_H
-#define FISHERSNEDECORRAND_H
+#ifndef FISHERFRAND_H
+#define FISHERFRAND_H
 
 #include "BetaPrimeRand.h"
 
 /**
- * @brief The FisherSnedecorRand class <BR>
+ * @brief The FisherFRand class <BR>
  * F-distribution
  *
  * Notation: X ~ F(d1, d2)
@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * X ~ B'(d1/2, d2/2)
  */
-class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution
 {
     int d1 = 2; ///< first degree
     int d2 = 2; ///< second degree
@@ -25,9 +25,9 @@ class RANDLIBSHARED_EXPORT FisherSnedecorRand : public ContinuousDistribution
     BetaPrimeRand B{};
 
 public:
-    FisherSnedecorRand(int degree1, int degree2);
+    FisherFRand(int degree1, int degree2);
 
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }
@@ -56,4 +56,4 @@ private:
     std::complex<double> CFImpl(double t) const override;
 };
 
-#endif // FISHERSNEDECORRAND_H
+#endif // FISHERFRAND_H

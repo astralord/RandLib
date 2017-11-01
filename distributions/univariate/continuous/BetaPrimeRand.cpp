@@ -5,7 +5,7 @@ BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
     SetParameters(shape1, shape2);
 }
 
-std::string BetaPrimeRand::Name() const
+std::__cxx11::string BetaPrimeRand::Name() const
 {
     return "Beta Prime(" + toStringWithPrecision(GetAlpha()) + ", " + toStringWithPrecision(GetBeta()) + ")";
 }
@@ -13,7 +13,7 @@ std::string BetaPrimeRand::Name() const
 void BetaPrimeRand::SetParameters(double shape1, double shape2)
 {
     if (shape1 <= 0 || shape2 <= 0)
-        throw std::invalid_argument("Shapes of Beta-prime distribution should be positive");
+        throw std::invalid_argument("Beta-prime distribution: shapes should be positive");
     B.SetShapes(shape1, shape2);
     alpha = B.GetAlpha();
     beta = B.GetBeta();

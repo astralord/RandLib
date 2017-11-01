@@ -5,7 +5,7 @@ InverseGammaRand::InverseGammaRand(double shape, double rate)
     SetParameters(shape, rate);
 }
 
-std::string InverseGammaRand::Name() const
+std::__cxx11::string InverseGammaRand::Name() const
 {
     return "Inverse-Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
@@ -13,9 +13,9 @@ std::string InverseGammaRand::Name() const
 void InverseGammaRand::SetParameters(double shape, double rate)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Inverse-Gamma distribution: shape should be positive");
     if (rate <= 0.0)
-        throw std::invalid_argument("Rate of Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Inverse-Gamma distribution: rate should be positive");
     X.SetParameters(shape, rate);
     alpha = X.GetShape();
     beta = X.GetRate();

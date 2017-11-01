@@ -26,7 +26,7 @@ class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
 
 public:
     SkellamRand(double rate1, double rate2);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
     int MinValue() const override { return INT_MIN; }
     int MaxValue() const override { return INT_MAX; }

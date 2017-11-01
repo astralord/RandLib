@@ -1,19 +1,19 @@
-#include "FisherSnedecorRand.h"
+#include "FisherFRand.h"
 
-FisherSnedecorRand::FisherSnedecorRand(int degree1, int degree2)
+FisherFRand::FisherFRand(int degree1, int degree2)
 {
     SetDegrees(degree1, degree2);
 }
 
-std::string FisherSnedecorRand::Name() const
+std::__cxx11::string FisherFRand::Name() const
 {
-    return "Fisher(" + toStringWithPrecision(GetFirstDegree()) + ", " + toStringWithPrecision(GetSecondDegree()) + ")";
+    return "Fisher-F(" + toStringWithPrecision(GetFirstDegree()) + ", " + toStringWithPrecision(GetSecondDegree()) + ")";
 }
 
-void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
+void FisherFRand::SetDegrees(int degree1, int degree2)
 {
     if (degree1 <= 0 || degree2 <= 0)
-        throw std::invalid_argument("Degrees of F-distribution should be positive");
+        throw std::invalid_argument("F-distribution: degrees of should be positive");
 
     d1 = degree1;
     d2 = degree2;
@@ -29,7 +29,7 @@ void FisherSnedecorRand::SetDegrees(int degree1, int degree2)
     pdfCoef -= B.GetLogBetaFunction();
 }
 
-double FisherSnedecorRand::f(const double & x) const
+double FisherFRand::f(const double & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -41,7 +41,7 @@ double FisherSnedecorRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double FisherSnedecorRand::logf(const double & x) const
+double FisherFRand::logf(const double & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -55,34 +55,34 @@ double FisherSnedecorRand::logf(const double & x) const
     return pdfCoef + y;
 }
 
-double FisherSnedecorRand::F(const double & x) const
+double FisherFRand::F(const double & x) const
 {
     return B.F(d1_d2 * x);
 }
 
-double FisherSnedecorRand::S(const double & x) const
+double FisherFRand::S(const double & x) const
 {
     return B.S(d1_d2 * x);
 }
 
-double FisherSnedecorRand::Variate() const
+double FisherFRand::Variate() const
 {
     return d2_d1 * B.Variate();
 }
 
-void FisherSnedecorRand::Sample(std::vector<double> &outputData) const
+void FisherFRand::Sample(std::vector<double> &outputData) const
 {
     B.Sample(outputData);
     for (double &var : outputData)
         var = d2_d1 * var;
 }
 
-double FisherSnedecorRand::Mean() const
+double FisherFRand::Mean() const
 {
     return (d2 > 2) ? 1 + 2.0 / (d2 - 2) : INFINITY;
 }
 
-double FisherSnedecorRand::Variance() const
+double FisherFRand::Variance() const
 {
     if (d2 <= 4)
         return INFINITY;
@@ -95,19 +95,19 @@ double FisherSnedecorRand::Variance() const
     return variance;
 }
 
-double FisherSnedecorRand::Median() const
+double FisherFRand::Median() const
 {
     return d2_d1 * B.Median();
 }
 
-double FisherSnedecorRand::Mode() const
+double FisherFRand::Mode() const
 {
     if (d1 <= 2)
         return 0.0;
     return d2_d1 * (d1 - 2) / (d2 + 2);
 }
 
-double FisherSnedecorRand::Skewness() const
+double FisherFRand::Skewness() const
 {
     if (d2 <= 6)
         return INFINITY;
@@ -120,7 +120,7 @@ double FisherSnedecorRand::Skewness() const
     return skewness;
 }
 
-double FisherSnedecorRand::ExcessKurtosis() const
+double FisherFRand::ExcessKurtosis() const
 {
     if (d2 <= 8)
         return INFINITY;
@@ -135,17 +135,17 @@ double FisherSnedecorRand::ExcessKurtosis() const
     return 12.0 * kurtosis;
 }
 
-double FisherSnedecorRand::quantileImpl(double p) const
+double FisherFRand::quantileImpl(double p) const
 {
   return d2_d1 * B.Quantile(p);
 }
 
-double FisherSnedecorRand::quantileImpl1m(double p) const
+double FisherFRand::quantileImpl1m(double p) const
 {
   return d2_d1 * B.Quantile1m(p);
 }
 
-std::complex<double> FisherSnedecorRand::CFImpl(double t) const
+std::complex<double> FisherFRand::CFImpl(double t) const
 {
   return B.CF(d2_d1 * t);
 }

@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution
 {
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
 
     using BetaDistribution::SetSupport;
 

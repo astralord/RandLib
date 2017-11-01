@@ -55,7 +55,7 @@ void BetaDistribution::setCoefficientsForGenerator()
 void BetaDistribution::SetShapes(double shape1, double shape2)
 {
     if (shape1 <= 0 || shape2 <= 0)
-        throw std::invalid_argument("Shapes of Beta distribution should be positive");
+        throw std::invalid_argument("Beta distribution: shapes should be positive");
     GammaRV1.SetParameters(shape1, 1);
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
@@ -68,7 +68,7 @@ void BetaDistribution::SetShapes(double shape1, double shape2)
 void BetaDistribution::SetSupport(double minValue, double maxValue)
 {
     if (minValue >= maxValue)
-        throw std::invalid_argument("Minimal value of Beta distribution should be less than maximum value");
+        throw std::invalid_argument("Beta distribution: minimal value should be smaller than maximum value");
 
     a = minValue;
     b = maxValue;
@@ -492,7 +492,7 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
     return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
-std::string BetaRand::Name() const
+std::__cxx11::string BetaRand::Name() const
 {
     return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
                    + toStringWithPrecision(GetBeta()) + ", "
@@ -526,7 +526,7 @@ void BetaRand::FitBetaMM(const std::vector<double> &sample)
     SetShapes(alpha, shape);
 }
 
-std::string ArcsineRand::Name() const
+std::__cxx11::string ArcsineRand::Name() const
 {
     return "Arcsine(" + toStringWithPrecision(GetShape()) + ", "
                       + toStringWithPrecision(MinValue()) + ", "
@@ -544,7 +544,7 @@ BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
     SetFixatingIndexAndFrequency(fixatingIndex, frequency);
 }
 
-std::string BaldingNicholsRand::Name() const
+std::__cxx11::string BaldingNicholsRand::Name() const
 {
     return "Balding-Nichols(" + toStringWithPrecision(GetFixatingIndex()) + ", " + toStringWithPrecision(GetFrequency()) + ")";
 }

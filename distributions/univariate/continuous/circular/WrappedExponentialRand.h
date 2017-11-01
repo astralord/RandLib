@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT WrappedExponentialRand : public CircularDistribution
 public:
     WrappedExponentialRand(double rate);
 
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
 
     void SetRate(double rate);
     inline double GetRate() const { return lambda; }

@@ -7,7 +7,7 @@ BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
     SetParameters(number, shape1, shape2);
 }
 
-std::string BetaBinomialRand::Name() const
+std::__cxx11::string BetaBinomialRand::Name() const
 {
     return "Beta-Binomial(" + toStringWithPrecision(GetNumber()) + ", "
                             + toStringWithPrecision(GetAlpha()) + ", "
@@ -17,9 +17,9 @@ std::string BetaBinomialRand::Name() const
 void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
 {
     if (shape1 <= 0.0 || shape2 <= 0.0)
-        throw std::invalid_argument("Shape parameters of Beta-Binomial distribution should be positive");
+        throw std::invalid_argument("Beta-Binomial distribution: shape parameters should be positive");
     if (number <= 0)
-        throw std::invalid_argument("Number of Beta-Binomial distribution should be positive");
+        throw std::invalid_argument("Beta-Binomial distribution: number should be positive");
     n = number;
     B.SetShapes(shape1, shape2);
     pmfCoef = RandMath::lfact(n);

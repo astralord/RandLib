@@ -7,7 +7,7 @@ PoissonRand::PoissonRand(double rate)
     SetRate(rate);
 }
 
-std::string PoissonRand::Name() const
+std::__cxx11::string PoissonRand::Name() const
 {
     return "Poisson(" + toStringWithPrecision(GetRate()) + ")";
 }
@@ -39,7 +39,7 @@ void PoissonRand::SetGeneratorConstants()
 void PoissonRand::SetRate(double rate)
 {
     if (rate <= 0.0)
-        throw std::invalid_argument("Rate of Poisson distribution should be positive");
+        throw std::invalid_argument("Poisson distribution: rate should be positive");
     lambda = rate;
 
     logLambda = std::log(lambda);

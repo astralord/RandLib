@@ -5,7 +5,7 @@ UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
     SetBoundaries(minValue, maxValue);
 }
 
-std::string UniformDiscreteRand::Name() const
+std::__cxx11::string UniformDiscreteRand::Name() const
 {
     return "Uniform Discrete(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
 }
@@ -13,7 +13,7 @@ std::string UniformDiscreteRand::Name() const
 void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
 {
     if (minValue >= maxValue)
-        throw std::invalid_argument("Minimal value of Uniform discrete distribution should be less than maximum value");
+        throw std::invalid_argument("Uniform discrete distribution: minimal value should be less than maximum value");
 
     a = minValue;
     b = maxValue;

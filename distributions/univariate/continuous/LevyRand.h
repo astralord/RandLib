@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution
 {
 public:
     LevyRand(double location = 0, double scale = 1);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
 
 public:
     double f(const double & x) const override;

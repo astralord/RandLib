@@ -5,7 +5,7 @@ TrinomialRand::TrinomialRand(int number, double probability1, double probability
     SetParameters(number, probability1, probability2);
 }
 
-std::string TrinomialRand::Name() const
+std::__cxx11::string TrinomialRand::Name() const
 {
     return "Trinomial(" + toStringWithPrecision(GetNumber()) + ", "
                         + toStringWithPrecision(GetFirstProbability()) + ", "

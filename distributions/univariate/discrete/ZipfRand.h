@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
 
 public:
     ZipfRand(double exponent, int number);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 1; }
     int MaxValue() const override { return n; }

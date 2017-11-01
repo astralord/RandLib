@@ -6,9 +6,9 @@ CategoricalRand::CategoricalRand(std::vector<double>&& probabilities)
     SetProbabilities(std::move(probabilities));
 }
 
-std::string CategoricalRand::Name() const
+std::__cxx11::string CategoricalRand::Name() const
 {
-    std::string str = "Categorical(";
+    std::__cxx11::string str = "Categorical(";
     for (int i = 0; i != K - 1; ++i)
         str += toStringWithPrecision(prob[i]) + ", ";
     return str + toStringWithPrecision(prob[K - 1]) + ")";
@@ -17,7 +17,7 @@ std::string CategoricalRand::Name() const
 void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
 {
     if (probabilities.size() == 0 || std::accumulate(probabilities.begin(), probabilities.end(), 0.0) != 1.0)
-        throw std::invalid_argument("Probability parameters of Categorical distribution should sum to 1");
+        throw std::invalid_argument("Categorical distribution: probability parameters should sum to 1");
     else {
         prob = std::move(probabilities);
     }

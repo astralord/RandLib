@@ -17,7 +17,6 @@ SOURCES += \
     distributions/univariate/continuous/BetaRand.cpp \
     distributions/univariate/continuous/CauchyRand.cpp \
     distributions/univariate/continuous/ExponentialRand.cpp \
-    distributions/univariate/continuous/FisherSnedecorRand.cpp \
     distributions/univariate/continuous/GammaRand.cpp \
     distributions/univariate/continuous/LaplaceRand.cpp \
     distributions/univariate/continuous/LevyRand.cpp \
@@ -80,7 +79,8 @@ SOURCES += \
     distributions/bivariate/TrinomialRand.cpp \
     distributions/univariate/continuous/circular/CircularDistribution.cpp \
     distributions/univariate/UnivariateDistribution.cpp \
-    distributions/univariate/continuous/circular/WrappedExponentialRand.cpp
+    distributions/univariate/continuous/circular/WrappedExponentialRand.cpp \
+    distributions/univariate/continuous/FisherFRand.cpp
 
 HEADERS +=\
     distributions/ProbabilityDistribution.h \
@@ -88,7 +88,6 @@ HEADERS +=\
     distributions/univariate/continuous/BetaRand.h \
     distributions/univariate/continuous/CauchyRand.h \
     distributions/univariate/continuous/ExponentialRand.h \
-    distributions/univariate/continuous/FisherSnedecorRand.h \
     distributions/univariate/continuous/GammaRand.h \
     distributions/univariate/continuous/LaplaceRand.h \
     distributions/univariate/continuous/LevyRand.h \
@@ -155,7 +154,8 @@ HEADERS +=\
     distributions/bivariate/TrinomialRand.h \
     distributions/univariate/continuous/circular/CircularDistribution.h \
     distributions/univariate/UnivariateDistribution.h \
-    distributions/univariate/continuous/circular/WrappedExponentialRand.h
+    distributions/univariate/continuous/circular/WrappedExponentialRand.h \
+    distributions/univariate/continuous/FisherFRand.h
 
 unix {
     target.path = /usr/lib

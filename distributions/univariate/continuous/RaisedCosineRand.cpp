@@ -15,7 +15,7 @@ void RaisedCosineDistribution::SetLocation(double location)
 void RaisedCosineDistribution::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Raised-Cosine distribution should be positive");
+        throw std::invalid_argument("Raised-Cosine distribution: scale should be positive");
     s = scale;
     s_pi = s * M_1_PI;
     log2S = std::log(2 * s);
@@ -146,12 +146,12 @@ double RaisedCosineDistribution::ExcessKurtosis() const
     return y;
 }
 
-std::string RaisedCosineRand::Name() const
+std::__cxx11::string RaisedCosineRand::Name() const
 {
     return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-std::string RaabGreenRand::Name() const
+std::__cxx11::string RaabGreenRand::Name() const
 {
     return "Raab Green";
 }

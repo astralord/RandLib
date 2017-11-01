@@ -25,7 +25,7 @@ class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
 
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     void SetParameters(double shape1, double shape2);
     inline double GetAlpha() const { return alpha; }
     inline double GetBeta() const { return beta; }

@@ -5,7 +5,7 @@ RademacherRand::RademacherRand()
 {
 }
 
-std::string RademacherRand::Name() const
+std::__cxx11::string RademacherRand::Name() const
 {
     return "Rademacher";
 }

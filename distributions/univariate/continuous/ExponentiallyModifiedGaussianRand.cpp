@@ -5,7 +5,7 @@ ExponentiallyModifiedGaussianRand::ExponentiallyModifiedGaussianRand(double loca
     SetParameters(location, variance, rate);
 }
 
-std::string ExponentiallyModifiedGaussianRand::Name() const
+std::__cxx11::string ExponentiallyModifiedGaussianRand::Name() const
 {
     return "Exponentially modified Gaussian(" + toStringWithPrecision(GetLocation()) + ", "
                                               + toStringWithPrecision(X.Variance()) + ", "
@@ -14,6 +14,11 @@ std::string ExponentiallyModifiedGaussianRand::Name() const
 
 void ExponentiallyModifiedGaussianRand::SetParameters(double location, double variance, double rate)
 {
+    if (variance <= 0)
+        throw std::invalid_argument("Exponentially modified Gaussian distribution: variance should be positive");
+    if (rate <= 0)
+        throw std::invalid_argument("Exponentially modified Gaussian distribution: rate should be positive");
+
     X.SetLocation(location);
     X.SetVariance(variance);
     Y.SetRate(rate);

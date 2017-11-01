@@ -23,7 +23,7 @@ class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
 public:
     TriangularRand(double lowerLimit = 0, double mode = 0.5, double upperLimit = 1);
 
-    std::string Name() const override;
+    std::__cxx11::string Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return a; }
     double MaxValue() const override { return b; }

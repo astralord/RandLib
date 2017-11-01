@@ -7,7 +7,7 @@ ZetaRand::ZetaRand(double exponent)
     SetExponent(exponent);
 }
 
-std::string ZetaRand::Name() const
+std::__cxx11::string ZetaRand::Name() const
 {
     return "Zeta(" + toStringWithPrecision(GetExponent()) + ")";
 }
@@ -15,7 +15,7 @@ std::string ZetaRand::Name() const
 void ZetaRand::SetExponent(double exponent)
 {
     if (exponent <= 1.0)
-        throw std::invalid_argument("Exponent of Zeta distribution should be larger than 1");
+        throw std::invalid_argument("Zeta distribution: exponent should be larger than 1");
     s = exponent;
     sm1 = s - 1.0;
     zetaS = std::riemann_zeta(s);

@@ -35,11 +35,17 @@ double StableDistribution::MaxValue() const
 void StableDistribution::SetParameters(double exponent, double skewness, double scale, double location)
 {
     if (exponent < 0.1 || exponent > 2.0)
-        throw std::invalid_argument("Exponent of Stable distribution should be in the interval [0.1, 2]");
+        throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2]");
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Skewness of Stable distribution should be in the interval [-1, 1]");
+        throw std::invalid_argument("Stable distribution: skewness of should be in the interval [-1, 1]");
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Stable distribution should be positive");
+        throw std::invalid_argument("Stable distribution: scale should be positive");
+
+    /// the following errors should be removed soon
+    if (exponent != 1.0 && std::fabs(exponent - 1.0) < 0.001 && skewness != 0.0)
+        throw std::invalid_argument("Stable distribution: exponent close to 1 with non-zero skewness is not yet supported");
+    if (exponent == 1.0 && skewness != 0.0 && std::fabs(skewness) < 0.01)
+        throw std::invalid_argument("Stable distribution: skewness close to 0 with exponent equal to 1 is not yet supported");
 
     alpha = exponent;
     alphaInv = 1.0 / alpha;
@@ -983,7 +989,7 @@ std::complex<double> StableDistribution::CFImpl(double t) const
     return std::exp(-psi);
 }
 
-std::string StableRand::Name() const
+std::__cxx11::string StableRand::Name() const
 {
     return "Stable("
             + toStringWithPrecision(GetExponent()) + ", "
@@ -992,7 +998,7 @@ std::string StableRand::Name() const
             + toStringWithPrecision(GetLocation()) + ")";
 }
 
-std::string HoltsmarkRand::Name() const
+std::__cxx11::string HoltsmarkRand::Name() const
 {
     return "Holtsmark("
             + toStringWithPrecision(GetScale()) + ", "
@@ -1000,7 +1006,7 @@ std::string HoltsmarkRand::Name() const
 }
 
 
-std::string LandauRand::Name() const
+std::__cxx11::string LandauRand::Name() const
 {
     return "Landau("
             + toStringWithPrecision(GetScale()) + ", "

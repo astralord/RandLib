@@ -7,7 +7,7 @@ GumbelRand::GumbelRand(double location, double scale)
     SetScale(scale);
 }
 
-std::string GumbelRand::Name() const
+std::__cxx11::string GumbelRand::Name() const
 {
     return "Gumbel(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
@@ -20,7 +20,7 @@ void GumbelRand::SetLocation(double location)
 void GumbelRand::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Gumbel distribution should be positive");
+        throw std::invalid_argument("Gumbel distribution: scale should be positive");
     beta = scale;
     logBeta = std::log(beta);
 }
