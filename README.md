@@ -12,21 +12,21 @@ With RandLib one can easily work with probability distributions. One of the majo
 What can you do with RandLib? Here are some useful examples:
 * Fast sampling. For instance, generate million variates from standard normal distribution:
 ```c++
-NormalRand distribution(0, 1);
+NormalRand X(0, 1);
 std::vector<double> data(1e6);
-distribution.Sample(data);
+X.Sample(data);
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
 
 * Calculate moments and other properties:
 ```c++
-LogNormalRand distribution(1, 1);
-std::cout << " Mean = " << distribution.Mean()
-          << " and Variance = " << distribution.Variance()
-          << "\n Median = " << distribution.Median()
-          << " and Mode = " << distribution.Mode()
-          << "\n Skewness = " << distribution.Skewness()
-          << " and Excess kurtosis = " << distribution.ExcessKurtosis();
+LogNormalRand X(1, 1);
+std::cout << " Mean = " << X.Mean()
+          << " and Variance = " << X.Variance()
+          << "\n Median = " << X.Median()
+          << " and Mode = " << X.Mode()
+          << "\n Skewness = " << X.Skewness()
+          << " and Excess kurtosis = " << X.ExcessKurtosis();
 ```
 ![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/lognormal11.png)
 ```
