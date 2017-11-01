@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <climits>
+#include <string>
 
 constexpr long double MIN_POSITIVE = 1e-21l;
 
