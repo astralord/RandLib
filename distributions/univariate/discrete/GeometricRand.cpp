@@ -2,7 +2,7 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 
-std::__cxx11::string GeometricRand::Name() const
+String GeometricRand::Name() const
 {
     return "Geometric(" + toStringWithPrecision(GetProbability()) + ")";
 }

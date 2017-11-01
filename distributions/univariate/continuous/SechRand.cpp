@@ -5,7 +5,7 @@ SechRand::SechRand()
 {
 }
 
-std::__cxx11::string SechRand::Name() const
+String SechRand::Name() const
 {
     return "Hyperbolic secant";
 }

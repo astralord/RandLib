@@ -7,7 +7,7 @@ InverseGaussianRand::InverseGaussianRand(double mean, double shape)
     SetParameters(mean, shape);
 }
 
-std::__cxx11::string InverseGaussianRand::Name() const
+String InverseGaussianRand::Name() const
 {
     return "Inverse-Gaussian(" + toStringWithPrecision(GetMean()) + ", " + toStringWithPrecision(GetShape()) + ")";
 }

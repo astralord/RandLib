@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT TrinomialRand : public DiscreteBivariateDistribution<
     double p2_1mp1 = 0.5; ///< p_2 / (1 - p_1)
 public:
     TrinomialRand(int number, double probability1, double probability2);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
     void SetParameters(int number, double probability1, double probability2);
     inline int GetNumber() const { return n; }

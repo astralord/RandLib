@@ -59,7 +59,7 @@ class RANDLIBSHARED_EXPORT RaisedCosineRand : public RaisedCosineDistribution
 {
 public:
     RaisedCosineRand(double location, double scale) : RaisedCosineDistribution(location, scale) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
     using RaisedCosineDistribution::SetLocation;
     using RaisedCosineDistribution::SetScale;
@@ -78,7 +78,7 @@ class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineDistribution
 {
 public:
     RaabGreenRand() : RaisedCosineDistribution(0.0, M_PI) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 };
 
 

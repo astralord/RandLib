@@ -5,7 +5,7 @@ NegativeHyperGeometricRand::NegativeHyperGeometricRand(int totalSize, int totalS
     SetParameters(totalSize, totalSuccessesNum, limitSuccessesNum);
 }
 
-std::__cxx11::string NegativeHyperGeometricRand::Name() const
+String NegativeHyperGeometricRand::Name() const
 {
     return "Negative hypergeometric(" + toStringWithPrecision(N) + ", "
                                       + toStringWithPrecision(M) + ", "

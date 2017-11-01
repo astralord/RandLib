@@ -30,7 +30,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribut
 public:
     explicit NoncentralChiSquaredRand(double degree = 1, double noncentrality = 0);
 
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

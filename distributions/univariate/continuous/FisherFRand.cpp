@@ -5,7 +5,7 @@ FisherFRand::FisherFRand(int degree1, int degree2)
     SetDegrees(degree1, degree2);
 }
 
-std::__cxx11::string FisherFRand::Name() const
+String FisherFRand::Name() const
 {
     return "Fisher-F(" + toStringWithPrecision(GetFirstDegree()) + ", " + toStringWithPrecision(GetSecondDegree()) + ")";
 }

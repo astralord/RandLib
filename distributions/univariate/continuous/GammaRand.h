@@ -271,7 +271,7 @@ class RANDLIBSHARED_EXPORT GammaRand : public FreeScaleGammaDistribution
 {
 public:
     GammaRand(double shape = 1, double rate = 1) : FreeScaleGammaDistribution(shape, rate) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
     using GammaDistribution::SetParameters;
     using GammaDistribution::SetShape;
@@ -305,7 +305,7 @@ class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {
 public:
     explicit ChiSquaredRand(size_t degree = 1) : GammaDistribution(0.5 * degree, 0.5) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     void SetDegree(size_t degree);
     inline size_t GetDegree() const { return static_cast<int>(2 * alpha); }
 };
@@ -325,7 +325,7 @@ class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution
 {
 public:
     ErlangRand(int shape = 1, double rate = 1) : FreeScaleGammaDistribution(shape, rate) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     void SetParameters(size_t shape, double rate);
     void SetShape(size_t shape);
 };

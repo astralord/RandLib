@@ -5,7 +5,7 @@ NoncentralChiSquaredRand::NoncentralChiSquaredRand(double degree, double noncent
     SetParameters(degree, noncentrality);
 }
 
-std::__cxx11::string NoncentralChiSquaredRand::Name() const
+String NoncentralChiSquaredRand::Name() const
 {
     return "Noncentral Chi-Squared(" + toStringWithPrecision(GetDegree()) + ", "
             + toStringWithPrecision(GetNoncentrality()) + ")";

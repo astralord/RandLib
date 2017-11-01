@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution
 public:
     InverseGammaRand(double shape = 1, double rate = 1);
 
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

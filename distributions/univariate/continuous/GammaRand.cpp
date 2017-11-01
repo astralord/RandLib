@@ -551,7 +551,7 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     return posteriorDistribution;
 }
 
-std::__cxx11::string GammaRand::Name() const
+String GammaRand::Name() const
 {
     return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }
@@ -614,7 +614,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
     SetParameters(shape, shape / average);
 }
 
-std::__cxx11::string ChiSquaredRand::Name() const
+String ChiSquaredRand::Name() const
 {
     return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
 }
@@ -625,7 +625,7 @@ void ChiSquaredRand::SetDegree(size_t degree)
 }
 
 
-std::__cxx11::string ErlangRand::Name() const
+String ErlangRand::Name() const
 {
     return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }

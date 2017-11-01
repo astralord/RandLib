@@ -86,7 +86,7 @@ class RANDLIBSHARED_EXPORT NakagamiRand : public NakagamiDistribution
 {
 public:
     NakagamiRand(double shape = 0.5, double spread = 1) : NakagamiDistribution(shape, spread) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     using NakagamiDistribution::SetParameters;
 };
 
@@ -107,7 +107,7 @@ class RANDLIBSHARED_EXPORT ChiRand : public NakagamiDistribution
 
 public:
     explicit ChiRand(int degree);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
 public:
     /**
@@ -142,7 +142,7 @@ class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiDistribution
     double sigma = 1; ///< scale σ
 public:
     explicit MaxwellBoltzmannRand(double scale);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
 public:
     /**
@@ -186,7 +186,7 @@ class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiDistribution
     double sigma = 1; ///< scale σ
 public:
     explicit RayleighRand(double scale = 1);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
 public:
     /**

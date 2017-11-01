@@ -208,7 +208,7 @@ class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution
 {
 public:
     BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1) : BetaDistribution(shape1, shape2, minValue, maxValue) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
     using BetaDistribution::SetShapes;
     using BetaDistribution::SetSupport;
@@ -241,7 +241,7 @@ class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
 {
 public:
     ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1) : BetaDistribution(1.0 - shape, shape, minValue, maxValue) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     void SetShape(double shape);
     inline double GetShape() const { return beta; }
 };
@@ -261,7 +261,7 @@ class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution
     double F = 0.5, p = 0.5;
 public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
     void SetFixatingIndexAndFrequency(double fixatingIndex, double frequency);
     inline double GetFixatingIndex() const { return F; }

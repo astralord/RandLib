@@ -22,7 +22,7 @@ protected:
      */
     static constexpr double MAX_ITER_REJECTION = 1000;
 
-    std::__cxx11::string toStringWithPrecision(const double a_value, const int n = 6) const;
+    String toStringWithPrecision(const double a_value, const int n = 6) const;
 
     ProbabilityDistribution();
     virtual ~ProbabilityDistribution() {}
@@ -32,7 +32,7 @@ public:
      * @fn Name
      * @return title of distribution, for instance "Normal(0, 1)"
      */
-    virtual std::__cxx11::string Name() const = 0;
+    virtual String Name() const = 0;
 
     /**
      * @fn MinValue
@@ -101,7 +101,7 @@ protected:
     static constexpr char UPPER_LIMIT_VIOLATION[] = "No element should be bigger than ";
     static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be less than ";
 
-    std::__cxx11::string fitErrorDescription(FIT_ERROR_TYPE fet, const std::__cxx11::string &explanation);
+    String fitErrorDescription(FIT_ERROR_TYPE fet, const String &explanation);
 };
 
 #endif // PROBABILITY_DISTRIBUTION_H

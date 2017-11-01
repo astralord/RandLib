@@ -5,7 +5,7 @@ IrwinHallRand::IrwinHallRand(size_t number)
     SetNumber(number);
 }
 
-std::__cxx11::string IrwinHallRand::Name() const
+String IrwinHallRand::Name() const
 {
     return "Irwin-Hall(" + toStringWithPrecision(GetNumber()) + ")";
 }

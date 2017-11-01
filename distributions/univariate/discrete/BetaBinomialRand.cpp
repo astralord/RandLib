@@ -7,7 +7,7 @@ BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
     SetParameters(number, shape1, shape2);
 }
 
-std::__cxx11::string BetaBinomialRand::Name() const
+String BetaBinomialRand::Name() const
 {
     return "Beta-Binomial(" + toStringWithPrecision(GetNumber()) + ", "
                             + toStringWithPrecision(GetAlpha()) + ", "

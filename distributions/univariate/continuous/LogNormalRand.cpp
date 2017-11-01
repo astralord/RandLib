@@ -6,7 +6,7 @@ LogNormalRand::LogNormalRand(double location, double squaredScale)
     SetScale(squaredScale > 0.0 ? std::sqrt(squaredScale) : 1.0);
 }
 
-std::__cxx11::string LogNormalRand::Name() const
+String LogNormalRand::Name() const
 {
     return "Log-Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }

@@ -7,7 +7,7 @@ BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1, proba
     boundary = q * RandGenerator::MaxValue();
 }
 
-std::__cxx11::string BernoulliRand::Name() const
+String BernoulliRand::Name() const
 {
     return "Bernoulli(" + toStringWithPrecision(GetProbability()) + ")";
 }

@@ -5,7 +5,7 @@ HyperGeometricRand::HyperGeometricRand(int totalSize, int drawsNum, int successe
     SetParameters(totalSize, drawsNum, successesNum);
 }
 
-std::__cxx11::string HyperGeometricRand::Name() const
+String HyperGeometricRand::Name() const
 {
     return "Hypergeometric(" + toStringWithPrecision(N) + ", "
                              + toStringWithPrecision(n) + ", "

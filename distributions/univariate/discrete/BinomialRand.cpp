@@ -415,7 +415,7 @@ BetaRand BinomialDistribution::FitProbabilityMinimax(const std::vector<int> &sam
     return FitProbabilityBayes(sample, B);
 }
 
-std::__cxx11::string BinomialRand::Name() const
+String BinomialRand::Name() const
 {
     return "Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
 }

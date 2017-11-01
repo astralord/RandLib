@@ -6,7 +6,7 @@ TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit
     SetParameters(lowerLimit, mode, upperLimit);
 }
 
-std::__cxx11::string TriangularRand::Name() const
+String TriangularRand::Name() const
 {
     return "Triangular("
             + toStringWithPrecision(MinValue()) + ", "

@@ -146,12 +146,12 @@ double RaisedCosineDistribution::ExcessKurtosis() const
     return y;
 }
 
-std::__cxx11::string RaisedCosineRand::Name() const
+String RaisedCosineRand::Name() const
 {
     return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }
 
-std::__cxx11::string RaabGreenRand::Name() const
+String RaabGreenRand::Name() const
 {
     return "Raab Green";
 }

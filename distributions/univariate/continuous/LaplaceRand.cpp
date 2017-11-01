@@ -131,7 +131,7 @@ void AsymmetricLaplaceDistribution::FitShiftAndScale(const std::vector<double> &
     FitScale(sample);
 }
 
-std::__cxx11::string AsymmetricLaplaceRand::Name() const
+String AsymmetricLaplaceRand::Name() const
 {
     return "Asymmetric-Laplace(" + toStringWithPrecision(GetShift()) + ", "
                                  + toStringWithPrecision(GetScale()) + ", "
@@ -235,7 +235,7 @@ void AsymmetricLaplaceRand::Fit(const std::vector<double> &sample)
 }
 
 
-std::__cxx11::string LaplaceRand::Name() const
+String LaplaceRand::Name() const
 {
     return "Laplace(" + toStringWithPrecision(GetShift()) + ", "
                       + toStringWithPrecision(GetScale()) + ")";

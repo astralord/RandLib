@@ -9,7 +9,7 @@ StudentTRand::StudentTRand(double degree, double location, double scale)
     SetScale(scale);
 }
 
-std::__cxx11::string StudentTRand::Name() const
+String StudentTRand::Name() const
 {
     if (mu == 0.0 && sigma == 1.0)
         return "Student-t(" + toStringWithPrecision(GetDegree()) + ")";

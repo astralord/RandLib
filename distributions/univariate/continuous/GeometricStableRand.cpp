@@ -504,7 +504,7 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
     ChangeAsymmetry();
 }
 
-std::__cxx11::string GeometricStableRand::Name() const
+String GeometricStableRand::Name() const
 {
     return "Geometric Stable("
             + toStringWithPrecision(GetExponent()) + ", "

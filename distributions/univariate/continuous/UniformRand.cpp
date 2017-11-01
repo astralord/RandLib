@@ -6,7 +6,7 @@ UniformRand::UniformRand(double minValue, double maxValue) :
 {
 }
 
-std::__cxx11::string UniformRand::Name() const
+String UniformRand::Name() const
 {
     return "Uniform(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
 }

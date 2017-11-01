@@ -62,7 +62,7 @@ class RANDLIBSHARED_EXPORT AsymmetricLaplaceRand : public AsymmetricLaplaceDistr
 {
 public:
     AsymmetricLaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1) : AsymmetricLaplaceDistribution(shift, scale, asymmetry) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     void SetAsymmetry(double asymmetry);
     static double StandardVariate(double asymmetry);
 
@@ -89,7 +89,7 @@ class RANDLIBSHARED_EXPORT LaplaceRand : public AsymmetricLaplaceDistribution
 {
 public:
     LaplaceRand(double shift = 0, double scale = 1) : AsymmetricLaplaceDistribution(shift, scale, 1.0) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     static double StandardVariate();
     void Fit(const std::vector<double> &sample) { FitShiftAndScale(sample); }
 };

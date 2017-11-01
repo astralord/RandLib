@@ -46,8 +46,8 @@ private:
 
 protected:
     double pdfCoef = 0.5 * (M_LN2 + M_LNPI); ///< hashed coefficient for faster pdf calculations
-    double pdftailBound = INFINITY; /// boundary k such that for |x| > k we can use pdf tail approximation
-    double cdftailBound = INFINITY; /// boundary k such that for |x| > k we can use cdf tail approximation
+    double pdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use pdf tail approximation
+    double cdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use cdf tail approximation
 
     StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
     virtual ~StableDistribution() {}
@@ -137,6 +137,13 @@ private:
     static double fastpdfExponentiation(double u);
 
     /**
+     * @brief pdfShortTailExpansionForUnityExponent
+     * @param logX
+     * @return leading term of pdf short tail series expansion for large x, |β| = 1 and α = 1
+     */
+    double pdfShortTailExpansionForUnityExponent(double x) const;
+
+    /**
      * @brief limitCaseForIntegrandAuxForUnityExponent
      * @param theta
      * @param xAdj
@@ -165,6 +172,13 @@ private:
     double pdfForUnityExponent(double x) const;
 
     DoublePair seriesZeroParams{};
+
+    /**
+     * @brief pdfShortTailExpansionForGeneralExponent
+     * @param logX
+     * @return leading term of pdf short tail series expansion for |β| = 1 and [(large x and α > 1) or (small x and α < 1)]
+     */
+    double pdfShortTailExpansionForGeneralExponent(double logX) const;
     /**
      * @fn pdfAtZero
      * @return probability density function for x = 0
@@ -415,7 +429,7 @@ class RANDLIBSHARED_EXPORT StableRand : public StableDistribution
 {
 public:
     StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution(exponent, skewness, scale, location) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     using StableDistribution::SetParameters;
 };
 
@@ -433,7 +447,7 @@ class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableDistribution
 {
 public:
     HoltsmarkRand(double scale = 1, double location = 0) : StableDistribution(1.5, 0.0, scale, location) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 };
 
 
@@ -450,7 +464,7 @@ class RANDLIBSHARED_EXPORT LandauRand : public StableDistribution
 {
 public:
     LandauRand(double scale = 1, double location = 0) : StableDistribution(1.0, 1.0, scale, location) {}
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 };
 
 #endif // STABLERAND_H

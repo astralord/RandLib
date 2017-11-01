@@ -6,7 +6,7 @@ VonMisesRand::VonMisesRand(double location, double concentration) : CircularDist
     SetConcentration(concentration);
 }
 
-std::__cxx11::string VonMisesRand::Name() const
+String VonMisesRand::Name() const
 {
     return "von Mises(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetConcentration()) + ")";
 }

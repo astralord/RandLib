@@ -7,7 +7,7 @@ ParetoRand::ParetoRand(double shape, double scale)
     SetScale(scale);
 }
 
-std::__cxx11::string ParetoRand::Name() const
+String ParetoRand::Name() const
 {
     return "Pareto(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
 }

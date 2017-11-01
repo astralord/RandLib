@@ -6,7 +6,7 @@ WrappedExponentialRand::WrappedExponentialRand(double rate) : CircularDistributi
     SetRate(rate);
 }
 
-std::__cxx11::string WrappedExponentialRand::Name() const
+String WrappedExponentialRand::Name() const
 {
     return "Wrapped Exponential(" + toStringWithPrecision(GetRate()) + ")";
 }

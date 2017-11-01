@@ -5,7 +5,7 @@ InverseGammaRand::InverseGammaRand(double shape, double rate)
     SetParameters(shape, rate);
 }
 
-std::__cxx11::string InverseGammaRand::Name() const
+String InverseGammaRand::Name() const
 {
     return "Inverse-Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
 }

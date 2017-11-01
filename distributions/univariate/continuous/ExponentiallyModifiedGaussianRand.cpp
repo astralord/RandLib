@@ -5,7 +5,7 @@ ExponentiallyModifiedGaussianRand::ExponentiallyModifiedGaussianRand(double loca
     SetParameters(location, variance, rate);
 }
 
-std::__cxx11::string ExponentiallyModifiedGaussianRand::Name() const
+String ExponentiallyModifiedGaussianRand::Name() const
 {
     return "Exponentially modified Gaussian(" + toStringWithPrecision(GetLocation()) + ", "
                                               + toStringWithPrecision(X.Variance()) + ", "

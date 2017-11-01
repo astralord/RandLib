@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution
 
 public:
     MarchenkoPasturRand(double ratio, double scale);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     void SetParameters(double ratio, double scale);
     double GetRatio() const { return lambda; }
     double GetScale() const { return sigmaSq; }

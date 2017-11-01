@@ -492,7 +492,7 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
     return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
-std::__cxx11::string BetaRand::Name() const
+String BetaRand::Name() const
 {
     return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
                    + toStringWithPrecision(GetBeta()) + ", "
@@ -526,7 +526,7 @@ void BetaRand::FitBetaMM(const std::vector<double> &sample)
     SetShapes(alpha, shape);
 }
 
-std::__cxx11::string ArcsineRand::Name() const
+String ArcsineRand::Name() const
 {
     return "Arcsine(" + toStringWithPrecision(GetShape()) + ", "
                       + toStringWithPrecision(MinValue()) + ", "
@@ -544,7 +544,7 @@ BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
     SetFixatingIndexAndFrequency(fixatingIndex, frequency);
 }
 
-std::__cxx11::string BaldingNicholsRand::Name() const
+String BaldingNicholsRand::Name() const
 {
     return "Balding-Nichols(" + toStringWithPrecision(GetFixatingIndex()) + ", " + toStringWithPrecision(GetFrequency()) + ")";
 }

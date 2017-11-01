@@ -23,7 +23,7 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return a; }
     int MaxValue() const override { return b; }

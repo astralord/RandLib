@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
 
 public:
     HyperGeometricRand(int totalSize, int drawsNum, int successesNum);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return std::max(0, n - N + K); }
     int MaxValue() const override { return std::min(n, K); }

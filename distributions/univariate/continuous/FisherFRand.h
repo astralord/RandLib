@@ -27,7 +27,7 @@ class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution
 public:
     FisherFRand(int degree1, int degree2);
 
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return INFINITY; }

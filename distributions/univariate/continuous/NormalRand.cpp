@@ -15,7 +15,7 @@ NormalRand::NormalRand(double mean, double var)
     SetVariance(var);
 }
 
-std::__cxx11::string NormalRand::Name() const
+String NormalRand::Name() const
 {
     return "Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(Variance()) + ")";
 }

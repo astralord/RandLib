@@ -6,7 +6,7 @@ FrechetRand::FrechetRand(double shape, double scale, double location)
     SetParameters(shape, scale, location);
 }
 
-std::__cxx11::string FrechetRand::Name() const
+String FrechetRand::Name() const
 {
     return "Frechet(" + toStringWithPrecision(GetShape()) + ", "
                       + toStringWithPrecision(GetScale()) + ", "

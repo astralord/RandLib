@@ -6,7 +6,7 @@ MarchenkoPasturRand::MarchenkoPasturRand(double ratio, double scale)
     SetParameters(ratio, scale);
 }
 
-std::__cxx11::string MarchenkoPasturRand::Name() const
+String MarchenkoPasturRand::Name() const
 {
     return "Marchenko-Pastur(" + toStringWithPrecision(GetRatio()) + ", "
             + toStringWithPrecision(GetScale()) + ")";

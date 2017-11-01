@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT BivariateNormalRand : public ContinuousBivariateDistr
 
 public:
     BivariateNormalRand(double location1, double location2, double scale1, double scale2, double correlation);
-    std::__cxx11::string Name() const override;
+    String Name() const override;
 
     void SetLocations(double location1, double location2);
     void SetCovariance(double scale1, double scale2, double correlation);

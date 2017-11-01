@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT CantorRand : public SingularDistribution
 
 public:
     CantorRand();
-    std::__cxx11::string Name() const override;
+    String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     double MinValue() const override { return 0; }
     double MaxValue() const override { return 1; }

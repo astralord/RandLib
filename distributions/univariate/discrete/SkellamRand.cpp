@@ -6,7 +6,7 @@ SkellamRand::SkellamRand(double rate1, double rate2)
     SetRates(rate1, rate2);
 }
 
-std::__cxx11::string SkellamRand::Name() const
+String SkellamRand::Name() const
 {
     return "Skellam(" + toStringWithPrecision(GetFirstRate()) + ", " + toStringWithPrecision(GetSecondRate()) + ")";
 }

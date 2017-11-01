@@ -17,7 +17,7 @@ CantorRand::CantorRand()
 {
 }
 
-std::__cxx11::string CantorRand::Name() const
+String CantorRand::Name() const
 {
     return "Cantor";
 }

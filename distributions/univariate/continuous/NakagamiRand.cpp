@@ -127,7 +127,7 @@ double NakagamiDistribution::quantileImpl1m(double p) const
 }
 
 /// NAKAGAMI
-std::__cxx11::string NakagamiRand::Name() const
+String NakagamiRand::Name() const
 {
     return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
 }
@@ -139,7 +139,7 @@ ChiRand::ChiRand(int degree)
     SetDegree(degree);
 }
 
-std::__cxx11::string ChiRand::Name() const
+String ChiRand::Name() const
 {
     return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
 }
@@ -179,7 +179,7 @@ MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale)
     SetScale(scale);
 }
 
-std::__cxx11::string MaxwellBoltzmannRand::Name() const
+String MaxwellBoltzmannRand::Name() const
 {
     return "Maxwell-Boltzmann(" + toStringWithPrecision(GetScale()) + ")";
 }
@@ -274,7 +274,7 @@ RayleighRand::RayleighRand(double scale)
     SetScale(scale);
 }
 
-std::__cxx11::string RayleighRand::Name() const
+String RayleighRand::Name() const
 {
     return "Rayleigh(" + toStringWithPrecision(GetScale()) + ")";
 }

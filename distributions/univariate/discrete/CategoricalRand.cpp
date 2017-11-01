@@ -6,9 +6,9 @@ CategoricalRand::CategoricalRand(std::vector<double>&& probabilities)
     SetProbabilities(std::move(probabilities));
 }
 
-std::__cxx11::string CategoricalRand::Name() const
+String CategoricalRand::Name() const
 {
-    std::__cxx11::string str = "Categorical(";
+    String str = "Categorical(";
     for (int i = 0; i != K - 1; ++i)
         str += toStringWithPrecision(prob[i]) + ", ";
     return str + toStringWithPrecision(prob[K - 1]) + ")";
