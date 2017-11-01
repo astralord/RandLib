@@ -36,6 +36,14 @@ public:
      */
     void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
+    /**
+     * @brief LogProbabilityDensityFunction
+     * fill vector y by logf(x)
+     * @param x
+     * @param y
+     */
+    void LogProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
+
     double Mode() const override;
 
 protected:

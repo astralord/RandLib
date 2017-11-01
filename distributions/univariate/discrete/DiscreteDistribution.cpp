@@ -10,6 +10,15 @@ void DiscreteDistribution::ProbabilityMassFunction(const std::vector<int> &x, st
         y[i] = P(x[i]);
 }
 
+void DiscreteDistribution::LogProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const
+{
+    size_t size = x.size();
+    if (size > y.size())
+        return;
+    for (size_t i = 0; i != size; ++i)
+        y[i] = logP(x[i]);
+}
+
 int DiscreteDistribution::Mode() const
 {
     /// Works only for unimodal and monotone from starting point to the mode distributions

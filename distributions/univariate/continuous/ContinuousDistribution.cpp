@@ -10,6 +10,15 @@ void ContinuousDistribution::ProbabilityDensityFunction(const std::vector<double
         y[i] = f(x[i]);
 }
 
+void ContinuousDistribution::LogProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const
+{
+    size_t size = x.size();
+    if (size > y.size())
+        return;
+    for (size_t i = 0; i != size; ++i)
+        y[i] = logf(x[i]);
+}
+
 double ContinuousDistribution::quantileImpl(double p) const
 {
     double guess = 0.0;

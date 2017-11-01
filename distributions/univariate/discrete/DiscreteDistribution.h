@@ -36,6 +36,14 @@ public:
      */
     void ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const;
 
+    /**
+     * @brief LogProbabilityMassFunction
+     * fill vector y with logP(x)
+     * @param x
+     * @param y
+     */
+    void LogProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const;
+
     int Mode() const override;
 
 private:
