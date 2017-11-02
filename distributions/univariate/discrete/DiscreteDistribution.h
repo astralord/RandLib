@@ -37,7 +37,7 @@ public:
     void ProbabilityMassFunction(const std::vector<int> &x, std::vector<double> &y) const;
 
     /**
-     * @brief LogProbabilityMassFunction
+     * @fn LogProbabilityMassFunction
      * fill vector y with logP(x)
      * @param x
      * @param y
@@ -55,14 +55,14 @@ public:
     double Hazard(double x) const override;
 
     /**
-     * @brief LikelihoodFunction
+     * @fn LikelihoodFunction
      * @param sample
      * @return likelihood function of the distribution for given sample
      */
     double LikelihoodFunction(const std::vector<int> &sample) const override;
 
     /**
-     * @brief LogLikelihoodFunction
+     * @fn LogLikelihoodFunction
      * @param sample
      * @return log-likelihood function of the distribution for given sample
      */
@@ -86,7 +86,7 @@ public:
     bool PearsonChiSquaredTest(const std::vector<int> &orderStatistic, double alpha, int lowerBoundary, int upperBoundary, size_t numberOfEstimatedParameters = 0) const;
 
     /**
-     * @brief PearsonChiSquaredTest
+     * @fn PearsonChiSquaredTest
      * @param orderStatistic sample sorted in ascending order
      * @param alpha significance level of the test
      * @param numberOfEstimatedParameters zero by default

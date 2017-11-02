@@ -90,7 +90,7 @@ double NormalRand::StandardVariate()
             return ((signed)B > 0) ? x : -x;
         if (stairId == 0) /// handle the base layer
         {
-            static double z = -1;
+            static thread_local double z = -1;
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
                 x = ExponentialRand::StandardVariate() / x1;

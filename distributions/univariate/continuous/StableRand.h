@@ -137,35 +137,35 @@ private:
     static double fastpdfExponentiation(double u);
 
     /**
-     * @brief pdfShortTailExpansionForUnityExponent
+     * @fn pdfShortTailExpansionForUnityExponent
      * @param logX
      * @return leading term of pdf short tail series expansion for large x, |β| = 1 and α = 1
      */
     double pdfShortTailExpansionForUnityExponent(double x) const;
 
     /**
-     * @brief limitCaseForIntegrandAuxForUnityExponent
+     * @fn limitCaseForIntegrandAuxForUnityExponent
      * @param theta
      * @param xAdj
      * @return large values in the case of closeness to extreme points
      */
     double limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const;
     /**
-     * @brief integrandAuxForUnityExponent
+     * @fn integrandAuxForUnityExponent
      * @param theta
      * @param xAdj
      * @return supplementary value for the integrand used in pdf calculations for α = 1
      */
     double integrandAuxForUnityExponent(double theta, double xAdj) const;
     /**
-     * @brief integrandForUnityExponent
+     * @fn integrandForUnityExponent
      * @param theta
      * @param xAdj
      * @return the value of the integrand used for calculations of pdf for α = 1
      */
     double integrandForUnityExponent(double theta, double xAdj) const;
     /**
-     * @brief pdfForUnityExponent
+     * @fn pdfForUnityExponent
      * @param x
      * @return value of probability density function for α = 1
      */
@@ -174,7 +174,7 @@ private:
     DoublePair seriesZeroParams{};
 
     /**
-     * @brief pdfShortTailExpansionForGeneralExponent
+     * @fn pdfShortTailExpansionForGeneralExponent
      * @param logX
      * @return leading term of pdf short tail series expansion for |β| = 1 and [(large x and α > 1) or (small x and α < 1)]
      */
@@ -200,20 +200,20 @@ private:
      */
     double pdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     /**
-     * @brief pdfTaylorExpansionTailNearCauchy
+     * @fn pdfTaylorExpansionTailNearCauchy
      * @param x
      * @return the Taylor approximated difference ~ f(x, α) - f(x, 1)
      */
     double pdfTaylorExpansionTailNearCauchy(double x) const;
     /**
-     * @brief limitCaseForIntegrandAuxForGeneralExponent
+     * @fn limitCaseForIntegrandAuxForGeneralExponent
      * @param theta
      * @param xiAdj
      * @return large values in the case of closeness to extreme points
      */
     double limitCaseForIntegrandAuxForGeneralExponent(double theta, double xiAdj) const;
     /**
-     * @brief integrandAuxForGeneralExponent
+     * @fn integrandAuxForGeneralExponent
      * @param theta
      * @param xAdj
      * @param xiAdj
@@ -221,7 +221,7 @@ private:
      */
     double integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const;
     /**
-     * @brief integrandFoGeneralExponent
+     * @fn integrandFoGeneralExponent
      * @param theta
      * @param xAdj
      * @param xiAdj
@@ -229,7 +229,7 @@ private:
      */
     double integrandFoGeneralExponent(double theta, double xAdj, double xiAdj) const;
     /**
-     * @brief pdfForGeneralExponent
+     * @fn pdfForGeneralExponent
      * @param x
      * @return value of probability density function for α ≠ 1
      */

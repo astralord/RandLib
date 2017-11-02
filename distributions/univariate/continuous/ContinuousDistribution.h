@@ -37,7 +37,7 @@ public:
     void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
 
     /**
-     * @brief LogProbabilityDensityFunction
+     * @fn LogProbabilityDensityFunction
      * fill vector y by logf(x)
      * @param x
      * @param y

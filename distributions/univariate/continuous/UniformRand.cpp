@@ -53,7 +53,7 @@ double UniformRand::Variate(double minValue, double maxValue)
 
 double UniformRand::StandardVariate()
 {
-#ifdef UNIDBLRAND
+#ifdef RANDLIB_UNIDBL
     /// generates a random number on [0,1) with 53-bit resolution, using 2 32-bit integer variate
     double x;
     unsigned int a, b;
@@ -61,18 +61,18 @@ double UniformRand::StandardVariate()
     b = RandGenerator::Variate() >> 5; /// Upper 27 bits
     x = (a * 134217728.0 + b) / 9007199254740992.0;
     return x;
-#elif defined(JLKISS64RAND)
+#elif defined(RANDLIB_JLKISS64)
     /// generates a random number on [0,1) with 53-bit resolution, using 64-bit integer variate
     double x;
     unsigned long long a = RandGenerator::Variate();
     a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bit
     *(reinterpret_cast<unsigned long long *>(&x)) = a; /// Make a double from bits
     return x - 1.0;
-#elif defined(UNICLOSEDRAND)
+#elif defined(RANDLIB_UNICLOSED)
     /// generates a random number on interval [0,1]
     double x = RandGenerator::Variate();
     return x / 4294967295.0;
-#elif defined(UNIHALFCLOSEDRAND)
+#elif defined(RANDLIB_UNIHALFCLOSED)
     /// generates a random number on interval [0,1)
     double x = RandGenerator::Variate();
     return x / 4294967296.0;

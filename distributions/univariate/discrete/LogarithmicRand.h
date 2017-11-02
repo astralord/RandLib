@@ -30,7 +30,7 @@ public:
     double logP(const int & k) const override;
 private:
     /**
-     * @brief betaFun
+     * @fn betaFun
      * @param a
      * @return B(p, a, 0), where B(x, a, b) denotes incomplete beta function,
      * using series expansion (converges for x < 1)
