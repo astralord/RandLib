@@ -418,7 +418,7 @@ std::complex<double> ShiftedGeometricStableDistribution::CFImpl(double t) const
 {
     double x = 0;
     if (alpha != 2 && beta != 0) {
-        x = (alpha == 1) ? M_2_PI * std::log(t) : std::tan(M_PI_2 * alpha);
+        x = (alpha == 1) ? M_2_PI * std::log(t) : -std::tan(M_PI_2 * alpha);
         x *= beta;
     }
     double re = std::pow(gamma * t, alpha);
