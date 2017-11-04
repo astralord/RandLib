@@ -66,7 +66,7 @@ double ExponentialRand::StandardVariate()
     /// Ziggurat algorithm
     int iter = 0;
     do {
-        int stairId = RandGenerator::Variate() & 255;
+        int stairId = randGenerator.Variate() & 255;
         /// Get horizontal coordinate
         double x = UniformRand::StandardVariate() * stairWidth[stairId];
         if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept

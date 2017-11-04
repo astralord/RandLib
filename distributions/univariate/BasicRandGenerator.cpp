@@ -23,11 +23,6 @@ unsigned long RandEngine::getSeed()
     return mix(time(0), getpid(), pthread_self());
 }
 
-thread_local unsigned int JKissRandEngine::X = 123456789 ^ getSeed();
-thread_local unsigned int JKissRandEngine::C = 6543217;
-thread_local unsigned int JKissRandEngine::Y = 987654321;
-thread_local unsigned int JKissRandEngine::Z = 43219876;
-
 void JKissRandEngine::Reseed(unsigned long seed)
 {
     X = 123456789 ^ seed;
@@ -53,14 +48,6 @@ unsigned long long JKissRandEngine::Next()
     return X + Y + Z;
 }
 
-
-thread_local unsigned long long JLKiss64RandEngine::X = 123456789123ULL ^ getSeed();
-thread_local unsigned long long JLKiss64RandEngine::Y = 987654321987ULL;
-thread_local unsigned int JLKiss64RandEngine::Z1 = 43219876;
-thread_local unsigned int JLKiss64RandEngine::Z2 = 6543217;
-thread_local unsigned int JLKiss64RandEngine::C1 = 21987643;
-thread_local unsigned int JLKiss64RandEngine::C2 = 1732654;
-
 void JLKiss64RandEngine::Reseed(unsigned long seed)
 {
     X = 123456789123ULL ^ seed;
@@ -85,4 +72,19 @@ unsigned long long JLKiss64RandEngine::Next()
     C2 = t >> 32;
     Z2 = t;
     return X + Y + Z1 + (static_cast<unsigned long long>(Z2) << 32);
+}
+
+void PCGRandEngine::Reseed(unsigned long seed)
+{
+    state = seed;
+    inc = seed ^ state;
+}
+
+unsigned long long PCGRandEngine::Next()
+{
+    unsigned long long oldstate = state;
+    state = oldstate * 6364136223846793005ULL + (inc|1);
+    unsigned int xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
+    unsigned int rot = oldstate >> 59u;
+    return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "math/RandMath.h"
+#include "univariate/BasicRandGenerator.h"
 #include "RandLib_global.h"
 
 /**
@@ -14,6 +15,8 @@ template < typename T >
 class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
 protected:
+    static thread_local RandGenerator randGenerator;
+
     /**
      * @brief MAX_ITER_REJECTION
      * upper boundary for maximum amount of iterations in rejection methods
