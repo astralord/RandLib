@@ -12,8 +12,10 @@
  */
 class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution
 {
-    double lambda = 1, sigmaSq = 1;
+    double lambda = 1; ///< λ
+    double sigmaSq = 1; ///< σ^2
     double a = 0, b = 4;
+    double logLambda = 0; /// < log(λ)
     BetaRand BetaRV{0.5, 1.5, 0, 4};
     double M = 1.0; ///< rejection constant
 

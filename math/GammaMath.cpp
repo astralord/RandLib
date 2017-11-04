@@ -354,9 +354,8 @@ long double lfact(size_t n)
 
 long double ldfact(size_t n)
 {
-    if (n & 1) {
+    if (n & 1)
         return lfact(n) - ldfact(n - 1);
-    }
     size_t k = n >> 1;
     return k * M_LN2 + lfact(k);
 }

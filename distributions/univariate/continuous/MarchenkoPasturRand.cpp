@@ -26,6 +26,7 @@ void MarchenkoPasturRand::SetParameters(double ratio, double scale)
     b *= b;
 
     sigmaSq = scale;
+    logLambda = std::log(lambda);
 
     GENERATOR_ID genId = getIdOfUsedGenerator();
     if (genId == TINY_RATIO || genId == HUGE_RATIO) {
@@ -63,7 +64,7 @@ double MarchenkoPasturRand::logf(const double &x) const
     if (xSt < a || xSt > b)
         return -INFINITY;
     double y = 0.5 * std::log((b - xSt) * (xSt - a));
-    y -= std::log(2 * M_PI * sigmaSq * lambda * xSt);
+    y -= M_LN2 + M_LNPI + logLambda + std::log(x);
     return y;
 }
 
@@ -234,15 +235,19 @@ double MarchenkoPasturRand::Moment(int n) const
         return sigmaSq * sigmaSq * lambda;
     default: {
         double sum = 0.0;
+        double temp = RandMath::lfact(n) + RandMath::lfact(n - 1);
+        double nlogSigmaSq = n * std::log(sigmaSq);
         for (int k = 0; k != n; ++k) {
-            double addon = RandMath::binom(n - 1, k);
-            addon *= addon;
-            addon /= n - k;
-            addon /= k + 1;
-            addon *= n * std::pow(lambda, k);
-            sum += addon;
+            double term = temp;
+            term -= 2 * RandMath::lfact(k);
+            term -= RandMath::lfact(n - k);
+            term -= RandMath::lfact(n - k - 1);
+            term += k * logLambda;
+            term += nlogSigmaSq;
+            term = std::exp(term) / (k + 1);
+            sum += term;
         }
-        return std::pow(sigmaSq, n) * sum;
+        return sum;
         }
     }
 }
