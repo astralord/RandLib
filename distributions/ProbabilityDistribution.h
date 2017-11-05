@@ -16,7 +16,10 @@ class RANDLIBSHARED_EXPORT ProbabilityDistribution
 {
 protected:
     static thread_local RandGenerator staticRandGenerator;
+
     mutable RandGenerator localRandGenerator{};
+
+    void Reseed(unsigned long seed);
 
     /**
      * @brief MAX_ITER_REJECTION

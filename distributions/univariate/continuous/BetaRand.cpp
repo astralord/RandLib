@@ -145,8 +145,8 @@ double BetaDistribution::S(const double & x) const
 
 double BetaDistribution::variateArcsine() const
 {
-    double U = UniformRand::Variate(-M_PI, M_PI);
-    double X = std::sin(U);
+    double U = 2 * UniformRand::StandardVariate(localRandGenerator) - 1;
+    double X = std::sin(M_PI * U);
     return X * X;
 }
 

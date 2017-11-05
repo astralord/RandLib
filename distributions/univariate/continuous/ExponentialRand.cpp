@@ -73,7 +73,8 @@ double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
             return x;
         if (stairId == 0) /// if we catch the tail
             return x1 + StandardVariate(randGenerator);
-        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId], randGenerator) < std::exp(-x)) /// if we are under the curve - accept
+        long double height = stairHeight[stairId] - stairHeight[stairId - 1];
+        if (stairHeight[stairId] + height * UniformRand::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
             return x;
         /// rejection - go back
     } while (++iter <= MAX_ITER_REJECTION);

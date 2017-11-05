@@ -765,7 +765,7 @@ double StableDistribution::S(const double & x) const
 
 double StableDistribution::variateForUnityExponent() const
 {
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2, localRandGenerator);
+    double U = M_PI * UniformRand::StandardVariate(localRandGenerator) - M_PI_2;
     double W = ExponentialRand::StandardVariate(localRandGenerator);
     double pi_2pBetaU = M_PI_2 + beta * U;
     double Y = W * std::cos(U) / pi_2pBetaU;
@@ -779,7 +779,7 @@ double StableDistribution::variateForUnityExponent() const
 
 double StableDistribution::variateForGeneralExponent() const
 {
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2, localRandGenerator);
+    double U = M_PI * UniformRand::StandardVariate(localRandGenerator) - M_PI_2;
     double W = ExponentialRand::StandardVariate(localRandGenerator);
     double alphaUpxi = alpha * (U + xi);
     double X = std::sin(alphaUpxi);

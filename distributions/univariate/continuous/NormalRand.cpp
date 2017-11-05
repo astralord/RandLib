@@ -107,7 +107,8 @@ double NormalRand::StandardVariate(RandGenerator &randGenerator)
             return ((signed)B > 0) ? x : -x;
         }
         /// handle the wedges of other stairs
-        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId], randGenerator) < std::exp(-.5 * x * x))
+        long double height = stairHeight[stairId] - stairHeight[stairId - 1];
+        if (stairHeight[stairId] + height * UniformRand::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error

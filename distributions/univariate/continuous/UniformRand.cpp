@@ -40,17 +40,6 @@ double UniformRand::Variate() const
     return a + StandardVariate(localRandGenerator) * bma;
 }
 
-void UniformRand::Sample(std::vector<double> &outputData) const
-{
-    for (double & var : outputData)
-        var = this->Variate();
-}
-
-double UniformRand::Variate(double minValue, double maxValue, RandGenerator &randGenerator)
-{
-    return (minValue < maxValue) ? minValue + StandardVariate(randGenerator) * (maxValue - minValue) : NAN;
-}
-
 double UniformRand::StandardVariate(RandGenerator &randGenerator)
 {
 #ifdef RANDLIB_UNIDBL

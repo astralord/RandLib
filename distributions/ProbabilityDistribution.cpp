@@ -11,6 +11,12 @@ ProbabilityDistribution<T>::ProbabilityDistribution()
 }
 
 template < typename T >
+void ProbabilityDistribution<T>::Reseed(unsigned long seed)
+{
+    localRandGenerator.Reseed(seed);
+}
+
+template < typename T >
 String ProbabilityDistribution<T>::toStringWithPrecision(const double a_value, const int n) const
 {
     std::ostringstream out;

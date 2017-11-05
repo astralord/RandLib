@@ -166,7 +166,7 @@ int BinomialDistribution::variateRejection() const
     int iter = 0;
     double X, Y, V;
     do {
-        double U = UniformRand::Variate(0, a4, localRandGenerator);
+        double U = a4 * UniformRand::StandardVariate(localRandGenerator);
         if (U <= a1)
         {
             double N = NormalRand::StandardVariate(localRandGenerator);

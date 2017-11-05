@@ -35,8 +35,8 @@ double CauchyRand::StandardVariate(RandGenerator &randGenerator)
 {
     double x, y;
     do {
-        x = UniformRand::Variate(-1, 1, randGenerator);
-        y = UniformRand::Variate(-1, 1, randGenerator);
+        x = 2 * UniformRand::StandardVariate(randGenerator) - 1;
+        y = 2 * UniformRand::StandardVariate(randGenerator) - 1;
     } while (y == 0.0 || x * x + y * y > 1.0);
     return x / y;
 }
