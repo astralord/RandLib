@@ -132,20 +132,20 @@ double StudentTRand::S(const double & x) const
 double StudentTRand::Variate() const
 {
     if (nu == 1)
-        return mu + sigma * CauchyRand::StandardVariate();
-    return mu + sigma * NormalRand::StandardVariate() / Y.Variate();
+        return mu + sigma * CauchyRand::StandardVariate(localRandGenerator);
+    return mu + sigma * NormalRand::StandardVariate(localRandGenerator) / Y.Variate();
 }
 
 void StudentTRand::Sample(std::vector<double> &outputData) const
 {
     if (nu == 1) {
         for (double &var : outputData)
-            var = mu + sigma * CauchyRand::StandardVariate();
+            var = mu + sigma * CauchyRand::StandardVariate(localRandGenerator);
     }
     else {
         Y.Sample(outputData);
         for (double &var : outputData)
-            var = mu + sigma * NormalRand::StandardVariate() / var;
+            var = mu + sigma * NormalRand::StandardVariate(localRandGenerator) / var;
     }
 }
 

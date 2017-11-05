@@ -166,35 +166,35 @@ int BinomialDistribution::variateRejection() const
     int iter = 0;
     double X, Y, V;
     do {
-        double U = UniformRand::Variate(0, a4);
+        double U = UniformRand::Variate(0, a4, localRandGenerator);
         if (U <= a1)
         {
-            double N = NormalRand::StandardVariate();
+            double N = NormalRand::StandardVariate(localRandGenerator);
             Y = sigma1 * std::fabs(N);
             reject = (Y >= delta1);
             if (!reject)
             {
-                double W = ExponentialRand::StandardVariate();
+                double W = ExponentialRand::StandardVariate(localRandGenerator);
                 X = std::floor(Y);
                 V = -W - 0.5 * N * N + c;
             }
         }
         else if (U <= a2)
         {
-            double N = NormalRand::StandardVariate();
+            double N = NormalRand::StandardVariate(localRandGenerator);
             Y = sigma2 * std::fabs(N);
             reject = (Y >= delta2);
             if (!reject)
             {
-                double W = ExponentialRand::StandardVariate();
+                double W = ExponentialRand::StandardVariate(localRandGenerator);
                 X = std::floor(-Y);
                 V = -W - 0.5 * N * N;
             }
         }
         else if (U <= a3)
         {
-            double W1 = ExponentialRand::StandardVariate();
-            double W2 = ExponentialRand::StandardVariate();
+            double W1 = ExponentialRand::StandardVariate(localRandGenerator);
+            double W2 = ExponentialRand::StandardVariate(localRandGenerator);
             Y = delta1 + W1 / coefa3;
             X = std::floor(Y);
             V = -W2 - coefa3 * Y + delta1 / nqFloor;
@@ -202,8 +202,8 @@ int BinomialDistribution::variateRejection() const
         }
         else
         {
-            double W1 = ExponentialRand::StandardVariate();
-            double W2 = ExponentialRand::StandardVariate();
+            double W1 = ExponentialRand::StandardVariate(localRandGenerator);
+            double W2 = ExponentialRand::StandardVariate(localRandGenerator);
             Y = delta2 + W1 / coefa4;
             X = std::floor(-Y);
             V = -W2 - coefa4 * Y;
@@ -231,14 +231,28 @@ int BinomialDistribution::variateWaiting(int number) const
     return X;
 }
 
-int BinomialDistribution::variateWaiting(int number, double probability)
+int BinomialDistribution::variateWaiting(int number, double probability, RandGenerator &randGenerator)
 {
     int X = -1, sum = 0;
     do {
-        sum += GeometricRand::Variate(probability) + 1;
+        sum += GeometricRand::Variate(probability, randGenerator) + 1;
         ++X;
     } while (sum <= number);
     return X;
+}
+
+int BinomialDistribution::variateBernoulliSum(int number, double probability, RandGenerator &randGenerator)
+{
+    int var = 0;
+    if (RandMath::areClose(probability, 0.5)) {
+        for (int i = 0; i != number; ++i)
+            var += BernoulliRand::StandardVariate(randGenerator);
+    }
+    else {
+        for (int i = 0; i != number; ++i)
+            var += BernoulliRand::Variate(probability, randGenerator);
+    }
+    return var;
 }
 
 int BinomialDistribution::Variate() const
@@ -261,26 +275,12 @@ int BinomialDistribution::Variate() const
     }
     case BERNOULLI_SUM:
     default:
-        return variateBernoulliSum(n, p);
+        return variateBernoulliSum(n, p, localRandGenerator);
     }
     return -1; /// unexpected return
 }
 
-int BinomialDistribution::variateBernoulliSum(int number, double probability)
-{
-    int var = 0;
-    if (RandMath::areClose(probability, 0.5)) {
-        for (int i = 0; i != number; ++i)
-            var += BernoulliRand::StandardVariate();
-    }
-    else {
-        for (int i = 0; i != number; ++i)
-            var += BernoulliRand::Variate(probability);
-    }
-    return var;
-}
-
-int BinomialDistribution::Variate(int number, double probability)
+int BinomialDistribution::Variate(int number, double probability, RandGenerator &randGenerator)
 {
     /// sanity check
     if (number < 0 || probability < 0.0 || probability > 1.0)
@@ -291,10 +291,10 @@ int BinomialDistribution::Variate(int number, double probability)
         return number;
 
     if (number < 10)
-        return variateBernoulliSum(number, probability);
+        return variateBernoulliSum(number, probability, randGenerator);
     if (probability < 0.5)
-        return variateWaiting(number, probability);
-    return number - variateWaiting(number, 1.0 - probability);
+        return variateWaiting(number, probability, randGenerator);
+    return number - variateWaiting(number, 1.0 - probability, randGenerator);
 }
 
 void BinomialDistribution::Sample(std::vector<int> &outputData) const
@@ -340,7 +340,7 @@ void BinomialDistribution::Sample(std::vector<int> &outputData) const
     default:
     {
         for (int &var : outputData)
-           var = variateBernoulliSum(n, p);
+           var = variateBernoulliSum(n, p, localRandGenerator);
         return;
     }
     }

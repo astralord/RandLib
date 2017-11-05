@@ -98,9 +98,9 @@ int PoissonRand::variateRejection() const
     do {
         bool reject = false;
         double W = 0.0;
-        double U = c * UniformRand::StandardVariate();
+        double U = c * UniformRand::StandardVariate(localRandGenerator);
         if (U <= c1) {
-            double N = NormalRand::StandardVariate();
+            double N = NormalRand::StandardVariate(localRandGenerator);
             double Y = -std::fabs(N) * sqrtMu;
             X = std::floor(Y);
             if (X < -mu) {
@@ -111,7 +111,7 @@ int PoissonRand::variateRejection() const
             }
         }
         else if (U <= c2) {
-            double N = NormalRand::StandardVariate();
+            double N = NormalRand::StandardVariate(localRandGenerator);
             double Y = 1.0 + std::fabs(N) * sqrtMupHalfDelta;
             X = std::ceil(Y);
             if (X > delta) {
@@ -128,13 +128,13 @@ int PoissonRand::variateRejection() const
             X = 1;
         }
         else {
-            double V = ExponentialRand::StandardVariate();
+            double V = ExponentialRand::StandardVariate(localRandGenerator);
             double Y = delta + V * zeta;
             X = std::ceil(Y);
             W = -(2.0 + Y) / zeta;
         }
 
-        if (!reject && W - ExponentialRand::StandardVariate() <= acceptanceFunction(X)) {
+        if (!reject && W - ExponentialRand::StandardVariate(localRandGenerator) <= acceptanceFunction(X)) {
             return X + mu;
         }
 
@@ -144,7 +144,7 @@ int PoissonRand::variateRejection() const
 
 int PoissonRand::variateInversion() const
 {
-    double U = UniformRand::StandardVariate();
+    double U = UniformRand::StandardVariate(localRandGenerator);
     int k = mu;
     double s = Fmu, p = Pmu;
     if (s < U)
@@ -172,20 +172,20 @@ int PoissonRand::Variate() const
     return generateByInversion() ? variateInversion() : variateRejection();
 }
 
-int PoissonRand::Variate(double rate)
+int PoissonRand::Variate(double rate, RandGenerator &randGenerator)
 {
     /// check validness of parameter
     if (rate <= 0.0)
         return -1;
     if (rate > 1000) {
         /// approximate with normal distribution
-        double X = NormalRand::StandardVariate();
+        double X = NormalRand::StandardVariate(randGenerator);
         return std::floor(rate + std::sqrt(rate) * X);
     }
     int k = -1;
     double s = 0;
     do {
-        s += ExponentialRand::StandardVariate();
+        s += ExponentialRand::StandardVariate(randGenerator);
         ++k;
     } while (s < rate);
     return k;

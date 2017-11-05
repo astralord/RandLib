@@ -40,13 +40,14 @@ public:
     double S(const double & x) const override;
 
 private:
-    static double variateForAlphaOne();
-    static double variateForAlphaTwo();
-    static double variateForGeneralAlpha(double shape);
+    static double variateForAlphaOne(RandGenerator &randGenerator);
+    static double variateForAlphaTwo(RandGenerator &randGenerator);
+    static double variateForGeneralAlpha(double shape, RandGenerator &randGenerator);
 
 public:
-    static double StandardVariate(double shape);
-    static double Variate(double shape, double scale);
+    static double StandardVariate(double shape, RandGenerator &randGenerator = staticRandGenerator);
+    static double Variate(double shape, double scale, RandGenerator &randGenerator = staticRandGenerator);
+
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 

@@ -34,8 +34,8 @@ public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 
-    static double Variate(double minValue, double maxValue);
-    static double StandardVariate();
+    static double Variate(double minValue, double maxValue, RandGenerator &randGenerator = staticRandGenerator);
+    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
 
     double Mean() const override;
     double Variance() const override;

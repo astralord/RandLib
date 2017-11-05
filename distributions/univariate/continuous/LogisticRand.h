@@ -54,7 +54,7 @@ public:
     double Entropy() const;
 
     /**
-     * @brief FitLocation
+     * @fn FitLocation
      * fit location parameter via maximum-likelihood
      * @param sample
      */

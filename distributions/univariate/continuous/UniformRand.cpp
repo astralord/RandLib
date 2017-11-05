@@ -37,7 +37,7 @@ double UniformRand::S(const double & x) const
 
 double UniformRand::Variate() const
 {
-    return a + StandardVariate() * bma;
+    return a + StandardVariate(localRandGenerator) * bma;
 }
 
 void UniformRand::Sample(std::vector<double> &outputData) const
@@ -46,39 +46,39 @@ void UniformRand::Sample(std::vector<double> &outputData) const
         var = this->Variate();
 }
 
-double UniformRand::Variate(double minValue, double maxValue)
+double UniformRand::Variate(double minValue, double maxValue, RandGenerator &randGenerator)
 {
-    return (minValue < maxValue) ? minValue + StandardVariate() * (maxValue - minValue) : NAN;
+    return (minValue < maxValue) ? minValue + StandardVariate(randGenerator) * (maxValue - minValue) : NAN;
 }
 
-double UniformRand::StandardVariate()
+double UniformRand::StandardVariate(RandGenerator &randGenerator)
 {
-#ifdef UNIDBLRAND
+#ifdef RANDLIB_UNIDBL
     /// generates a random number on [0,1) with 53-bit resolution, using 2 32-bit integer variate
     double x;
     unsigned int a, b;
-    a = RandGenerator::Variate() >> 6; /// Upper 26 bits
-    b = RandGenerator::Variate() >> 5; /// Upper 27 bits
+    a = randGenerator.Variate() >> 6; /// Upper 26 bits
+    b = randGenerator.Variate() >> 5; /// Upper 27 bits
     x = (a * 134217728.0 + b) / 9007199254740992.0;
     return x;
-#elif defined(JLKISS64RAND)
+#elif defined(RANDLIB_JLKISS64)
     /// generates a random number on [0,1) with 53-bit resolution, using 64-bit integer variate
     double x;
-    unsigned long long a = RandGenerator::Variate();
+    unsigned long long a = randGenerator.Variate();
     a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bit
     *(reinterpret_cast<unsigned long long *>(&x)) = a; /// Make a double from bits
     return x - 1.0;
-#elif defined(UNICLOSEDRAND)
+#elif defined(RANDLIB_UNICLOSED)
     /// generates a random number on interval [0,1]
-    double x = RandGenerator::Variate();
+    double x = randGenerator.Variate();
     return x / 4294967295.0;
-#elif defined(UNIHALFCLOSEDRAND)
+#elif defined(RANDLIB_UNIHALFCLOSED)
     /// generates a random number on interval [0,1)
-    double x = RandGenerator::Variate();
+    double x = randGenerator.Variate();
     return x / 4294967296.0;
 #else
     /// generates a random number on interval (0,1)
-    double x = RandGenerator::Variate();
+    double x = randGenerator.Variate();
     x += 0.5;
     x /= 4294967296.0;
     return x;

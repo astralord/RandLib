@@ -25,7 +25,7 @@ public:
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     int MinValue() const override { return 0; }
-    int MaxValue() const override { return K; }
+    int MaxValue() const override { return K - 1; }
 
     void SetProbabilities(std::vector<double>&& probabilities);
     std::vector<double> GetProbabilities() { return prob; }

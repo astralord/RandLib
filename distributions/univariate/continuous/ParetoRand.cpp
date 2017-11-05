@@ -55,53 +55,53 @@ double ParetoRand::S(const double & x) const
     return (x > sigma) ? std::pow(sigma / x, alpha) : 1.0;
 }
 
-double ParetoRand::variateForAlphaOne()
+double ParetoRand::variateForAlphaOne(RandGenerator &randGenerator)
 {
-    return 1.0 / UniformRand::StandardVariate();
+    return 1.0 / UniformRand::StandardVariate(randGenerator);
 }
 
-double ParetoRand::variateForAlphaTwo()
+double ParetoRand::variateForAlphaTwo(RandGenerator &randGenerator)
 {
-    return 1.0 / std::sqrt(UniformRand::StandardVariate());
+    return 1.0 / std::sqrt(UniformRand::StandardVariate(randGenerator));
 }
 
-double ParetoRand::variateForGeneralAlpha(double shape)
+double ParetoRand::variateForGeneralAlpha(double shape, RandGenerator &randGenerator)
 {
-    return std::exp(ExponentialRand::StandardVariate() / shape);
+    return std::exp(ExponentialRand::StandardVariate(randGenerator) / shape);
 }
 
-double ParetoRand::StandardVariate(double shape)
+double ParetoRand::StandardVariate(double shape, RandGenerator &randGenerator)
 {
     if (RandMath::areClose(shape, 1.0))
-        return variateForAlphaOne();
+        return variateForAlphaOne(randGenerator);
     if (RandMath::areClose(shape, 2.0))
-        return variateForAlphaTwo();
-    return variateForGeneralAlpha(shape);
+        return variateForAlphaTwo(randGenerator);
+    return variateForGeneralAlpha(shape, randGenerator);
 }
 
-double ParetoRand::Variate(double shape, double scale)
+double ParetoRand::Variate(double shape, double scale, RandGenerator &randGenerator)
 {
-    return (shape <= 0.0 || scale <= 0.0) ? NAN : scale * StandardVariate(shape);
+    return (shape <= 0.0 || scale <= 0.0) ? NAN : scale * StandardVariate(shape, randGenerator);
 }
 
 double ParetoRand::Variate() const
 {
-    return sigma * StandardVariate(alpha);
+    return sigma * StandardVariate(alpha, localRandGenerator);
 }
 
 void ParetoRand::Sample(std::vector<double> &outputData) const
 {
     if (RandMath::areClose(alpha, 1.0)) {
         for (double &var : outputData)
-            var = sigma * variateForAlphaOne();
+            var = sigma * variateForAlphaOne(localRandGenerator);
     }
     else if (RandMath::areClose(alpha, 2.0)) {
         for (double &var : outputData)
-            var = sigma * variateForAlphaTwo();
+            var = sigma * variateForAlphaTwo(localRandGenerator);
     }
     else {
         for (double &var : outputData)
-            var = sigma * variateForGeneralAlpha(alpha);
+            var = sigma * variateForGeneralAlpha(alpha, localRandGenerator);
     }
 }
 

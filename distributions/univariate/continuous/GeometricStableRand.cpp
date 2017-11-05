@@ -308,7 +308,7 @@ double ShiftedGeometricStableDistribution::F(const double & x) const
 
 double ShiftedGeometricStableDistribution::variateForUnityExponent(double z) const
 {
-    double W = ExponentialRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     double X = z + 2 * beta * std::log(gamma * W) / M_PI;
     X *= gamma;
     X += mu;
@@ -317,21 +317,21 @@ double ShiftedGeometricStableDistribution::variateForUnityExponent(double z) con
 
 double ShiftedGeometricStableDistribution::variateForGeneralExponent(double z) const
 {
-    double W = ExponentialRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     double X = std::pow(W, alphaInv) * gamma * z;
     return mu * W + X;
 }
 
 double ShiftedGeometricStableDistribution::variateForOneHalfExponent(double z) const
 {
-    double W = ExponentialRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     double X = mu + gamma * W * z;
     return X * W;
 }
 
 double ShiftedGeometricStableDistribution::variateByCauchy(double z) const
 {
-    double W = ExponentialRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     double X = mu + gamma * z;
     return X * W;
 }
@@ -340,9 +340,9 @@ double ShiftedGeometricStableDistribution::Variate() const
 {
     switch (distributionType) {
     case LAPLACE:
-        return gamma * LaplaceRand::StandardVariate();
+        return gamma * LaplaceRand::StandardVariate(localRandGenerator);
     case ASYMMETRIC_LAPLACE:
-        return gamma * AsymmetricLaplaceRand::StandardVariate(kappa);
+        return gamma * AsymmetricLaplaceRand::StandardVariate(kappa, localRandGenerator);
     case ONEHALF_EXPONENT:
     case LEVY:
         return variateForOneHalfExponent(Z.Variate());
@@ -361,12 +361,12 @@ void ShiftedGeometricStableDistribution::Sample(std::vector<double> &outputData)
     switch (distributionType) {
     case LAPLACE: {
         for (double & var : outputData)
-            var = gamma * LaplaceRand::StandardVariate();
+            var = gamma * LaplaceRand::StandardVariate(localRandGenerator);
     }
         break;
     case ASYMMETRIC_LAPLACE: {
         for (double & var : outputData)
-            var = gamma * AsymmetricLaplaceRand::StandardVariate(kappa);
+            var = gamma * AsymmetricLaplaceRand::StandardVariate(kappa, localRandGenerator);
     }
         break;
     case ONEHALF_EXPONENT:

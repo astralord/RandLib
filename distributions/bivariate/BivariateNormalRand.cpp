@@ -97,8 +97,8 @@ double BivariateNormalRand::F(const DoublePair &point) const
 
 DoublePair BivariateNormalRand::Variate() const
 {
-    double Z1 = NormalRand::StandardVariate();
-    double Z2 = NormalRand::StandardVariate();
+    double Z1 = NormalRand::StandardVariate(localRandGenerator);
+    double Z2 = NormalRand::StandardVariate(localRandGenerator);
     double x = mu1 + sigma1 * Z1;
     double y = mu2 + sigma2 * (rho * Z1 + sqrt1mroSq * Z2);
     return std::make_pair(x, y);

@@ -80,31 +80,31 @@ double NoncentralChiSquaredRand::S(const double & x) const
 
 double NoncentralChiSquaredRand::variateForDegreeEqualOne() const
 {
-    double y = sqrtLambda + NormalRand::StandardVariate();
+    double y = sqrtLambda + NormalRand::StandardVariate(localRandGenerator);
     return y * y;
 }
 
-double NoncentralChiSquaredRand::Variate(double degree, double noncentrality)
+double NoncentralChiSquaredRand::Variate(double degree, double noncentrality, RandGenerator &randGenerator)
 {
     if (degree <= 0 || noncentrality <= 0)
         return NAN;
 
     if (degree >= 1) {
-        double rv = (degree == 1) ? 0.0 : 2 * GammaDistribution::StandardVariate(0.5 * degree - 0.5);
-        double y = std::sqrt(noncentrality) + NormalRand::StandardVariate();
+        double rv = (degree == 1) ? 0.0 : 2 * GammaDistribution::StandardVariate(0.5 * degree - 0.5, randGenerator);
+        double y = std::sqrt(noncentrality) + NormalRand::StandardVariate(randGenerator);
         return rv + y * y;
     }
-    double shape = 0.5 * degree + PoissonRand::Variate(0.5 * noncentrality);
-    return 2 * GammaDistribution::StandardVariate(shape);
+    double shape = 0.5 * degree + PoissonRand::Variate(0.5 * noncentrality, randGenerator);
+    return 2 * GammaDistribution::StandardVariate(shape, randGenerator);
 }
 
 double NoncentralChiSquaredRand::Variate() const
 {
     if (k < 1)
-        return 2 * GammaDistribution::StandardVariate(halfK + Y.Variate());
+        return 2 * GammaDistribution::StandardVariate(halfK + Y.Variate(), localRandGenerator);
     double X = variateForDegreeEqualOne();
     if (k > 1)
-        X += 2 * GammaDistribution::StandardVariate(halfK - 0.5);
+        X += 2 * GammaDistribution::StandardVariate(halfK - 0.5, localRandGenerator);
     return X;
 }
 
@@ -113,15 +113,15 @@ void NoncentralChiSquaredRand::Sample(std::vector<double> &outputData) const
     if (k >= 1) {
         for (double & var : outputData)
             var = variateForDegreeEqualOne();
-        if (RandMath::areClose(k, 1))
-            return;
         double halfKmHalf = halfK - 0.5;
+        if (halfKmHalf == 0)
+            return;
         for (double & var : outputData)
-            var += 2 * GammaDistribution::StandardVariate(halfKmHalf);
+            var += 2 * GammaDistribution::StandardVariate(halfKmHalf, localRandGenerator);
     }
     else {
         for (double & var : outputData)
-            var = 2 * GammaDistribution::StandardVariate(halfK + Y.Variate());
+            var = 2 * GammaDistribution::StandardVariate(halfK + Y.Variate(), localRandGenerator);
     }
 }
 

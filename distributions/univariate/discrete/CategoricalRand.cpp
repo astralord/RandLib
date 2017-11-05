@@ -27,7 +27,7 @@ void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
 
 double CategoricalRand::P(const int & k) const
 {
-    return (k < 0 || k > K) ? 0.0 : prob[k];
+    return (k < 0 || k >= K) ? 0.0 : prob[k];
 }
 
 double CategoricalRand::logP(const int & k) const
@@ -55,7 +55,7 @@ double CategoricalRand::F(const int & k) const
 
 int CategoricalRand::Variate() const
 {
-    double U = UniformRand::StandardVariate();
+    double U = UniformRand::StandardVariate(localRandGenerator);
     return quantileImpl(U);
 }
 
@@ -89,18 +89,18 @@ int CategoricalRand::quantileImpl(double p) const
     double sum = 0.0;
     for (int i = 0; i != K; ++i) {
         sum += prob[i];
-        if (sum >= p)
+        if (RandMath::areClose(sum, p) || sum > p)
             return i;
     }
-    return K;
+    return K - 1;
 }
 
 int CategoricalRand::quantileImpl1m(double p) const
 {
-    double sum = prob[K - 1];
-    for (int i = K - 2; i >= 0; --i) {
+    double sum = 0;
+    for (int i = K - 1; i >= 0; --i) {
         sum += prob[i];
-        if (sum >= p)
+        if (RandMath::areClose(sum, p) || sum > p)
             return i;
     }
     return 0.0;

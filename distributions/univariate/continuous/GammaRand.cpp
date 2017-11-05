@@ -100,29 +100,29 @@ GammaDistribution::GENERATOR_ID GammaDistribution::getIdOfUsedGenerator(double s
     return MARSAGLIA_TSANG;
 }
 
-double GammaDistribution::variateThroughExponentialSum(int shape)
+double GammaDistribution::variateThroughExponentialSum(int shape, RandGenerator& randGenerator)
 {
     double X = 0.0;
     for (int i = 0; i < shape; ++i)
-        X += ExponentialRand::StandardVariate();
+        X += ExponentialRand::StandardVariate(randGenerator);
     return X;
 }
 
-double GammaDistribution::variateForShapeOneAndAHalf()
+double GammaDistribution::variateForShapeOneAndAHalf(RandGenerator& randGenerator)
 {
-    double W = ExponentialRand::StandardVariate();
-    double N = NormalRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(randGenerator);
+    double N = NormalRand::StandardVariate(randGenerator);
     return W + 0.5 * N * N;
 }
 
-double GammaDistribution::variateBest() const
+double GammaDistribution::variateBest(RandGenerator &randGenerator) const
 {
     /// Algorithm RGS for gamma variates (Best, 1983)
     double X = 0;
     int iter = 0;
     do {
-        double V = genCoef.b * UniformRand::StandardVariate();
-        double W = UniformRand::StandardVariate();
+        double V = genCoef.b * UniformRand::StandardVariate(randGenerator);
+        double W = UniformRand::StandardVariate(randGenerator);
         if (V <= 1) {
             X = genCoef.t * std::pow(V, 1.0 / alpha);
             if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
@@ -139,7 +139,7 @@ double GammaDistribution::variateBest() const
 }
 
 
-double GammaDistribution::variateAhrensDieter(double shape)
+double GammaDistribution::variateAhrensDieter(double shape, RandGenerator &randGenerator)
 {
     /// Rejection algorithm GS for gamma variates (Ahrens and Dieter, 1974)
     double X = 0;
@@ -147,9 +147,9 @@ double GammaDistribution::variateAhrensDieter(double shape)
     double shapeInv = 1.0 / shape;
     double t = shapeInv + M_1_E;
     do {
-        double U = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(randGenerator);
         double p = shape * t * U;
-        double W = ExponentialRand::StandardVariate();
+        double W = ExponentialRand::StandardVariate(randGenerator);
         if (p <= 1)
         {
             X = std::pow(p, shapeInv);
@@ -166,19 +166,19 @@ double GammaDistribution::variateAhrensDieter(double shape)
     return NAN; /// shouldn't end up here
 }
 
-double GammaDistribution::variateFishman(double shape)
+double GammaDistribution::variateFishman(double shape, RandGenerator& randGenerator)
 {
     /// G. Fishman algorithm (shape > 1)
     double W1, W2;
     double shapem1 = shape - 1;
     do {
-        W1 = ExponentialRand::StandardVariate();
-        W2 = ExponentialRand::StandardVariate();
+        W1 = ExponentialRand::StandardVariate(randGenerator);
+        W2 = ExponentialRand::StandardVariate(randGenerator);
     } while (W2 < shapem1 * (W1 - std::log(W1) - 1));
     return shape * W1;
 }
 
-double GammaDistribution::variateMarsagliaTsang(double shape)
+double GammaDistribution::variateMarsagliaTsang(double shape, RandGenerator &randGenerator)
 {
     /// Marsaglia and Tsang’s Method (shape > 1/3)
     double d = shape - 1.0 / 3;
@@ -187,12 +187,12 @@ double GammaDistribution::variateMarsagliaTsang(double shape)
     do {
         double N;
         do {
-            N = NormalRand::StandardVariate();
+            N = NormalRand::StandardVariate(randGenerator);
         } while (N <= -c);
         double v = 1 + N / c;
         v = v * v * v;
         N *= N;
-        double U = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(randGenerator);
         if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
             return d * v;
         }
@@ -200,7 +200,7 @@ double GammaDistribution::variateMarsagliaTsang(double shape)
     return NAN; /// shouldn't end up here
 }
 
-double GammaDistribution::StandardVariate(double shape)
+double GammaDistribution::StandardVariate(double shape, RandGenerator& randGenerator)
 {
     if (shape <= 0)
         return NAN;
@@ -209,23 +209,23 @@ double GammaDistribution::StandardVariate(double shape)
 
     switch(genId) {
     case INTEGER_SHAPE:
-        return variateThroughExponentialSum(std::round(shape));
+        return variateThroughExponentialSum(std::round(shape), randGenerator);
     case ONE_AND_A_HALF_SHAPE:
-        return variateForShapeOneAndAHalf();
+        return variateForShapeOneAndAHalf(randGenerator);
     case SMALL_SHAPE:
-        return variateAhrensDieter(shape);
+        return variateAhrensDieter(shape, randGenerator);
     case FISHMAN:
-        return variateFishman(shape);
+        return variateFishman(shape, randGenerator);
     case MARSAGLIA_TSANG:
-        return variateMarsagliaTsang(shape);
+        return variateMarsagliaTsang(shape, randGenerator);
     default:
         return NAN;
     }
 }
 
-double GammaDistribution::Variate(double shape, double rate)
+double GammaDistribution::Variate(double shape, double rate, RandGenerator& randGenerator)
 {
-    return (shape <= 0.0 || rate <= 0.0) ? NAN : StandardVariate(shape) / rate;
+    return (shape <= 0.0 || rate <= 0.0) ? NAN : StandardVariate(shape, randGenerator) / rate;
 }
 
 double GammaDistribution::Variate() const
@@ -234,15 +234,15 @@ double GammaDistribution::Variate() const
 
     switch(genId) {
     case INTEGER_SHAPE:
-        return theta * variateThroughExponentialSum(alpha);
+        return theta * variateThroughExponentialSum(alpha, localRandGenerator);
     case ONE_AND_A_HALF_SHAPE:
-        return theta * variateForShapeOneAndAHalf();
+        return theta * variateForShapeOneAndAHalf(localRandGenerator);
     case SMALL_SHAPE:
-        return theta * variateBest();
+        return theta * variateBest(localRandGenerator);
     case FISHMAN:
-        return theta * variateFishman(alpha);
+        return theta * variateFishman(alpha, localRandGenerator);
     case MARSAGLIA_TSANG:
-        return theta * variateMarsagliaTsang(alpha);
+        return theta * variateMarsagliaTsang(alpha, localRandGenerator);
     default:
         return NAN;
     }
@@ -255,23 +255,23 @@ void GammaDistribution::Sample(std::vector<double> &outputData) const
     switch(genId) {
     case INTEGER_SHAPE:
         for (double &var : outputData)
-            var = theta * variateThroughExponentialSum(alpha);
+            var = theta * variateThroughExponentialSum(alpha, localRandGenerator);
         break;
     case ONE_AND_A_HALF_SHAPE:
         for (double &var : outputData)
-            var = theta * variateForShapeOneAndAHalf();
+            var = theta * variateForShapeOneAndAHalf(localRandGenerator);
         break;
     case SMALL_SHAPE:
         for (double &var : outputData)
-            var = theta * variateBest();
+            var = theta * variateBest(localRandGenerator);
         break;
     case FISHMAN:
         for (double &var : outputData)
-            var = theta * variateFishman(alpha);
+            var = theta * variateFishman(alpha, localRandGenerator);
         break;
     case MARSAGLIA_TSANG:
         for (double &var : outputData)
-            var = theta * variateMarsagliaTsang(alpha);
+            var = theta * variateMarsagliaTsang(alpha, localRandGenerator);
         break;
     default:
         return;

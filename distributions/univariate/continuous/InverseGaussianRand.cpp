@@ -66,8 +66,8 @@ double InverseGaussianRand::S(const double & x) const
 
 double InverseGaussianRand::Variate() const
 {
-    double X = NormalRand::StandardVariate();
-    double U = UniformRand::StandardVariate();
+    double X = NormalRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(localRandGenerator);
     X *= X;
     double mupX = mu * X;
     double y = 4 * lambda + mupX;

@@ -154,8 +154,8 @@ double BetaDistribution::variateRejectionUniform() const
 {
     int iter = 0;
     do {
-        double U = UniformRand::StandardVariate();
-        double V = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
+        double V = UniformRand::StandardVariate(localRandGenerator);
         if (0.25 * V * V <= U - U * U)
             return U;
     } while (++iter <= MAX_ITER_REJECTION);
@@ -167,8 +167,8 @@ double BetaDistribution::variateRejectionUniformExtended() const
     int iter = 0;
     static constexpr double M_LN4 = M_LN2 + M_LN2;
     do {
-        double U = UniformRand::StandardVariate();
-        double W = ExponentialRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
+        double W = ExponentialRand::StandardVariate(localRandGenerator);
         double edge = M_LN4 + std::log(U - U * U);
         if (W >= (1.0 - alpha) * edge)
             return U;
@@ -180,8 +180,8 @@ double BetaDistribution::variateCheng() const
 {
     double R, T, Y;
     do {
-        double U = UniformRand::StandardVariate();
-        double V = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
+        double V = UniformRand::StandardVariate(localRandGenerator);
         double X = std::log(U / (1 - U)) / genCoef.t;
         Y = alpha * std::exp(X);
         R = 1.0 / (beta + Y);
@@ -197,8 +197,8 @@ double BetaDistribution::variateAtkinsonWhittaker() const
 {
     int iter = 0;
     do {
-        double U = UniformRand::StandardVariate();
-        double W = ExponentialRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
+        double W = ExponentialRand::StandardVariate(localRandGenerator);
         if (U <= genCoef.s) {
             double X = genCoef.t * std::pow(U / genCoef.s, 1.0 / alpha);
             if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - genCoef.t)))
@@ -228,11 +228,11 @@ double BetaDistribution::variateRejectionNormal() const
     double alpha2m1 = alpha + alpham1;
     do {
         do {
-            N = NormalRand::StandardVariate();
+            N = NormalRand::StandardVariate(localRandGenerator);
             Z = N * N;
         } while (Z >= alpha2m1);
 
-        double W = ExponentialRand::StandardVariate() + genCoef.s;
+        double W = ExponentialRand::StandardVariate(localRandGenerator) + genCoef.s;
         double aux = 0.5 - alpham1 / (alpha2m1 - Z);
         aux *= Z;
         if (W + aux >= 0)
@@ -250,8 +250,8 @@ double BetaDistribution::variateJohnk() const
 {
     double X = 0, Z = 0;
     do {
-        double U = UniformRand::StandardVariate();
-        double V = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
+        double V = UniformRand::StandardVariate(localRandGenerator);
         X = std::pow(U, 1.0 / alpha);
         Z = X + std::pow(V, 1.0 / beta);
     } while (Z > 1);
@@ -265,7 +265,7 @@ double BetaDistribution::Variate() const
 
     switch (id) {
     case UNIFORM:
-        var = UniformRand::StandardVariate();
+        var = UniformRand::StandardVariate(localRandGenerator);
         break;
     case ARCSINE:
         var = variateArcsine();
@@ -304,7 +304,7 @@ void BetaDistribution::Sample(std::vector<double> &outputData) const
     switch (id) {
     case UNIFORM: {
         for (double &var : outputData)
-            var = UniformRand::StandardVariate();
+            var = UniformRand::StandardVariate(localRandGenerator);
         }
         break;
     case ARCSINE: {

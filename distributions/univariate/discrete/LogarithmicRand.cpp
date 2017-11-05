@@ -58,10 +58,10 @@ int LogarithmicRand::Variate() const
 {
     /// Kemp's second accelerated generator
     /// p. 548, "Non-Uniform Random Variate Generation" by Luc Devroye
-    double V = UniformRand::StandardVariate();
+    double V = UniformRand::StandardVariate(localRandGenerator);
     if (V >= p)
         return 1.0;
-    double U = UniformRand::StandardVariate();
+    double U = UniformRand::StandardVariate(localRandGenerator);
     double y = -std::expm1(U * log1mProb);
     if (V > y)
         return 1.0;

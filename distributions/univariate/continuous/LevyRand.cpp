@@ -33,15 +33,15 @@ double LevyRand::S(const double & x) const
 
 double LevyRand::Variate() const
 {
-    double rv = NormalRand::StandardVariate();
+    double rv = NormalRand::StandardVariate(localRandGenerator);
     rv *= rv;
     rv = gamma / rv;
     return mu + rv;
 }
 
-double LevyRand::StandardVariate()
+double LevyRand::StandardVariate(RandGenerator &randGenerator)
 {
-    double rv = NormalRand::StandardVariate();
+    double rv = NormalRand::StandardVariate(randGenerator);
     return 1.0 / (rv * rv);
 }
 

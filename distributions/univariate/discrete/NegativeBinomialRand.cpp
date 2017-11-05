@@ -104,7 +104,7 @@ int NegativeBinomialDistribution<T>::variateThroughGammaPoisson() const
 template< >
 int NegativeBinomialDistribution<int>::variateGeometricByTable() const
 {
-    double U = UniformRand::StandardVariate();
+    double U = UniformRand::StandardVariate(localRandGenerator);
     /// handle tail by recursion
     if (U > table[tableSize - 1])
         return tableSize + variateGeometricByTable();
@@ -118,7 +118,7 @@ int NegativeBinomialDistribution<int>::variateGeometricByTable() const
 template< >
 int NegativeBinomialDistribution<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(-ExponentialRand::StandardVariate() / log1mProb);
+    return std::floor(-ExponentialRand::StandardVariate(localRandGenerator) / log1mProb);
 }
 
 template< >

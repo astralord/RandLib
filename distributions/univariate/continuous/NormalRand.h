@@ -58,7 +58,7 @@ public:
      * @fn StandardVariate
      * @return variate from standard normal distribution
      */
-    static double StandardVariate();
+    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
     void Sample(std::vector<double> &outputData) const override;
 
 private:
@@ -80,7 +80,7 @@ public:
     void FitLocation(const std::vector<double> &sample);
 
     /**
-     * @brief FitLocation
+     * @fn FitLocation
      * set location, returned by maximium-likelihood estimator
      * and return confidenceInterval for given significance level
      * @param sample
@@ -97,7 +97,7 @@ public:
     void FitVariance(const std::vector<double> &sample);
 
     /**
-     * @brief FitVariance
+     * @fn FitVariance
      * @param sample
      * @param confidenceInterval
      * @param significanceLevel
@@ -106,7 +106,7 @@ public:
     void FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased = false);
 
     /**
-     * @brief FitScale
+     * @fn FitScale
      * set scale, returned via maximum-likelihood estimation or unbiased estimator
      * (which might be different from the unbiased estimator of variance)
      * @param sample
@@ -124,7 +124,7 @@ public:
     void Fit(const std::vector<double> &sample, bool unbiased = false);
 
     /**
-     * @brief Fit
+     * @fn Fit
      * set parameters, returned by maximium-likelihood estimator if unbiased = false,
      * otherwise set parameters via UMVU estimator, and return confidence intervals for given significance level
      * @param sample

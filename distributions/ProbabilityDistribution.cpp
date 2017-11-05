@@ -3,6 +3,9 @@
 #include <iomanip>
 
 template < typename T >
+thread_local RandGenerator ProbabilityDistribution<T>::staticRandGenerator;
+
+template < typename T >
 ProbabilityDistribution<T>::ProbabilityDistribution()
 {
 }

@@ -61,15 +61,15 @@ double YuleRand::S(const int & k) const
 int YuleRand::Variate() const
 {
     double prob = 1.0 / X.Variate();
-    return GeometricRand::Variate(prob) + 1;
+    return GeometricRand::Variate(prob, localRandGenerator) + 1;
 }
 
-int YuleRand::Variate(double shape)
+int YuleRand::Variate(double shape, RandGenerator &randGenerator)
 {
     if (shape <= 0.0)
         return -1;
-    double prob = 1.0 / ParetoRand::StandardVariate(shape);
-    return GeometricRand::Variate(prob) + 1;
+    double prob = 1.0 / ParetoRand::StandardVariate(shape, randGenerator);
+    return GeometricRand::Variate(prob, randGenerator) + 1;
 }
 
 double YuleRand::Mean() const

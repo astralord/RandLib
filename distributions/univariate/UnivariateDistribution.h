@@ -141,7 +141,10 @@ public:
 
     /**
      * @fn Mode
-     * @return the most probable value
+     * Mode is the value, which has the largest probability to happen,
+     * or, in the case of continuous distribution, has the largest value
+     * of density function.
+     * @return mode. In case, when it's not unique, return any of them.
      */
     virtual T Mode() const = 0;
 
