@@ -224,8 +224,8 @@ double MaxwellBoltzmannRand::S(const double & x) const
 
 double MaxwellBoltzmannRand::Variate() const
 {
-    double W = ExponentialRand::StandardVariate();
-    double N = NormalRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
+    double N = NormalRand::StandardVariate(localRandGenerator);
     return sigma * std::sqrt(2 * W + N * N);
 }
 
@@ -312,7 +312,7 @@ double RayleighRand::S(const double & x) const
 
 double RayleighRand::Variate() const
 {
-    double W = ExponentialRand::StandardVariate();
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     return sigma * std::sqrt(2 * W);
 }
 

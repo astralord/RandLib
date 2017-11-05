@@ -80,7 +80,7 @@ DoublePair NormalInverseGammaRand::Variate() const
     DoublePair var;
     var.second = Y.Variate();
     double coef = std::sqrt(var.second) / lambda;
-    var.first = mu + coef * NormalRand::StandardVariate();
+    var.first = mu + coef * NormalRand::StandardVariate(localRandGenerator);
     return var;
 }
 

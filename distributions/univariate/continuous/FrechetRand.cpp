@@ -62,7 +62,7 @@ double FrechetRand::S(const double & x) const
 
 double FrechetRand::Variate() const
 {
-    return m + s / std::pow(ExponentialRand::StandardVariate(), alphaInv);
+    return m + s / std::pow(ExponentialRand::StandardVariate(localRandGenerator), alphaInv);
 }
 
 double FrechetRand::Mean() const

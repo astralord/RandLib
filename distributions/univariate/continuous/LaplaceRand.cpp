@@ -43,7 +43,7 @@ double AsymmetricLaplaceDistribution::S(const double & x) const
 
 double AsymmetricLaplaceDistribution::Variate() const
 {
-    double X = (kappa == 1) ? LaplaceRand::StandardVariate() : AsymmetricLaplaceRand::StandardVariate(kappa);
+    double X = (kappa == 1) ? LaplaceRand::StandardVariate(localRandGenerator) : AsymmetricLaplaceRand::StandardVariate(kappa, localRandGenerator);
     return m + gamma * X;
 }
 
@@ -51,11 +51,11 @@ void AsymmetricLaplaceDistribution::Sample(std::vector<double> &outputData) cons
 {
     if (kappa == 1) {
         for (double & var : outputData)
-            var = m + gamma * LaplaceRand::StandardVariate();
+            var = m + gamma * LaplaceRand::StandardVariate(localRandGenerator);
     }
     else {
         for (double & var : outputData)
-            var = m + gamma * AsymmetricLaplaceRand::StandardVariate(kappa);
+            var = m + gamma * AsymmetricLaplaceRand::StandardVariate(kappa, localRandGenerator);
     }
 }
 
@@ -144,10 +144,10 @@ void AsymmetricLaplaceRand::SetAsymmetry(double asymmetry)
     ChangeLocation();
 }
 
-double AsymmetricLaplaceRand::StandardVariate(double asymmetry)
+double AsymmetricLaplaceRand::StandardVariate(double asymmetry, RandGenerator &randGenerator)
 {
-    double x = ExponentialRand::StandardVariate() / asymmetry;
-    double y = ExponentialRand::StandardVariate() * asymmetry;
+    double x = ExponentialRand::StandardVariate(randGenerator) / asymmetry;
+    double y = ExponentialRand::StandardVariate(randGenerator) * asymmetry;
     return x - y;
 }
 
@@ -241,8 +241,8 @@ String LaplaceRand::Name() const
                       + toStringWithPrecision(GetScale()) + ")";
 }
 
-double LaplaceRand::StandardVariate()
+double LaplaceRand::StandardVariate(RandGenerator &randGenerator)
 {
-    double W = ExponentialRand::StandardVariate();
-    return BernoulliRand::StandardVariate() ? W : -W;
+    double W = ExponentialRand::StandardVariate(randGenerator);
+    return BernoulliRand::StandardVariate(randGenerator) ? W : -W;
 }

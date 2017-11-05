@@ -45,7 +45,7 @@ int GeometricRand::Variate() const
     return -1;
 }
 
-int GeometricRand::Variate(double probability)
+int GeometricRand::Variate(double probability, RandGenerator &randGenerator)
 {
     if (probability > 1.0 || probability < 0.0)
         return -1;
@@ -53,11 +53,11 @@ int GeometricRand::Variate(double probability)
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
         double rate = -std::log1p(-probability);
-        double X = ExponentialRand::StandardVariate() / rate;
+        double X = ExponentialRand::StandardVariate(randGenerator) / rate;
         return std::floor(X);
     }
 
-    double U = UniformRand::StandardVariate();
+    double U = UniformRand::StandardVariate(randGenerator);
     int x = 0;
     double prod = probability, sum = prod, qprob = 1.0 - probability;
     while (U > sum) {

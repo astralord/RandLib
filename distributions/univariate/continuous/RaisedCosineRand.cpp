@@ -66,12 +66,12 @@ double RaisedCosineDistribution::S(const double & x) const
     return 0.5 - 0.5 * y;
 }
 
-double RaisedCosineDistribution::StandardVariate()
+double RaisedCosineDistribution::StandardVariate(RandGenerator &randGenerator)
 {
     /// p. 160. Non-Uniform Random Variate Generation. Luc Devroye
-    double X = UniformRand::Variate(-M_PI_2, M_PI_2);
+    double X = UniformRand::Variate(-M_PI_2, M_PI_2, randGenerator);
     double XSq = X * X;
-    double U = UniformRand::StandardVariate();
+    double U = UniformRand::StandardVariate(randGenerator);
     U += U;
     int a = 0, b = -1;
     double W = 0.0, V = 1.0;
@@ -99,7 +99,7 @@ double RaisedCosineDistribution::StandardVariate()
 
 double RaisedCosineDistribution::Variate() const
 {
-    return mu + s_pi * StandardVariate();
+    return mu + s_pi * StandardVariate(localRandGenerator);
 }
 
 double RaisedCosineDistribution::Mean() const

@@ -22,7 +22,7 @@ void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)
     nInv = 1.0 / n;
     logN = std::log(n);
 
-    unsigned long long MAX_RAND = randGenerator.MaxValue();
+    unsigned long long MAX_RAND = localRandGenerator.MaxValue();
     MAX_RAND_UNBIASED = MAX_RAND - MAX_RAND % n - 1;
 }
 
@@ -49,7 +49,7 @@ int UniformDiscreteRand::Variate() const
 {
     unsigned long intVar;
     do {
-        intVar = randGenerator.Variate();
+        intVar = localRandGenerator.Variate();
     } while (intVar > MAX_RAND_UNBIASED);
     return a + (intVar % n);
 }

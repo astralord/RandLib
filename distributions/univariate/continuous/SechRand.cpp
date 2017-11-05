@@ -28,7 +28,7 @@ double SechRand::F(const double & x) const
 
 double SechRand::Variate() const
 {
-    double y = std::fabs(CauchyRand::StandardVariate());
+    double y = std::fabs(CauchyRand::StandardVariate(localRandGenerator));
     return M_2_PI * std::log(y);
 }
 

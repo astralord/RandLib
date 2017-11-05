@@ -52,7 +52,7 @@ double ExponentialRand::S(const double & x) const
 
 double ExponentialRand::Variate() const
 {
-    return theta * StandardVariate();
+    return theta * StandardVariate(localRandGenerator);
 }
 
 void ExponentialRand::Sample(std::vector<double> &outputData) const
@@ -61,19 +61,19 @@ void ExponentialRand::Sample(std::vector<double> &outputData) const
         var = this->Variate();
 }
 
-double ExponentialRand::StandardVariate()
+double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm
     int iter = 0;
     do {
         int stairId = randGenerator.Variate() & 255;
         /// Get horizontal coordinate
-        double x = UniformRand::StandardVariate() * stairWidth[stairId];
+        double x = UniformRand::StandardVariate(randGenerator) * stairWidth[stairId];
         if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
             return x;
         if (stairId == 0) /// if we catch the tail
-            return x1 + StandardVariate();
-        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-x)) /// if we are under the curve - accept
+            return x1 + StandardVariate(randGenerator);
+        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId], randGenerator) < std::exp(-x)) /// if we are under the curve - accept
             return x;
         /// rejection - go back
     } while (++iter <= MAX_ITER_REJECTION);

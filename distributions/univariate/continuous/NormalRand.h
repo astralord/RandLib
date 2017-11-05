@@ -58,7 +58,7 @@ public:
      * @fn StandardVariate
      * @return variate from standard normal distribution
      */
-    static double StandardVariate();
+    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
     void Sample(std::vector<double> &outputData) const override;
 
 private:

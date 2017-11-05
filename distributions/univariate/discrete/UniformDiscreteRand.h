@@ -19,7 +19,7 @@ class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
     int b = 0; ///< max bound
     double nInv = 1; ///< 1/n
     double logN = 0; ///< log(n)
-    unsigned long long MAX_RAND_UNBIASED = randGenerator.MaxValue();///< constant for unbiased generator
+    unsigned long long MAX_RAND_UNBIASED = localRandGenerator.MaxValue();///< constant for unbiased generator
 
 public:
     UniformDiscreteRand(int minValue = 0, int maxValue = 1);

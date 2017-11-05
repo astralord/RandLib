@@ -53,7 +53,7 @@ double WrappedExponentialRand::S(const double &x) const
 
 double WrappedExponentialRand::Variate() const
 {
-    return quantileImpl(UniformRand::StandardVariate());
+    return quantileImpl(UniformRand::StandardVariate(localRandGenerator));
 }
 
 double WrappedExponentialRand::CircularMean() const

@@ -28,15 +28,15 @@ double CauchyRand::S(const double & x) const
 
 double CauchyRand::Variate() const
 {
-    return mu + gamma * StandardVariate();
+    return mu + gamma * StandardVariate(localRandGenerator);
 }
 
-double CauchyRand::StandardVariate()
+double CauchyRand::StandardVariate(RandGenerator &randGenerator)
 {
     double x, y;
     do {
-        x = UniformRand::Variate(-1, 1);
-        y = UniformRand::Variate(-1, 1);
+        x = UniformRand::Variate(-1, 1, randGenerator);
+        y = UniformRand::Variate(-1, 1, randGenerator);
     } while (y == 0.0 || x * x + y * y > 1.0);
     return x / y;
 }

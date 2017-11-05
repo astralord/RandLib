@@ -37,7 +37,7 @@ double UniformRand::S(const double & x) const
 
 double UniformRand::Variate() const
 {
-    return a + StandardVariate() * bma;
+    return a + StandardVariate(localRandGenerator) * bma;
 }
 
 void UniformRand::Sample(std::vector<double> &outputData) const
@@ -46,12 +46,12 @@ void UniformRand::Sample(std::vector<double> &outputData) const
         var = this->Variate();
 }
 
-double UniformRand::Variate(double minValue, double maxValue)
+double UniformRand::Variate(double minValue, double maxValue, RandGenerator &randGenerator)
 {
-    return (minValue < maxValue) ? minValue + StandardVariate() * (maxValue - minValue) : NAN;
+    return (minValue < maxValue) ? minValue + StandardVariate(randGenerator) * (maxValue - minValue) : NAN;
 }
 
-double UniformRand::StandardVariate()
+double UniformRand::StandardVariate(RandGenerator &randGenerator)
 {
 #ifdef RANDLIB_UNIDBL
     /// generates a random number on [0,1) with 53-bit resolution, using 2 32-bit integer variate

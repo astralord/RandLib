@@ -765,8 +765,8 @@ double StableDistribution::S(const double & x) const
 
 double StableDistribution::variateForUnityExponent() const
 {
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::StandardVariate();
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2, localRandGenerator);
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     double pi_2pBetaU = M_PI_2 + beta * U;
     double Y = W * std::cos(U) / pi_2pBetaU;
     double X = std::log(Y);
@@ -779,8 +779,8 @@ double StableDistribution::variateForUnityExponent() const
 
 double StableDistribution::variateForGeneralExponent() const
 {
-    double U = UniformRand::Variate(-M_PI_2, M_PI_2);
-    double W = ExponentialRand::StandardVariate();
+    double U = UniformRand::Variate(-M_PI_2, M_PI_2, localRandGenerator);
+    double W = ExponentialRand::StandardVariate(localRandGenerator);
     double alphaUpxi = alpha * (U + xi);
     double X = std::sin(alphaUpxi);
     double W_adj = W / std::cos(U - alphaUpxi);
@@ -792,7 +792,8 @@ double StableDistribution::variateForGeneralExponent() const
 
 double StableDistribution::variateForExponentEqualOneHalf() const
 {
-    double Z1 = NormalRand::StandardVariate(), Z2 = NormalRand::StandardVariate();
+    double Z1 = NormalRand::StandardVariate(localRandGenerator);
+    double Z2 = NormalRand::StandardVariate(localRandGenerator);
     double temp1 = (1.0 + beta) / Z1, temp2 = (1.0 - beta) / Z2;
     double var = temp1 - temp2;
     var *= temp1 + temp2;
@@ -804,11 +805,11 @@ double StableDistribution::Variate() const
 {
     switch (distributionType) {
     case NORMAL:
-        return mu + M_SQRT2 * gamma * NormalRand::StandardVariate();
+        return mu + M_SQRT2 * gamma * NormalRand::StandardVariate(localRandGenerator);
     case CAUCHY:
-        return mu + gamma * CauchyRand::StandardVariate();
+        return mu + gamma * CauchyRand::StandardVariate(localRandGenerator);
     case LEVY:
-        return mu + RandMath::sign(beta) * gamma * LevyRand::StandardVariate();
+        return mu + RandMath::sign(beta) * gamma * LevyRand::StandardVariate(localRandGenerator);
     case UNITY_EXPONENT:
         return variateForUnityExponent();
     case GENERAL:
@@ -824,22 +825,22 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
     case NORMAL: {
         double stdev = M_SQRT2 * gamma;
         for (double &var : outputData)
-            var = mu + stdev * NormalRand::StandardVariate();
+            var = mu + stdev * NormalRand::StandardVariate(localRandGenerator);
     }
         break;
     case CAUCHY: {
         for (double &var : outputData)
-            var = mu + gamma * CauchyRand::StandardVariate();
+            var = mu + gamma * CauchyRand::StandardVariate(localRandGenerator);
     }
         break;
     case LEVY: {
         if (beta > 0) {
             for (double &var : outputData)
-                var = mu + gamma * LevyRand::StandardVariate();
+                var = mu + gamma * LevyRand::StandardVariate(localRandGenerator);
         }
         else {
             for (double &var : outputData)
-                var = mu - gamma * LevyRand::StandardVariate();
+                var = mu - gamma * LevyRand::StandardVariate(localRandGenerator);
         }
     }
         break;

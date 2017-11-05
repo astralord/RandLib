@@ -29,7 +29,7 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
 
-    static double StandardVariate();
+    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
 
 private:
     double quantileImpl(double p) const override;

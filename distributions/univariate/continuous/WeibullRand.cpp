@@ -63,7 +63,7 @@ double WeibullRand::S(const double & x) const
 
 double WeibullRand::Variate() const
 {
-    return lambda * std::pow(ExponentialRand::StandardVariate(), kInv);
+    return lambda * std::pow(ExponentialRand::StandardVariate(localRandGenerator), kInv);
 }
 
 double WeibullRand::Mean() const

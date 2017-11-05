@@ -42,7 +42,7 @@ public:
     double F(const double & x) const override;
     double S(const double & x) const override;
     double Variate() const override;
-    static double StandardVariate();
+    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
 
     double Mean() const override;
     double Variance() const override;

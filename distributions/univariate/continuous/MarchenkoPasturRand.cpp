@@ -151,7 +151,7 @@ double MarchenkoPasturRand::variateForTinyRatio() const
     int iter = 0;
     do {
         double X = BetaRV.Variate();
-        double U = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
         if (U < M / X)
             return X;
     } while (++iter <= MAX_ITER_REJECTION);
@@ -163,7 +163,7 @@ double MarchenkoPasturRand::variateForSmallRatio() const
     int iter = 0;
     do {
         double X = BetaRV.Variate();
-        double U = UniformRand::StandardVariate();
+        double U = UniformRand::StandardVariate(localRandGenerator);
         double ratio = M * (1.0 - a / X);
         if (U * U < ratio)
             return X;
@@ -173,12 +173,12 @@ double MarchenkoPasturRand::variateForSmallRatio() const
 
 double MarchenkoPasturRand::variateForLargeRatio() const
 {
-    return (UniformRand::StandardVariate() > 1.0 / lambda) ? 0.0 : variateForSmallRatio();
+    return (UniformRand::StandardVariate(localRandGenerator) > 1.0 / lambda) ? 0.0 : variateForSmallRatio();
 }
 
 double MarchenkoPasturRand::variateForHugeRatio() const
 {
-    return (UniformRand::StandardVariate() > 1.0 / lambda) ? 0.0 : variateForTinyRatio();
+    return (UniformRand::StandardVariate(localRandGenerator) > 1.0 / lambda) ? 0.0 : variateForTinyRatio();
 }
 
 double MarchenkoPasturRand::Variate() const

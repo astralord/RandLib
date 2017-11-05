@@ -51,7 +51,7 @@ private:
 
 public:
     int Variate() const override;
-    static int Variate(double rate);
+    static int Variate(double rate, RandGenerator &randGenerator = staticRandGenerator);
     void Sample(std::vector<int> &outputData) const;
 
     double Mean() const override;

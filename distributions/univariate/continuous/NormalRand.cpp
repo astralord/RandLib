@@ -75,17 +75,17 @@ double NormalRand::S(const double & x) const
 
 double NormalRand::Variate() const
 {
-    return mu + sigma * StandardVariate();
+    return mu + sigma * StandardVariate(localRandGenerator);
 }
 
-double NormalRand::StandardVariate()
+double NormalRand::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm by George Marsaglia using 256 strips
     int iter = 0;
     do {
         unsigned long long B = randGenerator.Variate();
         int stairId = B & 255;
-        double x = UniformRand::StandardVariate() * stairWidth[stairId]; /// Get horizontal coordinate
+        double x = UniformRand::StandardVariate(randGenerator) * stairWidth[stairId]; /// Get horizontal coordinate
         if (x < stairWidth[stairId + 1])
             return ((signed)B > 0) ? x : -x;
         if (stairId == 0) /// handle the base layer
@@ -93,21 +93,21 @@ double NormalRand::StandardVariate()
             static thread_local double z = -1;
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::StandardVariate() / x1;
+                x = ExponentialRand::StandardVariate(randGenerator) / x1;
                 z -= 0.5 * x * x;
             }
             if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
-                    x = ExponentialRand::StandardVariate() / x1;
-                    z = ExponentialRand::StandardVariate() - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
+                    x = ExponentialRand::StandardVariate(randGenerator) / x1;
+                    z = ExponentialRand::StandardVariate(randGenerator) - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
             x += x1;
             return ((signed)B > 0) ? x : -x;
         }
         /// handle the wedges of other stairs
-        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId]) < std::exp(-.5 * x * x))
+        if (UniformRand::Variate(stairHeight[stairId - 1], stairHeight[stairId], randGenerator) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
