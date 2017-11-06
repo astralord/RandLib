@@ -86,11 +86,11 @@ IntPair TrinomialRand::Variate() const
 {
     if (X.GetProbability() > Y.GetProbability()) {
         int x = X.Variate();
-        int y = BinomialRand::Variate(n - x, p2_1mp1);
+        int y = BinomialDistribution::Variate(n - x, p2_1mp1, localRandGenerator);
         return IntPair(x, y);
     }
     int y = Y.Variate();
-    int x = BinomialRand::Variate(n - y, p1_1mp2);
+    int x = BinomialDistribution::Variate(n - y, p1_1mp2, localRandGenerator);
     return IntPair(x, y);
 }
 

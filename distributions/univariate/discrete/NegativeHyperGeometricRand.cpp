@@ -80,7 +80,7 @@ int NegativeHyperGeometricRand::Variate() const
     int num = 0;
     while (successesNum < m) {
         ++num;
-        if (BernoulliRand::Variate(p) && ++successesNum == num - N + M)
+        if (BernoulliRand::Variate(p, localRandGenerator) && ++successesNum == num - N + M)
             return N - M;
         p = M - successesNum;
         p /= N - num;

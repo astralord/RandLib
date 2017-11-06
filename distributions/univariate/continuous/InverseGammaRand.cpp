@@ -60,6 +60,11 @@ void InverseGammaRand::Sample(std::vector<double> &outputData) const
         var = 1.0 / var;
 }
 
+void InverseGammaRand::Reseed(unsigned long seed) const
+{
+    X.Reseed(seed);
+}
+
 double InverseGammaRand::Mean() const
 {
     return (alpha > 1) ? beta / (alpha - 1) : INFINITY;

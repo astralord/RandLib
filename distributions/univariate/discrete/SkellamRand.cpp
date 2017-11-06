@@ -62,6 +62,12 @@ void SkellamRand::Sample(std::vector<int> &outputData) const
         var -= Y.Variate();
 }
 
+void SkellamRand::Reseed(unsigned long seed) const
+{
+    X.Reseed(seed);
+    Y.Reseed(seed + 1);
+}
+
 double SkellamRand::Mean() const
 {
     return mu1 - mu2;

@@ -70,6 +70,11 @@ double ParetoRand::variateForGeneralAlpha(double shape, RandGenerator &randGener
     return std::exp(ExponentialRand::StandardVariate(randGenerator) / shape);
 }
 
+double ParetoRand::Variate() const
+{
+    return sigma * StandardVariate(alpha, localRandGenerator);
+}
+
 double ParetoRand::StandardVariate(double shape, RandGenerator &randGenerator)
 {
     if (RandMath::areClose(shape, 1.0))
@@ -77,16 +82,6 @@ double ParetoRand::StandardVariate(double shape, RandGenerator &randGenerator)
     if (RandMath::areClose(shape, 2.0))
         return variateForAlphaTwo(randGenerator);
     return variateForGeneralAlpha(shape, randGenerator);
-}
-
-double ParetoRand::Variate(double shape, double scale, RandGenerator &randGenerator)
-{
-    return (shape <= 0.0 || scale <= 0.0) ? NAN : scale * StandardVariate(shape, randGenerator);
-}
-
-double ParetoRand::Variate() const
-{
-    return sigma * StandardVariate(alpha, localRandGenerator);
 }
 
 void ParetoRand::Sample(std::vector<double> &outputData) const

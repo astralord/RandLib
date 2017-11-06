@@ -41,6 +41,7 @@ public:
     double S(const int & k) const override;
     int Variate() const override;
     void Sample(std::vector<int> &outputData) const override;
+    void Reseed(unsigned long seed) const override;
 
     double Mean() const override;
     double Variance() const override;

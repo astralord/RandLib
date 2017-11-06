@@ -21,10 +21,10 @@ protected:
      */
     static unsigned long mix(unsigned long a, unsigned long b, unsigned long c);
     /**
-     * @fn getSeed
-     * @return
+     * @fn getRandomSeed
+     * @return seed as a mix of time and thread id
      */
-    static unsigned long getSeed();
+    static unsigned long getRandomSeed();
 
 public:
     RandEngine() {}
@@ -46,7 +46,7 @@ class RANDLIBSHARED_EXPORT JKissRandEngine : public RandEngine
     unsigned int Z{};
 
 public:
-    JKissRandEngine() { this->Reseed(getSeed()); }
+    JKissRandEngine() { this->Reseed(getRandomSeed()); }
     unsigned long long MinValue() const { return 0; }
     unsigned long long MaxValue() const { return 4294967295UL; }
     void Reseed(unsigned long seed);
@@ -66,7 +66,7 @@ class RANDLIBSHARED_EXPORT JLKiss64RandEngine : public RandEngine
     unsigned int C2{};
 
 public:
-    JLKiss64RandEngine() { this->Reseed(getSeed()); }
+    JLKiss64RandEngine() { this->Reseed(getRandomSeed()); }
     unsigned long long MinValue() const { return 0; }
     unsigned long long MaxValue() const { return 18446744073709551615ULL; }
     void Reseed(unsigned long seed);
@@ -83,7 +83,7 @@ class RANDLIBSHARED_EXPORT PCGRandEngine : public RandEngine
     unsigned long long inc{};
 
 public:
-    PCGRandEngine() { this->Reseed(getSeed()); }
+    PCGRandEngine() { this->Reseed(getRandomSeed()); }
     unsigned long long MinValue() const { return 0; }
     unsigned long long MaxValue() const { return 4294967295UL; }
     void Reseed(unsigned long seed);
@@ -129,7 +129,7 @@ public:
 #ifdef JLKISS64RAND
 typedef BasicRandGenerator<JLKiss64RandEngine> RandGenerator;
 #else
-typedef BasicRandGenerator<PCGRandEngine> RandGenerator;
+typedef BasicRandGenerator<JKissRandEngine> RandGenerator;
 #endif
 
 

@@ -2,6 +2,7 @@
 #define BIVARIATEDISTRIBUTION_H
 
 #include "../ProbabilityDistribution.h"
+#include "../univariate/UnivariateDistribution.h"
 
 /**
  * @brief The BivariateDistribution class <BR>
@@ -19,6 +20,8 @@ protected:
 public:
     T MinValue() const { return T(X.MinValue(), Y.MinValue()); }
     T MaxValue() const { return T(X.MaxValue(), Y.MaxValue()); }
+
+    void Reseed(unsigned long seed) const override;
 
     virtual DoublePair Mean() const final;
     virtual DoubleTriplet Covariance() const final;

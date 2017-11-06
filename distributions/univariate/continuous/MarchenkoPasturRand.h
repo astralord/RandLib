@@ -3,7 +3,6 @@
 
 #include "ContinuousDistribution.h"
 #include "BetaRand.h"
-
 /**
  * @brief The MarchenkoPasturRand class <BR>
  * Marchenko-Pastur distribution
@@ -12,11 +11,13 @@
  */
 class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution
 {
-    double lambda = 1; ///< λ
-    double sigmaSq = 1; ///< σ^2
-    double a = 0, b = 4;
+    double lambda = 1; ///< ratio index λ
+    double sigmaSq = 1; ///< scale parameter σ^2
+    double a = 0; ///< minimal value (apart from 0 if λ > 1)
+    double b = 4; ///< maximal value
     double logLambda = 0; /// < log(λ)
-    BetaRand BetaRV{0.5, 1.5, 0, 4};
+
+    BetaRand BetaRV{0.5, 1.5, 0, 4}; ///< beta-distributed rv for generator
     double M = 1.0; ///< rejection constant
 
 public:
@@ -69,6 +70,7 @@ private:
 public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
+    void Reseed(unsigned long seed) const override;
 
 private:
     double Moment(int n) const;

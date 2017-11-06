@@ -54,10 +54,6 @@ public:
     double F(const double & x) const override;
     double S(const double & x) const override;
     double Variate() const override;
-    /**
-     * @fn StandardVariate
-     * @return variate from standard normal distribution
-     */
     static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
     void Sample(std::vector<double> &outputData) const override;
 

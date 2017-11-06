@@ -65,6 +65,12 @@ void NakagamiDistribution::Sample(std::vector<double> &outputData) const
         var = std::sqrt(var);
 }
 
+void NakagamiDistribution::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    Y.Reseed(seed + 1);
+}
+
 double NakagamiDistribution::Mean() const
 {
     double y = lgammaShapeRatio;

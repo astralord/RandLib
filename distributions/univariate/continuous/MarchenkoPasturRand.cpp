@@ -222,6 +222,12 @@ void MarchenkoPasturRand::Sample(std::vector<double> &outputData) const
     }
 }
 
+void MarchenkoPasturRand::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    BetaRV.Reseed(seed + 1);
+}
+
 double MarchenkoPasturRand::Moment(int n) const
 {
     if (n < 0)

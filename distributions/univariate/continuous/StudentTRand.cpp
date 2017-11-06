@@ -149,6 +149,12 @@ void StudentTRand::Sample(std::vector<double> &outputData) const
     }
 }
 
+void StudentTRand::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    Y.Reseed(seed + 1);
+}
+
 double StudentTRand::Mean() const
 {
     return (nu > 1) ? mu : NAN;

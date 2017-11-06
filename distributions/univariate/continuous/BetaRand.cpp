@@ -356,6 +356,13 @@ void BetaDistribution::Sample(std::vector<double> &outputData) const
         var = a + bma * var;
 }
 
+void BetaDistribution::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    GammaRV1.Reseed(seed + 1);
+    GammaRV2.Reseed(seed + 2);
+}
+
 double BetaDistribution::Mean() const
 {
     double mean = alpha / (alpha + beta);

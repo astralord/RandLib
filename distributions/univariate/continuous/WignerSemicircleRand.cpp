@@ -57,6 +57,11 @@ double WignerSemicircleRand::Variate() const
     return R * x;
 }
 
+void WignerSemicircleRand::Reseed(unsigned long seed) const
+{
+    X.Reseed(seed);
+}
+
 double WignerSemicircleRand::Mean() const
 {
     return 0.0;

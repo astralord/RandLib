@@ -36,6 +36,7 @@ public:
     double logP(const int & k) const override;
     double F(const int & k) const override;
     int Variate() const override;
+    void Reseed(unsigned long seed) const override;
 
     double Mean() const override;
     double Variance() const override;

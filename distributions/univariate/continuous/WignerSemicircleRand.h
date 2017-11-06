@@ -35,6 +35,7 @@ public:
     double logf(const double & x) const override;
     double F(const double & x) const override;
     double Variate() const override;
+    void Reseed(unsigned long seed) const override;
 
     double Mean() const override;
     double Variance() const override;

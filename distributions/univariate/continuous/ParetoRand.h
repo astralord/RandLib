@@ -45,10 +45,8 @@ private:
     static double variateForGeneralAlpha(double shape, RandGenerator &randGenerator);
 
 public:
-    static double StandardVariate(double shape, RandGenerator &randGenerator = staticRandGenerator);
-    static double Variate(double shape, double scale, RandGenerator &randGenerator = staticRandGenerator);
-
     double Variate() const override;
+    static double StandardVariate(double shape, RandGenerator &randGenerator = staticRandGenerator);
     void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;

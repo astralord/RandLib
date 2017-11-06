@@ -19,6 +19,7 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution
     double pdfCoef = 0; ///< coefficient for faster pdf calculation
 
     GammaRand X{};
+
 public:
     InverseGammaRand(double shape = 1, double rate = 1);
 
@@ -38,6 +39,7 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
+    void Reseed(unsigned long seed) const override;
 
     double Mean() const override;
     double Variance() const override;

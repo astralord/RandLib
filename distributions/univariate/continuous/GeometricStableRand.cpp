@@ -397,6 +397,11 @@ void ShiftedGeometricStableDistribution::Sample(std::vector<double> &outputData)
     }
 }
 
+void ShiftedGeometricStableDistribution::Reseed(unsigned long seed) const
+{
+    Z.Reseed(seed);
+}
+
 double ShiftedGeometricStableDistribution::Mean() const
 {
     if (alpha > 1)

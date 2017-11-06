@@ -77,6 +77,11 @@ void FisherFRand::Sample(std::vector<double> &outputData) const
         var = d2_d1 * var;
 }
 
+void FisherFRand::Reseed(unsigned long seed) const
+{
+    B.Reseed(seed);
+}
+
 double FisherFRand::Mean() const
 {
     return (d2 > 2) ? 1 + 2.0 / (d2 - 2) : INFINITY;

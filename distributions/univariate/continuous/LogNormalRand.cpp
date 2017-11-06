@@ -49,14 +49,19 @@ double LogNormalRand::S(const double & x) const
     return (x > 0.0) ? X.S(std::log(x)) : 1.0;
 }
 
+double LogNormalRand::Variate() const
+{
+    return std::exp(X.Variate());
+}
+
 double LogNormalRand::StandardVariate(RandGenerator &randGenerator)
 {
     return std::exp(NormalRand::StandardVariate(randGenerator));
 }
 
-double LogNormalRand::Variate() const
+void LogNormalRand::Reseed(unsigned long seed) const
 {
-    return std::exp(X.Variate());
+    X.Reseed(seed);
 }
 
 double LogNormalRand::Mean() const

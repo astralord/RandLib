@@ -11,24 +11,11 @@ ProbabilityDistribution<T>::ProbabilityDistribution()
 }
 
 template < typename T >
-void ProbabilityDistribution<T>::Reseed(unsigned long seed)
-{
-    localRandGenerator.Reseed(seed);
-}
-
-template < typename T >
 String ProbabilityDistribution<T>::toStringWithPrecision(const double a_value, const int n) const
 {
     std::ostringstream out;
     out << std::setprecision(n) << a_value;
     return out.str();
-}
-
-template < typename T >
-void ProbabilityDistribution<T>::Sample(std::vector<T> &outputData) const
-{
-    for (T &var : outputData)
-        var = this->Variate();
 }
 
 template < typename T >
@@ -55,6 +42,19 @@ void ProbabilityDistribution<T>::SurvivalFunction(const std::vector<T> &x, std::
         return;
     for (size_t i = 0; i != size; ++i)
         y[i] = this->S(x[i]);
+}
+
+template < typename T >
+void ProbabilityDistribution<T>::Sample(std::vector<T> &outputData) const
+{
+    for (T &var : outputData)
+        var = this->Variate();
+}
+
+template < typename T >
+void ProbabilityDistribution<T>::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
 }
 
 template < typename T >

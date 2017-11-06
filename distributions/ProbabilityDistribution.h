@@ -19,8 +19,6 @@ protected:
 
     mutable RandGenerator localRandGenerator{};
 
-    void Reseed(unsigned long seed);
-
     /**
      * @brief MAX_ITER_REJECTION
      * upper boundary for maximum amount of iterations in rejection methods
@@ -54,18 +52,6 @@ public:
     virtual T MaxValue() const = 0;
 
     /**
-     * @fn Variate()
-     * @return random variable
-     */
-    virtual T Variate() const = 0;
-
-    /**
-     * @fn Sample
-     * @param outputData
-     */
-    virtual void Sample(std::vector<T> &outputData) const;
-
-    /**
      * @fn F
      * @param x
      * @return P(X ≤ x)
@@ -92,6 +78,24 @@ public:
      * @param y output vector: y = P(X > x)
      */
     void SurvivalFunction(const std::vector<T> &x, std::vector<double> &y) const;
+
+    /**
+     * @fn Variate()
+     * @return random variable
+     */
+    virtual T Variate() const = 0;
+
+    /**
+     * @fn Sample
+     * @param outputData
+     */
+    virtual void Sample(std::vector<T> &outputData) const;
+
+    /**
+     * @brief Reseed
+     * @param seed
+     */
+    virtual void Reseed(unsigned long seed) const;
 
 protected:
     enum FIT_ERROR_TYPE {

@@ -98,7 +98,7 @@ NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialDistribution<double>:
 template< typename T >
 int NegativeBinomialDistribution<T>::variateThroughGammaPoisson() const
 {
-    return PoissonRand::Variate(GammaRV.Variate());
+    return PoissonRand::Variate(GammaRV.Variate(), localRandGenerator);
 }
 
 template< >
@@ -179,6 +179,13 @@ void NegativeBinomialDistribution<int>::Sample(std::vector<int> &outputData) con
         for (int &var : outputData)
             var = variateThroughGammaPoisson();
     }
+}
+
+template< typename T >
+void NegativeBinomialDistribution<T>::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    GammaRV.Reseed(seed + 1);
 }
 
 template< typename T >

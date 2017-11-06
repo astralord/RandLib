@@ -125,6 +125,12 @@ void NoncentralChiSquaredRand::Sample(std::vector<double> &outputData) const
     }
 }
 
+void NoncentralChiSquaredRand::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    Y.Reseed(seed + 1);
+}
+
 double NoncentralChiSquaredRand::Mean() const
 {
     return k + lambda;

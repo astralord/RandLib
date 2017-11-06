@@ -82,6 +82,11 @@ double IrwinHallRand::Variate() const
     return sum;
 }
 
+void IrwinHallRand::Reseed(unsigned long seed) const
+{
+    U.Reseed(seed);
+}
+
 double IrwinHallRand::Mean() const
 {
     return 0.5 * n;

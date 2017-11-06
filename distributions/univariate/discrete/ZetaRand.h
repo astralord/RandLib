@@ -18,6 +18,7 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
     double zetaS = M_PI_SQ / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
     double logZetaS = 2 * M_LNPI - M_LN2 - M_LN3;///< ln(ζ(s))
     double b = 0.5; ///< 1 - 2^(1-s)
+
 public:
     explicit ZetaRand(double exponent = 2.0);
     String Name() const override;

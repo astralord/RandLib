@@ -68,6 +68,11 @@ void BetaPrimeRand::Sample(std::vector<double> &outputData) const
         var = var / (1.0 - var);
 }
 
+void BetaPrimeRand::Reseed(unsigned long seed) const
+{
+    B.Reseed(seed);
+}
+
 double BetaPrimeRand::Mean() const
 {
     return (beta > 1) ? alpha / (beta - 1) : INFINITY;

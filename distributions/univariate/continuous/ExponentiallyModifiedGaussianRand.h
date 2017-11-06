@@ -43,6 +43,7 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
     static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    void Reseed(unsigned long seed) const override;
 
     double Mean() const override;
     double Variance() const override;

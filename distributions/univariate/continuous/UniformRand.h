@@ -33,6 +33,7 @@ public:
     double S(const double & x) const override;
     double Variate() const override;
     static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
     double Variance() const override;

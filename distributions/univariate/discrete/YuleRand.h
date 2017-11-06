@@ -37,6 +37,7 @@ public:
     double S(const int & k) const override;
     int Variate() const override;
     static int Variate(double shape, RandGenerator &randGenerator = staticRandGenerator);
+    void Reseed(unsigned long seed) const override;
 
     double Mean() const override;
     double Variance() const override;

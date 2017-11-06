@@ -346,6 +346,12 @@ void BinomialDistribution::Sample(std::vector<int> &outputData) const
     }
 }
 
+void BinomialDistribution::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    G.Reseed(seed);
+}
+
 double BinomialDistribution::Mean() const
 {
     return np;

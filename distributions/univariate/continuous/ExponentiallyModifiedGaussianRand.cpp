@@ -89,6 +89,12 @@ double ExponentiallyModifiedGaussianRand::StandardVariate(RandGenerator &randGen
     return NormalRand::StandardVariate(randGenerator) + ExponentialRand::StandardVariate(randGenerator);
 }
 
+void ExponentiallyModifiedGaussianRand::Reseed(unsigned long seed) const
+{
+    X.Reseed(seed);
+    Y.Reseed(seed + 1);
+}
+
 double ExponentiallyModifiedGaussianRand::Mean() const
 {
     return X.Mean() + Y.Mean();

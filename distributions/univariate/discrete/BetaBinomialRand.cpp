@@ -60,7 +60,13 @@ double BetaBinomialRand::F(const int & k) const
 int BetaBinomialRand::Variate() const
 {
     double p = B.Variate();
-    return BinomialDistribution::Variate(n, p);
+    return BinomialDistribution::Variate(n, p, localRandGenerator);
+}
+
+void BetaBinomialRand::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    B.Reseed(seed + 1);
 }
 
 double BetaBinomialRand::Mean() const

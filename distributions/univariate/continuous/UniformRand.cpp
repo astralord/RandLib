@@ -74,6 +74,12 @@ double UniformRand::StandardVariate(RandGenerator &randGenerator)
 #endif
 }
 
+void UniformRand::Sample(std::vector<double> &outputData) const
+{
+    for (double & var : outputData)
+        var = this->Variate();
+}
+
 double UniformRand::Mean() const
 {
     return 0.5 * (b + a);

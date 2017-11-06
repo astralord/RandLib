@@ -72,6 +72,12 @@ int YuleRand::Variate(double shape, RandGenerator &randGenerator)
     return GeometricRand::Variate(prob, randGenerator) + 1;
 }
 
+void YuleRand::Reseed(unsigned long seed) const
+{
+    localRandGenerator.Reseed(seed);
+    X.Reseed(seed + 1);
+}
+
 double YuleRand::Mean() const
 {
     return (ro <= 1) ? INFINITY : ro / (ro - 1);
