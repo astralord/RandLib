@@ -507,8 +507,8 @@ String BetaRand::Name() const
                    + toStringWithPrecision(MaxValue()) + ")";
 }
 
-constexpr char UniformRand::ALPHA_ZERO[];
-constexpr char UniformRand::BETA_ZERO[];
+constexpr char BetaRand::ALPHA_ZERO[];
+constexpr char BetaRand::BETA_ZERO[];
 
 void BetaRand::FitAlpha(const std::vector<double> &sample)
 {
