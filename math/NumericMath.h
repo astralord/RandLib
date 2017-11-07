@@ -25,8 +25,9 @@ double integral(const std::function<double (double)> &funPtr, double a, double b
  * Newton's root-finding procedure,
  * using first and second derivatives
  * @param funPtr mapping x |-> (f(x), f'(x), f''(x))
- * @param root starting point and such x that f(x) = 0
- * @param epsilon tolerance
+ * @param root starting point in input and such x that f(x) = 0 in output
+ * @param funTol function tolerance
+ * @param stepTol step tolerance
  * @return true if success, false otherwise
  */
 bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root, double funTol = 1e-10, double stepTol = 1e-6);
@@ -36,11 +37,27 @@ bool findRoot(const std::function<DoubleTriplet (double)> &funPtr, double & root
  * Newton's root-finding procedure,
  * using first derivative
  * @param funPtr mapping x |-> (f(x), f'(x))
- * @param root starting point and such x that f(x) = 0
- * @param epsilon tolerance
+ * @param root starting point in input and such x that f(x) = 0 in output
+ * @param funTol function tolerance
+ * @param stepTol step tolerance
  * @return true if success, false otherwise
  */
 bool findRoot(const std::function<DoublePair (double)> &funPtr, double & root, double funTol = 1e-10, double stepTol = 1e-6);
+
+/**
+ * @fn findRoot
+ * Newton's root-finding procedure
+ * for 2 functions of 2 parameters,
+ * using Jacobian matrix
+ * @param funPtr mapping x, y |-> (f(x, y), g(x, y))
+ * @param gradPtr x, y |-> (f_x(x, y), f_y(x, y), g_x(x, y)), g_y(x, y))
+ * @param root starting point in input and such x that f(x) = 0 in output
+ * @param funTol function tolerance
+ * @param stepTol step tolerance
+ * @return true if success, false otherwise
+ */
+bool findRoot(const std::function<DoublePair (DoublePair)> &funPtr, const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
+              DoublePair & root, double funTol = 1e-10, double stepTol = 1e-6);
 
 /**
  * @fn findRoot
