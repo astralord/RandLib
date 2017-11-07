@@ -507,6 +507,9 @@ String BetaRand::Name() const
                    + toStringWithPrecision(MaxValue()) + ")";
 }
 
+constexpr char UniformRand::ALPHA_ZERO[];
+constexpr char UniformRand::BETA_ZERO[];
+
 void BetaRand::FitAlpha(const std::vector<double> &sample)
 {
     if (!allElementsAreNotSmallerThan(a, sample))
@@ -523,7 +526,7 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
             lnG += std::log(x);
         }
         if (!std::isfinite(lnG))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
         lnG /= N;
         SetShapes(-1.0 / lnG, beta);
     }
@@ -536,9 +539,9 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
             lnG1m += std::log1p(-x);
         }
         if (!std::isfinite(lnG))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
         if (!std::isfinite(lnG1m))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
         lnG /= N;
         lnG1m /= N;
         /// get initial value for shape by method of moments
@@ -576,7 +579,7 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
             lnG1m += std::log1p(-x);
         }
         if (!std::isfinite(lnG1m))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
         lnG1m /= N;
         SetShapes(alpha, -1.0 / lnG1m);
     }
@@ -589,9 +592,9 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
             lnG1m += std::log1p(-x);
         }
         if (!std::isfinite(lnG))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
         if (!std::isfinite(lnG1m))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
         lnG /= N;
         lnG1m /= N;
         /// get initial value for shape by method of moments
@@ -628,9 +631,9 @@ void BetaRand::FitShapes(const std::vector<double> &sample)
         lnG1m += std::log1p(-x);
     }
     if (!std::isfinite(lnG))
-        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
     if (!std::isfinite(lnG1m))
-        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
     lnG /= N;
     lnG1m /= N;
 

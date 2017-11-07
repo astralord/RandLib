@@ -214,6 +214,9 @@ public:
     using BetaDistribution::SetShapes;
     using BetaDistribution::SetSupport;
 
+    static constexpr char ALPHA_ZERO[] = "Possibly one or more elements of the sample coincide with the lower boundary a.";
+    static constexpr char BETA_ZERO[] = "Possibly one or more elements of the sample coincide with the upper boundary b.";
+
     /**
      * @brief FitAlpha
      * set α, estimated via maximum likelihood
@@ -241,10 +244,10 @@ public:
  * @brief The ArcsineRand class <BR>
  * Arcsine distribution
  *
- * Notation: X ~ Arcsine(α)
+ * Notation: X ~ Arcsine(α, a, b)
  * 
  * Related distributions: <BR>
- * X ~ B(1 - α, α, 0, 1)
+ * X ~ B(1 - α, α, a, b)
  */
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
 {
