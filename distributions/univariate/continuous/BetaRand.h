@@ -249,6 +249,13 @@ public:
 
     void SetShape(double shape);
     inline double GetShape() const { return beta; }
+
+    /**
+     * @brief FitShape
+     * set α, estimated via maximum likelihood
+     * @param sample
+     */
+    void FitShape(const std::vector<double> &sample);
 };
 
 

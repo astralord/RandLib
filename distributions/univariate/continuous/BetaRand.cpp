@@ -563,7 +563,7 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
 
     int N = sample.size();
     if (alpha == 1.0) {
-        /// for β = 1 we have explicit expression for estimator
+        /// for α = 1 we have explicit expression for estimator
         double lnG1m = 0;
         for (double var : sample) {
             double x = (var - a) * bmaInv;
@@ -611,6 +611,28 @@ String ArcsineRand::Name() const
 void ArcsineRand::SetShape(double shape)
 {
     BetaDistribution::SetShapes(1.0 - shape, shape);
+}
+
+void ArcsineRand::FitShape(const std::vector<double> &sample)
+{
+    if (!allElementsAreNotLessThan(a, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+    if (!allElementsAreNotBiggerThan(b, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+
+    int N = sample.size();
+    double lnG = 0, lnG1m = 0;
+    for (double var : sample) {
+        double x = (var - a) * bmaInv;
+        lnG += std::log(x);
+        lnG1m += std::log1p(-x);
+    }
+    lnG /= N;
+    lnG1m /= N;
+
+    double shape = M_PI / (lnG1m - lnG);
+    shape = -M_1_PI * RandMath::atan(shape);
+    SetShape(shape > 0 ? shape : shape + 1);
 }
 
 
