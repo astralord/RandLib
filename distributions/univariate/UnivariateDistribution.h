@@ -205,17 +205,17 @@ protected:
      * @fn allElementsAreNotBiggerThan
      * @param value
      * @param sample
-     * @return true if all elements in sample are not bigger than value
+     * @return true if all elements in sample are not bigger than given value
      */
     static bool allElementsAreNotBiggerThan(T value, const std::vector<T> &sample);
 
     /**
-     * @fn allElementsAreNotLessThan
+     * @fn allElementsAreNotSmallerThan
      * @param value
      * @param sample
-     * @return true if all elements in sample are not less than value
+     * @return true if all elements in sample are not smaller than given value
      */
-    static bool allElementsAreNotLessThan(T value, const std::vector<T> &sample);
+    static bool allElementsAreNotSmallerThan(T value, const std::vector<T> &sample);
 
     /**
      * @fn allElementsAreNonNegative

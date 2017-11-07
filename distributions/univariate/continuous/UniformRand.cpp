@@ -148,7 +148,7 @@ void UniformRand::FitMinimum(const std::vector<double> &sample, bool unbiased)
         int n = sample.size();
         /// E[min] = b - n / (n + 1) * (b - a)
         double minVarAdj = (minVar * (n + 1) - b) / n;
-        if (!allElementsAreNotLessThan(minVarAdj, sample))
+        if (!allElementsAreNotSmallerThan(minVarAdj, sample))
             throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
         SetSupport(minVarAdj, b);
     }
@@ -159,7 +159,7 @@ void UniformRand::FitMinimum(const std::vector<double> &sample, bool unbiased)
 
 void UniformRand::FitMaximum(const std::vector<double> &sample, bool unbiased)
 {
-    if (!allElementsAreNotLessThan(a, sample))
+    if (!allElementsAreNotSmallerThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     double maxVar = *std::max_element(sample.begin(), sample.end());
 
@@ -186,7 +186,7 @@ void UniformRand::Fit(const std::vector<double> &sample, bool unbiased)
         double minVarAdj = (minVar * n - maxVar) / (n - 1);
         /// E[max] = (b - a) * n / (n + 1) + a
         double maxVarAdj = (maxVar * n - minVar) / (n - 1);
-        if (!allElementsAreNotLessThan(minVarAdj, sample))
+        if (!allElementsAreNotSmallerThan(minVarAdj, sample))
             throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
         if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
             throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));

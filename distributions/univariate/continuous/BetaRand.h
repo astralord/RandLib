@@ -227,6 +227,13 @@ public:
      * @param sample
      */
     void FitBeta(const std::vector<double> &sample);
+
+    /**
+     * @brief FitShapes
+     * set α and β, estimated via maximum likelihood
+     * @param sample
+     */
+    void FitShapes(const std::vector<double> &sample);
 };
 
 

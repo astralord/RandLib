@@ -195,7 +195,7 @@ bool UnivariateDistribution<T>::allElementsAreNotBiggerThan(T value, const std::
 }
 
 template< typename T >
-bool UnivariateDistribution<T>::allElementsAreNotLessThan(T value, const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsAreNotSmallerThan(T value, const std::vector<T> &sample)
 {
     for (const T & var : sample) {
         if (var < value)
@@ -207,7 +207,7 @@ bool UnivariateDistribution<T>::allElementsAreNotLessThan(T value, const std::ve
 template< typename T >
 bool UnivariateDistribution<T>::allElementsAreNonNegative(const std::vector<T> &sample)
 {
-    return allElementsAreNotLessThan(0, sample);
+    return allElementsAreNotSmallerThan(0, sample);
 }
 
 template< typename T >

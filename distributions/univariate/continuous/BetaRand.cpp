@@ -509,7 +509,7 @@ String BetaRand::Name() const
 
 void BetaRand::FitAlpha(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThan(a, sample))
+    if (!allElementsAreNotSmallerThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
@@ -522,6 +522,8 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
             double x = (var - a) * bmaInv;
             lnG += std::log(x);
         }
+        if (!std::isfinite(lnG))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
         lnG /= N;
         SetShapes(-1.0 / lnG, beta);
     }
@@ -533,6 +535,10 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
             lnG += std::log(x);
             lnG1m += std::log1p(-x);
         }
+        if (!std::isfinite(lnG))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+        if (!std::isfinite(lnG1m))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
         lnG /= N;
         lnG1m /= N;
         /// get initial value for shape by method of moments
@@ -549,14 +555,14 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
             double second = RandMath::trigamma(x);
             return DoublePair(first, second);
         }, shape))
-            throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+            throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure."));
         SetShapes(shape, beta);
     }
 }
 
 void BetaRand::FitBeta(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThan(a, sample))
+    if (!allElementsAreNotSmallerThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
@@ -569,6 +575,8 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
             double x = (var - a) * bmaInv;
             lnG1m += std::log1p(-x);
         }
+        if (!std::isfinite(lnG1m))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
         lnG1m /= N;
         SetShapes(alpha, -1.0 / lnG1m);
     }
@@ -580,6 +588,10 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
             lnG += std::log(x);
             lnG1m += std::log1p(-x);
         }
+        if (!std::isfinite(lnG))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+        if (!std::isfinite(lnG1m))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
         lnG /= N;
         lnG1m /= N;
         /// get initial value for shape by method of moments
@@ -596,9 +608,66 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
             double second = RandMath::trigamma(x);
             return DoublePair(first, second);
         }, shape))
-            throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+            throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure."));
         SetShapes(alpha, shape);
     }
+}
+
+void BetaRand::FitShapes(const std::vector<double> &sample)
+{
+    if (!allElementsAreNotSmallerThan(a, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+    if (!allElementsAreNotBiggerThan(b, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+
+    int N = sample.size();
+    double lnG = 0, lnG1m = 0;
+    for (double var : sample) {
+        double x = (var - a) * bmaInv;
+        lnG += std::log(x);
+        lnG1m += std::log1p(-x);
+    }
+    if (!std::isfinite(lnG))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+    if (!std::isfinite(lnG1m))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
+    lnG /= N;
+    lnG1m /= N;
+
+    /// get initial values for shapes by method of moments
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    double mean = (stats.first - a) * bmaInv;
+    double var = stats.second * bmaInv * bmaInv;
+    double temp = mean * (1.0 - mean) / var - 1.0;
+    double shape1 = 0.001, shape2 = alpha;
+    if (temp > 0) {
+        shape1 = mean * temp;
+        shape2 = (1.0 - mean) * temp;
+    }
+    DoublePair shapes = std::make_pair(shape1, shape2);
+
+    /// run root-finding procedure
+    if (!RandMath::findRoot([lnG, lnG1m] (DoublePair x)
+    {
+        double digammaAlphapBeta = RandMath::digamma(x.first + x.second);
+        double digammaAlpha = RandMath::digamma(x.first);
+        double digammaBeta = RandMath::digamma(x.second);
+        double first = lnG + digammaAlphapBeta - digammaAlpha;
+        double second = lnG1m + digammaAlphapBeta - digammaBeta;
+        return DoublePair(first, second);
+    },
+    [] (DoublePair x)
+    {
+        double trigammaAlphapBeta = RandMath::trigamma(x.first + x.second);
+        double trigammaAlpha = RandMath::trigamma(x.first);
+        double trigammaBeta = RandMath::trigamma(x.second);
+        DoublePair first = std::make_pair(trigammaAlphapBeta - trigammaAlpha, trigammaAlphapBeta);
+        DoublePair second = std::make_pair(trigammaAlphapBeta, trigammaAlphapBeta - trigammaBeta);
+        return std::make_tuple(first, second);
+    },
+    shapes))
+        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure."));
+    SetShapes(shapes.first, shapes.second);
 }
 
 String ArcsineRand::Name() const
@@ -615,7 +684,7 @@ void ArcsineRand::SetShape(double shape)
 
 void ArcsineRand::FitShape(const std::vector<double> &sample)
 {
-    if (!allElementsAreNotLessThan(a, sample))
+    if (!allElementsAreNotSmallerThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
@@ -627,6 +696,10 @@ void ArcsineRand::FitShape(const std::vector<double> &sample)
         lnG += std::log(x);
         lnG1m += std::log1p(-x);
     }
+    if (!std::isfinite(lnG))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+    if (!std::isfinite(lnG1m))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
     lnG /= N;
     lnG1m /= N;
 
