@@ -18,7 +18,7 @@ double UniformRand::f(const double & x) const
 
 double UniformRand::logf(const double & x) const
 {
-    return (x < a || x > b) ? -INFINITY : -logBma;
+    return (x < a || x > b) ? -INFINITY : -logbma;
 }
 
 double UniformRand::F(const double & x) const

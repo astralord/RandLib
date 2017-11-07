@@ -74,7 +74,7 @@ void BetaDistribution::SetSupport(double minValue, double maxValue)
     b = maxValue;
     bma = b - a;
     bmaInv = 1.0 / bma;
-    logBma = std::log(bma);
+    logbma = std::log(bma);
 }
 
 double BetaDistribution::f(const double & x) const
@@ -112,7 +112,7 @@ double BetaDistribution::logf(const double & x) const
     }
     double y = (alpha - 1) * std::log(xSt);
     y += (beta - 1) * std::log1p(-xSt);
-    return y - logBetaFun - logBma;
+    return y - logBetaFun - logbma;
 }
 
 double BetaDistribution::F(const double & x) const
@@ -507,30 +507,98 @@ String BetaRand::Name() const
                    + toStringWithPrecision(MaxValue()) + ")";
 }
 
-void BetaRand::FitAlphaMM(const std::vector<double> &sample)
+void BetaRand::FitAlpha(const std::vector<double> &sample)
 {
     if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    double mean = GetSampleMean(sample);
-    double shape = mean - a;
-    shape /= b - mean;
-    shape *= beta;
-    SetShapes(shape, beta);
+
+    int N = sample.size();
+    if (beta == 1.0) {
+        /// for β = 1 we have explicit expression for estimator
+        double lnG = 0;
+        for (double var : sample) {
+            double x = (var - a) * bmaInv;
+            lnG += std::log(x);
+        }
+        lnG /= N;
+        SetShapes(-1.0 / lnG, beta);
+    }
+    else {
+        /// change to logarithmic scale
+        double lnG = 0, lnG1m = 0;
+        for (double var : sample) {
+            double x = (var - a) * bmaInv;
+            lnG += std::log(x);
+            lnG1m += std::log1p(-x);
+        }
+        lnG /= N;
+        lnG1m /= N;
+        /// get initial value for shape by method of moments
+        double mean = GetSampleMean(sample);
+        double shape = mean - a;
+        shape /= b - mean;
+        shape *= beta;
+        double diff = lnG - lnG1m;
+        double digammaBeta = RandMath::digamma(beta);
+        /// run root-finding procedure
+        if (!RandMath::findRoot([diff, digammaBeta] (double x)
+        {
+            double first = RandMath::digamma(x) - diff - digammaBeta;
+            double second = RandMath::trigamma(x);
+            return DoublePair(first, second);
+        }, shape))
+            throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        SetShapes(shape, beta);
+    }
 }
 
-void BetaRand::FitBetaMM(const std::vector<double> &sample)
+void BetaRand::FitBeta(const std::vector<double> &sample)
 {
     if (!allElementsAreNotLessThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
-    double mean = GetSampleMean(sample);
-    double shape = b - mean;
-    shape /= mean - a;
-    shape *= alpha;
-    SetShapes(alpha, shape);
+
+    int N = sample.size();
+    if (alpha == 1.0) {
+        /// for β = 1 we have explicit expression for estimator
+        double lnG1m = 0;
+        for (double var : sample) {
+            double x = (var - a) * bmaInv;
+            lnG1m += std::log1p(-x);
+        }
+        lnG1m /= N;
+        SetShapes(alpha, -1.0 / lnG1m);
+    }
+    else {
+        /// change to logarithmic scale
+        double lnG = 0, lnG1m = 0;
+        for (double var : sample) {
+            double x = (var - a) * bmaInv;
+            lnG += std::log(x);
+            lnG1m += std::log1p(-x);
+        }
+        lnG /= N;
+        lnG1m /= N;
+        /// get initial value for shape by method of moments
+        double mean = GetSampleMean(sample);
+        double shape = b - mean;
+        shape /= mean - a;
+        shape *= alpha;
+        double diff = lnG - lnG1m;
+        double digammaAlpha = RandMath::digamma(alpha);
+        /// run root-finding procedure
+        if (!RandMath::findRoot([diff, digammaAlpha] (double x)
+        {
+            double first = RandMath::digamma(x) + diff - digammaAlpha;
+            double second = RandMath::trigamma(x);
+            return DoublePair(first, second);
+        }, shape))
+            throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        SetShapes(alpha, shape);
+    }
 }
 
 String ArcsineRand::Name() const

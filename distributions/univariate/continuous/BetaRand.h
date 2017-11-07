@@ -28,7 +28,7 @@ protected:
     double b = 1; ///< max bound
     double bma = 1; ///< b-a
     double bmaInv = 1; ///< 1/(b-a)
-    double logBma = 0; ///< log(b-a)
+    double logbma = 0; ///< log(b-a)
 
     GammaRand GammaRV1{}, GammaRV2{};
 
@@ -215,17 +215,18 @@ public:
     using BetaDistribution::SetSupport;
 
     /**
-     * @fn FitAlphaMM
-     * set α, estimated via method of moments
+     * @brief FitAlpha
+     * set α, estimated via maximum likelihood
      * @param sample
      */
-    void FitAlphaMM(const std::vector<double> &sample);
+    void FitAlpha(const std::vector<double> &sample);
+
     /**
-     * @fn FitBetaMM
-     * set β, estimated via method of moments
+     * @brief FitBeta
+     * set β, estimated via maximum likelihood
      * @param sample
      */
-    void FitBetaMM(const std::vector<double> &sample);
+    void FitBeta(const std::vector<double> &sample);
 };
 
 
@@ -243,6 +244,9 @@ class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution
 public:
     ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1) : BetaDistribution(1.0 - shape, shape, minValue, maxValue) {}
     String Name() const override;
+
+    using BetaDistribution::SetSupport;
+
     void SetShape(double shape);
     inline double GetShape() const { return beta; }
 };
