@@ -52,9 +52,6 @@ private:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
 
-    double logAverage(const std::vector<double> &sample);
-    double logVariance(const std::vector<double> &sample, double mu);
-
 public:
     /// Maximum-likelihod estimation
     void FitLocation(const std::vector<double> &sample);

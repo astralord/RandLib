@@ -240,6 +240,15 @@ double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
 }
 
 template< typename T >
+double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
+{
+    long double sum = 0.0;
+    for (const T & var : sample)
+        sum += std::log(var);
+    return sum / sample.size();
+}
+
+template< typename T >
 double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
 {
     long double sum = 0.0l;
@@ -251,15 +260,42 @@ double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample
 }
 
 template< typename T >
+double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sample, double logMean)
+{
+    long double sum = 0.0l;
+    for (const T & var : sample) {
+        double temp = std::log(var) - logMean;
+        sum += temp * temp;
+    }
+    return sum / sample.size();
+}
+
+template< typename T >
 DoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
 {
     /// Welford's stable method
     long double m = 0.0l, v = 0.0l;
-    size_t n = sample.size();
-    for (size_t i = 0; i < n; ++i) {
-        long double diff = sample[i] - m;
+    int n = sample.size();
+    for (int i = 0; i < n; ++i) {
+        double x = sample[i];
+        double diff = x - m;
         m += diff / (i + 1);
-        v += diff * (sample[i] - m);
+        v += diff * (x - m);
+    }
+    return std::make_pair(m, v / n);
+}
+
+template< typename T >
+DoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(const std::vector<T> &sample)
+{
+    /// Welford's stable method
+    long double m = 0.0l, v = 0.0l;
+    int n = sample.size();
+    for (int i = 0; i < n; ++i) {
+        double logX = std::log(sample[i]);
+        double diff = logX - m;
+        m += diff / (i + 1);
+        v += diff * (logX - m);
     }
     return std::make_pair(m, v / n);
 }

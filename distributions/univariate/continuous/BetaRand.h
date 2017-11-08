@@ -214,25 +214,61 @@ public:
     using BetaDistribution::SetShapes;
     using BetaDistribution::SetSupport;
 
+protected:
     static constexpr char ALPHA_ZERO[] = "Possibly one or more elements of the sample coincide with the lower boundary a.";
     static constexpr char BETA_ZERO[] = "Possibly one or more elements of the sample coincide with the upper boundary b.";
 
+public:
+    double GetSampleLog1pMean(const std::vector<double> &sample);
+    double GetSampleLog1mMean(const std::vector<double> &sample);
+
     /**
-     * @brief FitAlpha
+     * @fn FitAlpha
+     * set α, estimated via maximum likelihood,
+     * using sufficient statistics instead of the whole sample
+     * @param lnG sample average of ln(X)
+     * @param lnG1m sample average of ln(1-X)
+     * @param mean sample average
+     */
+    void FitAlpha(double lnG, double lnG1m, double mean);
+
+    /**
+     * @fn FitAlpha
      * set α, estimated via maximum likelihood
      * @param sample
      */
     void FitAlpha(const std::vector<double> &sample);
 
     /**
-     * @brief FitBeta
+     * @fn FitBeta
+     * set β, estimated via maximum likelihood,
+     * using sufficient statistics instead of the whole sample
+     * @param lnG sample average of ln(X)
+     * @param lnG1m sample average of ln(1-X)
+     * @param mean sample average
+     */
+    void FitBeta(double lnG, double lnG1m, double mean);
+
+    /**
+     * @fn FitBeta
      * set β, estimated via maximum likelihood
      * @param sample
      */
     void FitBeta(const std::vector<double> &sample);
 
     /**
-     * @brief FitShapes
+     * @fn FitShapes
+     * set α and β, estimated via maximum likelihood,
+     * using sufficient statistics instead of the whole sample
+     * @param lnG sample average of ln(X)
+     * @param lnG1m sample average of ln(1-X)
+     * @param mean sample average
+     * @param variance sample variance
+     */
+    void FitShapes(double lnG, double lnG1m, double mean, double variance);
+
+    /**
+     * @fn FitShapes
      * set α and β, estimated via maximum likelihood
      * @param sample
      */
@@ -259,6 +295,15 @@ public:
 
     void SetShape(double shape);
     inline double GetShape() const { return beta; }
+
+    /**
+     * @brief FitShape
+     * set α and β, estimated via maximum likelihood,
+     * using sufficient statistics instead of the whole sample
+     * @param lnG average of all ln(X)
+     * @param lnG1m average of all ln(1-X)
+     */
+    void FitShape(double lnG, double lnG1m);
 
     /**
      * @brief FitShape

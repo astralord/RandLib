@@ -247,19 +247,41 @@ public:
     static double GetSampleMean(const std::vector<T> &sample);
 
     /**
+     * @fn GetSampleLogMean
+     * @param sample
+     * @return arithmetic log-average
+     */
+    static double GetSampleLogMean(const std::vector<T> &sample);
+
+    /**
      * @fn GetSampleVariance
      * @param sample
-     * @param known mean
+     * @param mean known mean value
      * @return sample second central moment
      */
     static double GetSampleVariance(const std::vector<T> &sample, double mean);
 
     /**
-     * @brief GetSampleMeanAndVariance
+     * @fn GetSampleLogVariance
+     * @param sample
+     * @param logMean known log-mean value
+     * @return sample log-variance
+     */
+    static double GetSampleLogVariance(const std::vector<T> &sample, double logMean);
+
+    /**
+     * @fn GetSampleMeanAndVariance
      * @param sample
      * @return sample mean and variance
      */
     static DoublePair GetSampleMeanAndVariance(const std::vector<T> &sample);
+
+    /**
+     * @fn GetSampleLogMeanAndVariance
+     * @param sample
+     * @return sample log-mean and log-variance
+     */
+    static DoublePair GetSampleLogMeanAndVariance(const std::vector<T> &sample);
 
     /**
      * @brief GetSampleStatistics

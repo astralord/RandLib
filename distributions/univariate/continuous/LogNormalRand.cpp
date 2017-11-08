@@ -110,33 +110,12 @@ double LogNormalRand::ExcessKurtosis() const
     return a + 2 * b + 3 * c - 6;
 }
 
-double LogNormalRand::logAverage(const std::vector<double> &sample)
-{
-    size_t n = sample.size();
-    long double logSum = 0.0L;
-    for (double var : sample) {
-        logSum += std::log(var);
-    }
-    return logSum / n;
-}
-
-double LogNormalRand::logVariance(const std::vector<double> &sample, double mu)
-{
-    size_t n = sample.size();
-    long double logSum = 0.0L;
-    for (double var : sample) {
-        double logVar = std::log(var) - mu;
-        logSum += logVar * logVar;
-    }
-    return logSum / n;
-}
-
 void LogNormalRand::FitLocation(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetLocation(logAverage(sample));
+    SetLocation(GetSampleLogMean(sample));
 }
 
 void LogNormalRand::FitScale(const std::vector<double> &sample)
@@ -145,7 +124,7 @@ void LogNormalRand::FitScale(const std::vector<double> &sample)
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double mu = X.GetLocation();
-    SetScale(std::sqrt(logVariance(sample, mu)));
+    SetScale(std::sqrt(GetSampleLogVariance(sample, mu)));
 }
 
 void LogNormalRand::Fit(const std::vector<double> &sample)
@@ -178,7 +157,7 @@ NormalRand LogNormalRand::FitLocationBayes(const std::vector<double> &sample, co
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
     double tau = X.GetPrecision();
-    double numerator = n * logAverage(sample) * tau + tau0 * mu0;
+    double numerator = n * GetSampleLogMean(sample) * tau + tau0 * mu0;
     double denominator = n * tau + tau0;
     NormalRand posteriorDistribution(numerator / denominator, 1.0 / denominator);
     SetLocation(posteriorDistribution.Mean());
@@ -195,7 +174,7 @@ InverseGammaRand LogNormalRand::FitScaleBayes(const std::vector<double> &sample,
     double beta = priorDistribution.GetRate();
     double newAlpha = alpha + 0.5 * n;
     double mu = X.GetLocation();
-    double newBeta = beta + 0.5 * n * logVariance(sample, mu);
+    double newBeta = beta + 0.5 * n * GetSampleLogVariance(sample, mu);
     InverseGammaRand posteriorDistribution(newAlpha, newBeta);
     SetScale(std::sqrt(posteriorDistribution.Mean()));
     return posteriorDistribution;
@@ -211,11 +190,12 @@ NormalInverseGammaRand LogNormalRand::FitBayes(const std::vector<double> &sample
     double beta = priorDistribution.GetRate();
     double mu0 = priorDistribution.GetLocation();
     double lambda = priorDistribution.GetPrecision();
-    double average = logAverage(sample), sum = n * average;
+    DoublePair logStats = GetSampleLogMeanAndVariance(sample);
+    double average = logStats.first, sum = n * average;
     double newLambda = lambda + n;
     double newMu0 = (lambda * mu0 + sum) / newLambda;
     double newAlpha = alpha + 0.5 * n;
-    double variance = logVariance(sample, average);
+    double variance = logStats.second;
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
     NormalInverseGammaRand posteriorDistribution(newMu0, newLambda, newAlpha, newBeta);

@@ -20,7 +20,7 @@ class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution
     double d1_d2 = 1; ///< d1 / d2
     double c = -2; ///< -(d1 + d2) / 2;
     double d2_d1 = 1; ///< d2 / d1
-    double pdfCoef = 0; /// < (a + 1) * log(d1_d2) - log(B(d1/2, d2/2))
+    double pdfCoef = 0; /// < (a + 1) * log(d1/d2) - log(B(d1/2, d2/2))
 
     BetaPrimeRand B{};
 

@@ -173,12 +173,6 @@ void ParetoRand::Fit(const std::vector<double> &sample)
     if (minVar <= 0)
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "All elements in the sample should be positive"));
 
-    /// Calculate alpha
-    double logAverage = 0.0;
-    for (double var : sample)
-        logAverage += std::log(var / minVar);
-    logAverage = sample.size() / logAverage;
-
-    SetShape(logAverage);
+    SetShape(GetSampleLogMean(sample));
     SetScale(minVar);
 }

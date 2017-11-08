@@ -504,48 +504,41 @@ String BetaRand::Name() const
     return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
                    + toStringWithPrecision(GetBeta()) + ", "
                    + toStringWithPrecision(MinValue()) + ", "
-                   + toStringWithPrecision(MaxValue()) + ")";
+            + toStringWithPrecision(MaxValue()) + ")";
 }
 
 constexpr char BetaRand::ALPHA_ZERO[];
 constexpr char BetaRand::BETA_ZERO[];
 
-void BetaRand::FitAlpha(const std::vector<double> &sample)
-{
-    if (!allElementsAreNotSmallerThan(a, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
-    if (!allElementsAreNotBiggerThan(b, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
 
-    int N = sample.size();
+double BetaRand::GetSampleLog1pMean(const std::vector<double> &sample)
+{
+    double lnG1p = 0;
+    for (double var : sample) {
+        double x = (var - a) * bmaInv;
+        lnG1p += std::log1p(x);
+    }
+    return lnG1p / sample.size();
+}
+
+double BetaRand::GetSampleLog1mMean(const std::vector<double> &sample)
+{
+    double lnG1m = 0;
+    for (double var : sample) {
+        double x = (var - a) * bmaInv;
+        lnG1m += std::log1p(-x);
+    }
+    return lnG1m / sample.size();
+}
+
+void BetaRand::FitAlpha(double lnG, double lnG1m, double mean)
+{
     if (beta == 1.0) {
         /// for β = 1 we have explicit expression for estimator
-        double lnG = 0;
-        for (double var : sample) {
-            double x = (var - a) * bmaInv;
-            lnG += std::log(x);
-        }
-        if (!std::isfinite(lnG))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
-        lnG /= N;
         SetShapes(-1.0 / lnG, beta);
     }
     else {
-        /// change to logarithmic scale
-        double lnG = 0, lnG1m = 0;
-        for (double var : sample) {
-            double x = (var - a) * bmaInv;
-            lnG += std::log(x);
-            lnG1m += std::log1p(-x);
-        }
-        if (!std::isfinite(lnG))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
-        if (!std::isfinite(lnG1m))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
-        lnG /= N;
-        lnG1m /= N;
         /// get initial value for shape by method of moments
-        double mean = GetSampleMean(sample);
         double shape = mean - a;
         shape /= b - mean;
         shape *= beta;
@@ -563,42 +556,34 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
     }
 }
 
-void BetaRand::FitBeta(const std::vector<double> &sample)
+void BetaRand::FitAlpha(const std::vector<double> &sample)
 {
     if (!allElementsAreNotSmallerThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
 
-    int N = sample.size();
+    double lnG = GetSampleLogMean(sample);
+    if (!std::isfinite(lnG))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
+    double lnG1m = 0.0;
+    if (beta != 1.0) {
+        lnG1m = GetSampleLog1mMean(sample);
+        if (!std::isfinite(lnG1m))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
+    }
+    double mean = GetSampleMean(sample);
+    FitAlpha(lnG, lnG1m, mean);
+}
+
+void BetaRand::FitBeta(double lnG, double lnG1m, double mean)
+{
     if (alpha == 1.0) {
         /// for α = 1 we have explicit expression for estimator
-        double lnG1m = 0;
-        for (double var : sample) {
-            double x = (var - a) * bmaInv;
-            lnG1m += std::log1p(-x);
-        }
-        if (!std::isfinite(lnG1m))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
-        lnG1m /= N;
         SetShapes(alpha, -1.0 / lnG1m);
     }
     else {
-        /// change to logarithmic scale
-        double lnG = 0, lnG1m = 0;
-        for (double var : sample) {
-            double x = (var - a) * bmaInv;
-            lnG += std::log(x);
-            lnG1m += std::log1p(-x);
-        }
-        if (!std::isfinite(lnG))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
-        if (!std::isfinite(lnG1m))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
-        lnG /= N;
-        lnG1m /= N;
         /// get initial value for shape by method of moments
-        double mean = GetSampleMean(sample);
         double shape = b - mean;
         shape /= mean - a;
         shape *= alpha;
@@ -616,36 +601,36 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
     }
 }
 
-void BetaRand::FitShapes(const std::vector<double> &sample)
+void BetaRand::FitBeta(const std::vector<double> &sample)
 {
     if (!allElementsAreNotSmallerThan(a, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
 
-    int N = sample.size();
-    double lnG = 0, lnG1m = 0;
-    for (double var : sample) {
-        double x = (var - a) * bmaInv;
-        lnG += std::log(x);
-        lnG1m += std::log1p(-x);
-    }
-    if (!std::isfinite(lnG))
-        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
+    double lnG1m = GetSampleLog1mMean(sample);
     if (!std::isfinite(lnG1m))
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
-    lnG /= N;
-    lnG1m /= N;
+    double lnG = 0.0;
+    if (alpha != 1.0) {
+        lnG = GetSampleLogMean(sample);
+        if (!std::isfinite(lnG))
+            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
+    }
+    double mean = GetSampleMean(sample);
+    FitBeta(lnG, lnG1m, mean);
+}
 
+void BetaRand::FitShapes(double lnG, double lnG1m, double mean, double variance)
+{
     /// get initial values for shapes by method of moments
-    DoublePair stats = GetSampleMeanAndVariance(sample);
-    double mean = (stats.first - a) * bmaInv;
-    double var = stats.second * bmaInv * bmaInv;
-    double temp = mean * (1.0 - mean) / var - 1.0;
+    double scaledMean = (mean - a) * bmaInv;
+    double scaledVar = variance * bmaInv * bmaInv;
+    double temp = scaledMean * (1.0 - scaledMean) / scaledVar - 1.0;
     double shape1 = 0.001, shape2 = alpha;
     if (temp > 0) {
-        shape1 = mean * temp;
-        shape2 = (1.0 - mean) * temp;
+        shape1 = scaledMean * temp;
+        shape2 = (1.0 - scaledMean) * temp;
     }
     DoublePair shapes = std::make_pair(shape1, shape2);
 
@@ -673,6 +658,25 @@ void BetaRand::FitShapes(const std::vector<double> &sample)
     SetShapes(shapes.first, shapes.second);
 }
 
+void BetaRand::FitShapes(const std::vector<double> &sample)
+{
+    if (!allElementsAreNotSmallerThan(a, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+    if (!allElementsAreNotBiggerThan(b, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+
+    double lnG = GetSampleLogMean(sample);
+    double lnG1m = GetSampleLog1mMean(sample);
+    if (!std::isfinite(lnG))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
+    if (!std::isfinite(lnG1m))
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
+
+    /// get initial values for shapes by method of moments
+    DoublePair stats = GetSampleMeanAndVariance(sample);
+    FitShapes(lnG, lnG1m, stats.first, stats.second);
+}
+
 String ArcsineRand::Name() const
 {
     return "Arcsine(" + toStringWithPrecision(GetShape()) + ", "
@@ -683,6 +687,15 @@ String ArcsineRand::Name() const
 void ArcsineRand::SetShape(double shape)
 {
     BetaDistribution::SetShapes(1.0 - shape, shape);
+}
+
+void ArcsineRand::FitShape(double lnG, double lnG1m)
+{
+    double shape = M_PI / (lnG1m - lnG);
+    if (!std::isfinite(shape))
+        SetShape(0.5);
+    shape = -M_1_PI * RandMath::atan(shape);
+    SetShape(shape > 0 ? shape : shape + 1);
 }
 
 void ArcsineRand::FitShape(const std::vector<double> &sample)
@@ -705,12 +718,8 @@ void ArcsineRand::FitShape(const std::vector<double> &sample)
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
     lnG /= N;
     lnG1m /= N;
-
-    double shape = M_PI / (lnG1m - lnG);
-    shape = -M_1_PI * RandMath::atan(shape);
-    SetShape(shape > 0 ? shape : shape + 1);
+    FitShape(lnG, lnG1m);
 }
-
 
 BaldingNicholsRand::BaldingNicholsRand(double fixatingIndex, double frequency)
 {

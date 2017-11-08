@@ -562,16 +562,10 @@ void GammaRand::FitShape(const std::vector<double> &sample)
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
-    /// Calculate log-average
-    long double logAverage = 0.0L;
-    for (double var : sample)
-        logAverage += std::log(var);
-    logAverage /= sample.size();
-
     /// Calculate initial guess via method of moments
     double shape = GetSampleMean(sample) * beta;
     /// Run root-finding procedure
-    double s = logAverage + logBeta;
+    double s = GetSampleLogMean(sample) + logBeta;
     if (!RandMath::findRoot([s] (double x)
     {
         double first = RandMath::digamma(x) - s;
@@ -588,15 +582,9 @@ void GammaRand::Fit(const std::vector<double> &sample)
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
-    /// Calculate average and log-average
-    double average = GetSampleMean(sample);
-    long double logAverage = 0.0L;
-    for (double var : sample)
-        logAverage += std::log(var);
-    logAverage /= sample.size();
-
     /// Calculate initial guess for shape
-    double s = std::log(average) - logAverage;
+    double average = GetSampleLogMean(sample);
+    double s = std::log(average) - GetSampleLogMean(sample);
     double sm3 = s - 3.0, sp12 = 12.0 * s;
     double shape = sm3 * sm3 + 2 * sp12;
     shape = std::sqrt(shape);

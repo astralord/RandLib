@@ -2,7 +2,7 @@
 
 BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
 {
-    SetParameters(shape1, shape2);
+    SetShapes(shape1, shape2);
 }
 
 String BetaPrimeRand::Name() const
@@ -10,7 +10,7 @@ String BetaPrimeRand::Name() const
     return "Beta Prime(" + toStringWithPrecision(GetAlpha()) + ", " + toStringWithPrecision(GetBeta()) + ")";
 }
 
-void BetaPrimeRand::SetParameters(double shape1, double shape2)
+void BetaPrimeRand::SetShapes(double shape1, double shape2)
 {
     if (shape1 <= 0 || shape2 <= 0)
         throw std::invalid_argument("Beta-prime distribution: shapes should be positive");
@@ -154,4 +154,48 @@ std::complex<double> BetaPrimeRand::CFImpl(double t) const
         return std::sin(t * x);
     }, 0.0, INFINITY);
     return std::complex<double>(re, im);
+}
+
+void BetaPrimeRand::FitAlpha(const std::vector<double> &sample)
+{
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    double lnG1m = -B.GetSampleLog1pMean(sample);
+    double lnG = GetSampleLogMean(sample) + lnG1m;
+    long double sum = 0.0;
+    for (const double & var : sample)
+        sum += var / (1.0 + var);
+    B.FitAlpha(lnG, lnG1m, sum / sample.size());
+    SetShapes(B.GetAlpha(), beta);
+}
+
+void BetaPrimeRand::FitBeta(const std::vector<double> &sample)
+{
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    double lnG1m = -B.GetSampleLog1pMean(sample);
+    double lnG = (alpha == 1.0) ? 0.0 : GetSampleLogMean(sample) + lnG1m;
+    long double sum = 0.0;
+    for (const double & var : sample)
+        sum += var / (1.0 + var);
+    B.FitBeta(lnG, lnG1m, sum / sample.size());
+    SetShapes(alpha, B.GetBeta());
+}
+
+void BetaPrimeRand::Fit(const std::vector<double> &sample)
+{
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    double lnG1m = -B.GetSampleLog1pMean(sample);
+    double lnG = GetSampleLogMean(sample) + lnG1m;
+    long double m = 0.0, v = 0.0;
+    int n = sample.size();
+    for (int i = 0; i < n; ++i) {
+        double x = sample[i] / (1.0 + sample[i]);
+        double diff = x - m;
+        m += diff / (i + 1);
+        v += diff * (x - m);
+    }
+    B.FitShapes(lnG, lnG1m, m, v / n);
+    SetShapes(B.GetAlpha(), B.GetBeta());
 }

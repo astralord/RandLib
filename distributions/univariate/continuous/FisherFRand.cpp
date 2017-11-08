@@ -18,7 +18,7 @@ void FisherFRand::SetDegrees(int degree1, int degree2)
     d1 = degree1;
     d2 = degree2;
 
-    B.SetParameters(0.5 * d1, 0.5 * d2);
+    B.SetShapes(0.5 * d1, 0.5 * d2);
 
     a = 0.5 * d1 - 1;
     d1_d2 = static_cast<double>(d1) / d2;
@@ -152,5 +152,5 @@ double FisherFRand::quantileImpl1m(double p) const
 
 std::complex<double> FisherFRand::CFImpl(double t) const
 {
-  return B.CF(d2_d1 * t);
+    return B.CF(d2_d1 * t);
 }

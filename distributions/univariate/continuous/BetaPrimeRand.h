@@ -26,7 +26,7 @@ class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
     String Name() const override;
-    void SetParameters(double shape1, double shape2);
+    void SetShapes(double shape1, double shape2);
     inline double GetAlpha() const { return alpha; }
     inline double GetBeta() const { return beta; }
 
@@ -67,6 +67,27 @@ public:
      * @return log(B(α, β))
      */
     inline double GetLogBetaFunction() const { return B.GetLogBetaFunction(); }
+
+    /**
+     * @fn FitAlpha
+     * fit α by maximum-likelihood
+     * @param sample
+     */
+    void FitAlpha(const std::vector<double> &sample);
+
+    /**
+     * @fn FitBeta
+     * fit β by maximum-likelihood
+     * @param sample
+     */
+    void FitBeta(const std::vector<double> &sample);
+
+    /**
+     * @fn Fit
+     * fit shapes by maximum-likelihood
+     * @param sample
+     */
+    void Fit(const std::vector<double> &sample);
 };
 
 #endif // BETAPRIMERAND_H
