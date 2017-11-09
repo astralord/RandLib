@@ -705,7 +705,7 @@ void ArcsineRand::FitShape(const std::vector<double> &sample)
     if (!allElementsAreNotBiggerThan(b, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
 
-    int N = sample.size();
+    int n = sample.size();
     double lnG = 0, lnG1m = 0;
     for (double var : sample) {
         double x = (var - a) * bmaInv;
@@ -716,8 +716,8 @@ void ArcsineRand::FitShape(const std::vector<double> &sample)
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
     if (!std::isfinite(lnG1m))
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
-    lnG /= N;
-    lnG1m /= N;
+    lnG /= n;
+    lnG1m /= n;
     FitShape(lnG, lnG1m);
 }
 

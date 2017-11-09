@@ -196,3 +196,16 @@ void UniformRand::Fit(const std::vector<double> &sample, bool unbiased)
         SetSupport(minVar, maxVar);
     }
 }
+
+ParetoRand UniformRand::FitMaximumBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution)
+{
+    if (!allElementsAreNotSmallerThan(a, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+    double maxVar = *std::max_element(sample.begin(), sample.end());
+    int n = sample.size();
+    double newShape = priorDistribution.GetShape() + n;
+    double newScale = std::max(priorDistribution.GetScale(), maxVar - a);
+    ParetoRand posteriorDistribution(newShape, newScale);
+    SetSupport(a, posteriorDistribution.Mean());
+    return posteriorDistribution;
+}

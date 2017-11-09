@@ -2,6 +2,7 @@
 #define UNIFORMRAND_H
 
 #include "BetaRand.h"
+#include "ParetoRand.h"
 
 /**
  * @brief The UniformRand class <BR>
@@ -75,6 +76,15 @@ public:
      * @param sample
      */
     void Fit(const std::vector<double> &sample, bool unbiased = false);
+
+    /**
+     * @fn FitMaximumBayes
+     * fit maximum parameter, using Bayesian estimation
+     * @param sample
+     * @param priorDistribution
+     * @return posterior distribution
+     */
+    ParetoRand FitMaximumBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution);
 };
 
 #endif // UNIFORMRAND_H
