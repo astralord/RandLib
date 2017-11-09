@@ -499,6 +499,9 @@ std::complex<double> BetaDistribution::CFImpl(double t) const
     return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
+constexpr char BetaDistribution::ALPHA_ZERO[];
+constexpr char BetaDistribution::BETA_ZERO[];
+
 String BetaRand::Name() const
 {
     return "Beta(" + toStringWithPrecision(GetAlpha()) + ", "
@@ -506,10 +509,6 @@ String BetaRand::Name() const
                    + toStringWithPrecision(MinValue()) + ", "
             + toStringWithPrecision(MaxValue()) + ")";
 }
-
-constexpr char BetaRand::ALPHA_ZERO[];
-constexpr char BetaRand::BETA_ZERO[];
-
 
 double BetaRand::GetSampleLog1pMean(const std::vector<double> &sample)
 {
@@ -713,9 +712,9 @@ void ArcsineRand::FitShape(const std::vector<double> &sample)
         lnG1m += std::log1p(-x);
     }
     if (!std::isfinite(lnG))
-        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the lower boundary a."));
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
     if (!std::isfinite(lnG1m))
-        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Possibly one or more elements of the sample coincide with the upper boundary b."));
+        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
     lnG /= n;
     lnG1m /= n;
     FitShape(lnG, lnG1m);

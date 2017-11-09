@@ -166,11 +166,37 @@ double ParetoRand::Entropy() const
     return logSigma - logAlpha + 1.0 / alpha + 1;
 }
 
-void ParetoRand::Fit(const std::vector<double> &sample)
+void ParetoRand::FitShape(const std::vector<double> &sample, bool unbiased)
+{
+    if (!allElementsAreNotSmallerThan(sigma, sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(sigma)));
+    double invShape = GetSampleLogMean(sample) - logSigma;
+    if (invShape == 0.0)
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "Possibly all the elements of the sample coincide with the lower boundary σ."));
+    double shape = 1.0 / invShape;
+    if (unbiased)
+        shape *= (1.0 - 1.0 / sample.size());
+    SetShape(shape);
+}
+
+void ParetoRand::Fit(const std::vector<double> &sample, bool unbiased)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "All elements in the sample should be positive"));
-    SetScale(minVar);
-    SetShape(1.0 / (GetSampleLogMean(sample) - GetLogScale()));
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+
+    double logBiasedSigma = std::log(minVar);
+    double invShape = GetSampleLogMean(sample) - logBiasedSigma;
+    if (invShape == 0.0)
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "Possibly all the elements of the sample are the same."));
+    double shape = 1.0 / invShape;
+
+    double scale = minVar;
+    if (unbiased) {
+        int n = sample.size();
+        shape *= 1.0 - 2.0 / n;
+        scale *= 1.0 - invShape / (n - 1);
+    }
+    SetScale(scale);
+    SetShape(shape);
 }

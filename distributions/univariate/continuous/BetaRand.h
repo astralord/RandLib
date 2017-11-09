@@ -199,6 +199,9 @@ protected:
     double quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
+
+    static constexpr char ALPHA_ZERO[] = "Possibly one or more elements of the sample coincide with the lower boundary a.";
+    static constexpr char BETA_ZERO[] = "Possibly one or more elements of the sample coincide with the upper boundary b.";
 };
 
 /**
@@ -213,10 +216,6 @@ public:
 
     using BetaDistribution::SetShapes;
     using BetaDistribution::SetSupport;
-
-protected:
-    static constexpr char ALPHA_ZERO[] = "Possibly one or more elements of the sample coincide with the lower boundary a.";
-    static constexpr char BETA_ZERO[] = "Possibly one or more elements of the sample coincide with the upper boundary b.";
 
 public:
     double GetSampleLog1pMean(const std::vector<double> &sample);

@@ -64,10 +64,20 @@ public:
     inline double Entropy() const;
 
     /**
-     * @fn Fit
+     * @fn FitShape
+     * fit α, using maximum-likelihood or UMVU
      * @param sample
+     * @param unbiased
      */
-    void Fit(const std::vector<double> &sample);
+    void FitShape(const std::vector<double> &sample, bool unbiased = false);
+
+    /**
+     * @fn Fit
+     * fit parameters, using maximum-likelihood or UMVU
+     * @param sample
+     * @param unbiased
+     */
+    void Fit(const std::vector<double> &sample, bool unbiased = false);
 };
 
 #endif // PARETORAND_H

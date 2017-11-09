@@ -7,7 +7,7 @@
  * @brief The InverseGammaRand class <BR>
  * Inverse-Gamma distribution
  *
- * X ~ Inv-Gamma(α, β)
+ * X ~ Inv-Γ(α, β)
  *
  * Related distributions: <BR>
  * X = 1 / Y, where Y ~ Gamma(α, β)

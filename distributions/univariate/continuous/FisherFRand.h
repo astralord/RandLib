@@ -10,7 +10,7 @@
  * Notation: X ~ F(d1, d2)
  *
  * Related distributions: <BR>
- * X ~ B'(d1/2, d2/2)
+ * d1/d2 * X ~ B'(d1/2, d2/2)
  */
 class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution
 {

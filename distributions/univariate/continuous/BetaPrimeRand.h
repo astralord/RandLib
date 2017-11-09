@@ -15,7 +15,7 @@
  * Related distributions: <BR>
  * X / (X + 1) ~ B(α, β) <BR>
  * X = Y / Z, where Y ~ Γ(α) and Z ~ Γ(β) <BR>
- * X ~ F(2α, 2β)
+ * β/α * X ~ F(2α, 2β)
  */
 class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
 {
