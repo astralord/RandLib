@@ -50,7 +50,7 @@ void NormalRand::SetVariance(double var)
 {
     if (var <= 0.0)
         throw std::invalid_argument("Variance of Normal distribution should be positive");
-    SetScale(var);
+    SetScale(std::sqrt(var));
 }
 
 double NormalRand::f(const double & x) const
