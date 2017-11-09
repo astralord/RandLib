@@ -118,8 +118,7 @@ double ParetoRand::Variance() const
 
 double ParetoRand::Median() const
 {
-    double y = alpha * logSigma + M_LN2;
-    return std::exp(y / alpha);
+    return std::exp(logSigma + M_LN2 / alpha);
 }
 
 double ParetoRand::Mode() const
@@ -172,7 +171,6 @@ void ParetoRand::Fit(const std::vector<double> &sample)
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "All elements in the sample should be positive"));
-
-    SetShape(GetSampleLogMean(sample));
     SetScale(minVar);
+    SetShape(1.0 / (GetSampleLogMean(sample) - GetLogScale()));
 }
