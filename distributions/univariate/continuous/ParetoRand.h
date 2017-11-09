@@ -78,6 +78,15 @@ public:
      * @param unbiased
      */
     void Fit(const std::vector<double> &sample, bool unbiased = false);
+
+    /**
+     * @fn FitShapeBayes
+     * fit α, using bayesian estimation
+     * @param sample
+     * @param priorDistribution
+     * @return posterior distribution of α
+     */
+    GammaRand FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution);
 };
 
 #endif // PARETORAND_H
