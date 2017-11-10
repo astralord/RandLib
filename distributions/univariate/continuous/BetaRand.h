@@ -218,8 +218,8 @@ public:
     using BetaDistribution::SetSupport;
 
 public:
-    double GetSampleLog1pMean(const std::vector<double> &sample);
-    double GetSampleLog1mMean(const std::vector<double> &sample);
+    double GetSampleLog1pMean(const std::vector<double> &sample) const;
+    double GetSampleLog1mMean(const std::vector<double> &sample) const;
 
     /**
      * @fn FitAlpha

@@ -510,9 +510,9 @@ String BetaRand::Name() const
             + toStringWithPrecision(MaxValue()) + ")";
 }
 
-double BetaRand::GetSampleLog1pMean(const std::vector<double> &sample)
+double BetaRand::GetSampleLog1pMean(const std::vector<double> &sample) const
 {
-    double lnG1p = 0;
+    long double lnG1p = 0;
     for (double var : sample) {
         double x = (var - a) * bmaInv;
         lnG1p += std::log1p(x);
@@ -520,9 +520,9 @@ double BetaRand::GetSampleLog1pMean(const std::vector<double> &sample)
     return lnG1p / sample.size();
 }
 
-double BetaRand::GetSampleLog1mMean(const std::vector<double> &sample)
+double BetaRand::GetSampleLog1mMean(const std::vector<double> &sample) const
 {
-    double lnG1m = 0;
+    long double lnG1m = 0;
     for (double var : sample) {
         double x = (var - a) * bmaInv;
         lnG1m += std::log1p(-x);

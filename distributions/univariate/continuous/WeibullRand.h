@@ -2,6 +2,7 @@
 #define WEIBULLRAND_H
 
 #include "ContinuousDistribution.h"
+#include "InverseGammaRand.h"
 
 /**
  * @brief The WeibullRand class <BR>
@@ -49,6 +50,26 @@ private:
 
 public:
     double Entropy() const;
+
+protected:
+    double getPowSampleMean(const std::vector<double> &sample) const;
+
+    /**
+     * @fn FitScale
+     * Fit λ by maximum-likelihood
+     * @param sample
+     */
+    void FitScale(const std::vector<double> &sample);
+
+    /**
+     * @fn FitScaleBayes
+     * Fit λ, using bayesian inference
+     * @param sample
+     * @param priorDistribution
+     * @param MAP if true, use MAP estimator
+     * @return posterior distribution
+     */
+    InverseGammaRand FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP = false);
 };
 
 #endif // WEIBULLRAND_H

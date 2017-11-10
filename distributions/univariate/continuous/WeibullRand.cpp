@@ -215,3 +215,31 @@ double WeibullRand::Entropy() const
 {
     return M_EULER * (1.0 - kInv) + std::log(lambda * kInv) + 1.0;
 }
+
+double WeibullRand::getPowSampleMean(const std::vector<double> &sample) const
+{
+    long double sum = 0;
+    for (const double &var : sample) {
+        sum += std::pow(var, k);
+    }
+    return sum / sample.size();
+}
+
+void WeibullRand::FitScale(const std::vector<double> &sample)
+{
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    SetParameters(getPowSampleMean(sample), k);
+}
+
+InverseGammaRand WeibullRand::FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP)
+{
+    if (!allElementsArePositive(sample))
+        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    int n = sample.size();
+    double newShape = priorDistribution.GetShape() + n;
+    double newRate = priorDistribution.GetRate() + n * getPowSampleMean(sample);
+    InverseGammaRand posteriorDistribution(newShape, newRate);
+    SetParameters(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean(), k);
+    return posteriorDistribution;
+}
