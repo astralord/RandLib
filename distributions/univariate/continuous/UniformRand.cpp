@@ -206,6 +206,7 @@ ParetoRand UniformRand::FitMaximumBayes(const std::vector<double> &sample, const
     double newShape = priorDistribution.GetShape() + n;
     double newScale = std::max(priorDistribution.GetScale(), maxVar - a);
     ParetoRand posteriorDistribution(newShape, newScale);
-    SetSupport(a, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
+    double theta = MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
+    SetSupport(a, a + theta);
     return posteriorDistribution;
 }
