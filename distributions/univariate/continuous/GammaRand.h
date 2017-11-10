@@ -260,7 +260,7 @@ public:
      * @param priorDistribution
      * @return posterior distribution
      */
-    GammaRand FitRateBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution);
+    GammaRand FitRateBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution, bool MAP = false);
 };
 
 /**

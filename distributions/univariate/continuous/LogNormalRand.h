@@ -53,15 +53,39 @@ private:
     double quantileImpl1m(double p) const override;
 
 public:
-    /// Maximum-likelihod estimation
     void FitLocation(const std::vector<double> &sample);
     void FitScale(const std::vector<double> &sample);
     void Fit(const std::vector<double> &sample);
 
-    /// Bayesian estimation
-    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
-    InverseGammaRand FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
-    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
+    /**
+     * @fn FitLocationBayes
+     * Set location, using bayesian inference
+     * @param sample
+     * @param priorDistribution
+     * @param MAP if true, use MAP estimator
+     * @return posterior distribution
+     */
+    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution, bool MAP = false);
+
+    /**
+     * @fn FitScaleBayes
+     * Set scale, using bayesian inference
+     * @param sample
+     * @param priorDistribution
+     * @param MAP if true, use MAP estimator
+     * @return posterior distribution
+     */
+    InverseGammaRand FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP = false);
+
+    /**
+     * @fn FitBayes
+     * Set parameters, using bayesian inference
+     * @param sample
+     * @param priorDistribution
+     * @param MAP if true, use MAP estimator
+     * @return posterior distribution
+     */
+    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution, bool MAP = false);
 };
 
 #endif // LOGNORMALRAND_H

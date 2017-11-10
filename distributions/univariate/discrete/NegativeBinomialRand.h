@@ -87,9 +87,10 @@ public:
      * @fn FitProbabilityBayes
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution);
+    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution, bool MAP = false);
 };
 
 

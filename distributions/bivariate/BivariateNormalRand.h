@@ -39,6 +39,8 @@ public:
     DoublePair Variate() const override;
 
     double Correlation() const override;
+
+    DoublePair Mode() const override;
 };
 
 #endif // BIVARIATENORMALRAND_H

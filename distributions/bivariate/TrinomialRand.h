@@ -34,6 +34,8 @@ public:
     IntPair Variate() const override;
 
     double Correlation() const override;
+
+    IntPair Mode() const override;
 };
 
 #endif // TRINOMIALRAND_H

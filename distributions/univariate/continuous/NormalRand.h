@@ -136,27 +136,30 @@ public:
      * set location, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution);
+    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitVarianceBayes
      * set variance, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution);
+    InverseGammaRand FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitBayes
      * set parameters, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution);
+    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution, bool MAP = false);
 };
 
 #endif // NORMALRAND_H

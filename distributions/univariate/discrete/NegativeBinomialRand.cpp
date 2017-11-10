@@ -228,7 +228,7 @@ double NegativeBinomialDistribution<T>::ExcessKurtosis() const
 }
 
 template< typename T >
-BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
+BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution, bool MAP)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
@@ -236,7 +236,7 @@ BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
     BetaRand posteriorDistribution(alpha + r * n, beta + GetSampleSum(sample));
-    SetParameters(r, posteriorDistribution.Mean());
+    SetParameters(r, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 

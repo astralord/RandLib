@@ -48,14 +48,14 @@ double NormalInverseGammaRand::logf(const DoublePair &point) const
     if (sigmaSq <= 0)
         return -INFINITY;
     double x = point.first;
-    double y = alpha + 1 - 1.5 * std::log(sigmaSq);
+    double y = (alpha + 1.5) * std::log(sigmaSq);
     double degree = x - mu;
     degree *= degree;
     degree *= lambda;
     degree += 2 * beta;
     degree *= 0.5 / sigmaSq;
-    y -= degree;
-    return pdfCoef + y;
+    y += degree;
+    return pdfCoef - y;
 }
 
 double NormalInverseGammaRand::F(const DoublePair &point) const
@@ -64,10 +64,10 @@ double NormalInverseGammaRand::F(const DoublePair &point) const
     if (sigmaSq <= 0)
         return 0.0;
     double x = point.first;
-    double sigma = std::sqrt(sigmaSq);
     double y = 0.5 * lambda;
-    y *= (mu - x) / sigma;
-    y = std::erfc(y);
+    double xmmu = x - mu;
+    y *= xmmu * xmmu / sigmaSq;
+    y = std::erfc(-std::sqrt(y));
     double z = beta / sigmaSq;
     double temp = alpha * std::log(z) - z;
     y *= std::exp(temp - Y.GetLogGammaShape());
@@ -87,4 +87,9 @@ DoublePair NormalInverseGammaRand::Variate() const
 double NormalInverseGammaRand::Correlation() const
 {
     return 0.0;
+}
+
+DoublePair NormalInverseGammaRand::Mode() const
+{
+    return std::make_pair(mu, 2 * beta / (2 * alpha + 3));
 }

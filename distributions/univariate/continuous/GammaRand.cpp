@@ -537,7 +537,7 @@ void FreeScaleGammaDistribution::FitRate(const std::vector<double> &sample, bool
     SetParameters(alpha, coef / mean);
 }
 
-GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
+GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution, bool MAP)
 {
     /// Sanity check
     if (!allElementsArePositive(sample))
@@ -547,7 +547,7 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     double newAlpha = alpha * sample.size() + alpha0;
     double newBeta = GetSampleSum(sample) + beta0;
     GammaRand posteriorDistribution(newAlpha, newBeta);
-    SetParameters(alpha, posteriorDistribution.Mean());
+    SetParameters(alpha, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 

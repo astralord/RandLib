@@ -65,7 +65,7 @@ public:
 
     /**
      * @fn FitShape
-     * fit α, using maximum-likelihood or UMVU
+     * Fit α, using maximum-likelihood or UMVU
      * @param sample
      * @param unbiased
      */
@@ -73,7 +73,7 @@ public:
 
     /**
      * @fn Fit
-     * fit parameters, using maximum-likelihood or UMVU
+     * Fit parameters, using maximum-likelihood or UMVU
      * @param sample
      * @param unbiased
      */
@@ -81,12 +81,13 @@ public:
 
     /**
      * @fn FitShapeBayes
-     * fit α, using bayesian estimation
+     * Fit α, using bayesian inference
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution of α
      */
-    GammaRand FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution);
+    GammaRand FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution, bool MAP = false);
 };
 
 #endif // PARETORAND_H

@@ -15,8 +15,8 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDi
 {
     double mu = 0; ///< location μ
     double lambda = 1; ///< precision λ
-    double alpha = 1; ///< first shape α
-    double beta = 1; ///< second shape β
+    double alpha = 1; ///< shape α
+    double beta = 1; ///< rate β
     double pdfCoef = 0.5 * (M_LNPI - M_LN2); ///< coefficient for faster pdf calculation
 
 public:
@@ -35,6 +35,8 @@ public:
     DoublePair Variate() const override;
 
     double Correlation() const override;
+
+    DoublePair Mode() const override;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

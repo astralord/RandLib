@@ -240,7 +240,7 @@ void NormalRand::Fit(const std::vector<double> &sample, DoublePair &confidenceIn
     confidenceIntervalForVariance.second = numerator / ChiSqRV.Quantile(halfAlpha);
 }
 
-NormalRand NormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution)
+NormalRand NormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution, bool MAP)
 {
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
@@ -248,11 +248,11 @@ NormalRand NormalRand::FitLocationBayes(const std::vector<double> &sample, const
     double numerator = GetSampleSum(sample) * tau + tau0 * mu0;
     double denominator = sample.size() * tau + tau0;
     NormalRand posteriorDistribution(numerator / denominator, 1.0 / denominator);
-    SetLocation(posteriorDistribution.Mean());
+    SetLocation(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 
-InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution)
+InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP)
 {
     double halfN = 0.5 * sample.size();
     double alphaPrior = priorDistribution.GetShape();
@@ -260,11 +260,11 @@ InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample,
     double alphaPosterior = alphaPrior + halfN;
     double betaPosterior = betaPrior + halfN * GetSampleVariance(sample, mu);
     InverseGammaRand posteriorDistribution(alphaPosterior, betaPosterior);
-    SetVariance(posteriorDistribution.Mean());
+    SetVariance(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 
-NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution)
+NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution, bool MAP)
 {
     size_t n = sample.size();
     double alphaPrior = priorDistribution.GetShape();
@@ -279,8 +279,8 @@ NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, c
     double aux = muPrior - stats.first;
     double betaPosterior = betaPrior + halfN * (stats.second + lambdaPrior / lambdaPosterior * aux * aux);
     NormalInverseGammaRand posteriorDistribution(muPosterior, lambdaPosterior, alphaPosterior, betaPosterior);
-    DoublePair mean = posteriorDistribution.Mean();
-    SetLocation(mean.first);
-    SetVariance(mean.second);
+    DoublePair newParams = MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
+    SetLocation(newParams.first);
+    SetVariance(newParams.second);
     return posteriorDistribution;
 }

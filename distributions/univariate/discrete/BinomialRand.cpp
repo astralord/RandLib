@@ -399,7 +399,7 @@ void BinomialDistribution::FitProbability(const std::vector<int> &sample)
     SetParameters(n, GetSampleMean(sample) / n);
 }
 
-BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
+BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution, bool MAP)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
@@ -410,7 +410,7 @@ BetaRand BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sampl
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
     BetaRand posteriorDistribution(sum + alpha, N * n - sum + beta);
-    SetParameters(n, posteriorDistribution.Mean());
+    SetParameters(n, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 

@@ -82,9 +82,10 @@ public:
      * fit maximum parameter, using Bayesian estimation
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    ParetoRand FitMaximumBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution);
+    ParetoRand FitMaximumBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution, bool MAP = false);
 };
 
 #endif // UNIFORMRAND_H

@@ -27,6 +27,7 @@ public:
     virtual DoubleTriplet Covariance() const final;
     virtual double Correlation() const = 0;
     virtual std::pair<T1, T2> GetMarginalDistributions() const final;
+    virtual T Mode() const = 0;
 };
 
 #endif // BIVARIATEDISTRIBUTION_H

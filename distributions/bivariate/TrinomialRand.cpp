@@ -101,3 +101,39 @@ double TrinomialRand::Correlation() const
     return -std::exp(logp1 + logp2 - log1mp1 - log1mp2);
 }
 
+IntPair TrinomialRand::Mode() const
+{
+    int modeX = X.Mode(), modeY = Y.Mode();
+    double modeValue = this->P(std::make_pair(modeX, modeY));
+    double modeValuexp1 = this->P(std::make_pair(modeX + 1, modeY));
+    double modeValuexm1 = this->P(std::make_pair(modeX - 1, modeY));
+    double modeValueyp1 = this->P(std::make_pair(modeX, modeY + 1));
+    double modeValueym1 = this->P(std::make_pair(modeX, modeY - 1));
+
+    while (modeValuexp1 > modeValue) {
+        modeX += 1;
+        modeValue = modeValuexp1;
+        modeValuexp1 = this->P(std::make_pair(modeX + 1, modeY));
+    }
+
+    while (modeValuexm1 > modeValue) {
+        modeX -= 1;
+        modeValue = modeValuexm1;
+        modeValuexp1 = this->P(std::make_pair(modeX - 1, modeY));
+    }
+
+    while (modeValueyp1 > modeValue) {
+        modeY += 1;
+        modeValue = modeValueyp1;
+        modeValueyp1 = this->P(std::make_pair(modeX, modeY + 1));
+    }
+
+    while (modeValueym1 > modeValue) {
+        modeY += 1;
+        modeValue = modeValueym1;
+        modeValueym1 = this->P(std::make_pair(modeX, modeY - 1));
+    }
+
+    return std::make_pair(modeX, modeY);
+}
+

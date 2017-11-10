@@ -108,3 +108,8 @@ double BivariateNormalRand::Correlation() const
 {
     return rho;
 }
+
+DoublePair BivariateNormalRand::Mode() const
+{
+    return std::make_pair(mu1, mu2);
+}
