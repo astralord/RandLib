@@ -229,7 +229,8 @@ void WeibullRand::FitScale(const std::vector<double> &sample)
 {
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    SetParameters(getPowSampleMean(sample), k);
+    double powScale = getPowSampleMean(sample);
+    SetParameters(std::pow(powScale, kInv), k);
 }
 
 InverseGammaRand WeibullRand::FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP)
@@ -240,6 +241,7 @@ InverseGammaRand WeibullRand::FitScaleBayes(const std::vector<double> &sample, c
     double newShape = priorDistribution.GetShape() + n;
     double newRate = priorDistribution.GetRate() + n * getPowSampleMean(sample);
     InverseGammaRand posteriorDistribution(newShape, newRate);
-    SetParameters(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean(), k);
+    double powScale =  MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
+    SetParameters(std::pow(powScale, kInv), k);
     return posteriorDistribution;
 }

@@ -72,6 +72,14 @@ public:
     void FitShape(const std::vector<double> &sample, bool unbiased = false);
 
     /**
+     * @fn FitScale
+     * Fit σ, using maximum-likelihood or UMVU
+     * @param sample
+     * @param unbiased
+     */
+    void FitScale(const std::vector<double> &sample, bool unbiased = false);
+
+    /**
      * @fn Fit
      * Fit parameters, using maximum-likelihood or UMVU
      * @param sample
@@ -88,6 +96,16 @@ public:
      * @return posterior distribution of α
      */
     GammaRand FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution, bool MAP = false);
+
+    /**
+     * @fn FitScaleBayes
+     * Fit σ, using bayesian inference
+     * @param sample
+     * @param priorDistribution
+     * @param MAP if true, use MAP estimator
+     * @return posterior distribution of σ
+     */
+    ParetoRand FitScaleBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution, bool MAP = false);
 };
 
 #endif // PARETORAND_H
