@@ -13,43 +13,45 @@
 \contentsline {subparagraph}{Bayesian inference.}{7}
 \contentsline {section}{\numberline {3}Beta-prime distribution}{7}
 \contentsline {paragraph}{Estimation of shapes.}{7}
-\contentsline {section}{\numberline {4}Degenerate distribution}{8}
-\contentsline {section}{\numberline {5}Exponentially-modified Gaussian distribution}{9}
-\contentsline {section}{\numberline {6}F-distribution}{10}
-\contentsline {section}{\numberline {7}Gamma distribution}{10}
-\contentsline {subsection}{\numberline {7.1}Chi-squared distribution}{10}
-\contentsline {subsection}{\numberline {7.2}Erlang distribution}{10}
-\contentsline {subsection}{\numberline {7.3}Exponential distribution}{11}
-\contentsline {section}{\numberline {8}Geometric Stable distribution}{12}
-\contentsline {subsection}{\numberline {8.1}Asymmetric Laplace distribution}{12}
-\contentsline {subsection}{\numberline {8.2}Laplace distribution}{12}
-\contentsline {section}{\numberline {9}Noncentral Chi-Squared distribution}{12}
-\contentsline {section}{\numberline {10}Planck distribution}{12}
-\contentsline {section}{\numberline {11}Stable distribution}{12}
-\contentsline {subsection}{\numberline {11.1}Normal distribution}{12}
-\contentsline {subsection}{\numberline {11.2}Cauchy distribution}{14}
-\contentsline {subsection}{\numberline {11.3}Levy distribution}{14}
-\contentsline {subsection}{\numberline {11.4}Holtsmark distribution}{14}
-\contentsline {subsection}{\numberline {11.5}Landau distribution}{15}
-\contentsline {section}{\numberline {12}Pareto distribution}{15}
+\contentsline {section}{\numberline {4}Exponentially-modified Gaussian distribution}{8}
+\contentsline {section}{\numberline {5}F-distribution}{9}
+\contentsline {section}{\numberline {6}Gamma distribution}{9}
+\contentsline {paragraph}{Estimation of parameters.}{9}
+\contentsline {subparagraph}{Frequentist inference.}{9}
+\contentsline {subparagraph}{Bayesian inference.}{10}
+\contentsline {subsection}{\numberline {6.1}Chi-squared distribution}{11}
+\contentsline {subsection}{\numberline {6.2}Erlang distribution}{11}
+\contentsline {subsection}{\numberline {6.3}Exponential distribution}{11}
+\contentsline {section}{\numberline {7}Geometric Stable distribution}{12}
+\contentsline {subsection}{\numberline {7.1}Asymmetric Laplace distribution}{12}
+\contentsline {subsection}{\numberline {7.2}Laplace distribution}{12}
+\contentsline {section}{\numberline {8}Noncentral Chi-Squared distribution}{12}
+\contentsline {section}{\numberline {9}Planck distribution}{12}
+\contentsline {section}{\numberline {10}Stable distribution}{12}
+\contentsline {subsection}{\numberline {10.1}Normal distribution}{12}
+\contentsline {subsection}{\numberline {10.2}Cauchy distribution}{14}
+\contentsline {subsection}{\numberline {10.3}Levy distribution}{14}
+\contentsline {subsection}{\numberline {10.4}Holtsmark distribution}{14}
+\contentsline {subsection}{\numberline {10.5}Landau distribution}{15}
+\contentsline {section}{\numberline {11}Pareto distribution}{15}
 \contentsline {paragraph}{Estimation of parameters.}{15}
 \contentsline {subparagraph}{Frequentist inference.}{15}
 \contentsline {subparagraph}{Bayesian inference.}{16}
-\contentsline {section}{\numberline {13}Weibull}{18}
+\contentsline {section}{\numberline {12}Weibull}{18}
 \contentsline {paragraph}{Estimation of scale}{18}
 \contentsline {subparagraph}{Frequentist inference.}{18}
 \contentsline {subparagraph}{Bayesian inference.}{19}
 \contentsline {part}{III\hspace {1em}Discrete univariate distributions}{20}
-\contentsline {section}{\numberline {14}Beta-binomial distribution}{20}
-\contentsline {section}{\numberline {15}Binomial distribution}{20}
-\contentsline {subsection}{\numberline {15.1}Bernoulli}{20}
-\contentsline {section}{\numberline {16}Poisson distribution}{21}
+\contentsline {section}{\numberline {13}Beta-binomial distribution}{20}
+\contentsline {section}{\numberline {14}Binomial distribution}{20}
+\contentsline {subsection}{\numberline {14.1}Bernoulli}{20}
+\contentsline {section}{\numberline {15}Poisson distribution}{21}
 \contentsline {part}{IV\hspace {1em}Bivariate distributions}{25}
-\contentsline {section}{\numberline {17}Bivariate Normal distribution}{25}
-\contentsline {section}{\numberline {18}Normal-Inverse-Gamma distribution}{25}
-\contentsline {section}{\numberline {19}Trinomial distribution}{25}
+\contentsline {section}{\numberline {16}Bivariate Normal distribution}{25}
+\contentsline {section}{\numberline {17}Normal-Inverse-Gamma distribution}{25}
+\contentsline {section}{\numberline {18}Trinomial distribution}{25}
 \contentsline {part}{V\hspace {1em}Circular distributions}{26}
-\contentsline {section}{\numberline {20}von Mises distribution}{26}
-\contentsline {section}{\numberline {21}Wrapped Exponential distribution}{26}
+\contentsline {section}{\numberline {19}von Mises distribution}{26}
+\contentsline {section}{\numberline {20}Wrapped Exponential distribution}{26}
 \contentsline {part}{VI\hspace {1em}Singular distributions}{27}
-\contentsline {section}{\numberline {22}Cantor distribution}{27}
+\contentsline {section}{\numberline {21}Cantor distribution}{27}

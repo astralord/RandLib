@@ -16,9 +16,8 @@
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution
 {
-    /// Tables for ziggurat
-    static long double stairWidth[257], stairHeight[256];
-    static constexpr long double x1 = 7.69711747013104972l;
+    static long double stairWidth[257], stairHeight[256]; ///< tables for ziggurat
+    static constexpr long double x1 = 7.69711747013104972l; ///< starting constant for tables
     static bool dummy;
     static bool SetupTables();
 

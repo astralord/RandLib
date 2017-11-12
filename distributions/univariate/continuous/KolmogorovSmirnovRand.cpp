@@ -102,10 +102,11 @@ double KolmogorovSmirnovRand::logS(const double & x) const
 double KolmogorovSmirnovRand::truncatedGammaVariate() const
 {
     /// Generator for truncated gamma distribution with shape = 1.5
-    static constexpr long double tp = 2.193245422464302l; /// π^2 / (8 * 0.75^2)
+    static constexpr long double tp = 2.193245422464302l; ///< π^2 / (8 * 0.75^2)
+    static constexpr long double rate = 1.2952909208355123l;
     int iter = 0;
     do {
-        double E0 = 1.2952909208355123l * ExponentialRand::StandardVariate(localRandGenerator);
+        double E0 = rate * ExponentialRand::StandardVariate(localRandGenerator);
         double E1 = 2 * ExponentialRand::StandardVariate(localRandGenerator);
         double G = tp + E0;
         if (E0 * E0 <= tp * E1 * (G + tp))

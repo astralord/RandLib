@@ -21,6 +21,19 @@
 \usepackage[export]{adjustbox}
 \usepackage[percent]{overpic}
 \usepackage{pbox}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset { %
+	language=C++,
+	backgroundcolor=\color{black!5}, % set backgroundcolor
+	basicstyle=\footnotesize,% basic font setting
+	keywordstyle=\color[rgb]{0,0,1},
+	commentstyle=\color[rgb]{0.026,0.112,0.095},
+	stringstyle=\color[rgb]{0.627,0.126,0.941},
+	numberstyle=\color[rgb]{0.205, 0.142, 0.73},
+	commentstyle=\color{red},
+	stringstyle=\color{green}
+}
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}
@@ -76,7 +89,7 @@
 	m_4' &= m_4 +  \delta^4 \frac{(n-1)(n^2-3n+3)}{n^3}+6\delta^2 \frac{m_2}{n^2}-4\delta\frac{m_3}{n}.
 	\end{aligned}
 	\]
-	Then $\ME[X] = m_1'$, $\Var(X) = \frac{m_2}{n}$, $\mathrm{Skew}(X) = \frac{\sqrt{n}m_3'}{m_2'^{3/2}}$ and $\mathrm{Kurt}(X) = \frac{nm_4'}{m_2'^2}$ (we return excess kurtosis). 
+	Then $ m_1'$, $\frac{m_2}{n}$, $\mathrm{Skew}(X) = \frac{\sqrt{n}m_3'}{m_2'^{3/2}}$ and $\mathrm{Kurt}(X) = \frac{nm_4'}{m_2'^2}$ (we return excess kurtosis). 
 	
 	\pagebreak
 	\part{Continuous univariate distributions}
@@ -97,19 +110,19 @@
 			\hline
 			Support & $x \in [a, b]$  \\
 			\hline
-			P.d.f. & $f(x) = \frac{y^{\alpha - 1}(1 - y)^{\beta - 1}}{(b-a)B(\alpha, \beta)}$ with $y = \frac{x - a}{b - a}$ \\
+			$f(x)$ & $\frac{y^{\alpha - 1}(1 - y)^{\beta - 1}}{(b-a)B(\alpha, \beta)}$ with $y = \frac{x - a}{b - a}$ \\
 			\hline
-			C.d.f. & $F(x)=I_{y}(\alpha, \beta)$ for $y = \frac{x - a}{b - a}$\\
+			$F(x)$ & $I_{y}(\alpha, \beta)$ for $y = \frac{x - a}{b - a}$\\
 			\hline
-			Expectation & $\ME[X] = a + (b-a)\frac{\alpha}{\alpha + \beta}$ \\
+			$\ME[X]$ & $a + (b-a)\frac{\alpha}{\alpha + \beta}$ \\
 			\hline
-			Variance & $\Var(X) = (b-a)^2\frac{ \alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$ \\
+			$\Var(X)$ & $(b-a)^2\frac{ \alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
 			Mode & $a + (b-a)\frac{\alpha - \beta}{\alpha + \beta - 2}$ for $\alpha, \beta > 1$. \\
 			\hline
-			C.f. & Calculated numerically \\
+			$\phi(t)$ & Calculated numerically \\
 			\hline
 		\end{tabular}
 	\end{minipage}
@@ -160,9 +173,11 @@
 	Therefore, maximum-likelihood function is
 	\[ \hat{\alpha} = -\frac{1}{\pi} \mathrm{atan}\Bigg(\frac{n\pi}{\sum_{i=1}^{n} \ln \frac{1-X_i}{X_i}}\Bigg). \]
 	If $\hat{\alpha}$ is negative, we add $1$, because $\frac{\mathrm{atan}}{\pi} \in (-0.5, 0.5)$, while $\alpha \in (0, 1)$.
+	
 	\subsection{Balding-Nichols distribution}
 	Notation: \[ X \sim \mathrm{Balding-Nichols}(p, F) \] with $p, F \in (0, 1)$.
 	Relation to Beta distribution: \[ X \sim B(pF', (1 - p)F') \] with $F' = (1 - F) / F$.
+	
 	\subsection{Uniform distribution}
 	\begin{figure}[!htb]\centering
 		\begin{minipage}{0.55\textwidth}
@@ -180,23 +195,24 @@
 				\hline
 				Support & $x \in [a, b]$  \\
 				\hline
-				P.d.f. & $f(x) = \frac{1}{b - a}$ \\
+				$f(x)$ & $\frac{1}{b - a}$ \\
 				\hline
-				C.d.f. & $F(x)=\frac{x - a}{b - a}$\\
+				$F(x)$ & $\frac{x - a}{b - a}$\\
 				\hline
-				Expectation & $\ME[X] = \frac{a+b}{2}$ \\
+				$\ME[X]$ & $ \frac{a+b}{2}$ \\
 				\hline
-				Variance & $\Var(X) = \frac{(b-a)^2}{12}$ \\
+				$\Var(X)$ & $\frac{(b-a)^2}{12}$ \\
 				\hline
 				Median & $\frac{a+b}{2}$ \\
 				\hline
 				Mode & doesn't exist \\
 				\hline
-				C.f. & $\phi(t) = \frac{e^{itb}-e^{ita}}{it(b-a)} $ \\
+				$\phi(t)$ & $ \frac{e^{itb}-e^{ita}}{it(b-a)} $ \\
 				\hline
 			\end{tabular}
 		\end{minipage}
 	\end{figure}
+	
 	Relation to Beta distribution: \[X \sim B(1, 1, a, b). \]
 	\paragraph{Estimation of support.}
 	\subparagraph{Frequentist inference.} Likelihood function is
@@ -246,19 +262,19 @@
 				\hline
 				Support & $x \in \MR^+$  \\
 				\hline
-				P.d.f. & $f(x) = \frac{x^{\alpha - 1}(1 + x)^{-\alpha - \beta}}{B(\alpha, \beta)}$ \\
+				$f(x)$ & $\frac{x^{\alpha - 1}(1 + x)^{-\alpha - \beta}}{B(\alpha, \beta)}$ \\
 				\hline
-				C.d.f. & $F(x)=I_{\frac{x}{1+x}}(\alpha, \beta)$\\
+				$F(x)$ & $I_{\frac{x}{1+x}}(\alpha, \beta)$\\
 				\hline
-				Expectation & $\ME[X] = \frac{\alpha}{\beta - 1}\mathbf{1}_{\{\beta > 1 \} } + \infty \mathbf{1}_{\{\beta \leq 1\} } $ \\
+				$\ME[X]$ & $ \frac{\alpha}{\beta - 1}\mathbf{1}_{\{\beta > 1 \} } + \infty \mathbf{1}_{\{\beta \leq 1\} } $ \\
 				\hline
-				Variance & $\Var(X) =\frac{ \alpha (\alpha +\beta - 1) }{ (\beta-2)(\beta-1)^2 }$, if $\beta > 1$ \\
+				$\Var(X)$ & $\frac{ \alpha (\alpha +\beta - 1) }{ (\beta-2)(\beta-1)^2 }$, if $\beta > 1$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
 				Mode & $\max\big( \frac{\alpha-1}{\beta+1}, 0 \big)$. \\
 				\hline
-				C.f. & Calculated numerically \\
+				$\phi(t)$ & Calculated numerically \\
 				\hline
 			\end{tabular}
 		\end{minipage}
@@ -271,32 +287,7 @@
 	\paragraph{Estimation of shapes.} Using relationship with Beta distribution we transform the sample:
 	\[ Y_i = \frac{X_i}{1+X_i}, \quad 1 \leq i \leq N, \]
 	and run BetaRand estimation for $Y$.
-	\section{Degenerate distribution}
-	\begin{center}
-		\begin{tabular}{| r | l |}
-			\hline
-			Notation & $X \sim \delta(a)$ \\
-			\hline
-			Parameters & $a \in \MR$ \\
-			\hline
-			Support & $x = a$  \\
-			\hline
-			P.d.f. & $f(x) = \delta(a)$ \\
-			\hline
-			C.d.f. & $F(x)=1_{\{x \leq a\}} $\\
-			\hline
-			Expectation & $\ME[X] = a$ \\
-			\hline
-			Variance & $\Var(X) = 0$ \\
-			\hline
-			Median & $a$ \\
-			\hline
-			Mode & $a$ \\
-			\hline
-			C.f. & $\phi(t) = e^{ita}$ \\
-			\hline
-		\end{tabular}
-	\end{center}
+
 	
 	\section{Exponentially-modified Gaussian distribution}
 	\begin{center}
@@ -308,19 +299,19 @@
 			\hline
 			Support & $x \in \MR$  \\
 			\hline
-			P.d.f. & $f(x) = ...  $ \\
+			$f(x)$ & $...  $ \\
 			\hline
-			C.d.f. & $F(x)=... $\\
+			$F(x)$ & $... $\\
 			\hline
-			Expectation & $\ME[X] = \mu + 1 / \lambda$ \\
+			$\ME[X]$ & $ \mu + 1 / \lambda$ \\
 			\hline
-			Variance & $\Var(X) = \sigma^2 + 1/\lambda^2$ \\
+			$\Var(X)$ & $\sigma^2 + 1/\lambda^2$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
 			Mode & Searched numerically \\
 			\hline
-			C.f. & $\phi(t) = ... $ \\
+			$\phi(t)$ & $ ... $ \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -334,19 +325,19 @@
 				\hline
 				Support & $x \in \MR^+$  \\
 				\hline
-				P.d.f. & $f(x) = \frac{\sqrt{\frac{(d_1 x)^{d_1} {d_2}^{d_2} }{(d_1x+d_2)^{d_1+d_2}}}}{x B\Big(\frac{d_1}{2},\frac{d_2}{2}\Big)}  $ \\
+				$f(x)$ & $\frac{\sqrt{\frac{(d_1 x)^{d_1} {d_2}^{d_2} }{(d_1x+d_2)^{d_1+d_2}}}}{x B\Big(\frac{d_1}{2},\frac{d_2}{2}\Big)}  $ \\
 				\hline
-				C.d.f. & $F(x)= I_{\frac{d_1x}{d_1x+d_2}}\Big(\frac{d_1}{2},\frac{d_2}{2}\Big) $\\
+				$F(x)$ & $ I_{\frac{d_1x}{d_1x+d_2}}\Big(\frac{d_1}{2},\frac{d_2}{2}\Big) $\\
 				\hline
-				Expectation & $\ME[X] = \frac{d_2}{d_2-2}$ for $ d_2 > 2 $ \\
+				$\ME[X]$ & $ \frac{d_2}{d_2-2}$ for $ d_2 > 2 $ \\
 				\hline
-				Variance & $\Var(X) = \frac{2d_2^2(d_1+d_2-2)}{d_1(d_2-2)^2(d_2-4)}$ for $d_2 > 4$ \\
+				$\Var(X)$ & $\frac{2d_2^2(d_1+d_2-2)}{d_1(d_2-2)^2(d_2-4)}$ for $d_2 > 4$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
 				Mode & $\max\Big(\frac{d_2(d_1-2)}{d_1(d_1+2)}, 0\Big)$ \\
 				\hline
-				C.f. & Calculated numerically \\
+				$\phi(t)$ & Calculated numerically \\
 				\hline
 			\end{tabular}
 		\end{center}
@@ -376,29 +367,82 @@
 				\hline
 				Support & $x \in \MR^+$  \\
 				\hline
-				P.d.f. & $f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1}e^{-\beta x}  $ \\
+				$f(x)$ & $\frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1}e^{-\beta x}  $ \\
 				\hline
-				C.d.f. & $F(x)=P(\alpha, \beta x) $\\
+				$F(x)$ & $P(\alpha, \beta x) $\\
 				\hline
-				Expectation & $\ME[X] = \frac{\alpha}{\beta}$ \\
+				$\ME[X]$ & $ \frac{\alpha}{\beta}$ \\
 				\hline
-				Variance & $\Var(X) = \frac{\alpha}{\beta^2}$ \\
+				$\Var(X)$ & $\frac{\alpha}{\beta^2}$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
 				Mode & $\max\big(\frac{\alpha - 1}{\beta}, 0\big)$ \\
 				\hline
-				C.f. & $\phi(t) = \Big( 1-\frac{it}{\beta} \Big)^{-\alpha}$ \\
+				$\phi(t)$ & $ \Big( 1-\frac{it}{\beta} \Big)^{-\alpha}$ \\
 				\hline
 			\end{tabular}
 		\end{minipage}
 	\end{figure}
+	
+	\paragraph{Estimation of parameters.}
+	\subparagraph{Frequentist inference.} Log-likelihood function:
+	\[
+	\ln \mathcal{L}(\alpha, \beta|X) =  n \alpha \ln \beta - n \ln \Gamma(\alpha) + (\alpha - 1) \sum_{i=1}^{n} \ln X_i - \beta \sum_{i=1}^{n} X_i.
+	\]
+	Derivatives:
+	\[
+	\frac{\partial \ln \mathcal{L}(\alpha, \beta | X) }{\partial \alpha} = n \ln \beta - n \psi (\alpha) + \sum_{i=1}^{n} \ln X_i,
+	\]
+	\[
+	\frac{\partial \ln \mathcal{L}(\alpha, \beta | X) }{\partial \beta} = \frac{n \alpha}{\beta} - \sum_{i=1}^{n} X_i.
+	\]
+	While the solution for the second equation is analytic:
+	\[
+	\hat{\beta} = \frac{\alpha}{\overline{X}_n},
+	\]
+	the first equation is solved numerically, using second derivative:
+	\[
+	\frac{\partial^2 \ln \mathcal{L}(\alpha, \beta | X) }{\partial \alpha^2} = - n \psi_1 (\alpha),
+	\]
+	or if $\beta$ is unknown:
+	\[
+	\frac{\partial^2 \ln \mathcal{L}(\alpha, \beta | X) }{\partial \alpha^2} = - n \psi_1 (\alpha) + \frac{n}{\alpha},
+	\]
+	Moreover, the maximum-likelihood estimation of rate $\beta$ is biased. Unbiased estimator would be
+	\[
+	\tilde{\beta} = \frac{\alpha}{\overline{X}_n} \Big(1 - \frac{1}{n}\Big).
+	\]
+	\subparagraph{Bayesian inference.} We suppose that prior distribution of rate $\beta$ is $\Gamma(\kappa, \theta)$:
+	\[
+	h(\beta) = \frac{\theta^\kappa}{\Gamma(\kappa)} \beta^{\kappa-1}e^{-\theta \beta}.
+	\]
+	Then
+	\[
+	f(\beta | X) \propto \beta^{\alpha n} e^{-\beta \sum_{i=1}^{n} X_i } \cdot \beta^{\kappa-1}e^{-\theta \beta} \sim \operatorname{\Gamma}\Big(\alpha n + \kappa, \theta +\sum_{i=1}^{n} X_i \Big).
+	\]
+	Therefore, Bayesian estimator is
+	\[
+	\ME[\beta|X] = \frac{\alpha n + \kappa}{\theta +\sum_{i=1}^{n} X_i},
+	\]
+	and MAP estimator is
+	\[
+	\beta_{MAP} = \frac{\alpha n + \kappa - 1}{\theta +\sum_{i=1}^{n} X_i}.
+	\]
+	
 	\subsection{Chi-squared distribution}
 	Relation to Gamma distribution:
 	\subsection{Erlang distribution}
 	The only difference between Gamma and Erlang distributions is that a second one takes an integer shape parameter $k$.
 	\subsection{Exponential distribution}
-	\begin{center}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{exponential_pdf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{exponential_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
 			Notation & $X \sim \mathrm{Exp}(\lambda)$ \\
@@ -407,25 +451,27 @@
 			\hline
 			Support & $x \in \MR^+$  \\
 			\hline
-			P.d.f. & $f(x) = \lambda e^{-\lambda x}  $ \\
+			$f(x)$ & $\lambda e^{-\lambda x}  $ \\
 			\hline
-			C.d.f. & $F(x)=1-e^{-\lambda x} $\\
+			$F(x)$ & $1-e^{-\lambda x} $\\
 			\hline
-			Expectation & $\ME[X] = \frac{1}{\lambda}$ \\
+			$\ME[X]$ & $ \frac{1}{\lambda}$ \\
 			\hline
-			Variance & $\Var(X) = \frac{1}{\lambda^2}$ \\
+			$\Var(X)$ & $\frac{1}{\lambda^2}$ \\
 			\hline
 			Median & $\frac{\ln(2)}{\lambda}$ \\
 			\hline
 			Mode & $0$ \\
 			\hline
-			C.f. & $\phi(t) = \frac{\lambda}{\lambda-it}$ \\
+			$\phi(t)$ & $ \frac{\lambda}{\lambda-it}$ \\
 			\hline
 		\end{tabular}
-	\end{center}
-	
+		\end{minipage}
+	\end{figure}
+
 	Relation to Gamma distribution:
-	$X \sim \Gamma(1, \beta).$
+	$X \sim \Gamma(1, \lambda).$
+	Hence, estimation of parameter $\lambda$ is the particular case of estimation of rate $\beta$ for Gamma distribution.
 	
 	
 	\section{Geometric Stable distribution}
@@ -445,19 +491,19 @@
 				\hline
 				Support & $x \in ...$  \\
 				\hline
-				P.d.f. & Calculated numerically \\
+				$f(x)$ & Calculated numerically \\
 				\hline
-				C.d.f. & Calculated numerically \\
+				$F(x)$ & Calculated numerically \\
 				\hline
-				Expectation & $\ME[X] = k + \lambda$ \\
+				$\ME[X]$ & $ k + \lambda$ \\
 				\hline
-				Variance & $\Var(X) =2(k+2\lambda)$ \\
+				$\Var(X)$ & $2(k+2\lambda)$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
 				Mode & Searched numerically \\
 				\hline
-				C.f. & $\phi(t) = ...$ \\
+				$\phi(t)$ & $ ...$ \\
 				\hline
 			\end{tabular}
 		\end{minipage}
@@ -484,19 +530,19 @@
 			\hline
 			Support & $x \in \MR^+$  \\
 			\hline
-			P.d.f. & $f(x) = ...  $ \\
+			$f(x)$ & $...  $ \\
 			\hline
-			C.d.f. & $F(x)=P_{\frac{k}{2}}(...) $\\
+			$F(x)$ & $P_{\frac{k}{2}}(...) $\\
 			\hline
-			Expectation & $\ME[X] = k + \lambda$ \\
+			$\ME[X]$ & $ k + \lambda$ \\
 			\hline
-			Variance & $\Var(X) =2(k+2\lambda)$ \\
+			$\Var(X)$ & $2(k+2\lambda)$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
 			Mode & Searched numerically \\
 			\hline
-			C.f. & $\phi(t) = \frac{\exp{\frac{it\lambda}{1-2it}}}{(1-2it)^{k/2}}$ \\
+			$\phi(t)$ & $ \frac{\exp{\frac{it\lambda}{1-2it}}}{(1-2it)^{k/2}}$ \\
 			\hline
 		\end{tabular}
 	\end{minipage}
@@ -521,19 +567,19 @@
 			\hline
 			Support & $ x \in \MR^+$  \\
 			\hline
-			P.d.f. & $f(x) = \frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \cdot \frac{x ^ a}{e^{bx} - 1}$ \\
+			$f(x)$ & $\frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \cdot \frac{x ^ a}{e^{bx} - 1}$ \\
 			\hline
-			C.d.f. & Calculated numerically \\
+			$F(x)$ & Calculated numerically \\
 			\hline
-			Expectation & $\ME[X] = \frac{(a+1)\zeta(a+2)}{b \zeta(a+1)}$ \\
+			$\ME[X]$ & $ \frac{(a+1)\zeta(a+2)}{b \zeta(a+1)}$ \\
 			\hline
-			Variance & $\Var(X) = \frac{(a+1)(a+2)\zeta(a+3)}{b^2 \zeta(a+1)}  - (\ME[X])^2$ \\
+			$\Var(X)$ & $\frac{(a+1)(a+2)\zeta(a+3)}{b^2 \zeta(a+1)}  - (\ME[X])^2$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
 			Mode & $\frac{W_0(-a e^{-a}) + a}{b}$, if $a > 1$, otherwise $0$ \\
 			\hline
-			C.f. & Calculated numerically \\
+			$\phi(t)$ & Calculated numerically \\
 			\hline
 		\end{tabular}
 	\end{minipage}
@@ -556,19 +602,19 @@
 			\hline
 			Support & \pbox{\linewidth}{$ x \in \MR$, if  $\beta \neq 1$, \\  $ x \in [\mu, \infty)  $, if  $\beta = 1$, $\alpha < 2$, \\ $ x \in (-\infty, \mu]  $, if  $\beta = -1$, $\alpha < 2$}  \\
 			\hline
-			P.d.f. & Calculated numerically \\
+			$f(x)$ & Calculated numerically \\
 			\hline
-			C.d.f. & Calculated numerically \\
+			$F(x)$ & Calculated numerically \\
 			\hline
-			Expectation & \pbox{\linewidth}{$\ME[X] = \mu$ for $\alpha > 1$,\\ otherwise undefined} \\
+			$\ME[X]$ & \pbox{\linewidth}{$ \mu$ for $\alpha > 1$,\\ otherwise undefined} \\
 			\hline
-			Variance & $\Var(X) = 2 \gamma^2 1_{\{ \alpha = 2 \} } + \infty 1_{ \{ \alpha < 2 \} }  $ \\
+			$\Var(X)$ & $2 \gamma^2 1_{\{ \alpha = 2 \} } + \infty 1_{ \{ \alpha < 2 \} }  $ \\
 			\hline
 			Median & \pbox{\linewidth}{$\mu$ for $\beta = 0$,\\ otherwise searched numerically} \\
 			\hline
 			Mode & \pbox{\linewidth}{$\mu$, if $\beta = 0$ or $\alpha = 2$, \\  $\mu + \frac{\beta \gamma}{3}$, if $|\beta| = 1$ and $\alpha = \frac{1}{2}$, \\ otherwise searched numerically} \\
 			\hline
-			C.f. & $\phi(t) = ...$ \\
+			$\phi(t)$ & $ ...$ \\
 			\hline
 		\end{tabular}
 	    \end{minipage}
@@ -594,19 +640,19 @@
 			\hline
 			Support & $x \in \MR$  \\
 			\hline
-			P.d.f. & $f(x)= \frac{1}{\sqrt{2\sigma^2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}  $ \\
+			$f(x)$ & $ \frac{1}{\sqrt{2\sigma^2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}  $ \\
 			\hline
-			C.d.f. & $F(x)= \frac{1}{2} \mathrm{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
+			$F(x)$ & $ \frac{1}{2} \mathrm{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
 			\hline
-			Expectation & $\ME[X] = \mu$ \\
+			$\ME[X]$ & $ \mu$ \\
 			\hline
-			Variance & $\Var(X) = \sigma^2$\\
+			$\Var(X)$ & $\sigma^2$\\
 			\hline
 			Median & $\mu$ \\
 			\hline
 			Mode & $\mu$ \\
 			\hline
-			C.f. & $\phi(t) = e^{i\mu t - \frac{1}{2}\sigma^2t^2}  $ \\
+			$\phi(t)$ & $ e^{i\mu t - \frac{1}{2}\sigma^2t^2}  $ \\
 			\hline
 		\end{tabular}
     	\end{minipage}
@@ -632,19 +678,19 @@
 			\hline
 			Support & $x \in \MR$  \\
 			\hline
-			P.d.f. & $f(x)= \frac{1}{ \pi \gamma \Big[ 1 + \big( \frac{x-\mu}{\gamma} \big)^2 \Big]  }  $ \\
+			$f(x)$ & $ \frac{1}{ \pi \gamma \Big[ 1 + \big( \frac{x-\mu}{\gamma} \big)^2 \Big]  }  $ \\
 			\hline
-			C.d.f. & $F(x)= \frac{1}{\pi} \mathrm{atan}\Big( \frac{x-\mu}{\gamma} \Big) + \frac{1}{2} $ \\
+			$F(x)$ & $ \frac{1}{\pi} \mathrm{atan}\Big( \frac{x-\mu}{\gamma} \Big) + \frac{1}{2} $ \\
 			\hline
-			Expectation & Undefined \\
+			$\ME[X]$ & Undefined \\
 			\hline
-			Variance & $\Var(X) = \infty $\\
+			$\Var(X)$ & $\infty $\\
 			\hline
 			Median & $\mu$ \\
 			\hline
 			Mode & $\mu$ \\
 			\hline
-			C.f. & $\phi(t) = e^{i\mu t - \gamma |t|}  $ \\
+			$\phi(t)$ & $ e^{i\mu t - \gamma |t|}  $ \\
 			\hline
 		\end{tabular}
 	    \end{minipage}
@@ -683,19 +729,19 @@
 						\hline
 						Support & $x \geq \sigma$  \\
 						\hline
-						P.d.f. & $f(x)= \frac{\alpha \sigma^\alpha}{x^{\alpha+1}}  $ \\
+						$f(x)$ & $ \frac{\alpha \sigma^\alpha}{x^{\alpha+1}}  $ \\
 						\hline
-						C.d.f. & $F(x)= 1-\big( \frac{\sigma}{x} \big)^\alpha $ \\
+						$F(x)$ & $ 1-\big( \frac{\sigma}{x} \big)^\alpha $ \\
 						\hline
-						Expectation & \pbox{\linewidth}{$\ME[X] = \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
+						$\ME[X]$ & \pbox{\linewidth}{$ \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
 						\hline
-						Variance & \pbox{\linewidth}{$\Var(X) = \frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise } \\
+						$\Var(X)$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise } \\
 						\hline
 						Median & $\sigma 2^{1/\alpha}$ \\
 						\hline
 						Mode & $\sigma$ \\
 						\hline
-						C.f. & Calculated numerically \\
+						$\phi(t)$ & Calculated numerically \\
 						\hline
 					\end{tabular}
 				\end{minipage}
@@ -772,19 +818,19 @@
 			\hline
 			Support & $x \in \MR^+$  \\
 			\hline
-			P.d.f. & $f(x)= \frac{k}{\lambda}\big( \frac{x}{\lambda}\big)^{k-1} \exp(-(x/\lambda)^k)  $ \\
+			$f(x)$ & $ \frac{k}{\lambda}\big( \frac{x}{\lambda}\big)^{k-1} \exp(-(x/\lambda)^k)  $ \\
 			\hline
-			C.d.f. & $F(x)= 1-\exp(-(x/\lambda)^k) $ \\
+			$F(x)$ & $ 1-\exp(-(x/\lambda)^k) $ \\
 			\hline
-			Expectation & $\ME[X] = \lambda \Gamma(1+1/k)$ \\
+			$\ME[X]$ & $ \lambda \Gamma(1+1/k)$ \\
 			\hline
-			Variance & $\Var(X) = \lambda^2 \Gamma(1+2/k) - (\ME[X])^2$ \\
+			$\Var(X)$ & $\lambda^2 \Gamma(1+2/k) - (\ME[X])^2$ \\
 			\hline
 			Median & $\lambda (\ln2)^{\frac{1}{k}}$ \\
 			\hline
 			Mode & $\lambda \big( 1-\frac{1}{k} \big)^{\frac{1}{k}}$ \\
 			\hline
-			C.f. & Calculated numerically \\
+			$\phi(t)$ & Calculated numerically \\
 			\hline
 		\end{tabular}
 	\end{minipage}
@@ -834,17 +880,17 @@ MAP estimator:
 			\hline
 			P.m.f. & $\MP(X = k) = \binom{n}{k} p^k (1-p)^{n-k}  $ \\
 			\hline
-			C.d.f. & $\MP(X \leq k)=I_{1-p}(n-k, 1+k) $ \\
+			$F(x)$ & $\MP(X \leq k)=I_{1-p}(n-k, 1+k) $ \\
 			\hline
-			Expectation & $\ME[X] = np$ \\
+			$\ME[X]$ & $ np$ \\
 			\hline
-			Variance & $\Var(X) = np(1-p)$ \\
+			$\Var(X)$ & $np(1-p)$ \\
 			\hline
 			Median & $[np]$ \\
 			\hline
 			Mode & $[(n+1)p]$ \\
 			\hline
-			C.f. & $\phi(t) = (1-p+pe^{it})^n  $ \\
+			$\phi(t)$ & $ (1-p+pe^{it})^n  $ \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -864,17 +910,17 @@ MAP estimator:
 			\hline
 			P.m.f. & $\MP(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$ \\
 			\hline
-			C.d.f. & $\MP(X \leq k)=Q(k+1, \lambda)$ \\
+			$F(x)$ & $\MP(X \leq k)=Q(k+1, \lambda)$ \\
 			\hline
-			Expectation & $\ME[X] = \lambda$ \\
+			$\ME[X]$ & $ \lambda$ \\
 			\hline
-			Variance & $\Var(X) = \lambda$ \\
+			$\Var(X)$ & $\lambda$ \\
 			\hline
 			Median & $\sim \max\big([\lambda + \frac{1}{3} - \frac{0.02}{\lambda}], 0\big) $ \\
 			\hline
 			Mode & $[\lambda]$ \\
 			\hline
-			C.f. & $\phi(t) = \exp \{ \lambda(e^{it}-1) \}  $ \\
+			$\phi(t)$ & $ \exp \{ \lambda(e^{it}-1) \}  $ \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -977,66 +1023,4 @@ MAP estimator:
 	\part{Singular distributions}
 	\section{Cantor distribution}
 	
-	Implemented distributions (under titles special cases are listed):
-	\begin{itemize}
-		\item Continuous distributions
-		\begin{itemize}
-			\item Generalised extreme value ????????
-				\subitem Gumbel
-				\subitem Frechet
-				\subitem Weibull
-			\item Geometric-Stable distribution
-				\subitem (Asymmetric) Laplace distribution
-			\item Inverse-Gamma
-			\item Inverse-Gaussian
-			\item Irwin-Hall
-			\item Kolmogorov-Smirnov
-		\end{itemize}
-	\end{itemize}
-	
-	Logistic
-	Log-Normal
-	Nakagami
-	Chi
-	Maxwell-Boltzmann
-	Rayleigh
-	Noncentral Chi-Squared
-	Pareto
-	Planck
-	Raised-cosine
-	Raab-Green
-	Sech
-	Stable
-	Cauchy
-	Holtsmark
-	Landau
-	Levy
-	Normal
-	t-distribution
-	Triangular
-	Von-Mises
-	Wigner-Semicircle
-	Disrete:
-	Beta-binomial
-	Binomial
-	Bernoulli
-	Categorical
-	Hypergeometric
-	Logarithmic
-	Negative-binomial (Polya)
-	Pascal
-	Geometric
-	Negative-hypergeometric
-	Poisson
-	Rademacher
-	Skellam
-	Uniform discrete
-	Yule
-	Zeta
-	Zipf
-	Singular:
-	Cantor
-	Bivariate:
-	Bivariate Normal
-	Normal-inverse-Gamma
 \end{document}

@@ -542,11 +542,11 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     /// Sanity check
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double alpha0 = priorDistribution.GetShape();
-    double beta0 = priorDistribution.GetRate();
-    double newAlpha = alpha * sample.size() + alpha0;
-    double newBeta = GetSampleSum(sample) + beta0;
-    GammaRand posteriorDistribution(newAlpha, newBeta);
+    double kappa = priorDistribution.GetShape();
+    double theta = priorDistribution.GetRate();
+    double newShape = alpha * sample.size() + kappa;
+    double newRate = GetSampleSum(sample) + theta;
+    GammaRand posteriorDistribution(newShape, newRate);
     SetParameters(alpha, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
@@ -583,7 +583,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
 
     /// Calculate initial guess for shape
-    double average = GetSampleLogMean(sample);
+    double average = GetSampleMean(sample);
     double s = std::log(average) - GetSampleLogMean(sample);
     double sm3 = s - 3.0, sp12 = 12.0 * s;
     double shape = sm3 * sm3 + 2 * sp12;
