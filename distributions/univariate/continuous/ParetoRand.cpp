@@ -216,20 +216,8 @@ GammaRand ParetoRand::FitShapeBayes(const std::vector<double> &sample, const Gam
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(sigma)));
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;
-    double newRate = priorDistribution.GetRate() + GetSampleLogMean(sample) - logSigma;
+    double newRate = priorDistribution.GetRate() + n * (GetSampleLogMean(sample) - logSigma);
     GammaRand posteriorDistribution(newShape, newRate);
     SetShape(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-    return posteriorDistribution;
-}
-
-ParetoRand ParetoRand::FitScaleBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution, bool MAP)
-{
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double newShape = priorDistribution.GetShape() - GetShape() * sample.size();
-    if (newShape <= 0)
-        throw std::invalid_argument(fitErrorDescription(NOT_APPLICABLE, "Shape hyperparameter of prior distribution should be larger than shape parameter α, multuplied by n."));
-    ParetoRand posteriorDistribution(newShape, priorDistribution.GetScale());
-    SetScale(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }

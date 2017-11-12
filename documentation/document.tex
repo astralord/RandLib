@@ -735,22 +735,25 @@
 	\[ \ME[\alpha | X] = \frac{\kappa + n}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
 	MAP estimator is
 	\[ \alpha_{MAP} = \frac{\kappa + n-1}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
-	Now let it be vice versa, $\alpha$ is known while $\sigma$ is not. The we say that a priori $\sigma \sim \operatorname{Pareto}(\kappa, \theta)$:
+	\textit{Note on fitting scale with Bayes:} let it be vice versa, $\alpha$ is known while $\sigma$ is not. Then we say that a priori $\sigma \sim \operatorname{Pareto}(\kappa, \theta)$:
 	\[
 	h(\sigma) = \frac{\kappa\theta^\kappa}{\sigma^{\kappa+1}}.
 	\]
 	Then posterior distribution is:
 	\[
-	f(\sigma|X) \propto \prod_{i=1}^n \frac{1}{{X_i}^{\alpha-1}} \cdot \sigma^{\alpha n - \kappa - 1} \sim \operatorname{Pareto}(\kappa-\alpha n, \theta).
+	f(\sigma|X) \propto \prod_{i=1}^n \frac{1}{{X_i}^{\alpha-1}} \cdot \sigma^{\alpha n - \kappa - 1} \mathbf{1}_{ \{ \theta < \sigma < X_{(1)}\} } \sim \operatorname{Bounded-Pareto}(\kappa-\alpha n, \theta, X_{(1)}).
 	\]
-	This imposes the following additional constraint on the prior shape hyperparameter: $\kappa > \alpha n$. Bayesian estimator:
+	This imposes the following additional constraints on the prior hyperparameters: $\kappa > \alpha n$ and $\theta < X_{(1)}$. Bayesian estimator:
 	\[
-	\ME[\sigma|X] = \frac{(\kappa-\alpha n) \theta }{\kappa-\alpha n - 1}.
+	\ME[\sigma|X] = \frac{\theta^{\alpha'}}{1-\Big(\frac{\theta}{X_{(1)}}\Big)^{\alpha'}} \cdot \Big(\frac{\alpha'}{\alpha'-1}\Big)\cdot \bigg( \frac{1}{\theta^{\alpha'}} -\frac{1}{X_{(1)}^{\alpha'}} \bigg)
 	\]
-	MAP estimator:
+	with $\alpha'=\kappa - \alpha n$.
+	MAP estimator is just
 	\[
 	\sigma_{MAP} = \theta.
 	\]
+	However, Bounded-Pareto distribution is not yet supported.
+	
 \section{Weibull}
 
 \begin{figure}[!htb]\centering

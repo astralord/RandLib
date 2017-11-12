@@ -96,16 +96,6 @@ public:
      * @return posterior distribution of α
      */
     GammaRand FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution, bool MAP = false);
-
-    /**
-     * @fn FitScaleBayes
-     * Fit σ, using bayesian inference
-     * @param sample
-     * @param priorDistribution
-     * @param MAP if true, use MAP estimator
-     * @return posterior distribution of σ
-     */
-    ParetoRand FitScaleBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution, bool MAP = false);
 };
 
 #endif // PARETORAND_H

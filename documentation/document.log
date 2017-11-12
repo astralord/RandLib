@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.11.8)  11 NOV 2017 14:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.11.8)  12 NOV 2017 15:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1224,45 +1224,45 @@ Overfull \hbox (67.27245pt too wide) in paragraph at lines 678--701
 
 [15 <./images/normal_pdf.png> <./images/normal_cdf.png>] [16 <./images/cauchy_p
 df.png> <./images/cauchy_cdf.png>] [17 <./images/pareto_pdf.png> <./images/pare
-to_cdf.png>] <./images/weibull_pdf.png, id=98, 728.7225pt x 432.61626pt>
+to_cdf.png>] <./images/weibull_pdf.png, id=99, 728.7225pt x 432.61626pt>
 File: ./images/weibull_pdf.png Graphic file (type png)
 
 <use ./images/weibull_pdf.png>
-Package pdftex.def Info: ./images/weibull_pdf.png used on input line 758.
+Package pdftex.def Info: ./images/weibull_pdf.png used on input line 761.
 (pdftex.def)             Requested size: 230.04079pt x 136.56529pt.
 
-<./images/weibull_cdf.png, id=99, 726.715pt x 424.58624pt>
+<./images/weibull_cdf.png, id=100, 726.715pt x 424.58624pt>
 File: ./images/weibull_cdf.png Graphic file (type png)
 
 <use ./images/weibull_cdf.png>
-Package pdftex.def Info: ./images/weibull_cdf.png used on input line 760.
+Package pdftex.def Info: ./images/weibull_cdf.png used on input line 763.
 (pdftex.def)             Requested size: 230.04079pt x 134.39972pt.
 
-Overfull \hbox (76.74364pt too wide) in paragraph at lines 764--787
+Overfull \hbox (76.74364pt too wide) in paragraph at lines 767--790
 [][] 
  []
 
 [18 <./images/weibull_pdf.png> <./images/weibull_cdf.png>] [19] [20]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 885.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 888.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 885.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 888.
 
-Overfull \hbox (109.12466pt too wide) detected at line 911
+Overfull \hbox (109.12466pt too wide) detected at line 914
 [] []
  []
 
 [21]
-Overfull \hbox (101.06046pt too wide) detected at line 935
+Overfull \hbox (101.06046pt too wide) detected at line 938
 [] []
  []
 
 [22]
-Overfull \hbox (107.1288pt too wide) detected at line 951
+Overfull \hbox (107.1288pt too wide) detected at line 954
 [] []
  []
 
@@ -1272,36 +1272,37 @@ Overfull \hbox (107.1288pt too wide) detected at line 951
 ### simple group (level 1) entered at line 56 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 7349 strings out of 494440
- 105856 string characters out of 6173198
+ 7351 strings out of 494440
+ 105882 string characters out of 6173198
  192619 words of memory out of 5000000
- 10431 multiletter control sequences out of 15000+600000
- 18873 words of font info for 51 fonts, out of 8000000 for 9000
+ 10432 multiletter control sequences out of 15000+600000
+ 19750 words of font info for 52 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
  38i,18n,43p,303b,1425s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/aleksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx2074
-.600pk> </home/aleksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1095.600pk> <
-/home/aleksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1095.600pk> </home/ale
-ksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1200.600pk> </home/aleksandr/.t
-exmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk> </home/aleksandr/.texmf-var/
-fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk> </home/aleksandr/.texmf-var/fonts/pk/
-ljfour/lh/lh-t2a/larm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cmextra/cmex8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/symbols/msbm10.pfb>
-Output written on document.pdf (27 pages, 974927 bytes).
+ </home/aleksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/lati1095
+.600pk> </home/aleksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx2074.600pk> <
+/home/aleksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1095.600pk> </home/ale
+ksandr/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1095.600pk> </home/aleksandr/.t
+exmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1200.600pk> </home/aleksandr/.texmf-var/
+fonts/pk/ljfour/lh/lh-t2a/labx1440.600pk> </home/aleksandr/.texmf-var/fonts/pk/
+ljfour/lh/lh-t2a/larm1200.600pk> </home/aleksandr/.texmf-var/fonts/pk/ljfour/lh
+/lh-t2a/larm1728.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/c
+mex8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/symbols/msbm10.pfb>
+Output written on document.pdf (27 pages, 980840 bytes).
 PDF statistics:
- 468 PDF objects out of 1000 (max. 8388607)
- 128 compressed objects within 2 object streams
+ 489 PDF objects out of 1000 (max. 8388607)
+ 132 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  121 words of extra memory for PDF output out of 10000 (max. 10000000)
 
