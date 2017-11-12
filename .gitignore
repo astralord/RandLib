@@ -1,3 +1,4 @@
 Randlib.pro.user
 unit_tests/*
 cov-int/*
+documentation/document.log
