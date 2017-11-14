@@ -296,7 +296,7 @@ public:
     inline double GetShape() const { return beta; }
 
     /**
-     * @brief FitShape
+     * @fn FitShape
      * set α and β, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
      * @param lnG average of all ln(X)
@@ -305,7 +305,7 @@ public:
     void FitShape(double lnG, double lnG1m);
 
     /**
-     * @brief FitShape
+     * @fn FitShape
      * set α, estimated via maximum likelihood
      * @param sample
      */

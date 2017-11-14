@@ -57,21 +57,24 @@ double UniformRand::StandardVariate(RandGenerator &randGenerator)
     a = (a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bit
     *(reinterpret_cast<unsigned long long *>(&x)) = a; /// Make a double from bits
     return x - 1.0;
-#elif defined(RANDLIB_UNICLOSED)
-    /// generates a random number on interval [0,1]
-    double x = randGenerator.Variate();
-    return x / 4294967295.0;
-#elif defined(RANDLIB_UNIHALFCLOSED)
-    /// generates a random number on interval [0,1)
-    double x = randGenerator.Variate();
-    return x / 4294967296.0;
 #else
-    /// generates a random number on interval (0,1)
     double x = randGenerator.Variate();
     x += 0.5;
     x /= 4294967296.0;
     return x;
 #endif
+}
+
+double UniformRand::StandardVariateClosed(RandGenerator &randGenerator)
+{
+    double x = randGenerator.Variate();
+    return x / 4294967295.0;
+}
+
+double UniformRand::StandardVariateHalfClosed(RandGenerator &randGenerator)
+{
+    double x = randGenerator.Variate();
+    return x / 4294967296.0;
 }
 
 void UniformRand::Sample(std::vector<double> &outputData) const
@@ -133,6 +136,18 @@ double UniformRand::ExcessKurtosis() const
 double UniformRand::Entropy() const
 {
     return (b == a) ? -INFINITY : std::log(bma);
+}
+
+double UniformRand::LikelihoodFunction(const std::vector<double> &sample) const
+{
+    bool sampleIsInsideInterval = allElementsAreNotSmallerThan(a, sample) && allElementsAreNotBiggerThan(b, sample);
+    return sampleIsInsideInterval ? std::pow(bma, -sample.size()) : 0.0;
+}
+
+double UniformRand::LogLikelihoodFunction(const std::vector<double> &sample) const
+{
+    bool sampleIsInsideInterval = allElementsAreNotSmallerThan(a, sample) && allElementsAreNotBiggerThan(b, sample);
+    return sampleIsInsideInterval ? -sample.size() * logbma : -INFINITY;
 }
 
 constexpr char UniformRand::TOO_LARGE_A[];

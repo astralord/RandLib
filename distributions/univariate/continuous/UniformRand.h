@@ -33,7 +33,27 @@ public:
     double F(const double & x) const override;
     double S(const double & x) const override;
     double Variate() const override;
+
+    /**
+     * @fn StandardVariate
+     * @param randGenerator
+     * @return a random number on interval (0,1) if no preprocessors are specified
+     */
     static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+
+    /**
+     * @fn StandardVariateClosed
+     * @param randGenerator
+     * @return a random number on interval [0,1]
+     */
+    static double StandardVariateClosed(RandGenerator &randGenerator = staticRandGenerator);
+
+    /**
+     * @fn StandardVariateHalfClosed
+     * @param randGenerator
+     * @return a random number on interval [0,1)
+     */
+    static double StandardVariateHalfClosed(RandGenerator &randGenerator = staticRandGenerator);
     void Sample(std::vector<double> &outputData) const override;
 
     double Mean() const override;
@@ -54,6 +74,9 @@ private:
 
 public:
     inline double Entropy() const;
+
+    double LikelihoodFunction(const std::vector<double> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<double> &sample) const override;
 
     /**
      * @fn FitMinimum

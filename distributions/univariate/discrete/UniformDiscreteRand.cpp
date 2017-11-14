@@ -110,18 +110,12 @@ double UniformDiscreteRand::Entropy() const
 
 double UniformDiscreteRand::LikelihoodFunction(const std::vector<int> &sample) const
 {
-    for (const int & var : sample) {
-        if (var < a || var > b)
-            return 0.0;
-    }
-    return std::pow(n, -sample.size());
+    bool sampleIsInsideInterval = allElementsAreNotSmallerThan(a, sample) && allElementsAreNotBiggerThan(b, sample);
+    return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
 }
 
 double UniformDiscreteRand::LogLikelihoodFunction(const std::vector<int> &sample) const
 {
-    for (const int & var : sample) {
-        if (var < a || var > b)
-            return -INFINITY;
-    }
-    return -sample.size() * logN;
+    bool sampleIsInsideInterval = allElementsAreNotSmallerThan(a, sample) && allElementsAreNotBiggerThan(b, sample);
+    return sampleIsInsideInterval ? -sample.size() * logN : -INFINITY;
 }
