@@ -303,6 +303,11 @@ double GammaDistribution::Mode() const
     return (alpha <= 1) ? 0 : (alpha - 1) * theta;
 }
 
+double GammaDistribution::Median() const
+{
+    return (alpha == 1.0) ? theta * M_LN2 : quantileImpl(0.5);
+}
+
 double GammaDistribution::Skewness() const
 {
     return 2.0 / std::sqrt(alpha);
@@ -446,9 +451,8 @@ double GammaDistribution::dfDivf(double x) const
     return x / (alpha - 1 - beta * x);
 }
 
-double GammaDistribution::quantileImpl(double p) const
+double GammaDistribution::quantileImpl(double p, double initValue) const
 {
-    double guess = quantileInitialGuess(p);
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
         if (RandMath::findRoot([this, logP] (double x)
@@ -460,8 +464,8 @@ double GammaDistribution::quantileImpl(double p) const
             double second = std::exp(logPdf - logCdf);
             double third = second * (dfDivf(x) - second);
             return DoubleTriplet(first, second, third);
-        }, guess))
-            return guess;
+        }, initValue))
+            return initValue;
         /// if we can't find quantile, then probably something bad has happened
         return NAN;
     }
@@ -473,15 +477,19 @@ double GammaDistribution::quantileImpl(double p) const
         double second = f(x);
         double third = df(x);
         return DoubleTriplet(first, second, third);
-    }, guess))
-        return guess;
+    }, initValue))
+        return initValue;
     /// if we can't find quantile, then probably something bad has happened
     return NAN;
 }
 
-double GammaDistribution::quantileImpl1m(double p) const
+double GammaDistribution::quantileImpl(double p) const
 {
-    double guess = quantileInitialGuess1m(p);
+    return (alpha == 1.0) ? -theta * std::log1p(-p) : quantileImpl(p, quantileInitialGuess(p));
+}
+
+double GammaDistribution::quantileImpl1m(double p, double initValue) const
+{
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
         if (RandMath::findRoot([this, logP] (double x)
@@ -493,8 +501,8 @@ double GammaDistribution::quantileImpl1m(double p) const
             double second = std::exp(logPdf - logCcdf);
             double third = second * (dfDivf(x) + second);
             return DoubleTriplet(first, second, third);
-        }, guess))
-            return guess;
+        }, initValue))
+            return initValue;
         /// if we can't find quantile, then probably something bad has happened
         return NAN;
     }
@@ -506,10 +514,15 @@ double GammaDistribution::quantileImpl1m(double p) const
         double second = f(x);
         double third = df(x);
         return DoubleTriplet(first, second, third);
-    }, guess))
-        return guess;
+    }, initValue))
+        return initValue;
     /// if we can't find quantile, then probably something bad has happened
     return NAN;
+}
+
+double GammaDistribution::quantileImpl1m(double p) const
+{
+    return (alpha == 1.0) ? -theta * std::log(p) : quantileImpl1m(p, quantileInitialGuess1m(p));
 }
 
 std::complex<double> GammaDistribution::CFImpl(double t) const

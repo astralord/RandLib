@@ -56,15 +56,19 @@ private:
     /**
      * @fn quantileImpl
      * @param p
+     * @param initValue initial value of x
      * @return such x that F(x) = p
      */
+    virtual T quantileImpl(double p, T initValue) const = 0;
     virtual T quantileImpl(double p) const = 0;
 
     /**
      * @fn quantileImpl1m
      * @param p
+     * @param initValue initial value of x
      * @return such x that F(x) = 1 - p
      */
+    virtual T quantileImpl1m(double p, T initValue) const = 0;
     virtual T quantileImpl1m(double p) const = 0;
 
 protected:

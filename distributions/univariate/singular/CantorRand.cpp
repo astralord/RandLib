@@ -70,27 +70,34 @@ double CantorRand::Variance() const
     return 0.125;
 }
 
-double CantorRand::quantileImpl(double p) const
+double CantorRand::quantileImpl(double p, double initValue) const
 {
-    double root = p;
     if (RandMath::findRoot([this, p] (double x)
     {
         return F(x) - p;
-    }, 0.0, 1.0, root))
-        return root;
+    }, 0.0, 1.0, initValue))
+        return initValue;
+    return NAN;
+}
+
+double CantorRand::quantileImpl(double p) const
+{
+    return quantileImpl(p, p);
+}
+
+double CantorRand::quantileImpl1m(double p, double initValue) const
+{
+    if (RandMath::findRoot([this, p] (double x)
+    {
+        return S(x) - p;
+    }, 0.0, 1.0, initValue))
+        return initValue;
     return NAN;
 }
 
 double CantorRand::quantileImpl1m(double p) const
 {
-    double root = 1.0 - p;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double y = F(x) - 1;
-        return y + p;
-    }, 0.0, 1.0, root))
-        return root;
-    return NAN;
+    return quantileImpl1m(p, 1.0 - p);
 }
 
 std::complex<double> CantorRand::CFImpl(double t) const
@@ -118,4 +125,3 @@ double CantorRand::ExcessKurtosis() const
 {
     return -1.6;
 }
-

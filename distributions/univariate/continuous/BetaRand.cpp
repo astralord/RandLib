@@ -395,7 +395,14 @@ double BetaDistribution::Median() const
         return -std::expm1(-M_LN2 / beta);
     if (beta == 1.0)
         return std::pow(2, -1.0 / alpha);
-    return this->quantileImpl(0.5);
+    if (alpha >= 1.0 && beta >= 1.0) {
+        double initValue = 3 * alpha - 1.0;
+        initValue /= 3 * (alpha + beta) - 2.0;
+        initValue *= bma;
+        initValue += a;
+        return ContinuousDistribution::quantileImpl(0.5, initValue);
+    }
+    return ContinuousDistribution::quantileImpl(0.5);
 }
 
 double BetaDistribution::Mode() const

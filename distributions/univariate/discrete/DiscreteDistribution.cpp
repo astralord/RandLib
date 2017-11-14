@@ -42,16 +42,9 @@ int DiscreteDistribution::Mode() const
     return x;
 }
 
-int DiscreteDistribution::quantileImpl(double p) const
+int DiscreteDistribution::quantileImpl(double p, int initValue) const
 {
-    /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 128;
-    static std::vector<int> sample(SAMPLE_SIZE);
-    this->Sample(sample);
-    int index = p * SAMPLE_SIZE;
-    std::nth_element(sample.begin(), sample.begin() + index, sample.end());
-    int guess = sample[index];
-    int down = static_cast<int>(std::floor(guess)), up = down + 1;
+    int down = static_cast<int>(std::floor(initValue)), up = down + 1;
     double fu = F(up), fd = F(down);
     /// go up
     while (fu < p) {
@@ -68,16 +61,23 @@ int DiscreteDistribution::quantileImpl(double p) const
     return (fd < p) ? up : down;
 }
 
-int DiscreteDistribution::quantileImpl1m(double p) const
+
+int DiscreteDistribution::quantileImpl(double p) const
 {
     /// We use quantile from sample as an initial guess
     static constexpr int SAMPLE_SIZE = 128;
     static std::vector<int> sample(SAMPLE_SIZE);
     this->Sample(sample);
     int index = p * SAMPLE_SIZE;
-    std::nth_element(sample.begin(), sample.begin() + index, sample.end(), std::greater<>());
-    int guess = sample[index];
-    int down = static_cast<int>(std::floor(guess)), up = down + 1;
+    if (index == 0)
+        return quantileImpl(p, *std::min_element(sample.begin(), sample.end()));
+    std::nth_element(sample.begin(), sample.begin() + index, sample.end());
+    return quantileImpl(p, sample[index]);
+}
+
+int DiscreteDistribution::quantileImpl1m(double p, int initValue) const
+{
+    int down = static_cast<int>(std::floor(initValue)), up = down + 1;
     double su = S(up), sd = S(down);
     /// go up
     while (su > p) {
@@ -93,6 +93,19 @@ int DiscreteDistribution::quantileImpl1m(double p) const
 
     /// if lower quantile is not equal probability, we return upper quantile
     return (sd > p) ? up : down;
+}
+
+int DiscreteDistribution::quantileImpl1m(double p) const
+{
+    /// We use quantile from sample as an initial guess
+    static constexpr int SAMPLE_SIZE = 128;
+    static std::vector<int> sample(SAMPLE_SIZE);
+    this->Sample(sample);
+    int index = p * SAMPLE_SIZE;
+    if (index == 0)
+        return quantileImpl1m(p, *std::max_element(sample.begin(), sample.end()));
+    std::nth_element(sample.begin(), sample.begin() + index, sample.end(), std::greater<>());
+    return quantileImpl1m(p, sample[index]);
 }
 
 double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const

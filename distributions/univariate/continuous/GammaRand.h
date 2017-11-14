@@ -186,6 +186,7 @@ public:
      */
     double GeometricVariance() const;
     double Mode() const override;
+    double Median() const override;
     double Skewness() const override;
     double ExcessKurtosis() const override;
 
@@ -213,7 +214,9 @@ private:
      * @return f'(x) / f(x)
      */
     double dfDivf(double x) const;
+    double quantileImpl(double p, double initValue) const override;
     double quantileImpl(double p) const override;
+    double quantileImpl1m(double p, double initValue) const override;
     double quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;

@@ -82,21 +82,6 @@ double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
     return NAN;
 }
 
-double ExponentialRand::Median() const
-{
-    return theta * M_LN2;
-}
-
-double ExponentialRand::quantileImpl(double p) const
-{
-    return -theta * std::log1p(-p);
-}
-
-double ExponentialRand::quantileImpl1m(double p) const
-{
-    return -theta * std::log(p);
-}
-
 std::complex<double> ExponentialRand::CFImpl(double t) const
 {
     return 1.0 / std::complex<double>(1.0, -theta * t);

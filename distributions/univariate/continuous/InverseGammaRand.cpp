@@ -79,6 +79,11 @@ double InverseGammaRand::Variance() const
     return var / (alpha - 2);
 }
 
+double InverseGammaRand::Median() const
+{
+    return 1.0 / X.Median();
+}
+
 double InverseGammaRand::quantileImpl(double p) const
 {
     return 1.0 / X.Quantile1m(p);
