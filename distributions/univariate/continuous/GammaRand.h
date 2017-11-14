@@ -296,10 +296,10 @@ public:
  * @brief The ChiSquaredRand class <BR>
  * Chi-squared distribution
  *
- * Notation: X ~ χ^2(n)
+ * Notation: X ~ χ^2(k)
  *
  * Related distributions: <BR>
- * X ~ Γ(0.5 * n, 0.5)
+ * X ~ Γ(0.5 * k, 0.5)
  */
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution
 {

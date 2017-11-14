@@ -22,21 +22,21 @@
 \contentsline {subsection}{\numberline {6.1}Chi-squared distribution}{11}
 \contentsline {subsection}{\numberline {6.2}Erlang distribution}{11}
 \contentsline {subsection}{\numberline {6.3}Exponential distribution}{11}
-\contentsline {section}{\numberline {7}Geometric Stable distribution}{12}
-\contentsline {subsection}{\numberline {7.1}Asymmetric Laplace distribution}{12}
-\contentsline {subsection}{\numberline {7.2}Laplace distribution}{12}
-\contentsline {section}{\numberline {8}Noncentral Chi-Squared distribution}{12}
-\contentsline {section}{\numberline {9}Planck distribution}{12}
-\contentsline {section}{\numberline {10}Stable distribution}{12}
-\contentsline {subsection}{\numberline {10.1}Normal distribution}{12}
-\contentsline {subsection}{\numberline {10.2}Cauchy distribution}{14}
-\contentsline {subsection}{\numberline {10.3}Levy distribution}{14}
-\contentsline {subsection}{\numberline {10.4}Holtsmark distribution}{14}
+\contentsline {section}{\numberline {7}Geometric Stable distribution}{14}
+\contentsline {subsection}{\numberline {7.1}Asymmetric Laplace distribution}{14}
+\contentsline {subsection}{\numberline {7.2}Laplace distribution}{14}
+\contentsline {section}{\numberline {8}Noncentral Chi-Squared distribution}{14}
+\contentsline {section}{\numberline {9}Planck distribution}{14}
+\contentsline {section}{\numberline {10}Stable distribution}{14}
+\contentsline {subsection}{\numberline {10.1}Normal distribution}{14}
+\contentsline {subsection}{\numberline {10.2}Cauchy distribution}{15}
+\contentsline {subsection}{\numberline {10.3}Levy distribution}{15}
+\contentsline {subsection}{\numberline {10.4}Holtsmark distribution}{15}
 \contentsline {subsection}{\numberline {10.5}Landau distribution}{15}
-\contentsline {section}{\numberline {11}Pareto distribution}{15}
-\contentsline {paragraph}{Estimation of parameters.}{15}
-\contentsline {subparagraph}{Frequentist inference.}{15}
-\contentsline {subparagraph}{Bayesian inference.}{16}
+\contentsline {section}{\numberline {11}Pareto distribution}{16}
+\contentsline {paragraph}{Estimation of parameters.}{16}
+\contentsline {subparagraph}{Frequentist inference.}{16}
+\contentsline {subparagraph}{Bayesian inference.}{17}
 \contentsline {section}{\numberline {12}Weibull}{18}
 \contentsline {paragraph}{Estimation of scale}{18}
 \contentsline {subparagraph}{Frequentist inference.}{18}

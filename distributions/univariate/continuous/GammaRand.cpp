@@ -543,9 +543,9 @@ GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sa
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
     double kappa = priorDistribution.GetShape();
-    double theta = priorDistribution.GetRate();
+    double gamma = priorDistribution.GetRate();
     double newShape = alpha * sample.size() + kappa;
-    double newRate = GetSampleSum(sample) + theta;
+    double newRate = GetSampleSum(sample) + gamma;
     GammaRand posteriorDistribution(newShape, newRate);
     SetParameters(alpha, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;

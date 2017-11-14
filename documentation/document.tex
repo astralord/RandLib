@@ -413,26 +413,37 @@
 	\[
 	\tilde{\beta} = \frac{\alpha}{\overline{X}_n} \Big(1 - \frac{1}{n}\Big).
 	\]
-	\subparagraph{Bayesian inference.} We suppose that prior distribution of rate $\beta$ is $\Gamma(\kappa, \theta)$:
+	\subparagraph{Bayesian inference.} We suppose that prior distribution of rate $\beta$ is $\Gamma(\kappa, \gamma)$:
 	\[
-	h(\beta) = \frac{\theta^\kappa}{\Gamma(\kappa)} \beta^{\kappa-1}e^{-\theta \beta}.
+	h(\beta) = \frac{\gamma^\kappa}{\Gamma(\kappa)} \beta^{\kappa-1}e^{-\gamma \beta}.
 	\]
 	Then
 	\[
-	f(\beta | X) \propto \beta^{\alpha n} e^{-\beta \sum_{i=1}^{n} X_i } \cdot \beta^{\kappa-1}e^{-\theta \beta} \sim \operatorname{\Gamma}\Big(\alpha n + \kappa, \theta +\sum_{i=1}^{n} X_i \Big).
+	f(\beta | X) \propto \beta^{\alpha n} e^{-\beta \sum_{i=1}^{n} X_i } \cdot \beta^{\kappa-1}e^{-\gamma \beta} \sim \operatorname{\Gamma}\Big(\alpha n + \kappa, \gamma +\sum_{i=1}^{n} X_i \Big).
 	\]
 	Therefore, Bayesian estimator is
 	\[
-	\ME[\beta|X] = \frac{\alpha n + \kappa}{\theta +\sum_{i=1}^{n} X_i},
+	\ME[\beta|X] = \frac{\alpha n + \kappa}{\gamma +\sum_{i=1}^{n} X_i},
 	\]
 	and MAP estimator is
 	\[
-	\beta_{MAP} = \frac{\alpha n + \kappa - 1}{\theta +\sum_{i=1}^{n} X_i}.
+	\beta_{MAP} = \frac{\alpha n + \kappa - 1}{\gamma +\sum_{i=1}^{n} X_i}.
 	\]
 	
 	\subsection{Chi-squared distribution}
+	Notation:
+	\[
+	X \sim \chi_k^2.
+	\]
 	Relation to Gamma distribution:
+	\[
+	X \sim \Gamma\bigg( \frac{k}{2}, \frac{1}{2} \bigg).
+	\]
 	\subsection{Erlang distribution}
+	Notation:
+	\[
+	X \sim \operatorname{Erlang}(k, \beta).
+	\]
 	The only difference between Gamma and Erlang distributions is that a second one takes an integer shape parameter $k$.
 	\subsection{Exponential distribution}
 	\begin{figure}[!htb]\centering
@@ -470,7 +481,7 @@
 	\end{figure}
 
 	Relation to Gamma distribution:
-	$X \sim \Gamma(1, \lambda).$
+	\[X \sim \Gamma(1, \lambda).\]
 	Hence, estimation of parameter $\lambda$ is the particular case of estimation of rate $\beta$ for Gamma distribution.
 	
 	

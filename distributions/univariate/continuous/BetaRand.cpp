@@ -389,7 +389,13 @@ double BetaDistribution::GeometricVariance() const
 
 double BetaDistribution::Median() const
 {
-    return (alpha == beta) ? 0.5 * (b + a) : quantileImpl(0.5);
+    if (alpha == beta)
+        return 0.5;
+    if (alpha == 1.0)
+        return -std::expm1(-M_LN2 / beta);
+    if (beta == 1.0)
+        return std::pow(2, -1.0 / alpha);
+    return this->quantileImpl(0.5);
 }
 
 double BetaDistribution::Mode() const
@@ -532,6 +538,8 @@ double BetaRand::GetSampleLog1mMean(const std::vector<double> &sample) const
 
 void BetaRand::FitAlpha(double lnG, double lnG1m, double mean)
 {
+    if (mean <= a || mean >= b)
+        throw std::invalid_argument(fitErrorDescription(NOT_APPLICABLE, "Mean of the sample should be inside of (a, b)"));
     if (beta == 1.0) {
         /// for β = 1 we have explicit expression for estimator
         SetShapes(-1.0 / lnG, beta);
@@ -565,18 +573,20 @@ void BetaRand::FitAlpha(const std::vector<double> &sample)
     double lnG = GetSampleLogMean(sample);
     if (!std::isfinite(lnG))
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
-    double lnG1m = 0.0;
+    double lnG1m = 0.0, mean = 0.5 * (a + b);
     if (beta != 1.0) {
         lnG1m = GetSampleLog1mMean(sample);
         if (!std::isfinite(lnG1m))
             throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
+        mean = GetSampleMean(sample);
     }
-    double mean = GetSampleMean(sample);
     FitAlpha(lnG, lnG1m, mean);
 }
 
 void BetaRand::FitBeta(double lnG, double lnG1m, double mean)
 {
+    if (mean <= a || mean >= b)
+        throw std::invalid_argument(fitErrorDescription(NOT_APPLICABLE, "Mean of the sample should be inside of (a, b)"));
     if (alpha == 1.0) {
         /// for α = 1 we have explicit expression for estimator
         SetShapes(alpha, -1.0 / lnG1m);
@@ -610,13 +620,13 @@ void BetaRand::FitBeta(const std::vector<double> &sample)
     double lnG1m = GetSampleLog1mMean(sample);
     if (!std::isfinite(lnG1m))
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, BETA_ZERO));
-    double lnG = 0.0;
+    double lnG = 0.0, mean = 0.5 * (a + b);
     if (alpha != 1.0) {
         lnG = GetSampleLogMean(sample);
         if (!std::isfinite(lnG))
             throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));
+        mean = GetSampleMean(sample);
     }
-    double mean = GetSampleMean(sample);
     FitBeta(lnG, lnG1m, mean);
 }
 
