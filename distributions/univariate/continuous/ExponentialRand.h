@@ -11,7 +11,7 @@
  */
 class RANDLIBSHARED_EXPORT ExpZiggurat {
 
-    static constexpr int TABLE_SIZE = 257;
+    static constexpr size_t TABLE_SIZE = 257;
     static constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
     {
         constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
