@@ -2,6 +2,37 @@
 #define EXPONENTIALRAND_H
 
 #include "GammaRand.h"
+#include <functional>
+
+/**
+ * @brief The ExpZiggurat class
+ * Class for ziggurat making
+ * (for exponentially distributed random data generation)
+ */
+class RANDLIBSHARED_EXPORT ExpZiggurat {
+
+    static constexpr int TABLE_SIZE = 257;
+    static constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
+    {
+        constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
+        std::array<LongDoublePair, TABLE_SIZE> table{};
+        /// coordinates of the implicit rectangle in base layer
+        table[0].first = 0.00045413435384149675l; /// exp(-x1);
+        table[0].second = 8.697117470131049720307l; /// A / stairHeight[0];
+        /// implicit value for the top layer
+        table[TABLE_SIZE - 1].second = 0;
+        table[1].second = 7.69711747013104972l;
+        table[1].first = 0.0009672692823271745203l;
+        for (size_t i = 2; i < TABLE_SIZE - 1; ++i) {
+            /// such y_i that f(x_{i+1}) = y_i
+            table[i].second = -std::log(table[i - 1].first);
+            table[i].first = table[i - 1].first + A / table[i].second;
+        }
+        return table;
+    }
+
+    friend class ExponentialRand;
+};
 
 /**
  * @brief The ExponentialRand class <BR>
@@ -16,10 +47,7 @@
  */
 class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution
 {
-    static long double stairWidth[257], stairHeight[256]; ///< tables for ziggurat
-    static constexpr long double x1 = 7.69711747013104972l; ///< starting constant for tables
-    static bool dummy;
-    static bool SetupTables();
+    static constexpr auto ziggurat = ExpZiggurat::createZiggurat();
 
 public:
     explicit ExponentialRand(double rate = 1) : FreeScaleGammaDistribution(1, rate) {}

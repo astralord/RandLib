@@ -16,6 +16,10 @@
 
 namespace RandMath
 {
+
+template <int TABLE_SIZE>
+constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat(const std::function<LongDoublePair (const LongDoublePair &)> &funPtr, LongDoublePair first, LongDoublePair second);
+
 /**
  * @fn areClose
  * @param a

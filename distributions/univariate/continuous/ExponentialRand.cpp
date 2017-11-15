@@ -2,32 +2,9 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
-long double ExponentialRand::stairWidth[257] = {0};
-long double ExponentialRand::stairHeight[256] = {0};
-bool ExponentialRand::dummy = ExponentialRand::SetupTables();
-
 String ExponentialRand::Name() const
 {
     return "Exponential(" + toStringWithPrecision(GetRate()) + ")";
-}
-
-bool ExponentialRand::SetupTables()
-{
-    /// Set up ziggurat tables
-    static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
-    /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = 0.00045413435384149675l; /// exp(-x1);
-    stairWidth[0] = 8.697117470131049720307l; /// A / stairHeight[0];
-    /// implicit value for the top layer
-    stairWidth[256] = 0;
-    stairWidth[1] = x1;
-    stairHeight[1] = 0.0009672692823271745203l;
-    for (size_t i = 2; i < 256; ++i) {
-        /// such y_i that f(x_{i+1}) = y_i
-        stairWidth[i] = -std::log(stairHeight[i - 1]);
-        stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
-    }
-    return true;
 }
 
 double ExponentialRand::f(const double & x) const
@@ -68,13 +45,13 @@ double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
     do {
         int stairId = randGenerator.Variate() & 255;
         /// Get horizontal coordinate
-        double x = UniformRand::StandardVariate(randGenerator) * stairWidth[stairId];
-        if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
+        double x = UniformRand::StandardVariate(randGenerator) * ziggurat[stairId].second;
+        if (x < ziggurat[stairId + 1].second) /// if we are under the upper stair - accept
             return x;
         if (stairId == 0) /// if we catch the tail
-            return x1 + StandardVariate(randGenerator);
-        long double height = stairHeight[stairId] - stairHeight[stairId - 1];
-        if (stairHeight[stairId - 1] + height * UniformRand::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
+            return ziggurat[1].second + StandardVariate(randGenerator);
+        long double height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
+        if (ziggurat[stairId - 1].first + height * UniformRand::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
             return x;
         /// rejection - go back
     } while (++iter <= MAX_ITER_REJECTION);

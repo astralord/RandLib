@@ -6,6 +6,36 @@
 #include "../../bivariate/NormalInverseGammaRand.h"
 
 /**
+ * @brief The NormalZiggurat class
+ * Class for ziggurat making
+ * (for normally distributed random data generation)
+ */
+class RANDLIBSHARED_EXPORT NormalZiggurat {
+
+    static constexpr int TABLE_SIZE = 257;
+    static constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
+    {
+        constexpr long double A = 4.92867323399e-3l; /// area under rectangle
+        std::array<LongDoublePair, TABLE_SIZE> table{};
+        /// coordinates of the implicit rectangle in base layer
+        table[0].first = 0.001260285930498597l; /// exp(-x1);
+        table[0].second = 3.9107579595370918075l; /// A / stairHeight[0];
+        /// implicit value for the top layer
+        table[TABLE_SIZE - 1].second = 0.0l;
+        table[1].second = 3.6541528853610088l;
+        table[1].first = 0.002609072746106362l;
+        for (size_t i = 2; i < TABLE_SIZE - 1; ++i) {
+            /// such y_i that f(x_{i+1}) = y_i
+            table[i].second = std::sqrt(-2 * std::log(table[i - 1].first));
+            table[i].first = table[i - 1].first + A / table[i].second;
+        }
+        return table;
+    }
+
+    friend class NormalRand;
+};
+
+/**
  * @brief The NormalRand class <BR>
  * Normal distribution
  *
@@ -20,11 +50,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
 {
     double sigma = 1; ///< scale σ
 
-    static long double stairWidth[257]; ///< width of ziggurat's stairs
-    static long double stairHeight[256]; ///< height of ziggurat's stairs
-    static constexpr long double x1 = 3.6541528853610088l; ///< starting point for ziggurat's setup
-    static const bool dummy;
-    static bool SetupTables();
+    static constexpr auto ziggurat = NormalZiggurat::createZiggurat();
 
 public:
     NormalRand(double mean = 0, double var = 1);

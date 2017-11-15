@@ -554,5 +554,6 @@ double MarcumQ(double mu, double x, double y)
     double logX = std::log(x), logY = std::log(y);
     return MarcumQ(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
+
 }
 

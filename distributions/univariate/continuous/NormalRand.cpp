@@ -5,10 +5,6 @@
 #include "GammaRand.h"
 #include "StudentTRand.h"
 
-long double NormalRand::stairWidth[257] = {0};
-long double NormalRand::stairHeight[256] = {0};
-const bool NormalRand::dummy = NormalRand::SetupTables();
-
 NormalRand::NormalRand(double mean, double var)
     : StableDistribution(2.0, 0.0, 1.0, mean)
 {
@@ -26,24 +22,6 @@ void NormalRand::SetScale(double scale)
         throw std::invalid_argument("Normal distribution: scale should be positive");
     sigma = scale;
     StableDistribution::SetScale(sigma * M_SQRT1_2);
-}
-
-bool NormalRand::SetupTables()
-{
-    static constexpr long double A = 4.92867323399e-3l; /// area under rectangle
-    /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = 0.001260285930498597l; /// exp(-0.5 * x1 * x1);
-    stairWidth[0] = 3.9107579595370918075l; /// A / stairHeight[0];
-    /// implicit value for the top layer
-    stairWidth[256] = 0.0l;
-    stairWidth[1] = x1;
-    stairHeight[1] = 0.002609072746106362l;
-    for (size_t i = 2; i <= 255; ++i) {
-        /// such y_i that f(x_{i+1}) = y_i
-        stairWidth[i] = std::sqrt(-2 * std::log(stairHeight[i - 1]));
-        stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
-    }
-    return true;
 }
 
 void NormalRand::SetVariance(double var)
@@ -85,30 +63,30 @@ double NormalRand::StandardVariate(RandGenerator &randGenerator)
     do {
         unsigned long long B = randGenerator.Variate();
         int stairId = B & 255;
-        double x = UniformRand::StandardVariate(randGenerator) * stairWidth[stairId]; /// Get horizontal coordinate
-        if (x < stairWidth[stairId + 1])
+        double x = UniformRand::StandardVariate(randGenerator) * ziggurat[stairId].second; /// Get horizontal coordinate
+        if (x < ziggurat[stairId + 1].second)
             return ((signed)B > 0) ? x : -x;
         if (stairId == 0) /// handle the base layer
         {
             static thread_local double z = -1;
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::StandardVariate(randGenerator) / x1;
+                x = ExponentialRand::StandardVariate(randGenerator) / ziggurat[1].second;
                 z -= 0.5 * x * x;
             }
             if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
-                    x = ExponentialRand::StandardVariate(randGenerator) / x1;
+                    x = ExponentialRand::StandardVariate(randGenerator) / ziggurat[1].second;
                     z = ExponentialRand::StandardVariate(randGenerator) - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
-            x += x1;
+            x += ziggurat[1].second;
             return ((signed)B > 0) ? x : -x;
         }
         /// handle the wedges of other stairs
-        long double height = stairHeight[stairId] - stairHeight[stairId - 1];
-        if (stairHeight[stairId - 1] + height * UniformRand::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
+        long double height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
+        if (ziggurat[stairId - 1].first + height * UniformRand::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
