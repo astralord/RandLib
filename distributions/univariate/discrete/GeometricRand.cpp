@@ -53,8 +53,8 @@ int GeometricRand::Variate(double probability, RandGenerator &randGenerator)
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
         double rate = -std::log1p(-probability);
-        double X = ExponentialRand::StandardVariate(randGenerator) / rate;
-        return std::floor(X);
+        double X = std::floor(ExponentialRand::StandardVariate(randGenerator) / rate);
+        return X < INT_MAX ? X : INT_MAX - 1; // if p->0, then X exceeds range of int
     }
 
     double U = UniformRand::StandardVariate(randGenerator);

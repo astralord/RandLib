@@ -59,10 +59,10 @@
 \newcommand{\MR}{\mathbb{R}}
 \newcommand{\MP}{\mathbb{P}}
 \newcommand{\MN}{\mathbb{N}}
-\newcommand{\Var}{\mathrm{Var}}
-\newcommand{\Cov}{\mathrm{Cov}}
-\newcommand{\diag}{\mathrm{diag}}
-\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\tr}{\operatorname{tr}}
 \newcommand{\convdistr}{\xrightarrow{\mathcal{L}}}
 \newcommand{\convprob}{\xrightarrow{\MP}}
 \newcommand{\define}[1]{\textit{\textbf{#1}}}
@@ -89,7 +89,7 @@
 	m_4' &= m_4 +  \delta^4 \frac{(n-1)(n^2-3n+3)}{n^3}+6\delta^2 \frac{m_2}{n^2}-4\delta\frac{m_3}{n}.
 	\end{aligned}
 	\]
-	Then $ m_1'$, $\frac{m_2}{n}$, $\mathrm{Skew}(X) = \frac{\sqrt{n}m_3'}{m_2'^{3/2}}$ and $\mathrm{Kurt}(X) = \frac{nm_4'}{m_2'^2}$ (we return excess kurtosis). 
+	Then $ m_1'$, $\frac{m_2}{n}$, $\operatorname{Skew}(X) = \frac{\sqrt{n}m_3'}{m_2'^{3/2}}$ and $\operatorname{Kurt}(X) = \frac{nm_4'}{m_2'^2}$ (we return excess kurtosis). 
 	
 	\pagebreak
 	\part{Continuous univariate distributions}
@@ -181,7 +181,7 @@
 	\]
 	Differentiating again we get the Hessian matrix:
 	\[
-	\mathrm{H}(\ln\mathcal{L}(\alpha,\beta|X)) = n \cdot \begin{pmatrix}
+	\operatorname{H}(\ln\mathcal{L}(\alpha,\beta|X)) = n \cdot \begin{pmatrix}
 	\psi_1(\alpha+\beta)-\psi_1(\alpha) & \psi_1(\alpha+\beta) \\
 	\psi_1(\alpha+\beta) & \psi_1(\alpha+\beta)-\psi_1(\beta)
 	\end{pmatrix}.
@@ -209,11 +209,11 @@
 	\frac{\partial \ln\mathcal{L}(\alpha | X)}{\partial \alpha} = \sum_{i=1}^{n} \ln \frac{1-X_i}{X_i} + n\pi \cot(\pi \alpha).
 	\]
 	Therefore, maximum-likelihood function is
-	\[ \hat{\alpha} = -\frac{1}{\pi} \mathrm{atan}\Bigg(\frac{n\pi}{\sum_{i=1}^{n} \ln \frac{1-X_i}{X_i}}\Bigg). \]
-	If $\hat{\alpha}$ is negative, we add $1$, because $\frac{\mathrm{atan}}{\pi} \in (-0.5, 0.5)$, while $\alpha \in (0, 1)$.
+	\[ \hat{\alpha} = -\frac{1}{\pi} \operatorname{atan}\Bigg(\frac{n\pi}{\sum_{i=1}^{n} \ln \frac{1-X_i}{X_i}}\Bigg). \]
+	If $\hat{\alpha}$ is negative, we add $1$, because $\frac{\operatorname{atan}}{\pi} \in (-0.5, 0.5)$, while $\alpha \in (0, 1)$.
 	
 	\subsection{Balding-Nichols distribution}
-	Notation: \[ X \sim \mathrm{Balding-Nichols}(p, F) \] with $p, F \in (0, 1)$.
+	Notation: \[ X \sim \operatorname{Balding-Nichols}(p, F) \] with $p, F \in (0, 1)$.
 	Relation to Beta distribution: \[ X \sim B(pF', (1 - p)F') \] with $F' = (1 - F) / F$.
 	
 	\subsection{Uniform distribution}
@@ -266,13 +266,13 @@
 	\ME[\tilde{a}] = \frac{n\ME[X_{(1)}] - \ME[X_{(n)}]}{n-1} = \frac{n(an+b)-(a+bn)}{n^2-1} = a.
 	\]
 	Analogously, $\ME[\tilde{b}] = b$.
-	\subparagraph{Bayesian inference.} Let us say, we try to estimate $\theta = b-a$ with known $a$. We set the prior distribution $\theta \sim \mathrm{Pareto}(\alpha, \sigma)$:
+	\subparagraph{Bayesian inference.} Let us say, we try to estimate $\theta = b-a$ with known $a$. We set the prior distribution $\theta \sim \operatorname{Pareto}(\alpha, \sigma)$:
 	\[
 	h(\theta|\alpha, \sigma) = \frac{\alpha \sigma^\alpha}{\theta^{\alpha + 1}} \mathbf{1}_{\{\theta \geq \sigma\}}.
 	\]
 	The density of posterior distribution is
 	\[
-	f(\theta|X) \propto \frac{\alpha \sigma^\alpha}{\theta^{\alpha+n+1}} \mathbf{1}_{\{\theta \geq \max(\sigma, X_{(n)}-a) \}} \sim \mathrm{Pareto}(\alpha + n, \max(\sigma, X_{(n)}-a) ).
+	f(\theta|X) \propto \frac{\alpha \sigma^\alpha}{\theta^{\alpha+n+1}} \mathbf{1}_{\{\theta \geq \max(\sigma, X_{(n)}-a) \}} \sim \operatorname{Pareto}(\alpha + n, \max(\sigma, X_{(n)}-a) ).
 	\]
 	Hence, Bayesian estimator is
 	\[  
@@ -344,7 +344,7 @@
 	\begin{center}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & $X \sim \mathrm{EMG}(\mu, \sigma, \lambda)$ \\
+			Notation & $X \sim \operatorname{EMG}(\mu, \sigma, \lambda)$ \\
 			\hline
 			Parameters & $\mu \in \MR, \sigma > 0, \lambda > 0$ \\
 			\hline
@@ -373,7 +373,7 @@
 		\begin{center}
 			\begin{tabular}{| r | l |}
 				\hline
-				Notation & $X \sim \mathrm{F}(d_1, d_2)$ \\
+				Notation & $X \sim \operatorname{F}(d_1, d_2)$ \\
 				\hline
 				Parameters & $d_1, d_2 > 0$ \\
 				\hline
@@ -511,7 +511,7 @@
 		\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & $X \sim \mathrm{Exp}(\lambda)$ \\
+			Notation & $X \sim \operatorname{Exp}(\lambda)$ \\
 			\hline
 			Parameters & $\lambda > 0$ \\
 			\hline
@@ -551,7 +551,7 @@
 		\begin{minipage}{0.4\textwidth}
 			\begin{tabular}{| r | l |}
 				\hline
-				Notation & $X \sim \mathrm{GS}_\alpha(\beta, \gamma, \mu)$ \\
+				Notation & $X \sim \operatorname{GS}_\alpha(\beta, \gamma, \mu)$ \\
 				\hline
 				Parameters & \pbox{\linewidth}{$\alpha \in (0, 2], \beta \in [-1, 1],$\\ $\gamma > 0, \mu \in \MR $} \\
 				\hline
@@ -629,7 +629,7 @@
 		\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & $X \sim \mathrm{Planck}(a, b)$ \\
+			Notation & $X \sim \operatorname{Planck}(a, b)$ \\
 			\hline
 			Parameters & $a, b > 0$ \\
 			\hline
@@ -652,6 +652,24 @@
 		\end{tabular}
 	\end{minipage}
     \end{figure}
+    \paragraph{Calculation of cumulative distribution function.} For $a \geq 1$ $F(x)$ can be calculated by straightforward numerical integration:
+    \[
+    F(x) = \frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \int_{0}^{x} \frac{t ^ a}{e^{bt} - 1} dt.
+    \]
+    Note that for $\alpha < 1$ integrand has a singularity point at $t=0$. In that case we define
+    \[
+    h(t) = \frac{b^{a+2}t ^ {a+1} }{\Gamma(a+1)\zeta(a+1)} \cdot \bigg( \frac{1}{e^{bt} -  1}-\frac{1}{bt}\bigg)
+    \]
+    and then
+    \[
+    F(x) = \int_{0}^{x}  h(t) dt + \frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \frac{x^a}{ba}.
+    \]
+	
+	\paragraph{Calculation of characteristic function.} The idea of calculations for $a < 1$ is near the same. We split the real part of $\phi(t)$ into $3$ different integrals:
+	\[
+	\Re(\phi(t)) = \int_{0}^{1} \cos(tx) h(x) dx + \int_{1}^{\infty} \cos(tx) dx + \frac{b^{a}}{a\Gamma(a+1)\zeta(a+1)} \bigg(\cos(t) + t\int_{0}^{1} \sin(tx)x^a dx \bigg).
+	\]
+	All the indegrands now have no singularity points.
 	
 	\pagebreak
 	\section{Stable distribution}
@@ -711,7 +729,7 @@
 			\hline
 			$f(x)$ & $ \frac{1}{\sqrt{2\sigma^2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}  $ \\
 			\hline
-			$F(x)$ & $ \frac{1}{2} \mathrm{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
+			$F(x)$ & $ \frac{1}{2} \operatorname{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
 			\hline
 			$\ME[X]$ & $ \mu$ \\
 			\hline
@@ -741,7 +759,7 @@
 		\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & $X \sim \mathrm{Cauchy}(\mu, \gamma)$ \\
+			Notation & $X \sim \operatorname{Cauchy}(\mu, \gamma)$ \\
 			\hline
 			Parameters & $\mu \in \MR, \gamma^2 > 0 $ \\
 			\hline
@@ -749,7 +767,7 @@
 			\hline
 			$f(x)$ & $ \frac{1}{ \pi \gamma \Big[ 1 + \big( \frac{x-\mu}{\gamma} \big)^2 \Big]  }  $ \\
 			\hline
-			$F(x)$ & $ \frac{1}{\pi} \mathrm{atan}\Big( \frac{x-\mu}{\gamma} \Big) + \frac{1}{2} $ \\
+			$F(x)$ & $ \frac{1}{\pi} \operatorname{atan}\Big( \frac{x-\mu}{\gamma} \Big) + \frac{1}{2} $ \\
 			\hline
 			$\ME[X]$ & Undefined \\
 			\hline
@@ -793,7 +811,7 @@
 				\begin{minipage}{0.4\textwidth}
 					\begin{tabular}{| r | l |}
 						\hline
-						Notation & $X \sim \mathrm{Pareto}(\alpha, \sigma)$ \\
+						Notation & $X \sim \operatorname{Pareto}(\alpha, \sigma)$ \\
 						\hline
 						Parameters & $\alpha,  \sigma > 0 $ \\
 						\hline
@@ -831,7 +849,7 @@
 	\[
 	\hat{\alpha} = \frac{1}{ \frac{1}{n} (\sum_{i=1}^{n} \ln X_i) - \ln \hat{\sigma} }.
 	\]
-	It is known that $\hat{\sigma} \sim \mathrm{Pareto}(n\alpha, \sigma)$ and $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n-1, n\alpha)$ and they are independent. Then
+	It is known that $\hat{\sigma} \sim \operatorname{Pareto}(n\alpha, \sigma)$ and $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n-1, n\alpha)$ and they are independent. Then
 	\[ \ME[\hat{\sigma}] = \frac{ \sigma}{1-\frac{1}{n \alpha}}\]
 	and
 	\[ \ME[\hat{\alpha}] = \frac{n\alpha}{n-2}. \]
@@ -884,7 +902,7 @@
 	\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & $X \sim \mathrm{Weibull}(\lambda, k)$ \\
+			Notation & $X \sim \operatorname{Weibull}(\lambda, k)$ \\
 			\hline
 			Parameters & $\lambda, k > 0 $ \\
 			\hline
@@ -940,19 +958,64 @@ MAP estimator:
 	\pagebreak
 	\part{Discrete univariate distributions}
 	\section{Beta-binomial distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{beta-binomial_pmf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{beta-binomial_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $ X \sim \operatorname{BB}(n, \alpha, \beta) $ \\
+				\hline
+				Parameters & $ n \in \MN, \alpha, \beta > 0  $ \\
+				\hline
+				Support & $ k \in \{0, \dots, n  \} $  \\
+				\hline
+				$\MP(X = k)$ & $\binom{n}{k} \frac{B(k+\alpha, n-k+\beta)}{B(\alpha, \beta)}  $ \\
+				\hline
+				$\MP(X \leq k)$ & Calculated numerically \\
+				\hline
+				$\ME[X]$ & $ n \frac{\alpha}{\alpha + \beta}$ \\
+				\hline
+				$\Var(X)$ & $\frac{n\alpha \beta (\alpha + \beta + n) }{(\alpha+\beta)^2(\alpha+\beta + 1)} $ \\
+				\hline
+				Median & Searched numerically \\
+				\hline
+				Mode & Searched numerically \\
+				\hline
+				$\phi(t)$ & Calculated numerically \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+
+    Relation to other distributions:
+    \[ X \sim \operatorname{Bin}(n, p), p \sim B(\alpha, \beta). \]
+
+	\pagebreak
 	\section{Binomial distribution}
-	\begin{center}
-		\begin{tabular}{| r | l |}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{binomial_pmf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{binomial_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
 			\hline
-			Notation & $ X \sim \mathrm{Bin}(n, p) $ \\
+			Notation & $ X \sim \operatorname{Bin}(n, p) $ \\
 			\hline
 			Parameters & $ n \in \MN, p \in [0, 1]  $ \\
 			\hline
 			Support & $ k \in \{0, \dots, n  \} $  \\
 			\hline
-			P.m.f. & $\MP(X = k) = \binom{n}{k} p^k (1-p)^{n-k}  $ \\
+			$\MP(X = k)$ & $\binom{n}{k} p^k (1-p)^{n-k}  $ \\
 			\hline
-			$F(x)$ & $\MP(X \leq k)=I_{1-p}(n-k, 1+k) $ \\
+			$\MP(X \leq k)$ & $I_{1-p}(n-k, 1+k) $ \\
 			\hline
 			$\ME[X]$ & $ np$ \\
 			\hline
@@ -965,16 +1028,63 @@ MAP estimator:
 			$\phi(t)$ & $ (1-p+pe^{it})^n  $ \\
 			\hline
 		\end{tabular}
-	\end{center}
+		\end{minipage}
+	\end{figure}
+	
 	\subsection{Bernoulli}
 	Notation:
-	\[ X \sim \mathrm{Bernoulli}(p). \]
-	Relation to Binomial distribution: \[X \sim \mathrm{Bin}(1, p). \]
+	\[ X \sim \operatorname{Bernoulli}(p). \]
+	Relation to Binomial distribution: \[X \sim \operatorname{Bin}(1, p). \]
+	
+	\pagebreak
+	\section{Hypergeometric distribution}
+		\begin{figure}[!htb]\centering
+			\begin{minipage}{0.55\textwidth}
+				\includegraphics[width=\linewidth, right]{hypergeometric_pmf}
+				\captionsetup{labelformat=empty}
+				\includegraphics[width=\linewidth, right]{hypergeometric_cdf}
+				\captionsetup{labelformat=empty}
+			\end{minipage}
+			\begin{minipage}{0.4\textwidth}
+				\begin{tabular}{| r | l |}
+					\hline
+					Notation & $ X \sim \operatorname{HG}(N, K, n) $ \\
+					\hline
+					Parameters & 
+					\pbox{\linewidth}{$ N \in \MN, K \in \{1, 2, \dotsm, N  \},$ \\ $n \in \{1, 2, \dotsm, N  \}$} \\
+					\hline
+					Support & $ \max(0, n+K-N) \leq k \leq \min(n, K) $  \\
+					\hline
+					$\MP(X = k)$ & $ \frac{\binom{K}{k}\binom{N-K}{n-k}  }{\binom{N}{n}}   $ \\
+					\hline
+					$\MP(X \leq k)$ & Calculated numerically \\
+					\hline
+					$\ME[X]$ & $ \frac{nK}{N}$ \\
+					\hline
+					$\Var(X)$ & $ \frac{nK(N-K)(N-n)}{N^2(N-1)} $ \\
+					\hline
+					Median & Searched numerically \\
+					\hline
+					Mode & $ \Big\lfloor  \frac{(n+1)(K+1)}{N+2} \Big\rfloor  $ \\
+					\hline
+					$\phi(t)$ & Calculated numerically \\
+					\hline
+				\end{tabular}
+			\end{minipage}
+		\end{figure}
+		
+		
+	\pagebreak
+	\section{Negative-Binomial (Polya) distribution}
+	\subsection{Geometric distribution}
+	\subsection{Pascal distribution}
+	
+	\pagebreak
 	\section{Poisson distribution}
 	\begin{center}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & $ X \sim \mathrm{Po}(\lambda) $ \\
+			Notation & $ X \sim \operatorname{Po}(\lambda) $ \\
 			\hline
 			Parameters & $\lambda > 0$ \\
 			\hline

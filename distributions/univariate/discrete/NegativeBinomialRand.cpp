@@ -118,7 +118,8 @@ int NegativeBinomialDistribution<int>::variateGeometricByTable() const
 template< >
 int NegativeBinomialDistribution<int>::variateGeometricThroughExponential() const
 {
-    return std::floor(-ExponentialRand::StandardVariate(localRandGenerator) / log1mProb);
+    double X = std::floor(-ExponentialRand::StandardVariate(localRandGenerator) / log1mProb);
+    return X < INT_MAX ? X : INT_MAX - 1;
 }
 
 template< >

@@ -1,6 +1,6 @@
 #include "BetaBinomialRand.h"
 #include "BinomialRand.h"
-#include <thread>
+#include "UniformDiscreteRand.h"
 
 BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
 {
@@ -57,10 +57,32 @@ double BetaBinomialRand::F(const int & k) const
     return sum;
 }
 
-int BetaBinomialRand::Variate() const
+int BetaBinomialRand::VariateUniform() const
+{
+    return UniformDiscreteRand::StandardVariate(0, n, localRandGenerator);
+}
+
+int BetaBinomialRand::VariateBeta() const
 {
     double p = B.Variate();
     return BinomialDistribution::Variate(n, p, localRandGenerator);
+}
+
+int BetaBinomialRand::Variate() const
+{
+    return (B.GetAlpha() == 1 && B.GetBeta() == 1) ? VariateUniform() : VariateBeta();
+}
+
+void BetaBinomialRand::Sample(std::vector<int> &outputData) const
+{
+    if (B.GetAlpha() == 1 && B.GetBeta() == 1) {
+        for (int & var : outputData)
+            var = VariateUniform();
+    }
+    else {
+        for (int & var : outputData)
+            var = VariateBeta();
+    }
 }
 
 void BetaBinomialRand::Reseed(unsigned long seed) const
@@ -116,7 +138,7 @@ int BetaBinomialRand::Mode() const
         return y;
     }, 0, n, guess))
         return std::round(guess);
-    /// if we can't find quantile, then probably something bad has happened
+    /// if we can't find mode, then probably something bad has happened
     return -1;
 }
 

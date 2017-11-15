@@ -35,7 +35,15 @@ public:
     double P(const int & k) const override;
     double logP(const int & k) const override;
     double F(const int & k) const override;
+
+private:
+    int VariateUniform() const;
+    int VariateBeta() const;
+
+public:
     int Variate() const override;
+    void Sample(std::vector<int> &outputData) const override;
+
     void Reseed(unsigned long seed) const override;
 
     double Mean() const override;

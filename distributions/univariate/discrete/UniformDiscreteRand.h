@@ -33,7 +33,9 @@ public:
     double P(const int & k) const override;
     double logP(const int & k) const override;
     double F(const int & k) const override;
+
     int Variate() const override;
+    static int StandardVariate(int minValue = 0, int maxValue = 1, RandGenerator &randGenerator = staticRandGenerator);
 
     double Mean() const override;
     double Variance() const override;

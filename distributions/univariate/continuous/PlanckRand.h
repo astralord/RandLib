@@ -38,7 +38,12 @@ public:
     inline double GetScale() const { return b; }
 
 private:
-    double leveledPdf(double t) const;
+    /**
+     * @fn h
+     * @param t
+     * @return leveled pdf for F and CF calculations
+     */
+    double h(double t) const;
 
 public:
     double f(const double & x) const override;

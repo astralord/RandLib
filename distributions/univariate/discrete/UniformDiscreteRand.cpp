@@ -54,6 +54,20 @@ int UniformDiscreteRand::Variate() const
     return a + (intVar % n);
 }
 
+int UniformDiscreteRand::StandardVariate(int minValue, int maxValue, RandGenerator &randGenerator)
+{
+    unsigned long long MAX_RAND = randGenerator.MaxValue();
+    int n = maxValue - minValue + 1;
+    if (n <= 1)
+        return minValue; // throw exception for n <= 0
+    unsigned long long MAX_RAND_UNBIASED = MAX_RAND - MAX_RAND % n - 1;
+    unsigned long intVar;
+    do {
+        intVar = randGenerator.Variate();
+    } while (intVar > MAX_RAND_UNBIASED);
+    return minValue + (intVar % n);
+}
+
 double UniformDiscreteRand::Mean() const
 {
     return 0.5 * (b + a);

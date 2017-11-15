@@ -1,5 +1,5 @@
 \select@language {english}
-\contentsline {part}{I\hspace {1em}General information}{2}
+\contentsline {part}{I\hspace {1em}General information}{3}
 \contentsline {section}{\numberline {1}Calculation of sample moments}{3}
 \contentsline {part}{II\hspace {1em}Continuous univariate distributions}{4}
 \contentsline {section}{\numberline {2}Beta distribution}{4}
@@ -31,6 +31,8 @@
 \contentsline {subsection}{\numberline {7.2}Laplace distribution}{16}
 \contentsline {section}{\numberline {8}Noncentral Chi-Squared distribution}{17}
 \contentsline {section}{\numberline {9}Planck distribution}{18}
+\contentsline {paragraph}{Calculation of cumulative distribution function.}{18}
+\contentsline {paragraph}{Calculation of characteristic function.}{18}
 \contentsline {section}{\numberline {10}Stable distribution}{19}
 \contentsline {subsection}{\numberline {10.1}Normal distribution}{19}
 \contentsline {subsection}{\numberline {10.2}Cauchy distribution}{19}
@@ -47,15 +49,19 @@
 \contentsline {subparagraph}{Bayesian inference.}{25}
 \contentsline {part}{III\hspace {1em}Discrete univariate distributions}{26}
 \contentsline {section}{\numberline {13}Beta-binomial distribution}{26}
-\contentsline {section}{\numberline {14}Binomial distribution}{26}
-\contentsline {subsection}{\numberline {14.1}Bernoulli}{26}
-\contentsline {section}{\numberline {15}Poisson distribution}{27}
-\contentsline {part}{IV\hspace {1em}Bivariate distributions}{31}
-\contentsline {section}{\numberline {16}Bivariate Normal distribution}{31}
-\contentsline {section}{\numberline {17}Normal-Inverse-Gamma distribution}{31}
-\contentsline {section}{\numberline {18}Trinomial distribution}{31}
-\contentsline {part}{V\hspace {1em}Circular distributions}{32}
-\contentsline {section}{\numberline {19}von Mises distribution}{32}
-\contentsline {section}{\numberline {20}Wrapped Exponential distribution}{32}
-\contentsline {part}{VI\hspace {1em}Singular distributions}{33}
-\contentsline {section}{\numberline {21}Cantor distribution}{33}
+\contentsline {section}{\numberline {14}Binomial distribution}{27}
+\contentsline {subsection}{\numberline {14.1}Bernoulli}{27}
+\contentsline {section}{\numberline {15}Hypergeometric distribution}{28}
+\contentsline {section}{\numberline {16}Negative-Binomial (Polya) distribution}{29}
+\contentsline {subsection}{\numberline {16.1}Geometric distribution}{29}
+\contentsline {subsection}{\numberline {16.2}Pascal distribution}{29}
+\contentsline {section}{\numberline {17}Poisson distribution}{30}
+\contentsline {part}{IV\hspace {1em}Bivariate distributions}{34}
+\contentsline {section}{\numberline {18}Bivariate Normal distribution}{34}
+\contentsline {section}{\numberline {19}Normal-Inverse-Gamma distribution}{34}
+\contentsline {section}{\numberline {20}Trinomial distribution}{34}
+\contentsline {part}{V\hspace {1em}Circular distributions}{35}
+\contentsline {section}{\numberline {21}von Mises distribution}{35}
+\contentsline {section}{\numberline {22}Wrapped Exponential distribution}{35}
+\contentsline {part}{VI\hspace {1em}Singular distributions}{36}
+\contentsline {section}{\numberline {23}Cantor distribution}{36}

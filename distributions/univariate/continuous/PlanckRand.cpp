@@ -28,7 +28,7 @@ void PlanckRand::SetParameters(double shape, double scale)
     pdfCoef -= G.GetLogGammaShape();
 }
 
-double PlanckRand::leveledPdf(double t) const
+double PlanckRand::h(double t) const
 {
     if (t <= 0)
         return 0.0;
@@ -89,7 +89,7 @@ double PlanckRand::F(const double & x) const
     double integral1 = std::exp(aux) / (b * a);
     double integral2 = RandMath::integral([this] (double t)
     {
-        return leveledPdf(t);
+        return h(t);
     },
     0, x);
     return integral1 + integral2;
@@ -195,7 +195,7 @@ std::complex<double> PlanckRand::CFImpl(double t) const
     /// simple expected value for the rest of the function
     double re1 = RandMath::integral([this, t] (double x)
     {
-        return std::cos(t * x) * leveledPdf(x);
+        return std::cos(t * x) * h(x);
     },
     0.0, 1.0);
 
