@@ -14,8 +14,8 @@ void NegativeBinomialDistribution<T>::SetParameters(T number, double probability
 {
     if (r <= 0.0)
         throw std::invalid_argument("Negative-Binomial distribution: number parameter should be positive");
-    if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should in interval [0, 1]");
+    if (probability <= 0.0 || probability >= 1.0)
+        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should in interval (0, 1)");
     r = (number > 0) ? number : 1;
     p = probability;
     q = 1.0 - p;
@@ -76,33 +76,14 @@ double NegativeBinomialDistribution<T>::S(const int & k) const
     return RandMath::ibeta(q, kp1, r, logBetaFun, log1mProb, logProb);
 }
 
-template< >
-NegativeBinomialRand<int>::GENERATOR_ID NegativeBinomialDistribution<int>::GetIdOfUsedGenerator() const
-{
-    /// if r is small, we use two different generators for two different cases:
-    /// if p < 0.08 then the tail is too heavy
-    /// (probability to be in main body is less than 0.75),
-    /// then we return highest integer less than variate from exponential distribution
-    /// otherwise we choose table method
-    if (r < 10)
-        return (p < 0.08) ? EXPONENTIAL : TABLE;
-    return GAMMA_POISSON;
-}
-
-template< >
-NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialDistribution<double>::GetIdOfUsedGenerator() const
-{
-    return GAMMA_POISSON;
-}
-
 template< typename T >
 int NegativeBinomialDistribution<T>::variateThroughGammaPoisson() const
 {
     return PoissonRand::Variate(GammaRV.Variate(), localRandGenerator);
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateGeometricByTable() const
+template< typename T >
+int NegativeBinomialDistribution<T>::variateGeometricByTable() const
 {
     double U = UniformRand::StandardVariate(localRandGenerator);
     /// handle tail by recursion
@@ -115,15 +96,15 @@ int NegativeBinomialDistribution<int>::variateGeometricByTable() const
     return x;
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateGeometricThroughExponential() const
+template< typename T >
+int NegativeBinomialDistribution<T>::variateGeometricThroughExponential() const
 {
     double X = std::floor(-ExponentialRand::StandardVariate(localRandGenerator) / log1mProb);
     return X < INT_MAX ? X : INT_MAX - 1;
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateByTable() const
+template< typename T >
+int NegativeBinomialDistribution<T>::variateByTable() const
 {
     double var = 0;
     for (int i = 0; i < r; ++i) {
@@ -132,8 +113,8 @@ int NegativeBinomialDistribution<int>::variateByTable() const
     return var;
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateThroughExponential() const
+template< typename T >
+int NegativeBinomialDistribution<T>::variateThroughExponential() const
 {
     double var = 0;
     for (int i = 0; i < r; ++i) {
@@ -142,14 +123,8 @@ int NegativeBinomialDistribution<int>::variateThroughExponential() const
     return var;
 }
 
-template< >
-int NegativeBinomialDistribution<double>::Variate() const
-{
-    return variateThroughGammaPoisson();
-}
-
-template< >
-int NegativeBinomialDistribution<int>::Variate() const
+template< typename T >
+int NegativeBinomialDistribution<T>::Variate() const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE)
@@ -157,15 +132,8 @@ int NegativeBinomialDistribution<int>::Variate() const
     return (genId == EXPONENTIAL) ? variateThroughExponential() : variateThroughGammaPoisson();
 }
 
-template< >
-void NegativeBinomialDistribution<double>::Sample(std::vector<int> &outputData) const
-{
-    for (int &var : outputData)
-        var = variateThroughGammaPoisson();
-}
-
-template< >
-void NegativeBinomialDistribution<int>::Sample(std::vector<int> &outputData) const
+template< typename T >
+void NegativeBinomialDistribution<T>::Sample(std::vector<int> &outputData) const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE) {

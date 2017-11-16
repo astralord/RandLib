@@ -992,8 +992,7 @@ MAP estimator:
 		\end{minipage}
 	\end{figure}
 
-    Relation to other distributions:
-    \[ X \sim \operatorname{Bin}(n, p), p \sim B(\alpha, \beta). \]
+    Relation to other distributions: if $ p \sim B(\alpha, \beta)$, then $\operatorname{Bin}(n, p) \sim \operatorname{BB}(n, \alpha, \beta)$.
 
 	\pagebreak
 	\section{Binomial distribution}
@@ -1076,120 +1075,105 @@ MAP estimator:
 		
 	\pagebreak
 	\section{Negative-Binomial (Polya) distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{negative-binomial_pmf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{negative-binomial_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $ X \sim \operatorname{NB}(r, p) $\\
+				\hline
+				Parameters & $r > 0$, $p \in (0, 1)$ \\
+				\hline
+				Support & $ k \in \MN_0 $  \\
+				\hline
+				$\MP(X = k)$ & $  \binom{k+r-1}{k} p^r (1-p)^k   $ \\
+				\hline
+				$\MP(X \leq k)$ & $I_p(r, k+1)$ \\
+				\hline
+				$\ME[X]$ & $ \frac{1-p}{p}r$ \\
+				\hline
+				$\Var(X)$ & $ \frac{1-p}{p^2}r $ \\
+				\hline
+				Median & Searched numerically \\
+				\hline
+				Mode & $ \max\Big(\Big\lfloor  \frac{(r-1)(1-p)}{p} \Big\rfloor, 0\Big)  $ \\
+				\hline
+				$\phi(t)$ & $\Big( \frac{p}{1-(1-p)e^{it}} \Big)^r$  \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+	Relation to other distributions: if $\lambda \sim \operatorname{Gamma}\big(r, \frac{p}{1-p}\big)$, then $\operatorname{Po}(\lambda) \sim \operatorname{NB}(r, p)$.
+	
 	\subsection{Geometric distribution}
+	Notation:
+	\[
+	X \sim \operatorname{Geometric}(p).
+	\]
+	Relation to Negative-Binomial distribution:
+	\[
+	X \sim \operatorname{NB}(1, p).
+	\]
 	\subsection{Pascal distribution}
+	Notation:
+	\[
+	X \sim \operatorname{Pascal}(r, p).
+	\]
+	The only difference with Negative-Binomial distribution is that for Pascal distribution shape $r$ is an integer.
 	
 	\pagebreak
 	\section{Poisson distribution}
-	\begin{center}
-		\begin{tabular}{| r | l |}
-			\hline
-			Notation & $ X \sim \operatorname{Po}(\lambda) $ \\
-			\hline
-			Parameters & $\lambda > 0$ \\
-			\hline
-			Support & $ k \in \MN_0 $  \\
-			\hline
-			P.m.f. & $\MP(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$ \\
-			\hline
-			$F(x)$ & $\MP(X \leq k)=Q(k+1, \lambda)$ \\
-			\hline
-			$\ME[X]$ & $ \lambda$ \\
-			\hline
-			$\Var(X)$ & $\lambda$ \\
-			\hline
-			Median & $\sim \max\big([\lambda + \frac{1}{3} - \frac{0.02}{\lambda}], 0\big) $ \\
-			\hline
-			Mode & $[\lambda]$ \\
-			\hline
-			$\phi(t)$ & $ \exp \{ \lambda(e^{it}-1) \}  $ \\
-			\hline
-		\end{tabular}
-	\end{center}
+		\begin{figure}[!htb]\centering
+			\begin{minipage}{0.55\textwidth}
+				\includegraphics[width=\linewidth, right]{poisson_pmf}
+				\captionsetup{labelformat=empty}
+				\includegraphics[width=\linewidth, right]{poisson_cdf}
+				\captionsetup{labelformat=empty}
+			\end{minipage}
+			\begin{minipage}{0.4\textwidth}
+				\begin{tabular}{| r | l |}
+					\hline
+					Notation & $ X \sim \operatorname{Po}(\lambda) $ \\
+					\hline
+					Parameters & $\lambda > 0$ \\
+					\hline
+					Support & $ k \in \MN_0 $  \\
+					\hline
+					P.m.f. & $\MP(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$ \\
+					\hline
+					$F(x)$ & $\MP(X \leq k)=Q(k+1, \lambda)$ \\
+					\hline
+					$\ME[X]$ & $ \lambda$ \\
+					\hline
+					$\Var(X)$ & $\lambda$ \\
+					\hline
+					Median & $\sim \max\big([\lambda + \frac{1}{3} - \frac{0.02}{\lambda}], 0\big) $ \\
+					\hline
+					Mode & $[\lambda]$ \\
+					\hline
+					$\phi(t)$ & $ \exp \{ \lambda(e^{it}-1) \}  $ \\
+					\hline
+				\end{tabular}
+			\end{minipage}
+		\end{figure}
 	
-	Generator (let $\delta = \mu \in \mathbb{Z}$). (There is a mistake in Lemma 3.8 in first inequality). Recall that
-	\[ q(X) = X \ln(\lambda) - \ln \Big( \frac{(\mu + X)!}{\mu!} \Big). \]
+	\pagebreak
+	\section{Skellam distribution}
 	
-	We denote acceptance probability $\MP(W \leq q(X))$ by $p$.
-	\begin{itemize}
-		
-		\item $k = \mu$. Probability to be in this setting is $1 / c$.
-		\[\MP(X = 0 | W \leq q(X)) = \frac{\MP(X = 0, W \leq q(X))}{\MP(W \leq q(X))} = \frac{1}{pc}. \]
-		On the other hand it should be equal to:
-		\[ \frac{1}{pc} = \frac{\lambda^\mu e^{-\lambda}}{\mu!}. \]
-		\item $k = \mu + 1$.
-		\[
-		\begin{aligned}
-		\MP(X = 1 | W \leq q(X)) &= \frac{\MP(X = 1, W \leq q(X))}{\MP(W \leq q(X))} = \frac{\lambda}{p(\mu + 1) c} \\
-		&= \frac{\lambda^{\mu+1} e^{-\lambda}}{(\mu + 1)!}.
-		\end{aligned}
-	    \]
-		
-		
-		\item $k < \mu$. Here was mistake in the book. We adjust the probabilities. Probability to be in this setting is $\sqrt{\pi \mu / 2 e} / c$.
-		\[
-		\begin{aligned}
-		\MP(W \leq q(X), X = k - \mu | U \leq c_1) &= \MP\Bigg(-\frac{N^2}{2} + \frac{1}{2} - E < q( \lfloor -|N|\sqrt{\mu} \rfloor ), \lceil |N| \sqrt{\mu} \rceil = \mu-k \Bigg) \\
-		& = \MP\Bigg(-\frac{N^2}{2} + \frac{1}{2} - E < \lfloor -|N|\sqrt{\mu} \rfloor \ln(\lambda) - \ln\bigg( \frac{(\mu + \lfloor -|N|\sqrt{\mu} \rfloor)!}{\mu!} \bigg), 
-		\\& \qquad\qquad \frac{\mu-k-1}{\sqrt{\mu}} \leq |N| < \frac{\mu-k}{\sqrt{\mu}} \Bigg)	\\
-		& = \MP\Bigg(U < \exp \Big \{\frac{N^2}{2}  - \frac{1}{2} + \lfloor -|N|\sqrt{\mu} \rfloor \ln(\lambda) - \ln\bigg( \frac{(\mu + \lfloor -|N|\sqrt{\mu} \rfloor)!}{\mu!} \bigg) \Big\}, 
-		\\& \qquad\qquad \frac{\mu-k-1}{\sqrt{\mu}} \leq |N| < \frac{\mu-k}{\sqrt{\mu}}   \Bigg) \\
-		&= \sqrt{\frac{2}{e\pi}} \int_{\frac{\mu-k-1}{\sqrt{\mu}}}^{\frac{\mu-k}{\sqrt{\mu}}}  \exp \Big \{ \lfloor -|n|\sqrt{\mu} \rfloor \ln(\lambda) - \ln\bigg( \frac{(\mu + \lfloor -|n|\sqrt{\mu} \rfloor)!}{\mu!} \bigg) \Big\} dn \\
-		& = \sqrt{\frac{2}{e\pi \mu}} \int_{\mu-k-1}^{\mu-k}  \exp \Big \{ \lfloor -z \rfloor \ln(\lambda) - \ln\bigg( \frac{(\mu + \lfloor -z \rfloor)!}{\mu!} \bigg) \Big\} dz \\
-		& = \sqrt{\frac{2}{e\pi \mu}} \exp \Big \{ (k-\mu) \ln(\lambda) - \ln\bigg( \frac{k!}{\mu!} \bigg) \Big\} \\
-		& = \sqrt{\frac{2}{e\pi \mu}} \lambda^{k-\mu} \frac{\mu!}{k!}
-		\end{aligned} 
-		\]
-		
-		Hence,
-		\[ 
-		\begin{aligned}
-		\MP(X = k - \mu | W \leq q(X)) &= \frac{\MP(W \leq q(X), X = k - \mu) }{\MP(W \leq q(X))} \\
-		&= \sqrt{\frac{2}{\pi \mu e}} \lambda^{k-\mu} \frac{\mu!}{k!} \cdot \sqrt{\pi \mu e / 2} \frac{\lambda^\mu e^{-\lambda}}{\mu!} \\
-		&= \frac{\lambda^{k} e^{-\lambda}}{k!}
-		\end{aligned} 
-		\]
-		
-		\item $k \in [\mu + 2, 2 \mu]$. Probability to be in this setting is $\sqrt{\frac{3\pi \mu}{4}} e^{\frac{1}{3\mu}} / c$. We also have
-		\[ W = \frac{-Y^2+2Y}{3\mu} - E = \frac{1}{3\mu}-\frac{N^2}{2} - E. \]
-		Then
-		\[
-		\begin{aligned}
-		\MP(W \leq q(X) | X = k-\mu | U \in ...) &= \MP\Bigg(\frac{1}{3\mu}-\frac{N^2}{2} - E < q( \lceil 1+|N| \sqrt{3\mu/2} \rceil ),
-		\lceil 1+|N| \sqrt{3\mu/2} \rceil = k - \mu\Bigg) \\
-		& = \MP\Bigg(U < \exp \Big \{-\frac{1}{3\mu} + \frac{N^2}{2} + q( \lceil 1+|N| \sqrt{3\mu/2} \rceil ) \Big\}, \\ 
-		& \qquad \qquad \frac{k-\mu-2}{\sqrt{3\mu/2}} < |N| \leq \frac{k-\mu-1}{\sqrt{3\mu/2}} \Bigg) \\
-		& = \sqrt{\frac{2}{\pi}} e^{-\frac{1}{3\mu}} \int_{\frac{k-\mu-2}{\sqrt{3\mu/2}}}^{\frac{k-\mu-1}{\sqrt{3\mu/2}}} \exp \Big \{  q( \lceil 1+|n| \sqrt{3\mu/2} \rceil ) \Big\} dn \\
-		& =  \sqrt{\frac{4}{3\pi\mu}} e^{-\frac{1}{3\mu}}  \int_{k-\mu-1}^{k-\mu} \exp \Big \{ \lceil z \rceil \ln(\lambda) - \ln\bigg( \frac{(\mu + \lceil z \rceil)!}{\mu!} \bigg) \Big\} dz \\
-		& = \sqrt{\frac{4}{3\pi\mu}} e^{-\frac{1}{3\mu}}\mu! \frac{\lambda^{k-\mu}}{k!}.
-		\end{aligned}
-		\]
-		
-		
-		\item $k > 2\mu$. Probability to be in this setting is $6e^{-\frac{2+\mu}{6}} / c$.
-		\[
-		\begin{aligned}
-		\MP(W \leq q(X) | X = k - \mu | U \in ...) &= \MP\Big(-\frac{2 + \mu}{6} - V - E < q( \lceil \mu + 6V \rceil ), \lceil \mu + 6V \rceil = k - \mu \Big)  \\
-		& = \MP\Bigg(-\frac{2 + \mu}{6} - V + \ln(U) < \lceil \mu + 6V \rceil \ln(\lambda) - \ln \bigg( \frac{(\mu + \lceil \lambda + 6V \rceil)!}{\mu!} \bigg),\\
-		& \qquad \qquad \lceil \mu + 6V \rceil = k - \mu \Bigg) \\
-		& =	\MP \Bigg( U < \exp\bigg\{\frac{2 + \mu}{6} + V + \lceil \mu + 6V \rceil \ln(\lambda) - \ln \bigg( \frac{(\mu + \lceil \mu + 6V \rceil)!}{\mu!} \bigg) \bigg\},\\
-		& \qquad \qquad \frac{k - 2\mu - 1}{6} < V \leq \frac{k - 2\mu}{6} \Bigg) \\
-		& = \int_{\frac{k - 2\mu - 1}{6}}^{\frac{k - 2\mu}{6}} \exp\bigg\{\frac{2 + \mu}{6} + \lceil \mu + 6v \rceil \ln(\lambda) - \ln \bigg( \frac{(\mu + \lceil \mu + 6v \rceil)!}{\mu!} \bigg) \bigg\} dv \\
-		& = \frac{ e^{\frac{2+\lambda}{6}}}{6} \int_{k-\mu-1}^{k-\mu} \exp\bigg\{\lceil z \rceil \ln(\lambda) - \ln \bigg( \frac{(\mu + \lceil z \rceil)!}{\mu!} \bigg) \bigg\} dz \\
-		& = \frac{ e^{\frac{2+\lambda}{6}}}{6} \exp\bigg\{(k-\mu) \ln(\lambda) - \ln \bigg( \frac{k!}{\mu!} \bigg) \bigg\} \\
-		& = \frac{ e^{\frac{2+\lambda}{6}}}{6} \lambda^{k-\mu} \frac{\mu!}{k!}
-		\end{aligned} 
-		\]
-		Hence,
-		\[ 
-		\begin{aligned}
-		\MP(X = k - \mu | W \leq q(X)) &= \frac{\MP(W \leq q(X), X = k-\mu)}{\MP(W \leq q(X))} \\
-		& = \frac{ e^{\frac{2+\lambda}{6}}}{6} \lambda^{k-\mu} \frac{\mu!}{k!} \cdot \frac{6e^{-\frac{2+\mu}{6}}}{pc}\\
-		& = \frac{\lambda^k e^{-\lambda}}{k!}
-		\end{aligned} 
-		\]
-		
-	\end{itemize}
+	\pagebreak
+	\section{Yule distribution}
+	
+	\pagebreak
+	\section{Zeta distribution}
+	
+	\pagebreak
+	\section{Zipf distribution}
+	
 	\pagebreak
 	\part{Bivariate distributions}
 	\section{Bivariate Normal distribution}

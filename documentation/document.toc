@@ -56,12 +56,16 @@
 \contentsline {subsection}{\numberline {16.1}Geometric distribution}{29}
 \contentsline {subsection}{\numberline {16.2}Pascal distribution}{29}
 \contentsline {section}{\numberline {17}Poisson distribution}{30}
-\contentsline {part}{IV\hspace {1em}Bivariate distributions}{34}
-\contentsline {section}{\numberline {18}Bivariate Normal distribution}{34}
-\contentsline {section}{\numberline {19}Normal-Inverse-Gamma distribution}{34}
-\contentsline {section}{\numberline {20}Trinomial distribution}{34}
-\contentsline {part}{V\hspace {1em}Circular distributions}{35}
-\contentsline {section}{\numberline {21}von Mises distribution}{35}
-\contentsline {section}{\numberline {22}Wrapped Exponential distribution}{35}
-\contentsline {part}{VI\hspace {1em}Singular distributions}{36}
-\contentsline {section}{\numberline {23}Cantor distribution}{36}
+\contentsline {section}{\numberline {18}Skellam distribution}{31}
+\contentsline {section}{\numberline {19}Yule distribution}{32}
+\contentsline {section}{\numberline {20}Zeta distribution}{33}
+\contentsline {section}{\numberline {21}Zipf distribution}{34}
+\contentsline {part}{IV\hspace {1em}Bivariate distributions}{35}
+\contentsline {section}{\numberline {22}Bivariate Normal distribution}{35}
+\contentsline {section}{\numberline {23}Normal-Inverse-Gamma distribution}{35}
+\contentsline {section}{\numberline {24}Trinomial distribution}{35}
+\contentsline {part}{V\hspace {1em}Circular distributions}{36}
+\contentsline {section}{\numberline {25}von Mises distribution}{36}
+\contentsline {section}{\numberline {26}Wrapped Exponential distribution}{36}
+\contentsline {part}{VI\hspace {1em}Singular distributions}{37}
+\contentsline {section}{\numberline {27}Cantor distribution}{37}

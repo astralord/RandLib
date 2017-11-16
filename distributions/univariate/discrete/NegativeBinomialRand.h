@@ -60,7 +60,20 @@ protected:
         GAMMA_POISSON
     };
 
-    GENERATOR_ID GetIdOfUsedGenerator() const;
+    /**
+     * @fn GetIdOfUsedGenerator
+     * If r is small, we use two different generators for two different cases:
+     * If p < 0.08 then the tail is too heavy (probability to be in main body is less than 0.75),
+     * then we return highest integer, smaller than variate from exponential distribution.
+     * Otherwise we choose table method
+     * @return id of generator
+     */
+    GENERATOR_ID GetIdOfUsedGenerator() const
+    {
+        if ((r < 10 || GammaRV.Mean() > 10) && RandMath::areClose(r, std::round(r)))
+            return (p < 0.08) ? EXPONENTIAL : TABLE;
+        return GAMMA_POISSON;
+    }
 
     int variateGeometricByTable() const;
     int variateGeometricThroughExponential() const;
