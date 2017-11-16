@@ -16,7 +16,7 @@ NormalRand X(0, 1);
 std::vector<double> data(1e6);
 X.Sample(data);
 ```
-![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/standardNormal.png)
+![alt tag](images/standardNormal.png)
 
 * Calculate moments and other properties:
 ```c++
@@ -28,7 +28,7 @@ std::cout << " Mean = " << X.Mean()
           << "\n Skewness = " << X.Skewness()
           << " and Excess kurtosis = " << X.ExcessKurtosis();
 ```
-![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/lognormal11.png)
+![alt tag](images/lognormal11.png)
 ```
 Mean = 4.48169 and Variance = 34.5126
 Median = 2.71828 and Mode = 1
@@ -61,7 +61,7 @@ cout << "UMVU estimator: " << X.Name() << "\n";
 X.Fit(data);
 cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
 ```
-![alt tag](https://github.com/StochasticEngineer/RandLib/blob/master/images/normalFit.png)
+![alt tag](images/normalFit.png)
 ```
 True distribution: Normal(0, 1)
 Sample: -0.328154  0.709122  -0.607214  1.11472  -1.23726  -0.123584  0.59374  -1.20573  -0.397376  -1.63173
@@ -70,3 +70,5 @@ Bayesian estimator: Normal(-0.283042, 0.951348)
 UMVU estimator: Normal(-0.311347, 0.82504)
 Maximum-likelihood estimator: Normal(-0.311347, 0.742536)
 ```
+
+[Full documentation](documentation/document.pdf)
