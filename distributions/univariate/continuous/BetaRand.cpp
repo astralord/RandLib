@@ -249,20 +249,14 @@ double BetaDistribution::variateRejectionNormal() const
 double BetaDistribution::variateJohnk() const
 {
     double X = 0, Z = 0;
-    double U, V;
+    double W = 0, V = 0;
     do {
-        U = UniformRand::StandardVariate(localRandGenerator);
-        V = UniformRand::StandardVariate(localRandGenerator);
-        X = std::pow(U, 1.0 / alpha);
-        Z = X + std::pow(V, 1.0 / beta);
+        W = ExponentialRand::StandardVariate(localRandGenerator) / alpha;
+        V = ExponentialRand::StandardVariate(localRandGenerator) / beta;
+        X = std::exp(-W);
+        Z = X + std::exp(-V);
     } while (Z > 1);
-    if (Z == 0) {
-        /// this is the case of loosing precision, when shapes are both too small
-        /// but we still can compare U and V using log-scale
-        double logU = std::log(U), logV = std::log(V);
-        return logU / alpha < logV / beta ? 0.0 : 1.0;
-    }
-    return X / Z;
+    return (Z > 0) ? (X / Z) : (W < V);;
 }
 
 double BetaDistribution::Variate() const
