@@ -71,4 +71,4 @@ UMVU estimator: Normal(-0.311347, 0.82504)
 Maximum-likelihood estimator: Normal(-0.311347, 0.742536)
 ```
 
-[Full documentation](documentation/document.pdf)
+For documentation look up [here](documentation/document.pdf)
