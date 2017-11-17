@@ -7,18 +7,18 @@
  * @brief The NakagamiDistribution class <BR>
  * Abstract class for Nakagami distribution
  *
- * Notation: X ~ Nakagami(m, w)
+ * Notation: X ~ Nakagami(μ, ω)
  *
  * Related distributions: <BR>
- * σX ~ Nakagami(m, wσ^2) <BR>
- * X^2 ~ Γ(m, m / w)
+ * σX ~ Nakagami(μ, ωσ^2) <BR>
+ * X^2 ~ Γ(μ, μ / ω)
  */
 class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
 {
-    double m = 0.5; ///< shape
-    double w = 1; ///< spread
+    double mu = 0.5; ///< shape μ
+    double omega = 1; ///< spread ω
     GammaRand Y {};
-    double lgammaShapeRatio = 0; ///< log(Γ(m + 0.5) / Γ(m))
+    double lgammaShapeRatio = 0; ///< log(Γ(μ + 0.5) / Γ(μ))
 
 protected:
     NakagamiDistribution(double shape = 0.5, double spread = 1);
@@ -31,30 +31,30 @@ public:
 protected:
     /**
      * @fn SetParameters
-     * @param shape m
-     * @param spread w
+     * @param shape μ
+     * @param spread ω
      */
     void SetParameters(double shape, double spread);
 
 public:
     /**
      * @fn GetShape
-     * @return shape m
+     * @return shape μ
      */
-    inline double GetShape() const { return m; }
+    inline double GetShape() const { return mu; }
     /**
      * @fn GetSpread
      * @return spread w
      */
-    inline double GetSpread() const { return w; }
+    inline double GetSpread() const { return omega; }
     /**
      * @fn GetLogGammaFunction
-     * @return log(Γ(m))
+     * @return log(Γ(μ))
      */
     inline double GetLogGammaFunction() const { return Y.GetLogGammaShape(); }
     /**
      * @fn GetLogGammaShapeRatio
-     * @return log(Γ(m + 0.5) / Γ(m))
+     * @return log(Γ(μ + 0.5) / Γ(μ))
      */
     inline double GetLogGammaShapeRatio() const { return lgammaShapeRatio; }
 
@@ -68,6 +68,7 @@ public:
 
     double Mean() const override;
     double Variance() const override;
+    double Median() const override;
     double Mode() const override;
     double Skewness() const override;
     double FourthMoment() const override;
@@ -76,6 +77,8 @@ public:
 protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p) const override;
+
+    std::complex<double> CFImpl(double t) const override;
 };
 
 

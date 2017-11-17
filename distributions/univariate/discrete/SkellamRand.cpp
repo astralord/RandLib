@@ -78,6 +78,11 @@ double SkellamRand::Variance() const
     return mu1 + mu2;
 }
 
+int SkellamRand::Median() const
+{
+    return quantileImpl(0.5, mu1 - mu2);
+}
+
 std::complex<double> SkellamRand::CFImpl(double t) const
 {
     double cosT = std::cos(t), sinT = std::sin(t);

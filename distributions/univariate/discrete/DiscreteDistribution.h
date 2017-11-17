@@ -46,7 +46,7 @@ public:
 
     int Mode() const override;
 
-private:
+protected:
     int quantileImpl(double p, int initValue) const override;
     int quantileImpl(double p) const override;
     int quantileImpl1m(double p, int initValue) const override;

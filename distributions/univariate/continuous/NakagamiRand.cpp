@@ -13,10 +13,10 @@ void NakagamiDistribution::SetParameters(double shape, double spread)
         throw std::invalid_argument("Nakagami distribution: shape should be positive");
     if (spread <= 0.0)
         throw std::invalid_argument("Nakagami distribution: spread should be positive");
-    m = shape;
-    w = spread;
-    Y.SetParameters(m, m / w);
-    lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaShape();
+    mu = shape;
+    omega = spread;
+    Y.SetParameters(mu, mu / omega);
+    lgammaShapeRatio = std::lgamma(mu + 0.5) - Y.GetLogGammaShape();
 }
 
 double NakagamiDistribution::f(const double & x) const
@@ -24,9 +24,9 @@ double NakagamiDistribution::f(const double & x) const
     if (x < 0.0)
         return 0.0;
     if (x == 0) {
-        if (m > 0.5)
+        if (mu > 0.5)
             return 0.0;
-        return (m < 0.5) ? INFINITY : std::sqrt(M_2_PI / w);
+        return (mu < 0.5) ? INFINITY : std::sqrt(M_2_PI / omega);
     }
     return 2 * x * Y.f(x * x);
 }
@@ -36,9 +36,9 @@ double NakagamiDistribution::logf(const double & x) const
     if (x < 0.0)
         return -INFINITY;
     if (x == 0) {
-        if (m > 0.5)
+        if (mu > 0.5)
             return 0-INFINITY;
-        return (m < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(w));
+        return (mu < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(omega));
     }
     return std::log(2 * x) + Y.logf(x * x);
 }
@@ -82,20 +82,25 @@ double NakagamiDistribution::Variance() const
 {
     double y = lgammaShapeRatio;
     y = std::exp(2 * y);
-    return w * (1 - y / m);
+    return omega * (1 - y / mu);
+}
+
+double NakagamiDistribution::Median() const
+{
+    return std::sqrt(Y.Quantile(0.5));
 }
 
 double NakagamiDistribution::Mode() const
 {
-    double mode = 0.5 * w / m;
-    return std::sqrt(std::max(w - mode, 0.0));
+    double mode = 0.5 * omega / mu;
+    return std::sqrt(std::max(omega - mode, 0.0));
 }
 
 double NakagamiDistribution::Skewness() const
 {
     double thirdMoment = lgammaShapeRatio;
     thirdMoment -= 1.5 * Y.GetLogRate();
-    thirdMoment = (m + 0.5) * std::exp(thirdMoment);
+    thirdMoment = (mu + 0.5) * std::exp(thirdMoment);
     double mean = Mean();
     double variance = Variance();
     return (thirdMoment - mean * (3 * variance + mean * mean)) / std::pow(variance, 1.5);
@@ -103,9 +108,9 @@ double NakagamiDistribution::Skewness() const
 
 double NakagamiDistribution::FourthMoment() const
 {
-    double fourthMoment = w / m;
+    double fourthMoment = omega / mu;
     fourthMoment *= fourthMoment;
-    fourthMoment *= m * (m + 1);
+    fourthMoment *= mu * (mu + 1);
     return fourthMoment;
 }
 
@@ -130,6 +135,26 @@ double NakagamiDistribution::quantileImpl(double p) const
 double NakagamiDistribution::quantileImpl1m(double p) const
 {
     return std::sqrt(Y.Quantile1m(p));
+}
+
+std::complex<double> NakagamiDistribution::CFImpl(double t) const
+{
+    if (mu >= 0.5)
+        return ContinuousDistribution::CFImpl(t);
+
+    double re = ExpectedValue([this, t] (double x)
+    {
+        if (x == 0.0)
+            return 0.0;
+        return std::cos(t * x) - 1.0;
+    }, 0, INFINITY) + 1.0;
+
+    double im = ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    }, 0, INFINITY);
+
+    return std::complex<double>(re, im);
 }
 
 /// NAKAGAMI
@@ -159,20 +184,20 @@ void ChiRand::SetDegree(int degree)
 
 double ChiRand::Skewness() const
 {
-    double mu = Mean();
+    double mean = Mean();
     double sigmaSq = Variance();
-    double skew = mu * (1 - 2 * sigmaSq);
+    double skew = mean * (1 - 2 * sigmaSq);
     skew /= std::pow(sigmaSq, 1.5);
     return skew;
 }
 
 double ChiRand::ExcessKurtosis() const
 {
-    double mu = Mean();
+    double mean = Mean();
     double sigmaSq = Variance();
     double sigma = std::sqrt(sigmaSq);
     double skew = Skewness();
-    double kurt = 1.0 - mu * sigma * skew;
+    double kurt = 1.0 - mean * sigma * skew;
     kurt /= sigmaSq;
     --kurt;
     return 2 * kurt;

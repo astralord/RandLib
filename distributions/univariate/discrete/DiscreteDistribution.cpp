@@ -44,7 +44,7 @@ int DiscreteDistribution::Mode() const
 
 int DiscreteDistribution::quantileImpl(double p, int initValue) const
 {
-    int down = static_cast<int>(std::floor(initValue)), up = down + 1;
+    int down = initValue, up = down + 1;
     double fu = F(up), fd = F(down);
     /// go up
     while (fu < p) {
@@ -77,7 +77,7 @@ int DiscreteDistribution::quantileImpl(double p) const
 
 int DiscreteDistribution::quantileImpl1m(double p, int initValue) const
 {
-    int down = static_cast<int>(std::floor(initValue)), up = down + 1;
+    int down = initValue, up = down + 1;
     double su = S(up), sd = S(down);
     /// go up
     while (su > p) {

@@ -143,7 +143,7 @@ double NoncentralChiSquaredRand::Variance() const
 
 double NoncentralChiSquaredRand::Mode() const
 {
-    return (k < 2) ? 0.0 : ContinuousDistribution::Mode();
+    return (k <= 2) ? 0.0 : ContinuousDistribution::Mode();
 }
 
 std::complex<double> NoncentralChiSquaredRand::CFImpl(double t) const

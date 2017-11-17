@@ -59,6 +59,7 @@
 \newcommand{\MR}{\mathbb{R}}
 \newcommand{\MP}{\mathbb{P}}
 \newcommand{\MN}{\mathbb{N}}
+\newcommand{\MZ}{\mathbb{Z}}
 \newcommand{\Var}{\operatorname{Var}}
 \newcommand{\Cov}{\operatorname{Cov}}
 \newcommand{\diag}{\operatorname{diag}}
@@ -77,6 +78,7 @@
 	\maketitle
 	\tableofcontents
 	
+	\pagebreak
 	\part{General information}
 	\section{Calculation of sample moments}
 	We use extension of Welford's method from Knuth. For every $n$-th element $x$ we have
@@ -131,7 +133,7 @@
 	\paragraph{Search of the median.}
 	In general, the value of median is unkwnown and calculated numerically with initial value:
 	\[
-	m \approx a + (b-a)\frac{\alpha - \frac{1}{3} }{ \alpha + \beta + \frac{2}{3} }
+	m \approx a + (b-a)\frac{\alpha - \frac{1}{3} }{ \alpha + \beta - \frac{2}{3} }
 	\]
 	for $\alpha, \beta \geq 1$.	However, there are analytical solutions for some particular values:
 	\begin{itemize}
@@ -199,6 +201,10 @@
 	and estimate parameters, using sample $Y$.
 	
 	\subsection{Arcsine distribution}
+	Notation:
+	\[
+	X \sim \operatorname{Arcsine}(\alpha).
+	\]
 	Relation to Beta distribution: \[ X \sim B(1-\alpha, \alpha, a, b). \]
 	\paragraph{Estimation of shape.} For Arcsine distribution log-likelihood function \eqref{Beta log-likelihood} turns into
 	\[
@@ -331,9 +337,9 @@
 	\paragraph{Calculation of characteristic function.} For $\alpha \geq 1$ one can use numerical integration from section %todo add section
 	For $\alpha < 1$ we have $\lim_{x \rightarrow 0} f(x) \rightarrow \infty$ and $\int_{0}^{\infty} \cos(tx)f(x) dx$ is impossible to compute directly. Then we split the integral:
 	\[
-	\int_{0}^{\infty} \cos(tx)f(x) dx = \int_{0}^{1}(\cos(tx)-1) f(x) dx + F(1) + \int_{1}^{\infty} \cos(tx)f(x) dx.
+	\int_{0}^{\infty} \cos(tx)f(x) dx = \int_{0}^{\infty}(\cos(tx)-1) f(x) dx + 1.
 	\]
-	The limit of the integrand in the first term for $x \rightarrow 0$ is $0$, regardless of the value of the shape $\alpha$.
+	The limit of the integrand for $x \rightarrow 0$ is $0$ now, regardless of the value of the shape $\alpha$.
 	
 	\paragraph{Estimation of shapes.} Using relationship with Beta distribution we transform the sample:
 	\[ Y_i = \frac{X_i}{1+X_i}, \quad 1 \leq i \leq N, \]
@@ -341,7 +347,14 @@
 
 	\pagebreak
 	\section{Exponentially-modified Gaussian distribution}
-	\begin{center}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{emg_pdf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{emg_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
 			Notation & $X \sim \operatorname{EMG}(\mu, \sigma, \lambda)$ \\
@@ -365,7 +378,8 @@
 			$\phi(t)$ & $ ... $ \\
 			\hline
 		\end{tabular}
-	\end{center}
+	\end{minipage}
+\end{figure}
 	
 	
 	\pagebreak
@@ -580,6 +594,94 @@
 	\subsection{Laplace distribution}
 	
 	\pagebreak
+	\section{Kolmogorov-Smirnov distribution}
+	\pagebreak
+	\section{Logistic distribution}
+	\pagebreak
+	\section{Log-normal distribution}
+	\pagebreak
+	\section{Marchenko-Pastur distribution}
+	
+	\pagebreak
+	\section{Nakagami distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{nakagami_pdf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{nakagami_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $X \sim \operatorname{Nakagami}(\mu, \omega)$ \\
+				\hline
+				Parameters & $\mu, \omega > 0$ \\
+				\hline
+				Support & $x \in \MR^+$  \\
+				\hline
+				$f(x)$ & $ \frac{2\mu^\mu}{\Gamma(\mu) \omega^\mu} x^{2\mu - 1} e^{-\frac{\mu}{\omega}x^2}   $ \\
+				\hline
+				$F(x)$ & $P(\mu, \mu x^2/\omega) $\\
+				\hline
+				$\ME[X]$ & $ \frac{\Gamma(\mu + 1/2)}{\Gamma(\mu)} \sqrt{\frac{\omega}{\mu}}  $ \\
+				\hline
+				$\Var(X)$ & $\omega - (\ME[X])^2$ \\
+				\hline
+				Median & Searched numerically \\
+				\hline
+				Mode & $ \max \bigg( \sqrt{\frac{(2\mu-1)\omega}{2\mu}}, 0\bigg)$ \\
+				\hline
+				$\phi(t)$ & Calculated numerically \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+	\paragraph{Calculation of characteristic function.} For $\mu < 1$ $\lim_{x \rightarrow 0}f(x) \rightarrow \infty$. Then we use the following transformation for real part of characteristic function:
+	\[
+	\begin{aligned}
+	\Re(\phi(t)) & = \int_{0}^{\infty} \cos(tx) f(x) dx \\ &= \int_{0}^{\infty} (\cos(tx)-1) f(x) + 1 dx
+	\end{aligned}
+	\]
+	
+	Relation to other distributions: if $Y \sim \Gamma\big(\mu, \mu/\omega\big)$, then
+	\[
+	X \sim \operatorname{Nakagami}(\mu, \omega).
+	\]
+	
+	\subsection{Chi distribution}
+	Notation:
+	\[
+	X \sim \chi_k
+	\]
+	Relation to Nakagami distribution:
+	\[
+	X \sim \operatorname{Nakagami}\big(k/2, k\big).
+	\]
+	
+	\subsection{Maxwell-Bolzmann distribution}
+	Notation:
+	\[
+	X \sim \operatorname{MB}(\sigma)
+	\]
+	Relation to Nakagami distribution:
+	\[
+	X \sim \operatorname{Nakagami}\big(3/2, \sigma^2 \big).
+	\]
+	
+	\subsection{Rayleigh distribution}
+	Notation:
+	\[
+	X \sim \operatorname{Rayleigh}(\sigma)
+	\]
+	Relation to Nakagami distribution:
+	\[
+	X \sim \operatorname{Nakagami}\big(1, 2\sigma^2\big).
+	\]
+	\paragraph{Estimation of scale.}
+	...%TODO: add estimation for whole Nakagami (look wiki)
+	
+	\pagebreak
 	\section{Noncentral Chi-Squared distribution}
 	\begin{figure}[!htb]\centering
 	\begin{minipage}{0.55\textwidth}
@@ -597,23 +699,32 @@
 			\hline
 			Support & $x \in \MR^+$  \\
 			\hline
-			$f(x)$ & $...  $ \\
+			$f(x)$ & $ \frac{1}{2} e^{-\frac{x+\lambda}{2}}  \Big( \frac{x}{\lambda} \Big)^{\frac{k-2}{4}} I_{\frac{k}{2}-1}(\sqrt{\lambda x})   $ \\
 			\hline
-			$F(x)$ & $P_{\frac{k}{2}}(...) $\\
+			$F(x)$ & $\operatorname{MarcumP}_{\frac{k}{2}}(\frac{\lambda}{2}, \frac{x}{2}) $\\
 			\hline
 			$\ME[X]$ & $ k + \lambda$ \\
 			\hline
 			$\Var(X)$ & $2(k+2\lambda)$ \\
 			\hline
-			Median & Searched numerically \\
+			Median & Searched numerically\\
 			\hline
-			Mode & Searched numerically \\
+			Mode & \pbox{\linewidth}{Searched numerically for $k > 2$, \\ $0$, otherwise}  \\
 			\hline
 			$\phi(t)$ & $ \frac{\exp{\frac{it\lambda}{1-2it}}}{(1-2it)^{k/2}}$ \\
 			\hline
 		\end{tabular}
 	\end{minipage}
     \end{figure}
+    Relation to other distributions: 
+    \begin{itemize}
+    	\item Let $X_1, \dots, X_k$ be independent with $X_i \sim \mathcal{N}(\mu_i, 1)$, $i = 1, \dots, k$. Then
+    	\[
+    	\sum_{i=1}^{k}X_i^2 \sim \chi'^2_k\big(\sum_{i=1}^{k}\mu_i^2\big).
+    	\]
+    	\item If $\lambda = 0$, then $X \sim \chi^2_k$.
+    	\item If $J \sim \operatorname{Po}(\lambda)$, then $\chi^2_{k+2J} \sim \chi'^2_k(\lambda)$.
+    \end{itemize}
 	
 	
 	\pagebreak
@@ -707,44 +818,8 @@
 	    \end{minipage}
 	\end{figure}
 	
-	\subsection{Normal distribution}
-	Relation to Stable distribution:
-	\[X \sim S_{2}(\cdot, \sigma^2/2, \mu) \]
-	
-	\begin{figure}[!htb]\centering
-		\begin{minipage}{0.55\textwidth}
-			\includegraphics[width=\linewidth, right]{normal_pdf}
-			\captionsetup{labelformat=empty}
-			\includegraphics[width=\linewidth, right]{normal_cdf}
-			\captionsetup{labelformat=empty}
-		\end{minipage}
-		\begin{minipage}{0.4\textwidth}
-		\begin{tabular}{| r | l |}
-			\hline
-			Notation & $X \sim \mathcal{N}(\mu, \sigma^2)$ \\
-			\hline
-			Parameters & $\mu \in \MR, \sigma^2 > 0 $ \\
-			\hline
-			Support & $x \in \MR$  \\
-			\hline
-			$f(x)$ & $ \frac{1}{\sqrt{2\sigma^2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}  $ \\
-			\hline
-			$F(x)$ & $ \frac{1}{2} \operatorname{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
-			\hline
-			$\ME[X]$ & $ \mu$ \\
-			\hline
-			$\Var(X)$ & $\sigma^2$\\
-			\hline
-			Median & $\mu$ \\
-			\hline
-			Mode & $\mu$ \\
-			\hline
-			$\phi(t)$ & $ e^{i\mu t - \frac{1}{2}\sigma^2t^2}  $ \\
-			\hline
-		\end{tabular}
-    	\end{minipage}
-	\end{figure}
-
+	\paragraph{Calculation of p.d.f.}
+	\paragraph{Calculation of c.d.f.}
 
 \subsection{Cauchy distribution}
 	Relation to Stable distribution:
@@ -788,6 +863,68 @@
 	Relation to Stable distribution:
 	\[X \sim S_{\frac{1}{2}}(1, \gamma, \mu) \]
 
+\subsection{Normal distribution}
+Relation to Stable distribution:
+\[X \sim S_{2}(\cdot, \sigma^2/2, \mu) \]
+
+\begin{figure}[!htb]\centering
+	\begin{minipage}{0.55\textwidth}
+		\includegraphics[width=\linewidth, right]{normal_pdf}
+		\captionsetup{labelformat=empty}
+		\includegraphics[width=\linewidth, right]{normal_cdf}
+		\captionsetup{labelformat=empty}
+	\end{minipage}
+	\begin{minipage}{0.4\textwidth}
+		\begin{tabular}{| r | l |}
+			\hline
+			Notation & $X \sim \mathcal{N}(\mu, \sigma^2)$ \\
+			\hline
+			Parameters & $\mu \in \MR, \sigma^2 > 0 $ \\
+			\hline
+			Support & $x \in \MR$  \\
+			\hline
+			$f(x)$ & $ \frac{1}{\sqrt{2\sigma^2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}  $ \\
+			\hline
+			$F(x)$ & $ \frac{1}{2} \operatorname{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
+			\hline
+			$\ME[X]$ & $ \mu$ \\
+			\hline
+			$\Var(X)$ & $\sigma^2$\\
+			\hline
+			Median & $\mu$ \\
+			\hline
+			Mode & $\mu$ \\
+			\hline
+			$\phi(t)$ & $ e^{i\mu t - \frac{1}{2}\sigma^2t^2}  $ \\
+			\hline
+		\end{tabular}
+	\end{minipage}
+\end{figure}
+
+\paragraph{Estimation of parameters}
+\subparagraph{Frequentist inference.} Maximum-likelihood estimators for Normal distribution are very well-known:
+\[
+\hat{\mu} = \overline{X}_n \quad \text{and} \quad \hat{\sigma^2} = \frac{1}{n} \sum_{i=1}^{n} (X_i - \mu)^2.
+\]
+However, for unknown $\mu$ the value of $\hat{\sigma^2} \sim \frac{\sigma^2}{n}\chi^2_{n-1}$. Therefore, unbiased estimator in this case would be
+\[
+\widetilde{\sigma^2} = \frac{1}{n-1} \sum_{i=1}^{n} (X_i - \overline{X}_n)^2.
+\]
+Moreover, if one is interested in estimating scale $\sigma$ with known $\mu$, then maximum likelihood estimator is
+\[
+\hat{\sigma} = \sqrt{\hat{\sigma^2}} \sim \frac{\sigma}{\sqrt{n}} \chi_{n}
+\]
+and
+\[
+\ME[\hat{\sigma}] = \frac{\sigma}{\sqrt{n}} \sqrt{2} \frac{\Gamma((n+1)/2)}{\Gamma(n/2)}.
+\]
+Then unbiased estimator is
+\[
+\widetilde{\sigma} = \hat{\sigma} \sqrt{\frac{n}{2}} \frac{\Gamma(n/2)}{\Gamma((n+1)/2)}
+\]
+
+\subparagraph{Bayesian inference.}
+...
 
 \subsection{Holtsmark distribution}
 	Relation to Stable distribution:
@@ -1144,9 +1281,9 @@ MAP estimator:
 					\hline
 					Support & $ k \in \MN_0 $  \\
 					\hline
-					P.m.f. & $\MP(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$ \\
+					$\MP(X = k)$ & $\frac{\lambda^k e^{-\lambda}}{k!}$ \\
 					\hline
-					$F(x)$ & $\MP(X \leq k)=Q(k+1, \lambda)$ \\
+					$\MP(X \leq k)$ & $Q(k+1, \lambda)$ \\
 					\hline
 					$\ME[X]$ & $ \lambda$ \\
 					\hline
@@ -1164,6 +1301,44 @@ MAP estimator:
 	
 	\pagebreak
 	\section{Skellam distribution}
+	
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{skellam_pmf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{skellam_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $ X \sim \operatorname{Skellam}(\mu_1, \mu_2) $ \\
+				\hline
+				Parameters & $\mu_1, \mu_2 > 0$ \\
+				\hline
+				Support & $ k \in \MZ $  \\
+				\hline
+				$\MP(X = k)$. & $e^{-(\mu_1 + \mu_2)} \Big( \frac{\mu_1}{\mu_2} \Big)^{\frac{k}{2}} I_k(2\sqrt{\mu_1\mu_2}) $ \\
+				\hline
+				$\MP(X \leq k)$ & \pbox{\linewidth}{$\operatorname{MarcumP}_{k+1}(\mu_2, \mu_1)$, $k \geq 0$ \\ $\operatorname{MarcumQ}_{-k}(\mu_1, \mu_2)$, $k < 0$ } \\
+				\hline
+				$\ME[X]$ & $ \mu_1-\mu_2$ \\
+				\hline
+				$\Var(X)$ & $\mu_1+\mu_2$ \\
+				\hline
+				Median & Searched numerically \\
+				\hline
+				Mode & $[ \mu_1-\mu_2] $ \\
+				\hline
+				$\phi(t)$ & $ \exp \{ \mu_1(e^{it}-1) - \mu_2(e^{it}-1) \}  $ \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+	Relation to other distributions: if $Y \sim \operatorname{Po}(\mu_1)$ and $Z \sim \operatorname{Po}(\mu_2)$, then
+	\[
+	Y - Z \sim \operatorname{Skellam}(\mu_1, \mu_2).
+	\]
 	
 	\pagebreak
 	\section{Yule distribution}
