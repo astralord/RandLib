@@ -199,7 +199,7 @@ std::complex<double> PlanckRand::CFImpl(double t) const
     },
     0.0, 1.0);
 
-    double re2 = ExpectedValue([this, t] (double x)
+    double re2 = this->ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
     },
@@ -216,7 +216,7 @@ std::complex<double> PlanckRand::CFImpl(double t) const
     re3 += std::cos(t);
     re3 *= std::exp(pdfCoef) / (b * a);
 
-    double im = ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
     },

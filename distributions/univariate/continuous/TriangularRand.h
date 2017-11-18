@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Tri(a, b, c)
  */
-class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution<>
 {
     double a = 0; ///< min value
     double b = 2; ///< max value

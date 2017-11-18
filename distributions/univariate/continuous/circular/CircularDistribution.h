@@ -9,7 +9,7 @@
  *
  * Note that all the moments are now useless, we implement circular moments instead.
  */
-class RANDLIBSHARED_EXPORT CircularDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT CircularDistribution : public ContinuousDistribution<>
 {
 protected:
     double loc{};

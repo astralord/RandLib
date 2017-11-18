@@ -149,7 +149,7 @@ MarchenkoPasturRand::GENERATOR_ID MarchenkoPasturRand::getIdOfUsedGenerator() co
 
 double MarchenkoPasturRand::variateForTinyRatio() const
 {
-    int iter = 0;
+    size_t iter = 0;
     do {
         double X = BetaRV.Variate();
         double U = UniformRand::StandardVariate(localRandGenerator);
@@ -161,7 +161,7 @@ double MarchenkoPasturRand::variateForTinyRatio() const
 
 double MarchenkoPasturRand::variateForSmallRatio() const
 {
-    int iter = 0;
+    size_t iter = 0;
     do {
         double X = BetaRV.Variate();
         double U = UniformRand::StandardVariate(localRandGenerator);
@@ -320,22 +320,22 @@ std::complex<double> MarchenkoPasturRand::CFImpl(double t) const
     /// otherwise we have singularity at point 0
     if (lambda == 1) {
         /// we split integrand for real part on (cos(tx)-1)f(x) and f(x)
-        double re = ExpectedValue([this, t] (double x)
+        double re = this->ExpectedValue([this, t] (double x)
         {
             return std::cos(t * x) - 1.0;
         }, 0, 4 * sigmaSq);
-        double im = ExpectedValue([this, t] (double x)
+        double im = this->ExpectedValue([this, t] (double x)
         {
             return std::sin(t * x);
         }, 0, 4 * sigmaSq);
         return std::complex<double>(1.0 + re, im);
     }
     /// for λ > 1 we split integral on 2 parts: at point 0 and the rest
-    double re = ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
     }, sigmaSq * a, sigmaSq * b);
-    double im = ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
     }, sigmaSq * a, sigmaSq * b);

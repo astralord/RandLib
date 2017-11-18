@@ -42,7 +42,7 @@ int ZetaRand::Variate() const
 {
     /// Luc Devroye, p. 551
     /// rejection sampling from rounded down Pareto distribution
-    int iter = 0;
+    size_t iter = 0;
     do {
         double X = std::floor(ParetoRand::StandardVariate(sm1, localRandGenerator));
         double T = std::pow(1.0 + 1.0 / X, sm1);

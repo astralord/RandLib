@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * exp(-(X - μ) / β) ~ Exp(1)
  */
-class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution<>
 {
     double mu = 0; ///< location μ
     double beta = 1; ///< scale β

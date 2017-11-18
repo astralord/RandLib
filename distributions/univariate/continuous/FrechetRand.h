@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Frechet(α, s, m)
  */
-class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution<>
 {
     double alpha = 1; ///< shape α
     double s = 1; ///< scale

@@ -14,7 +14,7 @@
  * Related distributions: <BR>
  * X ~ Y_1 + Y_2 + ... + Y_n, where Y_i ~ U(0,1)
  */
-class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution<>
 {
     int n = 1; ///< parameter of the distribution
     UniformRand U{};

@@ -9,7 +9,7 @@
  *
  * Notation: X ~ KS
  */
-class RANDLIBSHARED_EXPORT KolmogorovSmirnovRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT KolmogorovSmirnovRand : public ContinuousDistribution<>
 {
 public:
     KolmogorovSmirnovRand();

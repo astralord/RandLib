@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * ln(X / σ) ~ Exp(α)
  */
-class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT ParetoRand : public ContinuousDistribution<>
 {
     double alpha = 1; ///< shape α
     double sigma = 1; ///< scale σ

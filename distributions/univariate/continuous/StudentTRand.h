@@ -11,7 +11,7 @@
  * If X ~ t(1, μ, σ), then X ~ Cauchy(μ, σ)
  * X -> Normal(μ, σ) for t -> ∞
  */
-class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution<>
 {
     double nu = 1; ///< degree ν
     double mu = 0; ///< location μ

@@ -14,7 +14,7 @@
  * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ) <BR>
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
-class RANDLIBSHARED_EXPORT StableDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT StableDistribution : public ContinuousDistribution<>
 {
 protected:
     double alpha = 2; ///< characteristic exponent α

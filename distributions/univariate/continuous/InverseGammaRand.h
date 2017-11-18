@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * X = 1 / Y, where Y ~ Gamma(α, β)
  */
-class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution<>
 {
     double alpha = 1; ///< shape α
     double beta = 1; ///< rate β

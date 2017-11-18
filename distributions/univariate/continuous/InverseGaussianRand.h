@@ -9,7 +9,7 @@
  *
  * Notation: X ~ IG(μ, λ)
  */
-class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution<>
 {
     double mu = 1; ///< mean μ
     double lambda = 1; ///< shape λ

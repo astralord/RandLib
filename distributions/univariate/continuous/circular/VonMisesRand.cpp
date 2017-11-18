@@ -116,7 +116,7 @@ double VonMisesRand::Variate() const
 {
     /// Generating von Mises variates by the ratio-of-uniforms method
     /// Lucio Barabesi. Dipartimento di Metodi Quantitativi, Universiteta di Siena
-    int iter = 0;
+    size_t iter = 0;
     do {
         double U = UniformRand::StandardVariate(localRandGenerator);
         double V = 2 * UniformRand::StandardVariate(localRandGenerator) - 1;

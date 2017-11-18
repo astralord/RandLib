@@ -59,7 +59,7 @@ double NormalRand::Variate() const
 double NormalRand::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm by George Marsaglia using 256 strips
-    int iter = 0;
+    size_t iter = 0;
     do {
         unsigned long long B = randGenerator.Variate();
         int stairId = B & 255;

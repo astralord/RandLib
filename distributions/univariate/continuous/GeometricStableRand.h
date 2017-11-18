@@ -8,7 +8,7 @@
  * Abstract class that unites in itself Asymmetric Laplace
  * and Geometric-Stable distributions
  */
-class RANDLIBSHARED_EXPORT ShiftedGeometricStableDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT ShiftedGeometricStableDistribution : public ContinuousDistribution<>
 {
     StableRand Z{};
 

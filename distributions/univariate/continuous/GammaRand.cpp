@@ -119,7 +119,7 @@ double GammaDistribution::variateBest(RandGenerator &randGenerator) const
 {
     /// Algorithm RGS for gamma variates (Best, 1983)
     double X = 0;
-    int iter = 0;
+    size_t iter = 0;
     do {
         double V = genCoef.b * UniformRand::StandardVariate(randGenerator);
         double W = UniformRand::StandardVariate(randGenerator);
@@ -143,7 +143,7 @@ double GammaDistribution::variateAhrensDieter(double shape, RandGenerator &randG
 {
     /// Rejection algorithm GS for gamma variates (Ahrens and Dieter, 1974)
     double X = 0;
-    int iter = 0;
+    size_t iter = 0;
     double shapeInv = 1.0 / shape;
     double t = shapeInv + M_1_E;
     do {
@@ -183,7 +183,7 @@ double GammaDistribution::variateMarsagliaTsang(double shape, RandGenerator &ran
     /// Marsaglia and Tsang’s Method (shape > 1/3)
     double d = shape - 1.0 / 3;
     double c = 3 * std::sqrt(d);
-    int iter = 0;
+    size_t iter = 0;
     do {
         double N;
         do {
@@ -455,7 +455,7 @@ double GammaDistribution::quantileImpl(double p, double initValue) const
 {
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (RandMath::findRoot<double>([this, logP] (double x)
         {
             if (x <= 0)
                return DoubleTriplet(-INFINITY, 0, 0);
@@ -469,7 +469,7 @@ double GammaDistribution::quantileImpl(double p, double initValue) const
         /// if we can't find quantile, then probably something bad has happened
         return NAN;
     }
-    if (RandMath::findRoot([this, p] (double x)
+    if (RandMath::findRoot<double>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(-p, 0, 0);
@@ -492,7 +492,7 @@ double GammaDistribution::quantileImpl1m(double p, double initValue) const
 {
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (RandMath::findRoot<double>([this, logP] (double x)
         {
            if (x <= 0)
                return DoubleTriplet(logP, 0, 0);
@@ -506,7 +506,7 @@ double GammaDistribution::quantileImpl1m(double p, double initValue) const
         /// if we can't find quantile, then probably something bad has happened
         return NAN;
     }
-    if (RandMath::findRoot([this, p] (double x)
+    if (RandMath::findRoot<double>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(p - 1.0, 0, 0);
@@ -579,7 +579,7 @@ void GammaRand::FitShape(const std::vector<double> &sample)
     double shape = GetSampleMean(sample) * beta;
     /// Run root-finding procedure
     double s = GetSampleLogMean(sample) + logBeta;
-    if (!RandMath::findRoot([s] (double x)
+    if (!RandMath::findRoot<double>([s] (double x)
     {
         double first = RandMath::digamma(x) - s;
         double second = RandMath::trigamma(x);
@@ -604,7 +604,7 @@ void GammaRand::Fit(const std::vector<double> &sample)
     shape -= sm3;
     shape /= sp12;
 
-    if (!RandMath::findRoot([s] (double x)
+    if (!RandMath::findRoot<double>([s] (double x)
     {
         double first = RandMath::digammamLog(x) + s;
         double second = RandMath::trigamma(x) - 1.0 / x;

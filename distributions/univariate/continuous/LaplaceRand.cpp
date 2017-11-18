@@ -93,7 +93,7 @@ void AsymmetricLaplaceDistribution::FitShift(const std::vector<double> &sample)
     double maxVar = *std::max_element(sample.begin(), sample.end());
     double median = 0.5 * (minVar + maxVar);
 
-    if (!RandMath::findRoot([this, sample] (double med)
+    if (!RandMath::findRoot<double>([this, sample] (double med)
     {
         double y = 0.0;
         for (const double & x : sample) {
@@ -178,7 +178,7 @@ void AsymmetricLaplaceRand::FitAsymmetry(const std::vector<double> &sample)
         maxBound = 1.0;
     }
 
-    if (!RandMath::findRoot([sample, xPlus, xMinus, gammaN] (double t)
+    if (!RandMath::findRoot<double>([sample, xPlus, xMinus, gammaN] (double t)
     {
         double tSq = t * t;
         double y = 1.0 - tSq;

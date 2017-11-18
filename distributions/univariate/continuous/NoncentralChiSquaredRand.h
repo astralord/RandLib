@@ -16,7 +16,7 @@
  * If X ~ χ'^2(k, 0), then X ~ χ^2(k) <BR>
  * X ~ χ^2(k + 2J), where J ~ Po(λ)
  */
-class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution<>
 {
     double k = 1; ///< degree
     double lambda = 2; ///< noncentrality λ

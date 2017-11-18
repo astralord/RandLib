@@ -4,6 +4,7 @@
 #include <string>
 
 #include "math/RandMath.h"
+#include "math/NumericMath.h"
 #include "univariate/BasicRandGenerator.h"
 #include "RandLib_global.h"
 
@@ -25,7 +26,7 @@ protected:
      * one thousand should be enough to be sure there is a bug
      * (or rejection method is too slow to be used)
      */
-    static constexpr double MAX_ITER_REJECTION = 1000;
+    static constexpr size_t MAX_ITER_REJECTION = 1000;
 
     String toStringWithPrecision(const double a_value, const int n = 6) const;
 

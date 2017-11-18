@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Marchenko-Pastur(λ, σ)
  */
-class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution<>
 {
     double lambda = 1; ///< ratio index λ
     double sigmaSq = 1; ///< scale parameter σ^2

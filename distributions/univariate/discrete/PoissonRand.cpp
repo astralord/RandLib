@@ -93,7 +93,7 @@ bool PoissonRand::generateByInversion() const
 
 int PoissonRand::variateRejection() const
 {
-    int iter = 0;
+    size_t iter = 0;
     int X = 0;
     do {
         bool reject = false;

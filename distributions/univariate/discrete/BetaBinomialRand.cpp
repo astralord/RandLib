@@ -129,7 +129,7 @@ int BetaBinomialRand::Mode() const
     /// otherwise use numerical procedure to solve the equation f'(x) = 0
     double guess = n * B.Mean();
     double alpha = B.GetAlpha(), beta = B.GetBeta();
-    if (RandMath::findRoot([this, alpha, beta] (double x)
+    if (RandMath::findRoot<double>([this, alpha, beta] (double x)
     {
         double y = RandMath::digamma(x + alpha);
         y -= RandMath::digamma(n - x + beta);

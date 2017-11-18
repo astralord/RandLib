@@ -19,7 +19,7 @@
  * X = Y / (Y + Z), where Y ~ Γ(α) and Z ~ Γ(β) <BR>
  * βX / α(1 - X) ~ F(2α, 2β)
  */
-class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution<>
 {
 protected:
     double alpha = 1; ///< first shape α

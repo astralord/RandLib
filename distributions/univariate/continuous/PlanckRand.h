@@ -16,7 +16,7 @@
  * Related distributions: <BR>
  * If G ~ Gamma(a + 1, b) and Z ~ Zeta(a + 1), then G / Z ~ Planck(a, b)
  */
-class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution<>
 {
     double a = 1; ///< shape
     double b = 1; ///< scale

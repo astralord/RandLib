@@ -104,7 +104,7 @@ double KolmogorovSmirnovRand::truncatedGammaVariate() const
     /// Generator for truncated gamma distribution with shape = 1.5
     static constexpr long double tp = 2.193245422464302l; ///< π^2 / (8 * 0.75^2)
     static constexpr long double rate = 1.2952909208355123l;
-    int iter = 0;
+    size_t iter = 0;
     do {
         double E0 = rate * ExponentialRand::StandardVariate(localRandGenerator);
         double E1 = 2 * ExponentialRand::StandardVariate(localRandGenerator);
@@ -120,13 +120,13 @@ double KolmogorovSmirnovRand::truncatedGammaVariate() const
 
 double KolmogorovSmirnovRand::variateForTheLeftMostInterval() const
 {
-    int iter1 = 0;
+    size_t iter1 = 0;
     do {
         double G = truncatedGammaVariate();
         double X = M_PI / std::sqrt(8 * G);
         double W = 0.0;
         double Z = 0.5 / G;
-        int n = 1, iter2 = 0;
+        size_t n = 1, iter2 = 0;
         double Q = 1.0;
         double U = UniformRand::StandardVariate(localRandGenerator);
         while (U >= W && ++iter2 <= MAX_ITER_REJECTION) {
@@ -145,13 +145,13 @@ double KolmogorovSmirnovRand::variateForTheLeftMostInterval() const
 double KolmogorovSmirnovRand::variateForTheRightMostInterval() const
 {
     static constexpr double tSq = 0.5625; /// square of parameter t suggested in the book
-    int iter1 = 0;
+    size_t iter1 = 0;
     do {
         double E = ExponentialRand::StandardVariate(localRandGenerator);
         double U = UniformRand::StandardVariate(localRandGenerator);
         double X = std::sqrt(tSq + 0.5 * E);
         double W = 0.0;
-        int n = 1, iter2 = 0;
+        size_t n = 1, iter2 = 0;
         double Z = -2 * X * X;
         while (U > W && ++iter2 < MAX_ITER_REJECTION) {
             ++n;
@@ -201,7 +201,7 @@ double KolmogorovSmirnovRand::quantileImpl(double p) const
     double guess = std::sqrt(-0.5 * (std::log1pl(-p) - M_LN2));
     if (p < 1e-5) {
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (RandMath::findRoot<double>([this, logP] (double x)
         {
             double logCdf = logF(x), logPdf = logf(x);
             double first = logCdf - logP;
@@ -211,7 +211,7 @@ double KolmogorovSmirnovRand::quantileImpl(double p) const
             return guess;
         return NAN;
     }
-    if (RandMath::findRoot([p, this] (double x)
+    if (RandMath::findRoot<double>([p, this] (double x)
     {
         double first = F(x) - p;
         double second = f(x);
@@ -226,7 +226,7 @@ double KolmogorovSmirnovRand::quantileImpl1m(double p) const
     double guess = std::sqrt(-0.5 * std::log(0.5 * p));
     if (p < 1e-5) {
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (RandMath::findRoot<double>([this, logP] (double x)
         {
             double logCcdf = logS(x), logPdf = logf(x);
             double first = logP - logCcdf;
@@ -236,7 +236,7 @@ double KolmogorovSmirnovRand::quantileImpl1m(double p) const
             return guess;
         return NAN;
     }
-    if (RandMath::findRoot([p, this] (double x)
+    if (RandMath::findRoot<double>([p, this] (double x)
     {
         double first = p - S(x);
         double second = f(x);

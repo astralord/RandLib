@@ -14,7 +14,7 @@
  * Related distributions: <BR>
  * X = Y + Z, where Y ~ Normal(μ, σ) and Z ~ Exp(β)
  */
-class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution<>
 {
     NormalRand X{};
     ExponentialRand Y{};

@@ -13,7 +13,7 @@
  * σX ~ Nakagami(μ, ωσ^2) <BR>
  * X^2 ~ Γ(μ, μ / ω)
  */
-class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution<>
 {
     double mu = 0.5; ///< shape μ
     double omega = 1; ///< spread ω

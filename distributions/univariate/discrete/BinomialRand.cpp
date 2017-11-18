@@ -163,7 +163,7 @@ int BinomialDistribution::variateRejection() const
     /// p.533. Non-Uniform Random Variate Generation. Luc Devroye
     /// it can be used only when n * p is integer and p < 0.5
     bool reject = true;
-    int iter = 0;
+    size_t iter = 0;
     double X, Y, V;
     do {
         double U = a4 * UniformRand::StandardVariate(localRandGenerator);

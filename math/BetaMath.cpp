@@ -2,24 +2,19 @@
 
 namespace RandMath {
 
-long double logBeta(double a, double b)
+long double logBeta(long double a, long double b)
 {
     if (a <= 0 || b <= 0)
         return NAN;
     double apb = a + b;
     int roundA = std::round(a), roundB = std::round(b);
     int roundApB = std::round(apb); 
-    long double lgammaA = areClose(a, roundA) ? lfact(roundA - 1) : std::lgammal(a);
+    long double lgammaA = (a == roundA) ? lfact(roundA - 1) : std::lgammal(a);
     long double lgammaB = lgammaA;
     if (a != b)
-        lgammaB = areClose(b, roundB) ? lfact(roundB - 1) : std::lgammal(b);
-    long double lgammaApB = areClose(apb, roundApB) ? lfact(roundApB - 1) : std::lgammal(apb);
+        lgammaB = (b == roundB) ? lfact(roundB - 1) : std::lgammal(b);
+    long double lgammaApB = (apb == roundApB) ? lfact(roundApB - 1) : std::lgammal(apb);
     return lgammaA + lgammaB - lgammaApB;
-}
-
-long double beta(double a, double b)
-{
-    return std::exp(logBeta(a, b));
 }
 
 double ibetaPowerSeries1(double x, double a, double b, double logBetaFun, double logX, double log1mX)

@@ -13,7 +13,7 @@
  * Related distributions: <BR>
  * 1 / (exp((X - μ) / s) + 1) ~ U(0, 1)
  */
-class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution<>
 {
     double mu = 0; ///< location μ
     double s = 1; ///< scale s

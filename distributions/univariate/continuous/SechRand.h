@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Sech
  */
-class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution<>
 {
 public:
     SechRand();

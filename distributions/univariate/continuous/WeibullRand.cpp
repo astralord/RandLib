@@ -184,7 +184,7 @@ std::complex<double> WeibullRand::CFImpl(double t) const
     },
     0.0, 1.0);
 
-    double re2 = ExpectedValue([this, t] (double x)
+    double re2 = this->ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
     },
@@ -202,7 +202,7 @@ std::complex<double> WeibullRand::CFImpl(double t) const
 
     double re = re1 + re2 + re3;
 
-    double im = ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
     },

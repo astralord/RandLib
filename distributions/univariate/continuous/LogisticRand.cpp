@@ -120,7 +120,7 @@ void LogisticRand::FitLocation(const std::vector<double> &sample)
 {
     double nHalf = 0.5 * sample.size();
     double root = 0;
-    if (!RandMath::findRoot([this, sample, nHalf](double m)
+    if (!RandMath::findRoot<double>([this, sample, nHalf](double m)
     {
         double f1 = 0, f2 = 0;
         for (const double & x : sample)

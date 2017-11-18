@@ -7,8 +7,11 @@
  * @brief The ContinuousDistribution class <BR>
  * Abstract class for all continuous distributions
  */
-class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateDistribution<double>
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateDistribution<RealType>
 {
+    static_assert(std::is_floating_point_v<RealType>, "Continuous distribution supports only floating-point types");
+
 protected:
     ContinuousDistribution() {}
     virtual ~ContinuousDistribution() {}
@@ -19,44 +22,44 @@ public:
      * @param x
      * @return probability density function
      */
-    virtual double f(const double & x) const = 0;
+    virtual double f(const RealType & x) const = 0;
 
     /**
      * @fn logf
      * @param x
      * @return logarithm of probability density function
      */
-    virtual double logf(const double & x) const = 0;
+    virtual double logf(const RealType & x) const = 0;
 
     /**
      * @fn ProbabilityDensityFunction
-     * fill vector y by f(x)
+     * fill vector y with f(x)
      * @param x
      * @param y
      */
-    void ProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
+    void ProbabilityDensityFunction(const std::vector<RealType> &x, std::vector<double> &y) const;
 
     /**
      * @fn LogProbabilityDensityFunction
-     * fill vector y by logf(x)
+     * fill vector y with logf(x)
      * @param x
      * @param y
      */
-    void LogProbabilityDensityFunction(const std::vector<double> &x, std::vector<double> &y) const;
+    void LogProbabilityDensityFunction(const std::vector<RealType> &x, std::vector<double> &y) const;
 
-    double Mode() const override;
+    RealType Mode() const override;
 
 protected:
-    double quantileImpl(double p, double initValue) const override;
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p, double initValue) const override;
-    double quantileImpl1m(double p) const override;
-    long double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
+    RealType quantileImpl(double p, RealType initValue) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p, RealType initValue) const override;
+    RealType quantileImpl1m(double p) const override;
+    long double ExpectedValue(const std::function<double (double)> &funPtr, RealType minPoint, RealType maxPoint) const override;
 
 public:
-    double Hazard(const double &x) const override;
-    double LikelihoodFunction(const std::vector<double> &sample) const override;
-    double LogLikelihoodFunction(const std::vector<double> &sample) const override;
+    double Hazard(const RealType &x) const override;
+    double LikelihoodFunction(const std::vector<RealType> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<RealType> &sample) const override;
 
     /**
      * @fn KolmogorovSmirnovTest
@@ -64,7 +67,7 @@ public:
      * @param alpha level of test
      * @return true if sample is from this distribution according to asymptotic KS-test, false otherwise
      */
-    bool KolmogorovSmirnovTest(const std::vector<double> &orderStatistic, double alpha) const;
+    bool KolmogorovSmirnovTest(const std::vector<RealType> &orderStatistic, double alpha) const;
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H

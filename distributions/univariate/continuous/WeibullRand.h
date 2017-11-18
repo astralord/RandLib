@@ -10,7 +10,7 @@
  *
  * Notation: X ~ Weibull(λ, k)
  */
-class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution<>
 {
     double lambda = 1; ///< scale λ
     double k = 1; ///< shape k

@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * d1/d2 * X ~ B'(d1/2, d2/2)
  */
-class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution<>
 {
     int d1 = 2; ///< first degree
     int d2 = 2; ///< second degree

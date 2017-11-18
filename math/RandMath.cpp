@@ -1,17 +1,9 @@
 ﻿#include "RandMath.h"
+#include "NumericMath.h"
 #include <functional>
 
 namespace RandMath
 {
-
-bool areClose(double a, double b, double eps)
-{
-    if (a == b)
-        return true;
-    double fa = std::fabs(a);
-    double fb = std::fabs(b);
-    return std::fabs(b - a) < eps * std::max(fa, fb);
-}
 
 int sign(double x)
 {
@@ -330,7 +322,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
     /// to find first negleted term
     double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
     double logXY = logX + logY;
-    if (!RandMath::findRoot([C, mu, logXY] (double n)
+    if (!RandMath::findRoot<double>([C, mu, logXY] (double n)
     {
         double npmu = n + mu;
         double logn = std::log(n), lognpmu = std::log(npmu);

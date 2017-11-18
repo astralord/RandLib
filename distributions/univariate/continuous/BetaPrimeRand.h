@@ -17,7 +17,7 @@
  * X = Y / Z, where Y ~ Γ(α) and Z ~ Γ(β) <BR>
  * β/α * X ~ F(2α, 2β)
  */
-class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution<>
 {
     double alpha = 1; ///< first shape α
     double beta = 1; ///< second shape β

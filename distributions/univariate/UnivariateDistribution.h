@@ -105,9 +105,18 @@ public:
     /**
      * @fn QuantileFunction
      * @param p
+     * @param y
      * @return fills vector y with Quantile(p)
      */
     void QuantileFunction(const std::vector<double> &p, std::vector<T> &y);
+
+    /**
+     * @fn QuantileFunction1m
+     * @param p
+     * @param y
+     * @return fills vector y with Quantile1m(p)
+     */
+    void QuantileFunction1m(const std::vector<double> &p, std::vector<T> &y);
 
     /**
      * @fn CF

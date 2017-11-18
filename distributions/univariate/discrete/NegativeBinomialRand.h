@@ -70,7 +70,7 @@ protected:
      */
     GENERATOR_ID GetIdOfUsedGenerator() const
     {
-        if ((r < 10 || GammaRV.Mean() > 10) && RandMath::areClose(r, std::round(r)))
+        if ((r < 10 || GammaRV.Mean() > 10) && r == std::round(r))
             return (p < 0.08) ? EXPONENTIAL : TABLE;
         return GAMMA_POISSON;
     }

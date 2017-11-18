@@ -41,7 +41,7 @@ void ExponentialRand::Sample(std::vector<double> &outputData) const
 double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm
-    int iter = 0;
+    size_t iter = 0;
     do {
         int stairId = randGenerator.Variate() & 255;
         /// Get horizontal coordinate

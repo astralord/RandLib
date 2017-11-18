@@ -25,13 +25,13 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(const std::vecto
     if (size > y.size())
         return;
     for (size_t i = 0; i != size; ++i)
-        y[i] = F(x[i]);
+        y[i] = this->F(x[i]);
 }
 
 template < typename T >
 double ProbabilityDistribution<T>::S(const T &x) const
 {
-    return 1.0 - F(x);
+    return 1.0 - this->F(x);
 }
 
 template < typename T >
@@ -93,9 +93,15 @@ String ProbabilityDistribution<T>::fitErrorDescription(ProbabilityDistribution::
     return error + explanation;
 }
 
-/// Univariate
-template class ProbabilityDistribution<double>;
+/// Univariate discrete
 template class ProbabilityDistribution<int>;
+template class ProbabilityDistribution<long int>;
+template class ProbabilityDistribution<long long int>;
+
+/// Univariate continuous
+template class ProbabilityDistribution<float>;
+template class ProbabilityDistribution<double>;
+template class ProbabilityDistribution<long double>;
 
 /// Bivariate
 template class ProbabilityDistribution<DoublePair>;

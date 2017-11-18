@@ -152,7 +152,7 @@ double BetaDistribution::variateArcsine() const
 
 double BetaDistribution::variateRejectionUniform() const
 {
-    int iter = 0;
+    size_t iter = 0;
     do {
         double U = UniformRand::StandardVariate(localRandGenerator);
         double V = UniformRand::StandardVariate(localRandGenerator);
@@ -164,7 +164,7 @@ double BetaDistribution::variateRejectionUniform() const
 
 double BetaDistribution::variateRejectionUniformExtended() const
 {
-    int iter = 0;
+    size_t iter = 0;
     static constexpr double M_LN4 = M_LN2 + M_LN2;
     do {
         double U = UniformRand::StandardVariate(localRandGenerator);
@@ -195,7 +195,7 @@ double BetaDistribution::variateCheng() const
 
 double BetaDistribution::variateAtkinsonWhittaker() const
 {
-    int iter = 0;
+    size_t iter = 0;
     do {
         double U = UniformRand::StandardVariate(localRandGenerator);
         double W = ExponentialRand::StandardVariate(localRandGenerator);
@@ -222,7 +222,7 @@ double BetaDistribution::variateGammaRatio() const
 
 double BetaDistribution::variateRejectionNormal() const
 {
-    int iter = 0;
+    size_t iter = 0;
     double N = 0, Z = 0;
     double alpham1 = alpha - 1;
     double alpha2m1 = alpha + alpham1;
@@ -560,7 +560,7 @@ void BetaRand::FitAlpha(double lnG, double lnG1m, double mean)
         double diff = lnG - lnG1m;
         double digammaBeta = RandMath::digamma(beta);
         /// run root-finding procedure
-        if (!RandMath::findRoot([diff, digammaBeta] (double x)
+        if (!RandMath::findRoot<double>([diff, digammaBeta] (double x)
         {
             double first = RandMath::digamma(x) - diff - digammaBeta;
             double second = RandMath::trigamma(x);
@@ -607,7 +607,7 @@ void BetaRand::FitBeta(double lnG, double lnG1m, double mean)
         double diff = lnG - lnG1m;
         double digammaAlpha = RandMath::digamma(alpha);
         /// run root-finding procedure
-        if (!RandMath::findRoot([diff, digammaAlpha] (double x)
+        if (!RandMath::findRoot<double>([diff, digammaAlpha] (double x)
         {
             double first = RandMath::digamma(x) + diff - digammaAlpha;
             double second = RandMath::trigamma(x);

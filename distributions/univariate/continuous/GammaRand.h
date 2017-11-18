@@ -18,7 +18,7 @@
  * If X ~ Γ(0.5 * n, 0.5), then X ~ χ^2(n) <BR>
  * If X ~ Γ(k, β) for integer k, then X ~ Erlang(k, β)
  */
-class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution<>
 {
 protected:
     double alpha = 1; ///< shape α

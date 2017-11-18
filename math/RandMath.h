@@ -12,7 +12,6 @@
 #include "Constants.h"
 #include "GammaMath.h"
 #include "BetaMath.h"
-#include "NumericMath.h"
 
 namespace RandMath
 {
@@ -27,7 +26,15 @@ constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat(const std::funct
  * @param eps
  * @return |a - b| < eps * max(a, b)
  */
-bool areClose(double a, double b, double eps = 1e-6);
+template<typename RealType>
+bool areClose(RealType a, RealType b, RealType eps = 1e-6)
+{
+    if (a == b)
+        return true;
+    RealType fa = std::fabs(a);
+    RealType fb = std::fabs(b);
+    return std::fabs(b - a) < eps * std::max(fa, fb);
+}
 
 /**
  * @fn sign

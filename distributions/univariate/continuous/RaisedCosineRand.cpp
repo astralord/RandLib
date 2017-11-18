@@ -75,7 +75,7 @@ double RaisedCosineDistribution::StandardVariate(RandGenerator &randGenerator)
     U += U;
     int a = 0, b = -1;
     double W = 0.0, V = 1.0;
-    int iter = 0;
+    size_t iter = 0;
     do {
         a += 2;
         b += 2;

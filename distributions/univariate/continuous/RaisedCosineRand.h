@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Raised-cosine(μ, s)
  */
-class RANDLIBSHARED_EXPORT RaisedCosineDistribution : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT RaisedCosineDistribution : public ContinuousDistribution<>
 {
     double mu = 0; ///< location μ
     double s = M_PI; ///< scale

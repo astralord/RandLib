@@ -13,7 +13,7 @@
  * Related distributions: <BR>
  * ln(X) ~ Normal(μ, σ)
  */
-class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution<>
 {
     NormalRand X{};
     double expMu = 1; ///< exp(μ)
