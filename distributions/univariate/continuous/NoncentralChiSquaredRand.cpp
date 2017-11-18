@@ -90,21 +90,21 @@ double NoncentralChiSquaredRand::Variate(double degree, double noncentrality, Ra
         return NAN;
 
     if (degree >= 1) {
-        double rv = (degree == 1) ? 0.0 : 2 * GammaDistribution::StandardVariate(0.5 * degree - 0.5, randGenerator);
+        double rv = (degree == 1) ? 0.0 : 2 * GammaDistribution<double>::StandardVariate(0.5 * degree - 0.5, randGenerator);
         double y = std::sqrt(noncentrality) + NormalRand::StandardVariate(randGenerator);
         return rv + y * y;
     }
     double shape = 0.5 * degree + PoissonRand::Variate(0.5 * noncentrality, randGenerator);
-    return 2 * GammaDistribution::StandardVariate(shape, randGenerator);
+    return 2 * GammaDistribution<double>::StandardVariate(shape, randGenerator);
 }
 
 double NoncentralChiSquaredRand::Variate() const
 {
     if (k < 1)
-        return 2 * GammaDistribution::StandardVariate(halfK + Y.Variate(), localRandGenerator);
+        return 2 * GammaDistribution<double>::StandardVariate(halfK + Y.Variate(), localRandGenerator);
     double X = variateForDegreeEqualOne();
     if (k > 1)
-        X += 2 * GammaDistribution::StandardVariate(halfK - 0.5, localRandGenerator);
+        X += 2 * GammaDistribution<double>::StandardVariate(halfK - 0.5, localRandGenerator);
     return X;
 }
 
@@ -117,11 +117,11 @@ void NoncentralChiSquaredRand::Sample(std::vector<double> &outputData) const
         if (halfKmHalf == 0)
             return;
         for (double & var : outputData)
-            var += 2 * GammaDistribution::StandardVariate(halfKmHalf, localRandGenerator);
+            var += 2 * GammaDistribution<double>::StandardVariate(halfKmHalf, localRandGenerator);
     }
     else {
         for (double & var : outputData)
-            var = 2 * GammaDistribution::StandardVariate(halfK + Y.Variate(), localRandGenerator);
+            var = 2 * GammaDistribution<double>::StandardVariate(halfK + Y.Variate(), localRandGenerator);
     }
 }
 

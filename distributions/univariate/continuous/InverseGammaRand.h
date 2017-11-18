@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution<>
     double beta = 1; ///< rate β
     double pdfCoef = 0; ///< coefficient for faster pdf calculation
 
-    GammaRand X{};
+    GammaRand<double> X{};
 
 public:
     InverseGammaRand(double shape = 1, double rate = 1);

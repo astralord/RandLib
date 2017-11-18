@@ -95,7 +95,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution of α
      */
-    GammaRand FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution, bool MAP = false);
+    GammaRand<> FitShapeBayes(const std::vector<double> &sample, const GammaDistribution<> &priorDistribution, bool MAP = false);
 };
 
 #endif // PARETORAND_H

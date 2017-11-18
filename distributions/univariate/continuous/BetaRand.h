@@ -31,7 +31,7 @@ protected:
     double bmaInv = 1; ///< 1/(b-a)
     double logbma = 0; ///< log(b-a)
 
-    GammaRand GammaRV1{}, GammaRV2{};
+    GammaRand<RealType> GammaRV1{}, GammaRV2{};
 
 private:
     static constexpr double edgeForGenerators = 8.0;

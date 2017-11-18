@@ -210,7 +210,7 @@ void ParetoRand::Fit(const std::vector<double> &sample, bool unbiased)
     SetShape(shape);
 }
 
-GammaRand ParetoRand::FitShapeBayes(const std::vector<double> &sample, const GammaDistribution &priorDistribution, bool MAP)
+GammaRand<> ParetoRand::FitShapeBayes(const std::vector<double> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
 {
     if (!allElementsAreNotSmallerThan(sigma, sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(sigma)));

@@ -17,9 +17,9 @@ void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccesses
     if (totalSize <= 0 || totalSuccessesNum <= 0 || limitSuccessesNum <= 0)
         throw std::invalid_argument("Negative-HyperGeometric distribution: all parameters should be positive");
     if (totalSuccessesNum > totalSize)
-        throw std::invalid_argument("Negative-HyperGeometric distribution: total size should be larger than total successes number");
+        throw std::invalid_argument("Negative-HyperGeometric distribution: total size shouldn't be smaller than total successes number");
     if (limitSuccessesNum > totalSuccessesNum)
-        throw std::invalid_argument("Negative-HyperGeometric distribution: total successes number should be larger than limit successes number");
+        throw std::invalid_argument("Negative-HyperGeometric distribution: total successes number shouldn't be smaller than limit successes number");
 
     N = totalSize;
 

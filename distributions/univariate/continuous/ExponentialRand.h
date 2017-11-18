@@ -45,7 +45,7 @@ class RANDLIBSHARED_EXPORT ExpZiggurat {
  * Related distributions: <BR>
  * X ~ Γ(1, β)
  */
-class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution
+class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution<double>
 {
     static constexpr auto ziggurat = ExpZiggurat::createZiggurat();
 

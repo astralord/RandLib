@@ -31,7 +31,7 @@ private:
     double qDivP = 1; ///< q / p
     static constexpr int tableSize = 16;
     double table[tableSize];
-    GammaRand GammaRV{};
+    GammaRand<> GammaRV{};
 
 protected:
     NegativeBinomialDistribution(T number, double probability);

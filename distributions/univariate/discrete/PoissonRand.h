@@ -86,7 +86,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior Gamma distribution
      */
-    GammaRand FitBayes(const std::vector<int> &sample, const GammaDistribution & priorDistribution, bool MAP = false);
+    GammaRand<> FitBayes(const std::vector<int> &sample, const GammaDistribution<> & priorDistribution, bool MAP = false);
 };
 
 #endif // POISSONRAND_H

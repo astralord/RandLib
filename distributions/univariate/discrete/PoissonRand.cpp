@@ -263,13 +263,13 @@ void PoissonRand::Fit(const std::vector<int> &sample, DoublePair &confidenceInte
     confidenceInterval.second = ErlangRV.Quantile1m(halfAlpha);
 }
 
-GammaRand PoissonRand::FitBayes(const std::vector<int> &sample, const GammaDistribution &priorDistribution, bool MAP)
+GammaRand<> PoissonRand::FitBayes(const std::vector<int> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
 {
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
-    GammaRand posteriorDistribution(alpha + GetSampleSum(sample), beta + sample.size());
+    GammaRand<> posteriorDistribution(alpha + GetSampleSum(sample), beta + sample.size());
     SetRate(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
