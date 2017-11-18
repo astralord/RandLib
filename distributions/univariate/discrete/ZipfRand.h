@@ -10,7 +10,7 @@
  *
  * Notation: X ~ Zipf(s, n)
  */
-class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution<>
 {
     double s = 1; ///< exponent
     int n = 1; ///< number

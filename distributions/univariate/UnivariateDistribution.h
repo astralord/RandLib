@@ -86,7 +86,7 @@ protected:
      * @param maxPoint max{x | g(x) ≠ 0}
      * @return E[g(x)]
      */
-    virtual long double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
+    virtual long double ExpectedValue(const std::function<double (T)> &funPtr, T minPoint, T maxPoint) const = 0;
 public:
     /**
      * @fn Quantile

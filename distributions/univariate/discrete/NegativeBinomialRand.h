@@ -17,7 +17,7 @@
  * If Y ~ Γ(r, p / (1 - p), then Po(Y) ~ NB(r, p)
  */
 template < typename T >
-class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution<>
 {
 protected:
     double p = 0.5; ///< probability of failure

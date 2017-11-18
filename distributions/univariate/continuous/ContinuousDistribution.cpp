@@ -138,7 +138,7 @@ RealType ContinuousDistribution<RealType>::Mode() const
 }
 
 template< typename RealType >
-long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<double (double)> &funPtr, RealType minPoint, RealType maxPoint) const
+long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<double (RealType)> &funPtr, RealType minPoint, RealType maxPoint) const
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
@@ -266,5 +266,6 @@ bool ContinuousDistribution<RealType>::KolmogorovSmirnovTest(const std::vector<R
     return (SReal > interval || SReal < nInv - interval) ? false : true;
 }
 
+template class ContinuousDistribution<float>;
 template class ContinuousDistribution<double>;
 template class ContinuousDistribution<long double>;

@@ -12,7 +12,7 @@
  *
  * Notation: X ~ Po(λ)
  */
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution<>
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)

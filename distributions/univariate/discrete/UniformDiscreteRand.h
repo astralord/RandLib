@@ -12,7 +12,7 @@
  *
  * P(X = k) = 1 / (b - a + 1) for a <= k <= b
  */
-class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT UniformDiscreteRand : public DiscreteDistribution<>
 {
     size_t n = 1; ///< number of possible outcomes
     int a = 0; ///< min bound

@@ -14,7 +14,7 @@
  * Related distributions: <BR>
  * If X ~ Binomial(n, p), where p ~ Beta(α, β), then X ~ BB(n, α, β)
  */
-class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution<>
 {
     int n = 1; ///< number of experiments
     double pmfCoef = 0; ///< log(n!) - log(Γ(α + β + n)) - log(B(α, β))

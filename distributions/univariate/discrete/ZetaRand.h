@@ -11,7 +11,7 @@
  *
  * Notation: X ~ Zeta(s)
  */
-class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution<>
 {
     double s = 2; ///< exponent
     double sm1 = 1; ///< s - 1

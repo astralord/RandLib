@@ -54,7 +54,7 @@ protected:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p, RealType initValue) const override;
     RealType quantileImpl1m(double p) const override;
-    long double ExpectedValue(const std::function<double (double)> &funPtr, RealType minPoint, RealType maxPoint) const override;
+    long double ExpectedValue(const std::function<double (RealType)> &funPtr, RealType minPoint, RealType maxPoint) const override;
 
 public:
     double Hazard(const RealType &x) const override;

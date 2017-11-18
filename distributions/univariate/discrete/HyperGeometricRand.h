@@ -10,7 +10,7 @@
  *
  * X ~ HG(N, K, n)
  */
-class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT HyperGeometricRand : public DiscreteDistribution<>
 {
     int N = 1; ///< population size
     int K = 1; /// number of possible successes

@@ -15,7 +15,7 @@
  * If X ~ Bin(1, p), then X ~ Bernoulli(p) <BR>
  * X ~ Multin(n, 1 - p, p)
  */
-class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution<>
 {
 protected:
     double p = 0.5; ///< probability of success

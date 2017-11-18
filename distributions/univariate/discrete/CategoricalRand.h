@@ -15,7 +15,7 @@
  * If X ~ Bernoulli(p), then X ~ Cat(1 - p, p) <BR>
  * If X ~ Uniform-Discrete(0, K), then X ~ Cat(p, ..., p) with p = 1 / (K + 1)
  */
-class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT CategoricalRand : public DiscreteDistribution<>
 {
     std::vector<double> prob{1.0}; ///< vector of probabilities
     int K = 1; ///< number of possible outcomes

@@ -12,8 +12,8 @@
 template < class T1, class T2 >
 class RANDLIBSHARED_EXPORT DiscreteBivariateDistribution : public BivariateDistribution< T1, T2, IntPair >
 {
-    static_assert(std::is_base_of<DiscreteDistribution, T1>::value, "T1 must be a descendant of DiscreteDistribution");
-    static_assert(std::is_base_of<DiscreteDistribution, T2>::value, "T2 must be a descendant of DiscreteDistribution");
+    static_assert(std::is_base_of_v<DiscreteDistribution<>, T1>, "T1 must be a descendant of DiscreteDistribution");
+    static_assert(std::is_base_of_v<DiscreteDistribution<>, T2>, "T2 must be a descendant of DiscreteDistribution");
 
 protected:
     DiscreteBivariateDistribution() {}

@@ -13,7 +13,7 @@
  * Related distributions: <BR>
  * If Y ~ Po(μ1) and Z ~ Po(μ2) then Y - Z ~ Skellam(μ1, μ2)
  */
-class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution<>
 {
     double mu1 = 1; ///< first rate μ1
     double mu2 = 1; ///< second rate μ2

@@ -10,7 +10,7 @@
  *
  * Notation: X ~ NHG(N, M, m)
  */
-class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribution
+class RANDLIBSHARED_EXPORT NegativeHyperGeometricRand : public DiscreteDistribution<>
 {
     int N = 1; ///< size of population
     int M = 1; ///< total amount of successes
