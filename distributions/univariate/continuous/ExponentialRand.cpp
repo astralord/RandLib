@@ -19,7 +19,7 @@ double ExponentialRand::logf(const double & x) const
 
 double ExponentialRand::F(const double & x) const
 {
-    return (x > 0.0) ? -std::expm1(-beta * x) : 0.0;
+    return (x > 0.0) ? -std::expm1l(-beta * x) : 0.0;
 }
 
 double ExponentialRand::S(const double & x) const

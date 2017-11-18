@@ -48,7 +48,7 @@ double GumbelRand::S(const double & x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
-    return -std::expm1(-y);
+    return -std::expm1l(-y);
 }
 
 double GumbelRand::Variate() const
@@ -62,12 +62,12 @@ double GumbelRand::StandardVariate(RandGenerator &randGenerator)
     return -std::log(w);
 }
 
-double GumbelRand::Mean() const
+long double GumbelRand::Mean() const
 {
     return mu + beta * M_EULER;
 }
 
-double GumbelRand::Variance() const
+long double GumbelRand::Variance() const
 {
     double v = M_PI * beta;
     return v * v / 6;
@@ -80,7 +80,7 @@ double GumbelRand::quantileImpl(double p) const
 
 double GumbelRand::quantileImpl1m(double p) const
 {
-    return mu - beta * std::log(-std::log1p(-p));
+    return mu - beta * std::log(-std::log1pl(-p));
 }
 
 double GumbelRand::Median() const
@@ -94,15 +94,15 @@ double GumbelRand::Mode() const
     return mu;
 }
 
-double GumbelRand::Skewness() const
+long double GumbelRand::Skewness() const
 {
-    static constexpr double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI_SQ * M_PI);
+    static constexpr long double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI_SQ * M_PI);
     return skew;
 }
 
-double GumbelRand::ExcessKurtosis() const
+long double GumbelRand::ExcessKurtosis() const
 {
-    return 2.4;
+    return 2.4l;
 }
 
 double GumbelRand::Entropy() const

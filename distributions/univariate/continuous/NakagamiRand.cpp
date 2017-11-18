@@ -16,7 +16,7 @@ void NakagamiDistribution::SetParameters(double shape, double spread)
     mu = shape;
     omega = spread;
     Y.SetParameters(mu, mu / omega);
-    lgammaShapeRatio = std::lgamma(mu + 0.5) - Y.GetLogGammaShape();
+    lgammaShapeRatio = std::lgammal(mu + 0.5) - Y.GetLogGammaShape();
 }
 
 double NakagamiDistribution::f(const double & x) const
@@ -71,14 +71,14 @@ void NakagamiDistribution::Reseed(unsigned long seed) const
     Y.Reseed(seed + 1);
 }
 
-double NakagamiDistribution::Mean() const
+long double NakagamiDistribution::Mean() const
 {
     double y = lgammaShapeRatio;
     y -= 0.5 * Y.GetLogRate();
     return std::exp(y);
 }
 
-double NakagamiDistribution::Variance() const
+long double NakagamiDistribution::Variance() const
 {
     double y = lgammaShapeRatio;
     y = std::exp(2 * y);
@@ -96,7 +96,7 @@ double NakagamiDistribution::Mode() const
     return std::sqrt(std::max(omega - mode, 0.0));
 }
 
-double NakagamiDistribution::Skewness() const
+long double NakagamiDistribution::Skewness() const
 {
     double thirdMoment = lgammaShapeRatio;
     thirdMoment -= 1.5 * Y.GetLogRate();
@@ -106,7 +106,7 @@ double NakagamiDistribution::Skewness() const
     return (thirdMoment - mean * (3 * variance + mean * mean)) / std::pow(variance, 1.5);
 }
 
-double NakagamiDistribution::FourthMoment() const
+long double NakagamiDistribution::FourthMoment() const
 {
     double fourthMoment = omega / mu;
     fourthMoment *= fourthMoment;
@@ -114,7 +114,7 @@ double NakagamiDistribution::FourthMoment() const
     return fourthMoment;
 }
 
-double NakagamiDistribution::ExcessKurtosis() const
+long double NakagamiDistribution::ExcessKurtosis() const
 {
     double mean = Mean();
     double secondMoment = SecondMoment();
@@ -182,7 +182,7 @@ void ChiRand::SetDegree(int degree)
     NakagamiDistribution::SetParameters(0.5 * degree, degree);
 }
 
-double ChiRand::Skewness() const
+long double ChiRand::Skewness() const
 {
     double mean = Mean();
     double sigmaSq = Variance();
@@ -191,7 +191,7 @@ double ChiRand::Skewness() const
     return skew;
 }
 
-double ChiRand::ExcessKurtosis() const
+long double ChiRand::ExcessKurtosis() const
 {
     double mean = Mean();
     double sigmaSq = Variance();
@@ -266,12 +266,12 @@ void MaxwellBoltzmannRand::Sample(std::vector<double> &outputData) const
         var = this->Variate();
 }
 
-double MaxwellBoltzmannRand::Mean() const
+long double MaxwellBoltzmannRand::Mean() const
 {
     return 2 * M_1_SQRTPI * M_SQRT2 * sigma;
 }
 
-double MaxwellBoltzmannRand::Variance() const
+long double MaxwellBoltzmannRand::Variance() const
 {
     return (3 - 8.0 * M_1_PI) * sigma * sigma;
 }
@@ -281,7 +281,7 @@ double MaxwellBoltzmannRand::Mode() const
     return M_SQRT2 * sigma;
 }
 
-double MaxwellBoltzmannRand::Skewness() const
+long double MaxwellBoltzmannRand::Skewness() const
 {
     double skewness = 3 * M_PI - 8;
     skewness = 2.0 / skewness;
@@ -289,7 +289,7 @@ double MaxwellBoltzmannRand::Skewness() const
     return (16 - 5 * M_PI) * skewness;
 }
 
-double MaxwellBoltzmannRand::ExcessKurtosis() const
+long double MaxwellBoltzmannRand::ExcessKurtosis() const
 {
     double numerator = 40 - 3 * M_PI;
     numerator *= M_PI;
@@ -330,7 +330,7 @@ double RayleighRand::F(const double & x) const
     if (x <= 0)
         return 0.0;
     double xAdj = x / sigma;
-    return -std::expm1(-0.5 * xAdj * xAdj);
+    return -std::expm1l(-0.5 * xAdj * xAdj);
 }
 
 double RayleighRand::S(const double & x) const
@@ -353,19 +353,19 @@ void RayleighRand::Sample(std::vector<double> &outputData) const
         var = this->Variate();
 }
 
-double RayleighRand::Mean() const
+long double RayleighRand::Mean() const
 {
     return sigma * M_SQRTPI * M_SQRT1_2;
 }
 
-double RayleighRand::Variance() const
+long double RayleighRand::Variance() const
 {
     return (2.0 - M_PI_2) * sigma * sigma;
 }
 
 double RayleighRand::quantileImpl(double p) const
 {
-    return sigma * std::sqrt(-2 * std::log1p(-p));
+    return sigma * std::sqrt(-2 * std::log1pl(-p));
 }
 
 double RayleighRand::quantileImpl1m(double p) const
@@ -384,16 +384,16 @@ double RayleighRand::Mode() const
     return sigma;
 }
 
-double RayleighRand::Skewness() const
+long double RayleighRand::Skewness() const
 {
-    static constexpr double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    static constexpr long double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
     return skewness;
 }
 
-double RayleighRand::ExcessKurtosis() const
+long double RayleighRand::ExcessKurtosis() const
 {
-    static constexpr double temp = 4 - M_PI;
-    static constexpr double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    static constexpr long double temp = 4 - M_PI;
+    static constexpr long double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
     return kurtosis;
 }
 

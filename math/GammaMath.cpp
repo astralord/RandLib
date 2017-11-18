@@ -72,7 +72,7 @@ long double factorial(double n)
 {
     if (n < 0)
         return 0.0;
-    return (n > FACTORIAL_TABLESIZE) ? std::tgamma(n + 1) : factorialForSmallValue(n);
+    return (n > FACTORIAL_TABLESIZE) ? std::tgammal(n + 1) : factorialForSmallValue(n);
 }
 
 long double doubleFactorial(int n)
@@ -551,14 +551,14 @@ double lpgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
         long double sum = 0.0;
         double lgammaAp1 = logA + lgammaA;
         for (int n = n0; n > 0; --n) {
-            double addon = n * logX - std::lgamma(a + n + 1) + lgammaAp1;
+            double addon = n * logX - std::lgammal(a + n + 1) + lgammaAp1;
             addon = std::exp(addon);
             sum += addon;
         }
-        return a * logX - x + std::log1p(sum) - lgammaAp1;
+        return a * logX - x + std::log1pl(sum) - lgammaAp1;
     }
     return (mId == PUA) ? std::log(pgammaRaw(a, x, logX, logA, lgammaA, mId)) :
-                          std::log1p(-qgammaRaw(a, x, logX, logA, lgammaA, mId));
+                          std::log1pl(-qgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double lpgamma(double a, double x, double logA, double lgammaA)
@@ -583,7 +583,7 @@ double lpgamma(double a, double x, double logX)
     if (a == 1.0)
         return RandMath::log1mexp(-x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return lpgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return lpgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double lpgamma(double a, double x)
@@ -596,7 +596,7 @@ double lpgamma(double a, double x)
         return RandMath::log1mexp(-x);
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return lpgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return lpgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double pgammaRaw(double a, double x, double logX, double logA, double lgammaA, REGULARISED_GAMMA_METHOD_ID mId)
@@ -606,7 +606,7 @@ double pgammaRaw(double a, double x, double logX, double logA, double lgammaA, R
     if (mId == PUA)
         return incompleteGammaUniformExpansion(a, x, logX, logA, true);
     return (mId == QUA) ? 1.0 - qgammaRaw(a, x, logX, logA, lgammaA, mId) :
-                          -std::expm1(lqgammaRaw(a, x, logX, logA, lgammaA, mId));
+                          -std::expm1l(lqgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double pgamma(double a, double x, double logA, double lgammaA)
@@ -616,7 +616,7 @@ double pgamma(double a, double x, double logA, double lgammaA)
     if (x == 0.0)
         return 1.0;
     if (a == 1.0)
-        return -std::expm1(-x);
+        return -std::expm1l(-x);
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
     return pgammaRaw(a, x, logX, logA, lgammaA, mId);
@@ -629,9 +629,9 @@ double pgamma(double a, double x, double logX)
     if (x == 0.0)
         return 1.0;
     if (a == 1.0)
-        return -std::expm1(-x);
+        return -std::expm1l(-x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return pgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return pgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double pgamma(double a, double x)
@@ -641,10 +641,10 @@ double pgamma(double a, double x)
     if (x == 0.0)
         return 1.0;
     if (a == 1.0)
-        return -std::expm1(-x);
+        return -std::expm1l(-x);
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return pgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return pgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double qtGammaExpansionAux(double a, double logX, double logA, double lgammaA)
@@ -658,7 +658,7 @@ double qtGammaExpansionAux(double a, double logX, double logA, double lgammaA)
         sum += (n & 1) ? -addon : addon;
     }
     sum *= a;
-    double y = std::log1p(sum);
+    double y = std::log1pl(sum);
     y += a * logX;
     y -= logA + lgammaA;
     return y;
@@ -690,14 +690,14 @@ double lqgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
             tk *= rhok;
             sum += tk;
         }
-        double y = std::log1p(sum);
+        double y = std::log1pl(sum);
         y += a * logX;
         y -= x + lgammaA;
-        y -= std::log1p(x - a);
+        y -= std::log1pl(x - a);
         return y;
     }
     return (mId == QUA) ? std::log(qgammaRaw(a, x, logX, logA, lgammaA, mId)) :
-                          std::log1p(-pgammaRaw(a, x, logX, logA, lgammaA, mId));
+                          std::log1pl(-pgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double lqgamma(double a, double x, double logA, double lgammaA)
@@ -722,7 +722,7 @@ double lqgamma(double a, double x, double logX)
     if (a == 1.0)
         return -x;
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return lqgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return lqgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double lqgamma(double a, double x)
@@ -735,7 +735,7 @@ double lqgamma(double a, double x)
         return -x;
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return lqgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return lqgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double qgammaRaw(double a, double x, double logX, double logA, double lgammaA, REGULARISED_GAMMA_METHOD_ID mId)
@@ -743,11 +743,11 @@ double qgammaRaw(double a, double x, double logX, double logA, double lgammaA, R
     if (mId == CF)
         return std::exp(lqgammaRaw(a, x, logX, logA, lgammaA, mId));
     if (mId == QT)
-        return -std::expm1(qtGammaExpansionAux(a, logX, logA, lgammaA));
+        return -std::expm1l(qtGammaExpansionAux(a, logX, logA, lgammaA));
     if (mId == QUA)
         return incompleteGammaUniformExpansion(a, x, logX, logA, false);
     return (mId == PUA) ? 1.0 - pgammaRaw(a, x, logX, logA, lgammaA, mId) :
-                          -std::expm1(lpgammaRaw(a, x, logX, logA, lgammaA, mId));
+                          -std::expm1l(lpgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
 double qgamma(double a, double x, double logA, double lgammaA)
@@ -772,7 +772,7 @@ double qgamma(double a, double x, double logX)
     if (a == 1.0)
         return std::exp(-x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return qgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return qgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 double qgamma(double a, double x)
@@ -785,7 +785,7 @@ double qgamma(double a, double x)
         return std::exp(-x);
     double logX = std::log(x);
     REGULARISED_GAMMA_METHOD_ID mId = getRegularizedGammaMethodId(a, x, logX);
-    return qgammaRaw(a, x, logX, std::log(a), std::lgamma(a), mId);
+    return qgammaRaw(a, x, logX, std::log(a), std::lgammal(a), mId);
 }
 
 

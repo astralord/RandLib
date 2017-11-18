@@ -68,12 +68,12 @@ int UniformDiscreteRand::StandardVariate(int minValue, int maxValue, RandGenerat
     return minValue + (intVar % n);
 }
 
-double UniformDiscreteRand::Mean() const
+long double UniformDiscreteRand::Mean() const
 {
     return 0.5 * (b + a);
 }
 
-double UniformDiscreteRand::Variance() const
+long double UniformDiscreteRand::Variance() const
 {
     double nm1 = n - 1;
     double np1 = n + 1;
@@ -91,12 +91,12 @@ int UniformDiscreteRand::Mode() const
     return 0.5 * (a + b);
 }
 
-double UniformDiscreteRand::Skewness() const
+long double UniformDiscreteRand::Skewness() const
 {
     return 0.0;
 }
 
-double UniformDiscreteRand::ExcessKurtosis() const
+long double UniformDiscreteRand::ExcessKurtosis() const
 {
     double kurt = n;
     kurt *= n;

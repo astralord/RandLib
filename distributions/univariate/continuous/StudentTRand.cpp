@@ -69,7 +69,7 @@ double StudentTRand::logf(const double & x) const
     x0 /= sigma;
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
-        return -logSigma - M_LNPI - std::log1p(xSq);
+        return -logSigma - M_LNPI - std::log1pl(xSq);
     if (nu == 2)
         return -logSigma - 1.5 * std::log(2.0 + xSq);
     if (nu == 3) {
@@ -77,7 +77,7 @@ double StudentTRand::logf(const double & x) const
         y += M_LN2 + 1.5 * M_LN3 - M_LNPI - logSigma;
         return y;
     }
-    double y = -nup1Half * std::log1p(xSq / nu);
+    double y = -nup1Half * std::log1pl(xSq / nu);
     return pdfCoef + y - logSigma;
 }
 
@@ -101,7 +101,7 @@ double StudentTRand::F(const double & x) const
         return 0.5 + M_1_PI * y;
     }
     double t = nu / (xSq + nu);
-    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1p(-t));
+    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1pl(-t));
     return (x0 > 0.0) ? (1.0 - y) : y;
 }
 
@@ -125,7 +125,7 @@ double StudentTRand::S(const double & x) const
         return 0.5 - M_1_PI * y;
     }
     double t = nu / (xSq + nu);
-    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1p(-t));
+    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1pl(-t));
     return (x0 > 0.0) ? y : 1.0 - y;
 }
 
@@ -155,12 +155,12 @@ void StudentTRand::Reseed(unsigned long seed) const
     Y.Reseed(seed + 1);
 }
 
-double StudentTRand::Mean() const
+long double StudentTRand::Mean() const
 {
     return (nu > 1) ? mu : NAN;
 }
 
-double StudentTRand::Variance() const
+long double StudentTRand::Variance() const
 {
     if (nu > 2)
         return sigma * sigma * nu / (nu - 2);
@@ -224,12 +224,12 @@ double StudentTRand::Mode() const
     return mu;
 }
 
-double StudentTRand::Skewness() const
+long double StudentTRand::Skewness() const
 {
     return (nu > 3) ? 0.0 : NAN;
 }
 
-double StudentTRand::ExcessKurtosis() const
+long double StudentTRand::ExcessKurtosis() const
 {
     if (nu > 4)
         return 6.0 / (nu - 4);

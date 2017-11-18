@@ -82,7 +82,7 @@ double AsymmetricLaplaceDistribution::quantileImpl1m(double p) const
 double AsymmetricLaplaceDistribution::Entropy() const
 {
     double y = kappaInv + kappa;
-    return std::log1p(gamma * y);
+    return std::log1pl(gamma * y);
 }
 
 void AsymmetricLaplaceDistribution::FitShift(const std::vector<double> &sample)

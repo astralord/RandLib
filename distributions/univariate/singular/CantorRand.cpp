@@ -60,12 +60,12 @@ double CantorRand::Variate() const
     return sum + sum;
 }
 
-double CantorRand::Mean() const
+long double CantorRand::Mean() const
 {
     return 0.5;
 }
 
-double CantorRand::Variance() const
+long double CantorRand::Variance() const
 {
     return 0.125;
 }
@@ -116,12 +116,12 @@ double CantorRand::Median() const
     return (U + 1.0) / 3.0;
 }
 
-double CantorRand::Skewness() const
+long double CantorRand::Skewness() const
 {
-    return 0.0;
+    return 0.0l;
 }
 
-double CantorRand::ExcessKurtosis() const
+long double CantorRand::ExcessKurtosis() const
 {
-    return -1.6;
+    return -1.6l;
 }

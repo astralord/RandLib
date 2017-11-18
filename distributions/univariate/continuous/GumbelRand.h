@@ -37,12 +37,12 @@ public:
     double Variate() const override;
     static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     double quantileImpl(double p) const override;

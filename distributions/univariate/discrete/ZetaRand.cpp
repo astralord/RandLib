@@ -18,9 +18,9 @@ void ZetaRand::SetExponent(double exponent)
         throw std::invalid_argument("Zeta distribution: exponent should be larger than 1");
     s = exponent;
     sm1 = s - 1.0;
-    zetaS = std::riemann_zeta(s);
+    zetaS = std::riemann_zetal(s);
     logZetaS = std::log(zetaS);
-    b = -std::expm1(-sm1 * M_LN2);
+    b = -std::expm1l(-sm1 * M_LN2);
 }
 
 double ZetaRand::P(const int & k) const
@@ -54,17 +54,17 @@ int ZetaRand::Variate() const
     return -1; /// return if algorithm doesn't work
 }
 
-double ZetaRand::Mean() const
+long double ZetaRand::Mean() const
 {
-    return (s > 2) ? std::riemann_zeta(sm1) / zetaS : INFINITY;
+    return (s > 2) ? std::riemann_zetal(sm1) / zetaS : INFINITY;
 }
 
-double ZetaRand::Variance() const
+long double ZetaRand::Variance() const
 {
     if (s <= 3)
         return INFINITY;
     double y = Mean();
-    double z = std::riemann_zeta(s - 2) / zetaS;
+    double z = std::riemann_zetal(s - 2) / zetaS;
     return z - y * y;
 }
 
@@ -73,40 +73,40 @@ int ZetaRand::Mode() const
     return 1;
 }
 
-double ZetaRand::Skewness() const
+long double ZetaRand::Skewness() const
 {
     if (s <= 4)
         return INFINITY;
-    double z1 = std::riemann_zeta(sm1), z1Sq = z1 * z1;
-    double z2 = std::riemann_zeta(s - 2);
-    double z3 = std::riemann_zeta(s - 3);
-    double z = zetaS, zSq = z * z;
-    double numerator = zSq * z3;
+    long double z1 = std::riemann_zetal(sm1), z1Sq = z1 * z1;
+    long double z2 = std::riemann_zetal(s - 2);
+    long double z3 = std::riemann_zetal(s - 3);
+    long double z = zetaS, zSq = z * z;
+    long double numerator = zSq * z3;
     numerator -= 3 * z2 * z1 * z;
     numerator += 2 * z1 * z1Sq;
-    double denominator = z * z2 - z1Sq;
+    long double denominator = z * z2 - z1Sq;
     denominator = std::pow(denominator, 1.5);
     denominator *= zSq;
     return numerator / denominator;
 }
 
-double ZetaRand::ExcessKurtosis() const
+long double ZetaRand::ExcessKurtosis() const
 {
     if (s <= 5)
         return INFINITY;
-    double mean = Mean();
-    double secondMoment = SecondMoment();
-    double thirdMoment = ThirdMoment();
-    double fourthMoment = FourthMoment();
-    double meanSq = mean * mean;
-    double variance = secondMoment - meanSq;
-    double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
-    double denominator = variance * variance;
+    long double mean = Mean();
+    long double secondMoment = SecondMoment();
+    long double thirdMoment = ThirdMoment();
+    long double fourthMoment = FourthMoment();
+    long double meanSq = mean * mean;
+    long double variance = secondMoment - meanSq;
+    long double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
+    long double denominator = variance * variance;
     return numerator / denominator - 3.0;
 }
 
-double ZetaRand::Moment(int n) const
+long double ZetaRand::Moment(int n) const
 {
-    return (s > n + 1) ? std::riemann_zeta(s - n) / zetaS : INFINITY;
+    return (s > n + 1) ? std::riemann_zetal(s - n) / zetaS : INFINITY;
 }
 

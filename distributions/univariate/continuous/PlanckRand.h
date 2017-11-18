@@ -52,14 +52,14 @@ public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 
-    double Mean() const override;
-    double SecondMoment() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double SecondMoment() const override;
+    long double Variance() const override;
     double Mode() const override;
-    double ThirdMoment() const override;
-    double Skewness() const override;
-    double FourthMoment() const override;
-    double ExcessKurtosis() const override;
+    long double ThirdMoment() const override;
+    long double Skewness() const override;
+    long double FourthMoment() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

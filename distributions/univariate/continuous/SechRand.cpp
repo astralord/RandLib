@@ -32,12 +32,12 @@ double SechRand::Variate() const
     return M_2_PI * std::log(y);
 }
 
-double SechRand::Mean() const
+long double SechRand::Mean() const
 {
     return 0.0;
 }
 
-double SechRand::Variance() const
+long double SechRand::Variance() const
 {
     return 1.0;
 }
@@ -73,12 +73,12 @@ double SechRand::Mode() const
     return 0.0;
 }
 
-double SechRand::Skewness() const
+long double SechRand::Skewness() const
 {
     return 0.0;
 }
 
-double SechRand::ExcessKurtosis() const
+long double SechRand::ExcessKurtosis() const
 {
     return 2.0;
 }

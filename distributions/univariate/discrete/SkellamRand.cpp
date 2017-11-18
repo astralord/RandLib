@@ -68,12 +68,12 @@ void SkellamRand::Reseed(unsigned long seed) const
     Y.Reseed(seed + 1);
 }
 
-double SkellamRand::Mean() const
+long double SkellamRand::Mean() const
 {
     return mu1 - mu2;
 }
 
-double SkellamRand::Variance() const
+long double SkellamRand::Variance() const
 {
     return mu1 + mu2;
 }
@@ -97,12 +97,12 @@ int SkellamRand::Mode() const
     return Mean();
 }
 
-double SkellamRand::Skewness() const
+long double SkellamRand::Skewness() const
 {
     return (mu1 - mu2) / std::pow(mu1 + mu2, 1.5);
 }
 
-double SkellamRand::ExcessKurtosis() const
+long double SkellamRand::ExcessKurtosis() const
 {
     return 1.0 / (mu1 + mu2);
 }

@@ -20,14 +20,14 @@ void GammaDistribution::SetParameters(double shape, double rate)
     beta = (rate > 0.0) ? rate : 1.0;
     theta = 1.0 / beta;
 
-    lgammaAlpha = std::lgamma(alpha);
+    lgammaAlpha = std::lgammal(alpha);
     logAlpha = std::log(alpha);
     logBeta = std::log(beta);
     pdfCoef = -lgammaAlpha + alpha * logBeta;
 
     if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
         /// set constants for generator
-        genCoef.t = 0.5 * std::log1p(-alpha);
+        genCoef.t = 0.5 * std::log1pl(-alpha);
         genCoef.t = 0.07 + 0.75 * std::exp(genCoef.t);
         genCoef.b = 1.0 + std::exp(-genCoef.t) * alpha / genCoef.t;
     }
@@ -278,7 +278,7 @@ void GammaDistribution::Sample(std::vector<double> &outputData) const
     }
 }
 
-double GammaDistribution::Mean() const
+long double GammaDistribution::Mean() const
 {
     return alpha * theta;
 }
@@ -288,7 +288,7 @@ double GammaDistribution::GeometricMean() const
     return RandMath::digamma(alpha) - logBeta;
 }
 
-double GammaDistribution::Variance() const
+long double GammaDistribution::Variance() const
 {
     return alpha * theta * theta;
 }
@@ -308,14 +308,14 @@ double GammaDistribution::Median() const
     return (alpha == 1.0) ? theta * M_LN2 : quantileImpl(0.5);
 }
 
-double GammaDistribution::Skewness() const
+long double GammaDistribution::Skewness() const
 {
-    return 2.0 / std::sqrt(alpha);
+    return 2.0l / std::sqrt(alpha);
 }
 
-double GammaDistribution::ExcessKurtosis() const
+long double GammaDistribution::ExcessKurtosis() const
 {
-    return 6.0 / alpha;
+    return 6.0l / alpha;
 }
 
 double GammaDistribution::initRootForSmallP(double r) const
@@ -400,7 +400,7 @@ double GammaDistribution::quantileInitialGuess(double p) const
             guess = initRootForSmallP(r);
         }
         else {
-            double logQ = std::log1p(-p);
+            double logQ = std::log1pl(-p);
             /// boundary adviced in a paper
             double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha;
             /// the maximum possible value to have a solution
@@ -485,7 +485,7 @@ double GammaDistribution::quantileImpl(double p, double initValue) const
 
 double GammaDistribution::quantileImpl(double p) const
 {
-    return (alpha == 1.0) ? -theta * std::log1p(-p) : quantileImpl(p, quantileInitialGuess(p));
+    return (alpha == 1.0) ? -theta * std::log1pl(-p) : quantileImpl(p, quantileInitialGuess(p));
 }
 
 double GammaDistribution::quantileImpl1m(double p, double initValue) const

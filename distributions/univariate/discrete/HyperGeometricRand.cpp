@@ -84,12 +84,12 @@ int HyperGeometricRand::Variate() const
     return sum;
 }
 
-double HyperGeometricRand::Mean() const
+long double HyperGeometricRand::Mean() const
 {
     return static_cast<double>(n * K) / N;
 }
 
-double HyperGeometricRand::Variance() const
+long double HyperGeometricRand::Variance() const
 {
     double numerator = n;
     numerator *= K;
@@ -107,37 +107,37 @@ int HyperGeometricRand::Mode() const
     return std::floor(mode / (N + 2));
 }
 
-double HyperGeometricRand::Skewness() const
+long double HyperGeometricRand::Skewness() const
 {
-    double skewness = N - 1;
+    long double skewness = N - 1;
     skewness /= n;
     skewness /= K;
     skewness /= N - K;
-    skewness *= N - n;
+    skewness /= N - n;
     skewness = std::sqrt(skewness);
     skewness *= N - 2 * K;
     skewness *= N - 2 * n;
     return skewness / (N - 2);
 }
 
-double HyperGeometricRand::ExcessKurtosis() const
+long double HyperGeometricRand::ExcessKurtosis() const
 {
-    double numerator = N;
+    long double numerator = N;
     numerator *= (N + 1);
-    double a1 = K;
+    long double a1 = K;
     a1 *= N - K;
-    double a2 = n;
+    long double a2 = n;
     a2 *= N - n;
     numerator -= 6 * (a1 + a2);
     numerator *= N;
     numerator *= N;
     numerator *= N - 1;
-    double aux = n;
+    long double aux = n;
     aux *= K;
     aux *= N - K;
     aux *= N - n;
     numerator += 6 * aux * (5 * N - 6);
-    double denominator = aux * (N - 2) * (N - 3);
+    long double denominator = aux * (N - 2) * (N - 3);
     return numerator / denominator;
 }
 

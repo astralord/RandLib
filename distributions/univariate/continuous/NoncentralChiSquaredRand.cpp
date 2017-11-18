@@ -131,12 +131,12 @@ void NoncentralChiSquaredRand::Reseed(unsigned long seed) const
     Y.Reseed(seed + 1);
 }
 
-double NoncentralChiSquaredRand::Mean() const
+long double NoncentralChiSquaredRand::Mean() const
 {
     return k + lambda;
 }
 
-double NoncentralChiSquaredRand::Variance() const
+long double NoncentralChiSquaredRand::Variance() const
 {
     return 2 * (k + 2 * lambda);
 }
@@ -146,6 +146,20 @@ double NoncentralChiSquaredRand::Mode() const
     return (k <= 2) ? 0.0 : ContinuousDistribution::Mode();
 }
 
+long double NoncentralChiSquaredRand::Skewness() const
+{
+    long double y = k + 2 * lambda;
+    y = 2.0 / y;
+    long double z = y * std::sqrt(y);
+    return z * (k + 3 * lambda);
+}
+
+long double NoncentralChiSquaredRand::ExcessKurtosis() const
+{
+    long double y = k + 2 * lambda;
+    return 12 * (k + 4 * lambda) / (y * y);
+}
+
 std::complex<double> NoncentralChiSquaredRand::CFImpl(double t) const
 {
     std::complex<double> aux(1, -2 * t);
@@ -153,18 +167,4 @@ std::complex<double> NoncentralChiSquaredRand::CFImpl(double t) const
     y /= aux;
     y -= halfK * std::log(aux);
     return std::exp(y);
-}
-
-double NoncentralChiSquaredRand::Skewness() const
-{
-    double y = k + 2 * lambda;
-    y = 2.0 / y;
-    double z = y * std::sqrt(y);
-    return z * (k + 3 * lambda);
-}
-
-double NoncentralChiSquaredRand::ExcessKurtosis() const
-{
-    double y = k + 2 * lambda;
-    return 12 * (k + 4 * lambda) / (y * y);
 }

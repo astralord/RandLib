@@ -24,7 +24,7 @@ void TrinomialRand::SetParameters(int number, double probability1, double probab
     X.SetParameters(n, p1);
     Y.SetParameters(n, p2);
 
-    log1mProb = std::log1p(-p1 - p2);
+    log1mProb = std::log1pl(-p1 - p2);
     p1_1mp2 = p1 / (1.0 - p2);
     p2_1mp1 = p2 / (1.0 - p1);
 }

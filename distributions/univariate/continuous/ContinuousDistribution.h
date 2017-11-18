@@ -51,10 +51,10 @@ protected:
     double quantileImpl(double p) const override;
     double quantileImpl1m(double p, double initValue) const override;
     double quantileImpl1m(double p) const override;
-    double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
+    long double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
 
 public:
-    double Hazard(double x) const override;
+    double Hazard(const double &x) const override;
     double LikelihoodFunction(const std::vector<double> &sample) const override;
     double LogLikelihoodFunction(const std::vector<double> &sample) const override;
 

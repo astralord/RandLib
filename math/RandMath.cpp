@@ -34,25 +34,25 @@ double atan(double x)
 double log1pexp(double x)
 {
     if (x < 20.0)
-        return std::log1p(std::exp(x));
+        return std::log1pl(std::exp(x));
     return (x < 35.0) ? x + std::exp(-x) : x;
 }
 
 double log1mexp(double x)
 {
-    return (x < -M_LN2) ? std::log1p(-std::exp(x)) : std::log(-std::expm1(x));
+    return (x < -M_LN2) ? std::log1pl(-std::exp(x)) : std::log(-std::expm1l(x));
 }
 
-double logexpm1(double x)
+double logexpm1l(double x)
 {
     if (x < 20.0)
-        return std::log(std::expm1(x));
+        return std::log(std::expm1l(x));
     return (x < 35.0) ? x - std::exp(-x) : x;
 }
 
 double log2mexp(double x)
 {
-    return std::log1p(-std::expm1(x));
+    return std::log1pl(-std::expm1l(x));
 }
 
 double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
@@ -141,7 +141,7 @@ double erfinv(double p)
     if (p < 0.8)
         return erfinvAux4(p);
     /// Handle tails
-    double beta = std::sqrt(-std::log1p(-p * p));
+    double beta = std::sqrt(-std::log1pl(-p * p));
     if (p < 0.9975)
         return erfinvAux3(beta);
     return (1.0 - p < 5e-16) ? erfinvAux1(beta) : erfinvAux2(beta);
@@ -253,7 +253,7 @@ long double logBesselK(double nu, double x)
         return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
 
     if (!std::isfinite(besselk))
-        return (nu == 0) ? std::log(-std::log(x)) : std::lgamma(nu) - M_LN2 - nu * std::log(0.5 * x);
+        return (nu == 0) ? std::log(-std::log(x)) : std::lgammal(nu) - M_LN2 - nu * std::log(0.5 * x);
 
     return std::log(besselk);
 }
@@ -323,7 +323,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
 {
     /// ~log(2πε) for ε = 1e-16
     static constexpr double ln2piEps = -35.0;
-    double lgammamu = std::lgamma(mu);
+    double lgammamu = std::lgammal(mu);
     double C = lgammamu - ln2piEps + mu;
 
     /// solving equation f(n) = 0
@@ -351,7 +351,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
     int n0 = std::max(std::ceil(root), 5.0);
     double mpn0 = mu + n0;
     double P = pgamma(mpn0, y, logY);
-    double diffP = (mpn0 - 1) * logY - y - std::lgamma(mpn0);
+    double diffP = (mpn0 - 1) * logY - y - std::lgammal(mpn0);
     diffP = std::exp(diffP);
     for (int n = n0; n > 0; --n) {
         double term = n * logX - x - lfact(n);
@@ -362,7 +362,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
             /// every 5 iterations we recalculate P and diffP
             /// in order to achieve enough accuracy
             P = pgamma(mupnm1, y, logY);
-            diffP = (mupnm1 - 1) * logY - y - std::lgamma(mupnm1);
+            diffP = (mupnm1 - 1) * logY - y - std::lgammal(mupnm1);
             diffP = std::exp(diffP);
         }
         else {
@@ -439,7 +439,7 @@ double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, doubl
     /// however we have singularity point at 0,
     /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
-    double aux = x + mu * M_LN2 + std::lgamma(mu);
+    double aux = x + mu * M_LN2 + std::lgammal(mu);
     double log2x = M_LN2 + logX;
     double I = (M_LN2 + logY) * mu - aux;
     I = std::exp(I) / mu;

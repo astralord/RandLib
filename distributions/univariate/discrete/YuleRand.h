@@ -39,11 +39,11 @@ public:
     static int Variate(double shape, RandGenerator &randGenerator = staticRandGenerator);
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 };
 
 #endif // YULERAND_H

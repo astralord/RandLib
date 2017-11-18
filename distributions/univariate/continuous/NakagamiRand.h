@@ -66,13 +66,13 @@ public:
     void Sample(std::vector<double> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double FourthMoment() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double FourthMoment() const override;
+    long double ExcessKurtosis() const override;
 
 protected:
     double quantileImpl(double p) const override;
@@ -126,8 +126,8 @@ public:
      */
     inline int GetDegree() const { return 2 * NakagamiDistribution::GetShape(); }
 
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 };
 
 
@@ -167,11 +167,11 @@ public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 };
 
 
@@ -211,12 +211,12 @@ public:
     double Variate() const override;
     void Sample(std::vector<double> &outputData) const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     double quantileImpl(double p) const override;

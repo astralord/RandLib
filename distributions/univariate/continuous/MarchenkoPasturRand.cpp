@@ -258,12 +258,12 @@ double MarchenkoPasturRand::Moment(int n) const
     }
 }
 
-double MarchenkoPasturRand::Mean() const
+long double MarchenkoPasturRand::Mean() const
 {
     return sigmaSq;
 }
 
-double MarchenkoPasturRand::Variance() const
+long double MarchenkoPasturRand::Variance() const
 {
     return sigmaSq * sigmaSq * lambda;
 }
@@ -278,24 +278,24 @@ double MarchenkoPasturRand::Mode() const
     return sigmaSq * mode;
 }
 
-double MarchenkoPasturRand::Skewness() const
+long double MarchenkoPasturRand::Skewness() const
 {
-    double mu = Mean();
-    double var = Variance();
-    double skewness = Moment(3);
+    long double mu = Mean();
+    long double var = Variance();
+    long double skewness = Moment(3);
     skewness -= std::pow(mu, 3);
     skewness -= 3 * mu * var;
     skewness /= std::pow(var, 1.5);
     return skewness;
 }
 
-double MarchenkoPasturRand::ExcessKurtosis() const
+long double MarchenkoPasturRand::ExcessKurtosis() const
 {
-    double mu = Mean();
-    double var = Variance();
-    double moment3 = Moment(3);
-    double kurtosis = Moment(4);
-    double muSq = mu * mu;
+    long double mu = Mean();
+    long double var = Variance();
+    long double moment3 = Moment(3);
+    long double kurtosis = Moment(4);
+    long double muSq = mu * mu;
     kurtosis -= 4 * mu * moment3;
     kurtosis += 3 * muSq * muSq;
     kurtosis += 6 * muSq * var;

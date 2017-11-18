@@ -5,12 +5,12 @@ SingularDistribution::SingularDistribution()
 
 }
 
-double SingularDistribution::Hazard(double) const
+double SingularDistribution::Hazard(const double &) const
 {
     return NAN;
 }
 
-double SingularDistribution::ExpectedValue(const std::function<double (double)> &, double, double ) const
+long double SingularDistribution::ExpectedValue(const std::function<double (double)> &, double, double ) const
 {
     return NAN;
 }

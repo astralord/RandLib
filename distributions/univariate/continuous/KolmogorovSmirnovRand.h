@@ -36,8 +36,8 @@ private:
 public:
     double Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Mode() const override;
     double Median() const override;
 

@@ -62,7 +62,7 @@ double log1mexp(double x);
  * @param x
  * @return log(exp(x) - 1)
  */
-double logexpm1(double x);
+double logexpm1l(double x);
 
 /**
  * @fn log2mexp

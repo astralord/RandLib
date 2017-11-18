@@ -81,12 +81,12 @@ double TriangularRand::Variate() const
     return b - std::sqrt((1 - U) * coefGenerator2);
 }
 
-double TriangularRand::Mean() const
+long double TriangularRand::Mean() const
 {
     return (a + b + c) / 3.0;
 }
 
-double TriangularRand::Variance() const
+long double TriangularRand::Variance() const
 {
     return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }
@@ -119,7 +119,7 @@ double TriangularRand::Mode() const
     return c;
 }
 
-double TriangularRand::Skewness() const
+long double TriangularRand::Skewness() const
 {
     double numerator = M_SQRT2;
     numerator *= (a + b - c - c);
@@ -132,7 +132,7 @@ double TriangularRand::Skewness() const
     return 0.2 * numerator / denominator;
 }
 
-double TriangularRand::ExcessKurtosis() const
+long double TriangularRand::ExcessKurtosis() const
 {
     return -0.6;
 }

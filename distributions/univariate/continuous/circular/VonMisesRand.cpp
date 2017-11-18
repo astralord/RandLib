@@ -137,7 +137,7 @@ double VonMisesRand::CircularVariance() const
 {
     double var = RandMath::logBesselI(1, k);
     var -= logI0k;
-    return -std::expm1(var);
+    return -std::expm1l(var);
 }
 
 std::complex<double> VonMisesRand::CFImpl(double t) const

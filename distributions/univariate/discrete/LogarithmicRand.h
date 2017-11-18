@@ -41,8 +41,8 @@ public:
     double S(const int & k) const override;
     int Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     int Mode() const override;
 
 private:

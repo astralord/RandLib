@@ -37,12 +37,12 @@ public:
     int Variate() const override;
     static int StandardVariate(int minValue = 0, int maxValue = 1, RandGenerator &randGenerator = staticRandGenerator);
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     int Median() const override;
     int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

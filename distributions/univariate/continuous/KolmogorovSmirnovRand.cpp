@@ -91,12 +91,12 @@ double KolmogorovSmirnovRand::S(const double & x) const
 
 double KolmogorovSmirnovRand::logF(const double & x) const
 {
-    return (x > 1.0) ? std::log1p(-K(x)) : std::log(L(x));
+    return (x > 1.0) ? std::log1pl(-K(x)) : std::log(L(x));
 }
 
 double KolmogorovSmirnovRand::logS(const double & x) const
 {
-    return (x > 1.0) ? std::log(K(x)) : std::log1p(-L(x));
+    return (x > 1.0) ? std::log(K(x)) : std::log1pl(-L(x));
 }
 
 double KolmogorovSmirnovRand::truncatedGammaVariate() const
@@ -112,7 +112,7 @@ double KolmogorovSmirnovRand::truncatedGammaVariate() const
         if (E0 * E0 <= tp * E1 * (G + tp))
             return G;
         double Wp = E0 / tp;
-        if (Wp - std::log1p(Wp) <= E1)
+        if (Wp - std::log1pl(Wp) <= E1)
             return G;
     } while (++iter <= MAX_ITER_REJECTION);
     return NAN;
@@ -175,12 +175,12 @@ double KolmogorovSmirnovRand::Variate() const
     return isLeft ? variateForTheLeftMostInterval() : variateForTheRightMostInterval();
 }
 
-double KolmogorovSmirnovRand::Mean() const
+long double KolmogorovSmirnovRand::Mean() const
 {
     return M_SQRTPI * M_SQRT1_2 * M_LN2;
 }
 
-double KolmogorovSmirnovRand::Variance() const
+long double KolmogorovSmirnovRand::Variance() const
 {
     double mean = Mean();
     return M_PI_SQ / 12 - mean * mean;
@@ -198,7 +198,7 @@ double KolmogorovSmirnovRand::Median() const
 
 double KolmogorovSmirnovRand::quantileImpl(double p) const
 {
-    double guess = std::sqrt(-0.5 * (std::log1p(-p) - M_LN2));
+    double guess = std::sqrt(-0.5 * (std::log1pl(-p) - M_LN2));
     if (p < 1e-5) {
         double logP = std::log(p);
         if (RandMath::findRoot([this, logP] (double x)

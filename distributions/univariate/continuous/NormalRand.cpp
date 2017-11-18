@@ -170,8 +170,8 @@ void NormalRand::FitScale(const std::vector<double> &sample, bool unbiased)
         double s = GetSampleVariance(sample, mu);
         s *= halfN;
         s = 0.5 * std::log(s);
-        s -= std::lgamma(halfN + 0.5);
-        s += std::lgamma(halfN);
+        s -= std::lgammal(halfN + 0.5);
+        s += std::lgammal(halfN);
         SetScale(std::exp(s));
     }
     else {

@@ -75,12 +75,12 @@ int ZipfRand::Variate() const
     return k;
 }
 
-double ZipfRand::Mean() const
+long double ZipfRand::Mean() const
 {
     return RandMath::harmonicNumber(s - 1, n) * invHarmonicNumber;
 }
 
-double ZipfRand::Variance() const
+long double ZipfRand::Variance() const
 {
     double numerator = RandMath::harmonicNumber(s - 1, n);
     numerator *= numerator;
@@ -104,36 +104,36 @@ std::complex<double> ZipfRand::CFImpl(double t) const
     return invHarmonicNumber * sum;
 }
 
-double ZipfRand::Skewness() const
+long double ZipfRand::Skewness() const
 {
-    double harmonic0 = 1.0 / invHarmonicNumber;
-    double harmonic1 = RandMath::harmonicNumber(s - 1, n);
-    double harmonic2 = RandMath::harmonicNumber(s - 2, n);
-    double harmonic3 = RandMath::harmonicNumber(s - 3, n);
-    double first = harmonic3 * harmonic0 * harmonic0;
-    double harmonic2prod0 = harmonic2 * harmonic0;
-    double second = -3 * harmonic1 * harmonic2prod0;
-    double harmonic1Sq = harmonic1 * harmonic1;
-    double third = 2 * harmonic1 * harmonic1Sq;
-    double numerator = first + second + third;
-    double denominator = harmonic2prod0 - harmonic1Sq;
+    long double harmonic0 = 1.0 / invHarmonicNumber;
+    long double harmonic1 = RandMath::harmonicNumber(s - 1, n);
+    long double harmonic2 = RandMath::harmonicNumber(s - 2, n);
+    long double harmonic3 = RandMath::harmonicNumber(s - 3, n);
+    long double first = harmonic3 * harmonic0 * harmonic0;
+    long double harmonic2prod0 = harmonic2 * harmonic0;
+    long double second = -3 * harmonic1 * harmonic2prod0;
+    long double harmonic1Sq = harmonic1 * harmonic1;
+    long double third = 2 * harmonic1 * harmonic1Sq;
+    long double numerator = first + second + third;
+    long double denominator = harmonic2prod0 - harmonic1Sq;
     denominator *= std::sqrt(denominator);
     return numerator / denominator;
 }
 
-double ZipfRand::ExcessKurtosis() const
+long double ZipfRand::ExcessKurtosis() const
 {
-    double harmonic0 = 1.0 / invHarmonicNumber;
-    double harmonic1 = RandMath::harmonicNumber(s - 1, n);
-    double harmonic2 = RandMath::harmonicNumber(s - 2, n);
-    double harmonic3 = RandMath::harmonicNumber(s - 3, n);
-    double harmonic4 = RandMath::harmonicNumber(s - 4, n);
-    double harmonic2prod0 = harmonic2 * harmonic0;
-    double harmonic0Sq = harmonic0 * harmonic0;
-    double harmonic1Sq = harmonic1 * harmonic1;
-    double denominator = harmonic2prod0 - harmonic1Sq;
+    long double harmonic0 = 1.0 / invHarmonicNumber;
+    long double harmonic1 = RandMath::harmonicNumber(s - 1, n);
+    long double harmonic2 = RandMath::harmonicNumber(s - 2, n);
+    long double harmonic3 = RandMath::harmonicNumber(s - 3, n);
+    long double harmonic4 = RandMath::harmonicNumber(s - 4, n);
+    long double harmonic2prod0 = harmonic2 * harmonic0;
+    long double harmonic0Sq = harmonic0 * harmonic0;
+    long double harmonic1Sq = harmonic1 * harmonic1;
+    long double denominator = harmonic2prod0 - harmonic1Sq;
     denominator *= denominator;
-    double numerator = harmonic0Sq * harmonic0 * harmonic4;
+    long double numerator = harmonic0Sq * harmonic0 * harmonic4;
     numerator -= 4 * harmonic0Sq * harmonic1 * harmonic3;
     numerator += 6 * harmonic2prod0 * harmonic1Sq;
     numerator -= 3 * harmonic1Sq * harmonic1Sq;

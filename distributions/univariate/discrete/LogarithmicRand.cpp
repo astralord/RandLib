@@ -17,7 +17,7 @@ void LogarithmicRand::SetProbability(double probability)
         throw std::invalid_argument("Logarithmic distribution: probability parameter should in interval (0, 1)");
     p = probability;
     logProb = std::log(p);
-    log1mProb = std::log1p(-p);
+    log1mProb = std::log1pl(-p);
 }
 
 double LogarithmicRand::P(const int & k) const
@@ -62,7 +62,7 @@ int LogarithmicRand::Variate() const
     if (V >= p)
         return 1.0;
     double U = UniformRand::StandardVariate(localRandGenerator);
-    double y = -std::expm1(U * log1mProb);
+    double y = -std::expm1l(U * log1mProb);
     if (V > y)
         return 1.0;
     if (V > y * y)
@@ -70,12 +70,12 @@ int LogarithmicRand::Variate() const
     return std::floor(1.0 + std::log(V) / std::log(y));
 }
 
-double LogarithmicRand::Mean() const
+long double LogarithmicRand::Mean() const
 {
     return -p / (1.0 - p) / log1mProb;
 }
 
-double LogarithmicRand::Variance() const
+long double LogarithmicRand::Variance() const
 {
     double var = p / log1mProb + 1;
     var /= log1mProb;

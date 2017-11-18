@@ -35,11 +35,11 @@ public:
     double F(const int & k) const override;
     int Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 };
 
 #endif // HYPERGEOMETRICRAND_H

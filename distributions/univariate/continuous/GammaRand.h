@@ -169,7 +169,7 @@ public:
      * @fn Mean
      * @return E[X]
      */
-    double Mean() const override;
+    long double Mean() const override;
     /**
      * @fn GeometricMean
      * @return E[ln(X)]
@@ -179,7 +179,7 @@ public:
      * @fn Variance
      * @return Var(X)
      */
-    double Variance() const override;
+    long double Variance() const override;
     /**
      * @fn GeometricVariance
      * @return Var(ln(X))
@@ -187,8 +187,8 @@ public:
     double GeometricVariance() const;
     double Mode() const override;
     double Median() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     /// quantile auxiliary functions

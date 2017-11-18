@@ -20,7 +20,7 @@ void NegativeBinomialDistribution<T>::SetParameters(T number, double probability
     p = probability;
     q = 1.0 - p;
     logProb = std::log(p);
-    log1mProb = std::log1p(-p);
+    log1mProb = std::log1pl(-p);
     GammaRV.SetParameters(r, p / q);
     qDivP = GammaRV.GetScale();
     pdfCoef = r * logProb;
@@ -49,7 +49,7 @@ double NegativeBinomialDistribution<T>::logP(const int & k) const
 {
     if (k < 0)
         return -INFINITY;
-    double y = std::lgamma(r + k);
+    double y = std::lgammal(r + k);
     y -= RandMath::lfact(k);
     y += k * log1mProb;
     y += pdfCoef;
@@ -158,13 +158,13 @@ void NegativeBinomialDistribution<T>::Reseed(unsigned long seed) const
 }
 
 template< typename T >
-double NegativeBinomialDistribution<T>::Mean() const
+long double NegativeBinomialDistribution<T>::Mean() const
 {
     return qDivP * r;
 }
 
 template< typename T >
-double NegativeBinomialDistribution<T>::Variance() const
+long double NegativeBinomialDistribution<T>::Variance() const
 {
     return qDivP * r / p;
 }
@@ -183,15 +183,15 @@ int NegativeBinomialDistribution<T>::Mode() const
 }
 
 template< typename T >
-double NegativeBinomialDistribution<T>::Skewness() const
+long double NegativeBinomialDistribution<T>::Skewness() const
 {
     return (1 + q) / std::sqrt(q * r);
 }
 
 template< typename T >
-double NegativeBinomialDistribution<T>::ExcessKurtosis() const
+long double NegativeBinomialDistribution<T>::ExcessKurtosis() const
 {
-    double kurtosis = p / qDivP;
+    long double kurtosis = p / qDivP;
     kurtosis += 6;
     return kurtosis / r;
 }

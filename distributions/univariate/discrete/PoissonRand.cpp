@@ -203,12 +203,12 @@ void PoissonRand::Sample(std::vector<int> &outputData) const
     }
 }
 
-double PoissonRand::Mean() const
+long double PoissonRand::Mean() const
 {
     return lambda;
 }
 
-double PoissonRand::Variance() const
+long double PoissonRand::Variance() const
 {
     return lambda;
 }
@@ -230,12 +230,12 @@ int PoissonRand::Mode() const
     return mu;
 }
 
-double PoissonRand::Skewness() const
+long double PoissonRand::Skewness() const
 {
     return 1.0 / std::sqrt(lambda);
 }
 
-double PoissonRand::ExcessKurtosis() const
+long double PoissonRand::ExcessKurtosis() const
 {
     return 1.0 / lambda;
 }

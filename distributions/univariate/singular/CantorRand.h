@@ -27,11 +27,11 @@ public:
     double F(const double & x) const override;
     double Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Median() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     double quantileImpl(double p, double initValue) const override;

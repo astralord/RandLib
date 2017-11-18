@@ -80,7 +80,7 @@ void StableDistribution::SetParameters(double exponent, double skewness, double 
     else if (distributionType == GENERAL) {
         if (beta != 0.0) {
             zeta = -beta * std::tan(M_PI_2 * alpha);
-            omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
+            omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
             xi = alphaInv * RandMath::atan(-zeta);
         }
         else {
@@ -156,7 +156,7 @@ double StableDistribution::logpdfCauchy(double x) const
     double x0 = x - mu;
     x0 /= gamma;
     double xSq = x0 * x0;
-    return pdfCoef - std::log1p(xSq);
+    return pdfCoef - std::log1pl(xSq);
 }
 
 double StableDistribution::pdfLevy(double x) const
@@ -264,7 +264,7 @@ double StableDistribution::pdfForUnityExponent(double x) const
 double StableDistribution::pdfShortTailExpansionForGeneralExponent(double logX) const
 {
     double logAlpha = std::log(alpha);
-    double log1mAlpha = (alpha < 1) ? std::log1p(-alpha) : std::log(alpha - 1);
+    double log1mAlpha = (alpha < 1) ? std::log1pl(-alpha) : std::log(alpha - 1);
     double temp = logX - logAlpha;
     double y = std::exp(alpha_alpham1 * temp);
     y *= -std::fabs(1.0 - alpha);
@@ -277,9 +277,9 @@ double StableDistribution::pdfAtZero() const
 {
     double y0 = 0.0;
     if (beta == 0.0)
-        y0 = std::tgamma(alphaInv);
+        y0 = std::tgammal(alphaInv);
     else {
-        y0 = std::lgamma(alphaInv) - omega;
+        y0 = std::lgammal(alphaInv) - omega;
         y0 = std::exp(y0) * std::cos(xi);
     }
     return y0 * M_1_PI / alpha;
@@ -296,7 +296,7 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
         for (int n = 1; n <= k; ++n)
         {
             int n2 = n + n;
-            double term = std::lgamma((n2 + 1) / alpha);
+            double term = std::lgammal((n2 + 1) / alpha);
             term += n2 * logX;
             term -= RandMath::lfact(n2);
             term = std::exp(term);
@@ -308,7 +308,7 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
         double rhoPi_alpha = M_PI_2 + xiAdj;
         for (int n = 1; n <= k; ++n) {
             int np1 = n + 1;
-            double term = std::lgamma(np1 * alphaInv);
+            double term = std::lgammal(np1 * alphaInv);
             term += n * logX;
             term -= RandMath::lfact(n);
             term = std::exp(term - omega);
@@ -327,7 +327,7 @@ double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) co
     double sum = 0.0;
     for (int n = 1; n <= k; ++n) {
         double aux = n * alpha + 1.0;
-        double term = std::lgamma(aux);
+        double term = std::lgammal(aux);
         term -= aux * logX;
         term -= RandMath::lfact(n);
         term = std::exp(term - omega);
@@ -344,7 +344,7 @@ double StableDistribution::pdfTaylorExpansionTailNearCauchy(double x) const
     double ySq = y * y;
     double z = RandMath::atan(x);
     double zSq = z * z;
-    double logY = std::log1p(xSq);
+    double logY = std::log1pl(xSq);
     double alpham1 = alpha - 1.0;
     double temp = 1.0 - M_EULER - 0.5 * logY;
     /// first derivative
@@ -517,7 +517,7 @@ double StableDistribution::pdfForGeneralExponent(double x) const
     /// If α is near 2, we use tail aprroximation for large x
     /// and compare it with integral representation
     double alphap1 = alpha + 1.0;
-    double tail = std::lgamma(alphap1);
+    double tail = std::lgammal(alphap1);
     tail -= alphap1 * logAbsX;
     tail = std::exp(tail);
     tail *= (1.0 - 0.5 * alpha) / gamma;
@@ -648,7 +648,7 @@ double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, i
         /// Symmetric distribution
         for (int m = 0; m <= k; ++m) {
             int m2p1 = 2 * m + 1;
-            double term = std::lgamma(m2p1 * alphaInv);
+            double term = std::lgammal(m2p1 * alphaInv);
             term += m2p1 * logX;
             term -= RandMath::lfact(m2p1);
             term = std::exp(term);
@@ -659,7 +659,7 @@ double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, i
         /// Asymmetric distribution
         double rhoPi_alpha = M_PI_2 + xiAdj;
         for (int n = 1; n <= k; ++n) {
-            double term = std::lgamma(n * alphaInv);
+            double term = std::lgammal(n * alphaInv);
             term += n * logX;
             term -= RandMath::lfact(n);
             term = std::exp(term);
@@ -678,7 +678,7 @@ double StableDistribution::cdfSeriesExpansionAtInf(double logX, double xiAdj) co
     double sum = 0.0;
     for (int n = 1; n <= k; ++n) {
         double aux = n * alpha;
-        double term = std::lgamma(aux);
+        double term = std::lgammal(aux);
         term -= aux * logX;
         term -= RandMath::lfact(n);
         term = std::exp(term);
@@ -865,7 +865,7 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
     }
 }
 
-double StableDistribution::Mean() const
+long double StableDistribution::Mean() const
 {
     if (alpha > 1)
         return mu;
@@ -874,7 +874,7 @@ double StableDistribution::Mean() const
     return (beta == -1) ? -INFINITY : NAN;
 }
 
-double StableDistribution::Variance() const
+long double StableDistribution::Variance() const
 {
     return (distributionType == NORMAL) ? 2 * gamma * gamma : INFINITY;
 }
@@ -897,12 +897,12 @@ double StableDistribution::Median() const
     return ContinuousDistribution::Median();
 }
 
-double StableDistribution::Skewness() const
+long double StableDistribution::Skewness() const
 {
     return (distributionType == NORMAL) ? 0 : NAN;
 }
 
-double StableDistribution::ExcessKurtosis() const
+long double StableDistribution::ExcessKurtosis() const
 {
     return (distributionType == NORMAL) ? 0 : NAN;
 }

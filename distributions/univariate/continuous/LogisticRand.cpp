@@ -60,12 +60,12 @@ double LogisticRand::Variate() const
     return mu + s * std::log(1.0 / UniformRand::StandardVariate(localRandGenerator) - 1);
 }
 
-double LogisticRand::Mean() const
+long double LogisticRand::Mean() const
 {
     return mu;
 }
 
-double LogisticRand::Variance() const
+long double LogisticRand::Variance() const
 {
     double sPi = s * M_PI;
     return sPi * sPi / 3;
@@ -88,12 +88,12 @@ double LogisticRand::Entropy() const
 
 double LogisticRand::quantileImpl(double p) const
 {
-    return mu - s * (std::log1p(-p) - std::log(p));
+    return mu - s * (std::log1pl(-p) - std::log(p));
 }
 
 double LogisticRand::quantileImpl1m(double p) const
 {
-    return mu - s * (std::log(p) - std::log1p(-p));
+    return mu - s * (std::log(p) - std::log1pl(-p));
 }
 
 double LogisticRand::Median() const
@@ -106,12 +106,12 @@ double LogisticRand::Mode() const
     return mu;
 }
 
-double LogisticRand::Skewness() const
+long double LogisticRand::Skewness() const
 {
     return 0;
 }
 
-double LogisticRand::ExcessKurtosis() const
+long double LogisticRand::ExcessKurtosis() const
 {
     return 1.2;
 }

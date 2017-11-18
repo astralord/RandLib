@@ -87,12 +87,12 @@ void IrwinHallRand::Reseed(unsigned long seed) const
     U.Reseed(seed);
 }
 
-double IrwinHallRand::Mean() const
+long double IrwinHallRand::Mean() const
 {
     return 0.5 * n;
 }
 
-double IrwinHallRand::Variance() const
+long double IrwinHallRand::Variance() const
 {
     static constexpr double M_1_12 = 0.08333333333333;
     return n * M_1_12;
@@ -113,12 +113,12 @@ double IrwinHallRand::Mode() const
     return 0.5 * n;
 }
 
-double IrwinHallRand::Skewness() const
+long double IrwinHallRand::Skewness() const
 {
-    return 0.0;
+    return 0.0l;
 }
 
-double IrwinHallRand::ExcessKurtosis() const
+long double IrwinHallRand::ExcessKurtosis() const
 {
     return -1.2 / n;
 }

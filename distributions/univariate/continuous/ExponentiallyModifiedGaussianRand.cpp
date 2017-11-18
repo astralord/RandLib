@@ -95,12 +95,12 @@ void ExponentiallyModifiedGaussianRand::Reseed(unsigned long seed) const
     Y.Reseed(seed + 1);
 }
 
-double ExponentiallyModifiedGaussianRand::Mean() const
+long double ExponentiallyModifiedGaussianRand::Mean() const
 {
     return X.Mean() + Y.Mean();
 }
 
-double ExponentiallyModifiedGaussianRand::Variance() const
+long double ExponentiallyModifiedGaussianRand::Variance() const
 {
     return X.Variance() + Y.Variance();
 }
@@ -110,29 +110,29 @@ std::complex<double> ExponentiallyModifiedGaussianRand::CFImpl(double t) const
     return X.CF(t) * Y.CF(t);
 }
 
-double ExponentiallyModifiedGaussianRand::Skewness() const
+long double ExponentiallyModifiedGaussianRand::Skewness() const
 {
-    double sigma = X.GetScale();
-    double lambda = Y.GetRate();
-    double tmp = 1.0 / (sigma * lambda);
-    double tmpSq = tmp * tmp;
-    double y = 1.0 + tmpSq;
+    long double sigma = X.GetScale();
+    long double lambda = Y.GetRate();
+    long double tmp = 1.0 / (sigma * lambda);
+    long double tmpSq = tmp * tmp;
+    long double y = 1.0 + tmpSq;
     y = y * y * y;
     y = std::sqrt(y);
     y = tmpSq * tmp / y;
     return y + y;
 }
 
-double ExponentiallyModifiedGaussianRand::ExcessKurtosis() const
+long double ExponentiallyModifiedGaussianRand::ExcessKurtosis() const
 {
-    double sigma = X.GetScale();
-    double lambda = Y.GetRate();
-    double tmp = 1.0 / (sigma * lambda);
+    long double sigma = X.GetScale();
+    long double lambda = Y.GetRate();
+    long double tmp = 1.0 / (sigma * lambda);
     tmp *= tmp;
-    double numerator = 1.0 + 2.0 * tmp + 3.0 * tmp * tmp;
-    double denominator = 1.0 + tmp;
+    long double numerator = 1.0 + 2.0 * tmp + 3.0 * tmp * tmp;
+    long double denominator = 1.0 + tmp;
     denominator *= denominator;
-    double y = numerator / denominator - 1.0;
+    long double y = numerator / denominator - 1.0;
     return 3.0 * y;
 }
 

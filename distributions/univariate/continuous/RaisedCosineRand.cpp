@@ -36,7 +36,7 @@ double RaisedCosineDistribution::logf(const double & x) const
     if (xAdj <= -M_PI || xAdj >= M_PI)
         return -INFINITY;
     double y = std::cos(xAdj);
-    y = std::log1p(y);
+    y = std::log1pl(y);
     return y - log2S;
 }
 
@@ -102,12 +102,12 @@ double RaisedCosineDistribution::Variate() const
     return mu + s_pi * StandardVariate(localRandGenerator);
 }
 
-double RaisedCosineDistribution::Mean() const
+long double RaisedCosineDistribution::Mean() const
 {
     return mu;
 }
 
-double RaisedCosineDistribution::Variance() const
+long double RaisedCosineDistribution::Variance() const
 {
     static constexpr double coef = 1.0 / 3 - 2.0 / M_PI_SQ;
     return s * s * coef;
@@ -133,16 +133,16 @@ double RaisedCosineDistribution::Mode() const
     return mu;
 }
 
-double RaisedCosineDistribution::Skewness() const
+long double RaisedCosineDistribution::Skewness() const
 {
-    return 0.0;
+    return 0.0l;
 }
 
-double RaisedCosineDistribution::ExcessKurtosis() const
+long double RaisedCosineDistribution::ExcessKurtosis() const
 {
-    static constexpr double numerator = 1.2 * (90.0 - M_PI_SQ * M_PI_SQ);
-    static constexpr double denominator = M_PI_SQ - 6.0;
-    static constexpr double y = numerator / (denominator * denominator);
+    static constexpr long double numerator = 1.2 * (90.0 - M_PI_SQ * M_PI_SQ);
+    static constexpr long double denominator = M_PI_SQ - 6.0;
+    static constexpr long double y = numerator / (denominator * denominator);
     return y;
 }
 

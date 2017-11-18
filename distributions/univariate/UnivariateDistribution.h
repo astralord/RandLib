@@ -44,13 +44,13 @@ public:
      * @fn Mean
      * @return Mathematical expectation
      */
-    virtual double Mean() const = 0;
+    virtual long double Mean() const = 0;
 
     /**
      * @fn Variance
      * @return Variance of random variable
      */
-    virtual double Variance() const = 0;
+    virtual long double Variance() const = 0;
 
 private:
     /**
@@ -86,28 +86,28 @@ protected:
      * @param maxPoint max{x | g(x) ≠ 0}
      * @return E[g(x)]
      */
-    virtual double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
+    virtual long double ExpectedValue(const std::function<double (double)> &funPtr, T minPoint, T maxPoint) const = 0;
 public:
     /**
      * @fn Quantile
      * @param p
      * @return quantileImpl(p) if p is in (0, 1)
      */
-    double Quantile(double p) const;
+    T Quantile(double p) const;
 
     /**
      * @fn Quantile1m
      * @param p
      * @return quantileImpl1m(p) if p is in (0, 1)
      */
-    double Quantile1m(double p) const;
+    T Quantile1m(double p) const;
 
     /**
      * @fn QuantileFunction
      * @param p
      * @return fills vector y with Quantile(p)
      */
-    void QuantileFunction(const std::vector<double> &p, std::vector<double> &y);
+    void QuantileFunction(const std::vector<double> &p, std::vector<T> &y);
 
     /**
      * @fn CF
@@ -128,14 +128,14 @@ public:
      * @param x input parameter
      * @return hazard function
      */
-    virtual double Hazard(double x) const = 0;
+    virtual double Hazard(const T & x) const = 0;
 
     /**
      * @fn HazardFunction
      * @param x input vector
      * @param y output vector: y = Hazard(x)
      */
-    void HazardFunction(const std::vector<double> &x, std::vector<double> &y) const;
+    void HazardFunction(const std::vector<T> &x, std::vector<double> &y) const;
 
     /**
      * @fn Median
@@ -157,7 +157,7 @@ public:
      * @return E[((X - μ) / σ) ^ 3]
      * where μ is central moment and σ is standard deviation
      */
-    virtual double Skewness() const;
+    virtual long double Skewness() const;
 
     /**
      * @fn Kurtosis
@@ -170,25 +170,25 @@ public:
      * @return E[((X - μ) / σ) ^ 4]  - 3
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
-    virtual double ExcessKurtosis() const;
+    virtual long double ExcessKurtosis() const;
 
     /**
      * @fn SecondMoment
      * @return E[X^2]
      */
-    virtual double SecondMoment() const;
+    virtual long double SecondMoment() const;
 
     /**
      * @fn ThirdMoment
      * @return E[X^3]
      */
-    virtual double ThirdMoment() const;
+    virtual long double ThirdMoment() const;
 
     /**
      * @fn FourthMoment
      * @return E[X^4]
      */
-    virtual double FourthMoment() const;
+    virtual long double FourthMoment() const;
 
     /**
      * @fn LikelihoodFunction
@@ -292,7 +292,7 @@ public:
      * @param sample
      * @return sample mean, variance, skewness and excess kurtosis
      */
-    static std::tuple<double, double, double, double> GetSampleStatistics(const std::vector<T> &sample);
+    static std::tuple<long double, long double, long double, long double> GetSampleStatistics(const std::vector<T> &sample);
 };
 
 #endif // UNIVARIATEDISTRIBUTION_H

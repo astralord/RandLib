@@ -26,7 +26,7 @@ double GeometricRand::logP(const int & k) const
 
 double GeometricRand::F(const int & k) const
 {
-    return (k < 0) ? 0 : -std::expm1((k + 1) * log1mProb);
+    return (k < 0) ? 0 : -std::expm1l((k + 1) * log1mProb);
 }
 
 double GeometricRand::S(const int & k) const
@@ -52,7 +52,7 @@ int GeometricRand::Variate(double probability, RandGenerator &randGenerator)
 
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
-        double rate = -std::log1p(-probability);
+        double rate = -std::log1pl(-probability);
         double X = std::floor(ExponentialRand::StandardVariate(randGenerator) / rate);
         return X < INT_MAX ? X : INT_MAX - 1; // if p->0, then X exceeds range of int
     }

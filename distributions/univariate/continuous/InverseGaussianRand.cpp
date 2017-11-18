@@ -80,12 +80,12 @@ double InverseGaussianRand::Variate() const
     return mu * y;
 }
 
-double InverseGaussianRand::Mean() const
+long double InverseGaussianRand::Mean() const
 {
     return mu;
 }
 
-double InverseGaussianRand::Variance() const
+long double InverseGaussianRand::Variance() const
 {
     return mu * mu * mu / lambda;
 }
@@ -109,12 +109,12 @@ double InverseGaussianRand::Mode() const
     return mu * mode;
 }
 
-double InverseGaussianRand::Skewness() const
+long double InverseGaussianRand::Skewness() const
 {
     return 3 * std::sqrt(mu / lambda);
 }
 
-double InverseGaussianRand::ExcessKurtosis() const
+long double InverseGaussianRand::ExcessKurtosis() const
 {
     return 15 * mu / lambda;
 }

@@ -34,17 +34,17 @@ public:
     double F(const int & k) const override;
     int Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
-    double Moment(int n) const;
-    double ThirdMoment() const override { return Moment(3); }
-    double FourthMoment() const override { return Moment(4); }
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
+    long double Moment(int n) const;
+    long double ThirdMoment() const override { return Moment(3); }
+    long double FourthMoment() const override { return Moment(4); }
 
-    inline double GetZetaFunction() const { return zetaS; }
-    inline double GetLogZetaFunction() const { return logZetaS; }
+    inline long double GetZetaFunction() const { return zetaS; }
+    inline long double GetLogZetaFunction() const { return logZetaS; }
 };
 
 #endif // ZETARAND_H

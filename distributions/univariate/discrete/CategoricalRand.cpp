@@ -59,7 +59,7 @@ int CategoricalRand::Variate() const
     return quantileImpl(U);
 }
 
-double CategoricalRand::Mean() const
+long double CategoricalRand::Mean() const
 {
     double sum = 0.0;
     for (int i = 1; i != K; ++i)
@@ -67,7 +67,7 @@ double CategoricalRand::Mean() const
     return sum;
 }
 
-double CategoricalRand::Variance() const
+long double CategoricalRand::Variance() const
 {
     double mean = 0.0, secMom = 0.0;
     for (int i = 1; i != K; ++i) {

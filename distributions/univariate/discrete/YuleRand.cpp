@@ -16,7 +16,7 @@ void YuleRand::SetShape(double shape)
     if (shape <= 0.0)
         throw std::invalid_argument("Yule distribution: shape should be positive");
     ro = shape;
-    lgamma1pRo = std::lgamma(ro + 1);
+    lgamma1pRo = std::lgammal(ro + 1);
     X.SetShape(ro);
 }
 
@@ -31,7 +31,7 @@ double YuleRand::logP(const int & k) const
         return -INFINITY;
     double y = lgamma1pRo;
     y += RandMath::lfact(k - 1);
-    y -= std::lgamma(k + ro + 1);
+    y -= std::lgammal(k + ro + 1);
     y += X.GetLogShape();
     return y;
 }
@@ -42,7 +42,7 @@ double YuleRand::F(const int & k) const
         return 0.0;
     double y = lgamma1pRo;
     y += RandMath::lfact(k - 1);
-    y -= std::lgamma(k + ro + 1);
+    y -= std::lgammal(k + ro + 1);
     y = std::exp(y);
     return 1.0 - k * y;
 }
@@ -53,7 +53,7 @@ double YuleRand::S(const int & k) const
         return 1.0;
     double y = lgamma1pRo;
     y += RandMath::lfact(k - 1);
-    y -= std::lgamma(k + ro + 1);
+    y -= std::lgammal(k + ro + 1);
     y = std::exp(y);
     return k * y;
 }
@@ -78,12 +78,12 @@ void YuleRand::Reseed(unsigned long seed) const
     X.Reseed(seed + 1);
 }
 
-double YuleRand::Mean() const
+long double YuleRand::Mean() const
 {
     return (ro <= 1) ? INFINITY : ro / (ro - 1);
 }
 
-double YuleRand::Variance() const
+long double YuleRand::Variance() const
 {
     if (ro <= 2)
         return INFINITY;
@@ -96,23 +96,23 @@ int YuleRand::Mode() const
     return 1;
 }
 
-double YuleRand::Skewness() const
+long double YuleRand::Skewness() const
 {
     if (ro <= 3)
         return INFINITY;
-    double skewness = ro + 1;
+    long double skewness = ro + 1;
     skewness *= skewness;
     skewness *= std::sqrt(ro - 2);
     return skewness / (ro * (ro - 3));
 }
 
-double YuleRand::ExcessKurtosis() const
+long double YuleRand::ExcessKurtosis() const
 {
     if (ro <= 4)
         return INFINITY;
-    double numerator = 11 * ro * ro - 49;
+    long double numerator = 11 * ro * ro - 49;
     numerator *= ro;
     numerator -= 22;
-    double denominator = ro * (ro - 4) * (ro - 3);
+    long double denominator = ro * (ro - 4) * (ro - 3);
     return ro + 3 + numerator / denominator;
 }

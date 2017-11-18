@@ -177,13 +177,13 @@ private:
     double variateGammaRatio() const;
 
 public:
-    double Mean() const override;
+    long double Mean() const override;
     /**
      * @fn GeometricMean
      * @return E[ln(X)]
      */
     double GeometricMean() const;
-    double Variance() const override;
+    long double Variance() const override;
     /**
      * @fn GeometricVariance
      * @return Var(ln(X))
@@ -191,8 +191,8 @@ public:
     double GeometricVariance() const;
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 protected:
     double quantileImpl(double p) const override;

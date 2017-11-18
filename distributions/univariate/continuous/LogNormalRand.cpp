@@ -64,15 +64,15 @@ void LogNormalRand::Reseed(unsigned long seed) const
     X.Reseed(seed);
 }
 
-double LogNormalRand::Mean() const
+long double LogNormalRand::Mean() const
 {
     return expMu * expHalfSigmaSq;
 }
 
-double LogNormalRand::Variance() const
+long double LogNormalRand::Variance() const
 {
     double y = expMu * expHalfSigmaSq;
-    return y * y * std::expm1(X.Variance());
+    return y * y * std::expm1l(X.Variance());
 }
 
 double LogNormalRand::quantileImpl(double p) const
@@ -95,13 +95,13 @@ double LogNormalRand::Mode() const
     return expMu / (expHalfSigmaSq * expHalfSigmaSq);
 }
 
-double LogNormalRand::Skewness() const
+long double LogNormalRand::Skewness() const
 {
-    double y = std::expm1(X.Variance());
+    double y = std::expm1l(X.Variance());
     return (expHalfSigmaSq * expHalfSigmaSq + 2) * std::sqrt(y);
 }
 
-double LogNormalRand::ExcessKurtosis() const
+long double LogNormalRand::ExcessKurtosis() const
 {
     double temp = expHalfSigmaSq * expHalfSigmaSq;
     double c = temp * temp;

@@ -32,12 +32,12 @@ int RademacherRand::Variate() const
     return BernoulliRand::StandardVariate(localRandGenerator) ? 1 : -1;
 }
 
-double RademacherRand::Mean() const
+long double RademacherRand::Mean() const
 {
     return 0;
 }
 
-double RademacherRand::Variance() const
+long double RademacherRand::Variance() const
 {
     return 1;
 }
@@ -58,12 +58,12 @@ int RademacherRand::Mode() const
     return Variate();
 }
 
-double RademacherRand::Skewness() const
+long double RademacherRand::Skewness() const
 {
     return 0.0;
 }
 
-double RademacherRand::ExcessKurtosis() const
+long double RademacherRand::ExcessKurtosis() const
 {
     return -2.0;
 }

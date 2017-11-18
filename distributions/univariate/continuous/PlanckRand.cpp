@@ -35,7 +35,7 @@ double PlanckRand::h(double t) const
     double y = pdfCoef + a * std::log(t);
     double expY = std::exp(y);
     double bt = b * t;
-    double z = 1.0 / std::expm1(bt) - 1.0 / bt;
+    double z = 1.0 / std::expm1l(bt) - 1.0 / bt;
     return expY * z;
 }
 
@@ -52,7 +52,7 @@ double PlanckRand::f(const double & x) const
         return INFINITY;
     }
     double y = pdfCoef + a * std::log(x);
-    return std::exp(y) / std::expm1(b * x);
+    return std::exp(y) / std::expm1l(b * x);
 }
 
 double PlanckRand::logf(const double & x) const
@@ -68,7 +68,7 @@ double PlanckRand::logf(const double & x) const
         return INFINITY;
     }
     double y = pdfCoef + a * std::log(x);
-    return y - RandMath::logexpm1(b * x);
+    return y - RandMath::logexpm1l(b * x);
 }
 
 double PlanckRand::F(const double & x) const
@@ -107,23 +107,23 @@ void PlanckRand::Sample(std::vector<double> &outputData) const
         var /= Z.Variate();
 }
 
-double PlanckRand::Mean() const
+long double PlanckRand::Mean() const
 {
     double y = (a + 1) / b;
-    y *= std::riemann_zeta(a + 2);
+    y *= std::riemann_zetal(a + 2);
     return y / Z.GetZetaFunction();
 }
 
-double PlanckRand::SecondMoment() const
+long double PlanckRand::SecondMoment() const
 {
-    double secondMoment = (a + 1) * (a + 2);
+    long double secondMoment = (a + 1) * (a + 2);
     secondMoment /= (b * b);
-    secondMoment *= std::riemann_zeta(a + 3);
+    secondMoment *= std::riemann_zetal(a + 3);
     secondMoment /= Z.GetZetaFunction();
     return secondMoment;
 }
 
-double PlanckRand::Variance() const
+long double PlanckRand::Variance() const
 {
     double mean = Mean();
     return SecondMoment() - mean * mean;
@@ -138,47 +138,47 @@ double PlanckRand::Mode() const
     return (y + a) / b;
 }
 
-double PlanckRand::ThirdMoment() const
+long double PlanckRand::ThirdMoment() const
 {
-    double thirdMoment = (a + 3) * (a + 2) * (a + 1);
+    long double thirdMoment = (a + 3) * (a + 2) * (a + 1);
     thirdMoment /= (b * b * b);
-    thirdMoment *= std::riemann_zeta(a + 4);
+    thirdMoment *= std::riemann_zetal(a + 4);
     thirdMoment /= Z.GetZetaFunction();
     return thirdMoment;
 }
 
-double PlanckRand::Skewness() const
+long double PlanckRand::Skewness() const
 {
-    double mean = Mean();
-    double secondMoment = SecondMoment();
-    double thirdMoment = ThirdMoment();
-    double meanSq = mean * mean;
-    double variance = secondMoment - meanSq;
-    double numerator = thirdMoment - 3 * mean * variance - mean * meanSq;
-    double denominator = std::pow(variance, 1.5);
+    long double mean = Mean();
+    long double secondMoment = SecondMoment();
+    long double thirdMoment = ThirdMoment();
+    long double meanSq = mean * mean;
+    long double variance = secondMoment - meanSq;
+    long double numerator = thirdMoment - 3 * mean * variance - mean * meanSq;
+    long double denominator = std::pow(variance, 1.5);
     return numerator / denominator;
 }
 
-double PlanckRand::FourthMoment() const
+long double PlanckRand::FourthMoment() const
 {
-    double fourthMoment = (a + 4) * (a + 3) * (a + 2) * (a + 1);
-    double bSq = b * b;
+    long double fourthMoment = (a + 4) * (a + 3) * (a + 2) * (a + 1);
+    long double bSq = b * b;
     fourthMoment /= (bSq * bSq);
-    fourthMoment *= std::riemann_zeta(a + 5);
+    fourthMoment *= std::riemann_zetal(a + 5);
     fourthMoment /= Z.GetZetaFunction();
     return fourthMoment;
 }
 
-double PlanckRand::ExcessKurtosis() const
+long double PlanckRand::ExcessKurtosis() const
 {
-    double mean = Mean();
-    double secondMoment = SecondMoment();
-    double thirdMoment = ThirdMoment();
-    double fourthMoment = FourthMoment();
-    double meanSq = mean * mean;
-    double variance = secondMoment - meanSq;
-    double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
-    double denominator = variance * variance;
+    long double mean = Mean();
+    long double secondMoment = SecondMoment();
+    long double thirdMoment = ThirdMoment();
+    long double fourthMoment = FourthMoment();
+    long double meanSq = mean * mean;
+    long double variance = secondMoment - meanSq;
+    long double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
+    long double denominator = variance * variance;
     return numerator / denominator - 3.0;
 }
 

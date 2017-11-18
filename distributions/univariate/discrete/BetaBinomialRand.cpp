@@ -23,7 +23,7 @@ void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)
     n = number;
     B.SetShapes(shape1, shape2);
     pmfCoef = RandMath::lfact(n);
-    pmfCoef -= std::lgamma(B.GetAlpha() + B.GetBeta() + n);
+    pmfCoef -= std::lgammal(B.GetAlpha() + B.GetBeta() + n);
     pmfCoef -= B.GetLogBetaFunction();
 }
 
@@ -36,8 +36,8 @@ double BetaBinomialRand::logP(const int & k) const
 {
     if (k < 0 || k > n)
         return 0.0;
-    double y = std::lgamma(k + B.GetAlpha());
-    y += std::lgamma(n - k + B.GetBeta());
+    double y = std::lgammal(k + B.GetAlpha());
+    y += std::lgammal(n - k + B.GetBeta());
     y -= RandMath::lfact(k);
     y -= RandMath::lfact(n - k);
     return pmfCoef + y;
@@ -91,14 +91,14 @@ void BetaBinomialRand::Reseed(unsigned long seed) const
     B.Reseed(seed + 1);
 }
 
-double BetaBinomialRand::Mean() const
+long double BetaBinomialRand::Mean() const
 {
     double alpha = B.GetAlpha();
     double beta = B.GetBeta();
     return n * alpha / (alpha + beta);
 }
 
-double BetaBinomialRand::Variance() const
+long double BetaBinomialRand::Variance() const
 {
     double alpha = B.GetAlpha();
     double beta = B.GetBeta();
@@ -142,25 +142,25 @@ int BetaBinomialRand::Mode() const
     return -1;
 }
 
-double BetaBinomialRand::Skewness() const
+long double BetaBinomialRand::Skewness() const
 {
-    double alpha = B.GetAlpha();
-    double beta = B.GetBeta();
-    double alphaPBeta = alpha + beta;
-    double res = (1 + alphaPBeta) / (n * alpha * beta * (alphaPBeta + n));
+    long double alpha = B.GetAlpha();
+    long double beta = B.GetBeta();
+    long double alphaPBeta = alpha + beta;
+    long double res = (1 + alphaPBeta) / (n * alpha * beta * (alphaPBeta + n));
     res = std::sqrt(res);
     res *= (alphaPBeta + 2 * n) * (beta - alpha);
     res /= alphaPBeta + 2;
     return res;
 }
 
-double BetaBinomialRand::ExcessKurtosis() const
+long double BetaBinomialRand::ExcessKurtosis() const
 {
-    double alpha = B.GetAlpha();
-    double beta = B.GetBeta();
-    double alphaPBeta = alpha + beta;
-    double alphaBetaN = alpha * beta * n;
-    double res = alpha * beta * (n - 2);
+    long double alpha = B.GetAlpha();
+    long double beta = B.GetBeta();
+    long double alphaPBeta = alpha + beta;
+    long double alphaBetaN = alpha * beta * n;
+    long double res = alpha * beta * (n - 2);
     res += 2 * (double)n * n;
     res -= alphaBetaN * (6 - n) / alphaPBeta;
     res -= 6 * alphaBetaN * n / (alphaPBeta * alphaPBeta);

@@ -69,7 +69,7 @@ void BinomialDistribution::SetGeneratorConstants()
     a4 += a3;
 
     logPFloor = std::log(pFloor);
-    logQFloor = (pFloor == qFloor) ? logPFloor : std::log1p(-pFloor);
+    logQFloor = (pFloor == qFloor) ? logPFloor : std::log1pl(-pFloor);
 
     logPnpInv = logProbFloor(npFloor);
 }
@@ -86,7 +86,7 @@ void BinomialDistribution::SetParameters(int number, double probability)
     np = n * p;
     lfactn = RandMath::lfact(n);
     logProb = std::log(p);
-    log1mProb = std::log1p(-p);
+    log1mProb = std::log1pl(-p);
     SetGeneratorConstants();
 }
 
@@ -352,12 +352,12 @@ void BinomialDistribution::Reseed(unsigned long seed) const
     G.Reseed(seed);
 }
 
-double BinomialDistribution::Mean() const
+long double BinomialDistribution::Mean() const
 {
     return np;
 }
 
-double BinomialDistribution::Variance() const
+long double BinomialDistribution::Variance() const
 {
     return np * q;
 }
@@ -378,14 +378,14 @@ int BinomialDistribution::Mode() const
     return std::floor(np + p);
 }
 
-double BinomialDistribution::Skewness() const
+long double BinomialDistribution::Skewness() const
 {
     return (q - p) / std::sqrt(np * q);
 }
 
-double BinomialDistribution::ExcessKurtosis() const
+long double BinomialDistribution::ExcessKurtosis() const
 {
-    double y = 1.0 / (p * q);
+    long double y = 1.0 / (p * q);
     y -= 6.0;
     return y / n;
 }

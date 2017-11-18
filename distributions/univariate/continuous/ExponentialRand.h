@@ -72,8 +72,8 @@ private:
 public:
     double Entropy() const;
     double Moment(int n) const;
-    double ThirdMoment() const override { return Moment(3); }
-    double FourthMoment() const override { return Moment(4); }
+    long double ThirdMoment() const override { return Moment(3); }
+    long double FourthMoment() const override { return Moment(4); }
 };
 
 #endif // EXPONENTIALRAND_H

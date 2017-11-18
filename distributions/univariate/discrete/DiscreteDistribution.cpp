@@ -108,7 +108,7 @@ int DiscreteDistribution::quantileImpl1m(double p) const
     return quantileImpl1m(p, sample[index]);
 }
 
-double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const
+long double DiscreteDistribution::ExpectedValue(const std::function<double (double)> &funPtr, int minPoint, int maxPoint) const
 {
     SUPPORT_TYPE suppType = SupportType();
     int k = minPoint, upperBoundary = maxPoint;
@@ -137,7 +137,7 @@ double DiscreteDistribution::ExpectedValue(const std::function<double (double)> 
     return sum;
 }
 
-double DiscreteDistribution::Hazard(double x) const
+double DiscreteDistribution::Hazard(const int &x) const
 {
     if (x < MinValue())
         return 0.0; /// 0/1

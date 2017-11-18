@@ -83,12 +83,12 @@ void UniformRand::Sample(std::vector<double> &outputData) const
         var = this->Variate();
 }
 
-double UniformRand::Mean() const
+long double UniformRand::Mean() const
 {
     return 0.5 * (b + a);
 }
 
-double UniformRand::Variance() const
+long double UniformRand::Variance() const
 {
     return bma * bma / 12;
 }
@@ -123,12 +123,12 @@ double UniformRand::Mode() const
     return 0.5 * (b + a);
 }
 
-double UniformRand::Skewness() const
+long double UniformRand::Skewness() const
 {
     return 0.0;
 }
 
-double UniformRand::ExcessKurtosis() const
+long double UniformRand::ExcessKurtosis() const
 {
     return -1.2;
 }

@@ -65,12 +65,12 @@ void InverseGammaRand::Reseed(unsigned long seed) const
     X.Reseed(seed);
 }
 
-double InverseGammaRand::Mean() const
+long double InverseGammaRand::Mean() const
 {
     return (alpha > 1) ? beta / (alpha - 1) : INFINITY;
 }
 
-double InverseGammaRand::Variance() const
+long double InverseGammaRand::Variance() const
 {
     if (alpha <= 2)
         return INFINITY;
@@ -99,16 +99,16 @@ double InverseGammaRand::Mode() const
     return beta / (alpha + 1);
 }
 
-double InverseGammaRand::Skewness() const
+long double InverseGammaRand::Skewness() const
 {
     return (alpha > 3) ? 4 * std::sqrt(alpha - 2) / (alpha - 3) : INFINITY;
 }
 
-double InverseGammaRand::ExcessKurtosis() const
+long double InverseGammaRand::ExcessKurtosis() const
 {
     if (alpha <= 4)
         return INFINITY;
-    double numerator = 30 * alpha - 66.0;
-    double denominator = (alpha - 3) * (alpha - 4);
+    long double numerator = 30 * alpha - 66.0;
+    long double denominator = (alpha - 3) * (alpha - 4);
     return numerator / denominator;
 }

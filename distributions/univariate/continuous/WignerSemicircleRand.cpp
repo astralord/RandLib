@@ -62,12 +62,12 @@ void WignerSemicircleRand::Reseed(unsigned long seed) const
     X.Reseed(seed);
 }
 
-double WignerSemicircleRand::Mean() const
+long double WignerSemicircleRand::Mean() const
 {
     return 0.0;
 }
 
-double WignerSemicircleRand::Variance() const
+long double WignerSemicircleRand::Variance() const
 {
     return 0.25 * RSq;
 }
@@ -82,12 +82,12 @@ double WignerSemicircleRand::Mode() const
     return 0.0;
 }
 
-double WignerSemicircleRand::Skewness() const
+long double WignerSemicircleRand::Skewness() const
 {
     return 0.0;
 }
 
-double WignerSemicircleRand::ExcessKurtosis() const
+long double WignerSemicircleRand::ExcessKurtosis() const
 {
     return -1.0;
 }

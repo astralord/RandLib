@@ -19,7 +19,7 @@ void WrappedExponentialRand::SetRate(double rate)
     logLambda = std::log(lambda);
     scaledLambda = 2 * M_PI * lambda;
     expmScaledLambda = std::exp(-scaledLambda);
-    pdfCoef = -std::expm1(-scaledLambda);
+    pdfCoef = -std::expm1l(-scaledLambda);
     logpdfCoef = RandMath::log1mexp(-scaledLambda);
 }
 
@@ -46,7 +46,7 @@ double WrappedExponentialRand::S(const double &x) const
         return 1.0;
     if (x >= 2 * M_PI)
         return 0.0;
-    double y = std::expm1(scaledLambda - lambda * x);
+    double y = std::expm1l(scaledLambda - lambda * x);
     y /= pdfCoef;
     return expmScaledLambda * y;
 }
@@ -78,7 +78,7 @@ double WrappedExponentialRand::Mode() const
 
 double WrappedExponentialRand::quantileImpl(double p) const
 {
-    return -std::log1p(-p * pdfCoef) / lambda;
+    return -std::log1pl(-p * pdfCoef) / lambda;
 }
 
 double WrappedExponentialRand::quantileImpl1m(double p) const

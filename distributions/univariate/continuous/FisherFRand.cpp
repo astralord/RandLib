@@ -51,7 +51,7 @@ double FisherFRand::logf(const double & x) const
         return (a > 0) ? -INFINITY : INFINITY;
     }
     double y = a * std::log(x);
-    y += c * std::log1p(d1_d2 * x);
+    y += c * std::log1pl(d1_d2 * x);
     return pdfCoef + y;
 }
 
@@ -82,12 +82,12 @@ void FisherFRand::Reseed(unsigned long seed) const
     B.Reseed(seed);
 }
 
-double FisherFRand::Mean() const
+long double FisherFRand::Mean() const
 {
     return (d2 > 2) ? 1 + 2.0 / (d2 - 2) : INFINITY;
 }
 
-double FisherFRand::Variance() const
+long double FisherFRand::Variance() const
 {
     if (d2 <= 4)
         return INFINITY;
@@ -112,12 +112,12 @@ double FisherFRand::Mode() const
     return d2_d1 * (d1 - 2) / (d2 + 2);
 }
 
-double FisherFRand::Skewness() const
+long double FisherFRand::Skewness() const
 {
     if (d2 <= 6)
         return INFINITY;
-    double skewness = 8.0 * (d2 - 4.0);
-    double aux = d1 + d2 - 2;
+    long double skewness = 8.0 * (d2 - 4.0);
+    long double aux = d1 + d2 - 2;
     skewness /= d1 * aux;
     skewness = std::sqrt(skewness);
     skewness *= d1 + aux;
@@ -125,11 +125,11 @@ double FisherFRand::Skewness() const
     return skewness;
 }
 
-double FisherFRand::ExcessKurtosis() const
+long double FisherFRand::ExcessKurtosis() const
 {
     if (d2 <= 8)
         return INFINITY;
-    double kurtosis = d2 - 2;
+    long double kurtosis = d2 - 2;
     kurtosis *= kurtosis;
     kurtosis *= d2 - 4;
     kurtosis /= d1;

@@ -47,7 +47,7 @@ double ParetoRand::logf(const double & x) const
 
 double ParetoRand::F(const double & x) const
 {
-    return (x > sigma) ? -std::expm1(alpha * std::log(sigma / x)) : 0.0;
+    return (x > sigma) ? -std::expm1l(alpha * std::log(sigma / x)) : 0.0;
 }
 
 double ParetoRand::S(const double & x) const
@@ -100,12 +100,12 @@ void ParetoRand::Sample(std::vector<double> &outputData) const
     }
 }
 
-double ParetoRand::Mean() const
+long double ParetoRand::Mean() const
 {
     return (alpha > 1) ? alpha * sigma / (alpha - 1) : INFINITY;
 }
 
-double ParetoRand::Variance() const
+long double ParetoRand::Variance() const
 {
     if (alpha > 2)
     {
@@ -126,7 +126,7 @@ double ParetoRand::Mode() const
     return sigma;
 }
 
-double ParetoRand::Skewness() const
+long double ParetoRand::Skewness() const
 {
     if (alpha <= 3)
         return INFINITY;
@@ -136,7 +136,7 @@ double ParetoRand::Skewness() const
     return skewness + skewness;
 }
 
-double ParetoRand::ExcessKurtosis() const
+long double ParetoRand::ExcessKurtosis() const
 {
     if (alpha <= 4)
         return INFINITY;
@@ -151,7 +151,7 @@ double ParetoRand::ExcessKurtosis() const
 
 double ParetoRand::quantileImpl(double p) const
 {
-    double y = logSigma - std::log1p(-p) / alpha;
+    double y = logSigma - std::log1pl(-p) / alpha;
     return std::exp(y);
 }
 

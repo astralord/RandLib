@@ -41,7 +41,7 @@ double BetaPrimeRand::logf(const double & x) const
         return (alpha > 1) ? -INFINITY : INFINITY;
     }
     double y = (alpha - 1) * std::log(x);
-    y -= (alpha + beta) * std::log1p(x);
+    y -= (alpha + beta) * std::log1pl(x);
     return y - GetLogBetaFunction();
 }
 
@@ -73,12 +73,12 @@ void BetaPrimeRand::Reseed(unsigned long seed) const
     B.Reseed(seed);
 }
 
-double BetaPrimeRand::Mean() const
+long double BetaPrimeRand::Mean() const
 {
     return (beta > 1) ? alpha / (beta - 1) : INFINITY;
 }
 
-double BetaPrimeRand::Variance() const
+long double BetaPrimeRand::Variance() const
 {
     if (beta <= 2)
         return INFINITY;
@@ -98,26 +98,26 @@ double BetaPrimeRand::Mode() const
     return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
 }
 
-double BetaPrimeRand::Skewness() const
+long double BetaPrimeRand::Skewness() const
 {
     if (beta <= 3)
         return INFINITY;
-    double aux = alpha + beta - 1;
-    double skewness = (beta - 2) / (alpha * aux);
+    long double aux = alpha + beta - 1;
+    long double skewness = (beta - 2) / (alpha * aux);
     skewness = std::sqrt(skewness);
     aux += alpha;
     aux += aux;
     return aux * skewness / (beta - 3);
 }
 
-double BetaPrimeRand::ExcessKurtosis() const
+long double BetaPrimeRand::ExcessKurtosis() const
 {
     if (beta <= 4)
         return INFINITY;
-    double betam1 = beta - 1;
-    double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
+    long double betam1 = beta - 1;
+    long double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
     numerator += 5 * beta - 11;
-    double denominator = (beta - 3) * (beta - 4);
+    long double denominator = (beta - 3) * (beta - 4);
     return 6 * numerator / denominator;
 }
 

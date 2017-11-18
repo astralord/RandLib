@@ -36,7 +36,7 @@ double ibetaPowerSeries1(double x, double a, double b, double logBetaFun, double
     double y = a * logX;
     y += (b - 1) * log1mX;
     y -= logBetaFun;
-    y += std::log1p(sum);
+    y += std::log1pl(sum);
     return std::exp(y) / a;
 }
 
@@ -73,7 +73,7 @@ double ibetaPowerSeries2(double x, double a, double b, double logBetaFun, double
     double y = a * logX;
     y += b * log1mX;
     y -= logBetaFun;
-    y += std::log1p(sum);
+    y += std::log1pl(sum);
     return std::exp(y) / a;
 }
 
@@ -108,7 +108,7 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
     if (b == 1.0)
         return std::exp(a * logX);
     if (a == 1.0)
-        return -std::expm1(b * log1mX);
+        return -std::expm1l(b * log1mX);
 
     /// If x is larger than mean of Beta distribution,
     /// convergence of complementary distribution function is faster
@@ -150,11 +150,11 @@ double ibeta(double x, double a, double b)
     if (b == 1.0)
         return std::pow(x, a);
     if (a == 1.0) {
-        double y = b * std::log1p(-x);
-        return -std::expm1(y);
+        double y = b * std::log1pl(-x);
+        return -std::expm1l(y);
     }
     double logBetaFun = logBeta(a, b);
-    double logX = std::log(x), log1mX = std::log1p(-x);
+    double logX = std::log(x), log1mX = std::log1pl(-x);
     return ibeta(x, a, b, logBetaFun, logX, log1mX);
 }
 

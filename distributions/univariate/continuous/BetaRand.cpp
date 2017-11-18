@@ -34,7 +34,7 @@ void BetaDistribution::setCoefficientsForGenerator()
     GENERATOR_ID id = getIdOfUsedGenerator();
     if (id == REJECTION_NORMAL) {
         double alpham1 = alpha - 1;
-        genCoef.s = alpham1 * std::log1p(0.5 / alpham1) - 0.5;
+        genCoef.s = alpham1 * std::log1pl(0.5 / alpham1) - 0.5;
         genCoef.t = 1.0 / std::sqrt(8 * alpha - 4);
     }
     else if (id == CHENG) {
@@ -60,7 +60,7 @@ void BetaDistribution::SetShapes(double shape1, double shape2)
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
-    logBetaFun = -std::lgamma(alpha + beta) + GammaRV1.GetLogGammaShape() + GammaRV2.GetLogGammaShape();
+    logBetaFun = -std::lgammal(alpha + beta) + GammaRV1.GetLogGammaShape() + GammaRV2.GetLogGammaShape();
     betaFun = std::exp(logBetaFun);
     setCoefficientsForGenerator();
 }
@@ -111,7 +111,7 @@ double BetaDistribution::logf(const double & x) const
         return (beta > 1) ? -INFINITY : INFINITY;
     }
     double y = (alpha - 1) * std::log(xSt);
-    y += (beta - 1) * std::log1p(-xSt);
+    y += (beta - 1) * std::log1pl(-xSt);
     return y - logBetaFun - logbma;
 }
 
@@ -126,7 +126,7 @@ double BetaDistribution::F(const double & x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(xSt));
-    return RandMath::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1p(-xSt));
+    return RandMath::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1pl(-xSt));
 }
 
 double BetaDistribution::S(const double & x) const
@@ -140,7 +140,7 @@ double BetaDistribution::S(const double & x) const
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::acos(std::sqrt(xSt));
-    return RandMath::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1p(-xSt), std::log(xSt));
+    return RandMath::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1pl(-xSt), std::log(xSt));
 }
 
 double BetaDistribution::variateArcsine() const
@@ -237,7 +237,7 @@ double BetaDistribution::variateRejectionNormal() const
         aux *= Z;
         if (W + aux >= 0)
             return 0.5 + N * genCoef.t;
-        aux = std::log1p(-Z / alpha2m1);
+        aux = std::log1pl(-Z / alpha2m1);
         aux *= alpham1;
         aux += W + 0.5 * Z;
         if (aux >= 0)
@@ -364,7 +364,7 @@ void BetaDistribution::Reseed(unsigned long seed) const
     GammaRV2.Reseed(seed + 2);
 }
 
-double BetaDistribution::Mean() const
+long double BetaDistribution::Mean() const
 {
     double mean = alpha / (alpha + beta);
     return a + bma * mean;
@@ -375,7 +375,7 @@ double BetaDistribution::GeometricMean() const
     return RandMath::digamma(alpha) - RandMath::digamma(alpha + beta);
 }
 
-double BetaDistribution::Variance() const
+long double BetaDistribution::Variance() const
 {
     double var = alpha + beta;
     var *= var * (var + 1);
@@ -393,7 +393,7 @@ double BetaDistribution::Median() const
     if (alpha == beta)
         return 0.5;
     if (alpha == 1.0)
-        return -std::expm1(-M_LN2 / beta);
+        return -std::expm1l(-M_LN2 / beta);
     if (beta == 1.0)
         return std::pow(2, -1.0 / alpha);
     if (alpha >= 1.0 && beta >= 1.0) {
@@ -416,19 +416,19 @@ double BetaDistribution::Mode() const
     return a + bma * mode;
 }
 
-double BetaDistribution::Skewness() const
+long double BetaDistribution::Skewness() const
 {
-    double skewness = (alpha + beta + 1) / (alpha * beta);
+    long double skewness = (alpha + beta + 1) / (alpha * beta);
     skewness = std::sqrt(skewness);
     skewness *= beta - alpha;
     skewness /= alpha + beta + 2;
     return 2 * skewness;
 }
 
-double BetaDistribution::ExcessKurtosis() const
+long double BetaDistribution::ExcessKurtosis() const
 {
-    double sum = alpha + beta;
-    double kurtosis = alpha - beta;
+    long double sum = alpha + beta;
+    long double kurtosis = alpha - beta;
     kurtosis *= kurtosis;
     kurtosis *= (sum + 1);
     kurtosis /= (alpha * beta * (sum + 2));
@@ -449,7 +449,7 @@ double BetaDistribution::quantileImpl(double p) const
             return a + bma * p;
     }
     if (alpha == 1.0)
-        return a - bma * std::expm1(std::log1p(-p) / beta);
+        return a - bma * std::expm1l(std::log1pl(-p) / beta);
     if (beta == 1.0)
         return a + bma * std::pow(p, 1.0 / alpha);
     return ContinuousDistribution::quantileImpl(p);
@@ -467,9 +467,9 @@ double BetaDistribution::quantileImpl1m(double p) const
             return b - bma * p;
     }
     if (alpha == 1.0)
-        return a - bma * std::expm1(std::log(p) / beta);
+        return a - bma * std::expm1l(std::log(p) / beta);
     if (beta == 1.0)
-        return a + bma * std::exp(std::log1p(-p) / alpha);
+        return a + bma * std::exp(std::log1pl(-p) / alpha);
     return ContinuousDistribution::quantileImpl1m(p);
 }
 
@@ -529,7 +529,7 @@ double BetaRand::GetSampleLog1pMean(const std::vector<double> &sample) const
     long double lnG1p = 0;
     for (double var : sample) {
         double x = (var - a) * bmaInv;
-        lnG1p += std::log1p(x);
+        lnG1p += std::log1pl(x);
     }
     return lnG1p / sample.size();
 }
@@ -539,7 +539,7 @@ double BetaRand::GetSampleLog1mMean(const std::vector<double> &sample) const
     long double lnG1m = 0;
     for (double var : sample) {
         double x = (var - a) * bmaInv;
-        lnG1m += std::log1p(-x);
+        lnG1m += std::log1pl(-x);
     }
     return lnG1m / sample.size();
 }
@@ -727,7 +727,7 @@ void ArcsineRand::FitShape(const std::vector<double> &sample)
     for (double var : sample) {
         double x = (var - a) * bmaInv;
         lnG += std::log(x);
-        lnG1m += std::log1p(-x);
+        lnG1m += std::log1pl(-x);
     }
     if (!std::isfinite(lnG))
         throw std::runtime_error(fitErrorDescription(WRONG_RETURN, ALPHA_ZERO));

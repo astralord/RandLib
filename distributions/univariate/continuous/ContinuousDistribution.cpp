@@ -130,7 +130,7 @@ double ContinuousDistribution::Mode() const
     return root;
 }
 
-double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const
+long double ContinuousDistribution::ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
@@ -206,7 +206,7 @@ double ContinuousDistribution::ExpectedValue(const std::function<double (double)
     }, -1.0, 1.0);
 }
 
-double ContinuousDistribution::Hazard(double x) const
+double ContinuousDistribution::Hazard(const double &x) const
 {
     if (x < MinValue())
         return 0.0; /// 0/1

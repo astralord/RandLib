@@ -25,10 +25,10 @@ public:
     void SetLocation(double location);
     inline double GetLocation() const { return loc; }
 
-    double Mean() const override { return NAN; }
-    double Variance() const override { return NAN; }
-    double Skewness() const override { return NAN; }
-    double ExcessKurtosis() const override { return NAN; }
+    long double Mean() const override { return NAN; }
+    long double Variance() const override { return NAN; }
+    long double Skewness() const override { return NAN; }
+    long double ExcessKurtosis() const override { return NAN; }
 
     /**
      * @fn CircularMean

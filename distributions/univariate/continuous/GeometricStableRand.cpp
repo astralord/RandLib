@@ -60,7 +60,7 @@ void ShiftedGeometricStableDistribution::SetAsymmetry(double asymmetry)
     kappa = asymmetry;
     kappaInv = 1.0 / kappa;
     kappaSq = kappa * kappa;
-    log1pKappaSq = std::log1p(kappaSq);
+    log1pKappaSq = std::log1pl(kappaSq);
     double logK = std::log(kappa);
     pdfCoef = logGamma + log1pKappaSq - logK;
     cdfCoef = 2 * logK - log1pKappaSq;
@@ -111,7 +111,7 @@ double ShiftedGeometricStableDistribution::cdfLaplace(double x) const
         y += cdfCoef;
         return std::exp(y);
     }
-    return -std::expm1(-log1pKappaSq - kappa * y);
+    return -std::expm1l(-log1pKappaSq - kappa * y);
 }
 
 double ShiftedGeometricStableDistribution::cdfLaplaceCompl(double x) const
@@ -120,7 +120,7 @@ double ShiftedGeometricStableDistribution::cdfLaplaceCompl(double x) const
     if (x < 0) {
         y *= kappaInv;
         y += cdfCoef;
-        return -std::expm1(y);
+        return -std::expm1l(y);
     }
     return std::exp(-log1pKappaSq - kappa * y);
 }
@@ -242,7 +242,7 @@ double ShiftedGeometricStableDistribution::f(const double & x) const
         if (alpha == 1)
             return INFINITY;
         if (mu == 0) {
-            double coef = std::tgamma(1.0 - alphaInv);
+            double coef = std::tgammal(1.0 - alphaInv);
             if (!std::isfinite(coef))
                 return INFINITY;
             return Z.f(0) * coef / gamma;
@@ -402,7 +402,7 @@ void ShiftedGeometricStableDistribution::Reseed(unsigned long seed) const
     Z.Reseed(seed);
 }
 
-double ShiftedGeometricStableDistribution::Mean() const
+long double ShiftedGeometricStableDistribution::Mean() const
 {
     if (alpha > 1)
         return m + mu;
@@ -411,7 +411,7 @@ double ShiftedGeometricStableDistribution::Mean() const
     return (beta == -1) ? -INFINITY : NAN;
 }
 
-double ShiftedGeometricStableDistribution::Variance() const
+long double ShiftedGeometricStableDistribution::Variance() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) {
         return mu * mu + 2 * gamma * gamma;
@@ -447,24 +447,24 @@ double ShiftedGeometricStableDistribution::Mode() const
     return ContinuousDistribution::Mode();
 }
 
-double ShiftedGeometricStableDistribution::Skewness() const
+long double ShiftedGeometricStableDistribution::Skewness() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) {
-        double k4 = kappaSq * kappaSq;
-        double k6 = k4 * kappaSq;
-        double z = (k4 + 1);
+        long double k4 = kappaSq * kappaSq;
+        long double k6 = k4 * kappaSq;
+        long double z = (k4 + 1);
         z *= std::sqrt(z);
-        double y = 2 * (1 - k6);
+        long double y = 2 * (1 - k6);
         return y / z;
     }
     return NAN;
 }
 
-double ShiftedGeometricStableDistribution::ExcessKurtosis() const
+long double ShiftedGeometricStableDistribution::ExcessKurtosis() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
     {
-        double denominator = kappaSq + kappaInv * kappaInv;
+        long double denominator = kappaSq + kappaInv * kappaInv;
         denominator *= denominator;
         return 6.0 - 12.0 / denominator;
     }

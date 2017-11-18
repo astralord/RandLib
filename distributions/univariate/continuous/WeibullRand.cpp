@@ -53,7 +53,7 @@ double WeibullRand::logf(const double & x) const
 
 double WeibullRand::F(const double & x) const
 {
-    return (x > 0.0) ? -std::expm1(-std::pow(x / lambda, k)) : 0.0;
+    return (x > 0.0) ? -std::expm1l(-std::pow(x / lambda, k)) : 0.0;
 }
 
 double WeibullRand::S(const double & x) const
@@ -66,16 +66,16 @@ double WeibullRand::Variate() const
     return lambda * std::pow(ExponentialRand::StandardVariate(localRandGenerator), kInv);
 }
 
-double WeibullRand::Mean() const
+long double WeibullRand::Mean() const
 {
-    return lambda * std::tgamma(1 + kInv);
+    return lambda * std::tgammal(1 + kInv);
 }
 
-double WeibullRand::Variance() const
+long double WeibullRand::Variance() const
 {
-    double res = std::tgamma(1 + kInv);
+    double res = std::tgammal(1 + kInv);
     res *= -res;
-    res += std::tgamma(1 + kInv + kInv);
+    res += std::tgammal(1 + kInv + kInv);
     return lambda * lambda * res;
 }
 
@@ -88,44 +88,44 @@ double WeibullRand::Mode() const
 {
     if (k <= 1)
         return 0;
-    double y = std::log1p(-kInv);
+    double y = std::log1pl(-kInv);
     y = std::exp(kInv * y);
     return lambda * y;
 }
 
-double WeibullRand::Skewness() const
+long double WeibullRand::Skewness() const
 {
-    double mu = Mean();
-    double var = Variance();
-    double sigma = std::sqrt(var);
-    double numerator = std::tgamma(1 + 3.0 * kInv);
+    long double mu = Mean();
+    long double var = Variance();
+    long double sigma = std::sqrt(var);
+    long double numerator = std::tgammal(1 + 3.0 * kInv);
     numerator *= lambda * lambda * lambda;
     numerator -= 3 * mu * var;
     numerator -= mu * mu * mu;
-    double denominator = var * sigma;
+    long double denominator = var * sigma;
     return numerator / denominator;
 }
 
-double WeibullRand::ExcessKurtosis() const
+long double WeibullRand::ExcessKurtosis() const
 {
-    double mu = Mean();
-    double var = Variance();
-    double sigma = std::sqrt(var);
-    double skewness = Skewness();
-    double numerator = lambda * lambda;
+    long double mu = Mean();
+    long double var = Variance();
+    long double sigma = std::sqrt(var);
+    long double skewness = Skewness();
+    long double numerator = lambda * lambda;
     numerator *= numerator;
-    numerator *= std::tgamma(1 + 4.0 * kInv);
+    numerator *= std::tgammal(1 + 4.0 * kInv);
     numerator -= 4 * skewness * var * sigma * mu;
-    double mu2 = mu * mu;
+    long double mu2 = mu * mu;
     numerator -= 6 * mu2 * var;
     numerator -= mu2 * mu2;
-    double kurtosis = numerator / (var * var);
+    long double kurtosis = numerator / (var * var);
     return kurtosis - 3;
 }
 
 double WeibullRand::quantileImpl(double p) const
 {
-    double x = -std::log1p(-p);
+    double x = -std::log1pl(-p);
     x = std::pow(x, kInv);
     return lambda * x;
 }
@@ -152,8 +152,8 @@ std::complex<double> WeibullRand::CFImpl(double t) const
         do {
             int n2 = n + n;
             addon = n2 * logLambdaT;
-            addon += std::lgamma(1.0 + n2 / k);
-            addon -= std::lgamma(1.0 + n2);
+            addon += std::lgammal(1.0 + n2 / k);
+            addon -= std::lgammal(1.0 + n2);
             addon = std::exp(addon);
             re += (n & 1) ? -addon : addon;
             ++n;
@@ -163,8 +163,8 @@ std::complex<double> WeibullRand::CFImpl(double t) const
         do {
             int n2p1 = n + n + 1;
             addon = n2p1 * logLambdaT;
-            addon += std::lgamma(1.0 + n2p1 / k);
-            addon -= std::lgamma(1.0 + n2p1);
+            addon += std::lgammal(1.0 + n2p1 / k);
+            addon -= std::lgammal(1.0 + n2p1);
             addon = std::exp(addon);
             im += (n & 1) ? -addon : addon;
             ++n;
@@ -179,7 +179,7 @@ std::complex<double> WeibullRand::CFImpl(double t) const
             return 0.0;
         double xAdj = x / lambda;
         double xAdjPow = std::pow(xAdj, k - 1);
-        double y = k / lambda * xAdjPow * std::expm1(-xAdj * xAdjPow);
+        double y = k / lambda * xAdjPow * std::expm1l(-xAdj * xAdjPow);
         return std::cos(t * x) * y;
     },
     0.0, 1.0);
