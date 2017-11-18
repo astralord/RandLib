@@ -773,12 +773,12 @@
     \]
     and then
     \[
-    F(x) = \int_{0}^{x}  h(t) dt + \frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \frac{x^a}{ba}.
+    F(x) = \int_{0}^{x}  h(t) dt + \frac{(bx)^{a}}{a\Gamma(a+1)\zeta(a+1)}.
     \]
 	
 	\paragraph{Calculation of characteristic function.} The idea of calculations for $a < 1$ is near the same. We split the real part of $\phi(t)$ into $3$ different integrals:
 	\[
-	\Re(\phi(t)) = \int_{0}^{1} \cos(tx) h(x) dx + \int_{1}^{\infty} \cos(tx) dx + \frac{b^{a}}{a\Gamma(a+1)\zeta(a+1)} \bigg(\cos(t) + t\int_{0}^{1} \sin(tx)x^a dx \bigg).
+	\Re(\phi(t)) = \int_{0}^{1} \cos(tx) h(x) dx + \int_{1}^{\infty} \cos(tx) f(x) dx + \frac{b^{a}}{a\Gamma(a+1)\zeta(a+1)} \bigg(\cos(t) + t\int_{0}^{1} \sin(tx)x^a dx \bigg).
 	\]
 	All the indegrands now have no singularity points.
 	
