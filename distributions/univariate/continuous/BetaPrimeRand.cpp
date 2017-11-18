@@ -157,8 +157,8 @@ void BetaPrimeRand::FitAlpha(const std::vector<double> &sample)
 {
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double lnG1m = -B.GetSampleLog1pMean(sample);
-    double lnG = GetSampleLogMean(sample) + lnG1m;
+    long double lnG1m = -B.GetSampleLog1pMean(sample);
+    long double lnG = GetSampleLogMean(sample) + lnG1m;
     long double mean = 0.5;
     if (beta != 1.0) {
         mean = 0.0;
@@ -174,7 +174,7 @@ void BetaPrimeRand::FitBeta(const std::vector<double> &sample)
 {
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double lnG1m = -B.GetSampleLog1pMean(sample), lnG = 0.0;
+    long double lnG1m = -B.GetSampleLog1pMean(sample), lnG = 0.0;
     long double mean = 0.5;
     if (alpha != 1.0) {
         lnG = GetSampleLogMean(sample) + lnG1m;
@@ -191,8 +191,8 @@ void BetaPrimeRand::Fit(const std::vector<double> &sample)
 {
     if (!allElementsArePositive(sample))
         throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double lnG1m = -B.GetSampleLog1pMean(sample);
-    double lnG = GetSampleLogMean(sample) + lnG1m;
+    long double lnG1m = -B.GetSampleLog1pMean(sample);
+    long double lnG = GetSampleLogMean(sample) + lnG1m;
     long double m = 0.0, v = 0.0;
     int n = sample.size();
     for (int i = 0; i < n; ++i) {

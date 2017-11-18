@@ -138,7 +138,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution & priorDistribution, bool MAP = false);
+    BetaRand<> FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution<> & priorDistribution, bool MAP = false);
 
     /**
      * @fn FitProbabilityMinimax
@@ -146,7 +146,7 @@ public:
      * @param sample
      * @return posterior distribution
      */
-    BetaRand FitProbabilityMinimax(const std::vector<int> &sample);
+    BetaRand<> FitProbabilityMinimax(const std::vector<int> &sample);
 };
 
 

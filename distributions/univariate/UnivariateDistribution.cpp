@@ -235,20 +235,20 @@ bool UnivariateDistribution<T>::allElementsArePositive(const std::vector<T> &sam
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleSum(const std::vector<T> &sample)
+long double UnivariateDistribution<T>::GetSampleSum(const std::vector<T> &sample)
 {
     return std::accumulate(sample.begin(), sample.end(), 0.0);
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
+long double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
 {
     size_t n = sample.size();
     return (n > 0) ? GetSampleSum(sample) / n : 0.0;
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
+long double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
 {
     long double sum = 0.0;
     for (const T & var : sample)
@@ -257,7 +257,7 @@ double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
+long double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
 {
     long double sum = 0.0l;
     for (const T & var : sample) {
@@ -268,7 +268,7 @@ double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sample, double logMean)
+long double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sample, double logMean)
 {
     long double sum = 0.0l;
     for (const T & var : sample) {
@@ -279,7 +279,7 @@ double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sam
 }
 
 template< typename T >
-DoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
+LongDoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
 {
     /// Welford's stable method
     long double m = 0.0l, v = 0.0l;
@@ -294,7 +294,7 @@ DoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector
 }
 
 template< typename T >
-DoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(const std::vector<T> &sample)
+LongDoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(const std::vector<T> &sample)
 {
     /// Welford's stable method
     long double m = 0.0l, v = 0.0l;

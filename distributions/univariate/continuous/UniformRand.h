@@ -16,7 +16,7 @@
  * X ~ B(1, 1, a, b) <BR>
  * (X - a) / (b - a) ~ IH(1)
  */
-class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution
+class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution<double>
 {
 public:
     UniformRand(double minValue = 0, double maxValue = 1);

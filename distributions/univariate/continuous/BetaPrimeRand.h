@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution<>
 {
     double alpha = 1; ///< first shape α
     double beta = 1; ///< second shape β
-    BetaRand B{};
+    BetaRand<double> B{};
 
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);

@@ -17,7 +17,7 @@ class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution<>
     double b = 4; ///< maximal value
     double logLambda = 0; /// < log(λ)
 
-    BetaRand BetaRV{0.5, 1.5, 0, 4}; ///< beta-distributed rv for generator
+    BetaRand<double> BetaRV{0.5, 1.5, 0, 4}; ///< beta-distributed rv for generator
     double M = 1.0; ///< rejection constant
 
 public:
