@@ -7,9 +7,9 @@ HyperGeometricRand::HyperGeometricRand(int totalSize, int drawsNum, int successe
 
 String HyperGeometricRand::Name() const
 {
-    return "Hypergeometric(" + toStringWithPrecision(N) + ", "
-                             + toStringWithPrecision(n) + ", "
-                             + toStringWithPrecision(K) + ")";
+    return "Hypergeometric(" + this->toStringWithPrecision(N) + ", "
+                             + this->toStringWithPrecision(n) + ", "
+                             + this->toStringWithPrecision(K) + ")";
 }
 
 void HyperGeometricRand::SetParameters(int totalSize, int drawsNum, int successesNum)

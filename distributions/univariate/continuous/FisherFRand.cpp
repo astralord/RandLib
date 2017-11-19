@@ -1,16 +1,19 @@
 #include "FisherFRand.h"
 
-FisherFRand::FisherFRand(int degree1, int degree2)
+template < typename RealType >
+FisherFRand<RealType>::FisherFRand(int degree1, int degree2)
 {
     SetDegrees(degree1, degree2);
 }
 
-String FisherFRand::Name() const
+template < typename RealType >
+String FisherFRand<RealType>::Name() const
 {
-    return "Fisher-F(" + toStringWithPrecision(GetFirstDegree()) + ", " + toStringWithPrecision(GetSecondDegree()) + ")";
+    return "Fisher-F(" + this->toStringWithPrecision(GetFirstDegree()) + ", " + this->toStringWithPrecision(GetSecondDegree()) + ")";
 }
 
-void FisherFRand::SetDegrees(int degree1, int degree2)
+template < typename RealType >
+void FisherFRand<RealType>::SetDegrees(int degree1, int degree2)
 {
     if (degree1 <= 0 || degree2 <= 0)
         throw std::invalid_argument("F-distribution: degrees of should be positive");
@@ -29,7 +32,8 @@ void FisherFRand::SetDegrees(int degree1, int degree2)
     pdfCoef -= B.GetLogBetaFunction();
 }
 
-double FisherFRand::f(const double & x) const
+template < typename RealType >
+double FisherFRand<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -41,7 +45,8 @@ double FisherFRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double FisherFRand::logf(const double & x) const
+template < typename RealType >
+double FisherFRand<RealType>::logf(const RealType & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -55,39 +60,46 @@ double FisherFRand::logf(const double & x) const
     return pdfCoef + y;
 }
 
-double FisherFRand::F(const double & x) const
+template < typename RealType >
+double FisherFRand<RealType>::F(const RealType & x) const
 {
     return B.F(d1_d2 * x);
 }
 
-double FisherFRand::S(const double & x) const
+template < typename RealType >
+double FisherFRand<RealType>::S(const RealType & x) const
 {
     return B.S(d1_d2 * x);
 }
 
-double FisherFRand::Variate() const
+template < typename RealType >
+RealType FisherFRand<RealType>::Variate() const
 {
     return d2_d1 * B.Variate();
 }
 
-void FisherFRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void FisherFRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     B.Sample(outputData);
-    for (double &var : outputData)
+    for (RealType &var : outputData)
         var = d2_d1 * var;
 }
 
-void FisherFRand::Reseed(unsigned long seed) const
+template < typename RealType >
+void FisherFRand<RealType>::Reseed(unsigned long seed) const
 {
     B.Reseed(seed);
 }
 
-long double FisherFRand::Mean() const
+template < typename RealType >
+long double FisherFRand<RealType>::Mean() const
 {
     return (d2 > 2) ? 1 + 2.0 / (d2 - 2) : INFINITY;
 }
 
-long double FisherFRand::Variance() const
+template < typename RealType >
+long double FisherFRand<RealType>::Variance() const
 {
     if (d2 <= 4)
         return INFINITY;
@@ -100,19 +112,22 @@ long double FisherFRand::Variance() const
     return variance;
 }
 
-double FisherFRand::Median() const
+template < typename RealType >
+RealType FisherFRand<RealType>::Median() const
 {
     return d2_d1 * B.Median();
 }
 
-double FisherFRand::Mode() const
+template < typename RealType >
+RealType FisherFRand<RealType>::Mode() const
 {
     if (d1 <= 2)
         return 0.0;
     return d2_d1 * (d1 - 2) / (d2 + 2);
 }
 
-long double FisherFRand::Skewness() const
+template < typename RealType >
+long double FisherFRand<RealType>::Skewness() const
 {
     if (d2 <= 6)
         return INFINITY;
@@ -125,7 +140,8 @@ long double FisherFRand::Skewness() const
     return skewness;
 }
 
-long double FisherFRand::ExcessKurtosis() const
+template < typename RealType >
+long double FisherFRand<RealType>::ExcessKurtosis() const
 {
     if (d2 <= 8)
         return INFINITY;
@@ -140,17 +156,24 @@ long double FisherFRand::ExcessKurtosis() const
     return 12.0 * kurtosis;
 }
 
-double FisherFRand::quantileImpl(double p) const
+template < typename RealType >
+RealType FisherFRand<RealType>::quantileImpl(double p) const
 {
   return d2_d1 * B.Quantile(p);
 }
 
-double FisherFRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType FisherFRand<RealType>::quantileImpl1m(double p) const
 {
   return d2_d1 * B.Quantile1m(p);
 }
 
-std::complex<double> FisherFRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> FisherFRand<RealType>::CFImpl(double t) const
 {
     return B.CF(d2_d1 * t);
 }
+
+template class FisherFRand<float>;
+template class FisherFRand<double>;
+template class FisherFRand<long double>;

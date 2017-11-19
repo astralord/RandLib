@@ -7,7 +7,7 @@ PlanckRand::PlanckRand(double shape, double scale)
 
 String PlanckRand::Name() const
 {
-    return "Planck(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Planck(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void PlanckRand::SetParameters(double shape, double scale)

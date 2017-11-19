@@ -8,7 +8,7 @@ WrappedExponentialRand::WrappedExponentialRand(double rate) : CircularDistributi
 
 String WrappedExponentialRand::Name() const
 {
-    return "Wrapped Exponential(" + toStringWithPrecision(GetRate()) + ")";
+    return "Wrapped Exponential(" + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 void WrappedExponentialRand::SetRate(double rate)

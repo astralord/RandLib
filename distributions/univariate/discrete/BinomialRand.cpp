@@ -393,18 +393,18 @@ long double BinomialDistribution::ExcessKurtosis() const
 void BinomialDistribution::FitProbability(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     SetParameters(n, GetSampleMean(sample) / n);
 }
 
 BetaRand<> BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution<> &priorDistribution, bool MAP)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(n)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     int N = sample.size();
     double sum = GetSampleSum(sample);
     double alpha = priorDistribution.GetAlpha();
@@ -423,5 +423,5 @@ BetaRand<> BinomialDistribution::FitProbabilityMinimax(const std::vector<int> &s
 
 String BinomialRand::Name() const
 {
-    return "Binomial(" + toStringWithPrecision(GetNumber()) + ", " + toStringWithPrecision(GetProbability()) + ")";
+    return "Binomial(" + this->toStringWithPrecision(GetNumber()) + ", " + this->toStringWithPrecision(GetProbability()) + ")";
 }

@@ -7,9 +7,9 @@ NegativeHyperGeometricRand::NegativeHyperGeometricRand(int totalSize, int totalS
 
 String NegativeHyperGeometricRand::Name() const
 {
-    return "Negative hypergeometric(" + toStringWithPrecision(N) + ", "
-                                      + toStringWithPrecision(M) + ", "
-                                      + toStringWithPrecision(m) + ")";
+    return "Negative hypergeometric(" + this->toStringWithPrecision(N) + ", "
+                                      + this->toStringWithPrecision(M) + ", "
+                                      + this->toStringWithPrecision(m) + ")";
 }
 
 void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccessesNum, int limitSuccessesNum)

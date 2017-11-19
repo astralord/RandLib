@@ -7,7 +7,7 @@ IrwinHallRand::IrwinHallRand(size_t number)
 
 String IrwinHallRand::Name() const
 {
-    return "Irwin-Hall(" + toStringWithPrecision(GetNumber()) + ")";
+    return "Irwin-Hall(" + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
 void IrwinHallRand::SetNumber(int number)

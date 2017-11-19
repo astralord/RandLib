@@ -9,11 +9,11 @@ BivariateNormalRand::BivariateNormalRand(double location1, double location2, dou
 
 String BivariateNormalRand::Name() const
 {
-    return "Bivariate Normal( (" + toStringWithPrecision(GetFirstLocation()) + ", "
-                               + toStringWithPrecision(GetSecondLocation()) + "), ("
-                               + toStringWithPrecision(GetFirstScale()) + ", "
-                               + toStringWithPrecision(GetSecondScale()) + ", "
-                               + toStringWithPrecision(GetCorrelation()) + ") )";
+    return "Bivariate Normal( (" + this->toStringWithPrecision(GetFirstLocation()) + ", "
+                               + this->toStringWithPrecision(GetSecondLocation()) + "), ("
+                               + this->toStringWithPrecision(GetFirstScale()) + ", "
+                               + this->toStringWithPrecision(GetSecondScale()) + ", "
+                               + this->toStringWithPrecision(GetCorrelation()) + ") )";
 }
 
 void BivariateNormalRand::SetLocations(double location1, double location2)

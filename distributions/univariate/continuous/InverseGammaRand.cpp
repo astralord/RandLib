@@ -7,7 +7,7 @@ InverseGammaRand::InverseGammaRand(double shape, double rate)
 
 String InverseGammaRand::Name() const
 {
-    return "Inverse-Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
+    return "Inverse-Gamma(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 void InverseGammaRand::SetParameters(double shape, double rate)

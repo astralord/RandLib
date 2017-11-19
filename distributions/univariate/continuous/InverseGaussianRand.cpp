@@ -9,7 +9,7 @@ InverseGaussianRand::InverseGaussianRand(double mean, double shape)
 
 String InverseGaussianRand::Name() const
 {
-    return "Inverse-Gaussian(" + toStringWithPrecision(GetMean()) + ", " + toStringWithPrecision(GetShape()) + ")";
+    return "Inverse-Gaussian(" + this->toStringWithPrecision(GetMean()) + ", " + this->toStringWithPrecision(GetShape()) + ")";
 }
 
 void InverseGaussianRand::SetParameters(double mean, double shape)

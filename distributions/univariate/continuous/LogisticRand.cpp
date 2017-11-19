@@ -8,7 +8,7 @@ LogisticRand::LogisticRand(double location, double scale)
 
 String LogisticRand::Name() const
 {
-    return "Logistic(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Logistic(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void LogisticRand::SetLocation(double location)
@@ -134,6 +134,6 @@ void LogisticRand::FitLocation(const std::vector<double> &sample)
         f1 -= nHalf;
         return DoublePair(f1, f2);
     }, root))
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(this->fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
     SetLocation(root);
 }

@@ -12,10 +12,10 @@ StudentTRand::StudentTRand(double degree, double location, double scale)
 String StudentTRand::Name() const
 {
     if (mu == 0.0 && sigma == 1.0)
-        return "Student-t(" + toStringWithPrecision(GetDegree()) + ")";
-    return "Student-t(" + toStringWithPrecision(GetDegree()) + ", "
-                          + toStringWithPrecision(GetLocation()) + ", "
-                          + toStringWithPrecision(GetScale()) + ")";
+        return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ")";
+    return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ", "
+                          + this->toStringWithPrecision(GetLocation()) + ", "
+                          + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void StudentTRand::SetDegree(double degree)

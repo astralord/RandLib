@@ -8,7 +8,7 @@ CauchyRand::CauchyRand(double location, double scale)
 
 String CauchyRand::Name() const
 {
-    return "Cauchy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Cauchy(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 double CauchyRand::f(const double & x) const

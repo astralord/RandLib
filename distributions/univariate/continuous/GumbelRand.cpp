@@ -9,7 +9,7 @@ GumbelRand::GumbelRand(double location, double scale)
 
 String GumbelRand::Name() const
 {
-    return "Gumbel(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Gumbel(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void GumbelRand::SetLocation(double location)

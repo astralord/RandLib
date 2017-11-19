@@ -106,7 +106,7 @@ void AsymmetricLaplaceDistribution::FitShift(const std::vector<double> &sample)
     },
     minVar, maxVar, median
     ))
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(this->fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetShift(median);
 }
@@ -133,9 +133,9 @@ void AsymmetricLaplaceDistribution::FitShiftAndScale(const std::vector<double> &
 
 String AsymmetricLaplaceRand::Name() const
 {
-    return "Asymmetric-Laplace(" + toStringWithPrecision(GetShift()) + ", "
-                                 + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetAsymmetry()) + ")";
+    return "Asymmetric-Laplace(" + this->toStringWithPrecision(GetShift()) + ", "
+                                 + this->toStringWithPrecision(GetScale()) + ", "
+            + this->toStringWithPrecision(GetAsymmetry()) + ")";
 }
 
 void AsymmetricLaplaceRand::SetAsymmetry(double asymmetry)
@@ -187,7 +187,7 @@ void AsymmetricLaplaceRand::FitAsymmetry(const std::vector<double> &sample)
         y += xMinus / tSq - xPlus;
         return y;
     }, minBound, maxBound, root))
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(this->fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetAsymmetry(root);
 }
@@ -213,11 +213,11 @@ void AsymmetricLaplaceRand::FitScaleAndAsymmetry(const std::vector<double> &samp
 
     if (xMinus == 0) {
         /// X ~ Exp(1 / xPlus)
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        throw std::runtime_error(this->fitErrorDescription(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
     if (xPlus == 0) {
         /// -X ~ Exp(1 / xMinus)
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        throw std::runtime_error(this->fitErrorDescription(UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
     }
 
     double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);
@@ -237,8 +237,8 @@ void AsymmetricLaplaceRand::Fit(const std::vector<double> &sample)
 
 String LaplaceRand::Name() const
 {
-    return "Laplace(" + toStringWithPrecision(GetShift()) + ", "
-                      + toStringWithPrecision(GetScale()) + ")";
+    return "Laplace(" + this->toStringWithPrecision(GetShift()) + ", "
+                      + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 double LaplaceRand::StandardVariate(RandGenerator &randGenerator)

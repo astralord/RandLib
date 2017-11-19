@@ -1014,23 +1014,23 @@ std::complex<double> StableDistribution::CFImpl(double t) const
 String StableRand::Name() const
 {
     return "Stable("
-            + toStringWithPrecision(GetExponent()) + ", "
-            + toStringWithPrecision(GetSkewness()) + ", "
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(GetExponent()) + ", "
+            + this->toStringWithPrecision(GetSkewness()) + ", "
+            + this->toStringWithPrecision(GetScale()) + ", "
+            + this->toStringWithPrecision(GetLocation()) + ")";
 }
 
 String HoltsmarkRand::Name() const
 {
     return "Holtsmark("
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(GetScale()) + ", "
+            + this->toStringWithPrecision(GetLocation()) + ")";
 }
 
 
 String LandauRand::Name() const
 {
     return "Landau("
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(GetScale()) + ", "
+            + this->toStringWithPrecision(GetLocation()) + ")";
 }

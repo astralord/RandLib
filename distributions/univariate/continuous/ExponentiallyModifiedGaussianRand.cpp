@@ -7,9 +7,9 @@ ExponentiallyModifiedGaussianRand::ExponentiallyModifiedGaussianRand(double loca
 
 String ExponentiallyModifiedGaussianRand::Name() const
 {
-    return "Exponentially modified Gaussian(" + toStringWithPrecision(GetLocation()) + ", "
-                                              + toStringWithPrecision(X.Variance()) + ", "
-                                              + toStringWithPrecision(GetRate()) + ")";
+    return "Exponentially modified Gaussian(" + this->toStringWithPrecision(GetLocation()) + ", "
+                                              + this->toStringWithPrecision(X.Variance()) + ", "
+                                              + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 void ExponentiallyModifiedGaussianRand::SetParameters(double location, double variance, double rate)

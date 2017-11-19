@@ -8,7 +8,7 @@ WeibullRand::WeibullRand(double scale, double shape)
 
 String WeibullRand::Name() const
 {
-    return "Weibull(" + toStringWithPrecision(GetScale()) + ", " + toStringWithPrecision(GetShape()) + ")";
+    return "Weibull(" + this->toStringWithPrecision(GetScale()) + ", " + this->toStringWithPrecision(GetShape()) + ")";
 }
 
 void WeibullRand::SetParameters(double scale, double shape)
@@ -227,16 +227,16 @@ double WeibullRand::getPowSampleMean(const std::vector<double> &sample) const
 
 void WeibullRand::FitScale(const std::vector<double> &sample)
 {
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     double powScale = getPowSampleMean(sample);
     SetParameters(std::pow(powScale, kInv), k);
 }
 
 InverseGammaRand WeibullRand::FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP)
 {
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;
     double newRate = priorDistribution.GetRate() + n * getPowSampleMean(sample);

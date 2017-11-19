@@ -11,7 +11,7 @@ String CategoricalRand::Name() const
     String str = "Categorical(";
     for (int i = 0; i != K - 1; ++i)
         str += toStringWithPrecision(prob[i]) + ", ";
-    return str + toStringWithPrecision(prob[K - 1]) + ")";
+    return str + this->toStringWithPrecision(prob[K - 1]) + ")";
 }
 
 void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)

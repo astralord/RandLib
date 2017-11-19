@@ -8,7 +8,7 @@ SkellamRand::SkellamRand(double rate1, double rate2)
 
 String SkellamRand::Name() const
 {
-    return "Skellam(" + toStringWithPrecision(GetFirstRate()) + ", " + toStringWithPrecision(GetSecondRate()) + ")";
+    return "Skellam(" + this->toStringWithPrecision(GetFirstRate()) + ", " + this->toStringWithPrecision(GetSecondRate()) + ")";
 }
 
 void SkellamRand::SetRates(double rate1, double rate2)

@@ -17,11 +17,12 @@
  * X = Y / Z, where Y ~ Γ(α) and Z ~ Γ(β) <BR>
  * β/α * X ~ F(2α, 2β)
  */
-class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution<>
+template < typename RealType = long double >
+class RANDLIBSHARED_EXPORT BetaPrimeRand : public ContinuousDistribution<RealType>
 {
     double alpha = 1; ///< first shape α
     double beta = 1; ///< second shape β
-    BetaRand<double> B{};
+    BetaRand<RealType> B{};
 
 public:
     BetaPrimeRand(double shape1 = 1, double shape2 = 1);
@@ -31,28 +32,28 @@ public:
     inline double GetBeta() const { return beta; }
 
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
 
-    double Variate() const override;
-    void Sample(std::vector<double> &outputData) const override;
+    RealType Variate() const override;
+    void Sample(std::vector<RealType> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 public:
@@ -73,21 +74,21 @@ public:
      * fit α by maximum-likelihood
      * @param sample
      */
-    void FitAlpha(const std::vector<double> &sample);
+    void FitAlpha(const std::vector<RealType> &sample);
 
     /**
      * @fn FitBeta
      * fit β by maximum-likelihood
      * @param sample
      */
-    void FitBeta(const std::vector<double> &sample);
+    void FitBeta(const std::vector<RealType> &sample);
 
     /**
      * @fn Fit
      * fit shapes by maximum-likelihood
      * @param sample
      */
-    void Fit(const std::vector<double> &sample);
+    void Fit(const std::vector<RealType> &sample);
 };
 
 #endif // BETAPRIMERAND_H

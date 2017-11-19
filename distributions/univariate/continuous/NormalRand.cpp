@@ -13,7 +13,7 @@ NormalRand::NormalRand(double mean, double var)
 
 String NormalRand::Name() const
 {
-    return "Normal(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(Variance()) + ")";
+    return "Normal(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(Variance()) + ")";
 }
 
 void NormalRand::SetScale(double scale)
@@ -130,7 +130,7 @@ void NormalRand::FitLocation(const std::vector<double> &sample)
 void NormalRand::FitLocation(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel)
 {
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     FitLocation(sample);
 
@@ -150,7 +150,7 @@ void NormalRand::FitVariance(const std::vector<double> &sample)
 void NormalRand::FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased)
 {
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     FitVariance(sample);
 
@@ -185,7 +185,7 @@ void NormalRand::Fit(const std::vector<double> &sample, bool unbiased)
     if (unbiased == true) {
         size_t n = sample.size();
         if (n <= 1)
-            throw std::invalid_argument(fitErrorDescription(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
+            throw std::invalid_argument(this->fitErrorDescription(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
         adjustment = static_cast<double>(n) / (n - 1);
     }
     DoublePair stats = GetSampleMeanAndVariance(sample);
@@ -196,7 +196,7 @@ void NormalRand::Fit(const std::vector<double> &sample, bool unbiased)
 void NormalRand::Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased)
 {
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     Fit(sample, unbiased);
 

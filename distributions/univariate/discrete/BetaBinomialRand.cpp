@@ -9,9 +9,9 @@ BetaBinomialRand::BetaBinomialRand(int number, double shape1, double shape2)
 
 String BetaBinomialRand::Name() const
 {
-    return "Beta-Binomial(" + toStringWithPrecision(GetNumber()) + ", "
-                            + toStringWithPrecision(GetAlpha()) + ", "
-                            + toStringWithPrecision(GetBeta()) + ")";
+    return "Beta-Binomial(" + this->toStringWithPrecision(GetNumber()) + ", "
+                            + this->toStringWithPrecision(GetAlpha()) + ", "
+                            + this->toStringWithPrecision(GetBeta()) + ")";
 }
 
 void BetaBinomialRand::SetParameters(int number, double shape1, double shape2)

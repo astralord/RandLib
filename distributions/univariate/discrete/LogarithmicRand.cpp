@@ -8,7 +8,7 @@ LogarithmicRand::LogarithmicRand(double probability)
 
 String LogarithmicRand::Name() const
 {
-    return "Logarithmic(" + toStringWithPrecision(GetProbability()) + ")";
+    return "Logarithmic(" + this->toStringWithPrecision(GetProbability()) + ")";
 }
 
 void LogarithmicRand::SetProbability(double probability)

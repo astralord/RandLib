@@ -8,7 +8,7 @@ VonMisesRand::VonMisesRand(double location, double concentration) : CircularDist
 
 String VonMisesRand::Name() const
 {
-    return "von Mises(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetConcentration()) + ")";
+    return "von Mises(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetConcentration()) + ")";
 }
 
 void VonMisesRand::SetConcentration(double concentration)

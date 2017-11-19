@@ -9,7 +9,7 @@ ZetaRand::ZetaRand(double exponent)
 
 String ZetaRand::Name() const
 {
-    return "Zeta(" + toStringWithPrecision(GetExponent()) + ")";
+    return "Zeta(" + this->toStringWithPrecision(GetExponent()) + ")";
 }
 
 void ZetaRand::SetExponent(double exponent)

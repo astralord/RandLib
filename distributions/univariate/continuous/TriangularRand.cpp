@@ -9,9 +9,9 @@ TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit
 String TriangularRand::Name() const
 {
     return "Triangular("
-            + toStringWithPrecision(MinValue()) + ", "
-            + toStringWithPrecision(Mode()) + ", "
-            + toStringWithPrecision(MaxValue()) + ")";
+            + this->toStringWithPrecision(MinValue()) + ", "
+            + this->toStringWithPrecision(Mode()) + ", "
+            + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
 void TriangularRand::SetParameters(double lowerLimit, double mode, double upperLimit)

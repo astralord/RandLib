@@ -8,7 +8,7 @@ UniformRand::UniformRand(double minValue, double maxValue) :
 
 String UniformRand::Name() const
 {
-    return "Uniform(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
+    return "Uniform(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
 double UniformRand::f(const double & x) const
@@ -156,7 +156,7 @@ constexpr char UniformRand::TOO_SMALL_B[];
 void UniformRand::FitMinimum(const std::vector<double> &sample, bool unbiased)
 {
     if (!allElementsAreNotBiggerThan(b, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + toStringWithPrecision(b)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(b)));
     double minVar = *std::min_element(sample.begin(), sample.end());
 
     if (unbiased == true) {
@@ -164,7 +164,7 @@ void UniformRand::FitMinimum(const std::vector<double> &sample, bool unbiased)
         /// E[min] = b - n / (n + 1) * (b - a)
         double minVarAdj = (minVar * (n + 1) - b) / n;
         if (!allElementsAreNotSmallerThan(minVarAdj, sample))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
+            throw std::runtime_error(this->fitErrorDescription(WRONG_RETURN, TOO_LARGE_A + this->toStringWithPrecision(minVarAdj)));
         SetSupport(minVarAdj, b);
     }
     else {
@@ -175,7 +175,7 @@ void UniformRand::FitMinimum(const std::vector<double> &sample, bool unbiased)
 void UniformRand::FitMaximum(const std::vector<double> &sample, bool unbiased)
 {
     if (!allElementsAreNotSmallerThan(a, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(a)));
     double maxVar = *std::max_element(sample.begin(), sample.end());
 
     if (unbiased == true) {
@@ -183,7 +183,7 @@ void UniformRand::FitMaximum(const std::vector<double> &sample, bool unbiased)
         /// E[max] = (b - a) * n / (n + 1) + a
         double maxVarAdj = (maxVar * (n + 1) - a) / n;
         if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));
+            throw std::runtime_error(this->fitErrorDescription(WRONG_RETURN, TOO_SMALL_B + this->toStringWithPrecision(maxVarAdj)));
         SetSupport(a, maxVarAdj);
     }
     else {
@@ -202,9 +202,9 @@ void UniformRand::Fit(const std::vector<double> &sample, bool unbiased)
         /// E[max] = (b - a) * n / (n + 1) + a
         double maxVarAdj = (maxVar * n - minVar) / (n - 1);
         if (!allElementsAreNotSmallerThan(minVarAdj, sample))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_LARGE_A + toStringWithPrecision(minVarAdj)));
+            throw std::runtime_error(this->fitErrorDescription(WRONG_RETURN, TOO_LARGE_A + this->toStringWithPrecision(minVarAdj)));
         if (!allElementsAreNotBiggerThan(maxVarAdj, sample))
-            throw std::runtime_error(fitErrorDescription(WRONG_RETURN, TOO_SMALL_B + toStringWithPrecision(maxVarAdj)));
+            throw std::runtime_error(this->fitErrorDescription(WRONG_RETURN, TOO_SMALL_B + this->toStringWithPrecision(maxVarAdj)));
         SetSupport(minVarAdj, maxVarAdj);
     }
     else {
@@ -215,7 +215,7 @@ void UniformRand::Fit(const std::vector<double> &sample, bool unbiased)
 ParetoRand UniformRand::FitMaximumBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution, bool MAP)
 {
     if (!allElementsAreNotSmallerThan(a, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(a)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(a)));
     double maxVar = *std::max_element(sample.begin(), sample.end());
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;

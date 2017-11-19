@@ -8,10 +8,10 @@ NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision
 
 String NormalInverseGammaRand::Name() const
 {
-    return "Normal-Inverse-Gamma(" + toStringWithPrecision(GetLocation()) + ", "
-                                   + toStringWithPrecision(GetPrecision()) + ", "
-                                   + toStringWithPrecision(GetShape()) + ", "
-                                   + toStringWithPrecision(GetRate()) + ")";
+    return "Normal-Inverse-Gamma(" + this->toStringWithPrecision(GetLocation()) + ", "
+                                   + this->toStringWithPrecision(GetPrecision()) + ", "
+                                   + this->toStringWithPrecision(GetShape()) + ", "
+                                   + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 void NormalInverseGammaRand::SetParameters(double location, double precision, double shape, double rate)

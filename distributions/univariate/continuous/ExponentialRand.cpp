@@ -4,7 +4,7 @@
 
 String ExponentialRand::Name() const
 {
-    return "Exponential(" + toStringWithPrecision(GetRate()) + ")";
+    return "Exponential(" + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 double ExponentialRand::f(const double & x) const

@@ -160,7 +160,7 @@ std::complex<double> NakagamiDistribution::CFImpl(double t) const
 /// NAKAGAMI
 String NakagamiRand::Name() const
 {
-    return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
+    return "Nakagami(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetSpread()) + ")";
 }
 
 
@@ -172,7 +172,7 @@ ChiRand::ChiRand(int degree)
 
 String ChiRand::Name() const
 {
-    return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
+    return "Chi(" + this->toStringWithPrecision(GetDegree()) +  ")";
 }
 
 void ChiRand::SetDegree(int degree)
@@ -212,7 +212,7 @@ MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale)
 
 String MaxwellBoltzmannRand::Name() const
 {
-    return "Maxwell-Boltzmann(" + toStringWithPrecision(GetScale()) + ")";
+    return "Maxwell-Boltzmann(" + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void MaxwellBoltzmannRand::SetScale(double scale)
@@ -307,7 +307,7 @@ RayleighRand::RayleighRand(double scale)
 
 String RayleighRand::Name() const
 {
-    return "Rayleigh(" + toStringWithPrecision(GetScale()) + ")";
+    return "Rayleigh(" + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void RayleighRand::SetScale(double scale)
@@ -400,8 +400,8 @@ long double RayleighRand::ExcessKurtosis() const
 void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
 {
     /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     size_t n = sample.size();
     DoublePair stats = GetSampleMeanAndVariance(sample);
     double rawMoment = stats.second + stats.first * stats.first;

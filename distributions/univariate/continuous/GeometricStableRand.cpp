@@ -512,10 +512,10 @@ GeometricStableRand::GeometricStableRand(double exponent, double skewness, doubl
 String GeometricStableRand::Name() const
 {
     return "Geometric Stable("
-            + toStringWithPrecision(GetExponent()) + ", "
-            + toStringWithPrecision(GetSkewness()) + ", "
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(GetExponent()) + ", "
+            + this->toStringWithPrecision(GetSkewness()) + ", "
+            + this->toStringWithPrecision(GetScale()) + ", "
+            + this->toStringWithPrecision(GetLocation()) + ")";
 }
 
 void GeometricStableRand::ChangeAsymmetry()

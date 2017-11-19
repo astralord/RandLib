@@ -8,7 +8,7 @@ LevyRand::LevyRand(double location, double scale)
 
 String LevyRand::Name() const
 {
-    return "Levy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Levy(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 double LevyRand::f(const double & x) const
@@ -64,7 +64,7 @@ void LevyRand::FitScale(const std::vector<double> &sample)
 {
     /// Sanity check
     if (!allElementsAreNotSmallerThan(mu, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(mu)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(mu)));
     long double invSum = 0.0;
     for (double var : sample)
         invSum += 1.0 / (var - mu);

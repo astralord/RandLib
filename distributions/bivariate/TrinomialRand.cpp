@@ -7,9 +7,9 @@ TrinomialRand::TrinomialRand(int number, double probability1, double probability
 
 String TrinomialRand::Name() const
 {
-    return "Trinomial(" + toStringWithPrecision(GetNumber()) + ", "
-                        + toStringWithPrecision(GetFirstProbability()) + ", "
-                        + toStringWithPrecision(GetSecondProbability()) + ")";
+    return "Trinomial(" + this->toStringWithPrecision(GetNumber()) + ", "
+                        + this->toStringWithPrecision(GetFirstProbability()) + ", "
+                        + this->toStringWithPrecision(GetSecondProbability()) + ")";
 }
 
 void TrinomialRand::SetParameters(int number, double probability1, double probability2)

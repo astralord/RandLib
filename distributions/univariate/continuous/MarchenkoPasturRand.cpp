@@ -8,8 +8,8 @@ MarchenkoPasturRand::MarchenkoPasturRand(double ratio, double scale)
 
 String MarchenkoPasturRand::Name() const
 {
-    return "Marchenko-Pastur(" + toStringWithPrecision(GetRatio()) + ", "
-            + toStringWithPrecision(GetScale()) + ")";
+    return "Marchenko-Pastur(" + this->toStringWithPrecision(GetRatio()) + ", "
+            + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void MarchenkoPasturRand::SetParameters(double ratio, double scale)

@@ -7,8 +7,8 @@ NoncentralChiSquaredRand::NoncentralChiSquaredRand(double degree, double noncent
 
 String NoncentralChiSquaredRand::Name() const
 {
-    return "Noncentral Chi-Squared(" + toStringWithPrecision(GetDegree()) + ", "
-            + toStringWithPrecision(GetNoncentrality()) + ")";
+    return "Noncentral Chi-Squared(" + this->toStringWithPrecision(GetDegree()) + ", "
+            + this->toStringWithPrecision(GetNoncentrality()) + ")";
 }
 
 void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality)

@@ -8,8 +8,8 @@ ZipfRand::ZipfRand(double exponent, int number)
 
 String ZipfRand::Name() const
 {
-    return "Zipf(" + toStringWithPrecision(GetExponent()) + ", "
-                   + toStringWithPrecision(GetNumber()) + ")";
+    return "Zipf(" + this->toStringWithPrecision(GetExponent()) + ", "
+                   + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
 void ZipfRand::SetParameters(double exponent, int number)

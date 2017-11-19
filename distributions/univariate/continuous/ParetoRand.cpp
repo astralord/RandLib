@@ -9,7 +9,7 @@ ParetoRand::ParetoRand(double shape, double scale)
 
 String ParetoRand::Name() const
 {
-    return "Pareto(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Pareto(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 void ParetoRand::SetShape(double shape)
@@ -169,10 +169,10 @@ double ParetoRand::Entropy() const
 void ParetoRand::FitShape(const std::vector<double> &sample, bool unbiased)
 {
     if (!allElementsAreNotSmallerThan(sigma, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(sigma)));
-    double invShape = GetSampleLogMean(sample) - logSigma;
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(sigma)));
+    double invShape = this->GetSampleLogMean(sample) - logSigma;
     if (invShape == 0.0)
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "Possibly all the elements of the sample coincide with the lower boundary σ."));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, "Possibly all the elements of the sample coincide with the lower boundary σ."));
     double shape = 1.0 / invShape;
     if (unbiased)
         shape *= (1.0 - 1.0 / sample.size());
@@ -183,7 +183,7 @@ void ParetoRand::FitScale(const std::vector<double> &sample, bool unbiased)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     double scale = unbiased ? (1.0 - 1.0 / (sample.size() * alpha)) * minVar : minVar;
     SetScale(scale);
 }
@@ -192,12 +192,12 @@ void ParetoRand::Fit(const std::vector<double> &sample, bool unbiased)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
     if (minVar <= 0)
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
 
     double logBiasedSigma = std::log(minVar);
-    double invShape = GetSampleLogMean(sample) - logBiasedSigma;
+    double invShape = this->GetSampleLogMean(sample) - logBiasedSigma;
     if (invShape == 0.0)
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "Possibly all the elements of the sample are the same."));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, "Possibly all the elements of the sample are the same."));
     double shape = 1.0 / invShape;
 
     double scale = minVar;
@@ -213,7 +213,7 @@ void ParetoRand::Fit(const std::vector<double> &sample, bool unbiased)
 GammaRand<> ParetoRand::FitShapeBayes(const std::vector<double> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
 {
     if (!allElementsAreNotSmallerThan(sigma, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(sigma)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(sigma)));
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;
     double newRate = priorDistribution.GetRate() + n * (GetSampleLogMean(sample) - logSigma);

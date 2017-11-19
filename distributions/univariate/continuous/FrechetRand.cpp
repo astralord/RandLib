@@ -8,9 +8,9 @@ FrechetRand::FrechetRand(double shape, double scale, double location)
 
 String FrechetRand::Name() const
 {
-    return "Frechet(" + toStringWithPrecision(GetShape()) + ", "
-                      + toStringWithPrecision(GetScale()) + ", "
-                      + toStringWithPrecision(GetLocation()) + ")";
+    return "Frechet(" + this->toStringWithPrecision(GetShape()) + ", "
+                      + this->toStringWithPrecision(GetScale()) + ", "
+                      + this->toStringWithPrecision(GetLocation()) + ")";
 }
 
 void FrechetRand::SetParameters(double shape, double scale, double location)

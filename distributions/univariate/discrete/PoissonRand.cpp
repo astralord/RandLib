@@ -9,7 +9,7 @@ PoissonRand::PoissonRand(double rate)
 
 String PoissonRand::Name() const
 {
-    return "Poisson(" + toStringWithPrecision(GetRate()) + ")";
+    return "Poisson(" + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 void PoissonRand::SetGeneratorConstants()
@@ -243,7 +243,7 @@ long double PoissonRand::ExcessKurtosis() const
 void PoissonRand::Fit(const std::vector<int> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     SetRate(GetSampleMean(sample));
 }
 
@@ -252,7 +252,7 @@ void PoissonRand::Fit(const std::vector<int> &sample, DoublePair &confidenceInte
     size_t n = sample.size();
 
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(fitErrorDescription(WRONG_LEVEL, "Alpha is equal to " + toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Alpha is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     Fit(sample);
 
@@ -266,7 +266,7 @@ void PoissonRand::Fit(const std::vector<int> &sample, DoublePair &confidenceInte
 GammaRand<> PoissonRand::FitBayes(const std::vector<int> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     GammaRand<> posteriorDistribution(alpha + GetSampleSum(sample), beta + sample.size());

@@ -148,7 +148,7 @@ long double RaisedCosineDistribution::ExcessKurtosis() const
 
 String RaisedCosineRand::Name() const
 {
-    return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Raised cosine(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 String RaabGreenRand::Name() const

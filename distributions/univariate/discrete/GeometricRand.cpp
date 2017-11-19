@@ -4,7 +4,7 @@
 
 String GeometricRand::Name() const
 {
-    return "Geometric(" + toStringWithPrecision(GetProbability()) + ")";
+    return "Geometric(" + this->toStringWithPrecision(GetProbability()) + ")";
 }
 
 void GeometricRand::SetProbability(double probability)

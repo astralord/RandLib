@@ -7,7 +7,7 @@ UniformDiscreteRand::UniformDiscreteRand(int minValue, int maxValue)
 
 String UniformDiscreteRand::Name() const
 {
-    return "Uniform Discrete(" + toStringWithPrecision(MinValue()) + ", " + toStringWithPrecision(MaxValue()) + ")";
+    return "Uniform Discrete(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
 void UniformDiscreteRand::SetBoundaries(int minValue, int maxValue)

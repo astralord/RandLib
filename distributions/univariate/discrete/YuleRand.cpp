@@ -8,7 +8,7 @@ X(shape, 1.0)
 
 String YuleRand::Name() const
 {
-    return "Yule(" + toStringWithPrecision(GetShape()) + ")";
+    return "Yule(" + this->toStringWithPrecision(GetShape()) + ")";
 }
 
 void YuleRand::SetShape(double shape)

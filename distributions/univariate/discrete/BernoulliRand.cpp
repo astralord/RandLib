@@ -9,7 +9,7 @@ BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1, proba
 
 String BernoulliRand::Name() const
 {
-    return "Bernoulli(" + toStringWithPrecision(GetProbability()) + ")";
+    return "Bernoulli(" + this->toStringWithPrecision(GetProbability()) + ")";
 }
 
 void BernoulliRand::SetProbability(double probability)
