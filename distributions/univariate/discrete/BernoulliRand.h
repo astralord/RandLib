@@ -16,7 +16,7 @@
  * X ~ Multin(1, 1 - p, p) <BR>
  * 2X - 1 ~ Rademacher
  */
-class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution
+class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution<int>
 {
     unsigned long long boundary = 0;///< coefficient for faster random number generation
 

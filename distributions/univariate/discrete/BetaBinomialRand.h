@@ -14,7 +14,8 @@
  * Related distributions: <BR>
  * If X ~ Binomial(n, p), where p ~ Beta(α, β), then X ~ BB(n, α, β)
  */
-class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution<>
+template< typename IntType = int >
+class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution<IntType>
 {
     int n = 1; ///< number of experiments
     double pmfCoef = 0; ///< log(n!) - log(Γ(α + β + n)) - log(B(α, β))
@@ -24,31 +25,31 @@ public:
     BetaBinomialRand(int number, double shape1, double shape2);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    int MinValue() const override { return 0; }
-    int MaxValue() const override { return n; }
+    IntType MinValue() const override { return 0; }
+    IntType MaxValue() const override { return n; }
 
     void SetParameters(int number, double shape1, double shape2);
     inline int GetNumber() const { return n; }
     inline double GetAlpha() const { return B.GetAlpha(); }
     inline double GetBeta() const { return B.GetBeta(); }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
 
 private:
-    int VariateUniform() const;
-    int VariateBeta() const;
+    IntType VariateUniform() const;
+    IntType VariateBeta() const;
 
 public:
-    int Variate() const override;
-    void Sample(std::vector<int> &outputData) const override;
+    IntType Variate() const override;
+    void Sample(std::vector<IntType> &outputData) const override;
 
     void Reseed(unsigned long seed) const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    int Mode() const override;
+    IntType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 };

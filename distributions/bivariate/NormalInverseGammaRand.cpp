@@ -49,12 +49,12 @@ double NormalInverseGammaRand<RealType>::f(const Pair<RealType> &point) const
 template< typename RealType >
 double NormalInverseGammaRand<RealType>::logf(const Pair<RealType> &point) const
 {
-    double sigmaSq = point.second;
+    RealType sigmaSq = point.second;
     if (sigmaSq <= 0)
         return -INFINITY;
-    double x = point.first;
-    double y = (alpha + 1.5) * std::log(sigmaSq);
-    double degree = x - mu;
+    RealType x = point.first;
+    RealType y = (alpha + 1.5) * std::log(sigmaSq);
+    RealType degree = x - mu;
     degree *= degree;
     degree *= lambda;
     degree += 2 * beta;
@@ -66,16 +66,16 @@ double NormalInverseGammaRand<RealType>::logf(const Pair<RealType> &point) const
 template< typename RealType >
 double NormalInverseGammaRand<RealType>::F(const Pair<RealType> &point) const
 {
-    double sigmaSq = point.second;
+    RealType sigmaSq = point.second;
     if (sigmaSq <= 0)
         return 0.0;
-    double x = point.first;
-    double y = 0.5 * lambda;
-    double xmmu = x - mu;
+    RealType x = point.first;
+    RealType y = 0.5 * lambda;
+    RealType xmmu = x - mu;
     y *= xmmu * xmmu / sigmaSq;
     y = std::erfc(-std::sqrt(y));
-    double z = beta / sigmaSq;
-    double temp = alpha * std::log(z) - z;
+    RealType z = beta / sigmaSq;
+    RealType temp = alpha * std::log(z) - z;
     y *= std::exp(temp - this->Y.GetLogGammaShape());
     y *= 0.5 / sigmaSq;
     return y;
