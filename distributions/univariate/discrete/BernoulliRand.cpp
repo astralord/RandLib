@@ -4,7 +4,7 @@
 
 BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1, probability)
 {
-    boundary = q * localRandGenerator.MaxValue();
+    boundary = q * this->localRandGenerator.MaxValue();
 }
 
 String BernoulliRand::Name() const
@@ -17,7 +17,7 @@ void BernoulliRand::SetProbability(double probability)
     if (probability < 0.0 || probability > 1.0)
         throw std::invalid_argument("Bernoulli distribution: probability parameter should in interval [0, 1]");
     SetParameters(1, probability);
-    boundary = q * localRandGenerator.MaxValue();
+    boundary = q * this->localRandGenerator.MaxValue();
 }
 
 double BernoulliRand::P(const int & k) const
@@ -42,7 +42,7 @@ double BernoulliRand::S(const int & k) const
 
 int BernoulliRand::Variate() const
 {
-    return localRandGenerator.Variate() > boundary;
+    return this->localRandGenerator.Variate() > boundary;
 }
 
 int BernoulliRand::Variate(double probability, RandGenerator &randGenerator)
@@ -73,7 +73,7 @@ void BernoulliRand::Sample(std::vector<int> &outputData) const
 {
     if (p == 0.5) {
         for (int & var : outputData)
-            var = StandardVariate(localRandGenerator);
+            var = StandardVariate(this->localRandGenerator);
     }
     else {
         for (int & var : outputData)

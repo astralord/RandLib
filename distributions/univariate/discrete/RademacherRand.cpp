@@ -29,7 +29,7 @@ double RademacherRand::F(const int & k) const
 
 int RademacherRand::Variate() const
 {
-    return BernoulliRand::StandardVariate(localRandGenerator) ? 1 : -1;
+    return BernoulliRand::StandardVariate(this->localRandGenerator) ? 1 : -1;
 }
 
 long double RademacherRand::Mean() const

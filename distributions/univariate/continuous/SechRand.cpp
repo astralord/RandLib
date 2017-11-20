@@ -1,89 +1,105 @@
 #include "SechRand.h"
 #include "CauchyRand.h"
 
-SechRand::SechRand()
+template < typename RealType >
+SechRand<RealType>::SechRand()
 {
 }
 
-String SechRand::Name() const
+template < typename RealType >
+String SechRand<RealType>::Name() const
 {
     return "Hyperbolic secant";
 }
 
-double SechRand::f(const double & x) const
+template < typename RealType >
+double SechRand<RealType>::f(const RealType & x) const
 {
     return 0.5 / std::cosh(M_PI_2 * x);
 }
 
-double SechRand::logf(const double & x) const
+template < typename RealType >
+double SechRand<RealType>::logf(const RealType & x) const
 {
     return M_PI_2 * x - RandMath::log1pexp(M_PI * x);
 }
 
-double SechRand::F(const double & x) const
+template < typename RealType >
+double SechRand<RealType>::F(const RealType & x) const
 {
     double y = std::exp(M_PI_2 * x);
     return M_2_PI * RandMath::atan(y);
 }
 
-double SechRand::Variate() const
+template < typename RealType >
+RealType SechRand<RealType>::Variate() const
 {
-    double y = std::fabs(CauchyRand::StandardVariate(localRandGenerator));
+    RealType y = std::fabs(CauchyRand<RealType>::StandardVariate(this->localRandGenerator));
     return M_2_PI * std::log(y);
 }
 
-long double SechRand::Mean() const
+template < typename RealType >
+long double SechRand<RealType>::Mean() const
 {
     return 0.0;
 }
 
-long double SechRand::Variance() const
+template < typename RealType >
+long double SechRand<RealType>::Variance() const
 {
     return 1.0;
 }
 
-std::complex<double> SechRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> SechRand<RealType>::CFImpl(double t) const
 {
     return 1.0 / std::cosh(t);
 }
 
-double SechRand::quantileImpl(double p) const
+template < typename RealType >
+RealType SechRand<RealType>::quantileImpl(double p) const
 {
-    double x = M_PI_2 * p;
+    RealType x = M_PI_2 * p;
     x = std::tan(x);
     x = std::log(x);
     return M_2_PI * x;
 }
 
-double SechRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType SechRand<RealType>::quantileImpl1m(double p) const
 {
-    double x = M_PI_2 * p;
+    RealType x = M_PI_2 * p;
     x = std::tan(x);
     x = -std::log(x);
     return M_2_PI * x;
 }
 
-double SechRand::Median() const
+template < typename RealType >
+RealType SechRand<RealType>::Median() const
 {
     return 0.0;
 }
 
-double SechRand::Mode() const
+template < typename RealType >
+RealType SechRand<RealType>::Mode() const
 {
     return 0.0;
 }
 
-long double SechRand::Skewness() const
+template < typename RealType >
+long double SechRand<RealType>::Skewness() const
 {
     return 0.0;
 }
 
-long double SechRand::ExcessKurtosis() const
+template < typename RealType >
+long double SechRand<RealType>::ExcessKurtosis() const
 {
     return 2.0;
 }
 
-double SechRand::Entropy() const
+template < typename RealType >
+double SechRand<RealType>::Entropy() const
 {
     return 2.0 * M_2_PI * M_CATALAN;
 }

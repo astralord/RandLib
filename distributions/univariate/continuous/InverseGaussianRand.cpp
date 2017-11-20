@@ -2,17 +2,20 @@
 #include "NormalRand.h"
 #include "UniformRand.h"
 
-InverseGaussianRand::InverseGaussianRand(double mean, double shape)
+template < typename RealType >
+InverseGaussianRand<RealType>::InverseGaussianRand(double mean, double shape)
 {
     SetParameters(mean, shape);
 }
 
-String InverseGaussianRand::Name() const
+template < typename RealType >
+String InverseGaussianRand<RealType>::Name() const
 {
     return "Inverse-Gaussian(" + this->toStringWithPrecision(GetMean()) + ", " + this->toStringWithPrecision(GetShape()) + ")";
 }
 
-void InverseGaussianRand::SetParameters(double mean, double shape)
+template < typename RealType >
+void InverseGaussianRand<RealType>::SetParameters(double mean, double shape)
 {
     if (mean <= 0.0)
         throw std::invalid_argument("Inverse-Gaussian distribution: mean should be positive");
@@ -25,12 +28,14 @@ void InverseGaussianRand::SetParameters(double mean, double shape)
     cdfCoef = std::exp(2 * lambda / mu);
 }
 
-double InverseGaussianRand::f(const double & x) const
+template < typename RealType >
+double InverseGaussianRand<RealType>::f(const RealType & x) const
 {
     return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
-double InverseGaussianRand::logf(const double & x) const
+template < typename RealType >
+double InverseGaussianRand<RealType>::logf(const RealType & x) const
 {
     if (x <= 0.0)
         return -INFINITY;
@@ -42,7 +47,8 @@ double InverseGaussianRand::logf(const double & x) const
     return y + z;
 }
 
-double InverseGaussianRand::F(const double & x) const
+template < typename RealType >
+double InverseGaussianRand<RealType>::F(const RealType & x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -53,7 +59,8 @@ double InverseGaussianRand::F(const double & x) const
     return 0.5 * y;
 }
 
-double InverseGaussianRand::S(const double & x) const
+template < typename RealType >
+double InverseGaussianRand<RealType>::S(const RealType & x) const
 {
     if (x <= 0.0)
         return 1.0;
@@ -64,13 +71,14 @@ double InverseGaussianRand::S(const double & x) const
     return 0.5 * y;
 }
 
-double InverseGaussianRand::Variate() const
+template < typename RealType >
+RealType InverseGaussianRand<RealType>::Variate() const
 {
-    double X = NormalRand::StandardVariate(localRandGenerator);
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    RealType X = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
+    RealType U = UniformRand::StandardVariate(this->localRandGenerator);
     X *= X;
-    double mupX = mu * X;
-    double y = 4 * lambda + mupX;
+    RealType mupX = mu * X;
+    RealType y = 4 * lambda + mupX;
     y = std::sqrt(y * mupX);
     y -= mupX;
     y *= -0.5 / lambda;
@@ -80,17 +88,20 @@ double InverseGaussianRand::Variate() const
     return mu * y;
 }
 
-long double InverseGaussianRand::Mean() const
+template < typename RealType >
+long double InverseGaussianRand<RealType>::Mean() const
 {
     return mu;
 }
 
-long double InverseGaussianRand::Variance() const
+template < typename RealType >
+long double InverseGaussianRand<RealType>::Variance() const
 {
     return mu * mu * mu / lambda;
 }
 
-std::complex<double> InverseGaussianRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> InverseGaussianRand<RealType>::CFImpl(double t) const
 {
     double im = mu * mu;
     im *= t / lambda;
@@ -100,21 +111,24 @@ std::complex<double> InverseGaussianRand::CFImpl(double t) const
     return std::exp(y);
 }
 
-double InverseGaussianRand::Mode() const
+template < typename RealType >
+RealType InverseGaussianRand<RealType>::Mode() const
 {
-    double aux = 1.5 * mu / lambda;
-    double mode = 1 + aux * aux;
+    RealType aux = 1.5 * mu / lambda;
+    RealType mode = 1 + aux * aux;
     mode = std::sqrt(mode);
     mode -= aux;
     return mu * mode;
 }
 
-long double InverseGaussianRand::Skewness() const
+template < typename RealType >
+long double InverseGaussianRand<RealType>::Skewness() const
 {
     return 3 * std::sqrt(mu / lambda);
 }
 
-long double InverseGaussianRand::ExcessKurtosis() const
+template < typename RealType >
+long double InverseGaussianRand<RealType>::ExcessKurtosis() const
 {
     return 15 * mu / lambda;
 }

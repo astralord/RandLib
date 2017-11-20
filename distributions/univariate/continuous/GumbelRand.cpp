@@ -53,7 +53,7 @@ double GumbelRand::S(const double & x) const
 
 double GumbelRand::Variate() const
 {
-    return mu + beta * GumbelRand::StandardVariate(localRandGenerator);
+    return mu + beta * GumbelRand::StandardVariate(this->localRandGenerator);
 }
 
 double GumbelRand::StandardVariate(RandGenerator &randGenerator)

@@ -55,7 +55,7 @@ double CantorRand::Variate() const
 {
     long double sum = 0.0;
     for (int i = 0; i != n; ++i) {
-        sum += table[i] * BernoulliRand::StandardVariate(localRandGenerator);
+        sum += table[i] * BernoulliRand::StandardVariate(this->localRandGenerator);
     }
     return sum + sum;
 }
@@ -112,7 +112,7 @@ std::complex<double> CantorRand::CFImpl(double t) const
 
 double CantorRand::Median() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(this->localRandGenerator);
     return (U + 1.0) / 3.0;
 }
 

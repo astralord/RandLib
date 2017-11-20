@@ -44,9 +44,9 @@ int ZetaRand::Variate() const
     /// rejection sampling from rounded down Pareto distribution
     size_t iter = 0;
     do {
-        double X = std::floor(ParetoRand::StandardVariate(sm1, localRandGenerator));
+        double X = std::floor(ParetoRand::StandardVariate(sm1, this->localRandGenerator));
         double T = std::pow(1.0 + 1.0 / X, sm1);
-        double V = UniformRand::StandardVariate(localRandGenerator);
+        double V = UniformRand::StandardVariate(this->localRandGenerator);
         /// there was a typo in the book - '<=' instead of '>'
         if (V * X * (T - 1) <= b * T )
             return X;

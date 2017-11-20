@@ -76,7 +76,7 @@ int HyperGeometricRand::Variate() const
     int sum = 0;
     for (int i = 1; i <= n; ++i)
     {
-        if (BernoulliRand::Variate(p, localRandGenerator) && ++sum >= K)
+        if (BernoulliRand::Variate(p, this->localRandGenerator) && ++sum >= K)
             return sum;
         p = K - sum;
         p /= N - i;

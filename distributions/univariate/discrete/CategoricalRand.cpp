@@ -55,7 +55,7 @@ double CategoricalRand::F(const int & k) const
 
 int CategoricalRand::Variate() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(this->localRandGenerator);
     return quantileImpl(U);
 }
 

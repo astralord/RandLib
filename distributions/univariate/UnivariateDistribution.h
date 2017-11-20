@@ -246,28 +246,28 @@ protected:
 
 public:
     /**
-     * @fn GetSampleSum
+     * @fn this->GetSampleSum
      * @param sample
      * @return sum of all elements in a sample
      */
     static long double GetSampleSum(const std::vector<T> &sample);
 
     /**
-     * @fn GetSampleMean
+     * @fn this->GetSampleMean
      * @param sample
      * @return arithmetic average
      */
     static long double GetSampleMean(const std::vector<T> &sample);
 
     /**
-     * @fn GetSampleLogMean
+     * @fn this->GetSampleLogMean
      * @param sample
      * @return arithmetic log-average
      */
     static long double GetSampleLogMean(const std::vector<T> &sample);
 
     /**
-     * @fn GetSampleVariance
+     * @fn this->GetSampleVariance
      * @param sample
      * @param mean known mean value
      * @return sample second central moment
@@ -275,7 +275,7 @@ public:
     static long double GetSampleVariance(const std::vector<T> &sample, double mean);
 
     /**
-     * @fn GetSampleLogVariance
+     * @fn this->GetSampleLogVariance
      * @param sample
      * @param logMean known log-mean value
      * @return sample log-variance
@@ -283,21 +283,21 @@ public:
     static long double GetSampleLogVariance(const std::vector<T> &sample, double logMean);
 
     /**
-     * @fn GetSampleMeanAndVariance
+     * @fn this->GetSampleMeanAndVariance
      * @param sample
      * @return sample mean and variance
      */
     static LongDoublePair GetSampleMeanAndVariance(const std::vector<T> &sample);
 
     /**
-     * @fn GetSampleLogMeanAndVariance
+     * @fn this->GetSampleLogMeanAndVariance
      * @param sample
      * @return sample log-mean and log-variance
      */
     static LongDoublePair GetSampleLogMeanAndVariance(const std::vector<T> &sample);
 
     /**
-     * @brief GetSampleStatistics
+     * @brief this->GetSampleStatistics
      * @param sample
      * @return sample mean, variance, skewness and excess kurtosis
      */

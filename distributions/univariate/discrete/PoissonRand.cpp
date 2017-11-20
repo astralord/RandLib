@@ -97,11 +97,11 @@ int PoissonRand::variateRejection() const
     int X = 0;
     do {
         bool reject = false;
-        double W = 0.0;
-        double U = c * UniformRand::StandardVariate(localRandGenerator);
+        float W = 0.0;
+        float U = c * UniformRand::StandardVariate(this->localRandGenerator);
         if (U <= c1) {
-            double N = NormalRand::StandardVariate(localRandGenerator);
-            double Y = -std::fabs(N) * sqrtMu;
+            float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
+            float Y = -std::fabs(N) * sqrtMu;
             X = std::floor(Y);
             if (X < -mu) {
                 reject = true;
@@ -111,8 +111,8 @@ int PoissonRand::variateRejection() const
             }
         }
         else if (U <= c2) {
-            double N = NormalRand::StandardVariate(localRandGenerator);
-            double Y = 1.0 + std::fabs(N) * sqrtMupHalfDelta;
+            float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
+            float Y = 1.0 + std::fabs(N) * sqrtMupHalfDelta;
             X = std::ceil(Y);
             if (X > delta) {
                 reject = true;
@@ -128,13 +128,13 @@ int PoissonRand::variateRejection() const
             X = 1;
         }
         else {
-            double V = ExponentialRand::StandardVariate(localRandGenerator);
-            double Y = delta + V * zeta;
+            float V = ExponentialRand::StandardVariate(this->localRandGenerator);
+            float Y = delta + V * zeta;
             X = std::ceil(Y);
             W = -(2.0 + Y) / zeta;
         }
 
-        if (!reject && W - ExponentialRand::StandardVariate(localRandGenerator) <= acceptanceFunction(X)) {
+        if (!reject && W - ExponentialRand::StandardVariate(this->localRandGenerator) <= acceptanceFunction(X)) {
             return X + mu;
         }
 
@@ -144,7 +144,7 @@ int PoissonRand::variateRejection() const
 
 int PoissonRand::variateInversion() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(this->localRandGenerator);
     int k = mu;
     double s = Fmu, p = Pmu;
     if (s < U)
@@ -179,7 +179,7 @@ int PoissonRand::Variate(double rate, RandGenerator &randGenerator)
         return -1;
     if (rate > 1000) {
         /// approximate with normal distribution
-        double X = NormalRand::StandardVariate(randGenerator);
+        float X = NormalRand<float>::StandardVariate(randGenerator);
         return std::floor(rate + std::sqrt(rate) * X);
     }
     int k = -1;
@@ -269,7 +269,7 @@ GammaRand<> PoissonRand::FitBayes(const std::vector<int> &sample, const GammaDis
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
-    GammaRand<> posteriorDistribution(alpha + GetSampleSum(sample), beta + sample.size());
+    GammaRand<> posteriorDistribution(alpha + this->GetSampleSum(sample), beta + sample.size());
     SetRate(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }

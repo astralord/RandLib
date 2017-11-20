@@ -16,22 +16,23 @@
  * Related distributions: <BR>
  * If G ~ Gamma(a + 1, b) and Z ~ Zeta(a + 1), then G / Z ~ Planck(a, b)
  */
-class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution<>
+template < typename RealType = long double >
+class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution<RealType>
 {
     double a = 1; ///< shape
     double b = 1; ///< scale
     double pdfCoef = M_LN2 + M_LN3 - 2 * M_LNPI; ///< coefficient for faster pdf calculations
 
     ZetaRand Z{};
-    GammaRand<double> G{2};
+    GammaRand<RealType> G{2};
 
 public:
     PlanckRand(double shape, double scale);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double shape, double scale);
     inline double GetShape() const { return a; }
@@ -46,16 +47,16 @@ private:
     double h(double t) const;
 
 public:
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double Variate() const override;
-    void Sample(std::vector<double> &outputData) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    RealType Variate() const override;
+    void Sample(std::vector<RealType> &outputData) const override;
 
     long double Mean() const override;
     long double SecondMoment() const override;
     long double Variance() const override;
-    double Mode() const override;
+    RealType Mode() const override;
     long double ThirdMoment() const override;
     long double Skewness() const override;
     long double FourthMoment() const override;

@@ -244,7 +244,7 @@ template< typename T >
 long double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
 {
     size_t n = sample.size();
-    return (n > 0) ? GetSampleSum(sample) / n : 0.0;
+    return (n > 0) ? this->GetSampleSum(sample) / n : 0.0;
 }
 
 template< typename T >

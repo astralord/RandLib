@@ -2,14 +2,16 @@
 #include "NormalRand.h"
 #include "CauchyRand.h"
 
-StudentTRand::StudentTRand(double degree, double location, double scale)
+template < typename RealType >
+StudentTRand<RealType>::StudentTRand(double degree, double location, double scale)
 {
     SetDegree(degree);
     SetLocation(location);
     SetScale(scale);
 }
 
-String StudentTRand::Name() const
+template < typename RealType >
+String StudentTRand<RealType>::Name() const
 {
     if (mu == 0.0 && sigma == 1.0)
         return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ")";
@@ -18,7 +20,8 @@ String StudentTRand::Name() const
                           + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-void StudentTRand::SetDegree(double degree)
+template < typename RealType >
+void StudentTRand<RealType>::SetDegree(double degree)
 {
     if (degree <= 0.0)
         throw std::invalid_argument("Student-t distribution: degree parameter should be positive");
@@ -32,12 +35,14 @@ void StudentTRand::SetDegree(double degree)
     pdfCoef -= 0.5 * std::log(nu);
 }
 
-void StudentTRand::SetLocation(double location)
+template < typename RealType >
+void StudentTRand<RealType>::SetLocation(double location)
 {
     mu = location;
 }
 
-void StudentTRand::SetScale(double scale)
+template < typename RealType >
+void StudentTRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Student-t distribution: scale should be positive");
@@ -45,7 +50,8 @@ void StudentTRand::SetScale(double scale)
     logSigma = std::log(sigma);
 }
 
-double StudentTRand::f(const double & x) const
+template < typename RealType >
+double StudentTRand<RealType>::f(const RealType & x) const
 {
     /// adjustment
     double x0 = x - mu;
@@ -62,7 +68,8 @@ double StudentTRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double StudentTRand::logf(const double & x) const
+template < typename RealType >
+double StudentTRand<RealType>::logf(const RealType & x) const
 {
     /// adjustment
     double x0 = x - mu;
@@ -81,7 +88,8 @@ double StudentTRand::logf(const double & x) const
     return pdfCoef + y - logSigma;
 }
 
-double StudentTRand::F(const double & x) const
+template < typename RealType >
+double StudentTRand<RealType>::F(const RealType & x) const
 {
     double x0 = x - mu;
     x0 /= sigma;
@@ -105,7 +113,8 @@ double StudentTRand::F(const double & x) const
     return (x0 > 0.0) ? (1.0 - y) : y;
 }
 
-double StudentTRand::S(const double & x) const
+template < typename RealType >
+double StudentTRand<RealType>::S(const RealType & x) const
 {
     double x0 = x - mu;
     x0 /= sigma;
@@ -129,45 +138,51 @@ double StudentTRand::S(const double & x) const
     return (x0 > 0.0) ? y : 1.0 - y;
 }
 
-double StudentTRand::Variate() const
+template < typename RealType >
+RealType StudentTRand<RealType>::Variate() const
 {
     if (nu == 1)
-        return mu + sigma * CauchyRand::StandardVariate(localRandGenerator);
-    return mu + sigma * NormalRand::StandardVariate(localRandGenerator) / Y.Variate();
+        return mu + sigma * CauchyRand<RealType>::StandardVariate(this->localRandGenerator);
+    return mu + sigma * NormalRand<RealType>::StandardVariate(this->localRandGenerator) / Y.Variate();
 }
 
-void StudentTRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void StudentTRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     if (nu == 1) {
-        for (double &var : outputData)
-            var = mu + sigma * CauchyRand::StandardVariate(localRandGenerator);
+        for (RealType &var : outputData)
+            var = mu + sigma * CauchyRand<RealType>::StandardVariate(this->localRandGenerator);
     }
     else {
         Y.Sample(outputData);
-        for (double &var : outputData)
-            var = mu + sigma * NormalRand::StandardVariate(localRandGenerator) / var;
+        for (RealType &var : outputData)
+            var = mu + sigma * NormalRand<RealType>::StandardVariate(this->localRandGenerator) / var;
     }
 }
 
-void StudentTRand::Reseed(unsigned long seed) const
+template < typename RealType >
+void StudentTRand<RealType>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     Y.Reseed(seed + 1);
 }
 
-long double StudentTRand::Mean() const
+template < typename RealType >
+long double StudentTRand<RealType>::Mean() const
 {
     return (nu > 1) ? mu : NAN;
 }
 
-long double StudentTRand::Variance() const
+template < typename RealType >
+long double StudentTRand<RealType>::Variance() const
 {
     if (nu > 2)
         return sigma * sigma * nu / (nu - 2);
     return (nu > 1) ? INFINITY : NAN;
 }
 
-std::complex<double> StudentTRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> StudentTRand<RealType>::CFImpl(double t) const
 {
     double x = std::sqrt(nu) * t * sigma; // value of sqrt(nu) can be hashed
     double vHalf = 0.5 * nu;
@@ -180,7 +195,8 @@ std::complex<double> StudentTRand::CFImpl(double t) const
     return std::exp(y) * cf;
 }
 
-double StudentTRand::quantileImpl(double p) const
+template < typename RealType >
+RealType StudentTRand<RealType>::quantileImpl(double p) const
 {
     double temp = p - 0.5;
     if (nu == 1)
@@ -194,10 +210,11 @@ double StudentTRand::quantileImpl(double p) const
         double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
         return mu + sigma * 2 * RandMath::sign(temp) * std::sqrt(beta);
     }
-    return ContinuousDistribution::quantileImpl(p);
+    return ContinuousDistribution<RealType>::quantileImpl(p);
 }
 
-double StudentTRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType StudentTRand<RealType>::quantileImpl1m(double p) const
 {
     double temp = 0.5 - p;
     if (nu == 1)
@@ -211,25 +228,29 @@ double StudentTRand::quantileImpl1m(double p) const
         double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
         return mu + sigma * 2 * RandMath::sign(temp) * std::sqrt(beta);
     }
-    return ContinuousDistribution::quantileImpl1m(p);
+    return ContinuousDistribution<RealType>::quantileImpl1m(p);
 }
 
-double StudentTRand::Median() const
+template < typename RealType >
+RealType StudentTRand<RealType>::Median() const
 {
     return mu;
 }
 
-double StudentTRand::Mode() const
+template < typename RealType >
+RealType StudentTRand<RealType>::Mode() const
 {
     return mu;
 }
 
-long double StudentTRand::Skewness() const
+template < typename RealType >
+long double StudentTRand<RealType>::Skewness() const
 {
     return (nu > 3) ? 0.0 : NAN;
 }
 
-long double StudentTRand::ExcessKurtosis() const
+template < typename RealType >
+long double StudentTRand<RealType>::ExcessKurtosis() const
 {
     if (nu > 4)
         return 6.0 / (nu - 4);

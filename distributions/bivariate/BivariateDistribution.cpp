@@ -13,13 +13,13 @@ void BivariateDistribution<T1, T2, T>::Reseed(unsigned long seed) const
 }
 
 template < class T1, class T2, typename T >
-DoublePair BivariateDistribution<T1, T2, T>::Mean() const
+LongDoublePair BivariateDistribution<T1, T2, T>::Mean() const
 {
     return std::make_pair(X.Mean(), Y.Mean());
 }
 
 template < class T1, class T2, typename T >
-DoubleTriplet BivariateDistribution<T1, T2, T>::Covariance() const
+LongDoubleTriplet BivariateDistribution<T1, T2, T>::Covariance() const
 {
     double var1 = X.Variance();
     double var2 = Y.Variance();
@@ -33,6 +33,14 @@ std::pair<T1, T2> BivariateDistribution<T1, T2, T>::GetMarginalDistributions() c
     return std::make_pair(X, Y);
 }
 
-template class BivariateDistribution<NormalRand, NormalRand, DoublePair>;
-template class BivariateDistribution<StudentTRand, InverseGammaRand, DoublePair>;
-template class BivariateDistribution<BinomialRand, BinomialRand, IntPair>;
+template class BivariateDistribution<NormalRand<float>, NormalRand<float>, float>;
+template class BivariateDistribution<NormalRand<double>, NormalRand<double>, double>;
+template class BivariateDistribution<NormalRand<long double>, NormalRand<long double>, long double>;
+
+template class BivariateDistribution<StudentTRand<float>, InverseGammaRand<float>, float>;
+template class BivariateDistribution<StudentTRand<double>, InverseGammaRand<double>, double>;
+template class BivariateDistribution<StudentTRand<long double>, InverseGammaRand<long double>, long double>;
+
+template class BivariateDistribution<BinomialRand<int>, BinomialRand<int>, int>;
+template class BivariateDistribution<BinomialRand<long int>, BinomialRand<long int>, long int>;
+template class BivariateDistribution<BinomialRand<long long int>, BinomialRand<long long int>, long long int>;

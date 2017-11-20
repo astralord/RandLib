@@ -108,8 +108,8 @@ RealType GammaDistribution<RealType>::variateThroughExponentialSum(int shape, Ra
 template < typename RealType >
 RealType GammaDistribution<RealType>::variateForShapeOneAndAHalf(RandGenerator& randGenerator)
 {
-    double W = ExponentialRand::StandardVariate(randGenerator);
-    double N = NormalRand::StandardVariate(randGenerator);
+    RealType W = ExponentialRand::StandardVariate(randGenerator);
+    RealType N = NormalRand<RealType>::StandardVariate(randGenerator);
     return W + 0.5 * N * N;
 }
 
@@ -182,18 +182,18 @@ template < typename RealType >
 RealType GammaDistribution<RealType>::variateMarsagliaTsang(double shape, RandGenerator &randGenerator)
 {
     /// Marsaglia and Tsang’s Method (shape > 1/3)
-    double d = shape - 1.0 / 3;
-    double c = 3 * std::sqrt(d);
+    RealType d = shape - 1.0 / 3;
+    RealType c = 3 * std::sqrt(d);
     size_t iter = 0;
     do {
-        double N;
+        RealType N;
         do {
-            N = NormalRand::StandardVariate(randGenerator);
+            N = NormalRand<RealType>::StandardVariate(randGenerator);
         } while (N <= -c);
-        double v = 1 + N / c;
+        RealType v = 1 + N / c;
         v = v * v * v;
         N *= N;
-        double U = UniformRand::StandardVariate(randGenerator);
+        RealType U = UniformRand::StandardVariate(randGenerator);
         if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
             return d * v;
         }

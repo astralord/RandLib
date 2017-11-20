@@ -1,37 +1,44 @@
 ﻿#include "CauchyRand.h"
 #include "UniformRand.h"
 
-CauchyRand::CauchyRand(double location, double scale)
-    : StableDistribution(1, 0, scale, location)
+template < typename RealType >
+CauchyRand<RealType>::CauchyRand(double location, double scale)
+    : StableDistribution<RealType>(1, 0, scale, location)
 {
 }
 
-String CauchyRand::Name() const
+template < typename RealType >
+String CauchyRand<RealType>::Name() const
 {
-    return "Cauchy(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Cauchy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
-double CauchyRand::f(const double & x) const
+template < typename RealType >
+double CauchyRand<RealType>::f(const RealType & x) const
 {
     return pdfCauchy(x);
 }
 
-double CauchyRand::F(const double & x) const
+template < typename RealType >
+double CauchyRand<RealType>::F(const RealType & x) const
 {
     return cdfCauchy(x);
 }
 
-double CauchyRand::S(const double & x) const
+template < typename RealType >
+double CauchyRand<RealType>::S(const RealType & x) const
 {
     return cdfCauchyCompl(x);
 }
 
-double CauchyRand::Variate() const
+template < typename RealType >
+RealType CauchyRand<RealType>::Variate() const
 {
-    return mu + gamma * StandardVariate(localRandGenerator);
+    return this->mu + gamma * StandardVariate(this->localRandGenerator);
 }
 
-double CauchyRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType CauchyRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
     double x, y;
     do {
@@ -40,23 +47,27 @@ double CauchyRand::StandardVariate(RandGenerator &randGenerator)
     } while (y == 0.0 || x * x + y * y > 1.0);
     return x / y;
 }
-    
-std::complex<double> CauchyRand::CFImpl(double t) const
+
+template < typename RealType >
+std::complex<double> CauchyRand<RealType>::CFImpl(double t) const
 {
-    return cfCauchy(t);
+    return this->cfCauchy(t);
 }
 
-double CauchyRand::quantileImpl(double p) const
+template < typename RealType >
+RealType CauchyRand<RealType>::quantileImpl(double p) const
 {
-    return quantileCauchy(p);
+    return this->quantileCauchy(p);
 }
 
-double CauchyRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType CauchyRand<RealType>::quantileImpl1m(double p) const
 {
-    return quantileCauchy1m(p);
+    return this->quantileCauchy1m(p);
 }
 
-double CauchyRand::Entropy() const
+template < typename RealType >
+double CauchyRand<RealType>::Entropy() const
 {
-    return 2 * M_LN2 + logGamma + M_LNPI;
+    return 2 * M_LN2 + this->logGamma + M_LNPI;
 }

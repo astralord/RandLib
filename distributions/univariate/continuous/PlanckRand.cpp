@@ -1,16 +1,19 @@
 #include "PlanckRand.h"
 
-PlanckRand::PlanckRand(double shape, double scale)
+template < typename RealType >
+PlanckRand<RealType>::PlanckRand(double shape, double scale)
 {
     SetParameters(shape, scale);
 }
 
-String PlanckRand::Name() const
+template < typename RealType >
+String PlanckRand<RealType>::Name() const
 {
     return "Planck(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-void PlanckRand::SetParameters(double shape, double scale)
+template < typename RealType >
+void PlanckRand<RealType>::SetParameters(double shape, double scale)
 {
     if (shape <= 0.0)
         throw std::invalid_argument("Planck distribution: shape should be positive");
@@ -28,7 +31,8 @@ void PlanckRand::SetParameters(double shape, double scale)
     pdfCoef -= G.GetLogGammaShape();
 }
 
-double PlanckRand::h(double t) const
+template < typename RealType >
+double PlanckRand<RealType>::h(double t) const
 {
     if (t <= 0)
         return 0.0;
@@ -39,7 +43,8 @@ double PlanckRand::h(double t) const
     return expY * z;
 }
 
-double PlanckRand::f(const double & x) const
+template < typename RealType >
+double PlanckRand<RealType>::f(const RealType &x) const
 {
     if (x < 0)
         return 0;
@@ -55,7 +60,8 @@ double PlanckRand::f(const double & x) const
     return std::exp(y) / std::expm1l(b * x);
 }
 
-double PlanckRand::logf(const double & x) const
+template < typename RealType >
+double PlanckRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -71,7 +77,8 @@ double PlanckRand::logf(const double & x) const
     return y - RandMath::logexpm1l(b * x);
 }
 
-double PlanckRand::F(const double & x) const
+template < typename RealType >
+double PlanckRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0)
         return 0.0;
@@ -95,26 +102,30 @@ double PlanckRand::F(const double & x) const
     return integral1 + integral2;
 }
 
-double PlanckRand::Variate() const
+template < typename RealType >
+RealType PlanckRand<RealType>::Variate() const
 {
     return G.Variate() / Z.Variate();
 }
 
-void PlanckRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void PlanckRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     G.Sample(outputData);
     for (double & var : outputData)
         var /= Z.Variate();
 }
 
-long double PlanckRand::Mean() const
+template < typename RealType >
+long double PlanckRand<RealType>::Mean() const
 {
     double y = (a + 1) / b;
     y *= std::riemann_zetal(a + 2);
     return y / Z.GetZetaFunction();
 }
 
-long double PlanckRand::SecondMoment() const
+template < typename RealType >
+long double PlanckRand<RealType>::SecondMoment() const
 {
     long double secondMoment = (a + 1) * (a + 2);
     secondMoment /= (b * b);
@@ -123,13 +134,15 @@ long double PlanckRand::SecondMoment() const
     return secondMoment;
 }
 
-long double PlanckRand::Variance() const
+template < typename RealType >
+long double PlanckRand<RealType>::Variance() const
 {
-    double mean = Mean();
+    long double mean = Mean();
     return SecondMoment() - mean * mean;
 }
 
-double PlanckRand::Mode() const
+template < typename RealType >
+RealType PlanckRand<RealType>::Mode() const
 {
     if (a <= 1)
         return 0.0;
@@ -138,7 +151,8 @@ double PlanckRand::Mode() const
     return (y + a) / b;
 }
 
-long double PlanckRand::ThirdMoment() const
+template < typename RealType >
+long double PlanckRand<RealType>::ThirdMoment() const
 {
     long double thirdMoment = (a + 3) * (a + 2) * (a + 1);
     thirdMoment /= (b * b * b);
@@ -147,7 +161,8 @@ long double PlanckRand::ThirdMoment() const
     return thirdMoment;
 }
 
-long double PlanckRand::Skewness() const
+template < typename RealType >
+long double PlanckRand<RealType>::Skewness() const
 {
     long double mean = Mean();
     long double secondMoment = SecondMoment();
@@ -159,7 +174,8 @@ long double PlanckRand::Skewness() const
     return numerator / denominator;
 }
 
-long double PlanckRand::FourthMoment() const
+template < typename RealType >
+long double PlanckRand<RealType>::FourthMoment() const
 {
     long double fourthMoment = (a + 4) * (a + 3) * (a + 2) * (a + 1);
     long double bSq = b * b;
@@ -169,7 +185,8 @@ long double PlanckRand::FourthMoment() const
     return fourthMoment;
 }
 
-long double PlanckRand::ExcessKurtosis() const
+template < typename RealType >
+long double PlanckRand<RealType>::ExcessKurtosis() const
 {
     long double mean = Mean();
     long double secondMoment = SecondMoment();
@@ -182,10 +199,11 @@ long double PlanckRand::ExcessKurtosis() const
     return numerator / denominator - 3.0;
 }
 
-std::complex<double> PlanckRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
 {
     if (a >= 1)
-        return ContinuousDistribution::CFImpl(t);
+        return ContinuousDistribution<RealType>::CFImpl(t);
 
     /// We have singularity point at 0 for real part,
     /// so we split the integral in two intervals:

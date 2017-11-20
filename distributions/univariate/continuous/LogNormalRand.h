@@ -13,9 +13,10 @@
  * Related distributions: <BR>
  * ln(X) ~ Normal(μ, σ)
  */
-class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution<>
+template < typename RealType >
+class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution<RealType>
 {
-    NormalRand X{};
+    NormalRand<RealType> X{};
     double expMu = 1; ///< exp(μ)
     double expHalfSigmaSq = 1.6487212707; ///< exp(σ^2 / 2)
 
@@ -24,38 +25,38 @@ public:
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetLocation(double location);
     void SetScale(double scale);
     inline double GetLocation() const { return X.Mean(); }
     inline double GetScale() const { return X.GetScale(); }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
 
-    double Variate() const override;
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    RealType Variate() const override;
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
     void Reseed(unsigned long seed) const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
 public:
-    void FitLocation(const std::vector<double> &sample);
-    void FitScale(const std::vector<double> &sample);
-    void Fit(const std::vector<double> &sample);
+    void FitLocation(const std::vector<RealType> &sample);
+    void FitScale(const std::vector<RealType> &sample);
+    void Fit(const std::vector<RealType> &sample);
 
     /**
      * @fn FitLocationBayes
@@ -65,7 +66,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution, bool MAP = false);
+    NormalRand<RealType> FitLocationBayes(const std::vector<RealType> &sample, const NormalRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitScaleBayes
@@ -75,7 +76,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand FitScaleBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP = false);
+    InverseGammaRand<RealType> FitScaleBayes(const std::vector<RealType> &sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitBayes
@@ -85,7 +86,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution, bool MAP = false);
+    NormalInverseGammaRand<RealType> FitBayes(const std::vector<RealType> &sample, const NormalInverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 #endif // LOGNORMALRAND_H

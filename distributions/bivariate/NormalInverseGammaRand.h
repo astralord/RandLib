@@ -11,7 +11,8 @@
  *
  * Notation: X ~ NIG(μ, λ, α, β)
  */
-class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDistribution<StudentTRand, InverseGammaRand>
+template< typename RealType = long double>
+class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDistribution<StudentTRand<RealType>, InverseGammaRand<RealType>, RealType>
 {
     double mu = 0; ///< location μ
     double lambda = 1; ///< precision λ
@@ -29,14 +30,14 @@ public:
     inline double GetShape() const { return alpha; }
     inline double GetRate() const { return beta; }
 
-    double f(const DoublePair &point) const override;
-    double logf(const DoublePair &point) const override;
-    double F(const DoublePair & point) const override;
-    DoublePair Variate() const override;
+    double f(const Pair<RealType> &point) const override;
+    double logf(const Pair<RealType> &point) const override;
+    double F(const Pair<RealType> & point) const override;
+    Pair<RealType> Variate() const override;
 
-    double Correlation() const override;
+    long double Correlation() const override;
 
-    DoublePair Mode() const override;
+    Pair<RealType> Mode() const override;
 };
 
 #endif // NORMALINVERSEGAMMARAND_H

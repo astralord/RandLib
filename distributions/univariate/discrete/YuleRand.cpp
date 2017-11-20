@@ -61,7 +61,7 @@ double YuleRand::S(const int & k) const
 int YuleRand::Variate() const
 {
     double prob = 1.0 / X.Variate();
-    return GeometricRand::Variate(prob, localRandGenerator) + 1;
+    return GeometricRand::Variate(prob, this->localRandGenerator) + 1;
 }
 
 int YuleRand::Variate(double shape, RandGenerator &randGenerator)
@@ -74,7 +74,7 @@ int YuleRand::Variate(double shape, RandGenerator &randGenerator)
 
 void YuleRand::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     X.Reseed(seed + 1);
 }
 

@@ -118,8 +118,8 @@ double VonMisesRand::Variate() const
     /// Lucio Barabesi. Dipartimento di Metodi Quantitativi, Universiteta di Siena
     size_t iter = 0;
     do {
-        double U = UniformRand::StandardVariate(localRandGenerator);
-        double V = 2 * UniformRand::StandardVariate(localRandGenerator) - 1;
+        double U = UniformRand::StandardVariate(this->localRandGenerator);
+        double V = 2 * UniformRand::StandardVariate(this->localRandGenerator) - 1;
         double theta = s * V / U;
         if ((std::fabs(theta) <= M_PI) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))

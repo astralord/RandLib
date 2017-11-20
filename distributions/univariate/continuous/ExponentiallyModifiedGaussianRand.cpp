@@ -1,18 +1,21 @@
 #include "ExponentiallyModifiedGaussianRand.h"
 
-ExponentiallyModifiedGaussianRand::ExponentiallyModifiedGaussianRand(double location, double variance, double rate)
+template < typename RealType >
+ExponentiallyModifiedGaussianRand<RealType>::ExponentiallyModifiedGaussianRand(double location, double variance, double rate)
 {
     SetParameters(location, variance, rate);
 }
 
-String ExponentiallyModifiedGaussianRand::Name() const
+template < typename RealType >
+String ExponentiallyModifiedGaussianRand<RealType>::Name() const
 {
     return "Exponentially modified Gaussian(" + this->toStringWithPrecision(GetLocation()) + ", "
                                               + this->toStringWithPrecision(X.Variance()) + ", "
                                               + this->toStringWithPrecision(GetRate()) + ")";
 }
 
-void ExponentiallyModifiedGaussianRand::SetParameters(double location, double variance, double rate)
+template < typename RealType >
+void ExponentiallyModifiedGaussianRand<RealType>::SetParameters(double location, double variance, double rate)
 {
     if (variance <= 0)
         throw std::invalid_argument("Exponentially modified Gaussian distribution: variance should be positive");
@@ -34,7 +37,8 @@ void ExponentiallyModifiedGaussianRand::SetParameters(double location, double va
     v = beta * sigma;
 }
 
-double ExponentiallyModifiedGaussianRand::f(const double & x) const
+template < typename RealType >
+double ExponentiallyModifiedGaussianRand<RealType>::f(const RealType & x) const
 {
     double lambda = Y.GetRate();
     double y = a - x;
@@ -47,7 +51,8 @@ double ExponentiallyModifiedGaussianRand::f(const double & x) const
     return y * exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::logf(const double & x) const
+template < typename RealType >
+double ExponentiallyModifiedGaussianRand<RealType>::logf(const RealType & x) const
 {
     double lambda = Y.GetRate();
     double y = a - x;
@@ -59,7 +64,8 @@ double ExponentiallyModifiedGaussianRand::logf(const double & x) const
     return std::log(y) + exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::F(const double & x) const
+template < typename RealType >
+double ExponentiallyModifiedGaussianRand<RealType>::F(const RealType & x) const
 {
     double u = Y.GetRate() * (x - X.GetLocation());
     double y = X.F(x);
@@ -69,7 +75,8 @@ double ExponentiallyModifiedGaussianRand::F(const double & x) const
     return y - exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::S(const double & x) const
+template < typename RealType >
+double ExponentiallyModifiedGaussianRand<RealType>::S(const RealType & x) const
 {
     double u = Y.GetRate() * (x - X.GetLocation());
     double y = X.S(x);
@@ -79,38 +86,45 @@ double ExponentiallyModifiedGaussianRand::S(const double & x) const
     return y + exponent;
 }
 
-double ExponentiallyModifiedGaussianRand::Variate() const
+template < typename RealType >
+RealType ExponentiallyModifiedGaussianRand<RealType>::Variate() const
 {
     return X.Variate() + Y.Variate();
 }
 
-double ExponentiallyModifiedGaussianRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType ExponentiallyModifiedGaussianRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
-    return NormalRand::StandardVariate(randGenerator) + ExponentialRand::StandardVariate(randGenerator);
+    return NormalRand<RealType>::StandardVariate(randGenerator) + ExponentialRand::StandardVariate(randGenerator);
 }
 
-void ExponentiallyModifiedGaussianRand::Reseed(unsigned long seed) const
+template < typename RealType >
+void ExponentiallyModifiedGaussianRand<RealType>::Reseed(unsigned long seed) const
 {
     X.Reseed(seed);
     Y.Reseed(seed + 1);
 }
 
-long double ExponentiallyModifiedGaussianRand::Mean() const
+template < typename RealType >
+long double ExponentiallyModifiedGaussianRand<RealType>::Mean() const
 {
     return X.Mean() + Y.Mean();
 }
 
-long double ExponentiallyModifiedGaussianRand::Variance() const
+template < typename RealType >
+long double ExponentiallyModifiedGaussianRand<RealType>::Variance() const
 {
     return X.Variance() + Y.Variance();
 }
 
-std::complex<double> ExponentiallyModifiedGaussianRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> ExponentiallyModifiedGaussianRand<RealType>::CFImpl(double t) const
 {
     return X.CF(t) * Y.CF(t);
 }
 
-long double ExponentiallyModifiedGaussianRand::Skewness() const
+template < typename RealType >
+long double ExponentiallyModifiedGaussianRand<RealType>::Skewness() const
 {
     long double sigma = X.GetScale();
     long double lambda = Y.GetRate();
@@ -123,7 +137,8 @@ long double ExponentiallyModifiedGaussianRand::Skewness() const
     return y + y;
 }
 
-long double ExponentiallyModifiedGaussianRand::ExcessKurtosis() const
+template < typename RealType >
+long double ExponentiallyModifiedGaussianRand<RealType>::ExcessKurtosis() const
 {
     long double sigma = X.GetScale();
     long double lambda = Y.GetRate();

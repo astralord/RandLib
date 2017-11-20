@@ -164,37 +164,37 @@ int BinomialDistribution::variateRejection() const
     /// it can be used only when n * p is integer and p < 0.5
     bool reject = true;
     size_t iter = 0;
-    double X, Y, V;
+    float X, Y, V;
     do {
-        double U = a4 * UniformRand::StandardVariate(localRandGenerator);
+        float U = a4 * UniformRand::StandardVariate(this->localRandGenerator);
         if (U <= a1)
         {
-            double N = NormalRand::StandardVariate(localRandGenerator);
+            float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
             Y = sigma1 * std::fabs(N);
             reject = (Y >= delta1);
             if (!reject)
             {
-                double W = ExponentialRand::StandardVariate(localRandGenerator);
+                float W = ExponentialRand::StandardVariate(this->localRandGenerator);
                 X = std::floor(Y);
                 V = -W - 0.5 * N * N + c;
             }
         }
         else if (U <= a2)
         {
-            double N = NormalRand::StandardVariate(localRandGenerator);
+            float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
             Y = sigma2 * std::fabs(N);
             reject = (Y >= delta2);
             if (!reject)
             {
-                double W = ExponentialRand::StandardVariate(localRandGenerator);
+                float W = ExponentialRand::StandardVariate(this->localRandGenerator);
                 X = std::floor(-Y);
                 V = -W - 0.5 * N * N;
             }
         }
         else if (U <= a3)
         {
-            double W1 = ExponentialRand::StandardVariate(localRandGenerator);
-            double W2 = ExponentialRand::StandardVariate(localRandGenerator);
+            float W1 = ExponentialRand::StandardVariate(this->localRandGenerator);
+            float W2 = ExponentialRand::StandardVariate(this->localRandGenerator);
             Y = delta1 + W1 / coefa3;
             X = std::floor(Y);
             V = -W2 - coefa3 * Y + delta1 / nqFloor;
@@ -202,8 +202,8 @@ int BinomialDistribution::variateRejection() const
         }
         else
         {
-            double W1 = ExponentialRand::StandardVariate(localRandGenerator);
-            double W2 = ExponentialRand::StandardVariate(localRandGenerator);
+            float W1 = ExponentialRand::StandardVariate(this->localRandGenerator);
+            float W2 = ExponentialRand::StandardVariate(this->localRandGenerator);
             Y = delta2 + W1 / coefa4;
             X = std::floor(-Y);
             V = -W2 - coefa4 * Y;
@@ -275,7 +275,7 @@ int BinomialDistribution::Variate() const
     }
     case BERNOULLI_SUM:
     default:
-        return variateBernoulliSum(n, p, localRandGenerator);
+        return variateBernoulliSum(n, p, this->localRandGenerator);
     }
     return -1; /// unexpected return
 }
@@ -340,7 +340,7 @@ void BinomialDistribution::Sample(std::vector<int> &outputData) const
     default:
     {
         for (int &var : outputData)
-           var = variateBernoulliSum(n, p, localRandGenerator);
+           var = variateBernoulliSum(n, p, this->localRandGenerator);
         return;
     }
     }
@@ -348,7 +348,7 @@ void BinomialDistribution::Sample(std::vector<int> &outputData) const
 
 void BinomialDistribution::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     G.Reseed(seed);
 }
 
@@ -396,7 +396,7 @@ void BinomialDistribution::FitProbability(const std::vector<int> &sample)
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
-    SetParameters(n, GetSampleMean(sample) / n);
+    SetParameters(n, this->GetSampleMean(sample) / n);
 }
 
 BetaRand<> BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution<> &priorDistribution, bool MAP)
@@ -406,7 +406,7 @@ BetaRand<> BinomialDistribution::FitProbabilityBayes(const std::vector<int> &sam
     if (!allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     int N = sample.size();
-    double sum = GetSampleSum(sample);
+    double sum = this->GetSampleSum(sample);
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
     BetaRand posteriorDistribution(sum + alpha, N * n - sum + beta);

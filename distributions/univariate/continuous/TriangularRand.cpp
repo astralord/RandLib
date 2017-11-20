@@ -75,7 +75,7 @@ double TriangularRand::S(const double & x) const
 
 double TriangularRand::Variate() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(this->localRandGenerator);
     if (U < constForGenerator)
         return a + std::sqrt(U * coefGenerator1);
     return b - std::sqrt((1 - U) * coefGenerator2);

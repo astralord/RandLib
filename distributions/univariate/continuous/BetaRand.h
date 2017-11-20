@@ -238,8 +238,8 @@ public:
     using BetaDistribution<RealType>::SetSupport;
 
 public:
-    double GetSampleLog1pMean(const std::vector<RealType> &sample) const;
-    double GetSampleLog1mMean(const std::vector<RealType> &sample) const;
+    long double GetSampleLog1pMean(const std::vector<RealType> &sample) const;
+    long double GetSampleLog1mMean(const std::vector<RealType> &sample) const;
 
     /**
      * @fn FitAlpha

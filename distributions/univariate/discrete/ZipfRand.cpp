@@ -57,7 +57,7 @@ double ZipfRand::F(const int & k) const
 
 int ZipfRand::Variate() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(this->localRandGenerator);
     int k = 1;
     /// if we didn't manage to hash values for such U
     if (U > table[hashedVarNum - 1]) {

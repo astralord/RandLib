@@ -54,7 +54,7 @@ void ProbabilityDistribution<T>::Sample(std::vector<T> &outputData) const
 template < typename T >
 void ProbabilityDistribution<T>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
 }
 
 template < typename T >

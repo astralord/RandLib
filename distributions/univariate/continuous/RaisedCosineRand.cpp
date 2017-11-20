@@ -99,7 +99,7 @@ double RaisedCosineDistribution::StandardVariate(RandGenerator &randGenerator)
 
 double RaisedCosineDistribution::Variate() const
 {
-    return mu + s_pi * StandardVariate(localRandGenerator);
+    return mu + s_pi * StandardVariate(this->localRandGenerator);
 }
 
 long double RaisedCosineDistribution::Mean() const

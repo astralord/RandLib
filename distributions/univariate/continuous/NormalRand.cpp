@@ -5,58 +5,68 @@
 #include "GammaRand.h"
 #include "StudentTRand.h"
 
-NormalRand::NormalRand(double mean, double var)
-    : StableDistribution(2.0, 0.0, 1.0, mean)
+template < typename RealType >
+NormalRand<RealType>::NormalRand(double mean, double var)
+    : StableDistribution<RealType>(2.0, 0.0, 1.0, mean)
 {
     SetVariance(var);
 }
 
-String NormalRand::Name() const
+template < typename RealType >
+String NormalRand<RealType>::Name() const
 {
-    return "Normal(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(Variance()) + ")";
+    return "Normal(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->Variance()) + ")";
 }
 
-void NormalRand::SetScale(double scale)
+template < typename RealType >
+void NormalRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Normal distribution: scale should be positive");
     sigma = scale;
-    StableDistribution::SetScale(sigma * M_SQRT1_2);
+    StableDistribution<RealType>::SetScale(sigma * M_SQRT1_2);
 }
 
-void NormalRand::SetVariance(double var)
+template < typename RealType >
+void NormalRand<RealType>::SetVariance(double var)
 {
     if (var <= 0.0)
         throw std::invalid_argument("Variance of Normal distribution should be positive");
     SetScale(std::sqrt(var));
 }
 
-double NormalRand::f(const double & x) const
+template < typename RealType >
+double NormalRand<RealType>::f(const RealType & x) const
 {
-    return pdfNormal(x);
+    return this->pdfNormal(x);
 }
 
-double NormalRand::logf(const double & x) const
+template < typename RealType >
+double NormalRand<RealType>::logf(const RealType & x) const
 {
-    return logpdfNormal(x);
+    return this->logpdfNormal(x);
 }
 
-double NormalRand::F(const double & x) const
+template < typename RealType >
+double NormalRand<RealType>::F(const RealType & x) const
 {
-    return cdfNormal(x);
+    return this->cdfNormal(x);
 }
 
-double NormalRand::S(const double & x) const
+template < typename RealType >
+double NormalRand<RealType>::S(const RealType & x) const
 {
-    return cdfNormalCompl(x);
+    return this->cdfNormalCompl(x);
 }
 
-double NormalRand::Variate() const
+template < typename RealType >
+RealType NormalRand<RealType>::Variate() const
 {
-    return mu + sigma * StandardVariate(localRandGenerator);
+    return this->mu + sigma * StandardVariate(this->localRandGenerator);
 }
 
-double NormalRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType NormalRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm by George Marsaglia using 256 strips
     size_t iter = 0;
@@ -88,32 +98,37 @@ double NormalRand::StandardVariate(RandGenerator &randGenerator)
         long double height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
         if (ziggurat[stairId - 1].first + height * UniformRand::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
-    } while (++iter <= MAX_ITER_REJECTION);
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     return NAN; /// fail due to some error
 }
 
-void NormalRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void NormalRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
-    for (double & var : outputData)
+    for (RealType & var : outputData)
         var = this->Variate();
 }
 
-std::complex<double> NormalRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> NormalRand<RealType>::CFImpl(double t) const
 {
-    return cfNormal(t);
+    return this->cfNormal(t);
 }
 
-double NormalRand::quantileImpl(double p) const
+template < typename RealType >
+RealType NormalRand<RealType>::quantileImpl(double p) const
 {
-    return quantileNormal(p);
+    return this->quantileNormal(p);
 }
 
-double NormalRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType NormalRand<RealType>::quantileImpl1m(double p) const
 {
-    return quantileNormal1m(p);
+    return this->quantileNormal1m(p);
 }
 
-double NormalRand::Moment(int n) const
+template < typename RealType >
+double NormalRand<RealType>::Moment(int n) const
 {
     if (n < 0)
         return 0;
@@ -122,35 +137,39 @@ double NormalRand::Moment(int n) const
     return (n & 1) ? std::exp(n * this->GetLogScale() + RandMath::ldfact(n - 1)) : 0.0;
 }
 
-void NormalRand::FitLocation(const std::vector<double> &sample)
+template < typename RealType >
+void NormalRand<RealType>::FitLocation(const std::vector<RealType> &sample)
 {
-    SetLocation(GetSampleMean(sample));
+    this->SetLocation(this->GetSampleMean(sample));
 }
 
-void NormalRand::FitLocation(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel)
+template < typename RealType >
+void NormalRand<RealType>::FitLocation(const std::vector<RealType> &sample, DoublePair &confidenceInterval, double significanceLevel)
 {
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     FitLocation(sample);
 
     int n = sample.size();
-    NormalRand NormalRV(0, 1);
+    NormalRand<RealType> NormalRV(0, 1);
     double halfAlpha = 0.5 * significanceLevel;
     double interval = NormalRV.Quantile1m(halfAlpha) * sigma / std::sqrt(n);
-    confidenceInterval.first = mu - interval;
-    confidenceInterval.second = mu + interval;
+    confidenceInterval.first = this->mu - interval;
+    confidenceInterval.second = this->mu + interval;
 }
 
-void NormalRand::FitVariance(const std::vector<double> &sample)
+template < typename RealType >
+void NormalRand<RealType>::FitVariance(const std::vector<RealType> &sample)
 {
-    SetVariance(GetSampleVariance(sample, mu));
+    this->SetVariance(this->GetSampleVariance(sample, this->mu));
 }
 
-void NormalRand::FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased)
+template < typename RealType >
+void NormalRand<RealType>::FitVariance(const std::vector<RealType> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased)
 {
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     FitVariance(sample);
 
@@ -162,12 +181,13 @@ void NormalRand::FitVariance(const std::vector<double> &sample, DoublePair &conf
     confidenceInterval.second = numerator / ChiSqRV.Quantile(halfAlpha);
 }
 
-void NormalRand::FitScale(const std::vector<double> &sample, bool unbiased)
+template < typename RealType >
+void NormalRand<RealType>::FitScale(const std::vector<RealType> &sample, bool unbiased)
 {
     if (unbiased == true) {
         size_t n = sample.size();
         double halfN = 0.5 * n;
-        double s = GetSampleVariance(sample, mu);
+        double s = this->GetSampleVariance(sample, this->mu);
         s *= halfN;
         s = 0.5 * std::log(s);
         s -= std::lgammal(halfN + 0.5);
@@ -179,24 +199,26 @@ void NormalRand::FitScale(const std::vector<double> &sample, bool unbiased)
     }
 }
 
-void NormalRand::Fit(const std::vector<double> &sample, bool unbiased)
+template < typename RealType >
+void NormalRand<RealType>::Fit(const std::vector<RealType> &sample, bool unbiased)
 {
     double adjustment = 1.0;
     if (unbiased == true) {
         size_t n = sample.size();
         if (n <= 1)
-            throw std::invalid_argument(this->fitErrorDescription(TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
+            throw std::invalid_argument(this->fitErrorDescription(this->TOO_FEW_ELEMENTS, "There should be at least 2 elements"));
         adjustment = static_cast<double>(n) / (n - 1);
     }
-    DoublePair stats = GetSampleMeanAndVariance(sample);
-    SetLocation(stats.first);
-    SetVariance(stats.second * adjustment);
+    DoublePair stats = this->GetSampleMeanAndVariance(sample);
+    this->SetLocation(stats.first);
+    this->SetVariance(stats.second * adjustment);
 }
 
-void NormalRand::Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased)
+template < typename RealType >
+void NormalRand<RealType>::Fit(const std::vector<RealType> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased)
 {
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_LEVEL, "Input level is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     Fit(sample, unbiased);
 
@@ -204,59 +226,67 @@ void NormalRand::Fit(const std::vector<double> &sample, DoublePair &confidenceIn
     double sigmaAdj = unbiased ? sigma : (sigma * n) / (n - 1);
     /// calculate confidence interval for mean
     double halfAlpha = 0.5 * significanceLevel;
-    StudentTRand tRV(n - 1);
+    StudentTRand<RealType> tRV(n - 1);
     double interval = tRV.Quantile1m(halfAlpha) * sigmaAdj / std::sqrt(n);
-    confidenceIntervalForMean.first = mu - interval;
-    confidenceIntervalForMean.second = mu + interval;
+    confidenceIntervalForMean.first = this->mu - interval;
+    confidenceIntervalForMean.second = this->mu + interval;
 
     /// calculate confidence interval for variance
-    ChiSquaredRand ChiSqRV(n - 1);
+    ChiSquaredRand<RealType> ChiSqRV(n - 1);
     double numerator = (n - 1) * sigmaAdj * sigmaAdj;
     confidenceIntervalForVariance.first = numerator / ChiSqRV.Quantile1m(halfAlpha);
     confidenceIntervalForVariance.second = numerator / ChiSqRV.Quantile(halfAlpha);
 }
 
-NormalRand NormalRand::FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution, bool MAP)
+template < typename RealType >
+NormalRand<RealType> NormalRand<RealType>::FitLocationBayes(const std::vector<RealType> &sample, const NormalRand<RealType> &priorDistribution, bool MAP)
 {
     double mu0 = priorDistribution.GetLocation();
     double tau0 = priorDistribution.GetPrecision();
     double tau = GetPrecision();
-    double numerator = GetSampleSum(sample) * tau + tau0 * mu0;
+    double numerator = this->GetSampleSum(sample) * tau + tau0 * mu0;
     double denominator = sample.size() * tau + tau0;
-    NormalRand posteriorDistribution(numerator / denominator, 1.0 / denominator);
-    SetLocation(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
+    NormalRand<RealType> posteriorDistribution(numerator / denominator, 1.0 / denominator);
+    this->SetLocation(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 
-InverseGammaRand NormalRand::FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP)
+template < typename RealType >
+InverseGammaRand<RealType> NormalRand<RealType>::FitVarianceBayes(const std::vector<RealType> &sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP)
 {
     double halfN = 0.5 * sample.size();
     double alphaPrior = priorDistribution.GetShape();
     double betaPrior = priorDistribution.GetRate();
     double alphaPosterior = alphaPrior + halfN;
-    double betaPosterior = betaPrior + halfN * GetSampleVariance(sample, mu);
-    InverseGammaRand posteriorDistribution(alphaPosterior, betaPosterior);
+    double betaPosterior = betaPrior + halfN * this->GetSampleVariance(sample, this->mu);
+    InverseGammaRand<RealType> posteriorDistribution(alphaPosterior, betaPosterior);
     SetVariance(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 
-NormalInverseGammaRand NormalRand::FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution, bool MAP)
+template < typename RealType >
+NormalInverseGammaRand<RealType> NormalRand<RealType>::FitBayes(const std::vector<RealType> &sample, const NormalInverseGammaRand<RealType> &priorDistribution, bool MAP)
 {
     size_t n = sample.size();
     double alphaPrior = priorDistribution.GetShape();
     double betaPrior = priorDistribution.GetRate();
     double muPrior = priorDistribution.GetLocation();
     double lambdaPrior = priorDistribution.GetPrecision();
-    DoublePair stats = GetSampleMeanAndVariance(sample);
+    DoublePair stats = this->GetSampleMeanAndVariance(sample);
     double lambdaPosterior = lambdaPrior + n;
     double muPosterior = (lambdaPrior * muPrior + n * stats.first) / lambdaPosterior;
     double halfN = 0.5 * n;
     double alphaPosterior = alphaPrior + halfN;
     double aux = muPrior - stats.first;
     double betaPosterior = betaPrior + halfN * (stats.second + lambdaPrior / lambdaPosterior * aux * aux);
-    NormalInverseGammaRand posteriorDistribution(muPosterior, lambdaPosterior, alphaPosterior, betaPosterior);
-    DoublePair newParams = MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
-    SetLocation(newParams.first);
-    SetVariance(newParams.second);
+    NormalInverseGammaRand<RealType> posteriorDistribution(muPosterior, lambdaPosterior, alphaPosterior, betaPosterior);
+    DoublePair newParams = MAP ? static_cast<DoublePair>(posteriorDistribution.Mode()) : static_cast<DoublePair>(posteriorDistribution.Mean());
+    this->SetLocation(newParams.first);
+    this->SetVariance(newParams.second);
     return posteriorDistribution;
 }
+
+template class NormalRand<float>;
+template class NormalRand<double>;
+template class NormalRand<long double>;
+

@@ -176,7 +176,7 @@ RealType BetaDistribution<RealType>::variateRejectionNormal() const
     RealType alpha2m1 = alpha + alpham1;
     do {
         do {
-            N = NormalRand::StandardVariate(this->localRandGenerator);
+            N = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
             Z = N * N;
         } while (Z >= alpha2m1);
 
@@ -544,7 +544,7 @@ String BetaRand<RealType>::Name() const
 }
 
 template < typename RealType >
-double BetaRand<RealType>::GetSampleLog1pMean(const std::vector<RealType> &sample) const
+long double BetaRand<RealType>::GetSampleLog1pMean(const std::vector<RealType> &sample) const
 {
     long double lnG1p = 0;
     for (RealType var : sample) {
@@ -555,7 +555,7 @@ double BetaRand<RealType>::GetSampleLog1pMean(const std::vector<RealType> &sampl
 }
 
 template < typename RealType >
-double BetaRand<RealType>::GetSampleLog1mMean(const std::vector<RealType> &sample) const
+long double BetaRand<RealType>::GetSampleLog1mMean(const std::vector<RealType> &sample) const
 {
     long double lnG1m = 0;
     for (RealType var : sample) {
@@ -606,7 +606,7 @@ void BetaRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->ALPHA_ZERO));
     long double lnG1m = 0.0, mean = 0.5 * (this->a + this->b);
     if (this->beta != 1.0) {
-        lnG1m = GetSampleLog1mMean(sample);
+        lnG1m = this->GetSampleLog1mMean(sample);
         if (!std::isfinite(lnG1m))
             throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->BETA_ZERO));
         mean = this->GetSampleMean(sample);
@@ -650,7 +650,7 @@ void BetaRand<RealType>::FitBeta(const std::vector<RealType> &sample)
     if (!this->allElementsAreNotBiggerThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
-    long double lnG1m = GetSampleLog1mMean(sample);
+    long double lnG1m = this->GetSampleLog1mMean(sample);
     if (!std::isfinite(lnG1m))
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->BETA_ZERO));
     long double lnG = 0.0, mean = 0.5 * (this->a + this->b);

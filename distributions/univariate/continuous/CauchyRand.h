@@ -16,26 +16,27 @@
  * X ~ S(1, 0, σ, μ) <BR>
  * If X, Y ~ Normal(0, 1), then X / Y ~ Cauchy(0, 1)
  */
-class RANDLIBSHARED_EXPORT CauchyRand : public StableDistribution
+template < typename RealType = long double >
+class RANDLIBSHARED_EXPORT CauchyRand : public StableDistribution<RealType>
 {
 public:
     CauchyRand(double location = 0, double scale = 1);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
-    double MinValue() const override { return -INFINITY; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return -INFINITY; }
+    RealType MaxValue() const override { return INFINITY; }
 
 public:
-    double f(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 

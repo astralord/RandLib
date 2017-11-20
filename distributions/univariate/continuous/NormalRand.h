@@ -32,6 +32,7 @@ class RANDLIBSHARED_EXPORT NormalZiggurat {
         return table;
     }
 
+    template < typename RealType >
     friend class NormalRand;
 };
 
@@ -46,7 +47,8 @@ class RANDLIBSHARED_EXPORT NormalZiggurat {
  * Related distributions: <BR>
  * X ~ S(2, 0, σ/√2, μ)
  */
-class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution
+template < typename RealType = long double>
+class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>
 {
     double sigma = 1; ///< scale σ
 
@@ -68,24 +70,24 @@ public:
      * @fn GetLogScale
      * @return log(σ)
      */
-    inline double GetLogScale() const { return StableDistribution::GetLogScale() - 0.5 * M_LN2; }
+    inline double GetLogScale() const { return StableDistribution<RealType>::GetLogScale() - 0.5 * M_LN2; }
     /**
      * @fn GetPrecision
      * @return 1/σ^2
      */
     inline double GetPrecision() const { return 1.0 / (sigma * sigma); }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
-    void Sample(std::vector<double> &outputData) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
+    void Sample(std::vector<RealType> &outputData) const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 
@@ -99,7 +101,7 @@ public:
      * set location, returned by maximium-likelihood estimator
      * @param sample
      */
-    void FitLocation(const std::vector<double> &sample);
+    void FitLocation(const std::vector<RealType> &sample);
 
     /**
      * @fn FitLocation
@@ -109,14 +111,14 @@ public:
      * @param confidenceInterval
      * @param significanceLevel
      */
-    void FitLocation(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel);
+    void FitLocation(const std::vector<RealType> &sample, DoublePair &confidenceInterval, double significanceLevel);
 
     /**
      * @fn FitVariance
      * set variance, returned by maximium-likelihood estimator
      * @param sample
      */
-    void FitVariance(const std::vector<double> &sample);
+    void FitVariance(const std::vector<RealType> &sample);
 
     /**
      * @fn FitVariance
@@ -125,7 +127,7 @@ public:
      * @param significanceLevel
      * @param unbiased
      */
-    void FitVariance(const std::vector<double> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased = false);
+    void FitVariance(const std::vector<RealType> &sample, DoublePair &confidenceInterval, double significanceLevel, bool unbiased = false);
 
     /**
      * @fn FitScale
@@ -134,7 +136,7 @@ public:
      * @param sample
      * @param unbiased
      */
-    void FitScale(const std::vector<double> &sample, bool unbiased = false);
+    void FitScale(const std::vector<RealType> &sample, bool unbiased = false);
 
     /**
      * @fn Fit
@@ -143,7 +145,7 @@ public:
      * @param sample
      * @param unbiased
      */
-    void Fit(const std::vector<double> &sample, bool unbiased = false);
+    void Fit(const std::vector<RealType> &sample, bool unbiased = false);
 
     /**
      * @fn Fit
@@ -155,7 +157,7 @@ public:
      * @param significanceLevel
      * @param unbiased
      */
-    void Fit(const std::vector<double> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased = false);
+    void Fit(const std::vector<RealType> &sample, DoublePair &confidenceIntervalForMean, DoublePair &confidenceIntervalForVariance, double significanceLevel, bool unbiased = false);
 
     /**
      * @fn FitLocationBayes
@@ -165,7 +167,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalRand FitLocationBayes(const std::vector<double> &sample, const NormalRand &priorDistribution, bool MAP = false);
+    NormalRand<RealType> FitLocationBayes(const std::vector<RealType> &sample, const NormalRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitVarianceBayes
@@ -175,7 +177,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand FitVarianceBayes(const std::vector<double> &sample, const InverseGammaRand &priorDistribution, bool MAP = false);
+    InverseGammaRand<RealType> FitVarianceBayes(const std::vector<RealType> &sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitBayes
@@ -185,7 +187,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalInverseGammaRand FitBayes(const std::vector<double> &sample, const NormalInverseGammaRand &priorDistribution, bool MAP = false);
+    NormalInverseGammaRand<RealType> FitBayes(const std::vector<RealType> &sample, const NormalInverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 #endif // NORMALRAND_H

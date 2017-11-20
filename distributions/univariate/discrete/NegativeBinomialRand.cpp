@@ -79,13 +79,13 @@ double NegativeBinomialDistribution<T>::S(const int & k) const
 template< typename T >
 int NegativeBinomialDistribution<T>::variateThroughGammaPoisson() const
 {
-    return PoissonRand::Variate(GammaRV.Variate(), localRandGenerator);
+    return PoissonRand::Variate(GammaRV.Variate(), this->localRandGenerator);
 }
 
 template< typename T >
 int NegativeBinomialDistribution<T>::variateGeometricByTable() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand::StandardVariate(this->localRandGenerator);
     /// handle tail by recursion
     if (U > table[tableSize - 1])
         return tableSize + variateGeometricByTable();
@@ -99,7 +99,7 @@ int NegativeBinomialDistribution<T>::variateGeometricByTable() const
 template< typename T >
 int NegativeBinomialDistribution<T>::variateGeometricThroughExponential() const
 {
-    double X = std::floor(-ExponentialRand::StandardVariate(localRandGenerator) / log1mProb);
+    double X = std::floor(-ExponentialRand::StandardVariate(this->localRandGenerator) / log1mProb);
     return X < INT_MAX ? X : INT_MAX - 1;
 }
 
@@ -153,7 +153,7 @@ void NegativeBinomialDistribution<T>::Sample(std::vector<int> &outputData) const
 template< typename T >
 void NegativeBinomialDistribution<T>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     GammaRV.Reseed(seed + 1);
 }
 
@@ -204,7 +204,7 @@ BetaRand<> NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vecto
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
-    BetaRand posteriorDistribution(alpha + r * n, beta + GetSampleSum(sample));
+    BetaRand posteriorDistribution(alpha + r * n, beta + this->GetSampleSum(sample));
     SetParameters(r, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
@@ -232,7 +232,7 @@ void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
     if (!allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
-    DoublePair stats = GetSampleMeanAndVariance(sample);
+    DoublePair stats = this->GetSampleMeanAndVariance(sample);
     double mean = stats.first, variance = stats.second;
     /// Method can't be applied in the case of too small variance
     if (variance <= mean)

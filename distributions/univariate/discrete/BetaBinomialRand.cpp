@@ -59,13 +59,13 @@ double BetaBinomialRand::F(const int & k) const
 
 int BetaBinomialRand::VariateUniform() const
 {
-    return UniformDiscreteRand::StandardVariate(0, n, localRandGenerator);
+    return UniformDiscreteRand::StandardVariate(0, n, this->localRandGenerator);
 }
 
 int BetaBinomialRand::VariateBeta() const
 {
     double p = B.Variate();
-    return BinomialDistribution::Variate(n, p, localRandGenerator);
+    return BinomialDistribution::Variate(n, p, this->localRandGenerator);
 }
 
 int BetaBinomialRand::Variate() const
@@ -87,7 +87,7 @@ void BetaBinomialRand::Sample(std::vector<int> &outputData) const
 
 void BetaBinomialRand::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     B.Reseed(seed + 1);
 }
 

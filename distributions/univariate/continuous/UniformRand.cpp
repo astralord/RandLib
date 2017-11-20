@@ -37,7 +37,7 @@ double UniformRand::S(const double & x) const
 
 double UniformRand::Variate() const
 {
-    return a + StandardVariate(localRandGenerator) * bma;
+    return a + StandardVariate(this->localRandGenerator) * bma;
 }
 
 double UniformRand::StandardVariate(RandGenerator &randGenerator)

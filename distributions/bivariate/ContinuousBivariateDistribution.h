@@ -9,19 +9,19 @@
  * Abstract class for all bivariate probability distributions
  * with marginal continuous distributions
  */
-template < class T1, class T2 >
-class RANDLIBSHARED_EXPORT ContinuousBivariateDistribution : public BivariateDistribution< T1, T2, DoublePair >
+template < class T1, class T2, typename RealType >
+class RANDLIBSHARED_EXPORT ContinuousBivariateDistribution : public BivariateDistribution< T1, T2, RealType>
 {
-    static_assert(std::is_base_of_v<ContinuousDistribution<>, T1>, "T1 must be a descendant of ContinuousDistribution");
-    static_assert(std::is_base_of_v<ContinuousDistribution<>, T2>, "T2 must be a descendant of ContinuousDistribution");
+    static_assert(std::is_base_of_v<ContinuousDistribution<RealType>, T1>, "T1 must be a descendant of ContinuousDistribution");
+    static_assert(std::is_base_of_v<ContinuousDistribution<RealType>, T2>, "T2 must be a descendant of ContinuousDistribution");
 
 protected:
     ContinuousBivariateDistribution() {}
     virtual ~ContinuousBivariateDistribution() {}
 
 public:
-    virtual double f(const DoublePair &point) const = 0;
-    virtual double logf(const DoublePair &point) const = 0;
+    virtual double f(const Pair<RealType> &point) const = 0;
+    virtual double logf(const Pair<RealType> &point) const = 0;
 };
 
 #endif // CONTINUOUS_BIVARIATE_DISTRIBUTION_H

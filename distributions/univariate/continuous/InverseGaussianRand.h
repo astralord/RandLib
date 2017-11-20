@@ -9,7 +9,8 @@
  *
  * Notation: X ~ IG(μ, λ)
  */
-class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution<>
+template < typename RealType = long double >
+class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution<RealType>
 {
     double mu = 1; ///< mean μ
     double lambda = 1; ///< shape λ
@@ -20,22 +21,22 @@ public:
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double mean, double shape);
     inline double GetMean() const { return mu; }
     inline double GetShape() const { return lambda; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    double Mode() const override;
+    RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 

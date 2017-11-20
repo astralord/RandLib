@@ -29,7 +29,7 @@ double ExponentialRand::S(const double & x) const
 
 double ExponentialRand::Variate() const
 {
-    return theta * StandardVariate(localRandGenerator);
+    return theta * StandardVariate(this->localRandGenerator);
 }
 
 void ExponentialRand::Sample(std::vector<double> &outputData) const

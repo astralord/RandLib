@@ -106,8 +106,8 @@ double KolmogorovSmirnovRand::truncatedGammaVariate() const
     static constexpr long double rate = 1.2952909208355123l;
     size_t iter = 0;
     do {
-        double E0 = rate * ExponentialRand::StandardVariate(localRandGenerator);
-        double E1 = 2 * ExponentialRand::StandardVariate(localRandGenerator);
+        double E0 = rate * ExponentialRand::StandardVariate(this->localRandGenerator);
+        double E1 = 2 * ExponentialRand::StandardVariate(this->localRandGenerator);
         double G = tp + E0;
         if (E0 * E0 <= tp * E1 * (G + tp))
             return G;
@@ -128,7 +128,7 @@ double KolmogorovSmirnovRand::variateForTheLeftMostInterval() const
         double Z = 0.5 / G;
         size_t n = 1, iter2 = 0;
         double Q = 1.0;
-        double U = UniformRand::StandardVariate(localRandGenerator);
+        double U = UniformRand::StandardVariate(this->localRandGenerator);
         while (U >= W && ++iter2 <= MAX_ITER_REJECTION) {
             W += Z * Q;
             if (U >= W)
@@ -147,8 +147,8 @@ double KolmogorovSmirnovRand::variateForTheRightMostInterval() const
     static constexpr double tSq = 0.5625; /// square of parameter t suggested in the book
     size_t iter1 = 0;
     do {
-        double E = ExponentialRand::StandardVariate(localRandGenerator);
-        double U = UniformRand::StandardVariate(localRandGenerator);
+        double E = ExponentialRand::StandardVariate(this->localRandGenerator);
+        double U = UniformRand::StandardVariate(this->localRandGenerator);
         double X = std::sqrt(tSq + 0.5 * E);
         double W = 0.0;
         size_t n = 1, iter2 = 0;
@@ -171,7 +171,7 @@ double KolmogorovSmirnovRand::Variate() const
 {
     /// Luc Devroye, pp. 163-165
     /// alternating series method
-    bool isLeft = UniformRand::StandardVariate(localRandGenerator) < 0.3728329582237386; /// F(0.75)
+    bool isLeft = UniformRand::StandardVariate(this->localRandGenerator) < 0.3728329582237386; /// F(0.75)
     return isLeft ? variateForTheLeftMostInterval() : variateForTheRightMostInterval();
 }
 
