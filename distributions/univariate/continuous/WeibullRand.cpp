@@ -261,8 +261,13 @@ InverseGammaRand<RealType> WeibullRand<RealType>::FitScaleBayes(const std::vecto
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;
     double newRate = priorDistribution.GetRate() + n * getPowSampleMean(sample);
-    InverseGammaRand posteriorDistribution(newShape, newRate);
+    InverseGammaRand<RealType> posteriorDistribution(newShape, newRate);
     double powScale =  MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
     SetParameters(std::pow(powScale, kInv), k);
     return posteriorDistribution;
 }
+
+
+template class WeibullRand<float>;
+template class WeibullRand<double>;
+template class WeibullRand<long double>;

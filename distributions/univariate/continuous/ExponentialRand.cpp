@@ -80,7 +80,7 @@ double ExponentialRand<RealType>::Entropy() const
 }
 
 template < typename RealType >
-double ExponentialRand<RealType>::Moment(int n) const
+long double ExponentialRand<RealType>::Moment(int n) const
 {
     if (n < 0)
         return 0;
@@ -88,3 +88,8 @@ double ExponentialRand<RealType>::Moment(int n) const
         return 1;
     return std::exp(RandMath::lfact(n) - n * this->logBeta);
 }
+
+
+template class ExponentialRand<float>;
+template class ExponentialRand<double>;
+template class ExponentialRand<long double>;

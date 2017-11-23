@@ -1078,6 +1078,10 @@ std::complex<double> StableDistribution<RealType>::CFImpl(double t) const
     return std::exp(-psi);
 }
 
+template class StableDistribution<float>;
+template class StableDistribution<double>;
+template class StableDistribution<long double>;
+
 template < typename RealType >
 String StableRand<RealType>::Name() const
 {
@@ -1088,6 +1092,10 @@ String StableRand<RealType>::Name() const
             + this->toStringWithPrecision(this->GetLocation()) + ")";
 }
 
+template class StableRand<float>;
+template class StableRand<double>;
+template class StableRand<long double>;
+
 template < typename RealType >
 String HoltsmarkRand<RealType>::Name() const
 {
@@ -1096,6 +1104,9 @@ String HoltsmarkRand<RealType>::Name() const
             + this->toStringWithPrecision(this->GetLocation()) + ")";
 }
 
+template class HoltsmarkRand<float>;
+template class HoltsmarkRand<double>;
+template class HoltsmarkRand<long double>;
 
 template < typename RealType >
 String LandauRand<RealType>::Name() const
@@ -1104,3 +1115,7 @@ String LandauRand<RealType>::Name() const
             + this->toStringWithPrecision(this->GetScale()) + ", "
             + this->toStringWithPrecision(this->GetLocation()) + ")";
 }
+
+template class LandauRand<float>;
+template class LandauRand<double>;
+template class LandauRand<long double>;

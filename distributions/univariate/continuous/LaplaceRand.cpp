@@ -12,7 +12,7 @@ AsymmetricLaplaceDistribution<RealType>::AsymmetricLaplaceDistribution(double sh
 template < typename RealType >
 void AsymmetricLaplaceDistribution<RealType>::ChangeLocation()
 {
-    SetLocation((1.0 - this->kappaSq) * gamma * this->kappaInv);
+    this->SetLocation((1.0 - this->kappaSq) * this->gamma * this->kappaInv);
 }
 
 template < typename RealType >
@@ -27,25 +27,25 @@ void AsymmetricLaplaceDistribution<RealType>::SetScale(double scale)
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::f(const RealType & x) const
 {
-    return pdfLaplace(x - this->m);
+    return this->pdfLaplace(x - this->m);
 }
 
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::logf(const RealType & x) const
 {
-    return logpdfLaplace(x - this->m);
+    return this->logpdfLaplace(x - this->m);
 }
 
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::F(const RealType & x) const
 {
-    return cdfLaplace(x - this->m);
+    return this->cdfLaplace(x - this->m);
 }
 
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::S(const RealType & x) const
 {
-    return cdfLaplaceCompl(x - this->m);
+    return this->cdfLaplaceCompl(x - this->m);
 }
 
 template < typename RealType >
@@ -53,7 +53,7 @@ RealType AsymmetricLaplaceDistribution<RealType>::Variate() const
 {
     RealType X = (this->kappa == 1) ? LaplaceRand<RealType>::StandardVariate(this->localRandGenerator)
                                     : AsymmetricLaplaceRand<RealType>::StandardVariate(this->kappa, this->localRandGenerator);
-    return this->m + gamma * X;
+    return this->m + this->gamma * X;
 }
 
 template < typename RealType >
@@ -61,11 +61,11 @@ void AsymmetricLaplaceDistribution<RealType>::Sample(std::vector<RealType> &outp
 {
     if (this->kappa == 1) {
         for (RealType & var : outputData)
-            var = this->m + gamma * LaplaceRand<RealType>::StandardVariate(this->localRandGenerator);
+            var = this->m + this->gamma * LaplaceRand<RealType>::StandardVariate(this->localRandGenerator);
     }
     else {
         for (RealType & var : outputData)
-            var = this->m + gamma * AsymmetricLaplaceRand<RealType>::StandardVariate(this->kappa, this->localRandGenerator);
+            var = this->m + this->gamma * AsymmetricLaplaceRand<RealType>::StandardVariate(this->kappa, this->localRandGenerator);
     }
 }
 
@@ -148,6 +148,10 @@ void AsymmetricLaplaceDistribution<RealType>::FitShiftAndScale(const std::vector
     FitScale(sample);
 }
 
+template class AsymmetricLaplaceDistribution<float>;
+template class AsymmetricLaplaceDistribution<double>;
+template class AsymmetricLaplaceDistribution<long double>;
+
 template < typename RealType >
 String AsymmetricLaplaceRand<RealType>::Name() const
 {
@@ -187,7 +191,7 @@ void AsymmetricLaplaceRand<RealType>::FitAsymmetry(const std::vector<RealType> &
         return;
     }
 
-    double gammaN = gamma * sample.size();
+    double gammaN = this->gamma * sample.size();
     double root = 1.0;
     double minBound, maxBound;
     if (xPlus < -xMinus) {
@@ -216,7 +220,7 @@ void AsymmetricLaplaceRand<RealType>::FitAsymmetry(const std::vector<RealType> &
 template < typename RealType >
 void AsymmetricLaplaceRand<RealType>::FitShiftAndAsymmetry(const std::vector<RealType> &sample)
 {
-    FitShift(sample);
+    this->FitShift(sample);
     FitAsymmetry(sample);
 }
 
@@ -254,10 +258,13 @@ void AsymmetricLaplaceRand<RealType>::FitScaleAndAsymmetry(const std::vector<Rea
 template < typename RealType >
 void AsymmetricLaplaceRand<RealType>::Fit(const std::vector<RealType> &sample)
 {
-    FitShift(sample);
+    this->FitShift(sample);
     FitScaleAndAsymmetry(sample);
 }
 
+template class AsymmetricLaplaceRand<float>;
+template class AsymmetricLaplaceRand<double>;
+template class AsymmetricLaplaceRand<long double>;
 
 template < typename RealType >
 String LaplaceRand<RealType>::Name() const
@@ -272,3 +279,8 @@ RealType LaplaceRand<RealType>::StandardVariate(RandGenerator &randGenerator)
     RealType W = ExponentialRand<RealType>::StandardVariate(randGenerator);
     return BernoulliRand::StandardVariate(randGenerator) ? W : -W;
 }
+
+
+template class LaplaceRand<float>;
+template class LaplaceRand<double>;
+template class LaplaceRand<long double>;

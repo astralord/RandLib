@@ -103,6 +103,12 @@ template class ProbabilityDistribution<float>;
 template class ProbabilityDistribution<double>;
 template class ProbabilityDistribution<long double>;
 
-/// Bivariate
-template class ProbabilityDistribution<DoublePair>;
-template class ProbabilityDistribution<IntPair>;
+/// Bivariate discrete
+template class ProbabilityDistribution< Pair<int> >;
+template class ProbabilityDistribution< Pair<long int> >;
+template class ProbabilityDistribution< Pair<long long int> >;
+
+/// Bivariate continuous
+template class ProbabilityDistribution< Pair<float> >;
+template class ProbabilityDistribution< Pair<double> >;
+template class ProbabilityDistribution< Pair<long double> >;

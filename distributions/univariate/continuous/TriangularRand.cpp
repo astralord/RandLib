@@ -152,3 +152,8 @@ long double TriangularRand<RealType>::ExcessKurtosis() const
 {
     return -0.6;
 }
+
+
+template class TriangularRand<float>;
+template class TriangularRand<double>;
+template class TriangularRand<long double>;

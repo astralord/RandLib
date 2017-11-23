@@ -104,3 +104,7 @@ double SechRand<RealType>::Entropy() const
     return 2.0 * M_2_PI * M_CATALAN;
 }
 
+
+template class SechRand<float>;
+template class SechRand<double>;
+template class SechRand<long double>;

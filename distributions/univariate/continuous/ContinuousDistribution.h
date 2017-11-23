@@ -7,7 +7,7 @@
  * @brief The ContinuousDistribution class <BR>
  * Abstract class for all continuous distributions
  */
-template < typename RealType = double >
+template < typename RealType >
 class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateDistribution<RealType>
 {
     static_assert(std::is_floating_point_v<RealType>, "Continuous distribution supports only floating-point types");

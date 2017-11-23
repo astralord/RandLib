@@ -12,35 +12,36 @@
  * Related distributions:
  * If Y ~ Beta(1.5, 1.5), then R * (2Y - 1) ~ Wigner-Sc(R)
  */
-class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution<>
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution<RealType>
 {
-    double R = 1; ///< radius
+    RealType R = 1; ///< radius
     double RSq = 1; ///< R^2
     double logRSq = 0; /// log(R^2)
-    BetaRand<double> X{1.5, 1.5};
+    BetaRand<RealType> X{1.5, 1.5};
     
 public:
     explicit WignerSemicircleRand(double radius);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    double MinValue() const override { return -R; }
-    double MaxValue() const override { return R; }
+    RealType MinValue() const override { return -R; }
+    RealType MaxValue() const override { return R; }
 
     void SetRadius(double radius);
     inline double GetRadius() const { return R; }
     
 public:
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    RealType Variate() const override;
     void Reseed(unsigned long seed) const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
     

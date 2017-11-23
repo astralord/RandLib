@@ -243,3 +243,7 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
     double re = re1 + re2 + re3;
     return std::complex<double>(re, im);
 }
+
+template class PlanckRand<float>;
+template class PlanckRand<double>;
+template class PlanckRand<long double>;

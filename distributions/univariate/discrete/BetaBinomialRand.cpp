@@ -86,11 +86,11 @@ template< typename IntType >
 void BetaBinomialRand<IntType>::Sample(std::vector<IntType> &outputData) const
 {
     if (B.GetAlpha() == 1 && B.GetBeta() == 1) {
-        for (int & var : outputData)
+        for (IntType & var : outputData)
             var = VariateUniform();
     }
     else {
-        for (int & var : outputData)
+        for (IntType & var : outputData)
             var = VariateBeta();
     }
 }
@@ -187,3 +187,6 @@ long double BetaBinomialRand<IntType>::ExcessKurtosis() const
     return res - 3.0;
 }
 
+template class BetaBinomialRand<int>;
+template class BetaBinomialRand<long int>;
+template class BetaBinomialRand<long long int>;

@@ -131,3 +131,8 @@ long double YuleRand<IntType>::ExcessKurtosis() const
     long double denominator = ro * (ro - 4) * (ro - 3);
     return ro + 3 + numerator / denominator;
 }
+
+
+template class YuleRand<int>;
+template class YuleRand<long int>;
+template class YuleRand<long long int>;

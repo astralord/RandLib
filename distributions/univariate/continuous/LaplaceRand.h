@@ -94,7 +94,7 @@ public:
     LaplaceRand(double shift = 0, double scale = 1) : AsymmetricLaplaceDistribution<RealType>(shift, scale, 1.0) {}
     String Name() const override;
     static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
-    void Fit(const std::vector<RealType> &sample) { FitShiftAndScale(sample); }
+    void Fit(const std::vector<RealType> &sample) { this->FitShiftAndScale(sample); }
 };
 
 #endif // LAPLACERAND_H

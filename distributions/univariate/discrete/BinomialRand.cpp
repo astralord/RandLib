@@ -401,9 +401,9 @@ std::complex<double> BinomialDistribution<IntType>::CFImpl(double t) const
 template< typename IntType >
 void BinomialDistribution<IntType>::FitProbability(const std::vector<IntType> &sample)
 {
-    if (!allElementsAreNonNegative(sample))
+    if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
-    if (!allElementsAreNotBiggerThan(n, sample))
+    if (!this->allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     SetParameters(n, this->GetSampleMean(sample) / n);
 }
@@ -411,9 +411,9 @@ void BinomialDistribution<IntType>::FitProbability(const std::vector<IntType> &s
 template< typename IntType >
 BetaRand<> BinomialDistribution<IntType>::FitProbabilityBayes(const std::vector<IntType> &sample, const BetaDistribution<> &priorDistribution, bool MAP)
 {
-    if (!allElementsAreNonNegative(sample))
+    if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
-    if (!allElementsAreNotBiggerThan(n, sample))
+    if (!this->allElementsAreNotBiggerThan(n, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     int N = sample.size();
     double sum = this->GetSampleSum(sample);
@@ -432,8 +432,16 @@ BetaRand<> BinomialDistribution<IntType>::FitProbabilityMinimax(const std::vecto
     return FitProbabilityBayes(sample, B);
 }
 
+template class BinomialDistribution<int>;
+template class BinomialDistribution<long int>;
+template class BinomialDistribution<long long int>;
+
 template< typename IntType >
 String BinomialRand<IntType>::Name() const
 {
     return "Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
+
+template class BinomialRand<int>;
+template class BinomialRand<long int>;
+template class BinomialRand<long long int>;

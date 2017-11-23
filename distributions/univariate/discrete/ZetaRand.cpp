@@ -123,3 +123,6 @@ long double ZetaRand<IntType>::Moment(int n) const
     return (s > n + 1) ? std::riemann_zetal(s - n) / zetaS : INFINITY;
 }
 
+template class ZetaRand<int>;
+template class ZetaRand<long int>;
+template class ZetaRand<long long int>;

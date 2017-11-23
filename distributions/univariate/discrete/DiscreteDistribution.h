@@ -7,7 +7,7 @@
  *@brief The DiscreteDistribution class <BR>
  * Abstract class for all discrete distributions
  */
-template < typename IntType = int >
+template < typename IntType >
 class RANDLIBSHARED_EXPORT DiscreteDistribution : public virtual UnivariateDistribution<IntType>
 {
     static_assert(std::is_integral_v<IntType> && std::is_signed_v<IntType>, "Discrete distribution supports only signed integral types");

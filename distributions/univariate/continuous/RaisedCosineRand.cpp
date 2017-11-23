@@ -161,14 +161,26 @@ long double RaisedCosineDistribution<RealType>::ExcessKurtosis() const
     return y;
 }
 
+template class RaisedCosineDistribution<float>;
+template class RaisedCosineDistribution<double>;
+template class RaisedCosineDistribution<long double>;
+
 template < typename RealType >
 String RaisedCosineRand<RealType>::Name() const
 {
     return "Raised cosine(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
+template class RaisedCosineRand<float>;
+template class RaisedCosineRand<double>;
+template class RaisedCosineRand<long double>;
+
 template < typename RealType >
 String RaabGreenRand<RealType>::Name() const
 {
     return "Raab Green";
 }
+
+template class RaabGreenRand<float>;
+template class RaabGreenRand<double>;
+template class RaabGreenRand<long double>;

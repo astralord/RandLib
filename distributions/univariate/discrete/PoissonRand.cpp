@@ -265,9 +265,9 @@ long double PoissonRand<IntType>::ExcessKurtosis() const
 template < typename IntType >
 void PoissonRand<IntType>::Fit(const std::vector<IntType> &sample)
 {
-    if (!allElementsAreNonNegative(sample))
+    if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
-    SetRate(GetSampleMean(sample));
+    SetRate(this->GetSampleMean(sample));
 }
 
 template < typename IntType >
@@ -290,7 +290,7 @@ void PoissonRand<IntType>::Fit(const std::vector<IntType> &sample, DoublePair &c
 template < typename IntType >
 GammaRand<> PoissonRand<IntType>::FitBayes(const std::vector<IntType> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
 {
-    if (!allElementsAreNonNegative(sample))
+    if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
@@ -298,3 +298,8 @@ GammaRand<> PoissonRand<IntType>::FitBayes(const std::vector<IntType> &sample, c
     SetRate(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
+
+
+template class PoissonRand<int>;
+template class PoissonRand<long int>;
+template class PoissonRand<long long int>;

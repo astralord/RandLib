@@ -130,3 +130,7 @@ std::complex<double> CategoricalRand<IntType>::CFImpl(double t) const
     return std::complex<double>(re, im);
 }
 
+
+template class CategoricalRand<int>;
+template class CategoricalRand<long int>;
+template class CategoricalRand<long long int>;

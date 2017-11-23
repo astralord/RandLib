@@ -176,3 +176,8 @@ RealType VonMisesRand<RealType>::Mode() const
 {
     return this->loc;
 }
+
+
+template class VonMisesRand<float>;
+template class VonMisesRand<double>;
+template class VonMisesRand<long double>;

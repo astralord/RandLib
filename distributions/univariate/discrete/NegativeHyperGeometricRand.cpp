@@ -1,18 +1,21 @@
 #include "NegativeHyperGeometricRand.h"
 
-NegativeHyperGeometricRand::NegativeHyperGeometricRand(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
+template < typename IntType >
+NegativeHyperGeometricRand<IntType>::NegativeHyperGeometricRand(IntType totalSize, IntType totalSuccessesNum, IntType limitSuccessesNum)
 {
     SetParameters(totalSize, totalSuccessesNum, limitSuccessesNum);
 }
 
-String NegativeHyperGeometricRand::Name() const
+template < typename IntType >
+String NegativeHyperGeometricRand<IntType>::Name() const
 {
     return "Negative hypergeometric(" + this->toStringWithPrecision(N) + ", "
                                       + this->toStringWithPrecision(M) + ", "
                                       + this->toStringWithPrecision(m) + ")";
 }
 
-void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccessesNum, int limitSuccessesNum)
+template < typename IntType >
+void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType totalSuccessesNum, IntType limitSuccessesNum)
 {
     if (totalSize <= 0 || totalSuccessesNum <= 0 || limitSuccessesNum <= 0)
         throw std::invalid_argument("Negative-HyperGeometric distribution: all parameters should be positive");
@@ -35,12 +38,14 @@ void NegativeHyperGeometricRand::SetParameters(int totalSize, int totalSuccesses
     pmfCoef -= RandMath::lfact(N);
 }
 
-double NegativeHyperGeometricRand::P(const int & k) const
+template < typename IntType >
+double NegativeHyperGeometricRand<IntType>::P(const IntType & k) const
 {
     return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
 }
 
-double NegativeHyperGeometricRand::logP(const int & k) const
+template < typename IntType >
+double NegativeHyperGeometricRand<IntType>::logP(const IntType & k) const
 {
     if (k < MinValue() || k > MaxValue())
         return -INFINITY;
@@ -51,33 +56,35 @@ double NegativeHyperGeometricRand::logP(const int & k) const
     return p + pmfCoef;
 }
 
-double NegativeHyperGeometricRand::F(const int & k) const
+template < typename IntType >
+double NegativeHyperGeometricRand<IntType>::F(const IntType &k) const
 {
     // relation with hypergeometric distribution can be used here instead
     if (k < MinValue())
         return 0.0;
-    int maxVal = MaxValue();
+    IntType maxVal = MaxValue();
     if (k >= maxVal)
         return 1.0;
     if (k <= 0.5 * maxVal) {
         /// sum P(X = i) going forward until k
         double sum = 0;
-        for (int i = 0; i <= k; ++i)
+        for (IntType i = 0; i <= k; ++i)
             sum += P(i);
         return sum;
     }
     /// going backwards is faster
     double sum = 1.0;
-    for (int i = k + 1; i <= maxVal; ++i)
+    for (IntType i = k + 1; i <= maxVal; ++i)
         sum -= P(i);
     return sum;
 }
 
-int NegativeHyperGeometricRand::Variate() const
+template < typename IntType >
+IntType NegativeHyperGeometricRand<IntType>::Variate() const
 {
     double p = p0;
-    int successesNum = 0;
-    int num = 0;
+    IntType successesNum = 0;
+    IntType num = 0;
     while (successesNum < m) {
         ++num;
         if (BernoulliRand::Variate(p, this->localRandGenerator) && ++successesNum == num - N + M)
@@ -88,7 +95,8 @@ int NegativeHyperGeometricRand::Variate() const
     return num - successesNum;
 }
 
-long double NegativeHyperGeometricRand::Mean() const
+template < typename IntType >
+long double NegativeHyperGeometricRand<IntType>::Mean() const
 {
     double mean = m;
     mean *= N - M;
@@ -96,7 +104,8 @@ long double NegativeHyperGeometricRand::Mean() const
     return mean;
 }
 
-long double NegativeHyperGeometricRand::Variance() const
+template < typename IntType >
+long double NegativeHyperGeometricRand<IntType>::Variance() const
 {
     double Mp1 = M + 1;
     double var = 1 - m / Mp1;
@@ -105,3 +114,7 @@ long double NegativeHyperGeometricRand::Variance() const
     var /= Mp1 * (Mp1 + 1);
     return m * var;
 }
+
+template class NegativeHyperGeometricRand<int>;
+template class NegativeHyperGeometricRand<long int>;
+template class NegativeHyperGeometricRand<long long int>;

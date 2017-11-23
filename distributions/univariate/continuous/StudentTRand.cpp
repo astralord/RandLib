@@ -256,3 +256,7 @@ long double StudentTRand<RealType>::ExcessKurtosis() const
         return 6.0 / (nu - 4);
     return (nu > 2) ? INFINITY : NAN;
 }
+
+template class StudentTRand<float>;
+template class StudentTRand<double>;
+template class StudentTRand<long double>;

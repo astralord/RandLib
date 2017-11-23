@@ -11,3 +11,7 @@ void CircularDistribution<RealType>::SetLocation(double location)
 {
     loc = location;
 }
+
+template class CircularDistribution<float>;
+template class CircularDistribution<double>;
+template class CircularDistribution<long double>;

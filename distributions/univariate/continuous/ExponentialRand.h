@@ -69,7 +69,7 @@ private:
 
 public:
     double Entropy() const;
-    double Moment(int n) const;
+    long double Moment(int n) const;
     long double ThirdMoment() const override { return Moment(3); }
     long double FourthMoment() const override { return Moment(4); }
 };

@@ -105,3 +105,7 @@ double GeometricRand<IntType>::Entropy() const
     double b = -this->p * this->logProb;
     return (a + b) / (M_LN2 * this->p);
 }
+
+template class GeometricRand<int>;
+template class GeometricRand<long int>;
+template class GeometricRand<long long int>;

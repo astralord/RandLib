@@ -108,3 +108,7 @@ IntType LogarithmicRand<IntType>::Mode() const
 {
     return 1.0;
 }
+
+template class LogarithmicRand<int>;
+template class LogarithmicRand<long int>;
+template class LogarithmicRand<long long int>;

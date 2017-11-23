@@ -152,3 +152,7 @@ long double ZipfRand<IntType>::ExcessKurtosis() const
     numerator -= 3 * harmonic1Sq * harmonic1Sq;
     return numerator / denominator - 3;
 }
+
+template class ZipfRand<int>;
+template class ZipfRand<long int>;
+template class ZipfRand<long long int>;

@@ -537,6 +537,10 @@ RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace1m(double 
     }
 }
 
+template class ShiftedGeometricStableDistribution<float>;
+template class ShiftedGeometricStableDistribution<double>;
+template class ShiftedGeometricStableDistribution<long double>;
+
 template < typename RealType >
 GeometricStableRand<RealType>::GeometricStableRand(double exponent, double skewness, double scale, double location)
     : ShiftedGeometricStableDistribution<RealType>(exponent, skewness, scale, location)
@@ -586,3 +590,7 @@ void GeometricStableRand<RealType>::SetScale(double scale)
     ShiftedGeometricStableDistribution<RealType>::SetScale(scale);
     ChangeAsymmetry();
 }
+
+template class GeometricStableRand<float>;
+template class GeometricStableRand<double>;
+template class GeometricStableRand<long double>;

@@ -123,3 +123,8 @@ long double SkellamRand<IntType>::ExcessKurtosis() const
 {
     return 1.0 / (mu1 + mu2);
 }
+
+
+template class SkellamRand<int>;
+template class SkellamRand<long int>;
+template class SkellamRand<long long int>;

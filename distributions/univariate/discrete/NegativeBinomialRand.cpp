@@ -209,6 +209,13 @@ BetaRand<> NegativeBinomialDistribution<IntType, T>::FitProbabilityBayes(const s
     return posteriorDistribution;
 }
 
+template class NegativeBinomialDistribution<int, int>;
+template class NegativeBinomialDistribution<long int, int>;
+template class NegativeBinomialDistribution<long long int, int>;
+
+template class NegativeBinomialDistribution<int, double>;
+template class NegativeBinomialDistribution<long int, double>;
+template class NegativeBinomialDistribution<long long int, double>;
 
 template< typename IntType, typename T >
 String NegativeBinomialRand<IntType, T>::Name() const
@@ -225,7 +232,7 @@ template< typename IntType, typename T >
 void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
 {
     /// Check positivity of sample
-    if (!allElementsAreNonNegative(sample))
+    if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
     DoublePair stats = this->GetSampleMeanAndVariance(sample);
@@ -252,10 +259,10 @@ void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
     SetParameters(guess, guess / (guess + mean));
 }
 
-template class NegativeBinomialDistribution<int, int>;
-template class NegativeBinomialDistribution<long int, int>;
-template class NegativeBinomialDistribution<long long int, int>;
+template class NegativeBinomialRand<int, int>;
+template class NegativeBinomialRand<long int, int>;
+template class NegativeBinomialRand<long long int, int>;
 
-template class NegativeBinomialDistribution<int, double>;
-template class NegativeBinomialDistribution<long int, double>;
-template class NegativeBinomialDistribution<long long int, double>;
+template class NegativeBinomialRand<int, double>;
+template class NegativeBinomialRand<long int, double>;
+template class NegativeBinomialRand<long long int, double>;

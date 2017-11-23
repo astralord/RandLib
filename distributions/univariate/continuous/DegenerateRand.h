@@ -11,7 +11,7 @@
  *
  * Notation: X ~ δ(a)
  */
-class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution<>
+class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution<double>
 {
     double a = 0; ///< value
 
