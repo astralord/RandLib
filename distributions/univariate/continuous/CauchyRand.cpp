@@ -16,25 +16,25 @@ String CauchyRand<RealType>::Name() const
 template < typename RealType >
 double CauchyRand<RealType>::f(const RealType & x) const
 {
-    return pdfCauchy(x);
+    return this->pdfCauchy(x);
 }
 
 template < typename RealType >
 double CauchyRand<RealType>::F(const RealType & x) const
 {
-    return cdfCauchy(x);
+    return this->cdfCauchy(x);
 }
 
 template < typename RealType >
 double CauchyRand<RealType>::S(const RealType & x) const
 {
-    return cdfCauchyCompl(x);
+    return this->cdfCauchyCompl(x);
 }
 
 template < typename RealType >
 RealType CauchyRand<RealType>::Variate() const
 {
-    return this->mu + gamma * StandardVariate(this->localRandGenerator);
+    return this->mu + this->gamma * StandardVariate(this->localRandGenerator);
 }
 
 template < typename RealType >
@@ -42,8 +42,8 @@ RealType CauchyRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
     double x, y;
     do {
-        x = 2 * UniformRand::StandardVariate(randGenerator) - 1;
-        y = 2 * UniformRand::StandardVariate(randGenerator) - 1;
+        x = 2 * UniformRand<RealType>::StandardVariate(randGenerator) - 1;
+        y = 2 * UniformRand<RealType>::StandardVariate(randGenerator) - 1;
     } while (y == 0.0 || x * x + y * y > 1.0);
     return x / y;
 }
@@ -71,3 +71,7 @@ double CauchyRand<RealType>::Entropy() const
 {
     return 2 * M_LN2 + this->logGamma + M_LNPI;
 }
+
+template class CauchyRand<float>;
+template class CauchyRand<double>;
+template class CauchyRand<long double>;

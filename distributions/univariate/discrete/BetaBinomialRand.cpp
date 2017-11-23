@@ -3,7 +3,7 @@
 #include "UniformDiscreteRand.h"
 
 template< typename IntType >
-BetaBinomialRand<IntType>::BetaBinomialRand(int number, double shape1, double shape2)
+BetaBinomialRand<IntType>::BetaBinomialRand(IntType number, double shape1, double shape2)
 {
     SetParameters(number, shape1, shape2);
 }
@@ -17,7 +17,7 @@ String BetaBinomialRand<IntType>::Name() const
 }
 
 template< typename IntType >
-void BetaBinomialRand<IntType>::SetParameters(int number, double shape1, double shape2)
+void BetaBinomialRand<IntType>::SetParameters(IntType number, double shape1, double shape2)
 {
     if (shape1 <= 0.0 || shape2 <= 0.0)
         throw std::invalid_argument("Beta-Binomial distribution: shape parameters should be positive");
@@ -66,7 +66,7 @@ double BetaBinomialRand<IntType>::F(const IntType & k) const
 template< typename IntType >
 IntType BetaBinomialRand<IntType>::VariateUniform() const
 {
-    return UniformDiscreteRand::StandardVariate(0, n, this->localRandGenerator);
+    return UniformDiscreteRand<IntType>::StandardVariate(0, n, this->localRandGenerator);
 }
 
 template< typename IntType >

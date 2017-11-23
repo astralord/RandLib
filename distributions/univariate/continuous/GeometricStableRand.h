@@ -8,7 +8,7 @@
  * Abstract class that unites in itself Asymmetric Laplace
  * and Geometric-Stable distributions
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ShiftedGeometricStableDistribution : public ContinuousDistribution<RealType>
 {
     StableRand<RealType> Z{};
@@ -119,11 +119,11 @@ protected:
  *
  * If X ~ Laplace(m, γ, κ), then X - m ~ GS(2, β, γ, (1/κ - κ) * γ) with arbitrary β
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution<RealType>
 {
 public:
-    GeometricStableRand(double exponent, double skewness, double scale, double location);
+    GeometricStableRand(double exponent = 2, double skewness = 0, double scale = M_SQRT2, double location = 0);
     virtual ~GeometricStableRand() {}
 
     String Name() const override;

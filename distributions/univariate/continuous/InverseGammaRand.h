@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * X = 1 / Y, where Y ~ Gamma(α, β)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT InverseGammaRand : public ContinuousDistribution<RealType>
 {
     double alpha = 1; ///< shape α

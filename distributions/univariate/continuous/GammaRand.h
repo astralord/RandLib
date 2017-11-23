@@ -18,7 +18,7 @@
  * If X ~ Γ(0.5 * n, 0.5), then X ~ χ^2(n) <BR>
  * If X ~ Γ(k, β) for integer k, then X ~ Erlang(k, β)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution<RealType>
 {
 protected:
@@ -242,7 +242,7 @@ class RANDLIBSHARED_EXPORT GammaRand;
  * @brief The FreeScaleGammaDistribution class <BR>
  * Abstract class for Gamma distribution with arbitrary scale/rate
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT FreeScaleGammaDistribution : public GammaDistribution<RealType>
 {
 protected:
@@ -285,7 +285,7 @@ public:
  * @brief The GammaRand class <BR>
  * Gamma distribution
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT GammaRand : public FreeScaleGammaDistribution<RealType>
 {
 public:
@@ -320,7 +320,7 @@ public:
  * Related distributions: <BR>
  * X ~ Γ(0.5 * k, 0.5)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ChiSquaredRand : public GammaDistribution<RealType>
 {
 public:
@@ -341,7 +341,7 @@ public:
  * X ~ Y_1 + Y_2 + ... + Y_k, where Y_i ~ Exp(β) <BR>
  * X ~ Γ(k, β)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution<RealType>
 {
 public:

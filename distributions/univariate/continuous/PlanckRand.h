@@ -16,18 +16,18 @@
  * Related distributions: <BR>
  * If G ~ Gamma(a + 1, b) and Z ~ Zeta(a + 1), then G / Z ~ Planck(a, b)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution<RealType>
 {
     double a = 1; ///< shape
     double b = 1; ///< scale
     double pdfCoef = M_LN2 + M_LN3 - 2 * M_LNPI; ///< coefficient for faster pdf calculations
 
-    ZetaRand Z{};
+    ZetaRand<long long int> Z{};
     GammaRand<RealType> G{2};
 
 public:
-    PlanckRand(double shape, double scale);
+    PlanckRand(double shape = 1, double scale = 1);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }

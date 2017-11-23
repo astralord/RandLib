@@ -71,7 +71,7 @@ double WeibullRand<RealType>::S(const RealType & x) const
 template < typename RealType >
 RealType WeibullRand<RealType>::Variate() const
 {
-    return lambda * std::pow(ExponentialRand::StandardVariate(this->localRandGenerator), kInv);
+    return lambda * std::pow(ExponentialRand<RealType>::StandardVariate(this->localRandGenerator), kInv);
 }
 
 template < typename RealType >

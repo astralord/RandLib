@@ -2,50 +2,58 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 
-String GeometricRand::Name() const
+template < typename IntType >
+String GeometricRand<IntType>::Name() const
 {
-    return "Geometric(" + this->toStringWithPrecision(GetProbability()) + ")";
+    return "Geometric(" + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
-void GeometricRand::SetProbability(double probability)
+template < typename IntType >
+void GeometricRand<IntType>::SetProbability(double probability)
 {
     if (probability < 0.0 || probability > 1.0)
         throw std::invalid_argument("Geometric distribution: probability parameter should in interval [0, 1]");
-    SetParameters(1, probability);
+    this->SetParameters(1, probability);
 }
 
-double GeometricRand::P(const int & k) const
+template < typename IntType >
+double GeometricRand<IntType>::P(const IntType &k) const
 {
-    return (k < 0) ? 0 : p * std::exp(k * log1mProb);
+    return (k < 0) ? 0 : this->p * std::exp(k * this->log1mProb);
 }
 
-double GeometricRand::logP(const int & k) const
+template < typename IntType >
+double GeometricRand<IntType>::logP(const IntType &k) const
 {
-    return (k < 0) ? -INFINITY : logProb + k * log1mProb;
+    return (k < 0) ? -INFINITY : this->logProb + k * this->log1mProb;
 }
 
-double GeometricRand::F(const int & k) const
+template < typename IntType >
+double GeometricRand<IntType>::F(const IntType &k) const
 {
-    return (k < 0) ? 0 : -std::expm1l((k + 1) * log1mProb);
+    return (k < 0) ? 0 : -std::expm1l((k + 1) * this->log1mProb);
 }
 
-double GeometricRand::S(const int & k) const
+template < typename IntType >
+double GeometricRand<IntType>::S(const IntType &k) const
 {
-    return (k < 0) ? 1 : std::exp((k + 1) * log1mProb);
+    return (k < 0) ? 1 : std::exp((k + 1) * this->log1mProb);
 }
 
-int GeometricRand::Variate() const
+template < typename IntType >
+IntType GeometricRand<IntType>::Variate() const
 {
-    GENERATOR_ID genId = GetIdOfUsedGenerator();
-    if (genId == EXPONENTIAL)
-        return variateGeometricThroughExponential();
-    if (genId == TABLE)
-        return variateGeometricByTable();
+    typename PascalRand<IntType>::GENERATOR_ID genId = this->GetIdOfUsedGenerator();
+    if (genId == this->EXPONENTIAL)
+        return this->variateGeometricThroughExponential();
+    if (genId == this->TABLE)
+        return this->variateGeometricByTable();
     /// unexpected return
     return -1;
 }
 
-int GeometricRand::Variate(double probability, RandGenerator &randGenerator)
+template < typename IntType >
+IntType GeometricRand<IntType>::Variate(double probability, RandGenerator &randGenerator)
 {
     if (probability > 1.0 || probability < 0.0)
         return -1;
@@ -53,11 +61,11 @@ int GeometricRand::Variate(double probability, RandGenerator &randGenerator)
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
         double rate = -std::log1pl(-probability);
-        double X = std::floor(ExponentialRand::StandardVariate(randGenerator) / rate);
-        return X < INT_MAX ? X : INT_MAX - 1; // if p->0, then X exceeds range of int
+        float X = ExponentialRand<float>::StandardVariate(randGenerator) / rate;
+        return std::floor(X);
     }
 
-    double U = UniformRand::StandardVariate(randGenerator);
+    double U = UniformRand<double>::StandardVariate(randGenerator);
     int x = 0;
     double prod = probability, sum = prod, qprob = 1.0 - probability;
     while (U > sum) {
@@ -68,29 +76,32 @@ int GeometricRand::Variate(double probability, RandGenerator &randGenerator)
     return x;
 }
 
-void GeometricRand::Sample(std::vector<int> &outputData) const
+template < typename IntType >
+void GeometricRand<IntType>::Sample(std::vector<IntType> &outputData) const
 {
-    GENERATOR_ID genId = GetIdOfUsedGenerator();
-    if (genId == EXPONENTIAL) {
-        for (int &var : outputData)
-            var = variateGeometricThroughExponential();
+    typename PascalRand<IntType>::GENERATOR_ID genId = this->GetIdOfUsedGenerator();
+    if (genId == this->EXPONENTIAL) {
+        for (IntType &var : outputData)
+            var = this->variateGeometricThroughExponential();
     }
-    else if (genId == TABLE) {
-        for (int &var : outputData)
-            var = variateGeometricByTable();
+    else if (genId == this->TABLE) {
+        for (IntType &var : outputData)
+            var = this->variateGeometricByTable();
     }
 }
 
-int GeometricRand::Median() const
+template < typename IntType >
+IntType GeometricRand<IntType>::Median() const
 {
-    double median = -M_LN2 / log1mProb;
+    double median = -M_LN2 / this->log1mProb;
     double flooredMedian = std::floor(median);
     return (RandMath::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
 }
 
-double GeometricRand::Entropy() const
+template < typename IntType >
+double GeometricRand<IntType>::Entropy() const
 {
-    double a = -q * log1mProb;
-    double b = -p * logProb;
-    return (a + b) / (M_LN2 * p);
+    double a = -this->q * this->log1mProb;
+    double b = -this->p * this->logProb;
+    return (a + b) / (M_LN2 * this->p);
 }

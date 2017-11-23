@@ -11,7 +11,8 @@
  *
  * X ~ Log(p)
  */
-class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution<>
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution<IntType>
 {
     double p = 1; ///< parameter of distribution
     double logProb = 0; ///< log(p)
@@ -20,14 +21,14 @@ public:
     explicit LogarithmicRand(double probability);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    int MinValue() const override { return 1; }
-    int MaxValue() const override { return INT_MAX; }
+    IntType MinValue() const override { return 1; }
+    IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
     void SetProbability(double probability);
     inline double GetProbability() const { return p; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
 private:
     /**
      * @fn betaFun
@@ -35,15 +36,15 @@ private:
      * @return B(p, a, 0), where B(x, a, b) denotes incomplete beta function,
      * using series expansion (converges for x < 1)
      */
-    double betaFun(int a) const;
+    double betaFun(IntType a) const;
 public:
-    double F(const int & k) const override;
-    double S(const int & k) const override;
-    int Variate() const override;
+    double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
+    IntType Variate() const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    int Mode() const override;
+    IntType Mode() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

@@ -11,7 +11,8 @@
  *
  * Notation: X ~ Zeta(s)
  */
-class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution<>
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution<IntType>
 {
     double s = 2; ///< exponent
     double sm1 = 1; ///< s - 1
@@ -22,21 +23,22 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution<>
 public:
     explicit ZetaRand(double exponent = 2.0);
     String Name() const override;
+
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    int MinValue() const override { return 1; }
-    int MaxValue() const override { return INT_MAX; }
+    IntType MinValue() const override { return 1; }
+    IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
     void SetExponent(double exponent);
     inline double GetExponent() const { return s; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    int Variate() const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    IntType Variate() const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    int Mode() const override;
+    IntType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
     long double Moment(int n) const;

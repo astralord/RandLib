@@ -10,7 +10,7 @@
  *
  * Notation: X ~ N(μ1, μ2, σ1, ρ, σ2)
  */
-template< typename RealType = long double>
+template< typename RealType = double>
 class RANDLIBSHARED_EXPORT BivariateNormalRand : public ContinuousBivariateDistribution<NormalRand<RealType>, NormalRand<RealType>, RealType>
 {
     double mu1 = 0; ///< first location μ1

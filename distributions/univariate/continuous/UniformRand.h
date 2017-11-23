@@ -16,56 +16,58 @@
  * X ~ B(1, 1, a, b) <BR>
  * (X - a) / (b - a) ~ IH(1)
  */
-class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution<double>
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT UniformRand : public BetaDistribution<RealType>
 {
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
     String Name() const override;
 
-    using BetaDistribution::SetSupport;
+    using BetaDistribution<RealType>::SetSupport;
 
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    double MinValue() const override { return a; }
-    double MaxValue() const override { return b; }
+    RealType MinValue() const override { return this->a; }
+    RealType MaxValue() const override { return this->b; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
     /**
      * @fn StandardVariate
      * @param randGenerator
      * @return a random number on interval (0,1) if no preprocessors are specified
      */
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
 
     /**
      * @fn StandardVariateClosed
      * @param randGenerator
      * @return a random number on interval [0,1]
      */
-    static double StandardVariateClosed(RandGenerator &randGenerator = staticRandGenerator);
+    static RealType StandardVariateClosed(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
 
     /**
      * @fn StandardVariateHalfClosed
      * @param randGenerator
      * @return a random number on interval [0,1)
      */
-    static double StandardVariateHalfClosed(RandGenerator &randGenerator = staticRandGenerator);
-    void Sample(std::vector<double> &outputData) const override;
+    static RealType StandardVariateHalfClosed(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
+
+    void Sample(std::vector<RealType> &outputData) const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 
@@ -75,8 +77,8 @@ private:
 public:
     inline double Entropy() const;
 
-    double LikelihoodFunction(const std::vector<double> &sample) const override;
-    double LogLikelihoodFunction(const std::vector<double> &sample) const override;
+    double LikelihoodFunction(const std::vector<RealType> &sample) const override;
+    double LogLikelihoodFunction(const std::vector<RealType> &sample) const override;
 
     /**
      * @fn FitMinimum
@@ -84,21 +86,21 @@ public:
      * otherwise fit minimum using UMVU estimator
      * @param sample
      */
-    void FitMinimum(const std::vector<double> &sample, bool unbiased = false);
+    void FitMinimum(const std::vector<RealType> &sample, bool unbiased = false);
     /**
      * @fn FitMaximum
      * fit maximum with maximum-likelihood estimator if unbiased parameter is false,
      * otherwise fit maximum using UMVU estimator
      * @param sample
      */
-    void FitMaximum(const std::vector<double> &sample, bool unbiased = false);
+    void FitMaximum(const std::vector<RealType> &sample, bool unbiased = false);
     /**
      * @fn Fit
      * fit support with maximum-likelihood estimator if unbiased parameter is false,
      * otherwise fit support using UMVU estimator
      * @param sample
      */
-    void Fit(const std::vector<double> &sample, bool unbiased = false);
+    void Fit(const std::vector<RealType> &sample, bool unbiased = false);
 
     /**
      * @fn FitMaximumBayes
@@ -108,7 +110,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    ParetoRand FitMaximumBayes(const std::vector<double> &sample, const ParetoRand &priorDistribution, bool MAP = false);
+    ParetoRand<RealType> FitMaximumBayes(const std::vector<RealType> &sample, const ParetoRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 #endif // UNIFORMRAND_H

@@ -2,78 +2,89 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
-String ExponentialRand::Name() const
+template < typename RealType >
+String ExponentialRand<RealType>::Name() const
 {
-    return "Exponential(" + this->toStringWithPrecision(GetRate()) + ")";
+    return "Exponential(" + this->toStringWithPrecision(this->GetRate()) + ")";
 }
 
-double ExponentialRand::f(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::f(const RealType &x) const
 {
-    return (x < 0.0) ? 0.0 : beta * std::exp(-beta * x);
+    return (x < 0.0) ? 0.0 : this->beta * std::exp(-this->beta * x);
 }
 
-double ExponentialRand::logf(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::logf(const RealType & x) const
 {
-    return (x < 0.0) ? -INFINITY : logBeta - beta * x;
+    return (x < 0.0) ? -INFINITY : this->logBeta - this->beta * x;
 }
 
-double ExponentialRand::F(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::F(const RealType & x) const
 {
-    return (x > 0.0) ? -std::expm1l(-beta * x) : 0.0;
+    return (x > 0.0) ? -std::expm1l(-this->beta * x) : 0.0;
 }
 
-double ExponentialRand::S(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::S(const RealType & x) const
 {
-    return (x > 0.0) ? std::exp(-beta * x) : 1.0;
+    return (x > 0.0) ? std::exp(-this->beta * x) : 1.0;
 }
 
-double ExponentialRand::Variate() const
+template < typename RealType >
+RealType ExponentialRand<RealType>::Variate() const
 {
-    return theta * StandardVariate(this->localRandGenerator);
+    return this->theta * StandardVariate(this->localRandGenerator);
 }
 
-void ExponentialRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void ExponentialRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
-    for (double & var : outputData)
+    for (RealType & var : outputData)
         var = this->Variate();
 }
 
-double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType ExponentialRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm
     size_t iter = 0;
     do {
         int stairId = randGenerator.Variate() & 255;
         /// Get horizontal coordinate
-        double x = UniformRand::StandardVariate(randGenerator) * ziggurat[stairId].second;
+        RealType x = UniformRand<RealType>::StandardVariate(randGenerator) * ziggurat[stairId].second;
         if (x < ziggurat[stairId + 1].second) /// if we are under the upper stair - accept
             return x;
         if (stairId == 0) /// if we catch the tail
             return ziggurat[1].second + StandardVariate(randGenerator);
-        long double height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
-        if (ziggurat[stairId - 1].first + height * UniformRand::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
+        RealType height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
+        if (ziggurat[stairId - 1].first + height * UniformRand<RealType>::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
             return x;
         /// rejection - go back
-    } while (++iter <= MAX_ITER_REJECTION);
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     /// fail due to some error
     return NAN;
 }
 
-std::complex<double> ExponentialRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> ExponentialRand<RealType>::CFImpl(double t) const
 {
-    return 1.0 / std::complex<double>(1.0, -theta * t);
+    return 1.0 / std::complex<double>(1.0, -this->theta * t);
 }
 
-double ExponentialRand::Entropy() const
+template < typename RealType >
+double ExponentialRand<RealType>::Entropy() const
 {
-    return 1.0 - logBeta;
+    return 1.0 - this->logBeta;
 }
 
-double ExponentialRand::Moment(int n) const
+template < typename RealType >
+double ExponentialRand<RealType>::Moment(int n) const
 {
     if (n < 0)
         return 0;
     if (n == 0)
         return 1;
-    return std::exp(RandMath::lfact(n) - n * logBeta);
+    return std::exp(RandMath::lfact(n) - n * this->logBeta);
 }

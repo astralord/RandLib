@@ -9,7 +9,8 @@
  *
  * Note that all the moments are now useless, we implement circular moments instead.
  */
-class RANDLIBSHARED_EXPORT CircularDistribution : public ContinuousDistribution<>
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT CircularDistribution : public ContinuousDistribution<RealType>
 {
 protected:
     double loc{};
@@ -19,8 +20,8 @@ protected:
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    double MinValue() const override { return loc - M_PI; }
-    double MaxValue() const override { return loc + M_PI; }
+    RealType MinValue() const override { return loc - M_PI; }
+    RealType MaxValue() const override { return loc + M_PI; }
 
     void SetLocation(double location);
     inline double GetLocation() const { return loc; }
@@ -34,13 +35,13 @@ public:
      * @fn CircularMean
      * @return Circular mean of random variable
      */
-    virtual double CircularMean() const = 0;
+    virtual long double CircularMean() const = 0;
 
     /**
      * @fn CircularVariance
      * @return Circular variance of random variable
      */
-    virtual double CircularVariance() const = 0;
+    virtual long double CircularVariance() const = 0;
 };
 
 #endif // CIRCULARDISTRIBUTION_H

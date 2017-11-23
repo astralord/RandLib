@@ -47,7 +47,7 @@ class RANDLIBSHARED_EXPORT NormalZiggurat {
  * Related distributions: <BR>
  * X ~ S(2, 0, σ/√2, μ)
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>
 {
     double sigma = 1; ///< scale σ

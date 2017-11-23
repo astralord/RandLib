@@ -16,7 +16,7 @@
  * If X ~ χ'^2(k, 0), then X ~ χ^2(k) <BR>
  * X ~ χ^2(k + 2J), where J ~ Po(λ)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution<RealType>
 {
     double k = 1; ///< degree
@@ -26,7 +26,7 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribut
     double sqrtLambda = M_SQRT2; ///< √λ
     double logLambda = M_LN2; ///< log(λ)
 
-    PoissonRand Y{};
+    PoissonRand<int> Y{};
 
 public:
     explicit NoncentralChiSquaredRand(double degree = 1, double noncentrality = 0);

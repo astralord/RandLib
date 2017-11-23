@@ -1,12 +1,14 @@
 #include "TriangularRand.h"
 #include "UniformRand.h"
 
-TriangularRand::TriangularRand(double lowerLimit, double mode, double upperLimit)
+template < typename RealType >
+TriangularRand<RealType>::TriangularRand(double lowerLimit, double mode, double upperLimit)
 {
     SetParameters(lowerLimit, mode, upperLimit);
 }
 
-String TriangularRand::Name() const
+template < typename RealType >
+String TriangularRand<RealType>::Name() const
 {
     return "Triangular("
             + this->toStringWithPrecision(MinValue()) + ", "
@@ -14,7 +16,8 @@ String TriangularRand::Name() const
             + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
-void TriangularRand::SetParameters(double lowerLimit, double mode, double upperLimit)
+template < typename RealType >
+void TriangularRand<RealType>::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
     if (lowerLimit >= mode)
         throw std::invalid_argument("Triangular distribution: lower limit should be larger than mode");
@@ -26,14 +29,16 @@ void TriangularRand::SetParameters(double lowerLimit, double mode, double upperL
     SetConstantsForGenerator();
 }
 
-void TriangularRand::SetConstantsForGenerator()
+template < typename RealType >
+void TriangularRand<RealType>::SetConstantsForGenerator()
 {
     constForGenerator = (c - a) / (b - a);
     coefGenerator1 = (b - a) * (c - a);
     coefGenerator2 = (b - a) * (b - c);
 }
 
-double TriangularRand::f(const double & x) const
+template < typename RealType >
+double TriangularRand<RealType>::f(const RealType & x) const
 {
     if (x <= a)
         return 0;
@@ -46,12 +51,14 @@ double TriangularRand::f(const double & x) const
     return 0;
 }
 
-double TriangularRand::logf(const double & x) const
+template < typename RealType >
+double TriangularRand<RealType>::logf(const RealType & x) const
 {
     return std::log(f(x));
 }
 
-double TriangularRand::F(const double & x) const
+template < typename RealType >
+double TriangularRand<RealType>::F(const RealType & x) const
 {
     if (x <= a)
         return 0.0;
@@ -62,7 +69,8 @@ double TriangularRand::F(const double & x) const
     return 1.0;
 }
 
-double TriangularRand::S(const double & x) const
+template < typename RealType >
+double TriangularRand<RealType>::S(const RealType & x) const
 {
     if (x <= a)
         return 1.0;
@@ -73,25 +81,29 @@ double TriangularRand::S(const double & x) const
     return 0.0;
 }
 
-double TriangularRand::Variate() const
+template < typename RealType >
+RealType TriangularRand<RealType>::Variate() const
 {
-    double U = UniformRand::StandardVariate(this->localRandGenerator);
+    RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
     if (U < constForGenerator)
         return a + std::sqrt(U * coefGenerator1);
     return b - std::sqrt((1 - U) * coefGenerator2);
 }
 
-long double TriangularRand::Mean() const
+template < typename RealType >
+long double TriangularRand<RealType>::Mean() const
 {
     return (a + b + c) / 3.0;
 }
 
-long double TriangularRand::Variance() const
+template < typename RealType >
+long double TriangularRand<RealType>::Variance() const
 {
     return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }
 
-std::complex<double> TriangularRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> TriangularRand<RealType>::CFImpl(double t) const
 {
     double bmc = b - c, bma = b - a, cma = c - a;
     double at = a * t, bt = b * t, ct = c * t;
@@ -107,19 +119,22 @@ std::complex<double> TriangularRand::CFImpl(double t) const
     return frac + frac;
 }
 
-double TriangularRand::Median() const
+template < typename RealType >
+RealType TriangularRand<RealType>::Median() const
 {
     if (c + c > a + b)
         return a + std::sqrt(0.5 * (b - a) * (c - a));
     return b - std::sqrt(0.5 * (b - a) * (b - c));
 }
 
-double TriangularRand::Mode() const
+template < typename RealType >
+RealType TriangularRand<RealType>::Mode() const
 {
     return c;
 }
 
-long double TriangularRand::Skewness() const
+template < typename RealType >
+long double TriangularRand<RealType>::Skewness() const
 {
     double numerator = M_SQRT2;
     numerator *= (a + b - c - c);
@@ -132,7 +147,8 @@ long double TriangularRand::Skewness() const
     return 0.2 * numerator / denominator;
 }
 
-long double TriangularRand::ExcessKurtosis() const
+template < typename RealType >
+long double TriangularRand<RealType>::ExcessKurtosis() const
 {
     return -0.6;
 }

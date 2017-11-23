@@ -103,7 +103,7 @@ RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double nonce
         RealType y = std::sqrt(noncentrality) + NormalRand<RealType>::StandardVariate(randGenerator);
         return rv + y * y;
     }
-    RealType shape = 0.5 * degree + PoissonRand::Variate(0.5 * noncentrality, randGenerator);
+    RealType shape = 0.5 * degree + PoissonRand<int>::Variate(0.5 * noncentrality, randGenerator);
     return 2 * GammaDistribution<RealType>::StandardVariate(shape, randGenerator);
 }
 
@@ -122,17 +122,17 @@ template < typename RealType >
 void NoncentralChiSquaredRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     if (k >= 1) {
-        for (double & var : outputData)
+        for (RealType & var : outputData)
             var = variateForDegreeEqualOne();
         double halfKmHalf = halfK - 0.5;
         if (halfKmHalf == 0)
             return;
-        for (double & var : outputData)
-            var += 2 * GammaDistribution<double>::StandardVariate(halfKmHalf, this->localRandGenerator);
+        for (RealType & var : outputData)
+            var += 2 * GammaDistribution<RealType>::StandardVariate(halfKmHalf, this->localRandGenerator);
     }
     else {
-        for (double & var : outputData)
-            var = 2 * GammaDistribution<double>::StandardVariate(halfK + Y.Variate(), this->localRandGenerator);
+        for (RealType & var : outputData)
+            var = 2 * GammaDistribution<RealType>::StandardVariate(halfK + Y.Variate(), this->localRandGenerator);
     }
 }
 
@@ -186,3 +186,7 @@ std::complex<double> NoncentralChiSquaredRand<RealType>::CFImpl(double t) const
     y -= halfK * std::log(aux);
     return std::exp(y);
 }
+
+template class NoncentralChiSquaredRand<float>;
+template class NoncentralChiSquaredRand<double>;
+template class NoncentralChiSquaredRand<long double>;

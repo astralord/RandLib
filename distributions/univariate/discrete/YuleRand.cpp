@@ -1,17 +1,20 @@
 #include "YuleRand.h"
 
-YuleRand::YuleRand(double shape) :
+template < typename IntType >
+YuleRand<IntType>::YuleRand(double shape) :
 X(shape, 1.0)
 {
     SetShape(shape);
 }
 
-String YuleRand::Name() const
+template < typename IntType >
+String YuleRand<IntType>::Name() const
 {
     return "Yule(" + this->toStringWithPrecision(GetShape()) + ")";
 }
 
-void YuleRand::SetShape(double shape)
+template < typename IntType >
+void YuleRand<IntType>::SetShape(double shape)
 {
     if (shape <= 0.0)
         throw std::invalid_argument("Yule distribution: shape should be positive");
@@ -20,12 +23,14 @@ void YuleRand::SetShape(double shape)
     X.SetShape(ro);
 }
 
-double YuleRand::P(const int & k) const
+template < typename IntType >
+double YuleRand<IntType>::P(const IntType & k) const
 {
     return (k < 1) ? 0.0 : std::exp(logP(k));
 }
 
-double YuleRand::logP(const int & k) const
+template < typename IntType >
+double YuleRand<IntType>::logP(const IntType & k) const
 {
     if (k < 1)
         return -INFINITY;
@@ -36,7 +41,8 @@ double YuleRand::logP(const int & k) const
     return y;
 }
 
-double YuleRand::F(const int & k) const
+template < typename IntType >
+double YuleRand<IntType>::F(const IntType & k) const
 {
     if (k < 1)
         return 0.0;
@@ -47,7 +53,8 @@ double YuleRand::F(const int & k) const
     return 1.0 - k * y;
 }
 
-double YuleRand::S(const int & k) const
+template < typename IntType >
+double YuleRand<IntType>::S(const IntType & k) const
 {
     if (k < 1)
         return 1.0;
@@ -58,32 +65,37 @@ double YuleRand::S(const int & k) const
     return k * y;
 }
 
-int YuleRand::Variate() const
+template < typename IntType >
+IntType YuleRand<IntType>::Variate() const
 {
     double prob = 1.0 / X.Variate();
-    return GeometricRand::Variate(prob, this->localRandGenerator) + 1;
+    return GeometricRand<IntType>::Variate(prob, this->localRandGenerator) + 1;
 }
 
-int YuleRand::Variate(double shape, RandGenerator &randGenerator)
+template < typename IntType >
+IntType YuleRand<IntType>::Variate(double shape, RandGenerator &randGenerator)
 {
     if (shape <= 0.0)
         return -1;
-    double prob = 1.0 / ParetoRand::StandardVariate(shape, randGenerator);
-    return GeometricRand::Variate(prob, randGenerator) + 1;
+    double prob = 1.0 / ParetoRand<double>::StandardVariate(shape, randGenerator);
+    return GeometricRand<IntType>::Variate(prob, randGenerator) + 1;
 }
 
-void YuleRand::Reseed(unsigned long seed) const
+template < typename IntType >
+void YuleRand<IntType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
     X.Reseed(seed + 1);
 }
 
-long double YuleRand::Mean() const
+template < typename IntType >
+long double YuleRand<IntType>::Mean() const
 {
     return (ro <= 1) ? INFINITY : ro / (ro - 1);
 }
 
-long double YuleRand::Variance() const
+template < typename IntType >
+long double YuleRand<IntType>::Variance() const
 {
     if (ro <= 2)
         return INFINITY;
@@ -91,12 +103,14 @@ long double YuleRand::Variance() const
     return aux * aux / (ro - 2);
 }
 
-int YuleRand::Mode() const
+template < typename IntType >
+IntType YuleRand<IntType>::Mode() const
 {
     return 1;
 }
 
-long double YuleRand::Skewness() const
+template < typename IntType >
+long double YuleRand<IntType>::Skewness() const
 {
     if (ro <= 3)
         return INFINITY;
@@ -106,7 +120,8 @@ long double YuleRand::Skewness() const
     return skewness / (ro * (ro - 3));
 }
 
-long double YuleRand::ExcessKurtosis() const
+template < typename IntType >
+long double YuleRand<IntType>::ExcessKurtosis() const
 {
     if (ro <= 4)
         return INFINITY;

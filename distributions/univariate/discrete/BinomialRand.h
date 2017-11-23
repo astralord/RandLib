@@ -25,7 +25,7 @@ protected:
     double log1mProb = -M_LN2; ///< log(q)
 
 private:
-    int n = 1; ///< number of experiments
+    IntType n = 1; ///< number of experiments
     double np = 0.5; ///< n * p
     double lfactn = 0; ///< log(n!)
 
@@ -43,10 +43,10 @@ private:
     double nqFloor = 0; ///< [n * max(p, q)]
     double logPnpInv = 0; ///< log(P([npFloor)) if p = pFloor
 
-    GeometricRand G{};
+    GeometricRand<IntType> G{};
 
 protected:
-    BinomialDistribution(int number, double probability);
+    BinomialDistribution(IntType number, double probability);
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
@@ -57,10 +57,10 @@ private:
     void SetGeneratorConstants();
 
 protected:
-    void SetParameters(int number, double probability);
+    void SetParameters(IntType number, double probability);
 
 public:
-    inline int GetNumber() const { return n; }
+    inline IntType GetNumber() const { return n; }
     inline double GetProbability() const { return p; }
 
 private:
@@ -81,7 +81,8 @@ private:
     enum GENERATOR_ID {
         BERNOULLI_SUM,
         WAITING,
-        REJECTION
+        REJECTION,
+        POISSON
     };
 
     GENERATOR_ID GetIdOfUsedGenerator() const
@@ -101,13 +102,13 @@ private:
     }
 
     IntType variateRejection() const;
-    IntType variateWaiting(int number) const;
-    static IntType variateWaiting(int number, double probability, RandGenerator &randGenerator);
-    static IntType variateBernoulliSum(int number, double probability, RandGenerator &randGenerator);
+    IntType variateWaiting(IntType number) const;
+    static IntType variateWaiting(IntType number, double probability, RandGenerator &randGenerator);
+    static IntType variateBernoulliSum(IntType number, double probability, RandGenerator &randGenerator);
 
 public:
     IntType Variate() const override;
-    static IntType Variate(int number, double probability, RandGenerator &randGenerator = ProbabilityDistribution<IntType>::staticRandGenerator);
+    static IntType Variate(IntType number, double probability, RandGenerator &randGenerator = ProbabilityDistribution<IntType>::staticRandGenerator);
     void Sample(std::vector<IntType> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 

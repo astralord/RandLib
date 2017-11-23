@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Marchenko-Pastur(λ, σ)
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution<RealType>
 {
     double lambda = 1; ///< ratio index λ
@@ -22,7 +22,7 @@ class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution<R
     double M = 1.0; ///< rejection constant
 
 public:
-    MarchenkoPasturRand(double ratio, double scale);
+    MarchenkoPasturRand(double ratio = 1, double scale = 1);
     String Name() const override;
 
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }

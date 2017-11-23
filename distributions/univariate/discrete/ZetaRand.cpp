@@ -2,17 +2,20 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/ParetoRand.h"
 
-ZetaRand::ZetaRand(double exponent)
+template < typename IntType >
+ZetaRand<IntType>::ZetaRand(double exponent)
 {
     SetExponent(exponent);
 }
 
-String ZetaRand::Name() const
+template < typename IntType >
+String ZetaRand<IntType>::Name() const
 {
     return "Zeta(" + this->toStringWithPrecision(GetExponent()) + ")";
 }
 
-void ZetaRand::SetExponent(double exponent)
+template < typename IntType >
+void ZetaRand<IntType>::SetExponent(double exponent)
 {
     if (exponent <= 1.0)
         throw std::invalid_argument("Zeta distribution: exponent should be larger than 1");
@@ -23,43 +26,49 @@ void ZetaRand::SetExponent(double exponent)
     b = -std::expm1l(-sm1 * M_LN2);
 }
 
-double ZetaRand::P(const int & k) const
+template < typename IntType >
+double ZetaRand<IntType>::P(const IntType &k) const
 {
     return (k < 1) ? 0.0 : std::exp(logP(k));
 }
 
-double ZetaRand::logP(const int & k) const
+template < typename IntType >
+double ZetaRand<IntType>::logP(const IntType & k) const
 {
     return (k < 1) ? -INFINITY : -logZetaS - s * std::log(k);
 }
 
-double ZetaRand::F(const int & k) const
+template < typename IntType >
+double ZetaRand<IntType>::F(const IntType & k) const
 {
     return (k < 1) ? 0.0 : RandMath::harmonicNumber(s, k) / zetaS;
 }
 
-int ZetaRand::Variate() const
+template < typename IntType >
+IntType ZetaRand<IntType>::Variate() const
 {
     /// Luc Devroye, p. 551
     /// rejection sampling from rounded down Pareto distribution
     size_t iter = 0;
     do {
-        double X = std::floor(ParetoRand::StandardVariate(sm1, this->localRandGenerator));
-        double T = std::pow(1.0 + 1.0 / X, sm1);
-        double V = UniformRand::StandardVariate(this->localRandGenerator);
+        IntType X = std::floor(ParetoRand<float>::StandardVariate(sm1, this->localRandGenerator));
+        float T = std::pow(1.0 + 1.0 / X, sm1);
+        float V = UniformRand<float>::StandardVariate(this->localRandGenerator);
         /// there was a typo in the book - '<=' instead of '>'
         if (V * X * (T - 1) <= b * T )
             return X;
-    } while (++iter <= MAX_ITER_REJECTION);
+    } while (++iter <= ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
     return -1; /// return if algorithm doesn't work
 }
 
-long double ZetaRand::Mean() const
+template < typename IntType >
+long double ZetaRand<IntType>::Mean() const
 {
     return (s > 2) ? std::riemann_zetal(sm1) / zetaS : INFINITY;
 }
 
-long double ZetaRand::Variance() const
+template < typename IntType >
+long double ZetaRand<IntType>::Variance() const
 {
     if (s <= 3)
         return INFINITY;
@@ -68,12 +77,14 @@ long double ZetaRand::Variance() const
     return z - y * y;
 }
 
-int ZetaRand::Mode() const
+template < typename IntType >
+IntType ZetaRand<IntType>::Mode() const
 {
     return 1;
 }
 
-long double ZetaRand::Skewness() const
+template < typename IntType >
+long double ZetaRand<IntType>::Skewness() const
 {
     if (s <= 4)
         return INFINITY;
@@ -90,12 +101,13 @@ long double ZetaRand::Skewness() const
     return numerator / denominator;
 }
 
-long double ZetaRand::ExcessKurtosis() const
+template < typename IntType >
+long double ZetaRand<IntType>::ExcessKurtosis() const
 {
     if (s <= 5)
         return INFINITY;
     long double mean = Mean();
-    long double secondMoment = SecondMoment();
+    long double secondMoment = this->SecondMoment();
     long double thirdMoment = ThirdMoment();
     long double fourthMoment = FourthMoment();
     long double meanSq = mean * mean;
@@ -105,7 +117,8 @@ long double ZetaRand::ExcessKurtosis() const
     return numerator / denominator - 3.0;
 }
 
-long double ZetaRand::Moment(int n) const
+template < typename IntType >
+long double ZetaRand<IntType>::Moment(int n) const
 {
     return (s > n + 1) ? std::riemann_zetal(s - n) / zetaS : INFINITY;
 }

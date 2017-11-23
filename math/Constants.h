@@ -13,15 +13,15 @@ using Pair = std::pair<T, T>;
 template <typename T>
 using Triplet = std::tuple<T, T, T>;
 
-typedef Pair<int> IntPair;
-typedef Pair<double> DoublePair;
-typedef Pair<long double> LongDoublePair;
+using IntPair = Pair<int>;
+using DoublePair = Pair<double>;
+using LongDoublePair = Pair<long double>;
 
-typedef Triplet<int> IntTriplet;
-typedef Triplet<double> DoubleTriplet;
-typedef Triplet<long double> LongDoubleTriplet;
+using IntTriplet = Triplet<int>;
+using DoubleTriplet = Triplet<double>;
+using LongDoubleTriplet = Triplet<long double>;
 
-typedef std::string String;
+using String = std::string;
 
 #ifndef INFINITY
 #include <limits>

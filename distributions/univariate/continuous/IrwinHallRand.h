@@ -14,31 +14,33 @@
  * Related distributions: <BR>
  * X ~ Y_1 + Y_2 + ... + Y_n, where Y_i ~ U(0,1)
  */
-class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution<>
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT IrwinHallRand : public ContinuousDistribution<RealType>
 {
     int n = 1; ///< parameter of the distribution
-    UniformRand U{};
+    UniformRand<RealType> U{};
+
 public:
     explicit IrwinHallRand(size_t number);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return n; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return n; }
 
     void SetNumber(int number);
     inline int GetNumber() const { return n; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    RealType Variate() const override;
     void Reseed(unsigned long seed) const override;
 
     long double Mean() const override;
     long double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 

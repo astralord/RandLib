@@ -16,7 +16,7 @@
  * X ~ S(0.5, 1, σ, μ) <BR>
  * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution<RealType>
 {
 public:

@@ -16,25 +16,25 @@ String LevyRand<RealType>::Name() const
 template < typename RealType >
 double LevyRand<RealType>::f(const RealType &x) const
 {
-    return pdfLevy(x);
+    return this->pdfLevy(x);
 }
 
 template < typename RealType >
 double LevyRand<RealType>::logf(const RealType & x) const
 {
-    return logpdfLevy(x);
+    return this->logpdfLevy(x);
 }
 
 template < typename RealType >
 double LevyRand<RealType>::F(const RealType & x) const
 {
-    return cdfLevy(x);
+    return this->cdfLevy(x);
 }
 
 template < typename RealType >
 double LevyRand<RealType>::S(const RealType & x) const
 {
-    return cdfLevyCompl(x);
+    return this->cdfLevyCompl(x);
 }
 
 template < typename RealType >
@@ -42,7 +42,7 @@ RealType LevyRand<RealType>::Variate() const
 {
     RealType rv = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     rv *= rv;
-    rv = gamma / rv;
+    rv = this->gamma / rv;
     return this->mu + rv;
 }
 
@@ -81,5 +81,10 @@ void LevyRand<RealType>::FitScale(const std::vector<RealType> &sample)
     for (RealType var : sample)
         invSum += 1.0 / (var - this->mu);
     invSum = 1.0 / invSum;
-    SetScale(sample.size() * invSum);
+    this->SetScale(sample.size() * invSum);
 }
+
+
+template class LevyRand<float>;
+template class LevyRand<double>;
+template class LevyRand<long double>;

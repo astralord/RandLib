@@ -101,14 +101,14 @@ RealType GammaDistribution<RealType>::variateThroughExponentialSum(int shape, Ra
 {
     double X = 0.0;
     for (int i = 0; i < shape; ++i)
-        X += ExponentialRand::StandardVariate(randGenerator);
+        X += ExponentialRand<RealType>::StandardVariate(randGenerator);
     return X;
 }
 
 template < typename RealType >
 RealType GammaDistribution<RealType>::variateForShapeOneAndAHalf(RandGenerator& randGenerator)
 {
-    RealType W = ExponentialRand::StandardVariate(randGenerator);
+    RealType W = ExponentialRand<RealType>::StandardVariate(randGenerator);
     RealType N = NormalRand<RealType>::StandardVariate(randGenerator);
     return W + 0.5 * N * N;
 }
@@ -120,8 +120,8 @@ RealType GammaDistribution<RealType>::variateBest(RandGenerator &randGenerator) 
     double X = 0;
     size_t iter = 0;
     do {
-        double V = genCoef.b * UniformRand::StandardVariate(randGenerator);
-        double W = UniformRand::StandardVariate(randGenerator);
+        double V = genCoef.b * UniformRand<RealType>::StandardVariate(randGenerator);
+        double W = UniformRand<RealType>::StandardVariate(randGenerator);
         if (V <= 1) {
             X = genCoef.t * std::pow(V, 1.0 / this->alpha);
             if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
@@ -146,9 +146,9 @@ RealType GammaDistribution<RealType>::variateAhrensDieter(double shape, RandGene
     double shapeInv = 1.0 / shape;
     double t = shapeInv + M_1_E;
     do {
-        double U = UniformRand::StandardVariate(randGenerator);
+        double U = UniformRand<RealType>::StandardVariate(randGenerator);
         double p = shape * t * U;
-        double W = ExponentialRand::StandardVariate(randGenerator);
+        double W = ExponentialRand<RealType>::StandardVariate(randGenerator);
         if (p <= 1)
         {
             X = std::pow(p, shapeInv);
@@ -172,8 +172,8 @@ RealType GammaDistribution<RealType>::variateFishman(double shape, RandGenerator
     double W1, W2;
     double shapem1 = shape - 1;
     do {
-        W1 = ExponentialRand::StandardVariate(randGenerator);
-        W2 = ExponentialRand::StandardVariate(randGenerator);
+        W1 = ExponentialRand<RealType>::StandardVariate(randGenerator);
+        W2 = ExponentialRand<RealType>::StandardVariate(randGenerator);
     } while (W2 < shapem1 * (W1 - std::log(W1) - 1));
     return shape * W1;
 }
@@ -193,7 +193,7 @@ RealType GammaDistribution<RealType>::variateMarsagliaTsang(double shape, RandGe
         RealType v = 1 + N / c;
         v = v * v * v;
         N *= N;
-        RealType U = UniformRand::StandardVariate(randGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(randGenerator);
         if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
             return d * v;
         }

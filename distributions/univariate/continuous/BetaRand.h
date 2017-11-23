@@ -19,7 +19,7 @@
  * X = Y / (Y + Z), where Y ~ Γ(α) and Z ~ Γ(β) <BR>
  * βX / α(1 - X) ~ F(2α, 2β)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT BetaDistribution : public ContinuousDistribution<RealType>
 {
 protected:
@@ -227,7 +227,7 @@ protected:
  * @brief The BetaRand class <BR>
  * Beta distribution
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution<RealType>
 {
 public:
@@ -304,7 +304,7 @@ public:
  * Related distributions: <BR>
  * X ~ B(1 - α, α, a, b)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ArcsineRand : public BetaDistribution<RealType>
 {
 public:
@@ -343,7 +343,7 @@ public:
  * Related distributions: <BR>
  * X ~ B(p * F', (1 - p) * F', 0, 1) for F' = (1 - F) / F
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution<RealType>
 {
     double F = 0.5, p = 0.5;

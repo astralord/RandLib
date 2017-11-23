@@ -47,7 +47,7 @@ int BernoulliRand::Variate() const
 
 int BernoulliRand::Variate(double probability, RandGenerator &randGenerator)
 {
-    return (probability < 0.0 || probability > 1.0) ? -1 : UniformRand::StandardVariate(randGenerator) <= probability;
+    return (probability < 0.0 || probability > 1.0) ? -1 : UniformRand<float>::StandardVariate(randGenerator) <= probability;
 }
 
 int BernoulliRand::StandardVariate(RandGenerator &randGenerator)

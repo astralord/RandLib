@@ -1,18 +1,21 @@
 #include "ZipfRand.h"
 #include "../continuous/UniformRand.h"
 
-ZipfRand::ZipfRand(double exponent, int number)
+template < typename IntType >
+ZipfRand<IntType>::ZipfRand(double exponent, IntType number)
 {
     SetParameters(exponent, number);
 }
 
-String ZipfRand::Name() const
+template < typename IntType >
+String ZipfRand<IntType>::Name() const
 {
     return "Zipf(" + this->toStringWithPrecision(GetExponent()) + ", "
                    + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
-void ZipfRand::SetParameters(double exponent, int number)
+template < typename IntType >
+void ZipfRand<IntType>::SetParameters(double exponent, IntType number)
 {
     if (exponent <= 1.0)
         throw std::invalid_argument("Zipf distribution: exponent should be larger than 1");
@@ -36,17 +39,20 @@ void ZipfRand::SetParameters(double exponent, int number)
         table[i] *= invHarmonicNumber;
 }
 
-double ZipfRand::P(const int & k) const
+template < typename IntType >
+double ZipfRand<IntType>::P(const IntType &k) const
 {
     return (k < 1 || k > n) ? 0.0 : std::pow(k, -s) * invHarmonicNumber;
 }
 
-double ZipfRand::logP(const int & k) const
+template < typename IntType >
+double ZipfRand<IntType>::logP(const IntType & k) const
 {
     return (k < 1 || k > n) ? -INFINITY : -s * std::log(k) + std::log(invHarmonicNumber); // can be hashed
 }
 
-double ZipfRand::F(const int & k) const
+template < typename IntType >
+double ZipfRand<IntType>::F(const IntType & k) const
 {
     if (k < 1.0)
         return 0.0;
@@ -55,9 +61,10 @@ double ZipfRand::F(const int & k) const
     return RandMath::harmonicNumber(s, k) * invHarmonicNumber;
 }
 
-int ZipfRand::Variate() const
+template < typename IntType >
+IntType ZipfRand<IntType>::Variate() const
 {
-    double U = UniformRand::StandardVariate(this->localRandGenerator);
+    double U = UniformRand<double>::StandardVariate(this->localRandGenerator);
     int k = 1;
     /// if we didn't manage to hash values for such U
     if (U > table[hashedVarNum - 1]) {
@@ -75,12 +82,14 @@ int ZipfRand::Variate() const
     return k;
 }
 
-long double ZipfRand::Mean() const
+template < typename IntType >
+long double ZipfRand<IntType>::Mean() const
 {
     return RandMath::harmonicNumber(s - 1, n) * invHarmonicNumber;
 }
 
-long double ZipfRand::Variance() const
+template < typename IntType >
+long double ZipfRand<IntType>::Variance() const
 {
     double numerator = RandMath::harmonicNumber(s - 1, n);
     numerator *= numerator;
@@ -88,12 +97,14 @@ long double ZipfRand::Variance() const
     return numerator * invHarmonicNumber * invHarmonicNumber;
 }
 
-int ZipfRand::Mode() const
+template < typename IntType >
+IntType ZipfRand<IntType>::Mode() const
 {
     return 1;
 }
 
-std::complex<double> ZipfRand::CFImpl(double t) const
+template < typename IntType >
+std::complex<double> ZipfRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> sum(0.0, 0.0);
     for (int i = 1; i <= n; ++i)
@@ -104,7 +115,8 @@ std::complex<double> ZipfRand::CFImpl(double t) const
     return invHarmonicNumber * sum;
 }
 
-long double ZipfRand::Skewness() const
+template < typename IntType >
+long double ZipfRand<IntType>::Skewness() const
 {
     long double harmonic0 = 1.0 / invHarmonicNumber;
     long double harmonic1 = RandMath::harmonicNumber(s - 1, n);
@@ -121,7 +133,8 @@ long double ZipfRand::Skewness() const
     return numerator / denominator;
 }
 
-long double ZipfRand::ExcessKurtosis() const
+template < typename IntType >
+long double ZipfRand<IntType>::ExcessKurtosis() const
 {
     long double harmonic0 = 1.0 / invHarmonicNumber;
     long double harmonic1 = RandMath::harmonicNumber(s - 1, n);

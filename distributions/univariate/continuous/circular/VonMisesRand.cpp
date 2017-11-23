@@ -1,17 +1,21 @@
 #include "VonMisesRand.h"
 #include "../UniformRand.h"
 
-VonMisesRand::VonMisesRand(double location, double concentration) : CircularDistribution(location)
+template < typename RealType >
+VonMisesRand<RealType>::VonMisesRand(double location, double concentration) : CircularDistribution<RealType>(location)
 {
     SetConcentration(concentration);
 }
 
-String VonMisesRand::Name() const
+template < typename RealType >
+String VonMisesRand<RealType>::Name() const
 {
-    return "von Mises(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetConcentration()) + ")";
+    return "von Mises(" + this->toStringWithPrecision(this->GetLocation()) + ", "
+                        + this->toStringWithPrecision(this->GetConcentration()) + ")";
 }
 
-void VonMisesRand::SetConcentration(double concentration)
+template < typename RealType >
+void VonMisesRand<RealType>::SetConcentration(double concentration)
 {
     if (concentration <= 0.0)
         throw std::invalid_argument("von Mises distribution: concentration parameter should be positive");
@@ -25,7 +29,8 @@ void VonMisesRand::SetConcentration(double concentration)
     }
 }
 
-double VonMisesRand::cdfSeries(double x) const
+template < typename RealType >
+double VonMisesRand<RealType>::cdfSeries(double x) const
 {
     /// backwards recursion
     double sinX = std::sin(x), cosX = std::cos(x);
@@ -49,7 +54,8 @@ double VonMisesRand::cdfSeries(double x) const
     return V;
 }
 
-double VonMisesRand::cdfErfcAux(double x) const
+template < typename RealType >
+double VonMisesRand<RealType>::cdfErfcAux(RealType x) const
 {
     /// Normal cdf approximation
     double c = 24.0 * k;
@@ -64,97 +70,109 @@ double VonMisesRand::cdfErfcAux(double x) const
     return z * (1.0 - twoZSq / y);
 }
 
-double VonMisesRand::cdfErfc(double x) const
+template < typename RealType >
+double VonMisesRand<RealType>::cdfErfc(RealType x) const
 {
     double arg = cdfErfcAux(x);
     return 0.5 * std::erfc(arg);
 }
 
-double VonMisesRand::ccdfErfc(double x) const
+template < typename RealType >
+double VonMisesRand<RealType>::ccdfErfc(RealType x) const
 {
     double arg = cdfErfcAux(x);
     return 0.5 * std::erfc(-arg);
 }
 
-double VonMisesRand::f(const double & x) const
+template < typename RealType >
+double VonMisesRand<RealType>::f(const RealType & x) const
 {
-    return (x < loc - M_PI || x > loc + M_PI) ? 0.0 : std::exp(logf(x));
+    return (x < this->loc - M_PI || x > this->loc + M_PI) ? 0.0 : std::exp(logf(x));
 }
 
-double VonMisesRand::logf(const double & x) const
+template < typename RealType >
+double VonMisesRand<RealType>::logf(const RealType & x) const
 {
-    if (x < loc - M_PI || x > loc + M_PI)
+    if (x < this->loc - M_PI || x > this->loc + M_PI)
         return -INFINITY;
-    double y = k * std::cos(x - loc) - logI0k;
+    double y = k * std::cos(x - this->loc) - logI0k;
     y -= M_LNPI + M_LN2;
     return y;
 }
 
-double VonMisesRand::F(const double & x) const
+template < typename RealType >
+double VonMisesRand<RealType>::F(const RealType & x) const
 {
-    if (x <= loc - M_PI)
+    if (x <= this->loc - M_PI)
         return 0.0;
-    if (x >= loc + M_PI)
+    if (x >= this->loc + M_PI)
         return 1.0;
-    double xAdj = x - loc;
+    double xAdj = x - this->loc;
     xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
     return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
 }
 
-double VonMisesRand::S(const double &x) const
+template < typename RealType >
+double VonMisesRand<RealType>::S(const RealType &x) const
 {
-    if (x <= loc - M_PI)
+    if (x <= this->loc - M_PI)
         return 1.0;
-    if (x >= loc + M_PI)
+    if (x >= this->loc + M_PI)
         return 0.0;
-    double xAdj = x - loc;
+    double xAdj = x - this->loc;
     xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
     return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
 }
 
-double VonMisesRand::Variate() const
+template < typename RealType >
+RealType VonMisesRand<RealType>::Variate() const
 {
     /// Generating von Mises variates by the ratio-of-uniforms method
     /// Lucio Barabesi. Dipartimento di Metodi Quantitativi, Universiteta di Siena
     size_t iter = 0;
     do {
-        double U = UniformRand::StandardVariate(this->localRandGenerator);
-        double V = 2 * UniformRand::StandardVariate(this->localRandGenerator) - 1;
-        double theta = s * V / U;
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType V = 2 * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - 1;
+        RealType theta = s * V / U;
         if ((std::fabs(theta) <= M_PI) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
-            return loc + theta;
-    } while (++iter <= MAX_ITER_REJECTION);
+            return this->loc + theta;
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     return NAN; /// fail
 }
 
-double VonMisesRand::CircularMean() const
+template < typename RealType >
+long double VonMisesRand<RealType>::CircularMean() const
 {
-    return loc;
+    return this->loc;
 }
 
-double VonMisesRand::CircularVariance() const
+template < typename RealType >
+long double VonMisesRand<RealType>::CircularVariance() const
 {
     double var = RandMath::logBesselI(1, k);
     var -= logI0k;
     return -std::expm1l(var);
 }
 
-std::complex<double> VonMisesRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> VonMisesRand<RealType>::CFImpl(double t) const
 {
-    double tloc = t * loc;
+    double tloc = t * this->loc;
     double cosTloc = std::cos(tloc), sinTloc = std::sin(tloc);
     std::complex<double> y(cosTloc, sinTloc);
     double z = RandMath::logBesselI(t, k) - logI0k;
     return y * std::exp(z);
 }
 
-double VonMisesRand::Median() const
+template < typename RealType >
+RealType VonMisesRand<RealType>::Median() const
 {
-    return loc;
+    return this->loc;
 }
 
-double VonMisesRand::Mode() const
+template < typename RealType >
+RealType VonMisesRand<RealType>::Mode() const
 {
-    return loc;
+    return this->loc;
 }

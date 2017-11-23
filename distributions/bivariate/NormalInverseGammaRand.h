@@ -11,7 +11,7 @@
  *
  * Notation: X ~ NIG(μ, λ, α, β)
  */
-template< typename RealType = long double>
+template< typename RealType = double>
 class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDistribution<StudentTRand<RealType>, InverseGammaRand<RealType>, RealType>
 {
     double mu = 0; ///< location μ

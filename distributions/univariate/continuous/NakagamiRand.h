@@ -13,7 +13,7 @@
  * σX ~ Nakagami(μ, ωσ^2) <BR>
  * X^2 ~ Γ(μ, μ / ω)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT NakagamiDistribution : public ContinuousDistribution<RealType>
 {
     double mu = 0.5; ///< shape μ
@@ -87,7 +87,7 @@ protected:
  * @brief The NakagamiRand class <BR>
  * Nakagami distribution
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT NakagamiRand : public NakagamiDistribution<RealType>
 {
 public:
@@ -108,7 +108,7 @@ public:
  * X^2 ~ χ^2(k) <BR>
  * X^2 ~ Γ(k/2, 0.5)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ChiRand : public NakagamiDistribution<RealType>
 {
 
@@ -144,7 +144,7 @@ public:
  * X / σ ~ χ(3) <BR>
  * X ~ Nakagami(1.5, 3σ^2)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT MaxwellBoltzmannRand : public NakagamiDistribution<RealType>
 {
     double sigma = 1; ///< scale σ
@@ -189,7 +189,7 @@ public:
  * X / σ ~ χ(2)
  * X ~ Nakagami(1, 2σ^2)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT RayleighRand : public NakagamiDistribution<RealType>
 {
     double sigma = 1; ///< scale σ

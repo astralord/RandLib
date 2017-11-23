@@ -8,7 +8,7 @@
  * @brief The AsymmetricLaplaceDistribution class <BR>
  * Abstract parent class for Laplace and Asymmetric Laplace distributions
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT AsymmetricLaplaceDistribution : public ShiftedGeometricStableDistribution<RealType>
 {
 public:
@@ -59,7 +59,7 @@ protected:
  * X = m + γ * (Y / κ - W * κ), where Y, W ~ Exp(1) <BR>
  * X - m ~ GS(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT AsymmetricLaplaceRand : public AsymmetricLaplaceDistribution<RealType>
 {
 public:
@@ -87,7 +87,7 @@ public:
  * X = m + γ * (Y - W), where Y, W ~ Exp(1) <BR>
  * X - m ~ GS(2, β, γ, 0) with arbitrary β
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT LaplaceRand : public AsymmetricLaplaceDistribution<RealType>
 {
 public:

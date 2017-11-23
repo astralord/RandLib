@@ -14,11 +14,11 @@
  * Related distributions: <BR>
  * X = Y + Z, where Y ~ Normal(μ, σ) and Z ~ Exp(β)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution<RealType>
 {
     NormalRand<RealType> X{};
-    ExponentialRand Y{};
+    ExponentialRand<RealType> Y{};
 
     double a = 1; ///< μ + βσ^2
     double b = M_SQRT1_2; ///< 1 / (√2 * σ)

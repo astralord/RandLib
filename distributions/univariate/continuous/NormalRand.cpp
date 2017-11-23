@@ -73,30 +73,30 @@ RealType NormalRand<RealType>::StandardVariate(RandGenerator &randGenerator)
     do {
         unsigned long long B = randGenerator.Variate();
         int stairId = B & 255;
-        double x = UniformRand::StandardVariate(randGenerator) * ziggurat[stairId].second; /// Get horizontal coordinate
+        RealType x = UniformRand<RealType>::StandardVariate(randGenerator) * ziggurat[stairId].second; /// Get horizontal coordinate
         if (x < ziggurat[stairId + 1].second)
             return ((signed)B > 0) ? x : -x;
         if (stairId == 0) /// handle the base layer
         {
-            static thread_local double z = -1;
+            static thread_local RealType z = -1;
             if (z > 0) /// we don't have to generate another exponential variable as we already have one
             {
-                x = ExponentialRand::StandardVariate(randGenerator) / ziggurat[1].second;
+                x = ExponentialRand<RealType>::StandardVariate(randGenerator) / ziggurat[1].second;
                 z -= 0.5 * x * x;
             }
             if (z <= 0) /// if previous generation wasn't successful
             {
                 do {
-                    x = ExponentialRand::StandardVariate(randGenerator) / ziggurat[1].second;
-                    z = ExponentialRand::StandardVariate(randGenerator) - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
+                    x = ExponentialRand<RealType>::StandardVariate(randGenerator) / ziggurat[1].second;
+                    z = ExponentialRand<RealType>::StandardVariate(randGenerator) - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
                 } while (z <= 0);
             }
             x += ziggurat[1].second;
             return ((signed)B > 0) ? x : -x;
         }
         /// handle the wedges of other stairs
-        long double height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
-        if (ziggurat[stairId - 1].first + height * UniformRand::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
+        RealType height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
+        if (ziggurat[stairId - 1].first + height * UniformRand<RealType>::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     return NAN; /// fail due to some error

@@ -327,7 +327,7 @@ double ShiftedGeometricStableDistribution<RealType>::F(const RealType &x) const
 template < typename RealType >
 double ShiftedGeometricStableDistribution<RealType>::variateForUnityExponent(double z) const
 {
-    double W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = z + 2 * beta * std::log(gamma * W) / M_PI;
     X *= gamma;
     X += mu;
@@ -337,7 +337,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateForUnityExponent(dou
 template < typename RealType >
 double ShiftedGeometricStableDistribution<RealType>::variateForGeneralExponent(double z) const
 {
-    double W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = std::pow(W, alphaInv) * gamma * z;
     return mu * W + X;
 }
@@ -345,7 +345,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateForGeneralExponent(d
 template < typename RealType >
 double ShiftedGeometricStableDistribution<RealType>::variateForOneHalfExponent(double z) const
 {
-    double W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = mu + gamma * W * z;
     return X * W;
 }
@@ -353,7 +353,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateForOneHalfExponent(d
 template < typename RealType >
 double ShiftedGeometricStableDistribution<RealType>::variateByCauchy(double z) const
 {
-    double W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = mu + gamma * z;
     return X * W;
 }

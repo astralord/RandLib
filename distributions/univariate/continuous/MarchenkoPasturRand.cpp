@@ -153,7 +153,7 @@ RealType MarchenkoPasturRand<RealType>::variateForTinyRatio() const
     size_t iter = 0;
     do {
         double X = BetaRV.Variate();
-        double U = UniformRand::StandardVariate(this->localRandGenerator);
+        double U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         if (U < M / X)
             return X;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
@@ -166,7 +166,7 @@ RealType MarchenkoPasturRand<RealType>::variateForSmallRatio() const
     size_t iter = 0;
     do {
         double X = BetaRV.Variate();
-        double U = UniformRand::StandardVariate(this->localRandGenerator);
+        double U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         double ratio = M * (1.0 - a / X);
         if (U * U < ratio)
             return X;
@@ -177,13 +177,13 @@ RealType MarchenkoPasturRand<RealType>::variateForSmallRatio() const
 template < typename RealType >
 RealType MarchenkoPasturRand<RealType>::variateForLargeRatio() const
 {
-    return (UniformRand::StandardVariate(this->localRandGenerator) > 1.0 / lambda) ? 0.0 : variateForSmallRatio();
+    return (UniformRand<RealType>::StandardVariate(this->localRandGenerator) > 1.0 / lambda) ? 0.0 : variateForSmallRatio();
 }
 
 template < typename RealType >
 RealType MarchenkoPasturRand<RealType>::variateForHugeRatio() const
 {
-    return (UniformRand::StandardVariate(this->localRandGenerator) > 1.0 / lambda) ? 0.0 : variateForTinyRatio();
+    return (UniformRand<RealType>::StandardVariate(this->localRandGenerator) > 1.0 / lambda) ? 0.0 : variateForTinyRatio();
 }
 
 template < typename RealType >
@@ -358,3 +358,7 @@ std::complex<double> MarchenkoPasturRand<RealType>::CFImpl(double t) const
     return std::complex<double>(1.0 - 1.0 / lambda + re, im);
 }
 
+
+template class MarchenkoPasturRand<float>;
+template class MarchenkoPasturRand<double>;
+template class MarchenkoPasturRand<long double>;

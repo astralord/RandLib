@@ -5,7 +5,7 @@
 #include "BernoulliRand.h"
 
 template< typename IntType >
-BinomialDistribution<IntType>::BinomialDistribution(int number, double probability)
+BinomialDistribution<IntType>::BinomialDistribution(IntType number, double probability)
 {
     SetParameters(number, probability);
 }
@@ -77,7 +77,7 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
 }
 
 template< typename IntType >
-void BinomialDistribution<IntType>::SetParameters(int number, double probability)
+void BinomialDistribution<IntType>::SetParameters(IntType number, double probability)
 {
     if (probability < 0.0 || probability > 1.0)
         throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1]");
@@ -160,7 +160,7 @@ IntType BinomialDistribution<IntType>::variateRejection() const
     float Y, V;
     IntType X;
     do {
-        float U = a4 * UniformRand::StandardVariate(this->localRandGenerator);
+        float U = a4 * UniformRand<float>::StandardVariate(this->localRandGenerator);
         if (U <= a1)
         {
             float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
@@ -168,7 +168,7 @@ IntType BinomialDistribution<IntType>::variateRejection() const
             reject = (Y >= delta1);
             if (!reject)
             {
-                float W = ExponentialRand::StandardVariate(this->localRandGenerator);
+                float W = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
                 X = std::floor(Y);
                 V = -W - 0.5 * N * N + c;
             }
@@ -180,15 +180,15 @@ IntType BinomialDistribution<IntType>::variateRejection() const
             reject = (Y >= delta2);
             if (!reject)
             {
-                float W = ExponentialRand::StandardVariate(this->localRandGenerator);
+                float W = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
                 X = std::floor(-Y);
                 V = -W - 0.5 * N * N;
             }
         }
         else if (U <= a3)
         {
-            float W1 = ExponentialRand::StandardVariate(this->localRandGenerator);
-            float W2 = ExponentialRand::StandardVariate(this->localRandGenerator);
+            float W1 = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
+            float W2 = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
             Y = delta1 + W1 / coefa3;
             X = std::floor(Y);
             V = -W2 - coefa3 * Y + delta1 / nqFloor;
@@ -196,8 +196,8 @@ IntType BinomialDistribution<IntType>::variateRejection() const
         }
         else
         {
-            float W1 = ExponentialRand::StandardVariate(this->localRandGenerator);
-            float W2 = ExponentialRand::StandardVariate(this->localRandGenerator);
+            float W1 = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
+            float W2 = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
             Y = delta2 + W1 / coefa4;
             X = std::floor(-Y);
             V = -W2 - coefa4 * Y;
@@ -214,11 +214,11 @@ IntType BinomialDistribution<IntType>::variateRejection() const
 }
 
 template< typename IntType >
-IntType BinomialDistribution<IntType>::variateWaiting(int number) const
+IntType BinomialDistribution<IntType>::variateWaiting(IntType number) const
 {
     /// waiting algorithm, using
     /// sum of geometrically distributed variables
-    int X = -1, sum = 0;
+    IntType X = -1, sum = 0;
     do {
         sum += G.Variate() + 1;
         ++X;
@@ -227,20 +227,20 @@ IntType BinomialDistribution<IntType>::variateWaiting(int number) const
 }
 
 template< typename IntType >
-IntType BinomialDistribution<IntType>::variateWaiting(int number, double probability, RandGenerator &randGenerator)
+IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double probability, RandGenerator &randGenerator)
 {
-    int X = -1, sum = 0;
+    IntType X = -1, sum = 0;
     do {
-        sum += GeometricRand::Variate(probability, randGenerator) + 1;
+        sum += GeometricRand<IntType>::Variate(probability, randGenerator) + 1;
         ++X;
     } while (sum <= number);
     return X;
 }
 
 template< typename IntType >
-IntType BinomialDistribution<IntType>::variateBernoulliSum(int number, double probability, RandGenerator &randGenerator)
+IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, double probability, RandGenerator &randGenerator)
 {
-    int var = 0;
+    IntType var = 0;
     if (RandMath::areClose(probability, 0.5)) {
         for (int i = 0; i != number; ++i)
             var += BernoulliRand::StandardVariate(randGenerator);
@@ -259,14 +259,14 @@ IntType BinomialDistribution<IntType>::Variate() const
     switch (genId) {
     case WAITING:
     {
-        double var = variateWaiting(n);
+        IntType var = variateWaiting(n);
         return (p <= 0.5) ? var : n - var;
     }
     case REJECTION:
     {
         /// if X ~ Bin(n, p') and Y ~ Bin(n - X, (p - p') / (1 - p'))
         /// then Z = X + Y ~ Bin(n, p)
-        int Z = variateRejection();
+        IntType Z = variateRejection();
         if (pRes > 0)
             Z += variateWaiting(n - Z);
         return (p > 0.5) ? n - Z : Z;
@@ -279,7 +279,7 @@ IntType BinomialDistribution<IntType>::Variate() const
 }
 
 template< typename IntType >
-IntType BinomialDistribution<IntType>::Variate(int number, double probability, RandGenerator &randGenerator)
+IntType BinomialDistribution<IntType>::Variate(IntType number, double probability, RandGenerator &randGenerator)
 {
     /// sanity check
     if (number < 0 || probability < 0.0 || probability > 1.0)

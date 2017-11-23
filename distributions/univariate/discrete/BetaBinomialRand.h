@@ -17,19 +17,19 @@
 template< typename IntType = int >
 class RANDLIBSHARED_EXPORT BetaBinomialRand : public DiscreteDistribution<IntType>
 {
-    int n = 1; ///< number of experiments
+    IntType n = 1; ///< number of experiments
     double pmfCoef = 0; ///< log(n!) - log(Γ(α + β + n)) - log(B(α, β))
     BetaRand<double> B{};
 
 public:
-    BetaBinomialRand(int number, double shape1, double shape2);
+    BetaBinomialRand(IntType number = 1, double shape1 = 1, double shape2 = 1);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
     IntType MinValue() const override { return 0; }
     IntType MaxValue() const override { return n; }
 
-    void SetParameters(int number, double shape1, double shape2);
-    inline int GetNumber() const { return n; }
+    void SetParameters(IntType number, double shape1, double shape2);
+    inline IntType GetNumber() const { return n; }
     inline double GetAlpha() const { return B.GetAlpha(); }
     inline double GetBeta() const { return B.GetBeta(); }
 

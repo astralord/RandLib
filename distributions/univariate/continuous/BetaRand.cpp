@@ -134,7 +134,7 @@ double BetaDistribution<RealType>::S(const RealType &x) const
 template < typename RealType >
 RealType BetaDistribution<RealType>::variateArcsine() const
 {
-    RealType U = 2 * UniformRand::StandardVariate(this->localRandGenerator) - 1;
+    RealType U = 2 * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - 1;
     RealType X = std::sin(M_PI * U);
     return X * X;
 }
@@ -144,8 +144,8 @@ RealType BetaDistribution<RealType>::variateRejectionUniform() const
 {
     size_t iter = 0;
     do {
-        RealType U = UniformRand::StandardVariate(this->localRandGenerator);
-        RealType V = UniformRand::StandardVariate(this->localRandGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType V = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         if (0.25 * V * V <= U - U * U)
             return U;
     } while (++iter <= this->MAX_ITER_REJECTION);
@@ -158,8 +158,8 @@ RealType BetaDistribution<RealType>::variateRejectionUniformExtended() const
     size_t iter = 0;
     static constexpr double M_LN4 = M_LN2 + M_LN2;
     do {
-        RealType U = UniformRand::StandardVariate(this->localRandGenerator);
-        RealType W = ExponentialRand::StandardVariate(this->localRandGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
         RealType edge = M_LN4 + std::log(U - U * U);
         if (W >= (1.0 - alpha) * edge)
             return U;
@@ -180,7 +180,7 @@ RealType BetaDistribution<RealType>::variateRejectionNormal() const
             Z = N * N;
         } while (Z >= alpha2m1);
 
-        RealType W = ExponentialRand::StandardVariate(this->localRandGenerator) + genCoef.s;
+        RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator) + genCoef.s;
         RealType aux = 0.5 - alpham1 / (alpha2m1 - Z);
         aux *= Z;
         if (W + aux >= 0)
@@ -200,8 +200,8 @@ RealType BetaDistribution<RealType>::variateJohnk() const
     RealType X = 0, Z = 0;
     RealType W = 0, V = 0;
     do {
-        W = ExponentialRand::StandardVariate(this->localRandGenerator) / alpha;
-        V = ExponentialRand::StandardVariate(this->localRandGenerator) / beta;
+        W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator) / alpha;
+        V = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator) / beta;
         X = std::exp(-W);
         Z = X + std::exp(-V);
     } while (Z > 1);
@@ -213,8 +213,8 @@ RealType BetaDistribution<RealType>::variateCheng() const
 {
     RealType R, T, Y;
     do {
-        RealType U = UniformRand::StandardVariate(this->localRandGenerator);
-        RealType V = UniformRand::StandardVariate(this->localRandGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType V = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         RealType X = std::log(U / (1 - U)) / genCoef.t;
         Y = alpha * std::exp(X);
         R = 1.0 / (beta + Y);
@@ -231,8 +231,8 @@ RealType BetaDistribution<RealType>::variateAtkinsonWhittaker() const
 {
     size_t iter = 0;
     do {
-        RealType U = UniformRand::StandardVariate(this->localRandGenerator);
-        RealType W = ExponentialRand::StandardVariate(this->localRandGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
         if (U <= genCoef.s) {
             RealType X = genCoef.t * std::pow(U / genCoef.s, 1.0 / alpha);
             if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - genCoef.t)))
@@ -263,7 +263,7 @@ RealType BetaDistribution<RealType>::Variate() const
 
     switch (id) {
     case UNIFORM:
-        var = UniformRand::StandardVariate(this->localRandGenerator);
+        var = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         break;
     case ARCSINE:
         var = variateArcsine();
@@ -303,7 +303,7 @@ void BetaDistribution<RealType>::Sample(std::vector<RealType> &outputData) const
     switch (id) {
     case UNIFORM: {
         for (RealType &var : outputData)
-            var = UniformRand::StandardVariate(this->localRandGenerator);
+            var = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         }
         break;
     case ARCSINE: {

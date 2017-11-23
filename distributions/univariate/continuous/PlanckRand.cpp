@@ -112,7 +112,7 @@ template < typename RealType >
 void PlanckRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     G.Sample(outputData);
-    for (double & var : outputData)
+    for (RealType & var : outputData)
         var /= Z.Variate();
 }
 

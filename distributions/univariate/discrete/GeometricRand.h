@@ -14,25 +14,26 @@
  * Related distributions: <BR>
  * X ~ NB(1, p)
  */
-class RANDLIBSHARED_EXPORT GeometricRand : public NegativeBinomialDistribution<int>
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT GeometricRand : public PascalRand<IntType>
 {
 public:
-    explicit GeometricRand(double probability = 0.5) : NegativeBinomialDistribution<int>(1, probability) {}
+    explicit GeometricRand(double probability = 0.5) : PascalRand<IntType>(1, probability) {}
     String Name() const override;
 
 public:
     void SetProbability(double probability);
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    double S(const int & k) const override;
-    int Variate() const override;
-    static int Variate(double probability, RandGenerator &randGenerator = staticRandGenerator);
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
+    IntType Variate() const override;
+    static IntType Variate(double probability, RandGenerator &randGenerator = ProbabilityDistribution<IntType>::staticRandGenerator);
 
-    void Sample(std::vector<int> &outputData) const override;
+    void Sample(std::vector<IntType> &outputData) const override;
 
-    int Median() const override;
+    IntType Median() const override;
 
     double Entropy() const;
 };

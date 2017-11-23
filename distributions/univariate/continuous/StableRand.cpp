@@ -810,8 +810,8 @@ double StableDistribution<RealType>::S(const RealType & x) const
 template < typename RealType >
 double StableDistribution<RealType>::variateForUnityExponent() const
 {
-    RealType U = M_PI * UniformRand::StandardVariate(this->localRandGenerator) - M_PI_2;
-    RealType W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    RealType U = M_PI * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - M_PI_2;
+    RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     RealType pi_2pBetaU = M_PI_2 + beta * U;
     RealType Y = W * std::cos(U) / pi_2pBetaU;
     RealType X = std::log(Y);
@@ -825,8 +825,8 @@ double StableDistribution<RealType>::variateForUnityExponent() const
 template < typename RealType >
 double StableDistribution<RealType>::variateForGeneralExponent() const
 {
-    RealType U = M_PI * UniformRand::StandardVariate(this->localRandGenerator) - M_PI_2;
-    RealType W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    RealType U = M_PI * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - M_PI_2;
+    RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     RealType alphaUpxi = alpha * (U + xi);
     RealType X = std::sin(alphaUpxi);
     RealType W_adj = W / std::cos(U - alphaUpxi);

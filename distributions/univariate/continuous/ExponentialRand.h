@@ -31,6 +31,7 @@ class RANDLIBSHARED_EXPORT ExpZiggurat {
         return table;
     }
 
+    template < typename RealType >
     friend class ExponentialRand;
 };
 
@@ -45,26 +46,23 @@ class RANDLIBSHARED_EXPORT ExpZiggurat {
  * Related distributions: <BR>
  * X ~ Γ(1, β)
  */
-class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution<double>
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT ExponentialRand : public FreeScaleGammaDistribution<RealType>
 {
     static constexpr auto ziggurat = ExpZiggurat::createZiggurat();
 
 public:
-    explicit ExponentialRand(double rate = 1) : FreeScaleGammaDistribution(1, rate) {}
-
+    explicit ExponentialRand(double rate = 1) : FreeScaleGammaDistribution<RealType>(1, rate) {}
     String Name() const override;
-    SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
 
 public:
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
-    void Sample(std::vector<double> &outputData) const override;
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
+    void Sample(std::vector<RealType> &outputData) const override;
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
 
 private:
     std::complex<double> CFImpl(double t) const override;

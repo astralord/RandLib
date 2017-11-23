@@ -166,8 +166,8 @@ void AsymmetricLaplaceRand<RealType>::SetAsymmetry(double asymmetry)
 template < typename RealType >
 RealType AsymmetricLaplaceRand<RealType>::StandardVariate(double asymmetry, RandGenerator &randGenerator)
 {
-    RealType x = ExponentialRand::StandardVariate(randGenerator) / asymmetry;
-    RealType y = ExponentialRand::StandardVariate(randGenerator) * asymmetry;
+    RealType x = ExponentialRand<RealType>::StandardVariate(randGenerator) / asymmetry;
+    RealType y = ExponentialRand<RealType>::StandardVariate(randGenerator) * asymmetry;
     return x - y;
 }
 
@@ -269,6 +269,6 @@ String LaplaceRand<RealType>::Name() const
 template < typename RealType >
 RealType LaplaceRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
-    RealType W = ExponentialRand::StandardVariate(randGenerator);
+    RealType W = ExponentialRand<RealType>::StandardVariate(randGenerator);
     return BernoulliRand::StandardVariate(randGenerator) ? W : -W;
 }

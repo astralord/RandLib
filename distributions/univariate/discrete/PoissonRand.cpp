@@ -2,17 +2,20 @@
 #include "../continuous/UniformRand.h"
 #include "../continuous/ExponentialRand.h"
 
-PoissonRand::PoissonRand(double rate)
+template < typename IntType >
+PoissonRand<IntType>::PoissonRand(double rate)
 {
     SetRate(rate);
 }
 
-String PoissonRand::Name() const
+template < typename IntType >
+String PoissonRand<IntType>::Name() const
 {
     return "Poisson(" + this->toStringWithPrecision(GetRate()) + ")";
 }
 
-void PoissonRand::SetGeneratorConstants()
+template < typename IntType >
+void PoissonRand<IntType>::SetGeneratorConstants()
 {
     delta = std::round(std::sqrt(2 * mu * std::log(M_1_PI * 128 * mu)));
     delta = std::max(6.0, std::min(mu, delta));
@@ -36,7 +39,8 @@ void PoissonRand::SetGeneratorConstants()
     lfactMu = RandMath::lfact(mu);
 }
 
-void PoissonRand::SetRate(double rate)
+template < typename IntType >
+void PoissonRand<IntType>::SetRate(double rate)
 {
     if (rate <= 0.0)
         throw std::invalid_argument("Poisson distribution: rate should be positive");
@@ -51,12 +55,14 @@ void PoissonRand::SetRate(double rate)
         SetGeneratorConstants();
 }
 
-double PoissonRand::P(const int & k) const
+template < typename IntType >
+double PoissonRand<IntType>::P(const IntType & k) const
 {
     return (k < 0) ? 0.0 : std::exp(logP(k));
 }
 
-double PoissonRand::logP(const int & k) const
+template < typename IntType >
+double PoissonRand<IntType>::logP(const IntType & k) const
 {
     if (k < 0)
         return -INFINITY;
@@ -64,17 +70,20 @@ double PoissonRand::logP(const int & k) const
     return y - RandMath::lfact(k);
 }
 
-double PoissonRand::F(const int & k) const
+template < typename IntType >
+double PoissonRand<IntType>::F(const IntType & k) const
 {
     return (k >= 0.0) ? RandMath::qgamma(k + 1, lambda, logLambda) : 0.0;
 }
 
-double PoissonRand::S(const int & k) const
+template < typename IntType >
+double PoissonRand<IntType>::S(const IntType & k) const
 {
     return (k >= 0.0) ? RandMath::pgamma(k + 1, lambda, logLambda) : 1.0;
 }
 
-double PoissonRand::acceptanceFunction(int X) const
+template < typename IntType >
+double PoissonRand<IntType>::acceptanceFunction(IntType X) const
 {
     if (X == 0)
         return 0.0;
@@ -84,21 +93,23 @@ double PoissonRand::acceptanceFunction(int X) const
     return q;
 }
 
-bool PoissonRand::generateByInversion() const
+template < typename IntType >
+bool PoissonRand<IntType>::generateByInversion() const
 {
     /// the inversion generator is much faster than rejection one,
     /// however the lost of precision for large rate affects it drastically
     return lambda < 10;
 }
 
-int PoissonRand::variateRejection() const
+template < typename IntType >
+IntType PoissonRand<IntType>::variateRejection() const
 {
     size_t iter = 0;
-    int X = 0;
+    IntType X = 0;
     do {
         bool reject = false;
         float W = 0.0;
-        float U = c * UniformRand::StandardVariate(this->localRandGenerator);
+        float U = c * UniformRand<float>::StandardVariate(this->localRandGenerator);
         if (U <= c1) {
             float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
             float Y = -std::fabs(N) * sqrtMu;
@@ -128,24 +139,25 @@ int PoissonRand::variateRejection() const
             X = 1;
         }
         else {
-            float V = ExponentialRand::StandardVariate(this->localRandGenerator);
+            float V = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
             float Y = delta + V * zeta;
             X = std::ceil(Y);
             W = -(2.0 + Y) / zeta;
         }
 
-        if (!reject && W - ExponentialRand::StandardVariate(this->localRandGenerator) <= acceptanceFunction(X)) {
+        if (!reject && W - ExponentialRand<float>::StandardVariate(this->localRandGenerator) <= acceptanceFunction(X)) {
             return X + mu;
         }
 
-    } while (++iter < MAX_ITER_REJECTION);
+    } while (++iter < ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
     return -1;
 }
 
-int PoissonRand::variateInversion() const
+template < typename IntType >
+IntType PoissonRand<IntType>::variateInversion() const
 {
-    double U = UniformRand::StandardVariate(this->localRandGenerator);
-    int k = mu;
+    double U = UniformRand<double>::StandardVariate(this->localRandGenerator);
+    IntType k = mu;
     double s = Fmu, p = Pmu;
     if (s < U)
     {
@@ -167,12 +179,14 @@ int PoissonRand::variateInversion() const
     return k;
 }
 
-int PoissonRand::Variate() const
+template < typename IntType >
+IntType PoissonRand<IntType>::Variate() const
 {
     return generateByInversion() ? variateInversion() : variateRejection();
 }
 
-int PoissonRand::Variate(double rate, RandGenerator &randGenerator)
+template < typename IntType >
+IntType PoissonRand<IntType>::Variate(double rate, RandGenerator &randGenerator)
 {
     /// check validness of parameter
     if (rate <= 0.0)
@@ -185,88 +199,99 @@ int PoissonRand::Variate(double rate, RandGenerator &randGenerator)
     int k = -1;
     double s = 0;
     do {
-        s += ExponentialRand::StandardVariate(randGenerator);
+        s += ExponentialRand<double>::StandardVariate(randGenerator);
         ++k;
     } while (s < rate);
     return k;
 }
 
-void PoissonRand::Sample(std::vector<int> &outputData) const
+template < typename IntType >
+void PoissonRand<IntType>::Sample(std::vector<IntType> &outputData) const
 {
     if (generateByInversion()) {
-        for (int & var : outputData)
+        for (IntType & var : outputData)
             var = variateInversion();
     }
     else {
-        for (int & var : outputData)
+        for (IntType & var : outputData)
             var = variateRejection();
     }
 }
 
-long double PoissonRand::Mean() const
+template < typename IntType >
+long double PoissonRand<IntType>::Mean() const
 {
     return lambda;
 }
 
-long double PoissonRand::Variance() const
+template < typename IntType >
+long double PoissonRand<IntType>::Variance() const
 {
     return lambda;
 }
 
-std::complex<double> PoissonRand::CFImpl(double t) const
+template < typename IntType >
+std::complex<double> PoissonRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(std::cos(t) - 1.0, std::sin(t));
     return std::exp(lambda * y);
 }
 
-int PoissonRand::Median() const
+template < typename IntType >
+IntType PoissonRand<IntType>::Median() const
 {
     /// this value is approximate
     return std::max(std::floor(lambda + 1.0 / 3 - 0.02 / lambda), 0.0);
 }
 
-int PoissonRand::Mode() const
+template < typename IntType >
+IntType PoissonRand<IntType>::Mode() const
 {
     return mu;
 }
 
-long double PoissonRand::Skewness() const
+template < typename IntType >
+long double PoissonRand<IntType>::Skewness() const
 {
     return 1.0 / std::sqrt(lambda);
 }
 
-long double PoissonRand::ExcessKurtosis() const
+template < typename IntType >
+long double PoissonRand<IntType>::ExcessKurtosis() const
 {
     return 1.0 / lambda;
 }
 
-void PoissonRand::Fit(const std::vector<int> &sample)
+template < typename IntType >
+void PoissonRand<IntType>::Fit(const std::vector<IntType> &sample)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
     SetRate(GetSampleMean(sample));
 }
 
-void PoissonRand::Fit(const std::vector<int> &sample, DoublePair &confidenceInterval, double significanceLevel)
+template < typename IntType >
+void PoissonRand<IntType>::Fit(const std::vector<IntType> &sample, DoublePair &confidenceInterval, double significanceLevel)
 {
     size_t n = sample.size();
 
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw std::invalid_argument(this->fitErrorDescription(WRONG_LEVEL, "Alpha is equal to " + this->toStringWithPrecision(significanceLevel)));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_LEVEL, "Alpha is equal to " + this->toStringWithPrecision(significanceLevel)));
 
     Fit(sample);
 
     double halfAlpha = 0.5 * significanceLevel;
-    ErlangRand ErlangRV(n);
+    ErlangRand<double> ErlangRV(n);
     confidenceInterval.first = ErlangRV.Quantile(halfAlpha);
     ErlangRV.SetShape(n + 1);
     confidenceInterval.second = ErlangRV.Quantile1m(halfAlpha);
 }
 
-GammaRand<> PoissonRand::FitBayes(const std::vector<int> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
+template < typename IntType >
+GammaRand<> PoissonRand<IntType>::FitBayes(const std::vector<IntType> &sample, const GammaDistribution<> &priorDistribution, bool MAP)
 {
     if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
     double alpha = priorDistribution.GetShape();
     double beta = priorDistribution.GetRate();
     GammaRand<> posteriorDistribution(alpha + this->GetSampleSum(sample), beta + sample.size());

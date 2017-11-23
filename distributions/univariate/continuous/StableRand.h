@@ -14,7 +14,7 @@
  * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ) <BR>
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT StableDistribution : public ContinuousDistribution<RealType>
 {
 protected:
@@ -426,7 +426,7 @@ private:
  * @brief The StableRand class <BR>
  * Stable distribution
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT StableRand : public StableDistribution<RealType>
 {
 public:
@@ -445,7 +445,7 @@ public:
  * Related distributions:
  * X ~ S(1.5, 0, γ, μ)
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableDistribution<RealType>
 {
 public:
@@ -463,7 +463,7 @@ public:
  * Related distributions:
  * X ~ S(1, 1, γ, μ)
  */
-template < typename RealType = long double>
+template < typename RealType = double>
 class RANDLIBSHARED_EXPORT LandauRand : public StableDistribution<RealType>
 {
 public:

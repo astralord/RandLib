@@ -95,7 +95,7 @@ RealType ExponentiallyModifiedGaussianRand<RealType>::Variate() const
 template < typename RealType >
 RealType ExponentiallyModifiedGaussianRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
-    return NormalRand<RealType>::StandardVariate(randGenerator) + ExponentialRand::StandardVariate(randGenerator);
+    return NormalRand<RealType>::StandardVariate(randGenerator) + ExponentialRand<RealType>::StandardVariate(randGenerator);
 }
 
 template < typename RealType >
@@ -151,3 +151,7 @@ long double ExponentiallyModifiedGaussianRand<RealType>::ExcessKurtosis() const
     return 3.0 * y;
 }
 
+
+template class ExponentiallyModifiedGaussianRand<float>;
+template class ExponentiallyModifiedGaussianRand<double>;
+template class ExponentiallyModifiedGaussianRand<long double>;

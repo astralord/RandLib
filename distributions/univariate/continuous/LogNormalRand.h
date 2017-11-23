@@ -13,7 +13,7 @@
  * Related distributions: <BR>
  * ln(X) ~ Normal(μ, σ)
  */
-template < typename RealType >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT LogNormalRand : public ContinuousDistribution<RealType>
 {
     NormalRand<RealType> X{};

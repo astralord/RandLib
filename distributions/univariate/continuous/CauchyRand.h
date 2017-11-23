@@ -16,7 +16,7 @@
  * X ~ S(1, 0, σ, μ) <BR>
  * If X, Y ~ Normal(0, 1), then X / Y ~ Cauchy(0, 1)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT CauchyRand : public StableDistribution<RealType>
 {
 public:

@@ -12,7 +12,8 @@
  *
  * Notation: X ~ Po(λ)
  */
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution<>
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution<IntType>
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
@@ -29,8 +30,8 @@ public:
     explicit PoissonRand(double rate = 1.0);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    int MinValue() const override { return 0; }
-    int MaxValue() const override { return INT_MAX; }
+    IntType MinValue() const override { return 0; }
+    IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
 private:
     void SetGeneratorConstants();
@@ -39,25 +40,25 @@ public:
     void SetRate(double rate);
     inline double GetRate() const { return lambda; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    double S(const int & k) const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
 private:
-    double acceptanceFunction(int X) const;
+    double acceptanceFunction(IntType X) const;
     bool generateByInversion() const;
-    int variateRejection() const;
-    int variateInversion() const;
+    IntType variateRejection() const;
+    IntType variateInversion() const;
 
 public:
-    int Variate() const override;
-    static int Variate(double rate, RandGenerator &randGenerator = staticRandGenerator);
-    void Sample(std::vector<int> &outputData) const;
+    IntType Variate() const override;
+    static IntType Variate(double rate, RandGenerator &randGenerator = ProbabilityDistribution<IntType>::staticRandGenerator);
+    void Sample(std::vector<IntType> &outputData) const;
 
     long double Mean() const override;
     long double Variance() const override;
-    int Median() const override;
-    int Mode() const override;
+    IntType Median() const override;
+    IntType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
 
@@ -70,14 +71,14 @@ public:
      * fit rate λ via maximum-likelihood method
      * @param sample
      */
-    void Fit(const std::vector<int> &sample);
+    void Fit(const std::vector<IntType> &sample);
     /**
      * @brief Fit
      * @param sample
      * @param confidenceInterval
      * @param significanceLevel
      */
-    void Fit(const std::vector<int> &sample, DoublePair &confidenceInterval, double significanceLevel);
+    void Fit(const std::vector<IntType> &sample, DoublePair &confidenceInterval, double significanceLevel);
     /**
      * @fn FitBayes
      * fit rate λ via Bayes estimation
@@ -86,7 +87,7 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior Gamma distribution
      */
-    GammaRand<> FitBayes(const std::vector<int> &sample, const GammaDistribution<> & priorDistribution, bool MAP = false);
+    GammaRand<> FitBayes(const std::vector<IntType> &sample, const GammaDistribution<> & priorDistribution, bool MAP = false);
 };
 
 #endif // POISSONRAND_H

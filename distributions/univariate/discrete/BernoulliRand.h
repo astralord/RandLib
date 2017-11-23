@@ -32,8 +32,8 @@ public:
     double F(const int & k) const override;
     double S(const int & k) const override;
     int Variate() const override;
-    static int Variate(double probability, RandGenerator &randGenerator = staticRandGenerator);
-    static int StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    static int Variate(double probability, RandGenerator &randGenerator = ProbabilityDistribution<int>::staticRandGenerator);
+    static int StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<int>::staticRandGenerator);
     void Sample(std::vector<int> &outputData) const override;
 
     inline double Entropy();

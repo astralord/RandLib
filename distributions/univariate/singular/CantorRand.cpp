@@ -112,8 +112,7 @@ std::complex<double> CantorRand::CFImpl(double t) const
 
 double CantorRand::Median() const
 {
-    double U = UniformRand::StandardVariate(this->localRandGenerator);
-    return (U + 1.0) / 3.0;
+    return 1.0 / 3;
 }
 
 long double CantorRand::Skewness() const

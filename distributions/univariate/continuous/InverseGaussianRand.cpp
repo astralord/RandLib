@@ -75,7 +75,7 @@ template < typename RealType >
 RealType InverseGaussianRand<RealType>::Variate() const
 {
     RealType X = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
-    RealType U = UniformRand::StandardVariate(this->localRandGenerator);
+    RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
     X *= X;
     RealType mupX = mu * X;
     RealType y = 4 * lambda + mupX;
@@ -132,3 +132,7 @@ long double InverseGaussianRand<RealType>::ExcessKurtosis() const
 {
     return 15 * mu / lambda;
 }
+
+template class InverseGaussianRand<float>;
+template class InverseGaussianRand<double>;
+template class InverseGaussianRand<long double>;

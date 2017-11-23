@@ -299,7 +299,7 @@ double MaxwellBoltzmannRand<RealType>::S(const RealType &x) const
 template < typename RealType >
 RealType MaxwellBoltzmannRand<RealType>::Variate() const
 {
-    RealType W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     RealType N = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     return sigma * std::sqrt(2 * W + N * N);
 }
@@ -404,7 +404,7 @@ double RayleighRand<RealType>::S(const RealType & x) const
 template < typename RealType >
 RealType RayleighRand<RealType>::Variate() const
 {
-    double W = ExponentialRand::StandardVariate(this->localRandGenerator);
+    double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     return sigma * std::sqrt(2 * W);
 }
 

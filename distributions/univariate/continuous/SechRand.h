@@ -9,7 +9,7 @@
  *
  * Notation: X ~ Sech
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution<RealType>
 {
 public:

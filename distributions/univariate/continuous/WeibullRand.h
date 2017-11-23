@@ -10,7 +10,7 @@
  *
  * Notation: X ~ Weibull(λ, k)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution<RealType>
 {
     double lambda = 1; ///< scale λ

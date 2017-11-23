@@ -135,7 +135,7 @@ void LogNormalRand<RealType>::FitLocation(const std::vector<RealType> &sample)
     /// Sanity check
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
-    SetLocation(GetSampleLogMean(sample));
+    this->SetLocation(this->GetSampleLogMean(sample));
 }
 
 template < typename RealType >
@@ -145,7 +145,7 @@ void LogNormalRand<RealType>::FitScale(const std::vector<RealType> &sample)
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     double mu = X.GetLocation();
-    SetScale(std::sqrt(GetSampleLogVariance(sample, mu)));
+    this->SetScale(std::sqrt(this->GetSampleLogVariance(sample, mu)));
 }
 
 template < typename RealType >
@@ -229,3 +229,8 @@ NormalInverseGammaRand<RealType> LogNormalRand<RealType>::FitBayes(const std::ve
     SetScale(std::sqrt(newParams.second));
     return posteriorDistribution;
 }
+
+
+template class LogNormalRand<float>;
+template class LogNormalRand<double>;
+template class LogNormalRand<long double>;

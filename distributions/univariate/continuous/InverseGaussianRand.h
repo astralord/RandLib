@@ -9,7 +9,7 @@
  *
  * Notation: X ~ IG(μ, λ)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution<RealType>
 {
     double mu = 1; ///< mean μ

@@ -12,7 +12,7 @@
  * Related distributions: <BR>
  * d1/d2 * X ~ B'(d1/2, d2/2)
  */
-template < typename RealType = long double >
+template < typename RealType = double >
 class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution<RealType>
 {
     int d1 = 2; ///< first degree
@@ -26,7 +26,7 @@ class RANDLIBSHARED_EXPORT FisherFRand : public ContinuousDistribution<RealType>
     BetaPrimeRand<RealType> B{};
 
 public:
-    FisherFRand(int degree1, int degree2);
+    FisherFRand(int degree1 = 2, int degree2 = 2);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
