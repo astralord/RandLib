@@ -368,7 +368,7 @@ long double BinomialDistribution<IntType>::Variance() const
 template< typename IntType >
 IntType BinomialDistribution<IntType>::Median() const
 {
-    return std::round(np);
+    return std::floor(np);
 }
 
 template< typename IntType >
