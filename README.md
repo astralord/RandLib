@@ -6,6 +6,7 @@
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/12703/badge.svg"/>
 </a>
+[![CodeFactor](https://www.codefactor.io/repository/github/quanteeks/randlib/badge/randlib-v.1.1)](https://www.codefactor.io/repository/github/quanteeks/randlib/overview/randlib-v.1.1)
 
 With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is C++17 compiler support.
 
