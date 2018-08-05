@@ -210,7 +210,7 @@ IntType BinomialDistribution<IntType>::variateRejection() const
                 return X;
         }
     } while (++iter <= ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
-    return -1;
+    throw std::runtime_error("Binomial distribution: sampling failed");
 }
 
 template< typename IntType >
@@ -272,18 +272,20 @@ IntType BinomialDistribution<IntType>::Variate() const
         return (p > 0.5) ? n - Z : Z;
     }
     case BERNOULLI_SUM:
-    default:
         return variateBernoulliSum(n, p, this->localRandGenerator);
+    default:
+        throw std::invalid_argument("Binomial distribution: invalid generator id");
     }
-    return -1; /// unexpected return
 }
 
 template< typename IntType >
 IntType BinomialDistribution<IntType>::Variate(IntType number, double probability, RandGenerator &randGenerator)
 {
     /// sanity check
-    if (number < 0 || probability < 0.0 || probability > 1.0)
-        return -1;
+    if (number < 0)
+        throw std::invalid_argument("Binomial distribution: number should be positive");
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1]");
     if (probability == 0.0)
         return 0;
     if (probability == 1.0)

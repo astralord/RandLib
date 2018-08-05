@@ -95,8 +95,10 @@ RealType NoncentralChiSquaredRand<RealType>::variateForDegreeEqualOne() const
 template < typename RealType >
 RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double noncentrality, RandGenerator &randGenerator)
 {
-    if (degree <= 0 || noncentrality <= 0)
-        return NAN;
+    if (degree <= 0.0)
+        throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
+    if (noncentrality <= 0.0)
+        throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
 
     if (degree >= 1) {
         RealType rv = (degree == 1) ? 0.0 : 2 * GammaDistribution<RealType>::StandardVariate(0.5 * degree - 0.5, randGenerator);

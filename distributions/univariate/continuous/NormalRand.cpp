@@ -99,7 +99,7 @@ RealType NormalRand<RealType>::StandardVariate(RandGenerator &randGenerator)
         if (ziggurat[stairId - 1].first + height * UniformRand<RealType>::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
             return ((signed)B > 0) ? x : -x;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// fail due to some error
+    throw std::runtime_error("Normal distribution: sampling failed");
 }
 
 template < typename RealType >

@@ -134,7 +134,7 @@ RealType GammaDistribution<RealType>::variateBest(RandGenerator &randGenerator) 
                 return X;
         }
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// shouldn't end up here
+    throw std::runtime_error("Gamma distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -162,7 +162,7 @@ RealType GammaDistribution<RealType>::variateAhrensDieter(double shape, RandGene
                 return X;
         }
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// shouldn't end up here
+    throw std::runtime_error("Gamma distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -198,14 +198,14 @@ RealType GammaDistribution<RealType>::variateMarsagliaTsang(double shape, RandGe
             return d * v;
         }
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// shouldn't end up here
+    throw std::runtime_error("Gamma distribution: sampling failed");
 }
 
 template < typename RealType >
 RealType GammaDistribution<RealType>::StandardVariate(double shape, RandGenerator& randGenerator)
 {
     if (shape <= 0)
-        return NAN;
+        throw std::invalid_argument("Gamma distribution: shape should be positive");
 
     GENERATOR_ID genId = getIdOfUsedGenerator(shape);
 
@@ -221,14 +221,18 @@ RealType GammaDistribution<RealType>::StandardVariate(double shape, RandGenerato
     case MARSAGLIA_TSANG:
         return variateMarsagliaTsang(shape, randGenerator);
     default:
-        return NAN;
+        throw std::runtime_error("Gamma distribution: invalid generator id");
     }
 }
 
 template < typename RealType >
 RealType GammaDistribution<RealType>::Variate(double shape, double rate, RandGenerator& randGenerator)
 {
-    return (shape <= 0.0 || rate <= 0.0) ? NAN : StandardVariate(shape, randGenerator) / rate;
+    if (shape <= 0.0)
+        throw std::invalid_argument("Gamma distribution: shape should be positive");
+    if (rate <= 0.0)
+        throw std::invalid_argument("Gamma distribution: rate should be positive");
+    return StandardVariate(shape, randGenerator) / rate;
 }
 
 template < typename RealType >
@@ -248,7 +252,7 @@ RealType GammaDistribution<RealType>::Variate() const
     case MARSAGLIA_TSANG:
         return theta * variateMarsagliaTsang(this->alpha, this->localRandGenerator);
     default:
-        return NAN;
+        throw std::runtime_error("Gamma distribution: invalid generator id");
     }
 }
 
@@ -477,7 +481,7 @@ RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue)
 {
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (RandMath::findRoot<RealType>([this, logP] (double x)
+        if (!RandMath::findRoot<RealType>([this, logP] (double x)
         {
             if (x <= 0)
                return DoubleTriplet(-INFINITY, 0, 0);
@@ -487,11 +491,10 @@ RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue)
             double third = second * (dfDivf(x) - second);
             return DoubleTriplet(first, second, third);
         }, initValue))
-            return initValue;
-        /// if we can't find quantile, then probably something bad has happened
-        return NAN;
+            throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+        return initValue;
     }
-    if (RandMath::findRoot<RealType>([this, p] (double x)
+    if (!RandMath::findRoot<RealType>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(-p, 0, 0);
@@ -500,9 +503,8 @@ RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue)
         double third = df(x);
         return DoubleTriplet(first, second, third);
     }, initValue))
-        return initValue;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+        throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+    return initValue;
 }
 
 template < typename RealType >
@@ -526,11 +528,10 @@ RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValu
             double third = second * (dfDivf(x) + second);
             return DoubleTriplet(first, second, third);
         }, initValue))
-            return initValue;
-        /// if we can't find quantile, then probably something bad has happened
-        return NAN;
+            throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+        return initValue;
     }
-    if (RandMath::findRoot<RealType>([this, p] (double x)
+    if (!RandMath::findRoot<RealType>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(p - 1.0, 0, 0);
@@ -539,9 +540,8 @@ RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValu
         double third = df(x);
         return DoubleTriplet(first, second, third);
     }, initValue))
-        return initValue;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+        throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+    return initValue;
 }
 
 template < typename RealType >

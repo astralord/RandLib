@@ -76,7 +76,7 @@ template < typename IntType >
 IntType YuleRand<IntType>::Variate(double shape, RandGenerator &randGenerator)
 {
     if (shape <= 0.0)
-        return -1;
+        throw std::invalid_argument("Yule distribution: shape should be positive");
     double prob = 1.0 / ParetoRand<double>::StandardVariate(shape, randGenerator);
     return GeometricRand<IntType>::Variate(prob, randGenerator) + 1;
 }

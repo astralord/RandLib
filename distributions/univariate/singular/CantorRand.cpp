@@ -72,12 +72,12 @@ long double CantorRand::Variance() const
 
 double CantorRand::quantileImpl(double p, double initValue) const
 {
-    if (RandMath::findRoot<double>([this, p] (double x)
+    if (!RandMath::findRoot<double>([this, p] (double x)
     {
         return F(x) - p;
     }, 0.0, 1.0, initValue))
-        return initValue;
-    return NAN;
+        throw std::runtime_error("Cantor distribution: failure in numerical procedure");
+    return initValue;
 }
 
 double CantorRand::quantileImpl(double p) const
@@ -87,12 +87,12 @@ double CantorRand::quantileImpl(double p) const
 
 double CantorRand::quantileImpl1m(double p, double initValue) const
 {
-    if (RandMath::findRoot<double>([this, p] (double x)
+    if (!RandMath::findRoot<double>([this, p] (double x)
     {
         return S(x) - p;
     }, 0.0, 1.0, initValue))
-        return initValue;
-    return NAN;
+        throw std::runtime_error("Cantor distribution: failure in numerical procedure");
+    return initValue;
 }
 
 double CantorRand::quantileImpl1m(double p) const

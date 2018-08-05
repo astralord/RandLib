@@ -157,7 +157,7 @@ RealType MarchenkoPasturRand<RealType>::variateForTinyRatio() const
         if (U < M / X)
             return X;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// fail due to some error
+    throw std::runtime_error("Marchenko-Pastur distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -171,7 +171,7 @@ RealType MarchenkoPasturRand<RealType>::variateForSmallRatio() const
         if (U * U < ratio)
             return X;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// fail due to some error
+    throw std::runtime_error("Marchenko-Pastur distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -199,7 +199,7 @@ RealType MarchenkoPasturRand<RealType>::Variate() const
     case HUGE_RATIO:
         return sigmaSq * variateForHugeRatio();
     default:
-        return NAN;
+        throw std::runtime_error("Marchenko-Pastur distribution: invalid generator id");
     }
 }
 
@@ -239,7 +239,7 @@ template < typename RealType >
 long double MarchenkoPasturRand<RealType>::Moment(int n) const
 {
     if (n < 0)
-        return NAN;
+        throw std::invalid_argument("Marchenko-Pastur distribution: degree n should be non-negative");
     switch (n) {
     case 0:
         return 1.0;

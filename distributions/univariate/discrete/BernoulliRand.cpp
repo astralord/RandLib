@@ -47,7 +47,9 @@ int BernoulliRand::Variate() const
 
 int BernoulliRand::Variate(double probability, RandGenerator &randGenerator)
 {
-    return (probability < 0.0 || probability > 1.0) ? -1 : UniformRand<float>::StandardVariate(randGenerator) <= probability;
+    if (probability < 0.0 || probability > 1.0)
+        throw std::invalid_argument("Bernoulli distribution: probability parameter should be in interval [0, 1]");
+    return UniformRand<float>::StandardVariate(randGenerator) <= probability;
 }
 
 int BernoulliRand::StandardVariate(RandGenerator &randGenerator)

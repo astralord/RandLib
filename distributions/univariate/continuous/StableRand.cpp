@@ -42,7 +42,7 @@ void StableDistribution<RealType>::SetParameters(double exponent, double skewnes
     if (exponent < 0.1 || exponent > 2.0)
         throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2]");
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Stable distribution: skewness of should be in the interval [-1, 1]");
+        throw std::invalid_argument("Stable distribution: skewness should be in the interval [-1, 1]");
     if (scale <= 0.0)
         throw std::invalid_argument("Stable distribution: scale should be positive");
 
@@ -566,7 +566,7 @@ double StableDistribution<RealType>::f(const RealType &x) const
     case GENERAL:
         return pdfForGeneralExponent(x);
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
@@ -585,7 +585,7 @@ double StableDistribution<RealType>::logf(const RealType &x) const
     case GENERAL:
         return std::log(pdfForGeneralExponent(x));
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
@@ -784,7 +784,7 @@ double StableDistribution<RealType>::F(const RealType &x) const
     case GENERAL:
         return cdfForGeneralExponent(x);
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
@@ -803,7 +803,7 @@ double StableDistribution<RealType>::S(const RealType & x) const
     case GENERAL:
         return 1.0 - cdfForGeneralExponent(x);
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
@@ -863,7 +863,7 @@ RealType StableDistribution<RealType>::Variate() const
     case GENERAL:
         return (alpha == 0.5) ? variateForExponentEqualOneHalf() : variateForGeneralExponent();
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 

@@ -125,7 +125,7 @@ double erfinv(double p)
     if (p < 0.0)
         return -erfinv(-p);
     if (p > 1.0)
-        return NAN;
+        throw std::invalid_argument("Argument p should be in interval [-1, 1]");
     if (p == 1.0)
         return INFINITY;
     if (p == 0.0)
@@ -280,7 +280,7 @@ double W0Lambert(double x, double epsilon)
 {
     double w = 0;
     if (x < -M_1_E)
-        return NAN;
+        throw std::invalid_argument("Argument x should be larger than -1/e");
     if (x > 10) {
         double logX = std::log(x);
         double loglogX = std::log(logX);
@@ -293,7 +293,7 @@ double Wm1Lambert(double x, double epsilon)
 {
     double w = -2;
     if (x < -M_1_E || x > 0)
-        return NAN;
+        throw std::invalid_argument("Argument x should be larger than -1/e and smaller or equal to 0");
     if (x > -0.1) {
         double logmX = std::log(-x);
         double logmlogmX = std::log(-logmX);
@@ -335,7 +335,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
         return DoubleTriplet(first, second, third);
     }, root))
         /// unexpected return
-        return NAN;
+        throw std::runtime_error("Marcum P function: failure in numerical procedure");
 
     /// series expansion
     double sum = 0.0;

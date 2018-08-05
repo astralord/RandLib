@@ -58,7 +58,7 @@ IntType ZetaRand<IntType>::Variate() const
         if (V * X * (T - 1) <= b * T )
             return X;
     } while (++iter <= ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
-    return -1; /// return if algorithm doesn't work
+    throw std::runtime_error("Zeta distribution: sampling failed");
 }
 
 template < typename IntType >

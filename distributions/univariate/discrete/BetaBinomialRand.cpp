@@ -126,24 +126,18 @@ template< typename IntType >
 IntType BetaBinomialRand<IntType>::Mode() const
 {
     /// for small n we use direct comparison of probabilities
-    if (n < 30) {
-        double maxValue = logP(0);
-        int index = 0;
-        for (int i = 1; i <= n; ++i)
-        {
-            double value = logP(i);
-            if (maxValue < value)
-            {
-                maxValue = value;
-                index = i;
-            }
-        }
-        return index;
+    static constexpr int SMALL_N = 32;
+    if (n < SMALL_N) {
+        std::vector<double> logProbs(n + 1);
+        for (int i = 0; i <= n; ++i)
+            logProbs[i] = logP(i);
+        std::vector<double>::iterator maxVar = std::max_element(logProbs.begin(), logProbs.end());
+        return std::distance(logProbs.begin(), maxVar);
     }
     /// otherwise use numerical procedure to solve the equation f'(x) = 0
     double guess = n * B.Mean();
     double alpha = B.GetAlpha(), beta = B.GetBeta();
-    if (RandMath::findRoot<double>([this, alpha, beta] (double x)
+    if (!RandMath::findRoot<double>([this, alpha, beta] (double x)
     {
         double y = RandMath::digamma(x + alpha);
         y -= RandMath::digamma(n - x + beta);
@@ -151,9 +145,8 @@ IntType BetaBinomialRand<IntType>::Mode() const
         y += RandMath::digamma(n - x + 1);
         return y;
     }, 0, n, guess))
-        return std::round(guess);
-    /// if we can't find mode, then probably something bad has happened
-    return -1;
+        throw std::runtime_error("Beta-Binomial distribution: failure in numerical procedure");
+    return std::round(guess);
 }
 
 template< typename IntType >

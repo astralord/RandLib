@@ -82,22 +82,22 @@ public:
 
     /**
      * @fn FitMinimum
-     * fit minimum with maximum-likelihood estimator if unbiased parameter is false,
-     * otherwise fit minimum using UMVU estimator
+     * fit minimum with maximum-likelihood estimator if unbiased == false,
+     * fit minimum using UMVU estimator otherwise
      * @param sample
      */
     void FitMinimum(const std::vector<RealType> &sample, bool unbiased = false);
     /**
      * @fn FitMaximum
-     * fit maximum with maximum-likelihood estimator if unbiased parameter is false,
-     * otherwise fit maximum using UMVU estimator
+     * fit maximum with maximum-likelihood estimator if unbiased == false,
+     * fit maximum using UMVU estimator otherwise
      * @param sample
      */
     void FitMaximum(const std::vector<RealType> &sample, bool unbiased = false);
     /**
      * @fn Fit
-     * fit support with maximum-likelihood estimator if unbiased parameter is false,
-     * otherwise fit support using UMVU estimator
+     * fit support with maximum-likelihood estimator if unbiased == false,
+     * fit support using UMVU estimator otherwise
      * @param sample
      */
     void Fit(const std::vector<RealType> &sample, bool unbiased = false);

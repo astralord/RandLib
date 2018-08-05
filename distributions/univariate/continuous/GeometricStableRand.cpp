@@ -375,8 +375,9 @@ RealType ShiftedGeometricStableDistribution<RealType>::Variate() const
         return variateForUnityExponent(Z.Variate());
     case GENERAL:
         return variateForGeneralExponent(Z.Variate());
+    default:
+        throw std::runtime_error("Shifted Geometric Stable distribution: invalid distribution type");
     }
-    return NAN;
 }
 
 template < typename RealType >
@@ -412,12 +413,14 @@ void ShiftedGeometricStableDistribution<RealType>::Sample(std::vector<RealType> 
             var = variateForUnityExponent(var);
     }
         break;
-    case GENERAL:
-    default: {
+    case GENERAL: {
         Z.Sample(outputData);
         for (RealType & var : outputData)
             var = variateForGeneralExponent(var);
     }
+        break;
+    default:
+        throw std::runtime_error("Shifted Geometric Stable distribution: invalid distribution type");
     }
 }
 

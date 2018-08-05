@@ -106,7 +106,7 @@ void AsymmetricLaplaceDistribution<RealType>::FitShift(const std::vector<RealTyp
     /// we use root-finding algorithm for median search
     double minVar = *std::min_element(sample.begin(), sample.end());
     double maxVar = *std::max_element(sample.begin(), sample.end());
-    double median = 0.5 * (minVar + maxVar);
+    double median = this->GetSampleMean(sample);
 
     if (!RandMath::findRoot<double>([this, sample] (double med)
     {
@@ -194,7 +194,7 @@ void AsymmetricLaplaceRand<RealType>::FitAsymmetry(const std::vector<RealType> &
     double gammaN = this->gamma * sample.size();
     double root = 1.0;
     double minBound, maxBound;
-    if (xPlus < -xMinus) {
+    if (xPlus < -xMinus) { //TODO: why there is minus?
         minBound = 1.0;
         maxBound = std::sqrt(xMinus / xPlus);
     }
@@ -207,7 +207,7 @@ void AsymmetricLaplaceRand<RealType>::FitAsymmetry(const std::vector<RealType> &
     {
         double tSq = t * t;
         double y = 1.0 - tSq;
-        y /= (t * (tSq + 1.0));
+        y /= (t * tSq + t);
         y *= gammaN;
         y += xMinus / tSq - xPlus;
         return y;
@@ -239,12 +239,12 @@ void AsymmetricLaplaceRand<RealType>::FitScaleAndAsymmetry(const std::vector<Rea
     xMinus /= n;
 
     if (xMinus == 0) {
-        /// X ~ Exp(1 / xPlus)
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        /// X ~ Exp(1 / xPlus) + m
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Sample might be from shifted exponential distribution (no values smaller than shift m)"));
     }
     if (xPlus == 0) {
-        /// -X ~ Exp(1 / xMinus)
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Distribution might be exponentially distributed"));
+        /// -X ~ Exp(1 / xMinus) + m
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Sample might be from shifted negative exponential distribution (no values larger than shift m)"));
     }
 
     double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);

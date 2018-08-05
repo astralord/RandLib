@@ -126,7 +126,7 @@ RealType KolmogorovSmirnovRand<RealType>::truncatedGammaVariate() const
         if (Wp - std::log1pl(Wp) <= E1)
             return G;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN;
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -151,7 +151,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheLeftMostInterval() const
             W -= nSq * Q;
         }
     } while (++iter1 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN;
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -177,7 +177,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheRightMostInterval() const
             W -= nSq * std::exp(Z * (nSq - 1));
         }
     } while (++iter1 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN;
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -228,7 +228,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
             return DoublePair(first, second);
         }, guess))
             return guess;
-        return NAN;
+        throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
     }
     if (RandMath::findRoot<RealType>([p, this] (RealType x)
     {
@@ -237,7 +237,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
         return DoublePair(first, second);
     }, guess))
         return guess;
-    return NAN;
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
 }
 
 template < typename RealType >
@@ -254,7 +254,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
             return DoublePair(first, second);
         }, guess))
             return guess;
-        return NAN;
+        throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
     }
     if (RandMath::findRoot<RealType>([p, this] (RealType x)
     {
@@ -263,7 +263,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
         return DoublePair(first, second);
     }, guess))
         return guess;
-    return NAN;
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
 }
 
 

@@ -66,7 +66,8 @@ public:
 
     /**
      * @fn FitShape
-     * Fit α, using maximum-likelihood or UMVU
+     * Fit α to maximum-likelihood estimator
+     * or to UMVU if unbiased == true
      * @param sample
      * @param unbiased
      */
@@ -74,7 +75,8 @@ public:
 
     /**
      * @fn FitScale
-     * Fit σ, using maximum-likelihood or UMVU
+     * Fit σ to maximum-likelihood estimator
+     * or to UMVU if unbiased == true
      * @param sample
      * @param unbiased
      */
@@ -82,7 +84,8 @@ public:
 
     /**
      * @fn Fit
-     * Fit parameters, using maximum-likelihood or UMVU
+     * Fit parameters to maximum-likelihood estimators
+     * or to UMVU if unbiased == true
      * @param sample
      * @param unbiased
      */

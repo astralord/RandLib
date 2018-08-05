@@ -101,7 +101,7 @@ RealType RaisedCosineDistribution<RealType>::StandardVariate(RandGenerator &rand
             return (X > 0.0) ? M_PI - X : -M_PI - X;
         }
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN;
+    throw std::runtime_error("Raised-Cosine distribution: sampling failed");
 }
 
 template < typename RealType >

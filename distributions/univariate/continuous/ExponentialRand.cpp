@@ -64,7 +64,7 @@ RealType ExponentialRand<RealType>::StandardVariate(RandGenerator &randGenerator
         /// rejection - go back
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     /// fail due to some error
-    return NAN;
+    throw std::runtime_error("Exponential distribution: sampling failed");
 }
 
 template < typename RealType >

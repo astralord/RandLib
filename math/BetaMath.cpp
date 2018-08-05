@@ -5,7 +5,7 @@ namespace RandMath {
 long double logBeta(long double a, long double b)
 {
     if (a <= 0 || b <= 0)
-        return NAN;
+        throw std::invalid_argument("Parameters (a, b) of beta function should be both positive");
     double apb = a + b;
     int roundA = std::round(a), roundB = std::round(b);
     int roundApB = std::round(apb); 
@@ -93,9 +93,11 @@ double ibetaContinuedFraction2(double x, double a, double b, int number, double 
 
 double ibeta(double x, double a, double b, double logBetaFun, double logX, double log1mX)
 {
-    /// Check special values
+    /// Check special and incorrect values of parameters
     if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
-        return NAN;
+        throw std::invalid_argument("Parameters (a, b) of incomplete beta function should be both positive");
+    if (x < 0.0 || x > 1.0)
+        throw std::invalid_argument("Argument x of incomplete beta function should be in interval [0, 1]");
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)
@@ -135,9 +137,11 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
 
 double ibeta(double x, double a, double b)
 {
-    /// Check special values
+    /// Check special and incorrect values of parameters
     if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
-        return NAN;
+        throw std::invalid_argument("Parameters (a, b) of incomplete beta function should be both positive");
+    if (x < 0.0 || x > 1.0)
+        throw std::invalid_argument("Argument x of incomplete beta function should be in interval [0, 1]");
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)

@@ -35,8 +35,8 @@ RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initV
             double second = std::exp(logPdf - logCdf);
             return DoublePair(first, second);
         }, initValue))
-            return initValue;
-        return NAN;
+            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
+        return initValue;
     }
 
     if (this->SupportType() == FINITE_T) {
@@ -44,8 +44,8 @@ RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initV
         {
             return this->F(x) - p;
         }, this->MinValue(), this->MaxValue(), initValue))
-            return initValue;
-        return NAN;
+            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
+        return initValue;
     }
 
     if (RandMath::findRoot<RealType>([this, p] (const RealType & x)
@@ -54,8 +54,8 @@ RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initV
         double second = this->f(x);
         return DoublePair(first, second);
     }, initValue))
-        return initValue;
-    return NAN;
+        throw std::runtime_error("Continuous distribution: failure in numeric procedure");
+    return initValue;
 }
 
 template< typename RealType >
@@ -86,27 +86,27 @@ RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType ini
             double second = std::exp(logPdf - logCcdf);
             return DoublePair(first, second);
         }, initValue))
-            return initValue;
-        return NAN;
+            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
+        return initValue;
     }
 
     if (this->SupportType() == FINITE_T) {
-        if (RandMath::findRoot<RealType>([this, p] (const RealType & x)
+        if (!RandMath::findRoot<RealType>([this, p] (const RealType & x)
         {
             return this->S(x) - p;
         }, this->MinValue(), this->MaxValue(), initValue))
-            return initValue;
-        return NAN;
+            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
+        return initValue;
     }
 
-    if (RandMath::findRoot<RealType>([this, p] (const RealType & x)
+    if (!RandMath::findRoot<RealType>([this, p] (const RealType & x)
     {
         double first = p - this->S(x);
         double second = this->f(x);
         return DoublePair(first, second);
     }, initValue))
-        return initValue;
-    return NAN;
+        throw std::runtime_error("Continuous distribution: failure in numeric procedure");
+    return initValue;
 }
 
 template< typename RealType >

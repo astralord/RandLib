@@ -150,7 +150,7 @@ IntType PoissonRand<IntType>::variateRejection() const
         }
 
     } while (++iter < ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
-    return -1;
+    throw std::runtime_error("Poisson distribution: sampling failed");
 }
 
 template < typename IntType >
@@ -190,7 +190,7 @@ IntType PoissonRand<IntType>::Variate(double rate, RandGenerator &randGenerator)
 {
     /// check validness of parameter
     if (rate <= 0.0)
-        return -1;
+        throw std::invalid_argument("Poisson distribution: rate should be positive");
     if (rate > 1000) {
         /// approximate with normal distribution
         float X = NormalRand<float>::StandardVariate(randGenerator);

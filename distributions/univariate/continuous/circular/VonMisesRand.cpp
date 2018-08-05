@@ -138,7 +138,7 @@ RealType VonMisesRand<RealType>::Variate() const
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
             return this->loc + theta;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
-    return NAN; /// fail
+    throw std::runtime_error("von Mises distribution: sampling failed");
 }
 
 template < typename RealType >

@@ -149,7 +149,7 @@ RealType BetaDistribution<RealType>::variateRejectionUniform() const
         if (0.25 * V * V <= U - U * U)
             return U;
     } while (++iter <= this->MAX_ITER_REJECTION);
-    return NAN; /// fail
+    throw std::runtime_error("Beta distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -164,7 +164,7 @@ RealType BetaDistribution<RealType>::variateRejectionUniformExtended() const
         if (W >= (1.0 - alpha) * edge)
             return U;
     } while (++iter <= this->MAX_ITER_REJECTION);
-    return NAN; /// fail
+    throw std::runtime_error("Beta distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -191,7 +191,7 @@ RealType BetaDistribution<RealType>::variateRejectionNormal() const
         if (aux >= 0)
             return 0.5 + N * genCoef.t;
     } while (++iter <= this->MAX_ITER_REJECTION);
-    return NAN; /// fail
+    throw std::runtime_error("Beta distribution: sampling failed");
 }
 
 template < typename RealType >
@@ -244,7 +244,7 @@ RealType BetaDistribution<RealType>::variateAtkinsonWhittaker() const
                 return X;
         }
     } while (++iter <= this->MAX_ITER_REJECTION);
-    return NAN; /// fail
+    throw std::runtime_error("Beta distribution: sampling failed");
 }
 
 template < typename RealType >
