@@ -249,6 +249,7 @@ void WeibullRand<RealType>::FitScale(const std::vector<RealType> &sample)
 {
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
+    // TODO: implement via logsumexp
     double powScale = getPowSampleMean(sample);
     SetParameters(std::pow(powScale, kInv), k);
 }
@@ -256,6 +257,7 @@ void WeibullRand<RealType>::FitScale(const std::vector<RealType> &sample)
 template < typename RealType >
 InverseGammaRand<RealType> WeibullRand<RealType>::FitScaleBayes(const std::vector<RealType> &sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP)
 {
+    // TODO: implement via logsumexp
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     int n = sample.size();
