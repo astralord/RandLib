@@ -213,9 +213,7 @@ long double logBesselI(double nu, double x)
 
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
-        long double y = 0.5 * (M_LN2 - M_LNPI - std::log(x));
-        y -= M_LN2;
-        y += x;
+        long double y = x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
         y += (nu > 0) ? RandMath::log1pexp(-2 * x) : RandMath::log1mexp(-2 * x);
         return y;
     }
@@ -228,7 +226,7 @@ long double logBesselI(double nu, double x)
         return std::log(y);
     }
 
-    long double besseli = std::cyl_bessel_il(nu, x);
+    long double besseli = std::cyl_bessel_il(nu, x); // TODO: expand Hankel asymptotic expansions
     return std::isfinite(besseli) ? std::log(besseli) : x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
 }
 
@@ -244,7 +242,7 @@ long double logBesselK(double nu, double x)
     if (nu == 0.5 || (besselk = std::cyl_bessel_kl(nu, x)) == 0)
         return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
 
-    if (!std::isfinite(besselk))
+    if (!std::isfinite(besselk)) // TODO: expand Hankel asymptotic expansions
         return (nu == 0) ? std::log(-std::log(x)) : std::lgammal(nu) - M_LN2 - nu * std::log(0.5 * x);
 
     return std::log(besselk);
