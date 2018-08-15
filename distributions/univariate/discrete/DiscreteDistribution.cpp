@@ -4,27 +4,21 @@
 template < typename IntType >
 void DiscreteDistribution<IntType>::ProbabilityMassFunction(const std::vector<IntType> &x, std::vector<double> &y) const
 {
-    size_t size = x.size();
-    if (size > y.size())
-        return;
-    for (size_t i = 0; i != size; ++i)
+    for (size_t i = 0; i != x.size(); ++i)
         y[i] = this->P(x[i]);
 }
 
 template < typename IntType >
 void DiscreteDistribution<IntType>::LogProbabilityMassFunction(const std::vector<IntType> &x, std::vector<double> &y) const
 {
-    size_t size = x.size();
-    if (size > y.size())
-        return;
-    for (size_t i = 0; i != size; ++i)
+    for (size_t i = 0; i != x.size(); ++i)
         y[i] = this->logP(x[i]);
 }
 
 template < typename IntType >
 IntType DiscreteDistribution<IntType>::Mode() const
 {
-    /// Works only for unimodal and monotone from starting point to the mode distributions
+    /// Works only for unimodal distributions
     IntType x = this->Median();
     double logProb = this->logP(x), newLogProb = this->logP(x + 1);
     if (logProb < newLogProb) {
@@ -178,15 +172,15 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(const std::vector<IntT
 
     /// Sanity checks
     if (lowerBoundary >= upperBoundary)
-        throw std::invalid_argument("Lower boundary should be less than upper one");
+        throw std::invalid_argument("Lower boundary should be smaller than upper one");
     for (size_t j = 1; j != n; ++j) {
         if (orderStatistic[i] < orderStatistic[j - 1])
-            throw std::invalid_argument("Sample should be sorted in ascending order");
+            throw std::invalid_argument("Order statistic should be sorted in ascending order");
     }
     if (orderStatistic[0] < this->MinValue())
-        throw std::invalid_argument("Some elements in the sample are too small to belong to this distribution, they should be bigger than " + this->toStringWithPrecision(this->MinValue()));
+        throw std::invalid_argument("Some elements in the sample are too small to belong to this distribution, they should be larger than " + this->toStringWithPrecision(this->MinValue()));
     if (orderStatistic[n - 1] > this->MaxValue())
-        throw std::invalid_argument("Some elements in the sample are too large to belong to this distribution, they should be less than " + this->toStringWithPrecision(this->MaxValue()));
+        throw std::invalid_argument("Some elements in the sample are too large to belong to this distribution, they should be smaller than " + this->toStringWithPrecision(this->MaxValue()));
 
     /// Lower interval
     IntType x = orderStatistic[0];
@@ -232,7 +226,7 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(const std::vector<IntT
     double statistic = n * sum;
     ChiSquaredRand X(k - 1);
     double q = X.Quantile1m(alpha);
-    return (statistic <= q);
+    return statistic <= q;
 }
 
 template < typename IntType >
