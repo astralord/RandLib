@@ -4,20 +4,14 @@
 template< typename RealType >
 void ContinuousDistribution<RealType>::ProbabilityDensityFunction(const std::vector<RealType> &x, std::vector<double> &y) const
 {
-    size_t size = x.size();
-    if (size > y.size())
-        return;
-    for (size_t i = 0; i != size; ++i)
+    for (size_t i = 0; i != x.size(); ++i)
         y[i] = this->f(x[i]);
 }
 
 template< typename RealType >
 void ContinuousDistribution<RealType>::LogProbabilityDensityFunction(const std::vector<RealType> &x, std::vector<double> &y) const
 {
-    size_t size = x.size();
-    if (size > y.size())
-        return;
-    for (size_t i = 0; i != size; ++i)
+    for (size_t i = 0; i != x.size(); ++i)
         y[i] = this->logf(x[i]);
 }
 
@@ -227,10 +221,7 @@ double ContinuousDistribution<RealType>::Hazard(const RealType &x) const
 template< typename RealType >
 double ContinuousDistribution<RealType>::LikelihoodFunction(const std::vector<RealType> &sample) const
 {
-    long double res = 1.0;
-    for (const RealType & var : sample)
-        res *= this->f(var);
-    return res;
+    return std::exp(LogLikelihoodFunction(sample));
 }
 
 template< typename RealType >
@@ -254,7 +245,7 @@ bool ContinuousDistribution<RealType>::KolmogorovSmirnovTest(const std::vector<R
     for (size_t i = 1; i != n; ++i) {
         RealType x = orderStatistic[i - 1];
         if (x > orderStatistic[i])
-            throw std::invalid_argument("Sample should be sorted in ascending order");
+            throw std::invalid_argument("Order statistic should be sorted in ascending order");
         double upperBound = Fn + interval;
         Fn = i * nInv;
         double lowerBound = Fn - interval;
