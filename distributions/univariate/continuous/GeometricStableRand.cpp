@@ -304,14 +304,13 @@ double ShiftedGeometricStableDistribution<RealType>::F(const RealType &x) const
         }
 
         if (z >= 1) {
-            if (mu != 0.0) {
-                if (distributionType == UNITY_EXPONENT)
-                    return Z.F(-mu / gamma);
-                if (alpha > 1.0)
-                    return Z.F(0);
-                return (mu < 0.0) ? 1.0 : 0.0;
-            }
-            return Z.F(0);
+            if (mu == 0.0)
+                return Z.F(0);
+            if (distributionType == UNITY_EXPONENT)
+                return Z.F(-mu / gamma);
+            if (alpha > 1.0)
+                return Z.F(0);
+            return (mu < 0.0) ? 1.0 : 0.0;
         }
 
         double denominator = 1.0 - z;
@@ -443,9 +442,8 @@ long double ShiftedGeometricStableDistribution<RealType>::Mean() const
 template < typename RealType >
 long double ShiftedGeometricStableDistribution<RealType>::Variance() const
 {
-    if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) {
+    if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
         return mu * mu + 2 * gamma * gamma;
-    }
     return INFINITY;
 }
 
@@ -465,9 +463,8 @@ std::complex<double> ShiftedGeometricStableDistribution<RealType>::CFImpl(double
 template < typename RealType >
 RealType ShiftedGeometricStableDistribution<RealType>::Median() const
 {
-    if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) {
+    if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
         return quantileLaplace(0.5);
-    }
     return ContinuousDistribution<RealType>::Median();
 }
 
@@ -483,27 +480,24 @@ RealType ShiftedGeometricStableDistribution<RealType>::Mode() const
 template < typename RealType >
 long double ShiftedGeometricStableDistribution<RealType>::Skewness() const
 {
-    if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) {
-        long double k4 = kappaSq * kappaSq;
-        long double k6 = k4 * kappaSq;
-        long double z = (k4 + 1);
-        z *= std::sqrt(z);
-        long double y = 2 * (1 - k6);
-        return y / z;
-    }
-    return NAN;
+    if (distributionType != LAPLACE && distributionType != ASYMMETRIC_LAPLACE)
+        return NAN;
+    long double k4 = kappaSq * kappaSq;
+    long double k6 = k4 * kappaSq;
+    long double z = (k4 + 1);
+    z *= std::sqrt(z);
+    long double y = 2 * (1 - k6);
+    return y / z;
 }
 
 template < typename RealType >
 long double ShiftedGeometricStableDistribution<RealType>::ExcessKurtosis() const
 {
-    if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
-    {
-        long double denominator = kappaSq + kappaInv * kappaInv;
-        denominator *= denominator;
-        return 6.0 - 12.0 / denominator;
-    }
-    return NAN;
+    if (distributionType != LAPLACE && distributionType != ASYMMETRIC_LAPLACE)
+        return NAN;
+    long double denominator = kappaSq + kappaInv * kappaInv;
+    denominator *= denominator;
+    return 6.0 - 12.0 / denominator;
 }
 
 template < typename RealType >
