@@ -15,8 +15,8 @@ String UniformDiscreteRand<IntType>::Name() const
 template< typename IntType >
 void UniformDiscreteRand<IntType>::SetBoundaries(IntType minValue, IntType maxValue)
 {
-    if (minValue >= maxValue)
-        throw std::invalid_argument("Uniform discrete distribution: minimal value should be less than maximum value");
+    if (minValue > maxValue)
+        throw std::invalid_argument("Uniform discrete distribution: minimal value shouldn't be larger than maximum value");
 
     a = minValue;
     b = maxValue;
@@ -150,6 +150,14 @@ double UniformDiscreteRand<IntType>::LogLikelihoodFunction(const std::vector<Int
 {
     bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotBiggerThan(b, sample);
     return sampleIsInsideInterval ? -sample.size() * logN : -INFINITY;
+}
+
+template< typename IntType >
+void UniformDiscreteRand<IntType>::Fit(const std::vector<IntType> &sample)
+{
+    IntType minVar = *std::min_element(sample.begin(), sample.end());
+    IntType maxVar = *std::max_element(sample.begin(), sample.end());
+    this->SetBoundaries(minVar, maxVar);
 }
 
 

@@ -52,6 +52,13 @@ public:
     double Entropy() const;
     double LikelihoodFunction(const std::vector<IntType> &sample) const override;
     double LogLikelihoodFunction(const std::vector<IntType> &sample) const override;
+
+    /**
+     * @fn Fit
+     * fit bounds via maximum-likelihood method
+     * @param sample
+     */
+    void Fit(const std::vector<IntType> &sample);
 };
 
 #endif // UNIFORM_DISCRETE_RAND_H

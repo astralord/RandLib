@@ -219,11 +219,17 @@ long double logBesselI(double nu, double x)
     }
 
     if (nu < 0) {
-        /// I(−ν, x) = I(ν, x) + 2 / π sin(πν) K(ν, x)
+        /// I(ν, x) = I(−ν, x) - 2 / π sin(πν) K(ν, x)
         long double besseli = std::cyl_bessel_il(-nu, x);
-        long double sinPiNu = std::sin(M_PI * nu);
-        long double y = (sinPiNu == 0) ? besseli : besseli - M_2_PI * sinPiNu * std::cyl_bessel_kl(-nu, x);
-        return std::log(y);
+        long double sinPiNu = -std::sin(M_PI * nu);
+        long double y = 0;
+        if (sinPiNu == 0 || RandMath::areClose(nu, std::round(nu)))
+            y = besseli;
+        else {
+            long double besselk = std::cyl_bessel_kl(-nu, x);
+            y = besseli - M_2_PI * sinPiNu * besselk;
+        }
+        return (y <= 0) ? -INFINITY : std::log(y);
     }
 
     long double besseli = std::cyl_bessel_il(nu, x); // TODO: expand Hankel asymptotic expansions
@@ -415,13 +421,13 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
 }
 
 /**
- * @fn MarcumPForMuLessThanOne
+ * @fn MarcumPForMuSmallerThanOne
  * @param mu
  * @param x
  * @param y
  * @return
  */
-double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, double logY)
+double MarcumPForMuSmallerThanOne(double mu, double x, double y, double logX, double logY)
 {
     // TODO: check Krishnamoorthy paper for alternative representation
 

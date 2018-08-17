@@ -63,7 +63,7 @@ protected:
     /**
      * @fn GetIdOfUsedGenerator
      * If r is small, we use two different generators for two different cases:
-     * If p < 0.08 then the tail is too heavy (probability to be in main body is less than 0.75),
+     * If p < 0.08 then the tail is too heavy (probability to be in main body is smaller than 0.75),
      * then we return highest integer, smaller than variate from exponential distribution.
      * Otherwise we choose table method
      * @return id of generator

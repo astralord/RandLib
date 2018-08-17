@@ -247,6 +247,9 @@ IntType PoissonRand<IntType>::Median() const
 template < typename IntType >
 IntType PoissonRand<IntType>::Mode() const
 {
+    if (RandMath::areClose(mu, lambda)) {
+        return (Pmu < this->P(mu + 1)) ? mu + 1 : mu;
+    }
     return mu;
 }
 

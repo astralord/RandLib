@@ -221,7 +221,7 @@ template< typename IntType, typename T >
 String NegativeBinomialRand<IntType, T>::Name() const
 {
     if (std::is_integral_v<T>)
-        return "Pascal" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+        return "Pascal(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
     return "Polya(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 

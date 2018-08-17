@@ -84,7 +84,7 @@ String ProbabilityDistribution<T>::fitErrorDescription(ProbabilityDistribution::
         error += "Sample is too small. ";
         break;
     case WRONG_LEVEL:
-        error += "Significance level should be positive and less than one. ";
+        error += "Significance level should be positive and smaller than 1. ";
         break;
     case UNDEFINED_ERROR:
     default:
