@@ -149,7 +149,8 @@ template< typename IntType >
 double UniformDiscreteRand<IntType>::LogLikelihoodFunction(const std::vector<IntType> &sample) const
 {
     bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotBiggerThan(b, sample);
-    return sampleIsInsideInterval ? -sample.size() * logN : -INFINITY;
+    int sample_size = -sample.size();
+    return sampleIsInsideInterval ? sample_size * logN : -INFINITY;
 }
 
 template< typename IntType >
