@@ -221,7 +221,8 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(const std::vector<IntT
 
     if (k <= numberOfEstimatedParameters + 1) {
         throw std::invalid_argument("Sample is too small, number of groups (" + this->toStringWithPrecision(k)
-                                    + ") should be bigger than number of estimated parameters plus one (" + this->toStringWithPrecision(numberOfEstimatedParameters + 1) + ")");
+                                    + ") should be bigger than number of estimated parameters plus 1 ("
+                                    + this->toStringWithPrecision(numberOfEstimatedParameters + 1) + ")");
     }
     double statistic = n * sum;
     ChiSquaredRand X(k - 1);

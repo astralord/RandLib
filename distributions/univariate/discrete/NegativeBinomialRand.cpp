@@ -15,7 +15,7 @@ void NegativeBinomialDistribution<IntType, T>::SetParameters(T number, double pr
     if (r <= 0.0)
         throw std::invalid_argument("Negative-Binomial distribution: number parameter should be positive");
     if (probability <= 0.0 || probability >= 1.0)
-        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should in interval (0, 1)");
+        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should be in interval (0, 1)");
     r = (number > 0) ? number : 1;
     p = probability;
     q = 1.0 - p;

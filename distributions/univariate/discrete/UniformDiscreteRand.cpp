@@ -141,16 +141,16 @@ double UniformDiscreteRand<IntType>::Entropy() const
 template< typename IntType >
 double UniformDiscreteRand<IntType>::LikelihoodFunction(const std::vector<IntType> &sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotBiggerThan(b, sample);
+    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotLargerThan(b, sample);
     return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
 }
 
 template< typename IntType >
 double UniformDiscreteRand<IntType>::LogLikelihoodFunction(const std::vector<IntType> &sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotBiggerThan(b, sample);
-    int sample_size = -sample.size();
-    return sampleIsInsideInterval ? sample_size * logN : -INFINITY;
+    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotLargerThan(b, sample);
+    int sample_size = sample.size();
+    return sampleIsInsideInterval ? -sample_size * logN : -INFINITY;
 }
 
 template< typename IntType >

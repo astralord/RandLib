@@ -199,7 +199,7 @@ long double UnivariateDistribution<T>::FourthMoment() const
 }
 
 template< typename T >
-bool UnivariateDistribution<T>::allElementsAreNotBiggerThan(T value, const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsAreNotLargerThan(T value, const std::vector<T> &sample)
 {
     for (const T & var : sample) {
         if (var > value)

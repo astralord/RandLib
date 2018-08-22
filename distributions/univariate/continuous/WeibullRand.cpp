@@ -36,9 +36,7 @@ double WeibullRand<RealType>::f(const RealType & x) const
             return 1.0 / lambda;
         return (k > 1) ? 0.0 : INFINITY;
     }
-    double xAdj = x / lambda;
-    double xAdjPow = std::pow(xAdj, k - 1);
-    return k / lambda * xAdjPow * std::exp(-xAdj * xAdjPow);
+    return std::exp(this->logf(x));
 }
 
 template < typename RealType >
@@ -52,8 +50,8 @@ double WeibullRand<RealType>::logf(const RealType & x) const
         return (k > 1) ? -INFINITY : INFINITY;
     }
     double xAdj = x / lambda;
-    double xAdjPow = std::pow(xAdj, k - 1);
-    return logk_lambda + (k - 1) * std::log(xAdj) - xAdj * xAdjPow;
+    double xAdjPow = std::pow(xAdj, k);
+    return logk_lambda + (k - 1) * std::log(xAdj) - xAdjPow;
 }
 
 template < typename RealType >

@@ -43,7 +43,7 @@ template < typename IntType >
 void PoissonRand<IntType>::SetRate(double rate)
 {
     if (rate <= 0.0)
-        throw std::invalid_argument("Poisson distribution: rate should be positive");
+        throw std::invalid_argument("Poisson distribution: rate should be positive, but it's equal to " + std::to_string(rate));
     lambda = rate;
 
     logLambda = std::log(lambda);

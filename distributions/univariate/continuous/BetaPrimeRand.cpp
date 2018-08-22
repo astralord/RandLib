@@ -63,10 +63,19 @@ double BetaPrimeRand<RealType>::S(const RealType &x) const
 }
 
 template < typename RealType >
+RealType BetaPrimeRand<RealType>::fromBetaVariate(const RealType & betaVar) const
+{
+    if (betaVar > 1e-5)
+        return betaVar / (1.0 - betaVar);
+    RealType logVar = std::log(betaVar), log1mVar = std::log1p(-betaVar);
+    return std::exp(logVar - log1mVar);
+}
+
+template < typename RealType >
 RealType BetaPrimeRand<RealType>::Variate() const
 {
     double x = B.Variate();
-    return x / (1.0 - x);
+    return fromBetaVariate(x);
 }
 
 template < typename RealType >
@@ -74,7 +83,7 @@ void BetaPrimeRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     B.Sample(outputData);
     for (RealType &var : outputData)
-        var = var / (1.0 - var);
+        var = fromBetaVariate(var);
 }
 
 template < typename RealType >
@@ -177,8 +186,7 @@ void BetaPrimeRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
 {
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
-    long double lnG1m = -B.GetSampleLog1pMean(sample);
-    long double lnG = this->GetSampleLogMean(sample) + lnG1m;
+    long double lnG = this->GetSampleLogMean(sample) - B.GetSampleLog1pMeanNorm(sample);
     long double mean = 0.5;
     if (beta != 1.0) {
         mean = 0.0;
@@ -186,7 +194,7 @@ void BetaPrimeRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
             mean += var / (1.0 + var);
         mean /= sample.size();
     }
-    B.FitAlpha(lnG, lnG1m, mean);
+    B.FitAlpha(lnG, mean);
     SetShapes(B.GetAlpha(), beta);
 }
 
@@ -195,16 +203,15 @@ void BetaPrimeRand<RealType>::FitBeta(const std::vector<RealType> &sample)
 {
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
-    long double lnG1m = -B.GetSampleLog1pMean(sample), lnG = 0.0;
+    long double lnG1m = -B.GetSampleLog1pMeanNorm(sample);
     long double mean = 0.5;
     if (alpha != 1.0) {
-        lnG = this->GetSampleLogMean(sample) + lnG1m;
         mean = 0.0;
         for (const double & var : sample)
             mean += var / (1.0 + var);
         mean /= sample.size();
     }
-    B.FitBeta(lnG, lnG1m, mean);
+    B.FitBeta(lnG1m, mean);
     SetShapes(alpha, B.GetBeta());
 }
 
@@ -213,7 +220,7 @@ void BetaPrimeRand<RealType>::Fit(const std::vector<RealType> &sample)
 {
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
-    long double lnG1m = -B.GetSampleLog1pMean(sample);
+    long double lnG1m = -B.GetSampleLog1pMeanNorm(sample);
     long double lnG = this->GetSampleLogMean(sample) + lnG1m;
     long double m = 0.0, v = 0.0;
     int n = sample.size();

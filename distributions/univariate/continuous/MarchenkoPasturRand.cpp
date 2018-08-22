@@ -253,12 +253,13 @@ long double MarchenkoPasturRand<RealType>::Moment(int n) const
         long double nlogSigmaSq = n * std::log(sigmaSq);
         for (int k = 0; k != n; ++k) {
             long double term = temp;
+            int kp1 = k + 1;
             term -= 2 * RandMath::lfact(k);
             term -= RandMath::lfact(n - k);
-            term -= RandMath::lfact(n - k - 1);
+            term -= RandMath::lfact(n - kp1);
             term += k * logLambda;
             term += nlogSigmaSq;
-            term = std::exp(term) / (k + 1);
+            term = std::exp(term) / kp1;
             sum += term;
         }
         return sum;

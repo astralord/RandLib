@@ -239,14 +239,14 @@ template < typename RealType >
 class RANDLIBSHARED_EXPORT GammaRand;
 
 /**
- * @brief The FreeScaleGammaDistribution class <BR>
+ * @brief The FreeRateGammaDistribution class <BR>
  * Abstract class for Gamma distribution with arbitrary scale/rate
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT FreeScaleGammaDistribution : public GammaDistribution<RealType>
+class RANDLIBSHARED_EXPORT FreeRateGammaDistribution : public GammaDistribution<RealType>
 {
 protected:
-    FreeScaleGammaDistribution(double shape, double rate) : GammaDistribution<RealType>(shape, rate) {}
+    FreeRateGammaDistribution(double shape, double rate) : GammaDistribution<RealType>(shape, rate) {}
 
 public:
     /**
@@ -286,10 +286,10 @@ public:
  * Gamma distribution
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT GammaRand : public FreeScaleGammaDistribution<RealType>
+class RANDLIBSHARED_EXPORT GammaRand : public FreeRateGammaDistribution<RealType>
 {
 public:
-    GammaRand(double shape = 1, double rate = 1) : FreeScaleGammaDistribution<RealType>(shape, rate) {}
+    GammaRand(double shape = 1, double rate = 1) : FreeRateGammaDistribution<RealType>(shape, rate) {}
     String Name() const override;
 
     using GammaDistribution<RealType>::SetParameters;
@@ -342,10 +342,10 @@ public:
  * X ~ Γ(k, β)
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT ErlangRand : public FreeScaleGammaDistribution<RealType>
+class RANDLIBSHARED_EXPORT ErlangRand : public FreeRateGammaDistribution<RealType>
 {
 public:
-    ErlangRand(int shape = 1, double rate = 1) : FreeScaleGammaDistribution<RealType>(shape, rate) {}
+    ErlangRand(int shape = 1, double rate = 1) : FreeRateGammaDistribution<RealType>(shape, rate) {}
     String Name() const override;
     void SetParameters(size_t shape, double rate);
     void SetShape(size_t shape);

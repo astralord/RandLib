@@ -51,12 +51,21 @@ IntType ZetaRand<IntType>::Variate() const
     /// rejection sampling from rounded down Pareto distribution
     size_t iter = 0;
     do {
-        IntType X = std::floor(ParetoRand<float>::StandardVariate(sm1, this->localRandGenerator));
-        float T = std::pow(1.0 + 1.0 / X, sm1);
+        float X = std::floor(ParetoRand<float>::StandardVariate(sm1, this->localRandGenerator));
         float V = UniformRand<float>::StandardVariate(this->localRandGenerator);
-        /// there was a typo in the book - '<=' instead of '>'
-        if (V * X * (T - 1) <= b * T )
-            return X;
+        if (X < 1e4) {
+            float T = std::pow(1.0 + 1.0 / X, sm1);
+            /// there was a typo in the book - '<=' instead of '>'
+            if (V * X * (T - 1) <= b * T)
+                return X;
+        }
+        else {
+            long double logT = sm1 * std::log1pl(1.0 / X);
+            long double TM1 = std::expm1l(logT);
+            if (V * X * TM1 <= b * std::exp(logT))
+                return X < this->MaxValue() ? (IntType)X : this->MaxValue();
+        }
+
     } while (++iter <= ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
     throw std::runtime_error("Zeta distribution: sampling failed");
 }

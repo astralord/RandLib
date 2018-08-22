@@ -110,7 +110,7 @@ protected:
 
     static constexpr char POSITIVITY_VIOLATION[] = "All elements should be positive";
     static constexpr char NON_NEGATIVITY_VIOLATION[] = "All elements should be non-negative";
-    static constexpr char UPPER_LIMIT_VIOLATION[] = "No element should be bigger than ";
+    static constexpr char UPPER_LIMIT_VIOLATION[] = "No element should be larger than ";
     static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be smaller than ";
 
     String fitErrorDescription(FIT_ERROR_TYPE fet, const String &explanation);

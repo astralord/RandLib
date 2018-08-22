@@ -215,12 +215,12 @@ public:
 
 protected:
     /**
-     * @fn allElementsAreNotBiggerThan
+     * @fn allElementsAreNotLargerThan
      * @param value
      * @param sample
-     * @return true if all elements in sample are not bigger than given value
+     * @return true if all elements in sample are not larger than given value
      */
-    static bool allElementsAreNotBiggerThan(T value, const std::vector<T> &sample);
+    static bool allElementsAreNotLargerThan(T value, const std::vector<T> &sample);
 
     /**
      * @fn allElementsAreNotSmallerThan

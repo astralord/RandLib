@@ -212,6 +212,11 @@ public:
     RealType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
+    /**
+     * @brief MeanAbsoluteDeviation
+     * @return E[|X - E[X]|]
+     */
+    long double MeanAbsoluteDeviation() const;
 
 protected:
     RealType quantileImpl(double p) const override;
@@ -238,18 +243,33 @@ public:
     using BetaDistribution<RealType>::SetSupport;
 
 public:
-    long double GetSampleLog1pMean(const std::vector<RealType> &sample) const;
-    long double GetSampleLog1mMean(const std::vector<RealType> &sample) const;
+    /**
+     * @brief GetSampleLogMeanNorm
+     * @param sample
+     * @return mean average of log(x) for x from normalized sample
+     */
+    long double GetSampleLogMeanNorm(const std::vector<RealType> &sample) const;
+    /**
+     * @brief GetSampleLog1pMeanNorm
+     * @param sample
+     * @return mean average of log(1+x) for x from normalized sample
+     */
+    long double GetSampleLog1pMeanNorm(const std::vector<RealType> &sample) const;
+    /**
+     * @brief GetSampleLog1mMeanNorm
+     * @param sample
+     * @return mean average of log(1-x) for x from normalized sample
+     */
+    long double GetSampleLog1mMeanNorm(const std::vector<RealType> &sample) const;
 
     /**
      * @fn FitAlpha
      * set α, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
-     * @param lnG sample average of ln(X)
-     * @param lnG1m sample average of ln(1-X)
-     * @param mean sample average
+     * @param lnG normalized sample average of ln(X)
+     * @param meanNorm normalized sample average
      */
-    void FitAlpha(long double lnG, long double lnG1m, long double mean);
+    void FitAlpha(long double lnG, long double meanNorm);
 
     /**
      * @fn FitAlpha
@@ -262,11 +282,10 @@ public:
      * @fn FitBeta
      * set β, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
-     * @param lnG sample average of ln(X)
-     * @param lnG1m sample average of ln(1-X)
-     * @param mean sample average
+     * @param lnG1m normalized sample average of ln(1-X)
+     * @param meanNorm normalized sample average
      */
-    void FitBeta(long double lnG, long double lnG1m, long double mean);
+    void FitBeta(long double lnG1m, long double meanNorm);
 
     /**
      * @fn FitBeta

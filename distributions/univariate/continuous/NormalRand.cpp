@@ -6,10 +6,10 @@
 #include "StudentTRand.h"
 
 template < typename RealType >
-NormalRand<RealType>::NormalRand(double mean, double var)
-    : StableDistribution<RealType>(2.0, 0.0, 1.0, mean)
+NormalRand<RealType>::NormalRand(double location, double variance)
+    : StableDistribution<RealType>(2.0, 0.0, 1.0, location)
 {
-    SetVariance(var);
+    SetVariance(variance);
 }
 
 template < typename RealType >
@@ -22,17 +22,17 @@ template < typename RealType >
 void NormalRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Normal distribution: scale should be positive");
+        throw std::invalid_argument("Normal distribution: scale should be positive, but it's equal to " + std::to_string(scale));
     sigma = scale;
     StableDistribution<RealType>::SetScale(sigma * M_SQRT1_2);
 }
 
 template < typename RealType >
-void NormalRand<RealType>::SetVariance(double var)
+void NormalRand<RealType>::SetVariance(double variance)
 {
-    if (var <= 0.0)
-        throw std::invalid_argument("Variance of Normal distribution should be positive");
-    SetScale(std::sqrt(var));
+    if (variance <= 0.0)
+        throw std::invalid_argument("Variance of Normal distribution should be positive, but it's equal to " + std::to_string(variance));
+    SetScale(std::sqrt(variance));
 }
 
 template < typename RealType >
@@ -184,19 +184,16 @@ void NormalRand<RealType>::FitVariance(const std::vector<RealType> &sample, Doub
 template < typename RealType >
 void NormalRand<RealType>::FitScale(const std::vector<RealType> &sample, bool unbiased)
 {
-    if (unbiased == true) {
-        size_t n = sample.size();
-        double halfN = 0.5 * n;
-        double s = this->GetSampleVariance(sample, this->mu);
-        s *= halfN;
-        s = 0.5 * std::log(s);
-        s -= std::lgammal(halfN + 0.5);
-        s += std::lgammal(halfN);
-        SetScale(std::exp(s));
-    }
-    else {
-        FitVariance(sample);
-    }
+    if (unbiased == false)
+        return FitVariance(sample);
+    size_t n = sample.size();
+    double halfN = 0.5 * n;
+    double s = this->GetSampleVariance(sample, this->mu);
+    s *= halfN;
+    s = 0.5 * std::log(s);
+    s -= std::lgammal(halfN + 0.5);
+    s += std::lgammal(halfN);
+    SetScale(std::exp(s));
 }
 
 template < typename RealType >

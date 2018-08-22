@@ -16,9 +16,9 @@ template < typename RealType >
 void PlanckRand<RealType>::SetParameters(double shape, double scale)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Planck distribution: shape should be positive");
+        throw std::invalid_argument("Planck distribution: shape should be positive, but it's equal to " + std::to_string(shape));
     if (scale <= 0.0)
-        throw std::invalid_argument("Planck distribution: scale should be positive");
+        throw std::invalid_argument("Planck distribution: scale should be positive, but it's equal to " + std::to_string(scale));
     a = shape;
     b = scale;
 

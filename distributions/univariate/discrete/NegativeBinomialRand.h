@@ -120,7 +120,7 @@ public:
 
     using NegativeBinomialDistribution<IntType, T>::SetParameters;
 
-    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
+    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be larger than sample mean";
 
     /**
      * @fn Fit

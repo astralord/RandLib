@@ -13,9 +13,9 @@ template < typename RealType >
 void GammaDistribution<RealType>::SetParameters(double shape, double rate)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Gamma distribution: shape should be positive");
+        throw std::invalid_argument("Gamma distribution: shape should be positive, but it's equal to " + std::to_string(shape));
     if (rate <= 0.0)
-        throw std::invalid_argument("Gamma distribution: rate should be positive");
+        throw std::invalid_argument("Gamma distribution: rate should be positive, but it's equal to " + std::to_string(rate));
 
     this->alpha = shape > 0 ? shape : 1.0;
     
@@ -518,7 +518,7 @@ RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValu
 {
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (RandMath::findRoot<RealType>([this, logP] (double x)
+        if (!RandMath::findRoot<RealType>([this, logP] (double x)
         {
            if (x <= 0)
                return DoubleTriplet(logP, 0, 0);
@@ -564,19 +564,19 @@ template class GammaDistribution<long double>;
 // FREE-SCALE-GAMMA-DISTRIBUTION
 
 template < typename RealType >
-void FreeScaleGammaDistribution<RealType>::SetRate(double rate)
+void FreeRateGammaDistribution<RealType>::SetRate(double rate)
 {
     this->SetParameters(this->alpha, rate);
 }
 
 template < typename RealType >
-void FreeScaleGammaDistribution<RealType>::SetScale(double scale)
+void FreeRateGammaDistribution<RealType>::SetScale(double scale)
 {
     SetRate(1.0 / scale);
 }
 
 template < typename RealType >
-void FreeScaleGammaDistribution<RealType>::FitRate(const std::vector<RealType> &sample, bool unbiased)
+void FreeRateGammaDistribution<RealType>::FitRate(const std::vector<RealType> &sample, bool unbiased)
 {
     /// Sanity check
     if (!this->allElementsArePositive(sample))
@@ -587,7 +587,7 @@ void FreeScaleGammaDistribution<RealType>::FitRate(const std::vector<RealType> &
 }
 
 template < typename RealType >
-GammaRand<RealType> FreeScaleGammaDistribution<RealType>::FitRateBayes(const std::vector<RealType> &sample, const GammaDistribution<RealType> &priorDistribution, bool MAP)
+GammaRand<RealType> FreeRateGammaDistribution<RealType>::FitRateBayes(const std::vector<RealType> &sample, const GammaDistribution<RealType> &priorDistribution, bool MAP)
 {
     /// Sanity check
     if (!this->allElementsArePositive(sample))
@@ -601,9 +601,9 @@ GammaRand<RealType> FreeScaleGammaDistribution<RealType>::FitRateBayes(const std
     return posteriorDistribution;
 }
 
-template class FreeScaleGammaDistribution<float>;
-template class FreeScaleGammaDistribution<double>;
-template class FreeScaleGammaDistribution<long double>;
+template class FreeRateGammaDistribution<float>;
+template class FreeRateGammaDistribution<double>;
+template class FreeRateGammaDistribution<long double>;
 
 
 // GAMMARAND

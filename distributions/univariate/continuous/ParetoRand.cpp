@@ -64,13 +64,13 @@ double ParetoRand<RealType>::S(const RealType & x) const
 }
 
 template < typename RealType >
-RealType ParetoRand<RealType>::variateForAlphaOne(RandGenerator &randGenerator)
+RealType ParetoRand<RealType>::variateForAlphaEqualOne(RandGenerator &randGenerator)
 {
     return 1.0 / UniformRand<RealType>::StandardVariate(randGenerator);
 }
 
 template < typename RealType >
-RealType ParetoRand<RealType>::variateForAlphaTwo(RandGenerator &randGenerator)
+RealType ParetoRand<RealType>::variateForAlphaEqualTwo(RandGenerator &randGenerator)
 {
     return 1.0 / std::sqrt(UniformRand<RealType>::StandardVariate(randGenerator));
 }
@@ -91,9 +91,9 @@ template < typename RealType >
 RealType ParetoRand<RealType>::StandardVariate(double shape, RandGenerator &randGenerator)
 {
     if (RandMath::areClose(shape, 1.0))
-        return variateForAlphaOne(randGenerator);
+        return variateForAlphaEqualOne(randGenerator);
     if (RandMath::areClose(shape, 2.0))
-        return variateForAlphaTwo(randGenerator);
+        return variateForAlphaEqualTwo(randGenerator);
     return variateForGeneralAlpha(shape, randGenerator);
 }
 
@@ -102,11 +102,11 @@ void ParetoRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     if (RandMath::areClose(alpha, 1.0)) {
         for (RealType &var : outputData)
-            var = sigma * variateForAlphaOne(this->localRandGenerator);
+            var = sigma * variateForAlphaEqualOne(this->localRandGenerator);
     }
     else if (RandMath::areClose(alpha, 2.0)) {
         for (RealType &var : outputData)
-            var = sigma * variateForAlphaTwo(this->localRandGenerator);
+            var = sigma * variateForAlphaEqualTwo(this->localRandGenerator);
     }
     else {
         for (RealType &var : outputData)

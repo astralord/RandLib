@@ -55,17 +55,22 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>
     static constexpr auto ziggurat = NormalZiggurat::createZiggurat();
 
 public:
-    NormalRand(double mean = 0, double var = 1);
+    NormalRand(double location = 0, double variance = 1);
     String Name() const override;
 
 public:
     void SetScale(double scale);
-    void SetVariance(double var);
+    void SetVariance(double variance);
     /**
      * @fn GetScale
      * @return σ
      */
     inline double GetScale() const { return sigma; }
+    /**
+     * @fn GetVariance
+     * @return σ^2
+     */
+    inline double GetVariance() const { return sigma * sigma; }
     /**
      * @fn GetLogScale
      * @return log(σ)
@@ -75,7 +80,7 @@ public:
      * @fn GetPrecision
      * @return 1/σ^2
      */
-    inline double GetPrecision() const { return 1.0 / (sigma * sigma); }
+    inline double GetPrecision() const { return 1.0 / GetVariance(); }
 
     double f(const RealType & x) const override;
     double logf(const RealType & x) const override;

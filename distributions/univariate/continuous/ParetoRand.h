@@ -41,8 +41,8 @@ public:
     double S(const RealType & x) const override;
 
 private:
-    static RealType variateForAlphaOne(RandGenerator &randGenerator);
-    static RealType variateForAlphaTwo(RandGenerator &randGenerator);
+    static RealType variateForAlphaEqualOne(RandGenerator &randGenerator);
+    static RealType variateForAlphaEqualTwo(RandGenerator &randGenerator);
     static RealType variateForGeneralAlpha(double shape, RandGenerator &randGenerator);
 
 public:

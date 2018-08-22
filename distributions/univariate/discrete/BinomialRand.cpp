@@ -405,7 +405,7 @@ void BinomialDistribution<IntType>::FitProbability(const std::vector<IntType> &s
 {
     if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
-    if (!this->allElementsAreNotBiggerThan(n, sample))
+    if (!this->allElementsAreNotLargerThan(n, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     SetParameters(n, this->GetSampleMean(sample) / n);
 }
@@ -415,7 +415,7 @@ BetaRand<> BinomialDistribution<IntType>::FitProbabilityBayes(const std::vector<
 {
     if (!this->allElementsAreNonNegative(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
-    if (!this->allElementsAreNotBiggerThan(n, sample))
+    if (!this->allElementsAreNotLargerThan(n, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(n)));
     int N = sample.size();
     double sum = this->GetSampleSum(sample);

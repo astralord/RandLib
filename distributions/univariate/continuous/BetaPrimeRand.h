@@ -40,6 +40,9 @@ public:
     double F(const RealType & x) const override;
     double S(const RealType & x) const override;
 
+private:
+    RealType fromBetaVariate(const RealType & betaVar) const;
+public:
     RealType Variate() const override;
     void Sample(std::vector<RealType> &outputData) const override;
     void Reseed(unsigned long seed) const override;

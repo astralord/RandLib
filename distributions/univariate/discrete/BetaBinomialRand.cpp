@@ -40,7 +40,7 @@ template< typename IntType >
 double BetaBinomialRand<IntType>::logP(const IntType &k) const
 {
     if (k < 0 || k > n)
-        return 0.0;
+        return -INFINITY;
     double y = std::lgammal(k + B.GetAlpha());
     y += std::lgammal(n - k + B.GetBeta());
     y -= RandMath::lfact(k);

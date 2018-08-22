@@ -54,8 +54,23 @@ private:
     RealType quantileImpl1m(double p) const override;
 
 public:
+    /**
+     * @fn FitLocation
+     * Fit location via maximum-likelihood
+     * @param sample
+     */
     void FitLocation(const std::vector<RealType> &sample);
+    /**
+     * @fn FitScale
+     * Fit scale via maximum-likelihood
+     * @param sample
+     */
     void FitScale(const std::vector<RealType> &sample);
+    /**
+     * @fn Fit
+     * Fit parameters via maximum-likelihood
+     * @param sample
+     */
     void Fit(const std::vector<RealType> &sample);
 
     /**

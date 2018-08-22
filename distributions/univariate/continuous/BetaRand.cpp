@@ -399,7 +399,7 @@ RealType BetaDistribution<RealType>::Median() const
     if (alpha == 1.0)
         return -std::expm1l(-M_LN2 / beta);
     if (beta == 1.0)
-        return std::pow(2, -1.0 / alpha);
+        return std::exp(-M_LN2 / alpha);
     if (alpha >= 1.0 && beta >= 1.0) {
         double initValue = 3 * alpha - 1.0;
         initValue /= 3 * (alpha + beta) - 2.0;
@@ -442,6 +442,18 @@ long double BetaDistribution<RealType>::ExcessKurtosis() const
     --kurtosis;
     kurtosis /= (sum + 3);
     return 6 * kurtosis;
+}
+
+template < typename RealType >
+long double BetaDistribution<RealType>::MeanAbsoluteDeviation() const
+{
+    double y = M_LN2;
+    y += alpha * std::log(alpha);
+    y += beta * std::log(beta);
+    y -= (alpha + beta + 1) * std::log(alpha + beta);
+    y -= logBetaFun;
+    y += logbma;
+    return std::exp(y);
 }
 
 template < typename RealType >
@@ -540,11 +552,22 @@ String BetaRand<RealType>::Name() const
     return "Beta(" + this->toStringWithPrecision(this->GetAlpha()) + ", "
                    + this->toStringWithPrecision(this->GetBeta()) + ", "
                    + this->toStringWithPrecision(this->MinValue()) + ", "
-                   + this->toStringWithPrecision(this->MaxValue()) + ")";
+            + this->toStringWithPrecision(this->MaxValue()) + ")";
 }
 
 template < typename RealType >
-long double BetaRand<RealType>::GetSampleLog1pMean(const std::vector<RealType> &sample) const
+long double BetaRand<RealType>::GetSampleLogMeanNorm(const std::vector<RealType> &sample) const
+{
+    long double lnG = 0;
+    for (RealType var : sample) {
+        RealType x = (var - this->a) * this->bmaInv;
+        lnG += std::log(x);
+    }
+    return lnG / sample.size();
+}
+
+template < typename RealType >
+long double BetaRand<RealType>::GetSampleLog1pMeanNorm(const std::vector<RealType> &sample) const
 {
     long double lnG1p = 0;
     for (RealType var : sample) {
@@ -555,7 +578,7 @@ long double BetaRand<RealType>::GetSampleLog1pMean(const std::vector<RealType> &
 }
 
 template < typename RealType >
-long double BetaRand<RealType>::GetSampleLog1mMean(const std::vector<RealType> &sample) const
+long double BetaRand<RealType>::GetSampleLog1mMeanNorm(const std::vector<RealType> &sample) const
 {
     long double lnG1m = 0;
     for (RealType var : sample) {
@@ -566,25 +589,23 @@ long double BetaRand<RealType>::GetSampleLog1mMean(const std::vector<RealType> &
 }
 
 template < typename RealType >
-void BetaRand<RealType>::FitAlpha(long double lnG, long double lnG1m, long double mean)
+void BetaRand<RealType>::FitAlpha(long double lnG, long double meanNorm)
 {
-    if (mean <= this->a || mean >= this->b)
-        throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, "Mean of the sample should be inside of (a, b)"));
+    if (meanNorm <= 0 || meanNorm >= 1)
+        throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, "Normalized mean of the sample should be in interval of (0, 1)"));
     if (this->beta == 1.0) {
         /// for β = 1 we have explicit expression for estimator
         SetShapes(-1.0 / lnG, this->beta);
     }
     else {
         /// get initial value for shape by method of moments
-        RealType shape = mean - this->a;
-        shape /= this->b - mean;
+        RealType shape = meanNorm;
+        shape /= 1.0 - meanNorm;
         shape *= this->beta;
-        long double diff = lnG - lnG1m;
-        long double digammaBeta = RandMath::digamma(this->beta);
         /// run root-finding procedure
-        if (!RandMath::findRoot<RealType>([diff, digammaBeta] (double x)
+        if (!RandMath::findRoot<RealType>([this, lnG] (double x)
         {
-            double first = RandMath::digamma(x) - diff - digammaBeta;
+            double first = RandMath::digamma(x) - RandMath::digamma(x + this->beta) - lnG;
             double second = RandMath::trigamma(x);
             return DoublePair(first, second);
         }, shape))
@@ -598,42 +619,34 @@ void BetaRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotBiggerThan(this->b, sample))
+    if (!this->allElementsAreNotLargerThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
-    long double lnG = this->GetSampleLogMean(sample);
+    long double lnG = this->GetSampleLogMeanNorm(sample);
     if (!std::isfinite(lnG))
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->ALPHA_ZERO));
-    long double lnG1m = 0.0, mean = 0.5 * (this->a + this->b);
-    if (this->beta != 1.0) {
-        lnG1m = this->GetSampleLog1mMean(sample);
-        if (!std::isfinite(lnG1m))
-            throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->BETA_ZERO));
-        mean = this->GetSampleMean(sample);
-    }
-    FitAlpha(lnG, lnG1m, mean);
+    long double mean = this->GetSampleMean(sample);
+    mean -= this->a;
+    mean *= this->bmaInv;
+    FitAlpha(lnG, mean);
 }
 
 template < typename RealType >
-void BetaRand<RealType>::FitBeta(long double lnG, long double lnG1m, long double mean)
+void BetaRand<RealType>::FitBeta(long double lnG1m, long double meanNorm)
 {
-    if (mean <= this->a || mean >= this->b)
-        throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, "Mean of the sample should be inside of (a, b)"));
+    if (meanNorm <= 0 || meanNorm >= 1)
+        throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, "Normalized mean of the sample should be in interval of (0, 1)"));
     if (this->alpha == 1.0) {
         /// for α = 1 we have explicit expression for estimator
         SetShapes(this->alpha, -1.0 / lnG1m);
     }
     else {
         /// get initial value for shape by method of moments
-        RealType shape = this->b - mean;
-        shape /= mean - this->a;
-        shape *= this->alpha;
-        long double diff = lnG - lnG1m;
-        long double digammaAlpha = RandMath::digamma(this->alpha);
+        RealType shape = this->alpha / meanNorm - this->alpha;
         /// run root-finding procedure
-        if (!RandMath::findRoot<RealType>([diff, digammaAlpha] (double x)
+        if (!RandMath::findRoot<RealType>([this, lnG1m] (double x)
         {
-            double first = RandMath::digamma(x) + diff - digammaAlpha;
+            double first = RandMath::digamma(x) - RandMath::digamma(x + this->alpha) - lnG1m;
             double second = RandMath::trigamma(x);
             return DoublePair(first, second);
         }, shape))
@@ -647,20 +660,16 @@ void BetaRand<RealType>::FitBeta(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotBiggerThan(this->b, sample))
+    if (!this->allElementsAreNotLargerThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
-    long double lnG1m = this->GetSampleLog1mMean(sample);
+    long double lnG1m = this->GetSampleLog1mMeanNorm(sample);
     if (!std::isfinite(lnG1m))
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->BETA_ZERO));
-    long double lnG = 0.0, mean = 0.5 * (this->a + this->b);
-    if (this->alpha != 1.0) {
-        lnG =this->GetSampleLogMean(sample);
-        if (!std::isfinite(lnG))
-            throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->ALPHA_ZERO));
-        mean = this->GetSampleMean(sample);
-    }
-    FitBeta(lnG, lnG1m, mean);
+    long double mean = this->GetSampleMean(sample);
+    mean -= this->a;
+    mean *= this->bmaInv;
+    FitBeta(lnG1m, mean);
 }
 
 template < typename RealType >
@@ -706,13 +715,13 @@ void BetaRand<RealType>::FitShapes(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotBiggerThan(this->b, sample))
+    if (!this->allElementsAreNotLargerThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
-    long double lnG = this->GetSampleLogMean(sample);
-    long double lnG1m = this->GetSampleLog1mMean(sample);
+    long double lnG = this->GetSampleLogMeanNorm(sample);
     if (!std::isfinite(lnG))
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->ALPHA_ZERO));
+    long double lnG1m = this->GetSampleLog1mMeanNorm(sample);
     if (!std::isfinite(lnG1m))
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, this->BETA_ZERO));
 
@@ -756,7 +765,7 @@ void ArcsineRand<RealType>::FitShape(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotBiggerThan(this->b, sample))
+    if (!this->allElementsAreNotLargerThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
     int n = sample.size();
