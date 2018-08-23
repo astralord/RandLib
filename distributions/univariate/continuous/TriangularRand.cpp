@@ -20,7 +20,7 @@ template < typename RealType >
 void TriangularRand<RealType>::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
     if (lowerLimit >= mode)
-        throw std::invalid_argument("Triangular distribution: lower limit should be larger than mode");
+        throw std::invalid_argument("Triangular distribution: lower limit should be greater than mode");
     if (mode >= upperLimit)
         throw std::invalid_argument("Triangular distribution: upper limit should be smaller than mode");
     a = lowerLimit;

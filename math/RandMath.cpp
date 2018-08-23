@@ -284,7 +284,7 @@ double W0Lambert(double x, double epsilon)
 {
     double w = 0;
     if (x < -M_1_E)
-        throw std::invalid_argument("Argument x should be larger than -1/e");
+        throw std::invalid_argument("Argument x should be greater than -1/e, but it's equal to " + std::to_string(x));
     if (x > 10) {
         double logX = std::log(x);
         double loglogX = std::log(logX);
@@ -297,7 +297,7 @@ double Wm1Lambert(double x, double epsilon)
 {
     double w = -2;
     if (x < -M_1_E || x > 0)
-        throw std::invalid_argument("Argument x should be larger than -1/e and smaller or equal to 0");
+        throw std::invalid_argument("Argument x should be greater than -1/e and smaller or equal to 0, but it's equal to " + std::to_string(x));
     if (x > -0.1) {
         double logmX = std::log(-x);
         double logmlogmX = std::log(-logmX);

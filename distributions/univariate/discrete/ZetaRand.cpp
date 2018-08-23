@@ -18,7 +18,7 @@ template < typename IntType >
 void ZetaRand<IntType>::SetExponent(double exponent)
 {
     if (exponent <= 1.0)
-        throw std::invalid_argument("Zeta distribution: exponent should be larger than 1");
+        throw std::invalid_argument("Zeta distribution: exponent should be greater than 1, but it's equal to " + std::to_string(exponent));
     s = exponent;
     sm1 = s - 1.0;
     zetaS = std::riemann_zetal(s);

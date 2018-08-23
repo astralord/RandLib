@@ -20,11 +20,14 @@ template< typename RealType >
 void NormalInverseGammaRand<RealType>::SetParameters(double location, double precision, double shape, double rate)
 {
     if (precision <= 0.0)
-        throw std::invalid_argument("Precision of Normal-Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Precision of Normal-Inverse-Gamma distribution should be positive, but it's equal to "
+                                    + std::to_string(precision));
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Normal-Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Shape of Normal-Inverse-Gamma distribution should be positive, but it's equal to "
+                                    + std::to_string(shape));
     if (rate <= 0.0)
-        throw std::invalid_argument("Rate of Normal-Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Rate of Normal-Inverse-Gamma distribution should be positive, but it's equal to "
+                                    + std::to_string(rate));
 
     mu = location;
     lambda = precision;

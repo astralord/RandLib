@@ -40,11 +40,14 @@ template < typename RealType >
 void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
 {
     if (exponent < 0.1 || exponent > 2.0)
-        throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2]");
+        throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to "
+                                    + std::to_string(exponent));
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Stable distribution: skewness should be in the interval [-1, 1]");
+        throw std::invalid_argument("Stable distribution: skewness should be in the interval [-1, 1], but it's equal to "
+                                    + std::to_string(skewness));
     if (scale <= 0.0)
-        throw std::invalid_argument("Stable distribution: scale should be positive");
+        throw std::invalid_argument("Stable distribution: scale should be positive, but it's equal to "
+                                    + std::to_string(scale));
 
     /// the following errors should be removed soon
     if (exponent != 1.0 && std::fabs(exponent - 1.0) < 0.01 && skewness != 0.0)
@@ -118,7 +121,8 @@ template < typename RealType >
 void StableDistribution<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Stable distribution should be positive");
+        throw std::invalid_argument("Scale of Stable distribution should be positive, but it's equal to "
+                                    + std::to_string(scale));
     gamma = scale;
     logGamma = std::log(gamma);
     if (distributionType == NORMAL)

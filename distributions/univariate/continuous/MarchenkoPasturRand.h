@@ -14,8 +14,8 @@ class RANDLIBSHARED_EXPORT MarchenkoPasturRand : public ContinuousDistribution<R
 {
     double lambda = 1; ///< ratio index λ
     double sigmaSq = 1; ///< scale parameter σ^2
-    double a = 0; ///< minimal value (apart from 0 if λ > 1)
-    double b = 4; ///< maximal value
+    double a = 0; ///< minimum value (apart from 0 if λ > 1)
+    double b = 4; ///< maximum value
     double logLambda = 0; /// < log(λ)
 
     BetaRand<RealType> BetaRV{0.5, 1.5, 0, 4}; ///< beta-distributed rv for generator

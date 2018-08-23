@@ -95,9 +95,11 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
 {
     /// Check special and incorrect values of parameters
     if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
-        throw std::invalid_argument("Parameters (a, b) of incomplete beta function should be both positive");
+        throw std::invalid_argument("Parameters (a, b) of incomplete beta function should be both positive, but they're equal to "
+                                    + std::to_string(a) + " and " + std::to_string(b) + " respectively");
     if (x < 0.0 || x > 1.0)
-        throw std::invalid_argument("Argument x of incomplete beta function should be in interval [0, 1]");
+        throw std::invalid_argument("Argument x of incomplete beta function should be in interval [0, 1], but it's equal to "
+                                    + std::to_string(x));
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)
@@ -107,7 +109,7 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
     if (a == 1.0)
         return -std::expm1l(b * log1mX);
 
-    /// If x is larger than mean of Beta distribution,
+    /// If x is greater than mean of Beta distribution,
     /// convergence of complementary distribution function is faster
     if (x > a / (a + b))
         return 1.0 - ibeta(1.0 - x, b, a);

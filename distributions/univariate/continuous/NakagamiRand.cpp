@@ -41,10 +41,10 @@ double NakagamiDistribution<RealType>::logf(const RealType & x) const
         return -INFINITY;
     if (x == 0) {
         if (mu > 0.5)
-            return 0-INFINITY;
+            return -INFINITY;
         return (mu < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(omega));
     }
-    return std::log(2 * x) + Y.logf(x * x);
+    return M_LN2 + std::log(x) + Y.logf(x * x);
 }
 
 template < typename RealType >
@@ -468,7 +468,7 @@ long double RayleighRand<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
-void RayleighRand<RealType>::FitScale(const std::vector<RealType> &sample, bool unbiased)
+void RayleighRand<RealType>::Fit(const std::vector<RealType> &sample, bool unbiased)
 {
     /// Sanity check
     if (!this->allElementsArePositive(sample))
@@ -485,7 +485,7 @@ void RayleighRand<RealType>::FitScale(const std::vector<RealType> &sample, bool 
         double coef = 1.0 / (640 * std::pow(n, 5));
         coef -= 1.0 / (192 * std::pow(n, 3));
         coef += 0.125 / n;
-        SetScale((1.0 + coef) * std::sqrt(sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
+        SetScale(std::exp(std::log1pl(coef) + 0.5 * sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
     }
     else if (n > 15) {
         double coef = RandMath::lfact(n);

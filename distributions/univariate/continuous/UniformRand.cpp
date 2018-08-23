@@ -162,14 +162,14 @@ double UniformRand<RealType>::Entropy() const
 template < typename RealType >
 double UniformRand<RealType>::LikelihoodFunction(const std::vector<RealType> &sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotLargerThan(this->b, sample);
+    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
     return sampleIsInsideInterval ? std::pow(this->bma, -sample.size()) : 0.0;
 }
 
 template < typename RealType >
 double UniformRand<RealType>::LogLikelihoodFunction(const std::vector<RealType> &sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotLargerThan(this->b, sample);
+    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
     int sample_size = sample.size();
     return sampleIsInsideInterval ? -sample_size * this->logbma : -INFINITY;
 }
@@ -182,7 +182,7 @@ constexpr char UniformRand<RealType>::TOO_SMALL_B[];
 template < typename RealType >
 void UniformRand<RealType>::FitMinimum(const std::vector<RealType> &sample, bool unbiased)
 {
-    if (!this->allElementsAreNotLargerThan(this->b, sample))
+    if (!this->allElementsAreNotGreaterThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
     RealType minVar = *std::min_element(sample.begin(), sample.end());
 
@@ -210,7 +210,7 @@ void UniformRand<RealType>::FitMaximum(const std::vector<RealType> &sample, bool
         int n = sample.size();
         /// E[max] = (this->b - this->a) * n / (n + 1) + a
         RealType maxVarAdj = (maxVar * (n + 1) - this->a) / n;
-        if (!this->allElementsAreNotLargerThan(maxVarAdj, sample))
+        if (!this->allElementsAreNotGreaterThan(maxVarAdj, sample))
             throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, TOO_SMALL_B + this->toStringWithPrecision(maxVarAdj)));
         SetSupport(this->a, maxVarAdj);
     }
@@ -232,7 +232,7 @@ void UniformRand<RealType>::Fit(const std::vector<RealType> &sample, bool unbias
         RealType maxVarAdj = (maxVar * n - minVar) / (n - 1);
         if (!this->allElementsAreNotSmallerThan(minVarAdj, sample))
             throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, TOO_LARGE_A + this->toStringWithPrecision(minVarAdj)));
-        if (!this->allElementsAreNotLargerThan(maxVarAdj, sample))
+        if (!this->allElementsAreNotGreaterThan(maxVarAdj, sample))
             throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, TOO_SMALL_B + this->toStringWithPrecision(maxVarAdj)));
         SetSupport(minVarAdj, maxVarAdj);
     }

@@ -229,12 +229,12 @@ private:
 
 public:
     /**
-     * @fn FitScale
-     * set scale via maximum-likelihood method if unbiased = false,
+     * @fn Fit
+     * fit scale via maximum-likelihood method if unbiased = false,
      * otherwise set scale, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
-    void FitScale(const std::vector<RealType> &sample, bool unbiased = false);
+    void Fit(const std::vector<RealType> &sample, bool unbiased = false);
 };
 
 

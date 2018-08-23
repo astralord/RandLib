@@ -240,11 +240,13 @@ void AsymmetricLaplaceRand<RealType>::FitScaleAndAsymmetry(const std::vector<Rea
 
     if (xMinus == 0) {
         /// X ~ Exp(1 / xPlus) + m
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Sample might be from shifted exponential distribution (no values smaller than shift m)"));
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR,
+                                                           "Sample might be from shifted exponential distribution (no values are smaller than shift m)"));
     }
     if (xPlus == 0) {
         /// -X ~ Exp(1 / xMinus) + m
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Sample might be from shifted negative exponential distribution (no values larger than shift m)"));
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR,
+                                                           "Sample might be from shifted negative exponential distribution (no values are greater than shift m)"));
     }
 
     double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);

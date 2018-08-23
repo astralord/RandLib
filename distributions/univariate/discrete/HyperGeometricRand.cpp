@@ -20,9 +20,9 @@ void HyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType draws
     if (totalSize <= 0 || drawsNum <= 0 || successesNum <= 0)
         throw std::invalid_argument("HyperGeometric distribution: all parameters should be positive");
     if (drawsNum > totalSize)
-        throw std::invalid_argument("HyperGeometric distribution: total size should be larger than draws number");
+        throw std::invalid_argument("HyperGeometric distribution: total size should be greater than draws number");
     if (successesNum > totalSize)
-        throw std::invalid_argument("HyperGeometric distribution: total size should be larger than successes number");
+        throw std::invalid_argument("HyperGeometric distribution: total size should be greater than successes number");
 
     N = totalSize;
     n = drawsNum;

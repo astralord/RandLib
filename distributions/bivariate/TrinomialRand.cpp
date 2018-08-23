@@ -18,9 +18,11 @@ template< typename IntType >
 void TrinomialRand<IntType>::SetParameters(int number, double probability1, double probability2)
 {
     if (probability1 < 0.0 || probability2 < 0.0 || probability1 + probability2 > 1.0)
-        throw std::invalid_argument("Probabilities of Trinomial distribution should be positive and their sum should be be not greater than 1");
+        throw std::invalid_argument("Probabilities of Trinomial distribution should be positive and their sum should be not greater than 1, but they're equal to "
+                                    + std::to_string(probability1) + " and " + std::to_string(probability2));
     if (number <= 0)
-        throw std::invalid_argument("Number of Trinomial distribution should be positive");
+        throw std::invalid_argument("Number of Trinomial distribution should be positive, but it's equal to "
+                                    + std::to_string(number));
 
     double p1 = probability1, p2 = probability2;
     n = number;

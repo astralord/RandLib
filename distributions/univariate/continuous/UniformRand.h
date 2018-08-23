@@ -72,7 +72,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
     static constexpr char TOO_LARGE_A[] = "Minimum element of the sample is smaller than lower boundary returned by method: ";
-    static constexpr char TOO_SMALL_B[] = "Maximum element of the sample is larger than upper boundary returned by method: ";
+    static constexpr char TOO_SMALL_B[] = "Maximum element of the sample is greater than upper boundary returned by method: ";
 
 public:
     inline double Entropy() const;

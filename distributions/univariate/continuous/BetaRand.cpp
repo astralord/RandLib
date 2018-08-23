@@ -52,7 +52,7 @@ template < typename RealType >
 void BetaDistribution<RealType>::SetSupport(double minValue, double maxValue)
 {
     if (minValue >= maxValue)
-        throw std::invalid_argument("Beta distribution: minimal value should be smaller than maximum value");
+        throw std::invalid_argument("Beta distribution: minimum value should be smaller than maximum value");
 
     a = minValue;
     b = maxValue;
@@ -619,7 +619,7 @@ void BetaRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotLargerThan(this->b, sample))
+    if (!this->allElementsAreNotGreaterThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
     long double lnG = this->GetSampleLogMeanNorm(sample);
@@ -660,7 +660,7 @@ void BetaRand<RealType>::FitBeta(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotLargerThan(this->b, sample))
+    if (!this->allElementsAreNotGreaterThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
     long double lnG1m = this->GetSampleLog1mMeanNorm(sample);
@@ -715,7 +715,7 @@ void BetaRand<RealType>::FitShapes(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotLargerThan(this->b, sample))
+    if (!this->allElementsAreNotGreaterThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
     long double lnG = this->GetSampleLogMeanNorm(sample);
@@ -765,7 +765,7 @@ void ArcsineRand<RealType>::FitShape(const std::vector<RealType> &sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a)));
-    if (!this->allElementsAreNotLargerThan(this->b, sample))
+    if (!this->allElementsAreNotGreaterThan(this->b, sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b)));
 
     int n = sample.size();

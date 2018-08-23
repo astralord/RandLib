@@ -16,7 +16,7 @@ template< typename IntType >
 void UniformDiscreteRand<IntType>::SetBoundaries(IntType minValue, IntType maxValue)
 {
     if (minValue > maxValue)
-        throw std::invalid_argument("Uniform discrete distribution: minimal value shouldn't be larger than maximum value");
+        throw std::invalid_argument("Uniform discrete distribution: minimum value shouldn't be greater than maximum value");
 
     a = minValue;
     b = maxValue;
@@ -141,14 +141,14 @@ double UniformDiscreteRand<IntType>::Entropy() const
 template< typename IntType >
 double UniformDiscreteRand<IntType>::LikelihoodFunction(const std::vector<IntType> &sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotLargerThan(b, sample);
+    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
     return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
 }
 
 template< typename IntType >
 double UniformDiscreteRand<IntType>::LogLikelihoodFunction(const std::vector<IntType> &sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotLargerThan(b, sample);
+    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
     int sample_size = sample.size();
     return sampleIsInsideInterval ? -sample_size * logN : -INFINITY;
 }

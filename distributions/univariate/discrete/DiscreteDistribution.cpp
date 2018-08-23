@@ -178,9 +178,11 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(const std::vector<IntT
             throw std::invalid_argument("Order statistic should be sorted in ascending order");
     }
     if (orderStatistic[0] < this->MinValue())
-        throw std::invalid_argument("Some elements in the sample are too small to belong to this distribution, they should be larger than " + this->toStringWithPrecision(this->MinValue()));
+        throw std::invalid_argument("Some elements in the sample are too small to belong to this distribution, they should be greater than "
+                                    + this->toStringWithPrecision(this->MinValue()));
     if (orderStatistic[n - 1] > this->MaxValue())
-        throw std::invalid_argument("Some elements in the sample are too large to belong to this distribution, they should be smaller than " + this->toStringWithPrecision(this->MaxValue()));
+        throw std::invalid_argument("Some elements in the sample are too large to belong to this distribution, they should be smaller than "
+                                    + this->toStringWithPrecision(this->MaxValue()));
 
     /// Lower interval
     IntType x = orderStatistic[0];
