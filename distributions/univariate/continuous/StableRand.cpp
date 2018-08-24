@@ -37,7 +37,7 @@ RealType StableDistribution<RealType>::MaxValue() const
 }
 
 template < typename RealType >
-void StableDistribution<RealType>::parametersVerification(double exponent, double skewness, double scale, double location)
+void StableDistribution<RealType>::parametersVerification(double exponent, double skewness, double scale)
 {
     if (exponent < 0.1 || exponent > 2.0)
         throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to "
@@ -89,7 +89,7 @@ void StableDistribution<RealType>::setParametersForUnityExponent()
 template < typename RealType >
 void StableDistribution<RealType>::setParametersForGeneralExponent()
 {   
-    distributionType = GENERAL_EXPONENT;
+    distributionType = GENERAL;
     if (beta != 0.0) {
         zeta = -beta * std::tan(M_PI_2 * alpha);
         omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
@@ -115,7 +115,7 @@ void StableDistribution<RealType>::setParametersForGeneralExponent()
 template < typename RealType >
 void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
 {
-    parametersVerification(exponent, skewness, scale, location);
+    parametersVerification(exponent, skewness, scale);
     alpha = exponent;
     alphaInv = 1.0 / alpha;
     beta = skewness;
@@ -1106,13 +1106,13 @@ String StableRand<RealType>::Name() const
 template < typename RealType >
 void StableRand<RealType>::SetExponent(double exponent)
 {
-    SetParameters(exponent, beta, gamma, mu);
+    SetParameters(exponent, this->beta, this->gamma, this->mu);
 }
 
 template < typename RealType >
 void StableRand<RealType>::SetSkewness(double skewness)
 {
-    SetParameters(alpha, skewness, gamma, mu);
+    SetParameters(this->alpha, skewness, this->gamma, this->mu);
 }
 
 template class StableRand<float>;
