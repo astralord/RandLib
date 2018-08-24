@@ -59,7 +59,7 @@ public:
     RealType MaxValue() const override;
 
 private:
-    void parametersVerification(double exponent, double skewness, double scale, double location);
+    void parametersVerification(double exponent, double skewness, double scale);
     void setParametersForNormal();
     void setParametersForCauchy();
     void setParametersForLevy();
