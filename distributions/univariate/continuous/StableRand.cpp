@@ -1106,13 +1106,13 @@ String StableRand<RealType>::Name() const
 template < typename RealType >
 void StableRand<RealType>::SetExponent(double exponent)
 {
-    SetParameters(exponent, this->beta, this->gamma, this->mu);
+    this->SetParameters(exponent, this->GetSkewness(), this->GetScale(), this->GetLocation());
 }
 
 template < typename RealType >
 void StableRand<RealType>::SetSkewness(double skewness)
 {
-    SetParameters(this->alpha, skewness, this->gamma, this->mu);
+    this->SetParameters(this->GetAlpha(), skewness, this->GetScale(), this->GetLocation());
 }
 
 template class StableRand<float>;
