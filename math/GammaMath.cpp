@@ -561,12 +561,19 @@ double lpgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
                           std::log1pl(-qgammaRaw(a, x, logX, logA, lgammaA, mId));
 }
 
-double lpgamma(double a, double x, double logA, double lgammaA)
+void parametersVerification(double a, double x)
 {
     if (x < 0.0)
-        throw std::invalid_argument("Argument x of logarithm of lower gamma function should be non-negative");
+        throw std::invalid_argument("Argument x of gamma function should be non-negative, but it's equal to "
+                                    + std::to_string(x));
     if (a < 0.0)
-        throw std::invalid_argument("Parameter a of logarithm of lower gamma function should be non-negative");
+        throw std::invalid_argument("Parameter a of gamma function should be non-negative, but it's equal to "
+                                    + std::to_string(a));
+}
+    
+double lpgamma(double a, double x, double logA, double lgammaA)
+{
+    parametersVerification(a, x);
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
@@ -578,10 +585,7 @@ double lpgamma(double a, double x, double logA, double lgammaA)
 
 double lpgamma(double a, double x, double logX)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of logarithm of lower gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of logarithm of lower gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
@@ -592,10 +596,7 @@ double lpgamma(double a, double x, double logX)
 
 double lpgamma(double a, double x)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of logarithm of lower gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of logarithm of lower gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
@@ -617,10 +618,7 @@ double pgammaRaw(double a, double x, double logX, double logA, double lgammaA, R
 
 double pgamma(double a, double x, double logA, double lgammaA)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of lower regularised incomplete gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of lower regularised incomplete gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 1.0;
     if (a == 1.0)
@@ -632,10 +630,7 @@ double pgamma(double a, double x, double logA, double lgammaA)
 
 double pgamma(double a, double x, double logX)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of lower regularised incomplete gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of lower regularised incomplete gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 1.0;
     if (a == 1.0)
@@ -646,10 +641,7 @@ double pgamma(double a, double x, double logX)
 
 double pgamma(double a, double x)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of lower regularised incomplete gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of lower regularised incomplete gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 1.0;
     if (a == 1.0)
@@ -714,10 +706,7 @@ double lqgammaRaw(double a, double x, double logX, double logA, double lgammaA, 
 
 double lqgamma(double a, double x, double logA, double lgammaA)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of logarithm of upper gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of logarithm of upper gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return -INFINITY;
     if (a == 1.0)
@@ -729,10 +718,7 @@ double lqgamma(double a, double x, double logA, double lgammaA)
 
 double lqgamma(double a, double x, double logX)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of logarithm of upper gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of logarithm of upper gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return -INFINITY;
     if (a == 1.0)
@@ -743,10 +729,7 @@ double lqgamma(double a, double x, double logX)
 
 double lqgamma(double a, double x)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of logarithm of upper gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of logarithm of upper gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return -INFINITY;
     if (a == 1.0)
@@ -770,10 +753,7 @@ double qgammaRaw(double a, double x, double logX, double logA, double lgammaA, R
 
 double qgamma(double a, double x, double logA, double lgammaA)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of upper regularised incomplete gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of upper regularised incomplete gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
@@ -785,10 +765,7 @@ double qgamma(double a, double x, double logA, double lgammaA)
 
 double qgamma(double a, double x, double logX)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of upper regularised incomplete gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of upper regularised incomplete gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
@@ -799,10 +776,7 @@ double qgamma(double a, double x, double logX)
 
 double qgamma(double a, double x)
 {
-    if (x < 0.0)
-        throw std::invalid_argument("Argument x of upper regularised incomplete gamma function should be non-negative");
-    if (a < 0.0)
-        throw std::invalid_argument("Parameter a of upper regularised incomplete gamma function should be non-negative");
+    parametersVerification(a, x);
     if (x == 0.0)
         return 0.0;
     if (a == 1.0)
