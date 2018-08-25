@@ -14,14 +14,17 @@ template < typename RealType >
 void ShiftedGeometricStableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location, double shift)
 {
     if (exponent < 0.1 || exponent > 2.0)
-        throw std::invalid_argument("Geometric-Stable distribution: exponent should be in the interval [0.1, 2]");
+        throw std::invalid_argument("Geometric-Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to "
+                                    + std::to_string(exponent));
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Geometric-Stable distribution: skewness should be in the interval [-1, 1]");
+        throw std::invalid_argument("Geometric-Stable distribution: skewness should be in the interval [-1, 1], but it's equal to "
+                                    + std::to_string(skewness));
 
     alpha = exponent;
     alphaInv = 1.0 / alpha;
     beta = skewness;
-    Z.SetParameters(alpha, beta);
+    Z.SetExponent(alpha);
+    Z.SetSkewness(beta);
 
     SetScale(scale);
     SetLocation(location);

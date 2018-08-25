@@ -65,7 +65,7 @@ public:
      * @fn GetScale
      * @return σ
      */
-    inline double GetScale() const override { return sigma; }
+    inline double GetScale() const { return sigma; }
     /**
      * @fn GetVariance
      * @return σ^2
@@ -75,7 +75,7 @@ public:
      * @fn GetLogScale
      * @return log(σ)
      */
-    inline double GetLogScale() const override { return StableDistribution<RealType>::GetLogScale() - 0.5 * M_LN2; }
+    inline double GetLogScale() const { return StableDistribution<RealType>::GetLogScale() - 0.5 * M_LN2; }
     /**
      * @fn GetPrecision
      * @return 1/σ^2

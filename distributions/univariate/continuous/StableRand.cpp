@@ -1112,7 +1112,7 @@ void StableRand<RealType>::SetExponent(double exponent)
 template < typename RealType >
 void StableRand<RealType>::SetSkewness(double skewness)
 {
-    this->SetParameters(this->GetAlpha(), skewness, this->GetScale(), this->GetLocation());
+    this->SetParameters(this->GetExponent(), skewness, this->GetScale(), this->GetLocation());
 }
 
 template class StableRand<float>;
