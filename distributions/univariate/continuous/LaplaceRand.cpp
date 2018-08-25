@@ -19,7 +19,8 @@ template < typename RealType >
 void AsymmetricLaplaceDistribution<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Laplace distribution: scale should be positive");
+        throw std::invalid_argument("Laplace distribution: scale should be positive, but it's equal to "
+                                    + std::to_string(scale));
     ShiftedGeometricStableDistribution<RealType>::SetScale(scale);
     ChangeLocation();
 }
@@ -132,12 +133,11 @@ void AsymmetricLaplaceDistribution<RealType>::FitScale(const std::vector<RealTyp
     double deviation = 0.0;
     for (const RealType & x : sample) {
         if (x > this->m)
-            deviation += this->kappaSq * (x - this->m);
+            deviation += this->kappa * (x - this->m);
         else
-            deviation -= (x - this->m);
+            deviation -= (x - this->m) / this->kappa;
     }
-    deviation /= (this->kappa * sample.size());
-
+    deviation /= sample.size();
     SetScale(deviation);
 }
 
@@ -176,92 +176,55 @@ RealType AsymmetricLaplaceRand<RealType>::StandardVariate(double asymmetry, Rand
 }
 
 template < typename RealType >
+DoublePair AsymmetricLaplaceRand<RealType>::getOneSidedSums(const std::vector<RealType> &sample)
+{
+    double xPlus = 0.0, xMinus = 0.0;
+    for (const RealType & x : sample) {
+        if (x < this->m)
+            xMinus += (x - this->m);
+        else
+            xPlus += (x - this->m);
+    }
+    return DoublePair(xPlus, xMinus);
+}
+
+template < typename RealType >
 void AsymmetricLaplaceRand<RealType>::FitAsymmetry(const std::vector<RealType> &sample)
 {
-    double xPlus = 0.0, xMinus = 0.0;
-    for (const RealType & x : sample) {
-        if (x < this->m)
-            xMinus -= (x - this->m);
-        else
-            xPlus += (x - this->m);
-    }
-
-    if (xPlus == xMinus) {
-        SetAsymmetry(1.0);
-        return;
-    }
-
+    auto [xPlus, xMinus] = getOneSidedSums(sample);
     double gammaN = this->gamma * sample.size();
-    double root = 1.0;
-    double minBound, maxBound;
-    if (xPlus < -xMinus) { //TODO: why there is minus?
-        minBound = 1.0;
-        maxBound = std::sqrt(xMinus / xPlus);
+    double asymmetry = 0;
+    if (xPlus == xMinus)
+        asymmetry = 1.0;
+    else if (xPlus == 0)
+        asymmetry = -xMinus / gammaN;
+    else if (xMinus == 0) {
+        asymmetry = gammaN / xPlus;
     }
     else {
-        minBound = std::sqrt(xMinus / xPlus);
-        maxBound = 1.0;
-    }
-
-    if (!RandMath::findRoot<double>([sample, xPlus, xMinus, gammaN] (double t)
-    {
-        double tSq = t * t;
-        double y = 1.0 - tSq;
-        y /= (t * tSq + t);
-        y *= gammaN;
-        y += xMinus / tSq - xPlus;
-        return y;
-    }, minBound, maxBound, root))
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding procedure"));
-
-    SetAsymmetry(root);
-}
-
-template < typename RealType >
-void AsymmetricLaplaceRand<RealType>::FitShiftAndAsymmetry(const std::vector<RealType> &sample)
-{
-    this->FitShift(sample);
-    FitAsymmetry(sample);
-}
-
-template < typename RealType >
-void AsymmetricLaplaceRand<RealType>::FitScaleAndAsymmetry(const std::vector<RealType> &sample)
-{
-    int n = sample.size();
-    double xPlus = 0.0, xMinus = 0.0;
-    for (const RealType & x : sample) {
-        if (x < this->m)
-            xMinus -= (x - this->m);
+        /// write down coefficients of quartic equation
+        double a = xPlus / gammaN;
+        double c = (xPlus + xMinus) / gammaN;
+        double e = xMinus / gammaN;
+        /// find coefficients for solution
+        double ae = a * e;
+        double delta1 = 2 * std::pow(c, 3) + 9 * c + 27 * (a + e) - 72 * ae * c;
+        double delta0 = c * c + 3 + 12 * ae;
+        double p2 = delta1 + std::sqrt(delta1 * delta1 - 4 * std::pow(delta0, 3));
+        double Q = std::cbrt(0.5 * p2);
+        double temp = 8 * a * a;
+        double p = (8 * a * c - 3.0) / temp;
+        double q = (-1.0 + 4 * a * c + temp) / (a * temp);
+        double S = 0.5 * std::sqrt(-2.0 / 3 * p + (Q + delta0 / Q) / (3 * a));
+        /// solve by general formula
+        double c1 = -0.25 / a, b1 = -4 * S * S - 2 * p, b2 = q / S;
+        if (b1 + b2 > 0)
+            asymmetry = c1 + S + 0.5 * std::sqrt(b1 + b2);
         else
-            xPlus += (x - this->m);
-    }
-    xPlus /= n;
-    xMinus /= n;
-
-    if (xMinus == 0) {
-        /// X ~ Exp(1 / xPlus) + m
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR,
-                                                           "Sample might be from shifted exponential distribution (no values are smaller than shift m)"));
-    }
-    if (xPlus == 0) {
-        /// -X ~ Exp(1 / xMinus) + m
-        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR,
-                                                           "Sample might be from shifted negative exponential distribution (no values are greater than shift m)"));
+            asymmetry = c1 - S + 0.5 * std::sqrt(b1 - b2);
     }
 
-    double xPlusSqrt = std::sqrt(xPlus), xMinusSqrt = std::sqrt(xMinus);
-    double scale = xPlusSqrt + xMinusSqrt;
-    scale *= std::sqrt(xPlusSqrt * xMinusSqrt);
-
-    this->SetScale(scale);
-    SetAsymmetry(std::pow(xMinus / xPlus, 0.25));
-}
-
-template < typename RealType >
-void AsymmetricLaplaceRand<RealType>::Fit(const std::vector<RealType> &sample)
-{
-    this->FitShift(sample);
-    FitScaleAndAsymmetry(sample);
+    SetAsymmetry(asymmetry);
 }
 
 template class AsymmetricLaplaceRand<float>;

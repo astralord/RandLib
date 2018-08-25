@@ -49,6 +49,8 @@ public:
 
     long double Mean() const override;
     long double Variance() const override;
+
+public:
     IntType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;

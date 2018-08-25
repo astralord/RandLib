@@ -256,7 +256,7 @@ double parabolicMinimum(RealType a, RealType b, RealType c, double fa, double fb
  * Combined Brent's method
  * @param funPtr
  * @param abc lower boundary / middle / upper boundary
- * @param fabc funPtr(abc)
+ * @param fx funPtr(b)
  * @param root such x that funPtr(x) is min
  * @param epsilon tolerance
  * @return true if success

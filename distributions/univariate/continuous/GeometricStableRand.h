@@ -27,8 +27,7 @@ protected:
     double kappaInv = 1; ///< 1 / κ
     double kappaSq = 1; ///< κ^2
     double log1pKappaSq = M_LN2; ///< log(1 + κ^2)
-    double pdfCoef = M_LN2; ///< log(γ * (κ + 1 / κ))
-    double cdfCoef = -M_LN2; ///< 2 * log(κ) - log(1 + κ^2)
+    double logKappa = 0; /// log(κ)
 
     ShiftedGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
     virtual ~ShiftedGeometricStableDistribution() {}

@@ -70,10 +70,10 @@ public:
 
     using AsymmetricLaplaceDistribution<RealType>::FitShiftAndScale;
 
+private:
+    DoublePair getOneSidedSums(const std::vector<RealType> &sample);
+public:
     void FitAsymmetry(const std::vector<RealType> &sample);
-    void FitShiftAndAsymmetry(const std::vector<RealType> &sample);
-    void FitScaleAndAsymmetry(const std::vector<RealType> &sample);
-    void Fit(const std::vector<RealType> &sample);
 };
 
 

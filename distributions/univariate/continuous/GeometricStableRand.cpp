@@ -53,7 +53,8 @@ template < typename RealType >
 void ShiftedGeometricStableDistribution<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
-        throw std::invalid_argument("Geometric-Stable distribution: scale should be positive");
+        throw std::invalid_argument("Asymmetric-Laplace distribution: scale should be positive, but it's equal to "
+                                    + std::to_string(scale));
     gamma = scale;
     logGamma = std::log(gamma);
 }
@@ -62,14 +63,13 @@ template < typename RealType >
 void ShiftedGeometricStableDistribution<RealType>::SetAsymmetry(double asymmetry)
 {
     if (asymmetry <= 0.0)
-        throw std::invalid_argument("Asymmetric-Laplace distribution: asymmetry parameter should be positive");
+        throw std::invalid_argument("Asymmetric-Laplace distribution: asymmetry parameter should be positive, but it's equal to "
+                                    + std::to_string(asymmetry));
     kappa = asymmetry;
     kappaInv = 1.0 / kappa;
     kappaSq = kappa * kappa;
     log1pKappaSq = std::log1pl(kappaSq);
-    double logK = std::log(kappa);
-    pdfCoef = logGamma + log1pKappaSq - logK;
-    cdfCoef = 2 * logK - log1pKappaSq;
+    logKappa = std::log(kappa);
 }
 
 template < typename RealType >
@@ -111,7 +111,7 @@ double ShiftedGeometricStableDistribution<RealType>::logpdfLaplace(double x) con
 {
     double y = x / gamma;
     y *= (x < 0) ? kappaInv : -kappa;
-    return y - pdfCoef;
+    return y - logGamma - log1pKappaSq + logKappa;
 }
 
 template < typename RealType >
@@ -120,7 +120,7 @@ double ShiftedGeometricStableDistribution<RealType>::cdfLaplace(double x) const
     double y = x / gamma;
     if (x < 0) {
         y *= kappaInv;
-        y += cdfCoef;
+        y += 2 * logKappa - log1pKappaSq;
         return std::exp(y);
     }
     return -std::expm1l(-log1pKappaSq - kappa * y);
@@ -132,7 +132,7 @@ double ShiftedGeometricStableDistribution<RealType>::cdfLaplaceCompl(double x) c
     double y = x / gamma;
     if (x < 0) {
         y *= kappaInv;
-        y += cdfCoef;
+        y += 2 * logKappa - log1pKappaSq;
         return -std::expm1l(y);
     }
     return std::exp(-log1pKappaSq - kappa * y);
@@ -504,7 +504,7 @@ template < typename RealType >
 RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace(double p) const
 {
     if (p < kappaSq / (1 + kappaSq)) {
-        RealType q = p * (1.0 / kappaSq + 1.0);
+        RealType q = p / kappaSq + p;
         q = std::log(q);
         q *= kappa * gamma;
         return m + q;
@@ -521,7 +521,8 @@ template < typename RealType >
 RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace1m(double p) const
 {
     if (p > 1.0 / (1 + kappaSq)) {
-        RealType q = (1.0 - p) * (1.0 / kappaSq + 1.0);
+        RealType pm1 = p - 1.0;
+        RealType q = -pm1 / kappaSq - pm1;
         q = std::log(q);
         q *= kappa * gamma;
         return m + q;
