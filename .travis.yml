@@ -24,3 +24,4 @@ install:
 script:
   - qmake
   - make
+cache: ccache
