@@ -242,7 +242,7 @@ void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
         throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, this->TOO_SMALL_VARIANCE));
     double guess = mean * mean / (variance - mean);
     size_t n = sample.size();
-    if (!RandMath::findRoot<double>([sample, mean, n] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<double>([sample, mean, n] (double x)
     {
         double first = 0.0, second = 0.0;
         for (const IntType & var : sample) {

@@ -109,7 +109,7 @@ void AsymmetricLaplaceDistribution<RealType>::FitShift(const std::vector<RealTyp
     double maxVar = *std::max_element(sample.begin(), sample.end());
     double median = this->GetSampleMean(sample);
 
-    if (!RandMath::findRoot<double>([this, sample] (double med)
+    if (!RandMath::findRootNewtonFirstOrder<double>([this, sample] (double med)
     {
         double y = 0.0;
         for (const RealType & x : sample) {

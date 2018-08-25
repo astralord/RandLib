@@ -56,7 +56,8 @@ template < typename IntType >
 IntType GeometricRand<IntType>::Variate(double probability, RandGenerator &randGenerator)
 {
     if (probability > 1.0 || probability < 0.0)
-        throw std::invalid_argument("Geometric distribution: probability parameter should be in interval [0, 1]");
+        throw std::invalid_argument("Geometric distribution: probability parameter should be in interval [0, 1], but it's equal to "
+                                    + std::to_string(probability));
 
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {

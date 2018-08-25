@@ -220,7 +220,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
     RealType guess = std::sqrt(-0.5 * (std::log1pl(-p) - M_LN2));
     if (p < 1e-5) {
         double logP = std::log(p);
-        if (!RandMath::findRoot<RealType>([this, logP] (RealType x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (RealType x)
         {
             double logCdf = logF(x), logPdf = logf(x);
             double first = logCdf - logP;
@@ -230,7 +230,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
             throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
         return guess;
     }
-    if (!RandMath::findRoot<RealType>([p, this] (RealType x)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([p, this] (RealType x)
     {
         double first = F(x) - p;
         double second = f(x);
@@ -246,7 +246,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
     RealType guess = std::sqrt(-0.5 * std::log(0.5 * p));
     if (p < 1e-5) {
         double logP = std::log(p);
-        if (!RandMath::findRoot<RealType>([this, logP] (RealType x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (RealType x)
         {
             double logCcdf = logS(x), logPdf = logf(x);
             double first = logP - logCcdf;
@@ -256,7 +256,7 @@ RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
             throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
         return guess;
     }
-    if (!RandMath::findRoot<RealType>([p, this] (RealType x)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([p, this] (RealType x)
     {
         double first = p - S(x);
         double second = f(x);

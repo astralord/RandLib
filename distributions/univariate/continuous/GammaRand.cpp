@@ -481,7 +481,7 @@ RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue)
 {
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (!RandMath::findRoot<RealType>([this, logP] (double x)
+        if (!RandMath::findRootNewtonSecondOrder<RealType>([this, logP] (double x)
         {
             if (x <= 0)
                return DoubleTriplet(-INFINITY, 0, 0);
@@ -494,7 +494,7 @@ RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue)
             throw std::runtime_error("Gamma distribution: failure in numeric procedure");
         return initValue;
     }
-    if (!RandMath::findRoot<RealType>([this, p] (double x)
+    if (!RandMath::findRootNewtonSecondOrder<RealType>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(-p, 0, 0);
@@ -518,7 +518,7 @@ RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValu
 {
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (!RandMath::findRoot<RealType>([this, logP] (double x)
+        if (!RandMath::findRootNewtonSecondOrder<RealType>([this, logP] (double x)
         {
            if (x <= 0)
                return DoubleTriplet(logP, 0, 0);
@@ -531,7 +531,7 @@ RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValu
             throw std::runtime_error("Gamma distribution: failure in numeric procedure");
         return initValue;
     }
-    if (!RandMath::findRoot<RealType>([this, p] (double x)
+    if (!RandMath::findRootNewtonSecondOrder<RealType>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(p - 1.0, 0, 0);
@@ -625,7 +625,7 @@ void GammaRand<RealType>::FitShape(const std::vector<RealType> &sample)
     double shape = this->GetSampleMean(sample) * this->beta;
     /// Run root-finding procedure
     double s = this->GetSampleLogMean(sample) + this->logBeta;
-    if (!RandMath::findRoot<double>([s] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<double>([s] (double x)
     {
         double first = RandMath::digamma(x) - s;
         double second = RandMath::trigamma(x);
@@ -651,7 +651,7 @@ void GammaRand<RealType>::Fit(const std::vector<RealType> &sample)
     shape -= sm3;
     shape /= sp12;
 
-    if (!RandMath::findRoot<double>([s] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<double>([s] (double x)
     {
         double first = RandMath::digammamLog(x) + s;
         double second = RandMath::trigamma(x) - 1.0 / x;

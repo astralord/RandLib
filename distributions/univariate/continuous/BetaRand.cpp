@@ -603,7 +603,7 @@ void BetaRand<RealType>::FitAlpha(long double lnG, long double meanNorm)
         shape /= 1.0 - meanNorm;
         shape *= this->beta;
         /// run root-finding procedure
-        if (!RandMath::findRoot<RealType>([this, lnG] (double x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, lnG] (double x)
         {
             double first = RandMath::digamma(x) - RandMath::digamma(x + this->beta) - lnG;
             double second = RandMath::trigamma(x);
@@ -644,7 +644,7 @@ void BetaRand<RealType>::FitBeta(long double lnG1m, long double meanNorm)
         /// get initial value for shape by method of moments
         RealType shape = this->alpha / meanNorm - this->alpha;
         /// run root-finding procedure
-        if (!RandMath::findRoot<RealType>([this, lnG1m] (double x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, lnG1m] (double x)
         {
             double first = RandMath::digamma(x) - RandMath::digamma(x + this->alpha) - lnG1m;
             double second = RandMath::trigamma(x);
@@ -687,7 +687,7 @@ void BetaRand<RealType>::FitShapes(long double lnG, long double lnG1m, long doub
     DoublePair shapes = std::make_pair(shape1, shape2);
 
     /// run root-finding procedure
-    if (!RandMath::findRoot([lnG, lnG1m] (DoublePair x)
+    if (!RandMath::findRootNewtonFirstOrder2d([lnG, lnG1m] (DoublePair x)
     {
         double digammaAlphapBeta = RandMath::digamma(x.first + x.second);
         double digammaAlpha = RandMath::digamma(x.first);

@@ -140,7 +140,7 @@ void LogisticRand<RealType>::FitLocation(const std::vector<RealType> &sample)
 {
     double nHalf = 0.5 * sample.size();
     RealType root = 0;
-    if (!RandMath::findRoot<RealType>([this, sample, nHalf](RealType m)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([this, sample, nHalf](RealType m)
     {
         double f1 = 0, f2 = 0;
         for (const double & x : sample)

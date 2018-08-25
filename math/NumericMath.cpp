@@ -47,8 +47,9 @@ double integral(const std::function<double (double)> &funPtr, double a, double b
     return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
 }
 
-bool findRoot(const std::function<DoublePair (DoublePair)> &funPtr, const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
-              DoublePair &root, long double funTol, long double stepTol)
+bool findRootNewtonFirstOrder2d(const std::function<DoublePair (DoublePair)> &funPtr,
+                                const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
+                                DoublePair &root, long double funTol, long double stepTol)
 {
     /// Sanity check
     funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;

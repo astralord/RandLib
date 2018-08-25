@@ -22,7 +22,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initV
     if (p < SMALL_P) {
         /// for small p we use logarithmic scale
         double logP = std::log(p);
-        if (!RandMath::findRoot<RealType>([this, logP] (const RealType & x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (const RealType & x)
         {
             double logCdf = std::log(this->F(x)), logPdf = this->logf(x);
             double first = logCdf - logP;
@@ -34,7 +34,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initV
     }
 
     if (this->SupportType() == FINITE_T) {
-        if (!RandMath::findRoot<RealType>([this, p] (const RealType & x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
         {
             return this->F(x) - p;
         }, this->MinValue(), this->MaxValue(), initValue))
@@ -42,7 +42,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initV
         return initValue;
     }
 
-    if (!RandMath::findRoot<RealType>([this, p] (const RealType & x)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
     {
         double first = this->F(x) - p;
         double second = this->f(x);
@@ -73,7 +73,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType ini
     if (p < SMALL_P) {
         /// for small p we use logarithmic scale
         double logP = std::log(p);
-        if (!RandMath::findRoot<RealType>([this, logP] (const RealType & x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (const RealType & x)
         {
             double logCcdf = std::log(this->S(x)), logPdf = this->logf(x);
             double first = logP - logCcdf;
@@ -85,7 +85,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType ini
     }
 
     if (this->SupportType() == FINITE_T) {
-        if (!RandMath::findRoot<RealType>([this, p] (const RealType & x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
         {
             return this->S(x) - p;
         }, this->MinValue(), this->MaxValue(), initValue))
@@ -93,7 +93,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType ini
         return initValue;
     }
 
-    if (!RandMath::findRoot<RealType>([this, p] (const RealType & x)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
     {
         double first = p - this->S(x);
         double second = this->f(x);

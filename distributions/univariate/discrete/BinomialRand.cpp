@@ -229,9 +229,13 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number) const
 template< typename IntType >
 IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double probability, RandGenerator &randGenerator)
 {
-    IntType X = -1, sum = 0;
+    IntType X = -1;
+    double sum = 0;
     do {
-        sum += GeometricRand<IntType>::Variate(probability, randGenerator) + 1;
+        IntType add = GeometricRand<IntType>::Variate(probability, randGenerator) + 1;
+        if (add < 0) /// we catched overflow
+            return X + 1;
+        sum += add;
         ++X;
     } while (sum <= number);
     return X;
@@ -283,9 +287,11 @@ IntType BinomialDistribution<IntType>::Variate(IntType number, double probabilit
 {
     /// sanity check
     if (number < 0)
-        throw std::invalid_argument("Binomial distribution: number should be positive");
+        throw std::invalid_argument("Binomial distribution: number should be positive, but it's equal to "
+                                    + std::to_string(number));
     if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1]");
+        throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1], but it's equal to "
+                                    + std::to_string(probability));
     if (probability == 0.0)
         return 0;
     if (probability == 1.0)

@@ -326,7 +326,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
     /// to find first negleted term
     double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
     double logXY = logX + logY;
-    if (!RandMath::findRoot<double>([C, mu, logXY] (double n)
+    if (!RandMath::findRootNewtonSecondOrder<double>([C, mu, logXY] (double n)
     {
         double npmu = n + mu;
         double logn = std::log(n), lognpmu = std::log(npmu);

@@ -21,7 +21,7 @@ double integral(const std::function<double (double)> &funPtr, double a, double b
                             double epsilon = 1e-11, int maxRecursionDepth = 11);
 
 /**
- * @fn findRoot
+ * @fn findRootNewtonSecondOrder
  * Newton's root-finding procedure,
  * using first and second derivatives
  * @param funPtr mapping x |-> (f(x), f'(x), f''(x))
@@ -31,7 +31,8 @@ double integral(const std::function<double (double)> &funPtr, double a, double b
  * @return true if success, false otherwise
  */
 template<typename RealType>
-bool findRoot(const std::function<DoubleTriplet (RealType)> &funPtr, RealType & root, long double funTol = 1e-10, long double stepTol = 1e-6)
+bool findRootNewtonSecondOrder(const std::function<DoubleTriplet (RealType)> &funPtr, RealType & root,
+                               long double funTol = 1e-10, long double stepTol = 1e-6)
 {
     /// Sanity check
     funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
@@ -71,7 +72,7 @@ bool findRoot(const std::function<DoubleTriplet (RealType)> &funPtr, RealType & 
 }
 
 /**
- * @fn findRoot
+ * @fn findRootNewtonFirstOrder
  * Newton's root-finding procedure,
  * using first derivative
  * @param funPtr mapping x |-> (f(x), f'(x))
@@ -81,7 +82,8 @@ bool findRoot(const std::function<DoubleTriplet (RealType)> &funPtr, RealType & 
  * @return true if success, false otherwise
  */
 template<typename RealType>
-bool findRoot(const std::function<DoublePair (RealType)> &funPtr, RealType & root, long double funTol = 1e-10, long double stepTol = 1e-6)
+bool findRootNewtonFirstOrder(const std::function<DoublePair (RealType)> &funPtr, RealType & root,
+                              long double funTol = 1e-10, long double stepTol = 1e-6)
 {
     /// Sanity check
     funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
@@ -123,7 +125,7 @@ bool findRoot(const std::function<DoublePair (RealType)> &funPtr, RealType & roo
 }
 
 /**
- * @fn findRoot
+ * @fn findRootNewtonFirstOrder2d
  * Newton's root-finding procedure
  * for 2 functions of 2 parameters,
  * using Jacobian matrix
@@ -134,8 +136,9 @@ bool findRoot(const std::function<DoublePair (RealType)> &funPtr, RealType & roo
  * @param stepTol step tolerance
  * @return true if success, false otherwise
  */
-bool findRoot(const std::function<DoublePair (DoublePair)> &funPtr, const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
-              DoublePair & root, long double funTol = 1e-10, long double stepTol = 1e-6);
+bool findRootNewtonFirstOrder2d(const std::function<DoublePair (DoublePair)> &funPtr,
+                                const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
+                                DoublePair & root, long double funTol = 1e-10, long double stepTol = 1e-6);
 
 /**
  * @fn findRoot
@@ -148,7 +151,7 @@ bool findRoot(const std::function<DoublePair (DoublePair)> &funPtr, const std::f
  * @return true if success, false otherwise
  */
 template<typename RealType>
-bool findRoot(const std::function<double (RealType)> &funPtr, RealType a, RealType b, RealType & root, long double epsilon = 1e-8)
+bool findRootNewtonFirstOrder(const std::function<double (RealType)> &funPtr, RealType a, RealType b, RealType & root, long double epsilon = 1e-8)
 {
     /// Sanity check
     epsilon = epsilon > MIN_POSITIVE ? epsilon : MIN_POSITIVE;
