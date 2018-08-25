@@ -58,9 +58,17 @@ public:
     RealType MinValue() const override;
     RealType MaxValue() const override;
 
+private:
+    void parametersVerification(double exponent, double skewness, double scale);
+    void setParametersForNormal();
+    void setParametersForCauchy();
+    void setParametersForLevy();
+    void setParametersForUnityExponent();
+    void setParametersForGeneralExponent();
+    
 protected:
     void SetParameters(double exponent, double skewness, double scale = 1, double location = 0);
-
+    
 public:
     void SetLocation(double location);
     void SetScale(double scale);
@@ -432,7 +440,9 @@ class RANDLIBSHARED_EXPORT StableRand : public StableDistribution<RealType>
 public:
     StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution<RealType>(exponent, skewness, scale, location) {}
     String Name() const override;
-    using StableDistribution<RealType>::SetParameters;
+    
+    void SetExponent(double location);
+    void SetSkewness(double skewness);
 };
 
 

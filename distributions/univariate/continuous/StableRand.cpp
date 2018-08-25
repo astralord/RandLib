@@ -37,7 +37,7 @@ RealType StableDistribution<RealType>::MaxValue() const
 }
 
 template < typename RealType >
-void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
+void StableDistribution<RealType>::parametersVerification(double exponent, double skewness, double scale)
 {
     if (exponent < 0.1 || exponent > 2.0)
         throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to "
@@ -49,94 +49,101 @@ void StableDistribution<RealType>::SetParameters(double exponent, double skewnes
         throw std::invalid_argument("Stable distribution: scale should be positive, but it's equal to "
                                     + std::to_string(scale));
 
-    /// the following errors should be removed soon
+    /// the following errors should be removed in the future
     if (exponent != 1.0 && std::fabs(exponent - 1.0) < 0.01 && skewness != 0.0)
         throw std::invalid_argument("Stable distribution: exponent close to 1 with non-zero skewness is not yet supported");
     if (exponent == 1.0 && skewness != 0.0 && std::fabs(skewness) < 0.01)
         throw std::invalid_argument("Stable distribution: skewness close to 0 with exponent equal to 1 is not yet supported");
+}
 
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForNormal()
+{   
+    distributionType = NORMAL;
+    pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForCauchy()
+{   
+    distributionType = CAUCHY;
+    pdfCoef = -logGamma - M_LNPI;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForLevy()
+{   
+    distributionType = LEVY;
+    pdfCoef = logGamma - M_LN2 - M_LNPI;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForUnityExponent()
+{   
+    distributionType = UNITY_EXPONENT;
+    pdfCoef = 0.5 / (gamma * std::fabs(beta));
+    pdftailBound = 0; // not in the use for now
+    logGammaPi_2 = logGamma + M_LNPI - M_LN2;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForGeneralExponent()
+{   
+    distributionType = GENERAL;
+    if (beta != 0.0) {
+        zeta = -beta * std::tan(M_PI_2 * alpha);
+        omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
+        xi = alphaInv * RandMath::atan(-zeta);
+    }
+    else {
+        zeta = omega = xi = 0.0;
+    }
+    pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
+    pdftailBound = 3.0 / (1.0 + alpha) * M_LN10;
+    cdftailBound = 3.0 / alpha * M_LN10;
+    /// define boundaries of region near 0, where we use series expansion
+    if (alpha <= ALMOST_TWO) {
+        seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
+        seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10; /// corresponds to interval [10^(-15.5), ~0.056]
+    }
+    else {
+        seriesZeroParams.first = 85;
+        seriesZeroParams.second = M_LN2 + M_LN3;///< corresponds to 6
+    }
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
+{
+    parametersVerification(exponent, skewness, scale);
     alpha = exponent;
     alphaInv = 1.0 / alpha;
     beta = skewness;
     mu = location;
     gamma = scale;
     logGamma = std::log(gamma);
+    alpha_alpham1 = alpha / (alpha - 1.0);
 
     /// Set id of distribution
     if (alpha == 2.0)
-        distributionType = NORMAL;
-    else if (alpha == 1.0)
-        distributionType = (beta == 0.0) ? CAUCHY : UNITY_EXPONENT;
-    else if (alpha == 0.5 && std::fabs(beta) == 1.0)
-        distributionType = LEVY;
-    else
-        distributionType = GENERAL;
-
-    alpha_alpham1 = alpha / (alpha - 1.0);
-
-    if (distributionType == NORMAL)
-        pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
-    else if (distributionType == LEVY)
-        pdfCoef = logGamma - M_LN2 - M_LNPI;
-    else if (distributionType == CAUCHY)
-        pdfCoef = -logGamma - M_LNPI;
-    else if (distributionType == UNITY_EXPONENT) {
-        pdfCoef = 0.5 / (gamma * std::fabs(beta));
-        pdftailBound = 0; // not in the use for now
-        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
-    }
-    else if (distributionType == GENERAL) {
-        if (beta != 0.0) {
-            zeta = -beta * std::tan(M_PI_2 * alpha);
-            omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
-            xi = alphaInv * RandMath::atan(-zeta);
-        }
-        else {
-            zeta = omega = xi = 0.0;
-        }
-        pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
-        pdftailBound = 3.0 / (1.0 + alpha) * M_LN10;
-        cdftailBound = 3.0 / alpha * M_LN10;
-        /// define boundaries of region near 0, where we use series expansion
-        if (alpha <= ALMOST_TWO) {
-            seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
-            /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
-            seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10;
-        }
-        else {
-            seriesZeroParams.first = 85;
-            /// corresponds to 6
-            seriesZeroParams.second = M_LN2 + M_LN3;
-        }
-    }
+        return setParametersForNormal();
+    if (alpha == 1.0)
+        return (beta == 0.0) ? setParametersForCauchy() : setParametersForUnityExponent();
+    if (alpha == 0.5 && std::fabs(beta) == 1.0)
+        return setParametersForLevy();
+    return setParametersForGeneralExponent();
 }
 
 template < typename RealType >
 void StableDistribution<RealType>::SetLocation(double location)
 {
-    mu = location;
+    SetParameters(alpha, beta, gamma, location);
 }
 
 template < typename RealType >
 void StableDistribution<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Stable distribution should be positive, but it's equal to "
-                                    + std::to_string(scale));
-    gamma = scale;
-    logGamma = std::log(gamma);
-    if (distributionType == NORMAL)
-        pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
-    else if (distributionType == LEVY)
-        pdfCoef = logGamma - M_LN2 - M_LNPI;
-    else if (distributionType == CAUCHY)
-        pdfCoef = -logGamma - M_LNPI;
-    else if (distributionType == UNITY_EXPONENT) {
-        pdfCoef = 0.5 / (gamma * std::fabs(beta));
-        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
-    }
-    else if (distributionType == GENERAL)
-        pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
+    SetParameters(alpha, beta, scale, mu);
 }
 
 template < typename RealType >
@@ -434,7 +441,7 @@ double StableDistribution<RealType>::pdfTaylorExpansionTailNearCauchy(double x) 
         gTable[i] = g;
     }
     double f_aaa = -gTable[0] + 3 * gTable[1] - gTable[2];
-    /// summarize all three derivatives
+    /// sum all three derivatives
     double tail = f_a * alpham1;
     tail += 0.5 * f_aa * alpham1 * alpham1;
     tail += std::pow(alpham1, 3) * f_aaa / 6.0;
@@ -1094,6 +1101,18 @@ String StableRand<RealType>::Name() const
             + this->toStringWithPrecision(this->GetSkewness()) + ", "
             + this->toStringWithPrecision(this->GetScale()) + ", "
             + this->toStringWithPrecision(this->GetLocation()) + ")";
+}
+
+template < typename RealType >
+void StableRand<RealType>::SetExponent(double exponent)
+{
+    this->SetParameters(exponent, this->GetSkewness(), this->GetScale(), this->GetLocation());
+}
+
+template < typename RealType >
+void StableRand<RealType>::SetSkewness(double skewness)
+{
+    this->SetParameters(this->GetAlpha(), skewness, this->GetScale(), this->GetLocation());
 }
 
 template class StableRand<float>;
