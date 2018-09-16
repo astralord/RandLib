@@ -395,11 +395,11 @@ template < typename RealType >
 RealType BetaDistribution<RealType>::Median() const
 {
     if (alpha == beta)
-        return 0.5;
+        return a + bma * 0.5;
     if (alpha == 1.0)
-        return -std::expm1l(-M_LN2 / beta);
+        return a - bma * std::expm1l(-M_LN2 / beta);
     if (beta == 1.0)
-        return std::exp(-M_LN2 / alpha);
+        return a + bma * std::exp(-M_LN2 / alpha);
     if (alpha >= 1.0 && beta >= 1.0) {
         double initValue = 3 * alpha - 1.0;
         initValue /= 3 * (alpha + beta) - 2.0;
