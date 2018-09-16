@@ -1,6 +1,18 @@
 language: cpp
 compiler: gcc
-
+env:
+  global:
+    - secure: K6fprXeRFhJEAse4X1PcHcA1uKDw9fG0KPWyAb9VTYiFk6QlW3PtvYlzy/+FFrK6t7xurMHXw0vzPbbLeKAOi2pHKG8BGNhheovmLV5or0T7oTeX+fh40wykfPdCTEBHb6Mdh5ymRdyNw9X1eP684Pi0JhlF+NTyULcVGwvU36VLYUawlX2+wVlzNssLivk+QMmV5KfHL3tJDtfA3VNN0p0nUEv0hkT+1EU8+hXgdQJjB9cuLGK0um7NrBkmnKsdxPMhu74i+9ti3NwVA44vwcT94qg/r+IrxThaZn22Ao9FChG9fTySrpvV7NV32fu8OJCj5tp1UGSum43bMqjh0qdFtks/Ag6itOQeS6tbPQX57HtzVRBTryOHevAhrCvN4LN44cfR4ihb4uuufH9IzFpweyUEViXwG+AMzV8HKQb3qjSrfFCvWnL/NFr5CyU+8KRWIcOB/6Ikpd9TpqXW/vhH4uUp+frYYD6QDy2/EfHeTDDr9Bq8HBZjVdTOUyHnfzvClnx8PKcZV+RwzpKk1SUbV3JmKOFlj8d3644qu6fQcz9/xYdESluCH0xoyyY2fa/66Fv6+kUyLd8f6jr+zNq3woQD9TYcmpTUOTmUjVNxOIvApWF5FOceA45b/KxnCaLBzxPxL9e+X65R1H3t0tjKSx+ouv5k6mfzwgnPrxY=
+addons:
+  coverity_scan:
+    project:
+      name: RandLib
+      description: Build submitted via Travis CI
+    notification_email: samarin_ad@mail.ru
+    build_command_prepend: qmake RandLib.pro
+    build_command: make -j 4
+    branch_pattern: coverity_scan
+    
 before_install:
   # C++17
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -12,3 +24,4 @@ install:
 script:
   - qmake
   - make
+cache: ccache
