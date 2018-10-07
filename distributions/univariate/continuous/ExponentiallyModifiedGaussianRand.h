@@ -38,6 +38,10 @@ public:
     inline double GetScale() const { return X.GetScale(); }
     inline double GetRate() const { return Y.GetRate(); }
 
+private:
+    DoublePair faux(const RealType &x) const;
+
+public:
     double f(const RealType & x) const override;
     double logf(const RealType & x) const override;
     double F(const RealType & x) const override;

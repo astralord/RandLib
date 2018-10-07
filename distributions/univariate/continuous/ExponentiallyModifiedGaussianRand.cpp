@@ -38,7 +38,7 @@ void ExponentiallyModifiedGaussianRand<RealType>::SetParameters(double location,
 }
 
 template < typename RealType >
-double ExponentiallyModifiedGaussianRand<RealType>::f(const RealType & x) const
+DoublePair ExponentiallyModifiedGaussianRand<RealType>::faux(const RealType &x) const
 {
     double lambda = Y.GetRate();
     double y = a - x;
@@ -47,20 +47,20 @@ double ExponentiallyModifiedGaussianRand<RealType>::f(const RealType & x) const
     y *= 0.5 * lambda;
     double exponent = c - x;
     exponent *= lambda;
-    exponent = std::exp(exponent);
-    return y * exponent;
+    return std::make_pair(y, exponent);
+}
+
+template < typename RealType >
+double ExponentiallyModifiedGaussianRand<RealType>::f(const RealType & x) const
+{
+    auto [y, exponent] = faux(x);
+    return y * std::exp(exponent);
 }
 
 template < typename RealType >
 double ExponentiallyModifiedGaussianRand<RealType>::logf(const RealType & x) const
 {
-    double lambda = Y.GetRate();
-    double y = a - x;
-    y *= b;
-    y = std::erfc(y);
-    y *= 0.5 * lambda;
-    double exponent = c - x;
-    exponent *= lambda;
+    auto [y, exponent] = faux(x);
     return std::log(y) + exponent;
 }
 

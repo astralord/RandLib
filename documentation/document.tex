@@ -363,9 +363,9 @@
 			\hline
 			Support & $x \in \MR$  \\
 			\hline
-			$f(x)$ & $...  $ \\
+			$f(x)$ & $ \frac{\lambda}{2} e^{\frac{\lambda}{2}(2\mu + \lambda \sigma^2 - 2x)} \operatorname{erfc} \Big( \frac{\mu + \lambda \sigma^2 - x}{\sqrt{2\sigma^2}} \Big) $ \\
 			\hline
-			$F(x)$ & $... $\\
+			$F(x)$ &\pbox{\linewidth}{$ \Phi(u,0,v)-e^{ -u + \frac{v^2}{2} +\log \Phi(u, v^2, v) }, $\\ where  $\Phi(x, \mu, \sigma)$ is Gaussian CDF, \\ $u=\lambda(x-\mu),$ \\ $v=\lambda \sigma$. } \\
 			\hline
 			$\ME[X]$ & $ \mu + 1 / \lambda$ \\
 			\hline
@@ -375,7 +375,7 @@
 			\hline
 			Mode & Searched numerically \\
 			\hline
-			$\phi(t)$ & $ ... $ \\
+			$\phi(t)$ & $ \big(1-\frac{it}{\lambda} \big)^{-1}  \exp \big(i\mu t - \frac{1}{2} \sigma^2 t^2 \big) $ \\
 			\hline
 		\end{tabular}
 	\end{minipage}
