@@ -128,13 +128,23 @@ RealType NormalRand<RealType>::quantileImpl1m(double p) const
 }
 
 template < typename RealType >
-double NormalRand<RealType>::Moment(int n) const
+long double NormalRand<RealType>::Moment(size_t n) const
 {
-    if (n < 0)
-        return 0;
     if (n == 0)
         return 1;
     return (n & 1) ? std::exp(n * this->GetLogScale() + RandMath::ldfact(n - 1)) : 0.0;
+}
+
+template < typename RealType >
+double NormalRand<RealType>::KullbackLeiblerDivergence(const NormalRand &Y)
+{
+    double divLogVar = Y.GetLogScale() - this->GetLogScale();
+    double divMean = Y.Mean() - this->Mean();
+    double div = (divMean * divMean + this->GetScale()) / Y.GetScale();
+    --div;
+    div *= 0.5;
+    div += divLogVar;
+    return div;
 }
 
 template < typename RealType >

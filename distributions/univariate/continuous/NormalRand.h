@@ -67,11 +67,6 @@ public:
      */
     inline double GetScale() const { return sigma; }
     /**
-     * @fn GetVariance
-     * @return σ^2
-     */
-    inline double GetVariance() const { return sigma * sigma; }
-    /**
      * @fn GetLogScale
      * @return log(σ)
      */
@@ -80,7 +75,7 @@ public:
      * @fn GetPrecision
      * @return 1/σ^2
      */
-    inline double GetPrecision() const { return 1.0 / GetVariance(); }
+    inline double GetPrecision() const { return 1.0 / this->Variance(); }
 
     double f(const RealType & x) const override;
     double logf(const RealType & x) const override;
@@ -97,9 +92,11 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    double Moment(int n) const;
+    long double Moment(size_t n) const;
     long double ThirdMoment() const override { return Moment(3); }
     long double FourthMoment() const override { return Moment(4); }
+
+    double KullbackLeiblerDivergence(const NormalRand &Y);
 
     /**
      * @fn FitLocation
