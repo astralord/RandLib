@@ -233,13 +233,15 @@ double WeibullRand<RealType>::Entropy() const
 }
 
 template < typename RealType >
-double WeibullRand<RealType>::getPowSampleMean(const std::vector<RealType> &sample) const
+double WeibullRand<RealType>::getNorm(const std::vector<RealType> &sample) const
 {
     long double sum = 0;
+    RealType maxVar = *std::max_element(sample.begin(), sample.end());
     for (const RealType &var : sample) {
-        sum += std::pow(var, k);
+        sum += std::pow(var / maxVar, k);
     }
-    return sum / sample.size();
+    long double avg = sum / sample.size();
+    return maxVar * std::pow(avg, kInv);
 }
 
 template < typename RealType >
@@ -247,22 +249,21 @@ void WeibullRand<RealType>::FitScale(const std::vector<RealType> &sample)
 {
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
-    // TODO: implement via logsumexp
-    double powScale = getPowSampleMean(sample);
-    SetParameters(std::pow(powScale, kInv), k);
+    double knorm = getNorm(sample);
+    SetParameters(knorm, k);
 }
 
 template < typename RealType >
 InverseGammaRand<RealType> WeibullRand<RealType>::FitScaleBayes(const std::vector<RealType> &sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP)
 {
-    // TODO: implement via logsumexp
     if (!this->allElementsArePositive(sample))
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;
-    double newRate = priorDistribution.GetRate() + n * getPowSampleMean(sample);
+    double knorm = getNorm(sample);
+    double newRate = priorDistribution.GetRate() + n * std::pow(knorm, k);
     InverseGammaRand<RealType> posteriorDistribution(newShape, newRate);
-    double powScale =  MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
+    double powScale = MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
     SetParameters(std::pow(powScale, kInv), k);
     return posteriorDistribution;
 }

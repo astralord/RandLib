@@ -3,6 +3,7 @@
 
 #include "DiscreteDistribution.h"
 #include "BernoulliRand.h"
+#include "BetaBinomialRand.h"
 
 /**
  * @brief The HyperGeometricRand class <BR>

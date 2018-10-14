@@ -320,13 +320,23 @@ long double MarchenkoPasturRand<RealType>::ExcessKurtosis() const
 template < typename RealType >
 RealType MarchenkoPasturRand<RealType>::quantileImpl(double p) const
 {
-    return (p < 1.0 - 1.0 / lambda) ? 0.0 : ContinuousDistribution<RealType>::quantileImpl(p);
+    if (p <= 1.0 - 1.0 / lambda)
+        return 0.0;
+    RealType minInitValue = sigmaSq * a;
+    RealType maxInitValue = sigmaSq * b;
+    RealType initValue = minInitValue + p * (maxInitValue - minInitValue);
+    return ContinuousDistribution<RealType>::quantileImpl(p, initValue);
 }
 
 template < typename RealType >
 RealType MarchenkoPasturRand<RealType>::quantileImpl1m(double p) const
 {
-    return (p > 1.0 / lambda) ? 0.0 : ContinuousDistribution<RealType>::quantileImpl1m(p);
+    if (p >= 1.0 / lambda)
+        return 0.0;
+    RealType minInitValue = sigmaSq * a;
+    RealType maxInitValue = sigmaSq * b;
+    RealType initValue = maxInitValue - p * (maxInitValue - minInitValue);
+    return ContinuousDistribution<RealType>::quantileImpl1m(p, initValue);
 }
 
 template < typename RealType >

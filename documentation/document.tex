@@ -106,11 +106,11 @@
 			\begin{minipage}{0.4\textwidth}
 		\begin{tabular}{| r | l |}
 			\hline
-			Notation & \pbox{\linewidth}{$ X \sim B(\alpha, \beta, a, b)$ \\ $X \sim B(\alpha, \beta)$ with $a=0, b=1$} \\
+			Notation & \pbox{\linewidth}{$ X \sim \mathcal{B}(\alpha, \beta, a, b)$ \\ $X \sim \mathcal{B}(\alpha, \beta)$ with $a=0, b=1$} \\
 			\hline
 			Parameters & $\alpha, \beta > 0$, $a, b \in \MR$ \\
 			\hline
-			Support & $x \in [a, b]$  \\
+			Domain & $x \in [a, b]$  \\
 			\hline
 			$f(x)$ & $\frac{y^{\alpha - 1}(1 - y)^{\beta - 1}}{(b-a)B(\alpha, \beta)}$ with $y = \frac{x - a}{b - a}$ \\
 			\hline
@@ -122,7 +122,7 @@
 			\hline
 			Median & Searched numerically \\
 			\hline
-			Mode & $a + (b-a)\frac{\alpha - \beta}{\alpha + \beta - 2}$ for $\alpha, \beta > 1$. \\
+			Mode & $a + (b-a)\frac{\alpha - 1}{\alpha + \beta - 2}$ for $\alpha, \beta > 1$. \\
 			\hline
 			$\phi(t)$ & Calculated numerically \\
 			\hline
@@ -205,7 +205,7 @@
 	\[
 	X \sim \operatorname{Arcsine}(\alpha).
 	\]
-	Relation to Beta distribution: \[ X \sim B(1-\alpha, \alpha, a, b). \]
+	Relation to Beta distribution: \[ X \sim \mathcal{B}(1-\alpha, \alpha, a, b). \]
 	\paragraph{Estimation of shape.} For Arcsine distribution log-likelihood function \eqref{Beta log-likelihood} turns into
 	\[
 	\ln \mathcal{L} (\alpha | X) = -\alpha \sum_{i=1}^{n} \ln X_i + (\alpha - 1) \sum_{i=1}^{n}\ln (1-X_i) - n \ln B(1-\alpha, \alpha).
@@ -220,7 +220,7 @@
 	
 	\subsection{Balding-Nichols distribution}
 	Notation: \[ X \sim \operatorname{Balding-Nichols}(p, F) \] with $p, F \in (0, 1)$.
-	Relation to Beta distribution: \[ X \sim B(pF', (1 - p)F') \] with $F' = (1 - F) / F$.
+	Relation to Beta distribution: \[ X \sim \mathcal{B}(pF', (1 - p)F') \] with $F' = (1 - F) / F$.
 	
 	\subsection{Uniform distribution}
 	\begin{figure}[!htb]\centering
@@ -237,7 +237,7 @@
 				\hline
 				Parameters & $a, b \in \MR$ \\
 				\hline
-				Support & $x \in [a, b]$  \\
+				Domain & $x \in [a, b]$  \\
 				\hline
 				$f(x)$ & $\frac{1}{b - a}$ \\
 				\hline
@@ -257,7 +257,7 @@
 		\end{minipage}
 	\end{figure}
 	
-	Relation to Beta distribution: \[X \sim B(1, 1, a, b). \]
+	Relation to Beta distribution: \[X \sim \mathcal{B}(1, 1, a, b). \]
 	\paragraph{Estimation of support.}
 	\subparagraph{Frequentist inference.} Likelihood function is
 	\[
@@ -301,11 +301,11 @@
 		\begin{minipage}{0.4\textwidth}
 			\begin{tabular}{| r | l |}
 				\hline
-				Notation & $X \sim B'(\alpha, \beta)$ \\
+				Notation & $X \sim \mathcal{B}'(\alpha, \beta)$ \\
 				\hline
 				Parameters & $\alpha, \beta > 0$ \\
 				\hline
-				Support & $x \in \MR^+$  \\
+				Domain & $x \in \MR^+$  \\
 				\hline
 				$f(x)$ & $\frac{x^{\alpha - 1}(1 + x)^{-\alpha - \beta}}{B(\alpha, \beta)}$ \\
 				\hline
@@ -325,14 +325,14 @@
 		\end{minipage}
 	\end{figure}
 	Relation to other distributions:
-	\[\frac{X}{1+X} \sim B(\alpha, \beta),\]
+	\[\frac{X}{1+X} \sim \mathcal{B}(\alpha, \beta),\]
 	\[
 	\frac{\beta}{\alpha}X \sim F(2\alpha, 2\beta ).
 	\]
 	
 	\paragraph{Search of the median.} For $\alpha = \beta$ we have $m=1$. Otherwise, we use the relation
 	$m = \frac{m'}{1-m'},$
-	where $m'$ is the median of beta-distribution $B(\alpha, \beta)$.
+	where $m'$ is the median of beta-distribution $\mathcal{B}(\alpha, \beta)$.
 	
 	\paragraph{Calculation of characteristic function.} For $\alpha \geq 1$ one can use numerical integration from section %todo add section
 	For $\alpha < 1$ we have $\lim_{x \rightarrow 0} f(x) \rightarrow \infty$ and $\int_{0}^{\infty} \cos(tx)f(x) dx$ is impossible to compute directly. Then we split the integral:
@@ -361,7 +361,7 @@
 			\hline
 			Parameters & $\mu \in \MR, \sigma > 0, \lambda > 0$ \\
 			\hline
-			Support & $x \in \MR$  \\
+			Domain & $x \in \MR$  \\
 			\hline
 			$f(x)$ & $ \frac{\lambda}{2} e^{\frac{\lambda}{2}(2\mu + \lambda \sigma^2 - 2x)} \operatorname{erfc} \Big( \frac{\mu + \lambda \sigma^2 - x}{\sqrt{2\sigma^2}} \Big) $ \\
 			\hline
@@ -391,7 +391,7 @@
 				\hline
 				Parameters & $d_1, d_2 > 0$ \\
 				\hline
-				Support & $x \in \MR^+$  \\
+				Domain & $x \in \MR^+$  \\
 				\hline
 				$f(x)$ & $\frac{\sqrt{\frac{(d_1 x)^{d_1} {d_2}^{d_2} }{(d_1x+d_2)^{d_1+d_2}}}}{x B\Big(\frac{d_1}{2},\frac{d_2}{2}\Big)}  $ \\
 				\hline
@@ -411,10 +411,10 @@
 		\end{center}
 		Relation to other distributions:
 		\[
-		\frac{d_1X}{d_2 + d_1X} \sim B\bigg(\frac{d_1}{2}, \frac{d_2}{2} \bigg),
+		\frac{d_1X}{d_2 + d_1X} \sim \mathcal{B}\bigg(\frac{d_1}{2}, \frac{d_2}{2} \bigg),
 		\]
 		\[
-		\frac{d_1}{d_2}X \sim B'\bigg(\frac{d_1}{2}, \frac{d_2}{2} \bigg).
+		\frac{d_1}{d_2}X \sim \mathcal{B}'\bigg(\frac{d_1}{2}, \frac{d_2}{2} \bigg).
 		\]
 		
 		
@@ -434,7 +434,7 @@
 				\hline
 				Parameters & $\alpha > 0, \beta > 0$ \\
 				\hline
-				Support & $x \in \MR^+$  \\
+				Domain & $x \in \MR^+$  \\
 				\hline
 				$f(x)$ & $\frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1}e^{-\beta x}  $ \\
 				\hline
@@ -529,7 +529,7 @@
 			\hline
 			Parameters & $\lambda > 0$ \\
 			\hline
-			Support & $x \in \MR^+$  \\
+			Domain & $x \in \MR^+$  \\
 			\hline
 			$f(x)$ & $\lambda e^{-\lambda x}  $ \\
 			\hline
@@ -569,7 +569,7 @@
 				\hline
 				Parameters & \pbox{\linewidth}{$\alpha \in (0, 2], \beta \in [-1, 1],$\\ $\gamma > 0, \mu \in \MR $} \\
 				\hline
-				Support & $x \in ...$  \\
+				Domain & $x \in ...$  \\
 				\hline
 				$f(x)$ & Calculated numerically \\
 				\hline
@@ -601,6 +601,48 @@
 	\section{Log-normal distribution}
 	\pagebreak
 	\section{Marchenko-Pastur distribution}
+	\begin{center}
+		\begin{tabular}{| r | l |}
+			\hline
+			Notation & $X \sim \mathcal{MP}(\lambda, \sigma^2)$ \\
+			\hline
+			Parameters & $\lambda, \sigma^2 > 0$ \\
+			\hline
+			Domain & 
+			\pbox{\linewidth}{$x \in [\sigma^2 a, \sigma^2 b]$, if  $\lambda < 1$, \\  $ x \in [\sigma^2 a, \sigma^2 b] \cup \{0\} $, otherwise, \\ where $a=(1-\sqrt{\lambda})^2$ and $b=(1+\sqrt{\lambda})^2$} \\
+			\hline
+			$f(x)$ & ...  \\
+			\hline
+			$F(x)$ & ... \\
+			\hline
+			$\ME[X]$ & $ \sigma^2 $ \\
+			\hline
+			$\Var(X)$ & $\sigma^4 \lambda $ \\
+			\hline
+			Median & $0$ if $\lambda > 2$, otherwise searched numerically \\
+			\hline
+			Mode & \pbox{\linewidth}{$\frac{\sigma^2(\lambda - 1)^2}{\lambda+1}$, if  $\lambda < 1$, \\  $ 0 $, otherwise } \\
+			\hline
+			$\phi(t)$ & Calculated numerically \\
+			\hline
+		\end{tabular}
+	\end{center}
+	
+	\paragraph{Calculation of characteristic function.}
+	For $\lambda > 1$ we use numerical integration by definition
+	\[
+	\phi(t) = \int_{\sigma^2 a}^{\sigma^2 b} \cos(tx) f(x) dx + i \int_{\sigma^2 a}^{\sigma^2 b}  \sin(tx) f(x) dx.
+	\]
+	For $\lambda = 1$ we split the integrand for real part by $(\cos(tx) - 1) f(x)$ and $f(x)$:
+	\[ \Re(\phi(t)) =  \int_{\sigma^2 a}^{\sigma^2 b} (\cos(tx)-1) f(x) dx + 1.\]
+	And for $\lambda < 1$ we calculate integral at point $0$ separately:
+	\[
+	\begin{aligned}
+	\phi(t) & = \int_{ \{0\} \cup [\sigma^2 a, \sigma^2 b]} \cos(tx) f(x) dx + i \int_{ \{0\} \cup [\sigma^2 a, \sigma^2 b]} \sin(tx) f(x) dx  \\ 
+	& = 1-\frac{1}{\lambda} + \int_{\sigma^2 a}^{\sigma^2 b} \cos(tx) f(x) dx + i \int_{\sigma^2 a}^{\sigma^2 b}  \sin(tx) f(x) dx.
+	\end{aligned}
+	\]
+	
 	
 	\pagebreak
 	\section{Nakagami distribution}
@@ -618,7 +660,7 @@
 				\hline
 				Parameters & $\mu, \omega > 0$ \\
 				\hline
-				Support & $x \in \MR^+$  \\
+				Domain & $x \in \MR^+$  \\
 				\hline
 				$f(x)$ & $ \frac{2\mu^\mu}{\Gamma(\mu) \omega^\mu} x^{2\mu - 1} e^{-\frac{\mu}{\omega}x^2}   $ \\
 				\hline
@@ -640,7 +682,7 @@
 	\paragraph{Calculation of characteristic function.} For $\mu < 1$ $\lim_{x \rightarrow 0}f(x) \rightarrow \infty$. Then we use the following transformation for real part of characteristic function:
 	\[
 	\begin{aligned}
-	\Re(\phi(t)) & = \int_{0}^{\infty} \cos(tx) f(x) dx \\ &= \int_{0}^{\infty} (\cos(tx)-1) f(x) + 1 dx
+	\Re(\phi(t)) & = \int_{0}^{\infty} \cos(tx) f(x) dx \\ &= \int_{0}^{\infty} (\cos(tx)-1) f(x) + 1
 	\end{aligned}
 	\]
 	
@@ -697,7 +739,7 @@
 			\hline
 			Parameters & $k > 0, \lambda > 0$ \\
 			\hline
-			Support & $x \in \MR^+$  \\
+			Domain & $x \in \MR^+$  \\
 			\hline
 			$f(x)$ & $ \frac{1}{2} e^{-\frac{x+\lambda}{2}}  \Big( \frac{x}{\lambda} \Big)^{\frac{k-2}{4}} I_{\frac{k}{2}-1}(\sqrt{\lambda x})   $ \\
 			\hline
@@ -725,7 +767,97 @@
     	\item If $\lambda = 0$, then $X \sim \chi^2_k$.
     	\item If $J \sim \operatorname{Po}(\lambda)$, then $\chi^2_{k+2J} \sim \chi'^2_k(\lambda)$.
     \end{itemize}
-	
+    
+
+\pagebreak
+\section{Pareto distribution}
+\begin{figure}[!htb]\centering
+	\begin{minipage}{0.55\textwidth}
+		\includegraphics[width=\linewidth, right]{pareto_pdf}
+		\captionsetup{labelformat=empty}
+		\includegraphics[width=\linewidth, right]{pareto_cdf}
+		\captionsetup{labelformat=empty}
+	\end{minipage}
+	\begin{minipage}{0.4\textwidth}
+		\begin{tabular}{| r | l |}
+			\hline
+			Notation & $X \sim \operatorname{Pareto}(\alpha, \sigma)$ \\
+			\hline
+			Parameters & $\alpha,  \sigma > 0 $ \\
+			\hline
+			Domain & $x \geq \sigma$  \\
+			\hline
+			$f(x)$ & $ \frac{\alpha \sigma^\alpha}{x^{\alpha+1}}  $ \\
+			\hline
+			$F(x)$ & $ 1-\big( \frac{\sigma}{x} \big)^\alpha $ \\
+			\hline
+			$\ME[X]$ & \pbox{\linewidth}{$ \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
+			\hline
+			$\Var(X)$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise } \\
+			\hline
+			Median & $\sigma 2^{1/\alpha}$ \\
+			\hline
+			Mode & $\sigma$ \\
+			\hline
+			$\phi(t)$ & Calculated numerically \\
+			\hline
+		\end{tabular}
+	\end{minipage}
+\end{figure}
+
+\paragraph{Estimation of parameters.}
+\subparagraph{Frequentist inference.} Log-likelihood function is
+\[
+\ln \mathcal{L}(\alpha, \sigma | X) = n \ln \alpha + n \alpha \ln \sigma - (\alpha + 1) \sum_{i=1}^{n} \ln X_i.
+\]
+We assume that $\sigma \leq X_{(1)}$, otherwise sample $X$ couldn't have been generated from such distribution. It is obvious, that $\ln \mathcal{L}(\alpha, \sigma | X)$ is an increasing function in terms of $\sigma$, therefore $\hat{\sigma} = X_{(1)}$ is an optimal estimator.
+Let's take derivative with respect to $\alpha$:
+\[
+\frac{\partial \ln \mathcal{L}(\alpha, \sigma | X) }{\partial \alpha} = \frac{n}{\alpha} + n \ln \sigma - \sum_{i=1}^{n} \ln X_i.
+\]
+From this we conclude that the maximum-likelihood estimator of shape is
+\[
+\hat{\alpha} = \frac{1}{ \frac{1}{n} (\sum_{i=1}^{n} \ln X_i) - \ln \hat{\sigma} }.
+\]
+It is known that $\hat{\sigma} \sim \operatorname{Pareto}(n\alpha, \sigma)$ and $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n-1, n\alpha)$ and they are independent. Then
+\[ \ME[\hat{\sigma}] = \frac{ \sigma}{1-\frac{1}{n \alpha}}\]
+and
+\[ \ME[\hat{\alpha}] = \frac{n\alpha}{n-2}. \]
+Therefore, in order to get unbiased estimators we need to make the following transformations:
+\[ \tilde{\alpha} = \frac{n-2}{n}\hat{\alpha} \quad \text{and} \quad \tilde{\sigma} = \hat{\sigma} \bigg(1 - \frac{1}{(n-1)\hat{\alpha}}\bigg). \]
+Note that if we estimate parameters separately, then $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n, n\alpha)$ and transformations are different.
+
+\subparagraph{Bayesian inference.} We now assume that $\sigma$ is known and prior distribution of $\alpha$ is $\Gamma(\kappa, \beta)$:
+\[
+h(\alpha) = \frac{\beta^\kappa}{\Gamma(\kappa)} \alpha^{\kappa-1}e^{-\beta \alpha}.
+\]
+The density of posterior distribution is
+\[
+f(\alpha | X) \propto \prod_{i=1}^n \frac{\sigma^\alpha}{{X_i}^{\alpha-1}} \cdot \alpha^{\kappa+n-1}e^{-\beta \alpha} \propto \alpha^{\kappa+n-1} e^{ -(\beta + \sum_{i=1}^n \ln (X_i/\sigma))\alpha }.
+\]
+Therefore, $\alpha |X \sim \Gamma(\kappa + n, \beta +\sum_{i=1}^n \ln (X_i/\sigma))$ and Bayesian estimator is
+\[ \ME[\alpha | X] = \frac{\kappa + n}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
+MAP estimator is
+\[ \alpha_{MAP} = \frac{\kappa + n-1}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
+\textit{Note on fitting scale with Bayes:} let it be vice versa, $\alpha$ is known while $\sigma$ is not. Then we say that a priori $\sigma \sim \operatorname{Pareto}(\kappa, \theta)$:
+\[
+h(\sigma) = \frac{\kappa\theta^\kappa}{\sigma^{\kappa+1}}.
+\]
+Then posterior distribution is:
+\[
+f(\sigma|X) \propto \prod_{i=1}^n \frac{1}{{X_i}^{\alpha-1}} \cdot \sigma^{\alpha n - \kappa - 1} \mathbf{1}_{ \{ \theta < \sigma < X_{(1)}\} } \sim \operatorname{Bounded-Pareto}(\kappa-\alpha n, \theta, X_{(1)}).
+\]
+This imposes the following additional constraints on the prior hyperparameters: $\kappa > \alpha n$ and $\theta < X_{(1)}$. Bayesian estimator:
+\[
+\ME[\sigma|X] = \frac{\theta^{\alpha'}}{1-\Big(\frac{\theta}{X_{(1)}}\Big)^{\alpha'}} \cdot \Big(\frac{\alpha'}{\alpha'-1}\Big)\cdot \bigg( \frac{1}{\theta^{\alpha'}} -\frac{1}{X_{(1)}^{\alpha'}} \bigg)
+\]
+with $\alpha'=\kappa - \alpha n$.
+MAP estimator is just
+\[
+\sigma_{MAP} = \theta.
+\]
+However, Bounded-Pareto distribution is not yet supported in RandLib.
+
 	
 	\pagebreak
 	\section{Planck distribution}
@@ -744,7 +876,7 @@
 			\hline
 			Parameters & $a, b > 0$ \\
 			\hline
-			Support & $ x \in \MR^+$  \\
+			Domain & $ x \in \MR^+$  \\
 			\hline
 			$f(x)$ & $\frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \cdot \frac{x ^ a}{e^{bx} - 1}$ \\
 			\hline
@@ -767,7 +899,7 @@
     \[
     F(x) = \frac{b^{a+1}}{\Gamma(a+1)\zeta(a+1)} \int_{0}^{x} \frac{t ^ a}{e^{bt} - 1} dt.
     \]
-    Note that for $\alpha < 1$ integrand has a singularity point at $t=0$. In that case we define
+    Note that for $\alpha < 1$ integrand has a singularity point at $t=0$. In such case we define
     \[
     h(t) = \frac{b^{a+2}t ^ {a+1} }{\Gamma(a+1)\zeta(a+1)} \cdot \bigg( \frac{1}{e^{bt} -  1}-\frac{1}{bt}\bigg)
     \]
@@ -798,7 +930,7 @@
 			\hline
 			Parameters & \pbox{\linewidth}{$\alpha \in (0, 2], \beta \in [-1, 1],$\\ $\gamma > 0, \mu \in \MR $} \\
 			\hline
-			Support & \pbox{\linewidth}{$ x \in \MR$, if  $\beta \neq 1$, \\  $ x \in [\mu, \infty)  $, if  $\beta = 1$, $\alpha < 2$, \\ $ x \in (-\infty, \mu]  $, if  $\beta = -1$, $\alpha < 2$}  \\
+			Domain & \pbox{\linewidth}{$ x \in \MR$, if  $\beta \neq 1$, \\  $ x \in [\mu, \infty)  $, if  $\beta = 1$, $\alpha < 2$, \\ $ x \in (-\infty, \mu]  $, if  $\beta = -1$, $\alpha < 2$}  \\
 			\hline
 			$f(x)$ & Calculated numerically \\
 			\hline
@@ -838,7 +970,7 @@
 			\hline
 			Parameters & $\mu \in \MR, \gamma^2 > 0 $ \\
 			\hline
-			Support & $x \in \MR$  \\
+			Domain & $x \in \MR$  \\
 			\hline
 			$f(x)$ & $ \frac{1}{ \pi \gamma \Big[ 1 + \big( \frac{x-\mu}{\gamma} \big)^2 \Big]  }  $ \\
 			\hline
@@ -881,7 +1013,7 @@ Relation to Stable distribution:
 			\hline
 			Parameters & $\mu \in \MR, \sigma^2 > 0 $ \\
 			\hline
-			Support & $x \in \MR$  \\
+			Domain & $x \in \MR$  \\
 			\hline
 			$f(x)$ & $ \frac{1}{\sqrt{2\sigma^2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}  $ \\
 			\hline
@@ -936,96 +1068,6 @@ Then unbiased estimator is
 	\[X \sim S_{1}(1, \gamma, \mu) \]
 	
 	
-	\pagebreak
-\section{Pareto distribution}
-			\begin{figure}[!htb]\centering
-				\begin{minipage}{0.55\textwidth}
-					\includegraphics[width=\linewidth, right]{pareto_pdf}
-					\captionsetup{labelformat=empty}
-					\includegraphics[width=\linewidth, right]{pareto_cdf}
-					\captionsetup{labelformat=empty}
-				\end{minipage}
-				\begin{minipage}{0.4\textwidth}
-					\begin{tabular}{| r | l |}
-						\hline
-						Notation & $X \sim \operatorname{Pareto}(\alpha, \sigma)$ \\
-						\hline
-						Parameters & $\alpha,  \sigma > 0 $ \\
-						\hline
-						Support & $x \geq \sigma$  \\
-						\hline
-						$f(x)$ & $ \frac{\alpha \sigma^\alpha}{x^{\alpha+1}}  $ \\
-						\hline
-						$F(x)$ & $ 1-\big( \frac{\sigma}{x} \big)^\alpha $ \\
-						\hline
-						$\ME[X]$ & \pbox{\linewidth}{$ \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
-						\hline
-						$\Var(X)$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise } \\
-						\hline
-						Median & $\sigma 2^{1/\alpha}$ \\
-						\hline
-						Mode & $\sigma$ \\
-						\hline
-						$\phi(t)$ & Calculated numerically \\
-						\hline
-					\end{tabular}
-				\end{minipage}
-			\end{figure}
-    
-	\paragraph{Estimation of parameters.}
-	\subparagraph{Frequentist inference.} Log-likelihood function is
-	\[
-	\ln \mathcal{L}(\alpha, \sigma | X) = n \ln \alpha + n \alpha \ln \sigma - (\alpha + 1) \sum_{i=1}^{n} \ln X_i.
-	\]
-	We assume that $\sigma \leq X_{(1)}$, otherwise sample $X$ couldn't have been generated from such distribution. It is obvious, that $\ln \mathcal{L}(\alpha, \sigma | X)$ is an increasing function in terms of $\sigma$, therefore $\hat{\sigma} = X_{(1)}$ is an optimal estimator.
-	Let's take derivative with respect to $\alpha$:
-	\[
-	\frac{\partial \ln \mathcal{L}(\alpha, \sigma | X) }{\partial \alpha} = \frac{n}{\alpha} + n \ln \sigma - \sum_{i=1}^{n} \ln X_i.
-	\]
-	From this we conclude that the maximum-likelihood estimator of shape is
-	\[
-	\hat{\alpha} = \frac{1}{ \frac{1}{n} (\sum_{i=1}^{n} \ln X_i) - \ln \hat{\sigma} }.
-	\]
-	It is known that $\hat{\sigma} \sim \operatorname{Pareto}(n\alpha, \sigma)$ and $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n-1, n\alpha)$ and they are independent. Then
-	\[ \ME[\hat{\sigma}] = \frac{ \sigma}{1-\frac{1}{n \alpha}}\]
-	and
-	\[ \ME[\hat{\alpha}] = \frac{n\alpha}{n-2}. \]
-	Therefore, in order to get unbiased estimators we need to make the following transformations:
-	\[ \tilde{\alpha} = \frac{n-2}{n}\hat{\alpha} \quad \text{and} \quad \tilde{\sigma} = \hat{\sigma} \bigg(1 - \frac{1}{(n-1)\hat{\alpha}}\bigg). \]
-	Note that if we estimate parameters separately, then $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n, n\alpha)$ and transformations are different.
-	
-	\subparagraph{Bayesian inference.} We now assume that $\sigma$ is known and prior distribution of $\alpha$ is $\Gamma(\kappa, \beta)$:
-	\[
-	h(\alpha) = \frac{\beta^\kappa}{\Gamma(\kappa)} \alpha^{\kappa-1}e^{-\beta \alpha}.
-	\]
-	The density of posterior distribution is
-	\[
-	f(\alpha | X) \propto \prod_{i=1}^n \frac{\sigma^\alpha}{{X_i}^{\alpha-1}} \cdot \alpha^{\kappa+n-1}e^{-\beta \alpha} \propto \alpha^{\kappa+n-1} e^{ -(\beta + \sum_{i=1}^n \ln (X_i/\sigma))\alpha }.
-	\]
-	Therefore, $\alpha |X \sim \Gamma(\kappa + n, \beta +\sum_{i=1}^n \ln (X_i/\sigma))$ and Bayesian estimator is
-	\[ \ME[\alpha | X] = \frac{\kappa + n}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
-	MAP estimator is
-	\[ \alpha_{MAP} = \frac{\kappa + n-1}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
-	\textit{Note on fitting scale with Bayes:} let it be vice versa, $\alpha$ is known while $\sigma$ is not. Then we say that a priori $\sigma \sim \operatorname{Pareto}(\kappa, \theta)$:
-	\[
-	h(\sigma) = \frac{\kappa\theta^\kappa}{\sigma^{\kappa+1}}.
-	\]
-	Then posterior distribution is:
-	\[
-	f(\sigma|X) \propto \prod_{i=1}^n \frac{1}{{X_i}^{\alpha-1}} \cdot \sigma^{\alpha n - \kappa - 1} \mathbf{1}_{ \{ \theta < \sigma < X_{(1)}\} } \sim \operatorname{Bounded-Pareto}(\kappa-\alpha n, \theta, X_{(1)}).
-	\]
-	This imposes the following additional constraints on the prior hyperparameters: $\kappa > \alpha n$ and $\theta < X_{(1)}$. Bayesian estimator:
-	\[
-	\ME[\sigma|X] = \frac{\theta^{\alpha'}}{1-\Big(\frac{\theta}{X_{(1)}}\Big)^{\alpha'}} \cdot \Big(\frac{\alpha'}{\alpha'-1}\Big)\cdot \bigg( \frac{1}{\theta^{\alpha'}} -\frac{1}{X_{(1)}^{\alpha'}} \bigg)
-	\]
-	with $\alpha'=\kappa - \alpha n$.
-	MAP estimator is just
-	\[
-	\sigma_{MAP} = \theta.
-	\]
-	However, Bounded-Pareto distribution is not yet supported in RandLib.
-	
-	
 \pagebreak
 \section{Weibull}
 
@@ -1043,7 +1085,7 @@ Then unbiased estimator is
 			\hline
 			Parameters & $\lambda, k > 0 $ \\
 			\hline
-			Support & $x \in \MR^+$  \\
+			Domain & $x \in \MR^+$  \\
 			\hline
 			$f(x)$ & $ \frac{k}{\lambda}\big( \frac{x}{\lambda}\big)^{k-1} \exp(-(x/\lambda)^k)  $ \\
 			\hline
@@ -1073,7 +1115,7 @@ The derivative with respect to scale:
 \]
 Therefore, maximum-likelihood estimation for $\lambda$ is
 \[
-\hat{\lambda} = \bigg(\sum_{i=1}^{n}X_i^k\bigg)^{\frac{1}{k}}.
+\hat{\lambda} = \bigg(\frac{1}{n}\sum_{i=1}^{n}X_i^k\bigg)^{\frac{1}{k}}.
 \]
 \subparagraph{Bayesian inference.} Assume $k$ is known. Instead of estimating $\lambda$ we give an estimation for $\lambda^k$. Let's say that prior distribution of $\lambda^k$ is $\operatorname{Inv-\Gamma}(\alpha, \beta)$:
 \[
@@ -1081,7 +1123,7 @@ h(\lambda^k) = \frac{\beta^\alpha}{\Gamma(\alpha)} \lambda^{-k(\alpha+1)} e^{-\b
 \]
 Posterior distribution then:
 \[
-f(\lambda^k| X) \propto \lambda^{-k(\alpha+1+n)} e^{-\frac{1}{\lambda^k} (\beta+\sum_{i=1}^{n}X_i^k)} \sim \operatorname{Inv-\Gamma}(\alpha+n, \beta+\sum_{i=1}^{n}X_i^k).
+f(\lambda^k| X) \propto \lambda^{-k(\alpha+1+n)} e^{-\frac{1}{\lambda^k} (\beta+\sum_{i=1}^{n}X_i^k)} \sim \operatorname{Inv-\Gamma}\bigg(\alpha+n, \beta+\sum_{i=1}^{n}X_i^k\bigg).
 \]
 Bayesian estimator:
 \[
@@ -1109,7 +1151,7 @@ MAP estimator:
 				\hline
 				Parameters & $ n \in \MN, \alpha, \beta > 0  $ \\
 				\hline
-				Support & $ k \in \{0, \dots, n  \} $  \\
+				Domain & $ k \in \{0, \dots, n  \} $  \\
 				\hline
 				$\MP(X = k)$ & $\binom{n}{k} \frac{B(k+\alpha, n-k+\beta)}{B(\alpha, \beta)}  $ \\
 				\hline
@@ -1129,7 +1171,7 @@ MAP estimator:
 		\end{minipage}
 	\end{figure}
 
-    Relation to other distributions: if $ p \sim B(\alpha, \beta)$, then $\operatorname{Bin}(n, p) \sim \operatorname{BB}(n, \alpha, \beta)$.
+    Relation to other distributions: if $ p \sim \mathcal{B}(\alpha, \beta)$, then $\operatorname{Bin}(n, p) \sim \operatorname{BB}(n, \alpha, \beta)$.
 
 	\pagebreak
 	\section{Binomial distribution}
@@ -1147,7 +1189,7 @@ MAP estimator:
 			\hline
 			Parameters & $ n \in \MN, p \in [0, 1]  $ \\
 			\hline
-			Support & $ k \in \{0, \dots, n  \} $  \\
+			Domain & $ k \in \{0, \dots, n  \} $  \\
 			\hline
 			$\MP(X = k)$ & $\binom{n}{k} p^k (1-p)^{n-k}  $ \\
 			\hline
@@ -1166,6 +1208,36 @@ MAP estimator:
 		\end{tabular}
 		\end{minipage}
 	\end{figure}
+	
+	\paragraph{Estimation of probability $p$ with known number $n$.}
+	\subparagraph{Frequentist inference.} Log-likelihood function:
+	\[
+	\ln \mathcal{L}(p|X) \propto \sum_{i=1}^{k} \big(X_i \log p + (n-X_i) \log(1-p)\big)
+	\]
+	The derivative with respect to $p$ is:
+	\[
+	\frac{\partial \ln \mathcal{L}(p|X)}{\partial p} = \frac{\sum_{i=1}^k X_i}{p} - \frac{nk - \sum_{i=1}^{k}X_i}{1-p}.
+	\]
+	Therefore we reach the maximum value of log-likelihood if
+	\[
+	p = \frac{\overline X_k}{n}.
+	\]
+	
+	\subparagraph{Bayesian inference.}
+	We set prior Beta distribution $\mathcal{B}(\alpha, \beta)$:
+	\[
+	h(p) = \frac{p^{\alpha-1} (1-p)^{\beta - 1}}{B(\alpha, \beta)}.
+	\]
+	Then posterior is
+	\[
+	f(p|X) \propto p^{\alpha-1 + \sum_{i=1}^k X_i} (1-p)^{\beta - 1 + \sum_{i=1}^k (n - X_i)} \sim \mathcal{B}\bigg(\alpha + \sum_{i=1}^k X_i, \beta + nk - \sum_{i=1}^k X_i\bigg).
+	\]
+	Thus Bayesian estimator is
+	\[ \mathbb{E}[p|X] = \frac{\alpha + \sum_{i=1}^k X_i}{\alpha + \beta + nk} \]
+	and MAP estimator is
+	\[ p_{MAP} = \frac{\alpha + \sum_{i=1}^k X_i - 1}{\alpha + \beta + nk - 2}. \]
+	Also, Minimax estimator is equal to Bayes estimator if $\alpha = \beta = \frac{1}{2}\sqrt{n}$.
+	
 	
 	\subsection{Bernoulli}
 	Notation:
@@ -1189,7 +1261,7 @@ MAP estimator:
 					Parameters & 
 					\pbox{\linewidth}{$ N \in \MN, K \in \{1, 2, \dotsm, N  \},$ \\ $n \in \{1, 2, \dotsm, N  \}$} \\
 					\hline
-					Support & $ \max(0, n+K-N) \leq k \leq \min(n, K) $  \\
+					Domain & $ \max(0, n+K-N) \leq k \leq \min(n, K) $  \\
 					\hline
 					$\MP(X = k)$ & $ \frac{\binom{K}{k}\binom{N-K}{n-k}  }{\binom{N}{n}}   $ \\
 					\hline
@@ -1209,6 +1281,22 @@ MAP estimator:
 			\end{minipage}
 		\end{figure}
 		
+	\paragraph{Estimation of number of target members of population K.}
+	\subparagraph{Bayesian inference.}
+	Let prior distribution of $K$ be Beta-Binomial distribution $BB(N, \alpha, \beta)$:
+	\[
+	h(K) = \binom{N}{K} \frac{B(K + \alpha, N - K + \beta)}{B(\alpha, \beta)}.
+	\]
+	Then for one sample $X$:
+    \[
+    K - X \sim BB\big(N - n, \alpha + X, \beta + nk - X \big)
+    \]
+    and therefore
+    \[ 
+    \mathbb{E}[K|X] = X + (N - n) \frac{\alpha}{\alpha + \beta}.
+    \]
+    However, RandLib doesn't support Bayesian fitting for Hypergeometric distribution yet.
+    
 		
 	\pagebreak
 	\section{Negative-Binomial (Polya) distribution}
@@ -1226,7 +1314,7 @@ MAP estimator:
 				\hline
 				Parameters & $r > 0$, $p \in (0, 1)$ \\
 				\hline
-				Support & $ k \in \MN_0 $  \\
+				Domain & $ k \in \MN_0 $  \\
 				\hline
 				$\MP(X = k)$ & $  \binom{k+r-1}{k} p^r (1-p)^k   $ \\
 				\hline
@@ -1279,7 +1367,7 @@ MAP estimator:
 					\hline
 					Parameters & $\lambda > 0$ \\
 					\hline
-					Support & $ k \in \MN_0 $  \\
+					Domain & $ k \in \MN_0 $  \\
 					\hline
 					$\MP(X = k)$ & $\frac{\lambda^k e^{-\lambda}}{k!}$ \\
 					\hline
@@ -1299,6 +1387,30 @@ MAP estimator:
 			\end{minipage}
 		\end{figure}
 	
+	\paragraph{Estimation of rate.}
+	\subparagraph{Frequentist inference.}
+	Log-likelihood function:
+	\[ \ln \mathcal{L}(\lambda | X) \propto -\lambda n + \sum_{i=1}^{n}X_i \log \lambda. \]
+	Setting the derivative w.r.t. rate to $0$ we get the optimal value:
+	\[ \lambda = \overline{X}_n. \]
+	\subparagraph{Bayesian inference.}
+	Let set prior distribution of $\lambda \sim \Gamma(\alpha, \beta)$:
+	\[
+	h(\lambda) = \frac{\beta^\alpha}{\Gamma(\alpha)} \lambda^{\alpha-1}e^{-\beta \lambda}.
+	\]
+	Posterior distribution:
+	\[
+	f(\lambda|X) \propto e^{-\lambda (\beta + n)}  \lambda^{\alpha - 1 + \sum_{i=1}^{n}X_i} \sim \Gamma(\alpha + \sum_{i=1}^{n}X_i, \beta + n).
+	\]
+	Therefore, Bayesian estimator:
+	\[
+	\mathbb{E}[\lambda|X] = \frac{\alpha + \sum_{i=1}^{n}X_i}{\beta + n}.
+	\]
+	And MAP estimator:
+	\[
+	\lambda_{MAP} = \max \bigg( \frac{\alpha + \sum_{i=1}^{n}X_i - 1}{\beta + n}, 0 \bigg).
+	\]
+	
 	\pagebreak
 	\section{Skellam distribution}
 	
@@ -1316,7 +1428,7 @@ MAP estimator:
 				\hline
 				Parameters & $\mu_1, \mu_2 > 0$ \\
 				\hline
-				Support & $ k \in \MZ $  \\
+				Domain & $ k \in \MZ $  \\
 				\hline
 				$\MP(X = k)$. & $e^{-(\mu_1 + \mu_2)} \Big( \frac{\mu_1}{\mu_2} \Big)^{\frac{k}{2}} I_k(2\sqrt{\mu_1\mu_2}) $ \\
 				\hline

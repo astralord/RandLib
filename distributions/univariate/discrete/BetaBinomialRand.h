@@ -1,4 +1,4 @@
-#ifndef BETABINOMIALRAND_H
+﻿#ifndef BETABINOMIALRAND_H
 #define BETABINOMIALRAND_H
 
 #include "DiscreteDistribution.h"
@@ -49,8 +49,6 @@ public:
 
     long double Mean() const override;
     long double Variance() const override;
-
-public:
     IntType Mode() const override;
     long double Skewness() const override;
     long double ExcessKurtosis() const override;

@@ -52,9 +52,15 @@ private:
 public:
     double Entropy() const;
 
-protected:
-    double getPowSampleMean(const std::vector<RealType> &sample) const;
+private:
+    /**
+     * @brief getNorm
+     * @param sample
+     * @return L^k norm of the sample
+     */
+    double getNorm(const std::vector<RealType> &sample) const;
 
+public:
     /**
      * @fn FitScale
      * Fit λ by maximum-likelihood
