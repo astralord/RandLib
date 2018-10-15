@@ -57,7 +57,18 @@ protected:
     long double ExpectedValue(const std::function<double (IntType)> &funPtr, IntType minPoint, IntType maxPoint) const override;
 
 public:
+    /**
+     * @fn Hazard
+     * @param x
+     * @return hazard function
+     */
     double Hazard(const IntType &x) const override;
+
+    /**
+     * @fn Entropy
+     * @return E[log(X)]
+     */
+    long double Entropy() const override;
 
     /**
      * @fn LikelihoodFunction

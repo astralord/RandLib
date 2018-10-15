@@ -184,7 +184,7 @@ RealType ParetoRand<RealType>::quantileImpl1m(double p) const
 }
 
 template < typename RealType >
-double ParetoRand<RealType>::Entropy() const
+long double ParetoRand<RealType>::Entropy() const
 {
     return logSigma - logAlpha + 1.0 / alpha + 1;
 }

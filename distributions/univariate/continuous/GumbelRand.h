@@ -50,7 +50,7 @@ private:
     RealType quantileImpl1m(double p) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const override;
 };
 
 #endif // GUMBELRAND_H

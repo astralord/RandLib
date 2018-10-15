@@ -154,7 +154,7 @@ std::complex<double> UniformRand<RealType>::CFImpl(double t) const
 }
 
 template < typename RealType >
-double UniformRand<RealType>::Entropy() const
+long double UniformRand<RealType>::Entropy() const
 {
     return (this->b == this->a) ? -INFINITY : std::log(this->bma);
 }

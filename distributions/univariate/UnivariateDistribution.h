@@ -172,7 +172,7 @@ public:
      * @fn Kurtosis
      * @return unbiased kurtosis = μ_4 / σ ^ 4
      */
-    virtual double Kurtosis() const;
+    virtual long double Kurtosis() const;
 
     /**
      * @fn ExcessKurtosis
@@ -198,6 +198,12 @@ public:
      * @return E[X^4]
      */
     virtual long double FourthMoment() const;
+
+    /**
+     * @fn Entropy
+     * @return E[log(X)]
+     */
+    virtual long double Entropy() const = 0;
 
     /**
      * @fn LikelihoodFunction

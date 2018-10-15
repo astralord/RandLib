@@ -58,6 +58,7 @@ protected:
 
 public:
     double Hazard(const RealType &x) const override;
+    long double Entropy() const override;
     double LikelihoodFunction(const std::vector<RealType> &sample) const override;
     double LogLikelihoodFunction(const std::vector<RealType> &sample) const override;
 

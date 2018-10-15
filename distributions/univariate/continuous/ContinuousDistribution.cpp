@@ -219,6 +219,15 @@ double ContinuousDistribution<RealType>::Hazard(const RealType &x) const
 }
 
 template< typename RealType >
+long double ContinuousDistribution<RealType>::Entropy() const
+{
+    return this->ExpectedValue([this] (double x)
+    {
+        return this->logf(x);
+    }, this->MinValue(), this->MaxValue());
+}
+
+template< typename RealType >
 double ContinuousDistribution<RealType>::LikelihoodFunction(const std::vector<RealType> &sample) const
 {
     return std::exp(LogLikelihoodFunction(sample));

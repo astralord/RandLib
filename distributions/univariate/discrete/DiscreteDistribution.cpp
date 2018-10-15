@@ -147,6 +147,15 @@ double DiscreteDistribution<IntType>::Hazard(const IntType &x) const
 }
 
 template < typename IntType >
+long double DiscreteDistribution<IntType>::Entropy() const
+{
+    return this->ExpectedValue([this] (double x)
+    {
+        return this->logP(x);
+    }, this->MinValue(), this->MaxValue());
+}
+
+template < typename IntType >
 double DiscreteDistribution<IntType>::LikelihoodFunction(const std::vector<IntType> &sample) const
 {
     long double res = 1.0;

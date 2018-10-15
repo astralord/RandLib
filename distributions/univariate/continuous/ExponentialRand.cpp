@@ -74,7 +74,7 @@ std::complex<double> ExponentialRand<RealType>::CFImpl(double t) const
 }
 
 template < typename RealType >
-double ExponentialRand<RealType>::Entropy() const
+long double ExponentialRand<RealType>::Entropy() const
 {
     return 1.0 - this->logBeta;
 }

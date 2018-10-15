@@ -67,7 +67,7 @@ RealType CauchyRand<RealType>::quantileImpl1m(double p) const
 }
 
 template < typename RealType >
-double CauchyRand<RealType>::Entropy() const
+long double CauchyRand<RealType>::Entropy() const
 {
     return 2 * M_LN2 + this->logGamma + M_LNPI;
 }

@@ -75,7 +75,7 @@ private:
     static constexpr char TOO_SMALL_B[] = "Maximum element of the sample is greater than upper boundary returned by method: ";
 
 public:
-    inline double Entropy() const;
+    long double Entropy() const override;
 
     double LikelihoodFunction(const std::vector<RealType> &sample) const override;
     double LogLikelihoodFunction(const std::vector<RealType> &sample) const override;

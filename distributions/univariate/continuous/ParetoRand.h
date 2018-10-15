@@ -62,7 +62,7 @@ private:
     RealType quantileImpl1m(double p) const override;
 
 public:
-    inline double Entropy() const;
+    long double Entropy() const override;
 
     /**
      * @fn FitShape

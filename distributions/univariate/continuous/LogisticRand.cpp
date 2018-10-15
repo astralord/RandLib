@@ -94,7 +94,7 @@ std::complex<double> LogisticRand<RealType>::CFImpl(double t) const
 }
 
 template < typename RealType >
-double LogisticRand<RealType>::Entropy() const
+long double LogisticRand<RealType>::Entropy() const
 {
     return 2 + logS;
 }

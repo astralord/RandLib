@@ -100,7 +100,7 @@ IntType GeometricRand<IntType>::Median() const
 }
 
 template < typename IntType >
-double GeometricRand<IntType>::Entropy() const
+long double GeometricRand<IntType>::Entropy() const
 {
     double a = -this->q * this->log1mProb;
     double b = -this->p * this->logProb;

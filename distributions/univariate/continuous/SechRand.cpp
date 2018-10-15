@@ -99,7 +99,7 @@ long double SechRand<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
-double SechRand<RealType>::Entropy() const
+long double SechRand<RealType>::Entropy() const
 {
     return 2.0 * M_2_PI * M_CATALAN;
 }

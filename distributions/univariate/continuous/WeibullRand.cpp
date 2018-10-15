@@ -227,7 +227,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
 }
 
 template < typename RealType >
-double WeibullRand<RealType>::Entropy() const
+long double WeibullRand<RealType>::Entropy() const
 {
     return M_EULER * (1.0 - kInv) + std::log(lambda * kInv) + 1.0;
 }

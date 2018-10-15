@@ -107,7 +107,7 @@ long double WignerSemicircleRand<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
-double WignerSemicircleRand<RealType>::Entropy() const
+long double WignerSemicircleRand<RealType>::Entropy() const
 {
     return M_LNPI + 0.5 * logRSq - 0.5;
 }

@@ -133,7 +133,7 @@ std::complex<double> UniformDiscreteRand<IntType>::CFImpl(double t) const
 }
 
 template< typename IntType >
-double UniformDiscreteRand<IntType>::Entropy() const
+long double UniformDiscreteRand<IntType>::Entropy() const
 {
     return logN;
 }

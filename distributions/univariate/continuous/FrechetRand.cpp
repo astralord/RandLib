@@ -154,7 +154,7 @@ long double FrechetRand<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
-double FrechetRand<RealType>::Entropy() const
+long double FrechetRand<RealType>::Entropy() const
 {
     return 1.0 + M_EULER * (1.0 + alphaInv) + std::log(s / alpha);
 }

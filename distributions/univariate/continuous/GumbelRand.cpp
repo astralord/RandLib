@@ -124,7 +124,7 @@ long double GumbelRand<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
-double GumbelRand<RealType>::Entropy() const
+long double GumbelRand<RealType>::Entropy() const
 {
     return logBeta + M_EULER + 1.0;
 }

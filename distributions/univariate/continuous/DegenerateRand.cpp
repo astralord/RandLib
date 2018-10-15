@@ -82,7 +82,7 @@ long double DegenerateRand::ExcessKurtosis() const
     return NAN;
 }
 
-double DegenerateRand::Entropy() const
+long double DegenerateRand::Entropy() const
 {
     return 0.0;
 }

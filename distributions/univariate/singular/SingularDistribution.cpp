@@ -20,6 +20,11 @@ double SingularDistribution::Mode() const
     return NAN;
 }
 
+long double SingularDistribution::Entropy() const
+{
+    return NAN;
+}
+
 double SingularDistribution::LikelihoodFunction(const std::vector<double> &) const
 {
     return NAN;

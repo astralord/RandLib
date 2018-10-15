@@ -49,7 +49,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const override;
     double LikelihoodFunction(const std::vector<IntType> &sample) const override;
     double LogLikelihoodFunction(const std::vector<IntType> &sample) const override;
 

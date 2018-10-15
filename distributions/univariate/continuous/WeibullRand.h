@@ -50,7 +50,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const override;
 
 private:
     /**

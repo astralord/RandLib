@@ -157,7 +157,7 @@ long double UnivariateDistribution<T>::ExcessKurtosis() const
 }
 
 template< typename T >
-double UnivariateDistribution<T>::Kurtosis() const
+long double UnivariateDistribution<T>::Kurtosis() const
 {
     return this->ExcessKurtosis() + 3.0;
 }
