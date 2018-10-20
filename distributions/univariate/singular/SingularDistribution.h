@@ -16,7 +16,6 @@ protected:
 private:
     double Hazard(const double&) const override;
     double Mode() const override;
-    long double Entropy() const override;
     long double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
     double LikelihoodFunction(const std::vector<double> &sample) const override;
     double LogLikelihoodFunction(const std::vector<double> &sample) const override;

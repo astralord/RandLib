@@ -45,7 +45,7 @@ public:
     long double Skewness() const override;
     long double ExcessKurtosis() const override;
     
-    long double Entropy() const override;
+    long double Entropy() const;
 };
 
 #endif // WIGNERSEMICIRCLERAND_H

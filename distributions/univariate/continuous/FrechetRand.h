@@ -49,7 +49,7 @@ private:
     RealType quantileImpl1m(double p) const override;
 
 public:
-    long double Entropy() const override;
+    long double Entropy() const;
 };
 
 #endif // FRECHETRAND_H

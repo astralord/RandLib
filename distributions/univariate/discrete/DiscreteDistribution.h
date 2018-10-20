@@ -2,6 +2,7 @@
 #define DISCRETE_DISTRIBUTION_H
 
 #include "../UnivariateDistribution.h"
+#include "../ExponentialFamily.h"
 
 /**
  *@brief The DiscreteDistribution class <BR>
@@ -22,7 +23,7 @@ public:
      * @param k
      * @return probability to get k
      */
-    virtual double P(const IntType & k) const = 0;
+    virtual double P(const IntType & k) const { return std::exp(this->logP(k)); }
 
     /**
      * @fn logP
@@ -65,12 +66,6 @@ public:
     double Hazard(const IntType &x) const override;
 
     /**
-     * @fn Entropy
-     * @return E[log(X)]
-     */
-    long double Entropy() const override;
-
-    /**
      * @fn LikelihoodFunction
      * @param sample
      * @return likelihood function of the distribution for given sample
@@ -111,6 +106,17 @@ public:
      * However it might be useful to group rare events for chi-squared test to give better results
      */
     bool PearsonChiSquaredTest(const std::vector<IntType> &orderStatistic, double alpha, size_t numberOfEstimatedParameters = 0) const;
+};
+
+
+
+template < typename IntType, typename P >
+class RANDLIBSHARED_EXPORT DiscreteExponentialFamily : public ExponentialFamily<IntType, P>, public DiscreteDistribution<IntType>
+{
+public:
+    virtual double logP(const IntType & x) const {
+        return this->LogProbabilityMeasure(x);
+    }
 };
 
 #endif // DISCRETE_DISTRIBUTION_H

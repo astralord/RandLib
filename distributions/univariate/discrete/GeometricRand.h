@@ -35,7 +35,7 @@ public:
 
     IntType Median() const override;
 
-    long double Entropy() const override;
+    long double Entropy() const;
 };
 
 #endif // GEOMETRICRAND_H

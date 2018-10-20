@@ -200,12 +200,6 @@ public:
     virtual long double FourthMoment() const;
 
     /**
-     * @fn Entropy
-     * @return E[log(X)]
-     */
-    virtual long double Entropy() const = 0;
-
-    /**
      * @fn LikelihoodFunction
      * @param sample
      * @return likelihood function for given sample

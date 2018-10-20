@@ -52,7 +52,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    long double Entropy() const override;
+    long double Entropy() const;
 
     /**
      * @fn FitLocation

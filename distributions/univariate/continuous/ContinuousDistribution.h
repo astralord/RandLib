@@ -2,6 +2,7 @@
 #define CONTINUOUS_DISTRIBUTION_H
 
 #include "../UnivariateDistribution.h"
+#include "../ExponentialFamily.h"
 
 /**
  * @brief The ContinuousDistribution class <BR>
@@ -22,7 +23,7 @@ public:
      * @param x
      * @return probability density function
      */
-    virtual double f(const RealType & x) const = 0;
+    virtual double f(const RealType & x) const { return std::exp(this->logf(x)); }
 
     /**
      * @fn logf
@@ -58,7 +59,6 @@ protected:
 
 public:
     double Hazard(const RealType &x) const override;
-    long double Entropy() const override;
     double LikelihoodFunction(const std::vector<RealType> &sample) const override;
     double LogLikelihoodFunction(const std::vector<RealType> &sample) const override;
 
@@ -69,6 +69,16 @@ public:
      * @return true if sample is from this distribution according to asymptotic KS-test, false otherwise
      */
     bool KolmogorovSmirnovTest(const std::vector<RealType> &orderStatistic, double alpha) const;
+};
+
+
+template < typename RealType, typename P >
+class RANDLIBSHARED_EXPORT ContinuousExponentialFamily : public ExponentialFamily<RealType, P>, public ContinuousDistribution<RealType>
+{
+public:
+    virtual double logf(const RealType & x) const {
+        return this->LogProbabilityMeasure(x);
+    }
 };
 
 #endif // CONTINUOUS_DISTRIBUTION_H

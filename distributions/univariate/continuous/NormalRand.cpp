@@ -36,18 +36,6 @@ void NormalRand<RealType>::SetVariance(double variance)
 }
 
 template < typename RealType >
-double NormalRand<RealType>::f(const RealType & x) const
-{
-    return this->pdfNormal(x);
-}
-
-template < typename RealType >
-double NormalRand<RealType>::logf(const RealType & x) const
-{
-    return this->logpdfNormal(x);
-}
-
-template < typename RealType >
 double NormalRand<RealType>::F(const RealType & x) const
 {
     return this->cdfNormal(x);

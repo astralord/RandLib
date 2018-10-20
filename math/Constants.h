@@ -10,6 +10,21 @@ constexpr long double MIN_POSITIVE = 1e-21l;
 template <typename T>
 using Pair = std::pair<T, T>;
 
+template < typename T >
+Pair<T> operator +(const Pair<T> & l, const Pair<T> & r) {
+    return {l.first + r.first, l.second + r.second};
+}
+
+template < typename T >
+Pair<T> operator -(const Pair<T> & l, const Pair<T> & r) {
+    return {l.first - r.first, l.second - r.second};
+}
+
+template < typename T >
+T operator *(const Pair<T> & l, const Pair<T> & r) {
+    return l.first * r.first + l.second * r.second;
+}
+
 template <typename T>
 using Triplet = std::tuple<T, T, T>;
 

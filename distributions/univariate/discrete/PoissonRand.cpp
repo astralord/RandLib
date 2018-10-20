@@ -49,16 +49,64 @@ void PoissonRand<IntType>::SetRate(double rate)
     logLambda = std::log(lambda);
     mu = std::floor(lambda);
     Fmu = F(mu);
-    Pmu = P(mu);
+    Pmu = this->P(mu);
 
     if (!generateByInversion())
         SetGeneratorConstants();
 }
 
 template < typename IntType >
-double PoissonRand<IntType>::P(const IntType & k) const
+double PoissonRand<IntType>::SufficientStatistic(IntType x) const
 {
-    return (k < 0) ? 0.0 : std::exp(logP(k));
+    return x;
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::SourceParameters() const
+{
+    return lambda;
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::NaturalParameters(double sourceParameters) const
+{
+    return std::log(sourceParameters);
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::ThetaP() const
+{
+    return logLambda;
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::LogNormalizer(double theta) const
+{
+    return std::exp(theta);
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::LogNormalizerGradient(double theta) const
+{
+    return std::exp(theta);
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::CarrierMeasure(IntType x) const
+{
+    return -RandMath::lfact(x);
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::CrossEntropyAdjusted(double parameters) const
+{
+    return parameters - lambda * std::log(parameters);
+}
+
+template < typename IntType >
+double PoissonRand<IntType>::EntropyAdjusted() const
+{
+    return lambda - lambda * logLambda;
 }
 
 template < typename IntType >

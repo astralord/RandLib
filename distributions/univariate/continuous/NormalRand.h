@@ -77,8 +77,6 @@ public:
      */
     inline double GetPrecision() const { return 1.0 / this->Variance(); }
 
-    double f(const RealType & x) const override;
-    double logf(const RealType & x) const override;
     double F(const RealType & x) const override;
     double S(const RealType & x) const override;
     RealType Variate() const override;

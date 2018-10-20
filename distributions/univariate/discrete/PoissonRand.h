@@ -13,7 +13,7 @@
  * Notation: X ~ Po(λ)
  */
 template < typename IntType = int >
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution<IntType>
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteExponentialFamily<IntType, double>
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
@@ -40,10 +40,20 @@ public:
     void SetRate(double rate);
     inline double GetRate() const { return lambda; }
 
-    double P(const IntType & k) const override;
-    double logP(const IntType & k) const override;
+    virtual double SufficientStatistic(IntType x) const override;
+    virtual double SourceParameters() const override;
+    virtual double NaturalParameters(double sourceParameters) const override;
+    virtual double ThetaP() const override;
+    virtual double LogNormalizer(double theta) const override;
+    virtual double LogNormalizerGradient(double theta) const override;
+    virtual double CarrierMeasure(IntType x) const override;
+    virtual double CrossEntropyAdjusted(double parameters) const override;
+    virtual double EntropyAdjusted() const override;
+
+    double logP(const IntType &k) const override;
     double F(const IntType & k) const override;
     double S(const IntType & k) const override;
+
 private:
     double acceptanceFunction(IntType X) const;
     bool generateByInversion() const;

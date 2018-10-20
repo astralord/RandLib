@@ -68,7 +68,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    long double Entropy() const override;
+    long double Entropy() const;
     long double Moment(int n) const;
     long double ThirdMoment() const override { return Moment(3); }
     long double FourthMoment() const override { return Moment(4); }

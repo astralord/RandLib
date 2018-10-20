@@ -39,7 +39,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    long double Entropy() const override;
+    long double Entropy() const;
 
     void FitShift(const std::vector<RealType> &sample);
     void FitScale(const std::vector<RealType> &sample);

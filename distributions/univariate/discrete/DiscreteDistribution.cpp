@@ -147,15 +147,6 @@ double DiscreteDistribution<IntType>::Hazard(const IntType &x) const
 }
 
 template < typename IntType >
-long double DiscreteDistribution<IntType>::Entropy() const
-{
-    return this->ExpectedValue([this] (double x)
-    {
-        return this->logP(x);
-    }, this->MinValue(), this->MaxValue());
-}
-
-template < typename IntType >
 double DiscreteDistribution<IntType>::LikelihoodFunction(const std::vector<IntType> &sample) const
 {
     long double res = 1.0;
@@ -250,3 +241,11 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(const std::vector<IntT
 template class DiscreteDistribution<int>;
 template class DiscreteDistribution<long int>;
 template class DiscreteDistribution<long long int>;
+
+template class DiscreteExponentialFamily<int, double>;
+template class DiscreteExponentialFamily<long int, double>;
+template class DiscreteExponentialFamily<long long int, double>;
+
+template class DiscreteExponentialFamily<int, DoublePair>;
+template class DiscreteExponentialFamily<long int, DoublePair>;
+template class DiscreteExponentialFamily<long long int, DoublePair>;
