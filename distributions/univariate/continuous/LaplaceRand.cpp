@@ -3,9 +3,9 @@
 
 template < typename RealType >
 AsymmetricLaplaceDistribution<RealType>::AsymmetricLaplaceDistribution(double shift, double scale, double asymmetry)
-    : ShiftedGeometricStableDistribution<RealType>(2.0, 0.0, scale, 0.0, shift)
+    : GeneralGeometricStableDistribution<RealType>(2.0, 0.0, scale, 0.0, shift)
 {
-    ShiftedGeometricStableDistribution<RealType>::SetAsymmetry(asymmetry);
+    GeneralGeometricStableDistribution<RealType>::SetAsymmetry(asymmetry);
     ChangeLocation();
 }
 
@@ -21,7 +21,7 @@ void AsymmetricLaplaceDistribution<RealType>::SetScale(double scale)
     if (scale <= 0.0)
         throw std::invalid_argument("Laplace distribution: scale should be positive, but it's equal to "
                                     + std::to_string(scale));
-    ShiftedGeometricStableDistribution<RealType>::SetScale(scale);
+    GeneralGeometricStableDistribution<RealType>::SetScale(scale);
     ChangeLocation();
 }
 
@@ -101,7 +101,21 @@ long double AsymmetricLaplaceDistribution<RealType>::Entropy() const
 }
 
 template < typename RealType >
-void AsymmetricLaplaceDistribution<RealType>::FitShift(const std::vector<RealType> &sample)
+void AsymmetricLaplaceDistribution<RealType>::FitScale(const std::vector<RealType> &sample)
+{
+    double deviation = 0.0;
+    for (const RealType & x : sample) {
+        if (x > this->m)
+            deviation += this->kappa * (x - this->m);
+        else
+            deviation -= (x - this->m) / this->kappa;
+    }
+    deviation /= sample.size();
+    SetScale(deviation);
+}
+
+template < typename RealType >
+void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShift(const std::vector<RealType> &sample)
 {
     /// Calculate median (considering asymmetry)
     /// we use root-finding algorithm for median search
@@ -124,28 +138,14 @@ void AsymmetricLaplaceDistribution<RealType>::FitShift(const std::vector<RealTyp
     ))
         throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding procedure"));
 
-    SetShift(median);
+    this->SetShift(median);
 }
 
 template < typename RealType >
-void AsymmetricLaplaceDistribution<RealType>::FitScale(const std::vector<RealType> &sample)
+void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShiftAndScale(const std::vector<RealType> &sample)
 {
-    double deviation = 0.0;
-    for (const RealType & x : sample) {
-        if (x > this->m)
-            deviation += this->kappa * (x - this->m);
-        else
-            deviation -= (x - this->m) / this->kappa;
-    }
-    deviation /= sample.size();
-    SetScale(deviation);
-}
-
-template < typename RealType >
-void AsymmetricLaplaceDistribution<RealType>::FitShiftAndScale(const std::vector<RealType> &sample)
-{
-    FitShift(sample);
-    FitScale(sample);
+    this->FitShift(sample);
+    this->FitScale(sample);
 }
 
 template class AsymmetricLaplaceDistribution<float>;
@@ -163,7 +163,7 @@ String AsymmetricLaplaceRand<RealType>::Name() const
 template < typename RealType >
 void AsymmetricLaplaceRand<RealType>::SetAsymmetry(double asymmetry)
 {
-    ShiftedGeometricStableDistribution<RealType>::SetAsymmetry(asymmetry);
+    GeneralGeometricStableDistribution<RealType>::SetAsymmetry(asymmetry);
     this->ChangeLocation();
 }
 

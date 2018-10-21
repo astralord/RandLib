@@ -6,10 +6,10 @@
 
 /**
  * @brief The AsymmetricLaplaceDistribution class <BR>
- * Abstract parent class for Laplace and Asymmetric Laplace distributions
+ * Abstract parent class for general Laplace and Asymmetric Laplace distributions
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT AsymmetricLaplaceDistribution : public ShiftedGeometricStableDistribution<RealType>
+class RANDLIBSHARED_EXPORT AsymmetricLaplaceDistribution : public GeneralGeometricStableDistribution<RealType>
 {
 public:
     AsymmetricLaplaceDistribution(double shift = 0, double scale = 1, double asymmetry = 1);
@@ -18,10 +18,8 @@ protected:
     void ChangeLocation();
 
 public:
-    using ShiftedGeometricStableDistribution<RealType>::SetShift;
     void SetScale(double scale);
 
-    inline double GetShift() const { return this->m; }
     inline double GetAsymmetry() const { return this->kappa; }
 
     double f(const RealType & x) const override;
@@ -41,9 +39,40 @@ private:
 public:
     long double Entropy() const;
 
-    void FitShift(const std::vector<RealType> &sample);
     void FitScale(const std::vector<RealType> &sample);
+};
 
+
+/**
+ * @brief The CenteredAsymmetricLaplaceRand class <BR>
+ * Centered Laplace distribution
+ *
+ * Belongs to exponential family
+ */
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT CenteredAsymmetricLaplaceRand : public AsymmetricLaplaceDistribution<RealType>,
+                                                           public ContinuousExponentialFamily<RealType, DoublePair>
+{
+public:
+    CenteredAsymmetricLaplaceRand(double scale = 1, double asymmetry = 1) :
+        AsymmetricLaplaceDistribution<RealType>(0.0, scale, asymmetry) {}
+};
+
+
+/**
+ * @brief The ShiftedAsymmetricLaplaceDistribution class <BR>
+ * Abstract parent class for shifted Laplace and Asymmetric Laplace distributions
+ */
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT ShiftedAsymmetricLaplaceDistribution : public AsymmetricLaplaceDistribution<RealType>
+{
+public:
+    ShiftedAsymmetricLaplaceDistribution(double shift = 0, double scale = 1, double asymmetry = 1) :
+        AsymmetricLaplaceDistribution<RealType>(shift, scale, asymmetry) {}
+    using GeneralGeometricStableDistribution<RealType>::SetShift;
+    inline double GetShift() const { return this->m; }
+
+    void FitShift(const std::vector<RealType> &sample);
 protected:
     void FitShiftAndScale(const std::vector<RealType> &sample);
 };
@@ -60,15 +89,16 @@ protected:
  * X - m ~ GS(2, β, γ, γ(1 - κ^2) / κ) with arbitrary β
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT AsymmetricLaplaceRand : public AsymmetricLaplaceDistribution<RealType>
+class RANDLIBSHARED_EXPORT AsymmetricLaplaceRand : public ShiftedAsymmetricLaplaceDistribution<RealType>
 {
 public:
-    AsymmetricLaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1) : AsymmetricLaplaceDistribution<RealType>(shift, scale, asymmetry) {}
+    AsymmetricLaplaceRand(double shift = 0, double scale = 1, double asymmetry = 1) :
+        ShiftedAsymmetricLaplaceDistribution<RealType>(shift, scale, asymmetry) {}
     String Name() const override;
     void SetAsymmetry(double asymmetry);
     static RealType StandardVariate(double asymmetry, RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
 
-    using AsymmetricLaplaceDistribution<RealType>::FitShiftAndScale;
+    using ShiftedAsymmetricLaplaceDistribution<RealType>::FitShiftAndScale;
 
 private:
     DoublePair getOneSidedSums(const std::vector<RealType> &sample);
@@ -88,10 +118,11 @@ public:
  * X - m ~ GS(2, β, γ, 0) with arbitrary β
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT LaplaceRand : public AsymmetricLaplaceDistribution<RealType>
+class RANDLIBSHARED_EXPORT LaplaceRand : public ShiftedAsymmetricLaplaceDistribution<RealType>
 {
 public:
-    LaplaceRand(double shift = 0, double scale = 1) : AsymmetricLaplaceDistribution<RealType>(shift, scale, 1.0) {}
+    LaplaceRand(double shift = 0, double scale = 1) :
+        ShiftedAsymmetricLaplaceDistribution<RealType>(shift, scale, 1.0) {}
     String Name() const override;
     static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
     void Fit(const std::vector<RealType> &sample) { this->FitShiftAndScale(sample); }

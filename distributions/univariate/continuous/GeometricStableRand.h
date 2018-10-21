@@ -4,12 +4,12 @@
 #include "StableRand.h"
 
 /**
- * @brief The ShiftedGeometricStableDistribution class
- * Abstract class that unites in itself Asymmetric Laplace
+ * @brief The GeneralGeometricStableDistribution class
+ * Abstract class for general interface of Asymmetric Laplace
  * and Geometric-Stable distributions
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT ShiftedGeometricStableDistribution : public ContinuousDistribution<RealType>
+class RANDLIBSHARED_EXPORT GeneralGeometricStableDistribution : public ContinuousDistribution<RealType>
 {
     StableRand<RealType> Z{};
 
@@ -29,8 +29,8 @@ protected:
     double log1pKappaSq = M_LN2; ///< log(1 + κ^2)
     double logKappa = 0; /// log(κ)
 
-    ShiftedGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
-    virtual ~ShiftedGeometricStableDistribution() {}
+    GeneralGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
+    virtual ~GeneralGeometricStableDistribution() {}
 
     void SetParameters(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.);
     void SetLocation(double location);
@@ -119,7 +119,7 @@ protected:
  * If X ~ Laplace(m, γ, κ), then X - m ~ GS(2, β, γ, (1/κ - κ) * γ) with arbitrary β
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution<RealType>
+class RANDLIBSHARED_EXPORT GeometricStableRand : public GeneralGeometricStableDistribution<RealType>
 {
 public:
     GeometricStableRand(double exponent = 2, double skewness = 0, double scale = M_SQRT2, double location = 0);

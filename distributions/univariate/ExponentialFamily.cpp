@@ -1,6 +1,12 @@
 #include "ExponentialFamily.h"
 
 template< typename T, typename P >
+P ExponentialFamily<T, P>::NaturalParameters() const {
+    P sourceParameters = SourceParameters();
+    return SourceToNatural(sourceParameters);
+}
+
+template< typename T, typename P >
 double ExponentialFamily<T, P>::ProbabilityMeasure(T x) const
 {
     return std::exp(LogProbabilityMeasure(x));
@@ -9,7 +15,7 @@ double ExponentialFamily<T, P>::ProbabilityMeasure(T x) const
 template< typename T, typename P >
 double ExponentialFamily<T, P>::LogProbabilityMeasure(T x) const
 {
-    P theta = this->ThetaP();
+    P theta = this->NaturalParameters();
     P t = this->SufficientStatistic(x);
     double y = t * theta;
     y -= this->LogNormalizer(theta);
@@ -28,8 +34,8 @@ double ExponentialFamily<T, P>::KullbackLeiblerDivergence(P parameters) const
 template< typename T, typename P >
 double ExponentialFamily<T, P>::CrossEntropyAdjusted(P parameters) const
 {
-    P theta_p = this->ThetaP();
-    P theta_q = this->NaturalParameters(parameters);
+    P theta_p = this->NaturalParameters();
+    P theta_q = this->SourceToNatural(parameters);
     double H = this->LogNormalizer(theta_q);
     P grad = this->LogNormalizerGradient(theta_p);
     H -= theta_q * grad;
@@ -39,8 +45,8 @@ double ExponentialFamily<T, P>::CrossEntropyAdjusted(P parameters) const
 template< typename T, typename P >
 double ExponentialFamily<T, P>::EntropyAdjusted() const
 {
-    P theta_p = this->ThetaP();
-    return CrossEntropyAdjusted(theta_p);
+    P sourceParameters = this->SourceParameters();
+    return CrossEntropyAdjusted(sourceParameters);
 }
 
 

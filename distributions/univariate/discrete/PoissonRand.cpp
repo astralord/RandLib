@@ -68,13 +68,13 @@ double PoissonRand<IntType>::SourceParameters() const
 }
 
 template < typename IntType >
-double PoissonRand<IntType>::NaturalParameters(double sourceParameters) const
+double PoissonRand<IntType>::SourceToNatural(double sourceParameters) const
 {
     return std::log(sourceParameters);
 }
 
 template < typename IntType >
-double PoissonRand<IntType>::ThetaP() const
+double PoissonRand<IntType>::NaturalParameters() const
 {
     return logLambda;
 }

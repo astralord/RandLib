@@ -5,13 +5,13 @@
 #include "CauchyRand.h"
 
 template < typename RealType >
-ShiftedGeometricStableDistribution<RealType>::ShiftedGeometricStableDistribution(double exponent, double skewness, double scale, double location, double shift)
+GeneralGeometricStableDistribution<RealType>::GeneralGeometricStableDistribution(double exponent, double skewness, double scale, double location, double shift)
 {
     SetParameters(exponent, skewness, scale, location, shift);
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location, double shift)
+void GeneralGeometricStableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location, double shift)
 {
     if (exponent < 0.1 || exponent > 2.0)
         throw std::invalid_argument("Geometric-Stable distribution: exponent should be inside the interval [0.1, 2], but it's equal to "
@@ -41,19 +41,19 @@ void ShiftedGeometricStableDistribution<RealType>::SetParameters(double exponent
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::SetLocation(double location)
+void GeneralGeometricStableDistribution<RealType>::SetLocation(double location)
 {
     mu = location;
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::SetShift(double shift)
+void GeneralGeometricStableDistribution<RealType>::SetShift(double shift)
 {
     m = shift;
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::SetScale(double scale)
+void GeneralGeometricStableDistribution<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Asymmetric-Laplace distribution: scale should be positive, but it's equal to "
@@ -63,7 +63,7 @@ void ShiftedGeometricStableDistribution<RealType>::SetScale(double scale)
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::SetAsymmetry(double asymmetry)
+void GeneralGeometricStableDistribution<RealType>::SetAsymmetry(double asymmetry)
 {
     if (asymmetry <= 0.0)
         throw std::invalid_argument("Asymmetric-Laplace distribution: asymmetry parameter should be positive, but it's equal to "
@@ -76,7 +76,7 @@ void ShiftedGeometricStableDistribution<RealType>::SetAsymmetry(double asymmetry
 }
 
 template < typename RealType >
-SUPPORT_TYPE ShiftedGeometricStableDistribution<RealType>::SupportType() const
+SUPPORT_TYPE GeneralGeometricStableDistribution<RealType>::SupportType() const
 {
     if (alpha < 1) {
         if (beta == 1 && mu >= 0)
@@ -88,7 +88,7 @@ SUPPORT_TYPE ShiftedGeometricStableDistribution<RealType>::SupportType() const
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::MinValue() const
+RealType GeneralGeometricStableDistribution<RealType>::MinValue() const
 {
     if (alpha < 1 && beta == 1 && mu >= 0)
         return m;
@@ -96,7 +96,7 @@ RealType ShiftedGeometricStableDistribution<RealType>::MinValue() const
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::MaxValue() const
+RealType GeneralGeometricStableDistribution<RealType>::MaxValue() const
 {
     if (alpha < 1 && beta == -1 && mu <= 0)
         return m;
@@ -104,13 +104,13 @@ RealType ShiftedGeometricStableDistribution<RealType>::MaxValue() const
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::pdfLaplace(double x) const
+double GeneralGeometricStableDistribution<RealType>::pdfLaplace(double x) const
 {
     return std::exp(logpdfLaplace(x));
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::logpdfLaplace(double x) const
+double GeneralGeometricStableDistribution<RealType>::logpdfLaplace(double x) const
 {
     double y = x / gamma;
     y *= (x < 0) ? kappaInv : -kappa;
@@ -118,7 +118,7 @@ double ShiftedGeometricStableDistribution<RealType>::logpdfLaplace(double x) con
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::cdfLaplace(double x) const
+double GeneralGeometricStableDistribution<RealType>::cdfLaplace(double x) const
 {
     double y = x / gamma;
     if (x < 0) {
@@ -130,7 +130,7 @@ double ShiftedGeometricStableDistribution<RealType>::cdfLaplace(double x) const
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::cdfLaplaceCompl(double x) const
+double GeneralGeometricStableDistribution<RealType>::cdfLaplaceCompl(double x) const
 {
     double y = x / gamma;
     if (x < 0) {
@@ -142,7 +142,7 @@ double ShiftedGeometricStableDistribution<RealType>::cdfLaplaceCompl(double x) c
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::pdfByLevy(double x) const
+double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
 {
     if (mu == 0) {
         /// Invert parameter for case of -Levy
@@ -217,7 +217,7 @@ double ShiftedGeometricStableDistribution<RealType>::pdfByLevy(double x) const
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
+double GeneralGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
 {
     // TODO: find analytical solution, maybe using residue technique
     // otherwise, use peak, which is t = exp(x / sqrt(mu^2 + sigma^2))
@@ -238,10 +238,10 @@ double ShiftedGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::f(const RealType &x) const
+double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
 {
     double x0 = x - m;
-    /// Cut zeros for half-infinite distribution
+    /// Cut zeros for semi-infinite distribution
     if (alpha < 1 && std::fabs(beta) == 1) {
         if (x0 < 0 && mu >= 0 && beta > 0)
             return 0.0;
@@ -249,7 +249,7 @@ double ShiftedGeometricStableDistribution<RealType>::f(const RealType &x) const
             return 0.0;
     }
 
-    /// Check if analytical expression is known
+    /// Verify if any of analytical expressions is applicable
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
         return pdfLaplace(x0);
     if (distributionType == CAUCHY)
@@ -281,13 +281,13 @@ double ShiftedGeometricStableDistribution<RealType>::f(const RealType &x) const
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::logf(const RealType & x) const
+double GeneralGeometricStableDistribution<RealType>::logf(const RealType & x) const
 {
     return (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) ? logpdfLaplace(x - m) : std::log(f(x));
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::F(const RealType &x) const
+double GeneralGeometricStableDistribution<RealType>::F(const RealType &x) const
 {
     double x0 = x - m;
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
@@ -327,7 +327,7 @@ double ShiftedGeometricStableDistribution<RealType>::F(const RealType &x) const
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::variateForUnityExponent(double z) const
+double GeneralGeometricStableDistribution<RealType>::variateForUnityExponent(double z) const
 {
     double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = z + 2 * beta * std::log(gamma * W) / M_PI;
@@ -337,7 +337,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateForUnityExponent(dou
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::variateForGeneralExponent(double z) const
+double GeneralGeometricStableDistribution<RealType>::variateForGeneralExponent(double z) const
 {
     double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = std::pow(W, alphaInv) * gamma * z;
@@ -345,7 +345,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateForGeneralExponent(d
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::variateForOneHalfExponent(double z) const
+double GeneralGeometricStableDistribution<RealType>::variateForOneHalfExponent(double z) const
 {
     double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = mu + gamma * W * z;
@@ -353,7 +353,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateForOneHalfExponent(d
 }
 
 template < typename RealType >
-double ShiftedGeometricStableDistribution<RealType>::variateByCauchy(double z) const
+double GeneralGeometricStableDistribution<RealType>::variateByCauchy(double z) const
 {
     double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     double X = mu + gamma * z;
@@ -361,7 +361,7 @@ double ShiftedGeometricStableDistribution<RealType>::variateByCauchy(double z) c
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::Variate() const
+RealType GeneralGeometricStableDistribution<RealType>::Variate() const
 {
     switch (distributionType) {
     case LAPLACE:
@@ -383,7 +383,7 @@ RealType ShiftedGeometricStableDistribution<RealType>::Variate() const
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::Sample(std::vector<RealType> &outputData) const
+void GeneralGeometricStableDistribution<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     switch (distributionType) {
     case LAPLACE: {
@@ -427,13 +427,13 @@ void ShiftedGeometricStableDistribution<RealType>::Sample(std::vector<RealType> 
 }
 
 template < typename RealType >
-void ShiftedGeometricStableDistribution<RealType>::Reseed(unsigned long seed) const
+void GeneralGeometricStableDistribution<RealType>::Reseed(unsigned long seed) const
 {
     Z.Reseed(seed);
 }
 
 template < typename RealType >
-long double ShiftedGeometricStableDistribution<RealType>::Mean() const
+long double GeneralGeometricStableDistribution<RealType>::Mean() const
 {
     if (alpha > 1)
         return m + mu;
@@ -443,7 +443,7 @@ long double ShiftedGeometricStableDistribution<RealType>::Mean() const
 }
 
 template < typename RealType >
-long double ShiftedGeometricStableDistribution<RealType>::Variance() const
+long double GeneralGeometricStableDistribution<RealType>::Variance() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
         return mu * mu + 2 * gamma * gamma;
@@ -451,7 +451,7 @@ long double ShiftedGeometricStableDistribution<RealType>::Variance() const
 }
 
 template < typename RealType >
-std::complex<double> ShiftedGeometricStableDistribution<RealType>::CFImpl(double t) const
+std::complex<double> GeneralGeometricStableDistribution<RealType>::CFImpl(double t) const
 {
     double x = 0;
     if (alpha != 2 && beta != 0) {
@@ -464,7 +464,7 @@ std::complex<double> ShiftedGeometricStableDistribution<RealType>::CFImpl(double
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::Median() const
+RealType GeneralGeometricStableDistribution<RealType>::Median() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
         return quantileLaplace(0.5);
@@ -472,7 +472,7 @@ RealType ShiftedGeometricStableDistribution<RealType>::Median() const
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::Mode() const
+RealType GeneralGeometricStableDistribution<RealType>::Mode() const
 {
     // TODO: calculate mode for more cases
     if (alpha == 1 || alpha == 2)
@@ -481,7 +481,7 @@ RealType ShiftedGeometricStableDistribution<RealType>::Mode() const
 }
 
 template < typename RealType >
-long double ShiftedGeometricStableDistribution<RealType>::Skewness() const
+long double GeneralGeometricStableDistribution<RealType>::Skewness() const
 {
     if (distributionType != LAPLACE && distributionType != ASYMMETRIC_LAPLACE)
         return NAN;
@@ -494,7 +494,7 @@ long double ShiftedGeometricStableDistribution<RealType>::Skewness() const
 }
 
 template < typename RealType >
-long double ShiftedGeometricStableDistribution<RealType>::ExcessKurtosis() const
+long double GeneralGeometricStableDistribution<RealType>::ExcessKurtosis() const
 {
     if (distributionType != LAPLACE && distributionType != ASYMMETRIC_LAPLACE)
         return NAN;
@@ -504,7 +504,7 @@ long double ShiftedGeometricStableDistribution<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace(double p) const
+RealType GeneralGeometricStableDistribution<RealType>::quantileLaplace(double p) const
 {
     if (p < kappaSq / (1 + kappaSq)) {
         RealType q = p / kappaSq + p;
@@ -521,7 +521,7 @@ RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace(double p)
 }
 
 template < typename RealType >
-RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace1m(double p) const
+RealType GeneralGeometricStableDistribution<RealType>::quantileLaplace1m(double p) const
 {
     if (p > 1.0 / (1 + kappaSq)) {
         RealType pm1 = p - 1.0;
@@ -538,13 +538,13 @@ RealType ShiftedGeometricStableDistribution<RealType>::quantileLaplace1m(double 
     }
 }
 
-template class ShiftedGeometricStableDistribution<float>;
-template class ShiftedGeometricStableDistribution<double>;
-template class ShiftedGeometricStableDistribution<long double>;
+template class GeneralGeometricStableDistribution<float>;
+template class GeneralGeometricStableDistribution<double>;
+template class GeneralGeometricStableDistribution<long double>;
 
 template < typename RealType >
 GeometricStableRand<RealType>::GeometricStableRand(double exponent, double skewness, double scale, double location)
-    : ShiftedGeometricStableDistribution<RealType>(exponent, skewness, scale, location)
+    : GeneralGeometricStableDistribution<RealType>(exponent, skewness, scale, location)
 {
     ChangeAsymmetry();
 }
@@ -574,21 +574,21 @@ void GeometricStableRand<RealType>::ChangeAsymmetry()
 template < typename RealType >
 void GeometricStableRand<RealType>::SetParameters(double exponent, double skewness)
 {
-    ShiftedGeometricStableDistribution<RealType>::SetParameters(exponent, skewness);
+    GeneralGeometricStableDistribution<RealType>::SetParameters(exponent, skewness);
     ChangeAsymmetry();
 }
 
 template < typename RealType >
 void GeometricStableRand<RealType>::SetLocation(double location)
 {
-    ShiftedGeometricStableDistribution<RealType>::SetLocation(location);
+    GeneralGeometricStableDistribution<RealType>::SetLocation(location);
     ChangeAsymmetry();
 }
 
 template < typename RealType >
 void GeometricStableRand<RealType>::SetScale(double scale)
 {
-    ShiftedGeometricStableDistribution<RealType>::SetScale(scale);
+    GeneralGeometricStableDistribution<RealType>::SetScale(scale);
     ChangeAsymmetry();
 }
 

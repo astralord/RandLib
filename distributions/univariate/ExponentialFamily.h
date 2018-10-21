@@ -12,11 +12,8 @@ public:
 
     virtual P SufficientStatistic(T x) const = 0;
     virtual P SourceParameters() const = 0;
-    virtual P NaturalParameters(P sourceParameters) const = 0;
-    virtual P ThetaP() const {
-        P sourceParameters = SourceParameters();
-        return NaturalParameters(sourceParameters);
-    }
+    virtual P SourceToNatural(P sourceParameters) const = 0;
+    virtual P NaturalParameters() const;
 
     virtual double LogNormalizer(P theta) const = 0;
     virtual P LogNormalizerGradient(P theta) const = 0;

@@ -42,8 +42,8 @@ public:
 
     virtual double SufficientStatistic(IntType x) const override;
     virtual double SourceParameters() const override;
-    virtual double NaturalParameters(double sourceParameters) const override;
-    virtual double ThetaP() const override;
+    virtual double SourceToNatural(double sourceParameters) const override;
+    virtual double NaturalParameters() const override;
     virtual double LogNormalizer(double theta) const override;
     virtual double LogNormalizerGradient(double theta) const override;
     virtual double CarrierMeasure(IntType x) const override;
