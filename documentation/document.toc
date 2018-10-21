@@ -81,15 +81,16 @@
 \contentsline {subparagraph}{Frequentist inference.}{39}
 \contentsline {subparagraph}{Bayesian inference.}{39}
 \contentsline {section}{\numberline {23}Skellam distribution}{41}
-\contentsline {section}{\numberline {24}Yule distribution}{42}
-\contentsline {section}{\numberline {25}Zeta distribution}{43}
-\contentsline {section}{\numberline {26}Zipf distribution}{44}
-\contentsline {part}{IV\hspace {1em}Bivariate distributions}{45}
-\contentsline {section}{\numberline {27}Bivariate Normal distribution}{45}
-\contentsline {section}{\numberline {28}Normal-Inverse-Gamma distribution}{45}
-\contentsline {section}{\numberline {29}Trinomial distribution}{45}
-\contentsline {part}{V\hspace {1em}Circular distributions}{46}
-\contentsline {section}{\numberline {30}von Mises distribution}{46}
-\contentsline {section}{\numberline {31}Wrapped Exponential distribution}{46}
-\contentsline {part}{VI\hspace {1em}Singular distributions}{47}
-\contentsline {section}{\numberline {32}Cantor distribution}{47}
+\contentsline {section}{\numberline {24}Uniform discrete distribution}{42}
+\contentsline {section}{\numberline {25}Yule distribution}{43}
+\contentsline {section}{\numberline {26}Zeta distribution}{44}
+\contentsline {section}{\numberline {27}Zipf distribution}{45}
+\contentsline {part}{IV\hspace {1em}Bivariate distributions}{46}
+\contentsline {section}{\numberline {28}Bivariate Normal distribution}{46}
+\contentsline {section}{\numberline {29}Normal-Inverse-Gamma distribution}{46}
+\contentsline {section}{\numberline {30}Trinomial distribution}{46}
+\contentsline {part}{V\hspace {1em}Circular distributions}{47}
+\contentsline {section}{\numberline {31}von Mises distribution}{47}
+\contentsline {section}{\numberline {32}Wrapped Exponential distribution}{47}
+\contentsline {part}{VI\hspace {1em}Singular distributions}{48}
+\contentsline {section}{\numberline {33}Cantor distribution}{48}

@@ -27,12 +27,6 @@ void ZetaRand<IntType>::SetExponent(double exponent)
 }
 
 template < typename IntType >
-double ZetaRand<IntType>::P(const IntType &k) const
-{
-    return (k < 1) ? 0.0 : std::exp(logP(k));
-}
-
-template < typename IntType >
 double ZetaRand<IntType>::logP(const IntType & k) const
 {
     return (k < 1) ? -INFINITY : -logZetaS - s * std::log(k);

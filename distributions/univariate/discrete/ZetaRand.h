@@ -31,7 +31,6 @@ public:
     void SetExponent(double exponent);
     inline double GetExponent() const { return s; }
 
-    double P(const IntType & k) const override;
     double logP(const IntType & k) const override;
     double F(const IntType & k) const override;
     IntType Variate() const override;

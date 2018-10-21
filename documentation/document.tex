@@ -380,6 +380,7 @@
 		\end{tabular}
 	\end{minipage}
 \end{figure}
+    Relation to other distribution: if $X \sim \mathcal{N}(\mu, \sigma^2)$ and $Y \sim \operatorname{Exp}(\lambda)$, then $X + Y \sim \operatorname{EMG}(\mu, \sigma, \lambda)$.
 	
 	
 	\pagebreak
@@ -1453,11 +1454,114 @@ MAP estimator:
 	\]
 	
 	\pagebreak
+	\section{Uniform discrete distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{uniform_discrete_pmf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{uniform_discrete_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $ X \sim \operatorname{U}\{a, \dots, b\} $ \\
+				\hline
+				Parameters & $a, b \in \MR, a \leq b$ \\
+				\hline
+				Domain & $ k \in \{a, \dots, b\} $  \\
+				\hline
+				$\MP(X = k)$ & $\frac{1}{n} $, where $n=b-a+1$. \\
+				\hline
+				$\MP(X \leq k)$ & $\frac{k-a+1}{n}$ \\
+				\hline
+				$\ME[X]$ & $ \frac{a+b}{2} $ \\
+				\hline
+				$\Var(X)$ & $ \frac{(n-1)(n+1)}{12}$\\
+				\hline
+				Median & $\frac{a+b}{2}$ \\
+				\hline
+				Mode & Any value between $a$ and $b$ \\
+				\hline
+				$\phi(t)$ & $\frac{\cos(at)-\cos((b+1)t)+i(\sin(at)-\sin((b+1)t))}{n(1-\cos(t)-i\sin(t))}$ \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+	
+	\pagebreak
 	\section{Yule distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{yule_pmf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{yule_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $ X \sim \operatorname{Yule}(\rho) $ \\
+				\hline
+				Parameters & $\rho \in \MR^+$ \\
+				\hline
+				Domain & $ k \in \MN $  \\
+				\hline
+				$\MP(X = k)$ & $\rho \frac{ \Gamma(1+\rho) (k-1)! } {\Gamma(k+\rho+1)} $ \\
+				\hline
+				$\MP(X \leq k)$ & $1-k \frac{ \Gamma(1+\rho) (k-1)! } {\Gamma(k+\rho+1)} $ \\
+				\hline
+				$\ME[X]$ & \pbox{\linewidth}{$ \frac{\rho}{\rho - 1}$, $\rho > 1$ \\ $\infty$, otherwise } \\
+				\hline
+				$\Var(X)$ & \pbox{\linewidth}{$ \frac{\rho^2}{(\rho - 1)^2(\rho-2)}$, $\rho > 2$ \\ $\infty$, otherwise } \\
+				\hline
+				Median & Searched numerically \\
+				\hline
+				Mode & $1 $ \\
+				\hline
+				$\phi(t)$ & Calculated numerically \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+	Relation to other distributions: if $X \sim \operatorname{Pareto}(\alpha, 1)$, then $\operatorname{Geometric}(1/X) \sim \operatorname{Yule}(\alpha)$.
 	
 	\pagebreak
 	\section{Zeta distribution}
-	
+		\begin{figure}[!htb]\centering
+			\begin{minipage}{0.55\textwidth}
+				\includegraphics[width=\linewidth, right]{zeta_pmf}
+				\captionsetup{labelformat=empty}
+				\includegraphics[width=\linewidth, right]{zeta_cdf}
+				\captionsetup{labelformat=empty}
+			\end{minipage}
+			\begin{minipage}{0.4\textwidth}
+				\begin{tabular}{| r | l |}
+					\hline
+					Notation & $ X \sim \operatorname{Zeta}(s) $ \\
+					\hline
+					Parameters & $s > 1$ \\
+					\hline
+					Domain & $ k \in \MN $  \\
+					\hline
+					$\MP(X = k)$ & $ \frac{1}{\zeta(s) k^s} $ \\
+					\hline
+					$\MP(X \leq k)$ & $ \frac{H(s, k)}{\zeta(s)} $ \\
+					\hline
+					$\ME[X]$ & \pbox{\linewidth}{$ \frac{\zeta(s-1)}{\zeta(s)}$, $s > 2$ \\ $\infty$, otherwise } \\
+					\hline
+					$\Var(X)$ & \pbox{\linewidth}{$ \frac{\zeta(s-2)}{\zeta(s)} - (\ME[X])^2$, $\rho > 3$ \\ $\infty$, otherwise } \\
+					\hline
+					Median & Searched numerically \\
+					\hline
+					Mode & $1 $ \\
+					\hline
+					$\phi(t)$ & Calculated numerically \\
+					\hline
+				\end{tabular}
+			\end{minipage}
+		\end{figure}
+		
 	\pagebreak
 	\section{Zipf distribution}
 	

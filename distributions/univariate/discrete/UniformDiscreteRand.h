@@ -8,7 +8,7 @@
  * @brief The UniformDiscreteRand class <BR>
  * Uniform discrete distribution
  *
- * Notation: X ~ U(a, b)
+ * Notation: X ~ U{a, ..., b}
  *
  * P(X = k) = 1 / (b - a + 1) for a <= k <= b
  */

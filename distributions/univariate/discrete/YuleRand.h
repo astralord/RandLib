@@ -18,7 +18,7 @@
 template < typename IntType = int >
 class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution<IntType>
 {
-    double ro = 0; ///< shape ρ
+    double rho = 0; ///< shape ρ
     double lgamma1pRo = 0; /// log(Γ(1 + ρ))
     
     ParetoRand<double> X;
@@ -30,9 +30,8 @@ public:
     IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
     void SetShape(double shape);
-    inline double GetShape() const { return ro; }
+    inline double GetShape() const { return rho; }
 
-    double P(const IntType & k) const override;
     double logP(const IntType & k) const override;
     double F(const IntType & k) const override;
     double S(const IntType & k) const override;

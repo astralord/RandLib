@@ -18,15 +18,9 @@ void YuleRand<IntType>::SetShape(double shape)
 {
     if (shape <= 0.0)
         throw std::invalid_argument("Yule distribution: shape should be positive");
-    ro = shape;
-    lgamma1pRo = std::lgammal(ro + 1);
-    X.SetShape(ro);
-}
-
-template < typename IntType >
-double YuleRand<IntType>::P(const IntType & k) const
-{
-    return (k < 1) ? 0.0 : std::exp(logP(k));
+    rho = shape;
+    lgamma1pRo = std::lgammal(rho + 1);
+    X.SetShape(rho);
 }
 
 template < typename IntType >
@@ -36,7 +30,7 @@ double YuleRand<IntType>::logP(const IntType & k) const
         return -INFINITY;
     double y = lgamma1pRo;
     y += RandMath::lfact(k - 1);
-    y -= std::lgammal(k + ro + 1);
+    y -= std::lgammal(k + rho + 1);
     y += X.GetLogShape();
     return y;
 }
@@ -48,9 +42,9 @@ double YuleRand<IntType>::F(const IntType & k) const
         return 0.0;
     double y = lgamma1pRo;
     y += RandMath::lfact(k - 1);
-    y -= std::lgammal(k + ro + 1);
-    y = std::exp(y);
-    return 1.0 - k * y;
+    y -= std::lgammal(k + rho + 1);
+    double logk = std::log(k);
+    return -std::expm1(y + logk);
 }
 
 template < typename IntType >
@@ -60,7 +54,7 @@ double YuleRand<IntType>::S(const IntType & k) const
         return 1.0;
     double y = lgamma1pRo;
     y += RandMath::lfact(k - 1);
-    y -= std::lgammal(k + ro + 1);
+    y -= std::lgammal(k + rho + 1);
     y = std::exp(y);
     return k * y;
 }
@@ -91,16 +85,16 @@ void YuleRand<IntType>::Reseed(unsigned long seed) const
 template < typename IntType >
 long double YuleRand<IntType>::Mean() const
 {
-    return (ro <= 1) ? INFINITY : ro / (ro - 1);
+    return (rho <= 1) ? INFINITY : rho / (rho - 1);
 }
 
 template < typename IntType >
 long double YuleRand<IntType>::Variance() const
 {
-    if (ro <= 2)
+    if (rho <= 2)
         return INFINITY;
-    double aux = ro / (ro - 1);
-    return aux * aux / (ro - 2);
+    double aux = rho / (rho - 1);
+    return aux * aux / (rho - 2);
 }
 
 template < typename IntType >
@@ -112,24 +106,24 @@ IntType YuleRand<IntType>::Mode() const
 template < typename IntType >
 long double YuleRand<IntType>::Skewness() const
 {
-    if (ro <= 3)
+    if (rho <= 3)
         return INFINITY;
-    long double skewness = ro + 1;
+    long double skewness = rho + 1;
     skewness *= skewness;
-    skewness *= std::sqrt(ro - 2);
-    return skewness / (ro * (ro - 3));
+    skewness *= std::sqrt(rho - 2);
+    return skewness / (rho * (rho - 3));
 }
 
 template < typename IntType >
 long double YuleRand<IntType>::ExcessKurtosis() const
 {
-    if (ro <= 4)
+    if (rho <= 4)
         return INFINITY;
-    long double numerator = 11 * ro * ro - 49;
-    numerator *= ro;
+    long double numerator = 11 * rho * rho - 49;
+    numerator *= rho;
     numerator -= 22;
-    long double denominator = ro * (ro - 4) * (ro - 3);
-    return ro + 3 + numerator / denominator;
+    long double denominator = rho * (rho - 4) * (rho - 3);
+    return rho + 3 + numerator / denominator;
 }
 
 
