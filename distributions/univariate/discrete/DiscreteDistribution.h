@@ -103,7 +103,7 @@ public:
      * @param numberOfEstimatedParameters zero by default
      * @return true if sample is from this distribution according to Pearson's chi-squared test, false otherwise
      * In this function user won't set upper and lower intervals for tails.
-     * However it might be useful to group rare events for chi-squared test to give better results
+     * However it might be useful to group rare events for chi-squared test to achieve better results
      */
     bool PearsonChiSquaredTest(const std::vector<IntType> &orderStatistic, double alpha, size_t numberOfEstimatedParameters = 0) const;
 };

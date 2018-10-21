@@ -16,7 +16,7 @@
  * X ~ Multin(n, 1 - p, p)
  */
 template< typename IntType = int >
-class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution<IntType>
+class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteExponentialFamily<IntType, double>
 {
 protected:
     double p = 0.5; ///< probability of success
@@ -62,6 +62,14 @@ protected:
 public:
     inline IntType GetNumber() const { return n; }
     inline double GetProbability() const { return p; }
+
+    double SufficientStatistic(IntType x) const override;
+    double SourceParameters() const override;
+    double SourceToNatural(double sourceParameters) const override;
+    double NaturalParameters() const override;
+    double LogNormalizer(double theta) const override;
+    double LogNormalizerGradient(double theta) const override;
+    double CarrierMeasure(IntType x) const override;
 
 private:
     /**

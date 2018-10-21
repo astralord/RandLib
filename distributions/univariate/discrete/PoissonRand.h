@@ -40,15 +40,15 @@ public:
     void SetRate(double rate);
     inline double GetRate() const { return lambda; }
 
-    virtual double SufficientStatistic(IntType x) const override;
-    virtual double SourceParameters() const override;
-    virtual double SourceToNatural(double sourceParameters) const override;
-    virtual double NaturalParameters() const override;
-    virtual double LogNormalizer(double theta) const override;
-    virtual double LogNormalizerGradient(double theta) const override;
-    virtual double CarrierMeasure(IntType x) const override;
-    virtual double CrossEntropyAdjusted(double parameters) const override;
-    virtual double EntropyAdjusted() const override;
+    double SufficientStatistic(IntType x) const override;
+    double SourceParameters() const override;
+    double SourceToNatural(double sourceParameters) const override;
+    double NaturalParameters() const override;
+    double LogNormalizer(double theta) const override;
+    double LogNormalizerGradient(double theta) const override;
+    double CarrierMeasure(IntType x) const override;
+    double CrossEntropyAdjusted(double parameters) const override;
+    double EntropyAdjusted() const override;
 
     double logP(const IntType &k) const override;
     double F(const IntType & k) const override;

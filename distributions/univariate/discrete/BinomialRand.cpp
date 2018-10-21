@@ -94,6 +94,53 @@ void BinomialDistribution<IntType>::SetParameters(IntType number, double probabi
 }
 
 template< typename IntType >
+double BinomialDistribution<IntType>::SufficientStatistic(IntType x) const
+{
+    return x;
+}
+
+template< typename IntType >
+double BinomialDistribution<IntType>::SourceParameters() const
+{
+    return this->p;
+}
+
+template< typename IntType >
+double BinomialDistribution<IntType>::SourceToNatural(double sourceParameters) const
+{
+    return std::log(sourceParameters) - std::log1p(-sourceParameters);
+}
+
+template< typename IntType >
+double BinomialDistribution<IntType>::NaturalParameters() const
+{
+    return this->logProb - this->log1mProb;
+}
+
+template< typename IntType >
+double BinomialDistribution<IntType>::LogNormalizer(double theta) const
+{
+    double F = n * RandMath::log1pexp(theta);
+    F -= this->lfactn;
+    return F;
+}
+
+template< typename IntType >
+double BinomialDistribution<IntType>::LogNormalizerGradient(double theta) const
+{
+    double expTheta = std::exp(theta);
+    return this->n * expTheta / (1.0 + expTheta);
+}
+
+template< typename IntType >
+double BinomialDistribution<IntType>::CarrierMeasure(IntType x) const
+{
+    double k = -RandMath::lfact(x);
+    k -= RandMath::lfact(n - x);
+    return k;
+}
+
+template< typename IntType >
 double BinomialDistribution<IntType>::logProbFloor(int k) const
 {
     double y = lfactn;
