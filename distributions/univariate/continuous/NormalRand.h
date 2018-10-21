@@ -48,7 +48,8 @@ class RANDLIBSHARED_EXPORT NormalZiggurat {
  * X ~ S(2, 0, σ/√2, μ)
  */
 template < typename RealType = double>
-class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>
+class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>,
+                                        public ContinuousExponentialFamily<RealType, DoublePair>
 {
     double sigma = 1; ///< scale σ
 
@@ -77,6 +78,15 @@ public:
      */
     inline double GetPrecision() const { return 1.0 / this->Variance(); }
 
+    DoublePair SufficientStatistic(RealType x) const override;
+    DoublePair SourceParameters() const override;
+    DoublePair SourceToNatural(DoublePair sourceParameters) const override;
+    double LogNormalizer(DoublePair theta) const override;
+    DoublePair LogNormalizerGradient(DoublePair theta) const override;
+    double CarrierMeasure(RealType) const override;
+
+    double f(const RealType &x) const override;
+    double logf(const RealType &x) const override;
     double F(const RealType & x) const override;
     double S(const RealType & x) const override;
     RealType Variate() const override;
@@ -93,8 +103,6 @@ public:
     long double Moment(size_t n) const;
     long double ThirdMoment() const override { return Moment(3); }
     long double FourthMoment() const override { return Moment(4); }
-
-    double KullbackLeiblerDivergence(const NormalRand &Y);
 
     /**
      * @fn FitLocation

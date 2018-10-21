@@ -36,6 +36,62 @@ void NormalRand<RealType>::SetVariance(double variance)
 }
 
 template < typename RealType >
+DoublePair NormalRand<RealType>::SufficientStatistic(RealType x) const
+{
+    return {x, x * x};
+}
+
+template < typename RealType >
+DoublePair NormalRand<RealType>::SourceParameters() const
+{
+    return {this->mu, this->sigma * this->sigma};
+}
+
+template < typename RealType >
+DoublePair NormalRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
+{
+    double mean = sourceParameters.first;
+    double scaleSq = sourceParameters.second;
+    return {mean / scaleSq, -0.5 / scaleSq};
+}
+
+template < typename RealType >
+double NormalRand<RealType>::LogNormalizer(DoublePair theta) const
+{
+    double theta1 = theta.first, theta2 = theta.second;
+    double F = -0.25 * theta1 * theta1 / theta2;
+    F += 0.5 * std::log(-M_PI / theta2);
+    return F;
+}
+
+template < typename RealType >
+DoublePair NormalRand<RealType>::LogNormalizerGradient(DoublePair theta) const
+{
+    double theta1 = theta.first, theta2 = theta.second;
+    double grad1 = -0.5 * theta1 / theta2;
+    double grad2 = -0.5 / theta2 + grad1 * grad1;
+    return {grad1, grad2};
+}
+
+template < typename RealType >
+double NormalRand<RealType>::CarrierMeasure(RealType) const
+{
+    return 0.0;
+}
+
+template < typename RealType >
+double NormalRand<RealType>::f(const RealType &x) const
+{
+    return this->pdfNormal(x);
+}
+
+template < typename RealType >
+double NormalRand<RealType>::logf(const RealType &x) const
+{
+    return this->logpdfNormal(x);
+}
+
+template < typename RealType >
 double NormalRand<RealType>::F(const RealType & x) const
 {
     return this->cdfNormal(x);
@@ -121,18 +177,6 @@ long double NormalRand<RealType>::Moment(size_t n) const
     if (n == 0)
         return 1;
     return (n & 1) ? std::exp(n * this->GetLogScale() + RandMath::ldfact(n - 1)) : 0.0;
-}
-
-template < typename RealType >
-double NormalRand<RealType>::KullbackLeiblerDivergence(const NormalRand &Y)
-{
-    double divLogVar = Y.GetLogScale() - this->GetLogScale();
-    double divMean = Y.Mean() - this->Mean();
-    double div = (divMean * divMean + this->GetScale()) / Y.GetScale();
-    --div;
-    div *= 0.5;
-    div += divLogVar;
-    return div;
 }
 
 template < typename RealType >

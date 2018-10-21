@@ -15,7 +15,7 @@
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
 template < typename RealType = double>
-class RANDLIBSHARED_EXPORT StableDistribution : public ContinuousDistribution<RealType>
+class RANDLIBSHARED_EXPORT StableDistribution : virtual public ContinuousDistribution<RealType>
 {
 protected:
     double alpha = 2; ///< characteristic exponent α

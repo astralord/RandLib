@@ -9,7 +9,7 @@
  * Abstract class for all discrete distributions
  */
 template < typename IntType >
-class RANDLIBSHARED_EXPORT DiscreteDistribution : public virtual UnivariateDistribution<IntType>
+class RANDLIBSHARED_EXPORT DiscreteDistribution : virtual public UnivariateDistribution<IntType>
 {
     static_assert(std::is_integral_v<IntType> && std::is_signed_v<IntType>, "Discrete distribution supports only signed integral types");
 
@@ -88,7 +88,7 @@ public:
      * @param numberOfEstimatedParameters zero by default
      * @return true if sample is from this distribution according to Pearson's chi-squared test, false otherwise
      *
-     * We wrote chi-squared test only for discrete distribution, as this is much more complicated for continuous one.
+     * Chi-squared test is implemented only for discrete distribution, as it is much more complicated for continuous one.
      * The problem is ambiguity of grouping sample into intervals. In the case when parameters are estimated by
      * maximum-likelihood estimator, using original observations, statistics might not follow asymptotic chi-square
      * distribution and that leads to serious underestimate of the error of the first kind.
@@ -111,7 +111,8 @@ public:
 
 
 template < typename IntType, typename P >
-class RANDLIBSHARED_EXPORT DiscreteExponentialFamily : public ExponentialFamily<IntType, P>, public DiscreteDistribution<IntType>
+class RANDLIBSHARED_EXPORT DiscreteExponentialFamily : public ExponentialFamily<IntType, P>,
+                                                       virtual public DiscreteDistribution<IntType>
 {
 public:
     virtual double logP(const IntType & x) const {

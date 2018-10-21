@@ -9,7 +9,7 @@
  * Abstract class for all continuous distributions
  */
 template < typename RealType >
-class RANDLIBSHARED_EXPORT ContinuousDistribution : public virtual UnivariateDistribution<RealType>
+class RANDLIBSHARED_EXPORT ContinuousDistribution : virtual public UnivariateDistribution<RealType>
 {
     static_assert(std::is_floating_point_v<RealType>, "Continuous distribution supports only floating-point types");
 
@@ -73,7 +73,8 @@ public:
 
 
 template < typename RealType, typename P >
-class RANDLIBSHARED_EXPORT ContinuousExponentialFamily : public ExponentialFamily<RealType, P>, public ContinuousDistribution<RealType>
+class RANDLIBSHARED_EXPORT ContinuousExponentialFamily : public ExponentialFamily<RealType, P>,
+                                                         virtual public ContinuousDistribution<RealType>
 {
 public:
     virtual double logf(const RealType & x) const {
