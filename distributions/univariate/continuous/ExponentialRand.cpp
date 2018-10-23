@@ -9,6 +9,42 @@ String ExponentialRand<RealType>::Name() const
 }
 
 template < typename RealType >
+double ExponentialRand<RealType>::SufficientStatistic(RealType x) const
+{
+    return x;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::SourceParameters() const
+{
+    return -this->beta;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::SourceToNatural(double rate) const
+{
+    return -rate;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::LogNormalizer(double thetaP) const
+{
+    return -std::log(-thetaP);
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::LogNormalizerGradient(double thetaP) const
+{
+    return -1.0 / thetaP;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::CarrierMeasure(RealType) const
+{
+    return 0.0;
+}
+
+template < typename RealType >
 double ExponentialRand<RealType>::f(const RealType &x) const
 {
     return (x < 0.0) ? 0.0 : this->beta * std::exp(-this->beta * x);
