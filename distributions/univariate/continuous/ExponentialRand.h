@@ -47,15 +47,24 @@ class RANDLIBSHARED_EXPORT ExpZiggurat {
  * X ~ Γ(1, β)
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT ExponentialRand : public FreeRateGammaDistribution<RealType>
+class RANDLIBSHARED_EXPORT ExponentialRand : public FreeRateGammaDistribution<RealType>,
+                                             public ContinuousExponentialFamily<RealType, double>
 {
     static constexpr auto ziggurat = ExpZiggurat::createZiggurat();
 
 public:
     explicit ExponentialRand(double rate = 1) : FreeRateGammaDistribution<RealType>(1, rate) {}
     String Name() const override;
-
-public:
+    
+    double SufficientStatistic(RealType x) const override;
+    double SourceParameters() const override;
+    double SourceToNatural(double rate) const override;
+    double LogNormalizer(double theta) const override;
+    double LogNormalizerGradient(double theta) const override;
+    double CarrierMeasure(RealType) const override;
+    double CrossEntropyAdjusted(double parameters) const override;
+    double EntropyAdjusted() const override;
+    
     double f(const RealType & x) const override;
     double logf(const RealType & x) const override;
     double F(const RealType & x) const override;
