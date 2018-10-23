@@ -500,6 +500,33 @@
 	\beta_{MAP} = \frac{\alpha n + \kappa - 1}{\gamma +\sum_{i=1}^{n} X_i}.
 	\]
 	
+	\paragraph{Exponential family parameterization}
+	Logarithm of probability mass function:
+	\[
+	\log \MP(X = x) = \alpha \log \beta - \log \Gamma(\alpha) + (\alpha - 1) \log x - \beta x.
+	\]
+	Therefore, sufficient statistics $T(x) = (\log x, x)^T$, natural parameters $\theta = (\alpha-1, -\beta)$, log-normalizer $F(\theta) = \log \Gamma (\theta_1 + 1) - (\theta_1 + 1) \log (-\theta_2)$, carrier measure $k(x) = 0$. Gradient of log-normalizer is $\nabla F(\theta) = \big(\psi(\theta_1 + 1) - \log(-\theta_2), -\frac{\theta_1+1}{\theta_2} \big)^T$ We conclude that adjusted cross-entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta_q \| \theta_p) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
+	&= \log \Gamma ({\theta_q}_1 + 1) - ({\theta_q}_1 + 1) \log (-{\theta_q}_2) - {\theta_q}_1 (\psi({\theta_p}_1 + 1) - \log(-{\theta_p}_2)) + \frac{{\theta_q}_2 ({\theta_p}_1 + 1)}{{\theta_p}_2}.
+	\end{aligned}
+	\]
+	Adjusted entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta) &= \log \Gamma ({\theta}_1 + 1) - \log (-{\theta}_2) - {\theta}_1 \psi({\theta}_1 + 1) + {\theta}_1 + 1 \\
+	& = \log \Gamma (\alpha) - \log \beta - (\alpha - 1) \cdot \psi (\alpha) + \alpha.
+	\end{aligned}
+	\]
+	And Kullback-Leibler divergence:
+	\[
+	\begin{aligned}
+	\operatorname{KL}(p \| q) &= H_F(\theta_q \| \theta_p) - H_F(\theta_p) \\
+	&= \log \frac{\Gamma (\alpha_q)}{\Gamma (\alpha_p)} + \alpha_q \log \frac{\beta_p}{\beta_q} + (\alpha_p - \alpha_q) \psi(\alpha_p) + \alpha_p \bigg(\frac{\beta_q}{\beta_p} - 1\bigg)
+	\end{aligned}
+	\]
+	
 	\subsection{Chi-squared distribution}
 	Notation:
 	\[
@@ -509,12 +536,19 @@
 	\[
 	X \sim \Gamma\bigg( \frac{k}{2}, \frac{1}{2} \bigg).
 	\]
+	Kullback-Leibler divergence:
+	\[
+	\operatorname{KL}(p \| q) = \log \frac{\Gamma(k_q/2)}{\Gamma(k_p/2)} + \frac{1}{2}(k_p - k_q) \psi(k_p / 2).
+	\]
+	Relation to other distributions: if $X_1, \dots, X_k ~ \sim \mathcal{N}(0, 1)$, then $\sum_{i=1}^{k}X_i \sim \chi_k^2$.
+	
 	\subsection{Erlang distribution}
 	Notation:
 	\[
 	X \sim \operatorname{Erlang}(k, \beta).
 	\]
-	The only difference between Gamma and Erlang distributions is that a second one takes an integer shape parameter $k$.
+	The only difference between Gamma and Erlang distributions is that latter takes an integer number $k$ as a shape parameter.
+	
 	\subsection{Exponential distribution}
 	\begin{figure}[!htb]\centering
 		\begin{minipage}{0.55\textwidth}
@@ -552,7 +586,19 @@
 
 	Relation to Gamma distribution:
 	\[X \sim \Gamma(1, \lambda).\]
-	Hence, estimation of parameter $\lambda$ is the particular case of estimation of rate $\beta$ for Gamma distribution.
+	Hence, estimation of parameter $\lambda$ is the particular case of estimation of rate $\beta$ for Gamma distribution. \\
+	Adjusted cross-entropy:
+	\[
+	H_F(\lambda_q \| \lambda_p) = \log \lambda_q + \frac{\lambda_q}{\lambda_p}. 
+	\]
+	Thus adjusted entropy is
+	\[
+	H_F(\lambda) = \log \lambda
+	\]
+	and Kullback-Leibler divergence:
+	\[
+	\operatorname{KL}(p \| q) = \log \frac{\lambda_p}{\lambda_q} + \bigg(\frac{\lambda_q}{\lambda_p} - 1\bigg).
+	\]
 	
 	\pagebreak
 	\section{Geometric Stable distribution}
@@ -1411,6 +1457,31 @@ MAP estimator:
 	\[
 	\lambda_{MAP} = \max \bigg( \frac{\alpha + \sum_{i=1}^{n}X_i - 1}{\beta + n}, 0 \bigg).
 	\]
+	
+	\paragraph{Exponential family parameterization}
+	Logarithm of probability mass function:
+	\[
+	\log \MP(X = x) = x \log \lambda - \lambda - \log(x!).
+	\]
+	Therefore, sufficient statistics $T(x) = x$, natural parameter $\theta = \log \lambda$, log-normalizer $F(\theta) = \exp(\theta)$, carrier measure $k(x) = \log(x!)$. We conclude that adjusted cross-entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta_q \| \theta_p) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
+	&= \exp(\theta_q) - \theta_q \exp(\theta_p).
+	\end{aligned}
+	\]
+	Adjusted entropy is
+	\[
+	H_F(\theta) = \exp(\theta) (1 - \theta) = \lambda (1 - \log \lambda).
+	\]
+	And Kullback-Leibler divergence:
+	\[
+	\begin{aligned}
+	\operatorname{KL}(p \| q) &= H_F(\theta_q \| \theta_p) - H_F(\theta_p) \\
+	&= \lambda_q -  \lambda_p \bigg(1 + \log \bigg(\frac{\lambda_p}{\lambda_q}\bigg)\bigg).
+	\end{aligned}
+	\]
+	
 	
 	\pagebreak
 	\section{Skellam distribution}

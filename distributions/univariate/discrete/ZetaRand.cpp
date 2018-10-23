@@ -95,13 +95,13 @@ long double ZetaRand<IntType>::Skewness() const
     long double z2 = std::riemann_zetal(s - 2);
     long double z3 = std::riemann_zetal(s - 3);
     long double z = zetaS, zSq = z * z;
-    long double numerator = zSq * z3;
-    numerator -= 3 * z2 * z1 * z;
-    numerator += 2 * z1 * z1Sq;
-    long double denominator = z * z2 - z1Sq;
-    denominator = std::pow(denominator, 1.5);
-    denominator *= zSq;
-    return numerator / denominator;
+    long double logskew = zSq * z3;
+    logskew -= 3 * z2 * z1 * z;
+    logskew += 2 * z1 * z1Sq;
+    logskew = std::log(numerator);
+    logskew -= 1.5 * std::log(z * z2 - z1Sq);
+    logskew -= 2 * logZetaS;
+    return std::exp(logskew);
 }
 
 template < typename IntType >
