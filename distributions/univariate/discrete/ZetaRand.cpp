@@ -98,7 +98,7 @@ long double ZetaRand<IntType>::Skewness() const
     long double logskew = zSq * z3;
     logskew -= 3 * z2 * z1 * z;
     logskew += 2 * z1 * z1Sq;
-    logskew = std::log(numerator);
+    logskew = std::log(logskew);
     logskew -= 1.5 * std::log(z * z2 - z1Sq);
     logskew -= 2 * logZetaS;
     return std::exp(logskew);
