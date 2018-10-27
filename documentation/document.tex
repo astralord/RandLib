@@ -589,15 +589,15 @@
 	Hence, estimation of parameter $\lambda$ is the particular case of estimation of rate $\beta$ for Gamma distribution. \\
 	Adjusted cross-entropy:
 	\[
-	H_F(\lambda_q \| \lambda_p) = \log \lambda_q + \frac{\lambda_q}{\lambda_p}. 
+	H_F(\lambda_q \| \lambda_p) = \frac{\lambda_q}{\lambda_p}-\log \lambda_q. 
 	\]
 	Thus adjusted entropy is
 	\[
-	H_F(\lambda) = \log \lambda
+	H_F(\lambda) = 1 - \log \lambda
 	\]
 	and Kullback-Leibler divergence:
 	\[
-	\operatorname{KL}(p \| q) = \log \frac{\lambda_p}{\lambda_q} + \bigg(\frac{\lambda_q}{\lambda_p} - 1\bigg).
+	\operatorname{KL}(p \| q) = \log \frac{\lambda_p}{\lambda_q} + \frac{\lambda_q}{\lambda_p} - 1.
 	\]
 	
 	\pagebreak
@@ -1536,7 +1536,7 @@ MAP estimator:
 		\begin{minipage}{0.4\textwidth}
 			\begin{tabular}{| r | l |}
 				\hline
-				Notation & $ X \sim \operatorname{U}\{a, \dots, b\} $ \\
+				Notation & $ X \sim \mathcal{U}\{a, \dots, b\} $ \\
 				\hline
 				Parameters & $a, b \in \MR, a \leq b$ \\
 				\hline
@@ -1559,6 +1559,8 @@ MAP estimator:
 			\end{tabular}
 		\end{minipage}
 	\end{figure}
+	
+	Relation to other distributions: if $X \sim BB(n, 1, 1)$, then $X \sim \mathcal{U}\{0, \dots, n\}$.
 	
 	\pagebreak
 	\section{Yule distribution}
