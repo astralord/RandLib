@@ -19,7 +19,7 @@
  * If X ~ Γ(k, β) for integer k, then X ~ Erlang(k, β)
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT GammaDistribution : public ContinuousDistribution<RealType>
+class RANDLIBSHARED_EXPORT GammaDistribution : virtual public ContinuousDistribution<RealType>
 {
 protected:
     double alpha = 1; ///< shape α
