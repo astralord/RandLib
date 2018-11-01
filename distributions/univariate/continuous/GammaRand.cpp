@@ -296,7 +296,7 @@ long double GammaDistribution<RealType>::Mean() const
 template < typename RealType >
 long double GammaDistribution<RealType>::GeometricMean() const
 {
-    return RandMath::digamma(this->alpha) - this->logBeta;
+    return this->digammaAlpha - this->logBeta;
 }
 
 template < typename RealType >
@@ -660,6 +660,71 @@ void GammaRand<RealType>::Fit(const std::vector<RealType> &sample)
         throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetParameters(shape, shape / average);
+}
+
+template < typename RealType >
+DoublePair GammaRand<RealType>::SufficientStatistic(RealType x) const
+{
+    return {std::log(x), x};
+}
+
+template < typename RealType >
+DoublePair GammaRand<RealType>::SourceParameters() const
+{
+    return {this->alpha, this->beta};
+}
+
+template < typename RealType >
+DoublePair GammaRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
+{
+    double shape = sourceParameters.first;
+    double rate = sourceParameters.second;
+    return {shape - 1, -rate};
+}
+
+template < typename RealType >
+double GammaRand<RealType>::LogNormalizer(DoublePair parameters) const
+{
+    double shape = parameters.first + 1, rate = -parameters.second;
+    double F = std::lgamma(shape);
+    F -= shape * std::log(rate);
+    return F;
+}
+
+template < typename RealType >
+DoublePair GammaRand<RealType>::LogNormalizerGradient(DoublePair parameters) const
+{
+    double shape = parameters.first + 1, rate = -parameters.second;
+    double gradF1 = RandMath::digamma(shape) - std::log(rate);
+    double gradF2 = shape / rate;
+    return {gradF1, gradF2};
+}
+
+template < typename RealType >
+double GammaRand<RealType>::CarrierMeasure(RealType) const
+{
+    return 0;
+}
+
+template < typename RealType >
+double GammaRand<RealType>::CrossEntropyAdjusted(DoublePair parameters) const
+{
+    double shapeq = parameters.first + 1, rateq = -parameters.second;
+    double H = std::lgamma(shapeq);
+    H -= shapeq * std::log(rateq);
+    H -= (shapeq - 1) * (this->digammaAlpha - this->logBeta);
+    H += rateq * this->alpha / this->beta;
+    return H;
+}
+
+template < typename RealType >
+double GammaRand<RealType>::EntropyAdjusted() const
+{
+    double H = this->lgammaAlpha;
+    H -= this->logBeta;
+    H -= (this->alpha - 1) * this->digammaAlpha;
+    H += this->alpha;
+    return H;
 }
 
 template class GammaRand<float>;

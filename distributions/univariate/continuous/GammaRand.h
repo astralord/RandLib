@@ -29,6 +29,7 @@ protected:
     double pdfCoef = 0; ///< α * log(β) - log(Γ(α))
     double logAlpha = 0; ///< log(α)
     double logBeta = 0; ///< log(β)
+    double digammaAlpha = -M_EULER; ///< ψ(α)
 
 private:
     /// constants for faster sampling
@@ -84,6 +85,11 @@ public:
      * @return log(α)
      */
     inline double GetLogShape() const { return logAlpha; }
+    /**
+     * @fn GetDigammaShape
+     * @return ψ(α)
+     */
+    inline double GetDigammaShape() const { return digammaAlpha;}
     /**
      * @fn GetLogRate
      * @return log(β)
@@ -286,7 +292,8 @@ public:
  * Gamma distribution
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT GammaRand : public FreeRateGammaDistribution<RealType>
+class RANDLIBSHARED_EXPORT GammaRand : public FreeRateGammaDistribution<RealType>,
+                                       public ContinuousExponentialFamily<RealType, DoublePair>
 {
 public:
     GammaRand(double shape = 1, double rate = 1) : FreeRateGammaDistribution<RealType>(shape, rate) {}
@@ -308,6 +315,17 @@ public:
      * @param sample
      */
     void Fit(const std::vector<RealType> &sample);
+
+    DoublePair SufficientStatistic(RealType x) const override;
+    DoublePair SourceParameters() const override;
+    DoublePair SourceToNatural(DoublePair sourceParameters) const override;
+    double LogNormalizer(DoublePair parameters) const override;
+    DoublePair LogNormalizerGradient(DoublePair parameters) const override;
+    double CarrierMeasure(RealType) const override;
+    double CrossEntropyAdjusted(DoublePair parameters) const override;
+    double EntropyAdjusted() const override;
+
+    double logf(const RealType &x) const override { return FreeRateGammaDistribution<RealType>::logf(x); }
 };
 
 
