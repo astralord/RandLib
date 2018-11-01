@@ -455,6 +455,14 @@
 		\end{minipage}
 	\end{figure}
 	
+	\paragraph{More properties.}
+	\begin{itemize}
+		\item $\ME[\ln X] = \psi(\alpha) - \ln(\beta)$, $\Var(\ln X) = \psi^{(1)}(\alpha)$.
+		\item $\ME\big[ \frac{1}{X} \big] = \frac{\beta}{\alpha - 1}$.
+		\item Let $X_i \sim \Gamma(\alpha_i, \beta)$ for $i = 1, \dots , n$. Then 
+		\[ \sum_{i=1}^n X_i \sim \Gamma\bigg(\sum_{i=1}^{n} \alpha_i, \beta\bigg). \]
+	\end{itemize}
+	
 	\paragraph{Estimation of parameters.}
 	\subparagraph{Frequentist inference.} Log-likelihood function:
 	\[
@@ -479,7 +487,14 @@
 	\[
 	\frac{\partial^2 \ln \mathcal{L}(\alpha, \beta | X) }{\partial \alpha^2} = - n \psi_1 (\alpha) + \frac{n}{\alpha},
 	\]
-	Moreover, the maximum-likelihood estimation of rate $\beta$ is biased. Unbiased estimator would be
+	Moreover, the maximum-likelihood estimation of rate $\beta$ is biased:
+	\[
+	\begin{aligned}
+	\ME[\hat{\beta}] & = \mathbb{\ME}\bigg[ \frac{\alpha n }{\sum_{i=1}^{n}X_i} \bigg] \\
+	& = \frac{\alpha n \beta}{\alpha n - 1}.
+	\end{aligned}
+	\]
+	Unbiased estimator will be
 	\[
 	\tilde{\beta} = \frac{\alpha}{\overline{X}_n} \Big(1 - \frac{1}{n}\Big).
 	\]
@@ -548,6 +563,8 @@
 	X \sim \operatorname{Erlang}(k, \beta).
 	\]
 	The only difference between Gamma and Erlang distributions is that latter takes an integer number $k$ as a shape parameter.
+	Relation to other distributions: if $X \sim \operatorname{Erlang}(k, \beta)$ and $Y \sim \operatorname{Po}(\beta x)$, then 
+	\[\MP(X < x) = P(k, \beta x) = \MP(Y > k).\]
 	
 	\subsection{Exponential distribution}
 	\begin{figure}[!htb]\centering

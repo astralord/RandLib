@@ -20,80 +20,81 @@
 \contentsline {section}{\numberline {4}Exponentially-modified Gaussian distribution}{12}
 \contentsline {section}{\numberline {5}F-distribution}{13}
 \contentsline {section}{\numberline {6}Gamma distribution}{14}
+\contentsline {paragraph}{More properties.}{14}
 \contentsline {paragraph}{Estimation of parameters.}{14}
 \contentsline {subparagraph}{Frequentist inference.}{14}
 \contentsline {subparagraph}{Bayesian inference.}{15}
-\contentsline {paragraph}{Exponential family parameterization}{15}
+\contentsline {paragraph}{Exponential family parameterization}{16}
 \contentsline {subsection}{\numberline {6.1}Chi-squared distribution}{16}
 \contentsline {subsection}{\numberline {6.2}Erlang distribution}{16}
-\contentsline {subsection}{\numberline {6.3}Exponential distribution}{16}
-\contentsline {section}{\numberline {7}Geometric Stable distribution}{17}
-\contentsline {subsection}{\numberline {7.1}Asymmetric Laplace distribution}{17}
-\contentsline {subsection}{\numberline {7.2}Laplace distribution}{17}
-\contentsline {section}{\numberline {8}Kolmogorov-Smirnov distribution}{18}
-\contentsline {section}{\numberline {9}Logistic distribution}{19}
-\contentsline {section}{\numberline {10}Log-normal distribution}{20}
-\contentsline {section}{\numberline {11}Marchenko-Pastur distribution}{21}
-\contentsline {paragraph}{Calculation of characteristic function.}{21}
-\contentsline {section}{\numberline {12}Nakagami distribution}{22}
+\contentsline {subsection}{\numberline {6.3}Exponential distribution}{17}
+\contentsline {section}{\numberline {7}Geometric Stable distribution}{18}
+\contentsline {subsection}{\numberline {7.1}Asymmetric Laplace distribution}{18}
+\contentsline {subsection}{\numberline {7.2}Laplace distribution}{18}
+\contentsline {section}{\numberline {8}Kolmogorov-Smirnov distribution}{19}
+\contentsline {section}{\numberline {9}Logistic distribution}{20}
+\contentsline {section}{\numberline {10}Log-normal distribution}{21}
+\contentsline {section}{\numberline {11}Marchenko-Pastur distribution}{22}
 \contentsline {paragraph}{Calculation of characteristic function.}{22}
-\contentsline {subsection}{\numberline {12.1}Chi distribution}{22}
-\contentsline {subsection}{\numberline {12.2}Maxwell-Bolzmann distribution}{23}
-\contentsline {subsection}{\numberline {12.3}Rayleigh distribution}{23}
-\contentsline {paragraph}{Estimation of scale.}{23}
-\contentsline {section}{\numberline {13}Noncentral Chi-Squared distribution}{24}
-\contentsline {section}{\numberline {14}Pareto distribution}{25}
-\contentsline {paragraph}{Estimation of parameters.}{25}
-\contentsline {subparagraph}{Frequentist inference.}{25}
-\contentsline {subparagraph}{Bayesian inference.}{26}
-\contentsline {section}{\numberline {15}Planck distribution}{28}
-\contentsline {paragraph}{Calculation of cumulative distribution function.}{28}
-\contentsline {paragraph}{Calculation of characteristic function.}{28}
-\contentsline {section}{\numberline {16}Stable distribution}{29}
-\contentsline {paragraph}{Calculation of p.d.f.}{29}
-\contentsline {paragraph}{Calculation of c.d.f.}{29}
-\contentsline {subsection}{\numberline {16.1}Cauchy distribution}{29}
-\contentsline {subsection}{\numberline {16.2}Levy distribution}{29}
-\contentsline {subsection}{\numberline {16.3}Normal distribution}{30}
-\contentsline {paragraph}{Estimation of parameters}{30}
-\contentsline {subparagraph}{Frequentist inference.}{30}
-\contentsline {subparagraph}{Bayesian inference.}{31}
-\contentsline {subsection}{\numberline {16.4}Holtsmark distribution}{31}
-\contentsline {subsection}{\numberline {16.5}Landau distribution}{31}
-\contentsline {section}{\numberline {17}Weibull}{32}
-\contentsline {paragraph}{Estimation of scale}{32}
-\contentsline {subparagraph}{Frequentist inference.}{32}
-\contentsline {subparagraph}{Bayesian inference.}{33}
-\contentsline {part}{III\hspace {1em}Discrete univariate distributions}{34}
-\contentsline {section}{\numberline {18}Beta-binomial distribution}{34}
-\contentsline {section}{\numberline {19}Binomial distribution}{35}
-\contentsline {paragraph}{Estimation of probability $p$ with known number $n$.}{35}
-\contentsline {subparagraph}{Frequentist inference.}{35}
-\contentsline {subparagraph}{Bayesian inference.}{35}
-\contentsline {subsection}{\numberline {19.1}Bernoulli}{36}
-\contentsline {section}{\numberline {20}Hypergeometric distribution}{37}
-\contentsline {paragraph}{Estimation of number of target members of population K.}{37}
-\contentsline {subparagraph}{Bayesian inference.}{37}
-\contentsline {section}{\numberline {21}Logarithmic distribution}{38}
-\contentsline {section}{\numberline {22}Negative-Binomial (Polya) distribution}{39}
-\contentsline {subsection}{\numberline {22.1}Geometric distribution}{39}
-\contentsline {subsection}{\numberline {22.2}Pascal distribution}{39}
-\contentsline {section}{\numberline {23}Poisson distribution}{40}
-\contentsline {paragraph}{Estimation of rate.}{40}
-\contentsline {subparagraph}{Frequentist inference.}{40}
-\contentsline {subparagraph}{Bayesian inference.}{40}
-\contentsline {paragraph}{Exponential family parameterization}{41}
-\contentsline {section}{\numberline {24}Skellam distribution}{42}
-\contentsline {section}{\numberline {25}Uniform discrete distribution}{43}
-\contentsline {section}{\numberline {26}Yule distribution}{44}
-\contentsline {section}{\numberline {27}Zeta distribution}{45}
-\contentsline {section}{\numberline {28}Zipf distribution}{46}
-\contentsline {part}{IV\hspace {1em}Bivariate distributions}{47}
-\contentsline {section}{\numberline {29}Bivariate Normal distribution}{47}
-\contentsline {section}{\numberline {30}Normal-Inverse-Gamma distribution}{47}
-\contentsline {section}{\numberline {31}Trinomial distribution}{47}
-\contentsline {part}{V\hspace {1em}Circular distributions}{48}
-\contentsline {section}{\numberline {32}von Mises distribution}{48}
-\contentsline {section}{\numberline {33}Wrapped Exponential distribution}{48}
-\contentsline {part}{VI\hspace {1em}Singular distributions}{49}
-\contentsline {section}{\numberline {34}Cantor distribution}{49}
+\contentsline {section}{\numberline {12}Nakagami distribution}{23}
+\contentsline {paragraph}{Calculation of characteristic function.}{23}
+\contentsline {subsection}{\numberline {12.1}Chi distribution}{23}
+\contentsline {subsection}{\numberline {12.2}Maxwell-Bolzmann distribution}{24}
+\contentsline {subsection}{\numberline {12.3}Rayleigh distribution}{24}
+\contentsline {paragraph}{Estimation of scale.}{24}
+\contentsline {section}{\numberline {13}Noncentral Chi-Squared distribution}{25}
+\contentsline {section}{\numberline {14}Pareto distribution}{26}
+\contentsline {paragraph}{Estimation of parameters.}{26}
+\contentsline {subparagraph}{Frequentist inference.}{26}
+\contentsline {subparagraph}{Bayesian inference.}{27}
+\contentsline {section}{\numberline {15}Planck distribution}{29}
+\contentsline {paragraph}{Calculation of cumulative distribution function.}{29}
+\contentsline {paragraph}{Calculation of characteristic function.}{29}
+\contentsline {section}{\numberline {16}Stable distribution}{30}
+\contentsline {paragraph}{Calculation of p.d.f.}{30}
+\contentsline {paragraph}{Calculation of c.d.f.}{30}
+\contentsline {subsection}{\numberline {16.1}Cauchy distribution}{30}
+\contentsline {subsection}{\numberline {16.2}Levy distribution}{30}
+\contentsline {subsection}{\numberline {16.3}Normal distribution}{31}
+\contentsline {paragraph}{Estimation of parameters}{31}
+\contentsline {subparagraph}{Frequentist inference.}{31}
+\contentsline {subparagraph}{Bayesian inference.}{32}
+\contentsline {subsection}{\numberline {16.4}Holtsmark distribution}{32}
+\contentsline {subsection}{\numberline {16.5}Landau distribution}{32}
+\contentsline {section}{\numberline {17}Weibull}{33}
+\contentsline {paragraph}{Estimation of scale}{33}
+\contentsline {subparagraph}{Frequentist inference.}{33}
+\contentsline {subparagraph}{Bayesian inference.}{34}
+\contentsline {part}{III\hspace {1em}Discrete univariate distributions}{35}
+\contentsline {section}{\numberline {18}Beta-binomial distribution}{35}
+\contentsline {section}{\numberline {19}Binomial distribution}{36}
+\contentsline {paragraph}{Estimation of probability $p$ with known number $n$.}{36}
+\contentsline {subparagraph}{Frequentist inference.}{36}
+\contentsline {subparagraph}{Bayesian inference.}{36}
+\contentsline {subsection}{\numberline {19.1}Bernoulli}{37}
+\contentsline {section}{\numberline {20}Hypergeometric distribution}{38}
+\contentsline {paragraph}{Estimation of number of target members of population K.}{38}
+\contentsline {subparagraph}{Bayesian inference.}{38}
+\contentsline {section}{\numberline {21}Logarithmic distribution}{39}
+\contentsline {section}{\numberline {22}Negative-Binomial (Polya) distribution}{40}
+\contentsline {subsection}{\numberline {22.1}Geometric distribution}{40}
+\contentsline {subsection}{\numberline {22.2}Pascal distribution}{40}
+\contentsline {section}{\numberline {23}Poisson distribution}{41}
+\contentsline {paragraph}{Estimation of rate.}{41}
+\contentsline {subparagraph}{Frequentist inference.}{41}
+\contentsline {subparagraph}{Bayesian inference.}{41}
+\contentsline {paragraph}{Exponential family parameterization}{42}
+\contentsline {section}{\numberline {24}Skellam distribution}{43}
+\contentsline {section}{\numberline {25}Uniform discrete distribution}{44}
+\contentsline {section}{\numberline {26}Yule distribution}{45}
+\contentsline {section}{\numberline {27}Zeta distribution}{46}
+\contentsline {section}{\numberline {28}Zipf distribution}{47}
+\contentsline {part}{IV\hspace {1em}Bivariate distributions}{48}
+\contentsline {section}{\numberline {29}Bivariate Normal distribution}{48}
+\contentsline {section}{\numberline {30}Normal-Inverse-Gamma distribution}{48}
+\contentsline {section}{\numberline {31}Trinomial distribution}{48}
+\contentsline {part}{V\hspace {1em}Circular distributions}{49}
+\contentsline {section}{\numberline {32}von Mises distribution}{49}
+\contentsline {section}{\numberline {33}Wrapped Exponential distribution}{49}
+\contentsline {part}{VI\hspace {1em}Singular distributions}{50}
+\contentsline {section}{\numberline {34}Cantor distribution}{50}
