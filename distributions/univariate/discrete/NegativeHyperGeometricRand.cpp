@@ -25,9 +25,7 @@ void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntTy
         throw std::invalid_argument("Negative-HyperGeometric distribution: total successes number shouldn't be smaller than limit successes number");
 
     N = totalSize;
-
     M = totalSuccessesNum;
-
     m = limitSuccessesNum;
 
     p0 = static_cast<double>(M) / N;

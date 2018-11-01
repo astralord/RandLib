@@ -14,9 +14,9 @@
 template < typename IntType = int >
 class RANDLIBSHARED_EXPORT LogarithmicRand : public DiscreteDistribution<IntType>
 {
-    double p = 1; ///< parameter of distribution
-    double logProb = 0; ///< log(p)
-    double log1mProb = -INFINITY; ///< log(q)
+    double p = 0.5; ///< parameter of distribution
+    double logProb = -M_LN2; ///< log(p)
+    double log1mProb = -M_LN2; ///< log(q)
 public:
     explicit LogarithmicRand(double probability);
     String Name() const override;

@@ -1344,6 +1344,42 @@ MAP estimator:
     \]
     However, RandLib doesn't support Bayesian fitting for Hypergeometric distribution yet.
     
+   	\pagebreak
+   	\section{Logarithmic distribution}
+   	\begin{figure}[!htb]\centering
+   		\begin{minipage}{0.55\textwidth}
+   			\includegraphics[width=\linewidth, right]{logarithmic_pmf}
+   			\captionsetup{labelformat=empty}
+   			\includegraphics[width=\linewidth, right]{logarithmic_cdf}
+   			\captionsetup{labelformat=empty}
+   		\end{minipage}
+   		\begin{minipage}{0.4\textwidth}
+   			\begin{tabular}{| r | l |}
+   				\hline
+   				Notation & $ X \sim \operatorname{Log}(p) $\\
+   				\hline
+   				Parameters & $p \in (0, 1)$ \\
+   				\hline
+   				Domain & $ k \in \MN $  \\
+   				\hline
+   				$\MP(X = k)$ & $  -\frac{p^k}{k \log(1-p)}   $ \\
+   				\hline
+   				$\MP(X \leq k)$ & $1 + \frac{B(p, k+1, 0)}{\log(1-p)}$ \\
+   				\hline
+   				$\ME[X]$ & $ -\frac{p}{(1-p)\log(1-p)}r$ \\
+   				\hline
+   				$\Var(X)$ & $ -\frac{p(p + \log(1-p))}{(\log(1-p) (1-p))^2} $ \\
+   				\hline
+   				Median & Searched numerically \\
+   				\hline
+   				Mode & $1$ \\
+   				\hline
+   				$\phi(t)$ & $ \frac{\log(1-pe^{it})}{\log(1-p)} $  \\
+   				\hline
+   			\end{tabular}
+   		\end{minipage}
+   	\end{figure}
+
 		
 	\pagebreak
 	\section{Negative-Binomial (Polya) distribution}
@@ -1554,7 +1590,7 @@ MAP estimator:
 				\hline
 				Mode & Any value between $a$ and $b$ \\
 				\hline
-				$\phi(t)$ & $\frac{\cos(at)-\cos((b+1)t)+i(\sin(at)-\sin((b+1)t))}{n(1-\cos(t)-i\sin(t))}$ \\
+				$\phi(t)$ & $\frac{e^{iat} - e^{i(b+1)t}}{n(1-e^{it})}$ \\
 				\hline
 			\end{tabular}
 		\end{minipage}

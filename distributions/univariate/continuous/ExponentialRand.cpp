@@ -45,6 +45,18 @@ double ExponentialRand<RealType>::CarrierMeasure(RealType) const
 }
 
 template < typename RealType >
+double ExponentialRand<RealType>::CrossEntropyAdjusted(double rate) const
+{
+    return rate * this->theta - std::log(rate);
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::EntropyAdjusted() const
+{
+    return 1.0 - this->logBeta;
+}
+
+template < typename RealType >
 double ExponentialRand<RealType>::f(const RealType &x) const
 {
     return (x < 0.0) ? 0.0 : this->beta * std::exp(-this->beta * x);
@@ -112,7 +124,7 @@ std::complex<double> ExponentialRand<RealType>::CFImpl(double t) const
 template < typename RealType >
 long double ExponentialRand<RealType>::Entropy() const
 {
-    return 1.0 - this->logBeta;
+    return this->EntropyAdjusted();
 }
 
 template < typename RealType >

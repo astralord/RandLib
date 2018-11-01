@@ -62,7 +62,7 @@ public:
     double LogNormalizer(double theta) const override;
     double LogNormalizerGradient(double theta) const override;
     double CarrierMeasure(RealType) const override;
-    double CrossEntropyAdjusted(double parameters) const override;
+    double CrossEntropyAdjusted(double rate) const override;
     double EntropyAdjusted() const override;
     
     double f(const RealType & x) const override;
