@@ -293,7 +293,7 @@ public:
  */
 template < typename RealType = double >
 class RANDLIBSHARED_EXPORT GammaRand : public FreeRateGammaDistribution<RealType>,
-                                       public ContinuousExponentialFamily<RealType, DoublePair>
+                                       public ExponentialFamily<RealType, DoublePair>
 {
 public:
     GammaRand(double shape = 1, double rate = 1) : FreeRateGammaDistribution<RealType>(shape, rate) {}

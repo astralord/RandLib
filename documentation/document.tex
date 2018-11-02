@@ -200,6 +200,31 @@
 	\[ Y_i = \frac{X_i - a}{b - a} \]
 	and estimate parameters, using sample $Y$.
 	
+	\paragraph{Exponential family parameterization.}
+	Logarithm of probabilty density function:
+	\[ \log f(x) = (\alpha - 1) \log y  + (\beta-1) \log(1-y) - \log(b-a) - \log B(\alpha, \beta) \]
+	with $y=\frac{x-a}{b-a}$. Therefore beta distribution with fixed $a$ and $b$ belongs to two-parameterized exponential family with sufficient statistics $T(x) = (\log y, \log(1-y) )^T$, natural parameters $\theta = (\alpha-1, \beta-1)$, log-normalizer $F(\theta) = \log(b-a) + \log B(\theta_1 + 1, \theta_2 + 1)$ and carrier measure $k(x)=0$. Gradient of log-normalizer: $\nabla F(\theta) = (\psi(\theta_1+1)-\psi(\theta_1+\theta_2+2), \psi(\theta_2+1)-\psi(\theta_1+\theta_2+2))^T $. Adjusted cross-entropy is
+	\[ 
+	\begin{aligned}
+	H_F(\theta_p \| \theta_q) & = F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
+	& = \log(b-a) + \log B({\theta_q}_1 + 1, {\theta_p}_2 + 1) \\ & -  {\theta_q}_1(\psi({\theta_p}_1+1)-\psi({\theta_p}_1+{\theta_p}_2+2)) - {\theta_q}_2 (\psi({\theta_p}_2+1)-\psi({\theta_p}_1+{\theta_p}_2+2))
+	\end{aligned}
+	\]
+	Adjusted entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta) & = \log(b-a)+ \log B(\alpha, \beta) \\
+	& - (\alpha-1) \psi(\alpha) - (\beta-1)\psi(\beta) + (\alpha+\beta-2)\psi(\alpha+\beta).
+	\end{aligned}
+	\]
+	And Kullback-Leibler divergence:
+	\[
+	\begin{aligned}
+	\operatorname{KL}(p \| q) & = H_F(\theta_p \| \theta_q) - H_F(\theta_p) \\
+	& = \log \frac{B(\alpha_q, \beta_q)}{B(\alpha_p, \beta_p)} - (\alpha_q - \alpha_p) \psi(\alpha_p) - (\beta_q - \beta_p)\psi(\beta_p) + (\alpha_q - \alpha_p + \beta_q - \beta_p) \psi(\alpha_p+\beta_p).
+	\end{aligned}
+	\]
+	
 	\subsection{Arcsine distribution}
 	Notation:
 	\[
@@ -523,7 +548,7 @@
 	Therefore, sufficient statistics $T(x) = (\log x, x)^T$, natural parameters $\theta = (\alpha-1, -\beta)$, log-normalizer $F(\theta) = \log \Gamma (\theta_1 + 1) - (\theta_1 + 1) \log (-\theta_2)$, carrier measure $k(x) = 0$. Gradient of log-normalizer is $\nabla F(\theta) = \big(\psi(\theta_1 + 1) - \log(-\theta_2), -\frac{\theta_1+1}{\theta_2} \big)^T$ We conclude that adjusted cross-entropy is
 	\[
 	\begin{aligned}
-	H_F(\theta_q \| \theta_p) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
+	H_F(\theta_p \| \theta_q) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
 	&= \log \Gamma ({\theta_q}_1 + 1) - ({\theta_q}_1 + 1) \log (-{\theta_q}_2) - {\theta_q}_1 (\psi({\theta_p}_1 + 1) - \log(-{\theta_p}_2)) + \frac{{\theta_q}_2 ({\theta_p}_1 + 1)}{{\theta_p}_2}.
 	\end{aligned}
 	\]
@@ -537,7 +562,7 @@
 	And Kullback-Leibler divergence:
 	\[
 	\begin{aligned}
-	\operatorname{KL}(p \| q) &= H_F(\theta_q \| \theta_p) - H_F(\theta_p) \\
+	\operatorname{KL}(p \| q) &= H_F(\theta_p \| \theta_q) - H_F(\theta_p) \\
 	&= \log \frac{\Gamma (\alpha_q)}{\Gamma (\alpha_p)} + \alpha_q \log \frac{\beta_p}{\beta_q} + (\alpha_p - \alpha_q) \psi(\alpha_p) + \alpha_p \bigg(\frac{\beta_q}{\beta_p} - 1\bigg)
 	\end{aligned}
 	\]
@@ -1308,7 +1333,7 @@ MAP estimator:
 	Therefore binomial distribution with fixed $n$ belongs to one-parameterized exponential family with sufficient statistics $T(x) = x$, natural parameter $\theta = \log \frac{p}{1-p}$, log-normalizer $F(\theta) = n \log (1 + \exp \theta) - \log(n!)$ and carrier measure $k(x)=-\log(x!(n-x)!)$. Gradient of log-normalizer: $\nabla F(\theta) = n \frac{\exp(\theta)}{1+\exp(\theta)}$. Adjusted cross-entropy is
 	\[ 
 	\begin{aligned}
-	H_F(\theta_2 \| \theta_1) & = F(\theta_2) - \langle \theta_2, \nabla F(\theta_1) \rangle \\
+	H_F(\theta_1 \| \theta_2) & = F(\theta_2) - \langle \theta_2, \nabla F(\theta_1) \rangle \\
 	& = n \log (1 + \exp \theta_2) - \log(n!) - \theta_2 n \frac{\exp(\theta_1)}{1+\exp(\theta_1)}.
 	\end{aligned}
 	\]
@@ -1322,7 +1347,7 @@ MAP estimator:
 	And Kullback-Leibler divergence:
 	\[
 	\begin{aligned}
-	\operatorname{KL}(p_1 \| p_2) & = H_F(\theta_2 \| \theta_1) - H_F(\theta_1) \\
+	\operatorname{KL}(p_1 \| p_2) & = H_F(\theta_1 \| \theta_2) - H_F(\theta_1) \\
 	& = n \log \frac{1+\exp \theta_2}{1+\exp \theta_1} - n (\theta_2 - \theta_1)\frac{\exp(\theta_1)}{1+\exp(\theta_1)} \\
 	& = n(1-p_1)\log\frac{1-p_1}{1-p_2} + n p_1 \log\frac{p_1}{p_2}.
     \end{aligned}
@@ -1544,7 +1569,7 @@ MAP estimator:
 	Therefore, sufficient statistics $T(x) = x$, natural parameter $\theta = \log \lambda$, log-normalizer $F(\theta) = \exp(\theta)$, carrier measure $k(x) = \log(x!)$. We conclude that adjusted cross-entropy is
 	\[
 	\begin{aligned}
-	H_F(\theta_q \| \theta_p) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
+	H_F(\theta_p \| \theta_q) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
 	&= \exp(\theta_q) - \theta_q \exp(\theta_p).
 	\end{aligned}
 	\]
@@ -1555,7 +1580,7 @@ MAP estimator:
 	And Kullback-Leibler divergence:
 	\[
 	\begin{aligned}
-	\operatorname{KL}(p \| q) &= H_F(\theta_q \| \theta_p) - H_F(\theta_p) \\
+	\operatorname{KL}(p \| q) &= H_F(\theta_p \| \theta_q) - H_F(\theta_p) \\
 	&= \lambda_q -  \lambda_p \bigg(1 + \log \bigg(\frac{\lambda_p}{\lambda_q}\bigg)\bigg).
 	\end{aligned}
 	\]

@@ -48,7 +48,7 @@ class RANDLIBSHARED_EXPORT ExpZiggurat {
  */
 template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ExponentialRand : public FreeRateGammaDistribution<RealType>,
-                                             public ContinuousExponentialFamily<RealType, double>
+                                             public ExponentialFamily<RealType, double>
 {
     static constexpr auto ziggurat = ExpZiggurat::createZiggurat();
 

@@ -233,7 +233,8 @@ protected:
  * Beta distribution
  */
 template < typename RealType = double >
-class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution<RealType>
+class RANDLIBSHARED_EXPORT BetaRand : public BetaDistribution<RealType>,
+                                      public ExponentialFamily<RealType, DoublePair>
 {
 public:
     BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1) : BetaDistribution<RealType>(shape1, shape2, minValue, maxValue) {}
@@ -242,7 +243,13 @@ public:
     using BetaDistribution<RealType>::SetShapes;
     using BetaDistribution<RealType>::SetSupport;
 
-public:
+    DoublePair SufficientStatistic(RealType x) const override;
+    DoublePair SourceParameters() const override;
+    DoublePair SourceToNatural(DoublePair sourceParameters) const override;
+    double LogNormalizer(DoublePair theta) const override;
+    DoublePair LogNormalizerGradient(DoublePair theta) const override;
+    double CarrierMeasure(RealType) const override;
+
     /**
      * @brief GetSampleLogMeanNorm
      * @param sample

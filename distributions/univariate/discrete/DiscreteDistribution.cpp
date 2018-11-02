@@ -242,10 +242,10 @@ template class DiscreteDistribution<int>;
 template class DiscreteDistribution<long int>;
 template class DiscreteDistribution<long long int>;
 
-template class DiscreteExponentialFamily<int, double>;
-template class DiscreteExponentialFamily<long int, double>;
-template class DiscreteExponentialFamily<long long int, double>;
+template class ExponentialFamily<int, double>;
+template class ExponentialFamily<long int, double>;
+template class ExponentialFamily<long long int, double>;
 
-template class DiscreteExponentialFamily<int, DoublePair>;
-template class DiscreteExponentialFamily<long int, DoublePair>;
-template class DiscreteExponentialFamily<long long int, DoublePair>;
+template class ExponentialFamily<int, DoublePair>;
+template class ExponentialFamily<long int, DoublePair>;
+template class ExponentialFamily<long long int, DoublePair>;

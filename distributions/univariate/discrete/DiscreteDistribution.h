@@ -108,16 +108,4 @@ public:
     bool PearsonChiSquaredTest(const std::vector<IntType> &orderStatistic, double alpha, size_t numberOfEstimatedParameters = 0) const;
 };
 
-
-
-template < typename IntType, typename P >
-class RANDLIBSHARED_EXPORT DiscreteExponentialFamily : public ExponentialFamily<IntType, P>,
-                                                       virtual public DiscreteDistribution<IntType>
-{
-public:
-    virtual double logP(const IntType & x) const {
-        return this->LogProbabilityMeasure(x);
-    }
-};
-
 #endif // DISCRETE_DISTRIBUTION_H

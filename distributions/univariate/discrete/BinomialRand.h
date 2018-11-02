@@ -16,7 +16,8 @@
  * X ~ Multin(n, 1 - p, p)
  */
 template< typename IntType = int >
-class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteExponentialFamily<IntType, double>
+class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution<IntType>,
+                                                  public ExponentialFamily<IntType, double>
 {
 protected:
     double p = 0.5; ///< probability of success

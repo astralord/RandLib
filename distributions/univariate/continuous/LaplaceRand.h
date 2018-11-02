@@ -51,7 +51,7 @@ public:
  */
 template < typename RealType = double >
 class RANDLIBSHARED_EXPORT CenteredAsymmetricLaplaceRand : public AsymmetricLaplaceDistribution<RealType>,
-                                                           public ContinuousExponentialFamily<RealType, DoublePair>
+                                                           public ExponentialFamily<RealType, DoublePair>
 {
 public:
     CenteredAsymmetricLaplaceRand(double scale = 1, double asymmetry = 1) :

@@ -13,7 +13,8 @@
  * Notation: X ~ Po(λ)
  */
 template < typename IntType = int >
-class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteExponentialFamily<IntType, double>
+class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution<IntType>,
+                                         public ExponentialFamily<IntType, double>
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)

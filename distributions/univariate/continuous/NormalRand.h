@@ -49,7 +49,7 @@ class RANDLIBSHARED_EXPORT NormalZiggurat {
  */
 template < typename RealType = double>
 class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>,
-                                        public ContinuousExponentialFamily<RealType, DoublePair>
+                                        public ExponentialFamily<RealType, DoublePair>
 {
     double sigma = 1; ///< scale σ
 

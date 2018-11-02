@@ -556,6 +556,46 @@ String BetaRand<RealType>::Name() const
 }
 
 template < typename RealType >
+DoublePair BetaRand<RealType>::SufficientStatistic(RealType x) const
+{
+    double y = (x - this->a) * this->bmaInv;
+    return {std::log(y), std::log1p(-y)};
+}
+
+template < typename RealType >
+DoublePair BetaRand<RealType>::SourceParameters() const
+{
+    return {this->alpha, this->beta};
+}
+
+template < typename RealType >
+DoublePair BetaRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
+{
+    return {sourceParameters.first - 1, sourceParameters.second - 1};
+}
+
+template < typename RealType >
+double BetaRand<RealType>::LogNormalizer(DoublePair theta) const
+{
+    return this->logbma + RandMath::logBeta(theta.first + 1, theta.second + 1);
+}
+
+template < typename RealType >
+DoublePair BetaRand<RealType>::LogNormalizerGradient(DoublePair theta) const
+{
+    double psi1 = RandMath::digamma(theta.first + 1);
+    double psi2 = RandMath::digamma(theta.second + 1);
+    double psisum = RandMath::digamma(theta.first + theta.second + 2);
+    return {psi1 - psisum, psi2 - psisum};
+}
+
+template < typename RealType >
+double BetaRand<RealType>::CarrierMeasure(RealType) const
+{
+    return 0;
+}
+
+template < typename RealType >
 long double BetaRand<RealType>::GetSampleLogMeanNorm(const std::vector<RealType> &sample) const
 {
     long double lnG = 0;

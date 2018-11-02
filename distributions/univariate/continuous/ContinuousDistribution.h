@@ -71,15 +71,4 @@ public:
     bool KolmogorovSmirnovTest(const std::vector<RealType> &orderStatistic, double alpha) const;
 };
 
-
-template < typename RealType, typename P >
-class RANDLIBSHARED_EXPORT ContinuousExponentialFamily : public ExponentialFamily<RealType, P>,
-                                                         virtual public ContinuousDistribution<RealType>
-{
-public:
-    virtual double logf(const RealType & x) const {
-        return this->LogProbabilityMeasure(x);
-    }
-};
-
 #endif // CONTINUOUS_DISTRIBUTION_H
