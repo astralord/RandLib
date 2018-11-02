@@ -42,7 +42,7 @@ template < typename RealType >
 double LogisticRand<RealType>::logf(const RealType & x) const
 {
     double x0 = (mu - x) / s;
-    double y = RandMath::log1pexp(x0);
+    double y = RandMath::softplus(x0);
     y *= 2;
     y += logS;
     return x0 - y;

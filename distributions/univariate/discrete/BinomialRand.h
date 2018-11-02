@@ -70,6 +70,7 @@ public:
     double LogNormalizer(double theta) const override;
     double LogNormalizerGradient(double theta) const override;
     double CarrierMeasure(IntType x) const override;
+    double EntropyAdjusted() const override;
 
 private:
     /**
@@ -95,7 +96,7 @@ private:
 
     GENERATOR_ID GetIdOfUsedGenerator() const
     {
-        /// if (n is tiny and minpq is big) or p = 0.5 and n is not so large,
+        /// if (n is tiny and minpq is big) or (p ~= 0.5 and n is not that large),
         /// we just sum Bernoulli random variables
         if ((n <= 3) || (n <= 13 && minpq > 0.025 * (n + 6)) || (n <= 200 && RandMath::areClose(p, 0.5)))
             return BERNOULLI_SUM;

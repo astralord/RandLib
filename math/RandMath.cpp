@@ -23,7 +23,7 @@ double atan(double x)
     return (x < -1.0) ? -M_PI_2 - std::atan(1.0 / x) : std::atan(x);
 }
 
-double log1pexp(double x)
+double softplus(double x)
 {
     if (x < 20.0)
         return std::log1pl(std::exp(x));
@@ -214,7 +214,7 @@ long double logBesselI(double nu, double x)
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
         long double y = x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
-        y += (nu > 0) ? RandMath::log1pexp(-2 * x) : RandMath::log1mexp(-2 * x);
+        y += (nu > 0) ? RandMath::softplus(-2 * x) : RandMath::log1mexp(-2 * x);
         return y;
     }
 

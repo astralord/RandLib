@@ -120,7 +120,7 @@ double BinomialDistribution<IntType>::NaturalParameters() const
 template< typename IntType >
 double BinomialDistribution<IntType>::LogNormalizer(double theta) const
 {
-    double F = n * RandMath::log1pexp(theta);
+    double F = n * RandMath::softplus(theta);
     F -= this->lfactn;
     return F;
 }
@@ -138,6 +138,16 @@ double BinomialDistribution<IntType>::CarrierMeasure(IntType x) const
     double k = -RandMath::lfact(x);
     k -= RandMath::lfact(n - x);
     return k;
+}
+
+template < typename IntType >
+double BinomialDistribution<IntType>::EntropyAdjusted() const
+{
+    double H = this->p * this->logProb;
+    H += this->q * this->log1mProb;
+    H *= this->n;
+    H += this->lfactn;
+    return -H;
 }
 
 template< typename IntType >

@@ -71,6 +71,7 @@
 \contentsline {paragraph}{Estimation of probability $p$ with known number $n$.}{36}
 \contentsline {subparagraph}{Frequentist inference.}{36}
 \contentsline {subparagraph}{Bayesian inference.}{36}
+\contentsline {paragraph}{Exponential family parameterization.}{37}
 \contentsline {subsection}{\numberline {19.1}Bernoulli}{37}
 \contentsline {section}{\numberline {20}Hypergeometric distribution}{38}
 \contentsline {paragraph}{Estimation of number of target members of population K.}{38}

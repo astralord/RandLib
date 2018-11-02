@@ -1255,7 +1255,7 @@ MAP estimator:
 			\hline
 			Domain & $ k \in \{0, \dots, n  \} $  \\
 			\hline
-			$\MP(X = k)$ & $\binom{n}{k} p^k (1-p)^{n-k}  $ \\
+			$\MP(X = k)$ & $\binom{n}{k} p^k (1-p)^{n-k}$ \\
 			\hline
 			$\MP(X \leq k)$ & $I_{1-p}(n-k, 1+k) $ \\
 			\hline
@@ -1302,6 +1302,31 @@ MAP estimator:
 	\[ p_{MAP} = \frac{\alpha + \sum_{i=1}^k X_i - 1}{\alpha + \beta + nk - 2}. \]
 	Also, Minimax estimator is equal to Bayes estimator if $\alpha = \beta = \frac{1}{2}\sqrt{n}$.
 	
+	\paragraph{Exponential family parameterization.}
+	Logarithm of probabilty mass function:
+	\[ \log \MP(X = x) = \log(n!) - \log(x!(n-x)!) + x \log \frac{p}{1-p} + n \log(1-p). \]
+	Therefore binomial distribution with fixed $n$ belongs to one-parameterized exponential family with sufficient statistics $T(x) = x$, natural parameter $\theta = \log \frac{p}{1-p}$, log-normalizer $F(\theta) = n \log (1 + \exp \theta) - \log(n!)$ and carrier measure $k(x)=-\log(x!(n-x)!)$. Gradient of log-normalizer: $\nabla F(\theta) = n \frac{\exp(\theta)}{1+\exp(\theta)}$. Adjusted cross-entropy is
+	\[ 
+	\begin{aligned}
+	H_F(\theta_2 \| \theta_1) & = F(\theta_2) - \langle \theta_2, \nabla F(\theta_1) \rangle \\
+	& = n \log (1 + \exp \theta_2) - \log(n!) - \theta_2 n \frac{\exp(\theta_1)}{1+\exp(\theta_1)}.
+	\end{aligned}
+	\]
+	Adjusted entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta) & = n \log (1 + \exp \theta) - \log(n!) - \theta n \frac{\exp(\theta)}{1+\exp(\theta)} \\
+	& = -n[(1-p)\log(1-p) + p \log p] - \log(n!).
+    \end{aligned}
+	\]
+	And Kullback-Leibler divergence:
+	\[
+	\begin{aligned}
+	\operatorname{KL}(p_1 \| p_2) & = H_F(\theta_2 \| \theta_1) - H_F(\theta_1) \\
+	& = n \log \frac{1+\exp \theta_2}{1+\exp \theta_1} - n (\theta_2 - \theta_1)\frac{\exp(\theta_1)}{1+\exp(\theta_1)} \\
+	& = n(1-p_1)\log\frac{1-p_1}{1-p_2} + n p_1 \log\frac{p_1}{p_2}.
+    \end{aligned}
+	\]
 	
 	\subsection{Bernoulli}
 	Notation:

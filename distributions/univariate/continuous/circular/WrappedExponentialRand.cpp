@@ -79,7 +79,7 @@ long double WrappedExponentialRand<RealType>::CircularVariance() const
 template < typename RealType >
 RealType WrappedExponentialRand<RealType>::Median() const
 {
-    return (M_LN2 - RandMath::log1pexp(-scaledLambda)) / lambda;
+    return (M_LN2 - RandMath::softplus(-scaledLambda)) / lambda;
 }
 
 template < typename RealType >

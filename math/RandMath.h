@@ -55,7 +55,7 @@ double atan(double x);
  * @param x
  * @return log(1 + exp(x))
  */
-double log1pexp(double x);
+double softplus(double x);
 
 /**
  * @fn log1mexp

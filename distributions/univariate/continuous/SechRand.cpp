@@ -21,7 +21,7 @@ double SechRand<RealType>::f(const RealType & x) const
 template < typename RealType >
 double SechRand<RealType>::logf(const RealType & x) const
 {
-    return M_PI_2 * x - RandMath::log1pexp(M_PI * x);
+    return M_PI_2 * x - RandMath::softplus(M_PI * x);
 }
 
 template < typename RealType >
