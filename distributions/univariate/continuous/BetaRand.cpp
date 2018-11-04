@@ -43,8 +43,8 @@ void BetaDistribution<RealType>::SetShapes(double shape1, double shape2)
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
-    logBetaFun = -std::lgammal(alpha + beta) + GammaRV1.GetLogGammaShape() + GammaRV2.GetLogGammaShape();
-    betaFun = std::exp(logBetaFun);
+    betaFun = std::betal(alpha, beta);
+    logBetaFun = std::log(betaFun);
     setCoefficientsForGenerator();
 }
 
@@ -83,7 +83,7 @@ template < typename RealType >
 double BetaDistribution<RealType>::logf(const RealType &x) const
 {
     /// Standardize
-    double xSt = (x - a) / bma;
+    double xSt = (x - a) * bmaInv;
     if (xSt < 0.0 || xSt > 1.0)
         return -INFINITY;
     if (xSt == 0.0) {
@@ -109,7 +109,7 @@ double BetaDistribution<RealType>::F(const RealType &x) const
     if (x >= b)
         return 1.0;
     /// Standardize
-    double xSt = (x - a) / bma;
+    double xSt = (x - a) * bmaInv;
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
         return M_2_PI * std::asin(std::sqrt(xSt));
@@ -559,7 +559,7 @@ template < typename RealType >
 DoublePair BetaRand<RealType>::SufficientStatistic(RealType x) const
 {
     double y = (x - this->a) * this->bmaInv;
-    return {std::log(y), std::log1p(-y)};
+    return {std::log(y), std::log1pl(-y)};
 }
 
 template < typename RealType >

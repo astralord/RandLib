@@ -6,6 +6,9 @@ long double logBeta(long double a, long double b)
 {
     if (a <= 0 || b <= 0)
         throw std::invalid_argument("Parameters (a, b) of beta function should be both positive");
+    double beta = std::betal(a, b);
+    if (std::isfinite(beta))
+        return std::log(beta);
     double apb = a + b;
     int roundA = std::round(a), roundB = std::round(b);
     int roundApB = std::round(apb); 

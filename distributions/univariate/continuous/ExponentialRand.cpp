@@ -17,7 +17,7 @@ double ExponentialRand<RealType>::SufficientStatistic(RealType x) const
 template < typename RealType >
 double ExponentialRand<RealType>::SourceParameters() const
 {
-    return -this->beta;
+    return this->beta;
 }
 
 template < typename RealType >

@@ -371,6 +371,7 @@ void RayleighRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Rayleigh distribution: scale should be positive");
+    sigma = scale;
     NakagamiDistribution<RealType>::SetParameters(1, 2 * sigma * sigma);
 }
 
