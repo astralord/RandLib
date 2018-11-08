@@ -75,7 +75,7 @@ protected:
     /**
      * @fn CFimpl
      * @param t
-     * @return Characteristic function (inverse Fourier transform of pdf)
+     * @return characteristic function implementation (inverse Fourier transform of pdf)
      */
     virtual std::complex<double> CFImpl(double t) const;
 

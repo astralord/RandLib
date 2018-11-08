@@ -22,13 +22,7 @@ void InverseGammaRand<RealType>::SetParameters(double shape, double rate)
     X.SetParameters(shape, rate);
     alpha = X.GetShape();
     beta = X.GetRate();
-    pdfCoef = -X.GetLogGammaShape() + alpha * X.GetLogRate();
-}
-
-template < typename RealType >
-double InverseGammaRand<RealType>::f(const RealType & x) const
-{
-    return (x > 0.0) ? std::exp(logf(x)) : 0.0;
+    pdfCoef = alpha * X.GetLogRate() - X.GetLogGammaShape();
 }
 
 template < typename RealType >
@@ -102,7 +96,6 @@ RealType InverseGammaRand<RealType>::Mode() const
 {
     return beta / (alpha + 1);
 }
-
 
 template < typename RealType >
 RealType InverseGammaRand<RealType>::quantileImpl(double p) const

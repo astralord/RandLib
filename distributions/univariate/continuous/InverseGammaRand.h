@@ -35,7 +35,6 @@ public:
     inline double GetLogShape() const { return X.GetLogShape(); }
     inline double GetLogRate() const { return X.GetLogRate(); }
 
-    double f(const RealType & x) const override;
     double logf(const RealType & x) const override;
     double F(const RealType & x) const override;
     double S(const RealType & x) const override;

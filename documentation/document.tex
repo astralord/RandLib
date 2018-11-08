@@ -580,7 +580,7 @@
 	\[
 	\operatorname{KL}(p \| q) = \log \frac{\Gamma(k_q/2)}{\Gamma(k_p/2)} + \frac{1}{2}(k_p - k_q) \psi(k_p / 2).
 	\]
-	Relation to other distributions: if $X_1, \dots, X_k ~ \sim \mathcal{N}(0, 1)$, then $\sum_{i=1}^{k}X_i \sim \chi_k^2$.
+	Relation to other distributions: if $X_1, \dots, X_k ~ \sim \mathcal{N}(0, 1)$, then $\sum_{i=1}^{k}X_i^2 \sim \chi_k^2$.
 	
 	\subsection{Erlang distribution}
 	Notation:
@@ -689,34 +689,44 @@
 	\pagebreak
 	\section{Log-normal distribution}
 	\pagebreak
-	\section{Marchenko-Pastur distribution}
-	\begin{center}
-		\begin{tabular}{| r | l |}
-			\hline
-			Notation & $X \sim \mathcal{MP}(\lambda, \sigma^2)$ \\
-			\hline
-			Parameters & $\lambda, \sigma^2 > 0$ \\
-			\hline
-			Domain & 
-			\pbox{\linewidth}{$x \in [\sigma^2 a, \sigma^2 b]$, if  $\lambda < 1$, \\  $ x \in [\sigma^2 a, \sigma^2 b] \cup \{0\} $, otherwise, \\ where $a=(1-\sqrt{\lambda})^2$ and $b=(1+\sqrt{\lambda})^2$} \\
-			\hline
-			$f(x)$ & ...  \\
-			\hline
-			$F(x)$ & ... \\
-			\hline
-			$\ME[X]$ & $ \sigma^2 $ \\
-			\hline
-			$\Var(X)$ & $\sigma^4 \lambda $ \\
-			\hline
-			Median & $0$ if $\lambda > 2$, otherwise searched numerically \\
-			\hline
-			Mode & \pbox{\linewidth}{$\frac{\sigma^2(\lambda - 1)^2}{\lambda+1}$, if  $\lambda < 1$, \\  $ 0 $, otherwise } \\
-			\hline
-			$\phi(t)$ & Calculated numerically \\
-			\hline
-		\end{tabular}
-	\end{center}
 	
+	\section{Marchenko-Pastur distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{marchenko_pastur_pdf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{marchenko_pastur_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & $X \sim \mathcal{MP}(\lambda, \sigma^2)$ \\
+				\hline
+				Parameters & $\lambda, \sigma^2 > 0$ \\
+				\hline
+				Domain & 
+				\pbox{\linewidth}{$x \in [\sigma^2 a, \sigma^2 b]$, if  $\lambda < 1$, \\  $ x \in [\sigma^2 a, \sigma^2 b] \cup \{0\} $, otherwise, \\ where $a=(1-\sqrt{\lambda})^2$ and $b=(1+\sqrt{\lambda})^2$} \\
+				\hline
+				$f(x)$ & ...  \\
+				\hline
+				$F(x)$ & ... \\
+				\hline
+				$\ME[X]$ & $ \sigma^2 $ \\
+				\hline
+				$\Var(X)$ & $\sigma^4 \lambda $ \\
+				\hline
+				Median &
+				\pbox{\linewidth}{$0$ if $\lambda > 2$, \\ otherwise searched numerically} \\
+				\hline
+				Mode & \pbox{\linewidth}{$\frac{\sigma^2(\lambda - 1)^2}{\lambda+1}$, if  $\lambda < 1$, \\  $ 0 $, otherwise } \\
+				\hline
+				$\phi(t)$ & Calculated numerically \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+		
 	\paragraph{Calculation of characteristic function.}
 	For $\lambda > 1$ we use numerical integration by definition
 	\[
@@ -1156,9 +1166,53 @@ Then unbiased estimator is
 	Relation to Stable distribution:
 	\[X \sim S_{1}(1, \gamma, \mu) \]
 	
-	
+
 \pagebreak
-\section{Weibull}
+\section{Student's t-distribution}
+	\begin{figure}[!htb]\centering
+		\begin{minipage}{0.55\textwidth}
+			\includegraphics[width=\linewidth, right]{student_t_pdf}
+			\captionsetup{labelformat=empty}
+			\includegraphics[width=\linewidth, right]{student_t_cdf}
+			\captionsetup{labelformat=empty}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{tabular}{| r | l |}
+				\hline
+				Notation & \pbox{\linewidth}{$X \sim t(\nu, \mu, \sigma)$, \\ $X \sim t(\nu)$ with $\mu=0$, $\sigma=1$} \\
+				\hline
+				Parameters & $\nu, \sigma > 0, \mu \in \MR$ \\
+				\hline
+				Domain & $x \in \MR$\\
+				\hline
+				$f(x)$ & $\frac{\Gamma \big( \frac{\nu + 1}{2} \big)}{\Gamma \big( \sqrt{\nu \pi} \frac{\nu}{2} \big)} \big(1+\frac{(x-\mu)^2}{\nu \sigma^2} \big)^{-\frac{\nu+1}{2}}$ \\
+				\hline
+				$F(x)$ & \pbox{\linewidth}{$h(y)$, $y < 0$, \\ $ 1 - h(y)$, otherwise \\ with $h(y)=\frac{1}{2} I_\frac{\nu}{\nu+y^2}\big(\frac{\nu}{2}, \frac{1}{2}\big)$ \\ and $y=\frac{x-\mu}{\sigma}$}\\
+				\hline
+				$\ME[X]$ & $\mu$ \\
+				\hline
+				$\Var(X)$ & \pbox{\linewidth}{$\sigma^2 \frac{\nu}{\nu+2}$ for $\nu > 2$,\\ $\infty$, otherwise.} \\
+				\hline
+				Median & $\mu$ \\
+				\hline
+				Mode & $\mu$ \\
+				\hline
+				$\phi(t)$ & $ \frac{K_{\nu/2}(\sqrt{\nu}|t|) \cdot (\sqrt{\nu}|t|)^{\nu/2}}{\Gamma(\nu/2)2^{\nu/2-1} } $ \\
+				\hline
+			\end{tabular}
+		\end{minipage}
+	\end{figure}
+Relation to other distributions:
+\begin{itemize}	
+	\item If $X \sim t(\nu)$, then $\mu + \sigma X \sim t(\nu, \mu, \sigma)$. 
+	\item If $X \sim t(1, \mu, \sigma)$, then $X \sim \operatorname{Cauchy}(\mu, \sigma)$.
+	\item If $X \sim \mathcal{N}(0, 1)$ and $Y \sim \operatorname{Nakagami}\big(\frac{\nu}{2}, 1\big)$, then $\frac{X}{Y} \sim t(\nu)$.
+	\item If $X \sim t(\nu)$, then $X^2 \sim \operatorname{F}(1, \nu)$.
+\end{itemize}
+
+
+\pagebreak
+\section{Weibull distribution}
 
 \begin{figure}[!htb]\centering
 	\begin{minipage}{0.55\textwidth}

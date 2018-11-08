@@ -59,8 +59,10 @@ double StudentTRand<RealType>::f(const RealType & x) const
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
         return M_1_PI / (sigma * (1 + xSq));
-    if (nu == 2)
-        return 1.0 / (sigma * std::pow(2.0 + xSq, 1.5));
+    if (nu == 2) {
+        double tmp = 2.0 + xSq;
+        return 1.0 / (sigma * tmp * std::sqrt(tmp));
+    }
     if (nu == 3) {
         double y = 3 + xSq;
         return 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
