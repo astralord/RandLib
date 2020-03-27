@@ -259,7 +259,7 @@ double StableDistribution<RealType>::pdfForUnityExponent(double x) const
     double xSt = (x - mu) / gamma;
     double xAdj = -M_PI_2 * xSt / beta - logGammaPi_2;
 
-    /// We squeeze boudaries for too peaked integrands
+    /// We squeeze boudaries for extremely sharp integrands
     double boundary = RandMath::atan(M_2_PI * beta * (5.0 - xAdj));
     double upperBoundary = (beta > 0.0) ? boundary : M_PI_2;
     double lowerBoundary = (beta < 0.0) ? boundary : -M_PI_2;
@@ -270,14 +270,14 @@ double StableDistribution<RealType>::pdfForUnityExponent(double x) const
     RandMath::findRootNewtonFirstOrder(funPtr, lowerBoundary, upperBoundary, theta0);
 
     /// Sanity check
-    /// if we failed while looking for the peak position
+    /// if we failed to find the peak position
     /// we set it in the middle between boundaries
     if (theta0 >= upperBoundary || theta0 <= lowerBoundary)
         theta0 = 0.5 * (upperBoundary + lowerBoundary);
 
     std::function<double (double)> integrandPtr = std::bind(&StableDistribution<RealType>::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
 
-    /// If theta0 is too close to +/-π/2 then we can still underestimate the integral
+    /// If theta0 is too close to +/-π/2, we can still underestimate the value of integral
     int maxRecursionDepth = 11;
     double closeness = M_PI_2 - std::fabs(theta0);
     if (closeness < 0.1)
@@ -320,7 +320,7 @@ template < typename RealType >
 double StableDistribution<RealType>::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const
 {
     /// Calculate first term of the sum
-    /// (if x = 0, only this term is non-zero)
+    /// (if x is 0, only this term is non-zero)
     double y0 = pdfAtZero();
     double sum = 0.0;
     if (beta == 0.0) {

@@ -631,7 +631,7 @@
 	Hence, estimation of parameter $\lambda$ is the particular case of estimation of rate $\beta$ for Gamma distribution. \\
 	Adjusted cross-entropy:
 	\[
-	H_F(\lambda_q \| \lambda_p) = \frac{\lambda_q}{\lambda_p}-\log \lambda_q. 
+	H_F(\lambda_p \| \lambda_q) = \frac{\lambda_q}{\lambda_p}-\log \lambda_q. 
 	\]
 	Thus adjusted entropy is
 	\[
@@ -708,9 +708,9 @@
 				Domain & 
 				\pbox{\linewidth}{$x \in [\sigma^2 a, \sigma^2 b]$, if  $\lambda < 1$, \\  $ x \in [\sigma^2 a, \sigma^2 b] \cup \{0\} $, otherwise, \\ where $a=(1-\sqrt{\lambda})^2$ and $b=(1+\sqrt{\lambda})^2$} \\
 				\hline
-				$f(x)$ & ...  \\
+				$f(x)$ & $\big(1 - \frac{1}{\lambda} \big)_{+} \delta_0(x)$  $+ \frac{\sqrt{(\sigma^2 b-x)(x-\sigma^2a)}}{2\pi\lambda\sigma^2 x}$  \\
 				\hline
-				$F(x)$ & ... \\
+				$F(x)$ & Read text \\
 				\hline
 				$\ME[X]$ & $ \sigma^2 $ \\
 				\hline
@@ -726,7 +726,9 @@
 			\end{tabular}
 		\end{minipage}
 	\end{figure}
-		
+	\paragraph{Calculation of cumulative distribution function.}
+	...
+	
 	\paragraph{Calculation of characteristic function.}
 	For $\lambda > 1$ we use numerical integration by definition
 	\[
@@ -778,6 +780,12 @@
 			\end{tabular}
 		\end{minipage}
 	\end{figure}
+	
+	Relation to other distributions: if $Y \sim \Gamma\big(\mu, \mu/\omega\big)$, then
+	\[
+	X \sim \operatorname{Nakagami}(\mu, \omega).
+	\]
+	
 	\paragraph{Calculation of characteristic function.} For $\mu < 1$ $\lim_{x \rightarrow 0}f(x) \rightarrow \infty$. Then we use the following transformation for real part of characteristic function:
 	\[
 	\begin{aligned}
@@ -785,10 +793,39 @@
 	\end{aligned}
 	\]
 	
-	Relation to other distributions: if $Y \sim \Gamma\big(\mu, \mu/\omega\big)$, then
+	\paragraph{Exponential family parameterization}
+	Logarithm of probability mass function:
 	\[
-	X \sim \operatorname{Nakagami}(\mu, \omega).
+	\log \MP(X = x) = \mu \log (\mu / \omega) - \log(\Gamma(\mu)/2) + (2 \mu - 1) \log x - \mu x^2/\omega.
 	\]
+	Therefore, sufficient statistics $T(x) = (\log x, x^2)^T$, natural parameters 
+	\[\theta = (2\mu-1, -\mu / \omega),\]
+	log-normalizer 
+	\[F(\theta) = \log \frac{\Gamma((\theta_1+1)/2)}{2} - \frac{\theta_1+1}{2} \log (-\theta_2) ,\]
+	carrier measure $k(x) = 0$. Gradient of log-normalizer is 
+	\[\nabla F(\theta) = \bigg(\frac{1}{2} \psi \Big(\frac{\theta_1+1}{2}\Big), \frac{\theta_1+1}{2 \theta_2} \bigg)^T\]
+	We conclude that adjusted cross-entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta_p \| \theta_q) &= F(\theta_q) - \langle \theta_q, \nabla F(\theta_p) \rangle \\
+	&= \frac{1}{2} \bigg( \log \Gamma\Big(\frac{{\theta_q}_1+1}{2}\Big) - ({\theta_q}_1+1) \log (-{\theta_q}_2) - {\theta_q}_1 \psi \Big(\frac{{\theta_p}_1+1}{2}\Big) - \frac{{\theta_q}_2({\theta_p}_1+1)}{{\theta_p}_2} \bigg).
+	\end{aligned}
+	\]
+	Adjusted entropy is
+	\[
+	\begin{aligned}
+	H_F(\theta) &= \frac{1}{2}\bigg(\log \Gamma\Big(\frac{\theta_1+1}{2}\Big) - (\theta_1+1) \log (-\theta_2) - \theta_1 \psi \Big(\frac{\theta_1+1}{2}\Big) - (\theta_1+1)\bigg) \\
+	& = \frac{\log \Gamma(\mu)}{2} - \mu \log (\mu/\omega) - \frac{2\mu-1}{2} \psi(\mu) - \mu.
+	\end{aligned}
+	\]
+	And Kullback-Leibler divergence:
+	\[
+	\begin{aligned}
+	\operatorname{KL}(p \| q) &= H_F(\theta_p \| \theta_q) - H_F(\theta_p) \\
+	&=\frac{1}{2} \log \frac{\Gamma (\mu_q)}{\Gamma(\mu_p)} + \mu_p \log\frac{\mu_p}{\omega_p} - \mu_q \log\frac{\mu_q}{\omega_q} + (\mu_p-\mu_q) \psi(\mu_p) - \bigg(\frac{\mu_q/\omega_q}{\mu_p/\omega_p} - 1\bigg)\mu_p 
+	\end{aligned}
+	\]
+	
 	
 	\subsection{Chi distribution}
 	Notation:
@@ -799,6 +836,18 @@
 	\[
 	X \sim \operatorname{Nakagami}\big(k/2, k\big).
 	\]
+	Adjusted cross-entropy:
+	\[
+	H_F(k_p \| k_q) = \frac{1}{2}\bigg(\log \Gamma(k_q/2) + k_q \log 2 - (2k_q-1)\psi(k_p/2) - k_p \bigg). 
+	\]
+	Thus adjusted entropy is
+	\[
+	H_F(k) = \frac{1}{2}\bigg(\log \Gamma(k/2) + k \log 2 - (2k-1)\psi(k/2) - k \bigg)
+	\]
+	and Kullback-Leibler divergence:
+	\[
+	\operatorname{KL}(p \| q) = \frac{1}{2} \bigg( \log \frac{\Gamma(k_q/2)}{\Gamma(k_p/2)} + (\log 2-2\psi(k_p/2))(k_q-k_p)\bigg).
+	\]
 	
 	\subsection{Maxwell-Bolzmann distribution}
 	Notation:
@@ -808,6 +857,18 @@
 	Relation to Nakagami distribution:
 	\[
 	X \sim \operatorname{Nakagami}\big(3/2, \sigma^2 \big).
+	\]
+	Adjusted cross-entropy:
+	\[
+	H_F(\sigma_p \| \sigma_q) =  ... 
+	\]
+	Thus adjusted entropy is
+	\[
+	H_F(\sigma) = ...
+	\]
+	and Kullback-Leibler divergence:
+	\[
+	\operatorname{KL}(p \| q) = ...
 	\]
 	
 	\subsection{Rayleigh distribution}
@@ -822,7 +883,21 @@
 	\paragraph{Estimation of scale.}
 	...%TODO: add estimation for whole Nakagami (look wiki)
 	
+	Adjusted cross-entropy:
+	\[
+	H_F(\sigma_p \| \sigma_q) =  ... 
+	\]
+	Thus adjusted entropy is
+	\[
+	H_F(\sigma) = ...
+	\]
+	and Kullback-Leibler divergence:
+	\[
+	\operatorname{KL}(p \| q) = ...
+	\]
+	
 	\pagebreak
+	
 	\section{Noncentral Chi-Squared distribution}
 	\begin{figure}[!htb]\centering
 	\begin{minipage}{0.55\textwidth}

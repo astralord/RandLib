@@ -324,8 +324,6 @@ public:
     double CarrierMeasure(RealType) const override;
     double CrossEntropyAdjusted(DoublePair parameters) const override;
     double EntropyAdjusted() const override;
-
-    double logf(const RealType &x) const override { return FreeRateGammaDistribution<RealType>::logf(x); }
 };
 
 
