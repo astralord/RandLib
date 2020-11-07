@@ -1,4 +1,4 @@
-\select@language {english}
+\babel@toc {english}{}
 \contentsline {part}{I\hspace {1em}General information}{4}
 \contentsline {section}{\numberline {1}Calculation of sample moments}{4}
 \contentsline {part}{II\hspace {1em}Continuous univariate distributions}{5}

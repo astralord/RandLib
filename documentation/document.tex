@@ -239,9 +239,7 @@
 	\[ 
 	\frac{\partial \ln\mathcal{L}(\alpha | X)}{\partial \alpha} = \sum_{i=1}^{n} \ln \frac{1-X_i}{X_i} + n\pi \cot(\pi \alpha).
 	\]
-	Therefore, maximum-likelihood function is
-	\[ \hat{\alpha} = -\frac{1}{\pi} \operatorname{atan}\Bigg(\frac{n\pi}{\sum_{i=1}^{n} \ln \frac{1-X_i}{X_i}}\Bigg). \]
-	If $\hat{\alpha}$ is negative, we add $1$, because $\frac{\operatorname{atan}}{\pi} \in (-0.5, 0.5)$, while $\alpha \in (0, 1)$.
+	Therefore, maximum-likelihood estimation is $\hat{\alpha} = \hat{\alpha}_0 + H(-\hat{\alpha}_0)$, where $\hat{\alpha}_0 = -\frac{1}{\pi} \operatorname{atan}\Bigg(\frac{n\pi}{\sum_{i=1}^{n} \ln \frac{1-X_i}{X_i}}\Bigg)$ and $H(\cdot)$ is a Heaviside step function.
 	
 	\subsection{Balding-Nichols distribution}
 	Notation: \[ X \sim \operatorname{Balding-Nichols}(p, F) \] with $p, F \in (0, 1)$.
@@ -390,7 +388,7 @@
 			\hline
 			$f(x)$ & $ \frac{\lambda}{2} e^{\frac{\lambda}{2}(2\mu + \lambda \sigma^2 - 2x)} \operatorname{erfc} \Big( \frac{\mu + \lambda \sigma^2 - x}{\sqrt{2\sigma^2}} \Big) $ \\
 			\hline
-			$F(x)$ &\pbox{\linewidth}{$ \Phi(u,0,v)-e^{ -u + \frac{v^2}{2} +\log \Phi(u, v^2, v) }, $\\ where  $\Phi(x, \mu, \sigma)$ is Gaussian CDF, \\ $u=\lambda(x-\mu),$ \\ $v=\lambda \sigma$. } \\
+			$F(x)$ &\pbox{\linewidth}{$ $ \\ $ \Phi(u,0,v)-e^{ -u + \frac{v^2}{2} +\log \Phi(u, v^2, v) }, $\\ where  $\Phi(x, \mu, \sigma)$ is Gaussian CDF, \\ $u=\lambda(x-\mu),$ \\ $v=\lambda \sigma$. } \\
 			\hline
 			$\ME[X]$ & $ \mu + 1 / \lambda$ \\
 			\hline
@@ -706,7 +704,7 @@
 				Parameters & $\lambda, \sigma^2 > 0$ \\
 				\hline
 				Domain & 
-				\pbox{\linewidth}{$x \in [\sigma^2 a, \sigma^2 b]$, if  $\lambda < 1$, \\  $ x \in [\sigma^2 a, \sigma^2 b] \cup \{0\} $, otherwise, \\ where $a=(1-\sqrt{\lambda})^2$ and $b=(1+\sqrt{\lambda})^2$} \\
+				\pbox{\linewidth}{$ $ \\ $x \in [\sigma^2 a, \sigma^2 b]$, if  $\lambda < 1$, \\  $ x \in [\sigma^2 a, \sigma^2 b] \cup \{0\} $, otherwise, \\ where $a=(1-\sqrt{\lambda})^2$ and $b=(1+\sqrt{\lambda})^2$} \\
 				\hline
 				$f(x)$ & $\big(1 - \frac{1}{\lambda} \big)_{+} \delta_0(x)$  $+ \frac{\sqrt{(\sigma^2 b-x)(x-\sigma^2a)}}{2\pi\lambda\sigma^2 x}$  \\
 				\hline
@@ -889,7 +887,7 @@
 	\]
 	Thus adjusted entropy is
 	\[
-	H_F(\sigma) = ...
+	H_F(\sigma) = \log(2\sigma^2) + \gamma / 2 - 1
 	\]
 	and Kullback-Leibler divergence:
 	\[
@@ -967,7 +965,7 @@
 			\hline
 			$\ME[X]$ & \pbox{\linewidth}{$ \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
 			\hline
-			$\Var(X)$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise } \\
+			$\Var(X)$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise  } \\
 			\hline
 			Median & $\sigma 2^{1/\alpha}$ \\
 			\hline
@@ -1104,7 +1102,7 @@ However, Bounded-Pareto distribution is not yet supported in RandLib.
 			\hline
 			Parameters & \pbox{\linewidth}{$\alpha \in (0, 2], \beta \in [-1, 1],$\\ $\gamma > 0, \mu \in \MR $} \\
 			\hline
-			Domain & \pbox{\linewidth}{$ x \in \MR$, if  $\beta \neq 1$, \\  $ x \in [\mu, \infty)  $, if  $\beta = 1$, $\alpha < 2$, \\ $ x \in (-\infty, \mu]  $, if  $\beta = -1$, $\alpha < 2$}  \\
+			Domain & \pbox{\linewidth}{$ $ \\ $ x \in \MR$, if  $\beta \neq 1$, \\  $ x \in [\mu, \infty)  $, if  $\beta = 1$, $\alpha < 2$, \\ $ x \in (-\infty, \mu]  $, if  $\beta = -1$, $\alpha < 2$}  \\
 			\hline
 			$f(x)$ & Calculated numerically \\
 			\hline
@@ -1116,7 +1114,7 @@ However, Bounded-Pareto distribution is not yet supported in RandLib.
 			\hline
 			Median & \pbox{\linewidth}{$\mu$ for $\beta = 0$,\\ otherwise searched numerically} \\
 			\hline
-			Mode & \pbox{\linewidth}{$\mu$, if $\beta = 0$ or $\alpha = 2$, \\  $\mu + \frac{\beta \gamma}{3}$, if $|\beta| = 1$ and $\alpha = \frac{1}{2}$, \\ otherwise searched numerically} \\
+			Mode & \pbox{\linewidth}{$ $ \\ $\mu$, if $\beta = 0$ or $\alpha = 2$, \\  $\mu + \frac{\beta \gamma}{3}$, if $|\beta| = 1$ and $\alpha = \frac{1}{2}$, \\ otherwise searched numerically} \\
 			\hline
 			$\phi(t)$ & $ ...$ \\
 			\hline
@@ -1262,7 +1260,7 @@ Then unbiased estimator is
 				\hline
 				$f(x)$ & $\frac{\Gamma \big( \frac{\nu + 1}{2} \big)}{\Gamma \big( \sqrt{\nu \pi} \frac{\nu}{2} \big)} \big(1+\frac{(x-\mu)^2}{\nu \sigma^2} \big)^{-\frac{\nu+1}{2}}$ \\
 				\hline
-				$F(x)$ & \pbox{\linewidth}{$h(y)$, $y < 0$, \\ $ 1 - h(y)$, otherwise \\ with $h(y)=\frac{1}{2} I_\frac{\nu}{\nu+y^2}\big(\frac{\nu}{2}, \frac{1}{2}\big)$ \\ and $y=\frac{x-\mu}{\sigma}$}\\
+				$F(x)$ & \pbox{\linewidth}{$ $ \\ $h(y)$, $y < 0$, \\ $ 1 - h(y)$, otherwise \\ with $h(y)=\frac{1}{2} I_\frac{\nu}{\nu+y^2}\big(\frac{\nu}{2}, \frac{1}{2}\big)$ \\ and $y=\frac{x-\mu}{\sigma}$}\\
 				\hline
 				$\ME[X]$ & $\mu$ \\
 				\hline
