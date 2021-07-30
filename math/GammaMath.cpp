@@ -49,23 +49,24 @@ constexpr long double FACTORIAL_TABLE[] =
  */
 long double factorialForSmallValue(int n)
 {
-    int residue = n % 10;
-    if (residue <= 5)
+    constexpr int step = 10;
+    int residue = n % step;
+    if (residue <= step / 2)
     {
         /// go up
         int nPrev = n - residue;
-        long double fact = FACTORIAL_TABLE[nPrev / 10];
+        long double fact = FACTORIAL_TABLE[nPrev / step];
         for (int i = 1; i <= residue; ++i)
             fact *= nPrev + i;
         return fact;
     }
 
     /// go  down
-    int nNext = n - residue + 10;
+    int nNext = n - residue + step;
     double denominator = 1;
-    for (int i = 0; i < 10 - residue; ++i)
+    for (int i = 0; i < step - residue; ++i)
         denominator *= nNext - i;
-    return FACTORIAL_TABLE[nNext / 10] / denominator;
+    return FACTORIAL_TABLE[nNext / step] / denominator;
 }
 
 long double factorial(double n)

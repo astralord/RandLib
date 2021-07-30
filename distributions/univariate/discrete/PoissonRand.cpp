@@ -144,8 +144,8 @@ double PoissonRand<IntType>::acceptanceFunction(IntType X) const
 template < typename IntType >
 bool PoissonRand<IntType>::generateByInversion() const
 {
-    /// the inversion generator is much faster than rejection one,
-    /// however the lost of precision for large rate affects it drastically
+    /// the inversion generator is much faster than rejection,
+    /// however precision loss for large rate increases drastically
     return lambda < 10;
 }
 

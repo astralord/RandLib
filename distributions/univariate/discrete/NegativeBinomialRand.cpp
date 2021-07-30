@@ -237,7 +237,7 @@ void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
     /// Initial guess by method of moments
     DoublePair stats = this->GetSampleMeanAndVariance(sample);
     double mean = stats.first, variance = stats.second;
-    /// Method can't be applied in the case of too small variance
+    /// Method can't be applied in case of variance smaller than mean
     if (variance <= mean)
         throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, this->TOO_SMALL_VARIANCE));
     double guess = mean * mean / (variance - mean);
