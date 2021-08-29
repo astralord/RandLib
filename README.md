@@ -1,8 +1,8 @@
 # RandLib
 
 
-[![Build Status](https://travis-ci.org/The-Freeman/RandLib.svg?branch=master)](https://travis-ci.org/The-Freeman/RandLib)
-[![CodeFactor](https://www.codefactor.io/repository/github/the-freeman/randlib/badge/master)](https://www.codefactor.io/repository/github/the-freeman/randlib/overview/master)
+[![Build Status](https://travis-ci.org/astralord/RandLib.svg?branch=master)](https://travis-ci.org/astralord/RandLib)
+[![CodeFactor](https://www.codefactor.io/repository/github/astralord/randlib/badge/master)](https://www.codefactor.io/repository/github/astralord/randlib/overview/master)
 
 With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is C++17 compiler support.
 
