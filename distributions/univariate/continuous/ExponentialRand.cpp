@@ -2,116 +2,142 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
 
-long double ExponentialRand::stairWidth[257] = {0};
-long double ExponentialRand::stairHeight[256] = {0};
-bool ExponentialRand::dummy = ExponentialRand::SetupTables();
-
-String ExponentialRand::Name() const
+template < typename RealType >
+String ExponentialRand<RealType>::Name() const
 {
-    return "Exponential(" + toStringWithPrecision(GetRate()) + ")";
+    return "Exponential(" + this->toStringWithPrecision(this->GetRate()) + ")";
 }
 
-bool ExponentialRand::SetupTables()
+template < typename RealType >
+double ExponentialRand<RealType>::SufficientStatistic(RealType x) const
 {
-    /// Set up ziggurat tables
-    static constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
-    /// coordinates of the implicit rectangle in base layer
-    stairHeight[0] = 0.00045413435384149675l; /// exp(-x1);
-    stairWidth[0] = 8.697117470131049720307l; /// A / stairHeight[0];
-    /// implicit value for the top layer
-    stairWidth[256] = 0;
-    stairWidth[1] = x1;
-    stairHeight[1] = 0.0009672692823271745203l;
-    for (size_t i = 2; i < 256; ++i) {
-        /// such y_i that f(x_{i+1}) = y_i
-        stairWidth[i] = -std::log(stairHeight[i - 1]);
-        stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
-    }
-    return true;
+    return x;
 }
 
-double ExponentialRand::f(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::SourceParameters() const
 {
-    return (x < 0.0) ? 0.0 : beta * std::exp(-beta * x);
+    return this->beta;
 }
 
-double ExponentialRand::logf(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::SourceToNatural(double rate) const
 {
-    return (x < 0.0) ? -INFINITY : logBeta - beta * x;
+    return -rate;
 }
 
-double ExponentialRand::F(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::LogNormalizer(double thetaP) const
 {
-    return (x > 0.0) ? -std::expm1(-beta * x) : 0.0;
+    return -std::log(-thetaP);
 }
 
-double ExponentialRand::S(const double & x) const
+template < typename RealType >
+double ExponentialRand<RealType>::LogNormalizerGradient(double thetaP) const
 {
-    return (x > 0.0) ? std::exp(-beta * x) : 1.0;
+    return -1.0 / thetaP;
 }
 
-double ExponentialRand::Variate() const
+template < typename RealType >
+double ExponentialRand<RealType>::CarrierMeasure(RealType) const
 {
-    return theta * StandardVariate(localRandGenerator);
+    return 0.0;
 }
 
-void ExponentialRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+double ExponentialRand<RealType>::CrossEntropyAdjusted(double rate) const
 {
-    for (double & var : outputData)
+    return rate * this->theta - std::log(rate);
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::EntropyAdjusted() const
+{
+    return 1.0 - this->logBeta;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::f(const RealType &x) const
+{
+    return (x < 0.0) ? 0.0 : this->beta * std::exp(-this->beta * x);
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::logf(const RealType & x) const
+{
+    return (x < 0.0) ? -INFINITY : this->logBeta - this->beta * x;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::F(const RealType & x) const
+{
+    return (x > 0.0) ? -std::expm1l(-this->beta * x) : 0.0;
+}
+
+template < typename RealType >
+double ExponentialRand<RealType>::S(const RealType & x) const
+{
+    return (x > 0.0) ? std::exp(-this->beta * x) : 1.0;
+}
+
+template < typename RealType >
+RealType ExponentialRand<RealType>::Variate() const
+{
+    return this->theta * StandardVariate(this->localRandGenerator);
+}
+
+template < typename RealType >
+void ExponentialRand<RealType>::Sample(std::vector<RealType> &outputData) const
+{
+    for (RealType & var : outputData)
         var = this->Variate();
 }
 
-double ExponentialRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType ExponentialRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
     /// Ziggurat algorithm
-    int iter = 0;
+    size_t iter = 0;
     do {
         int stairId = randGenerator.Variate() & 255;
         /// Get horizontal coordinate
-        double x = UniformRand::StandardVariate(randGenerator) * stairWidth[stairId];
-        if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
+        RealType x = UniformRand<RealType>::StandardVariate(randGenerator) * ziggurat[stairId].second;
+        if (x < ziggurat[stairId + 1].second) /// if we are under the upper stair - accept
             return x;
         if (stairId == 0) /// if we catch the tail
-            return x1 + StandardVariate(randGenerator);
-        long double height = stairHeight[stairId] - stairHeight[stairId - 1];
-        if (stairHeight[stairId - 1] + height * UniformRand::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
+            return ziggurat[1].second + StandardVariate(randGenerator);
+        RealType height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
+        if (ziggurat[stairId - 1].first + height * UniformRand<RealType>::StandardVariate(randGenerator) < std::exp(-x)) /// if we are under the curve - accept
             return x;
         /// rejection - go back
-    } while (++iter <= MAX_ITER_REJECTION);
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     /// fail due to some error
-    return NAN;
+    throw std::runtime_error("Exponential distribution: sampling failed");
 }
 
-double ExponentialRand::Median() const
+template < typename RealType >
+std::complex<double> ExponentialRand<RealType>::CFImpl(double t) const
 {
-    return theta * M_LN2;
+    return 1.0 / std::complex<double>(1.0, -this->theta * t);
 }
 
-double ExponentialRand::quantileImpl(double p) const
+template < typename RealType >
+long double ExponentialRand<RealType>::Entropy() const
 {
-    return -theta * std::log1p(-p);
+    return this->EntropyAdjusted();
 }
 
-double ExponentialRand::quantileImpl1m(double p) const
-{
-    return -theta * std::log(p);
-}
-
-std::complex<double> ExponentialRand::CFImpl(double t) const
-{
-    return 1.0 / std::complex<double>(1.0, -theta * t);
-}
-
-double ExponentialRand::Entropy() const
-{
-    return 1.0 - logBeta;
-}
-
-double ExponentialRand::Moment(int n) const
+template < typename RealType >
+long double ExponentialRand<RealType>::Moment(int n) const
 {
     if (n < 0)
         return 0;
     if (n == 0)
         return 1;
-    return std::exp(RandMath::lfact(n) - n * logBeta);
+    return std::exp(RandMath::lfact(n) - n * this->logBeta);
 }
+
+
+template class ExponentialRand<float>;
+template class ExponentialRand<double>;
+template class ExponentialRand<long double>;

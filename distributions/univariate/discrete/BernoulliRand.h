@@ -16,7 +16,7 @@
  * X ~ Multin(1, 1 - p, p) <BR>
  * 2X - 1 ~ Rademacher
  */
-class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution
+class RANDLIBSHARED_EXPORT BernoulliRand : public BinomialDistribution<int>
 {
     unsigned long long boundary = 0;///< coefficient for faster random number generation
 
@@ -32,8 +32,8 @@ public:
     double F(const int & k) const override;
     double S(const int & k) const override;
     int Variate() const override;
-    static int Variate(double probability, RandGenerator &randGenerator = staticRandGenerator);
-    static int StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    static int Variate(double probability, RandGenerator &randGenerator = ProbabilityDistribution<int>::staticRandGenerator);
+    static int StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<int>::staticRandGenerator);
     void Sample(std::vector<int> &outputData) const override;
 
     inline double Entropy();

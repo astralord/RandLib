@@ -13,7 +13,8 @@
  * Related distributions: <BR>
  * X ~ Multin(n, 1 - p_1 - p_2, p_1, p_2)
  */
-class RANDLIBSHARED_EXPORT TrinomialRand : public DiscreteBivariateDistribution<BinomialRand, BinomialRand>
+template< typename IntType = int>
+class RANDLIBSHARED_EXPORT TrinomialRand : public DiscreteBivariateDistribution<BinomialRand<IntType>, BinomialRand<IntType>, IntType>
 {
     int n = 1; ///< number of trials
     double log1mProb = -M_LN3; ///< log(1 - p_1 - p_2)
@@ -25,15 +26,17 @@ public:
 
     void SetParameters(int number, double probability1, double probability2);
     inline int GetNumber() const { return n; }
-    inline double GetFirstProbability() const { return X.GetProbability(); }
-    inline double GetSecondProbability() const { return Y.GetProbability(); }
+    inline double GetFirstProbability() const { return this->X.GetProbability(); }
+    inline double GetSecondProbability() const { return this->Y.GetProbability(); }
 
-    double P(const IntPair &point) const override;
-    double logP(const IntPair &point) const override;
-    double F(const IntPair & point) const override;
-    IntPair Variate() const override;
+    double P(const Pair<IntType> &point) const override;
+    double logP(const Pair<IntType> &point) const override;
+    double F(const Pair<IntType> & point) const override;
+    Pair<IntType> Variate() const override;
 
-    double Correlation() const override;
+    long double Correlation() const override;
+
+    Pair<IntType> Mode() const override;
 };
 
 #endif // TRINOMIALRAND_H

@@ -1,20 +1,23 @@
 #include "CategoricalRand.h"
 #include "../continuous/UniformRand.h"
 
-CategoricalRand::CategoricalRand(std::vector<double>&& probabilities)
+template < typename IntType >
+CategoricalRand<IntType>::CategoricalRand(std::vector<double>&& probabilities)
 {
     SetProbabilities(std::move(probabilities));
 }
 
-String CategoricalRand::Name() const
+template < typename IntType >
+String CategoricalRand<IntType>::Name() const
 {
     String str = "Categorical(";
     for (int i = 0; i != K - 1; ++i)
-        str += toStringWithPrecision(prob[i]) + ", ";
-    return str + toStringWithPrecision(prob[K - 1]) + ")";
+        str += this->toStringWithPrecision(prob[i]) + ", ";
+    return str + this->toStringWithPrecision(prob[K - 1]) + ")";
 }
 
-void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
+template < typename IntType >
+void CategoricalRand<IntType>::SetProbabilities(std::vector<double> &&probabilities)
 {
     if (probabilities.size() == 0 || std::accumulate(probabilities.begin(), probabilities.end(), 0.0) != 1.0)
         throw std::invalid_argument("Categorical distribution: probability parameters should sum to 1");
@@ -25,17 +28,20 @@ void CategoricalRand::SetProbabilities(std::vector<double> &&probabilities)
     K = prob.size();
 }
 
-double CategoricalRand::P(const int & k) const
+template < typename IntType >
+double CategoricalRand<IntType>::P(const IntType & k) const
 {
     return (k < 0 || k >= K) ? 0.0 : prob[k];
 }
 
-double CategoricalRand::logP(const int & k) const
+template < typename IntType >
+double CategoricalRand<IntType>::logP(const IntType & k) const
 {
     return std::log(P(k));
 }
 
-double CategoricalRand::F(const int & k) const
+template < typename IntType >
+double CategoricalRand<IntType>::F(const IntType & k) const
 {
     if (k < 0)
         return 0.0;
@@ -53,41 +59,46 @@ double CategoricalRand::F(const int & k) const
     return sum;
 }
 
-int CategoricalRand::Variate() const
+template < typename IntType >
+IntType CategoricalRand<IntType>::Variate() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand<double>::StandardVariate(this->localRandGenerator);
     return quantileImpl(U);
 }
 
-double CategoricalRand::Mean() const
+template < typename IntType >
+long double CategoricalRand<IntType>::Mean() const
 {
-    double sum = 0.0;
+    long double sum = 0.0;
     for (int i = 1; i != K; ++i)
         sum += i * prob[i];
     return sum;
 }
 
-double CategoricalRand::Variance() const
+template < typename IntType >
+long double CategoricalRand<IntType>::Variance() const
 {
-    double mean = 0.0, secMom = 0.0;
+    long double mean = 0.0, secMom = 0.0;
     for (int i = 1; i != K; ++i) {
-        double aux = i * prob[i];
+        long double aux = i * prob[i];
         mean += aux;
         secMom += i * aux;
     }
     return secMom - mean * mean;
 }
 
-int CategoricalRand::Mode() const
+template < typename IntType >
+IntType CategoricalRand<IntType>::Mode() const
 {
     auto maxProbIt = std::max_element(prob.begin(), prob.end());
     return std::distance(prob.begin(), maxProbIt);
 }
 
-int CategoricalRand::quantileImpl(double p) const
+template < typename IntType >
+IntType CategoricalRand<IntType>::quantileImpl(double p) const
 {
     double sum = 0.0;
-    for (int i = 0; i != K; ++i) {
+    for (IntType i = 0; i != K; ++i) {
         sum += prob[i];
         if (RandMath::areClose(sum, p) || sum > p)
             return i;
@@ -95,10 +106,11 @@ int CategoricalRand::quantileImpl(double p) const
     return K - 1;
 }
 
-int CategoricalRand::quantileImpl1m(double p) const
+template < typename IntType >
+IntType CategoricalRand<IntType>::quantileImpl1m(double p) const
 {
     double sum = 0;
-    for (int i = K - 1; i >= 0; --i) {
+    for (IntType i = K - 1; i >= 0; --i) {
         sum += prob[i];
         if (RandMath::areClose(sum, p) || sum > p)
             return i;
@@ -106,7 +118,8 @@ int CategoricalRand::quantileImpl1m(double p) const
     return 0.0;
 }
 
-std::complex<double> CategoricalRand::CFImpl(double t) const
+template < typename IntType >
+std::complex<double> CategoricalRand<IntType>::CFImpl(double t) const
 {
     double re = 0.0;
     double im = 0.0;
@@ -117,3 +130,7 @@ std::complex<double> CategoricalRand::CFImpl(double t) const
     return std::complex<double>(re, im);
 }
 
+
+template class CategoricalRand<int>;
+template class CategoricalRand<long int>;
+template class CategoricalRand<long long int>;

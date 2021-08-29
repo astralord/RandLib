@@ -2,16 +2,19 @@
 #include "ExponentialRand.h"
 #include "UniformRand.h"
 
-KolmogorovSmirnovRand::KolmogorovSmirnovRand()
+template < typename RealType >
+KolmogorovSmirnovRand<RealType>::KolmogorovSmirnovRand()
 {
 }
 
-String KolmogorovSmirnovRand::Name() const
+template < typename RealType >
+String KolmogorovSmirnovRand<RealType>::Name() const
 {
     return "Kolmogorov-Smirnov";
 }
 
-double KolmogorovSmirnovRand::L(double x)
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::L(RealType x)
 {
     if (x <= 0.0)
         return 0.0;
@@ -28,7 +31,8 @@ double KolmogorovSmirnovRand::L(double x)
     return M_SQRT2PI * sum / x;
 }
 
-double KolmogorovSmirnovRand::K(double x)
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::K(RealType x)
 {
     if (x <= 0.0)
         return 1.0;
@@ -44,7 +48,8 @@ double KolmogorovSmirnovRand::K(double x)
     return 2 * sum;
 }
 
-double KolmogorovSmirnovRand::f(const double & x) const
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -74,61 +79,69 @@ double KolmogorovSmirnovRand::f(const double & x) const
     return 8 * sum * x;
 }
 
-double KolmogorovSmirnovRand::logf(const double & x) const
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::logf(const RealType & x) const
 {
     return std::log(f(x));
 }
 
-double KolmogorovSmirnovRand::F(const double & x) const
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::F(const RealType & x) const
 {
     return (x > 1.0) ? 1.0 - K(x) : L(x);
 }
 
-double KolmogorovSmirnovRand::S(const double & x) const
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::S(const RealType & x) const
 {
     return (x > 1.0) ? K(x) : 1.0 - L(x);
 }
 
-double KolmogorovSmirnovRand::logF(const double & x) const
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::logF(const RealType & x) const
 {
-    return (x > 1.0) ? std::log1p(-K(x)) : std::log(L(x));
+    return (x > 1.0) ? std::log1pl(-K(x)) : std::log(L(x));
 }
 
-double KolmogorovSmirnovRand::logS(const double & x) const
+template < typename RealType >
+double KolmogorovSmirnovRand<RealType>::logS(const RealType & x) const
 {
-    return (x > 1.0) ? std::log(K(x)) : std::log1p(-L(x));
+    return (x > 1.0) ? std::log(K(x)) : std::log1pl(-L(x));
 }
 
-double KolmogorovSmirnovRand::truncatedGammaVariate() const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::truncatedGammaVariate() const
 {
     /// Generator for truncated gamma distribution with shape = 1.5
-    static constexpr long double tp = 2.193245422464302l; /// π^2 / (8 * 0.75^2)
-    int iter = 0;
+    static constexpr long double tp = 2.193245422464302l; ///< π^2 / (8 * 0.75^2)
+    static constexpr long double rate = 1.2952909208355123l;
+    size_t iter = 0;
     do {
-        double E0 = 1.2952909208355123l * ExponentialRand::StandardVariate(localRandGenerator);
-        double E1 = 2 * ExponentialRand::StandardVariate(localRandGenerator);
-        double G = tp + E0;
+        RealType E0 = rate * ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType E1 = 2 * ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType G = tp + E0;
         if (E0 * E0 <= tp * E1 * (G + tp))
             return G;
-        double Wp = E0 / tp;
-        if (Wp - std::log1p(Wp) <= E1)
+        RealType Wp = E0 / tp;
+        if (Wp - std::log1pl(Wp) <= E1)
             return G;
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN;
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
-double KolmogorovSmirnovRand::variateForTheLeftMostInterval() const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::variateForTheLeftMostInterval() const
 {
-    int iter1 = 0;
+    size_t iter1 = 0;
     do {
-        double G = truncatedGammaVariate();
-        double X = M_PI / std::sqrt(8 * G);
-        double W = 0.0;
-        double Z = 0.5 / G;
-        int n = 1, iter2 = 0;
-        double Q = 1.0;
-        double U = UniformRand::StandardVariate(localRandGenerator);
-        while (U >= W && ++iter2 <= MAX_ITER_REJECTION) {
+        RealType G = truncatedGammaVariate();
+        RealType X = M_PI / std::sqrt(8 * G);
+        RealType W = 0.0;
+        RealType Z = 0.5 / G;
+        size_t n = 1, iter2 = 0;
+        RealType Q = 1.0;
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        while (U >= W && ++iter2 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION) {
             W += Z * Q;
             if (U >= W)
                 return X;
@@ -137,22 +150,23 @@ double KolmogorovSmirnovRand::variateForTheLeftMostInterval() const
             Q = std::exp(G - G * nSq);
             W -= nSq * Q;
         }
-    } while (++iter1 <= MAX_ITER_REJECTION);
-    return NAN;
+    } while (++iter1 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
-double KolmogorovSmirnovRand::variateForTheRightMostInterval() const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::variateForTheRightMostInterval() const
 {
     static constexpr double tSq = 0.5625; /// square of parameter t suggested in the book
-    int iter1 = 0;
+    size_t iter1 = 0;
     do {
-        double E = ExponentialRand::StandardVariate(localRandGenerator);
-        double U = UniformRand::StandardVariate(localRandGenerator);
-        double X = std::sqrt(tSq + 0.5 * E);
-        double W = 0.0;
-        int n = 1, iter2 = 0;
-        double Z = -2 * X * X;
-        while (U > W && ++iter2 < MAX_ITER_REJECTION) {
+        RealType E = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
+        RealType X = std::sqrt(tSq + 0.5 * E);
+        RealType W = 0.0;
+        size_t n = 1, iter2 = 0;
+        RealType Z = -2 * X * X;
+        while (U > W && ++iter2 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION) {
             ++n;
             int nSq = n * n;
             W += nSq * std::exp(Z * (nSq - 1));
@@ -162,87 +176,98 @@ double KolmogorovSmirnovRand::variateForTheRightMostInterval() const
             nSq = n * n;
             W -= nSq * std::exp(Z * (nSq - 1));
         }
-    } while (++iter1 <= MAX_ITER_REJECTION);
-    return NAN;
+    } while (++iter1 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
-double KolmogorovSmirnovRand::Variate() const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::Variate() const
 {
     /// Luc Devroye, pp. 163-165
     /// alternating series method
-    bool isLeft = UniformRand::StandardVariate(localRandGenerator) < 0.3728329582237386; /// F(0.75)
+    bool isLeft = UniformRand<RealType>::StandardVariate(this->localRandGenerator) < 0.3728329582237386; /// F(0.75)
     return isLeft ? variateForTheLeftMostInterval() : variateForTheRightMostInterval();
 }
 
-double KolmogorovSmirnovRand::Mean() const
+template < typename RealType >
+long double KolmogorovSmirnovRand<RealType>::Mean() const
 {
     return M_SQRTPI * M_SQRT1_2 * M_LN2;
 }
 
-double KolmogorovSmirnovRand::Variance() const
+template < typename RealType >
+long double KolmogorovSmirnovRand<RealType>::Variance() const
 {
-    double mean = Mean();
+    long double mean = Mean();
     return M_PI_SQ / 12 - mean * mean;
 }
 
-double KolmogorovSmirnovRand::Mode() const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::Mode() const
 {
-    return 0.735467812776958;
+    return 0.735467812776958l;
 }
 
-double KolmogorovSmirnovRand::Median() const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::Median() const
 {
-    return 0.82757355518990761;
+    return 0.82757355518990761l;
 }
 
-double KolmogorovSmirnovRand::quantileImpl(double p) const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
 {
-    double guess = std::sqrt(-0.5 * (std::log1p(-p) - M_LN2));
+    RealType guess = std::sqrt(-0.5 * (std::log1pl(-p) - M_LN2));
     if (p < 1e-5) {
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (RealType x)
         {
             double logCdf = logF(x), logPdf = logf(x);
             double first = logCdf - logP;
             double second = std::exp(logPdf - logCdf);
             return DoublePair(first, second);
         }, guess))
-            return guess;
-        return NAN;
+            throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
+        return guess;
     }
-    if (RandMath::findRoot([p, this] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([p, this] (RealType x)
     {
         double first = F(x) - p;
         double second = f(x);
         return DoublePair(first, second);
     }, guess))
-        return guess;
-    return NAN;
+        throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
+    return guess;
 }
 
-double KolmogorovSmirnovRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
 {
-    double guess = std::sqrt(-0.5 * std::log(0.5 * p));
+    RealType guess = std::sqrt(-0.5 * std::log(0.5 * p));
     if (p < 1e-5) {
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (RealType x)
         {
             double logCcdf = logS(x), logPdf = logf(x);
             double first = logP - logCcdf;
             double second = std::exp(logPdf - logCcdf);
             return DoublePair(first, second);
         }, guess))
-            return guess;
-        return NAN;
+            throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
+        return guess;
     }
-    if (RandMath::findRoot([p, this] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<RealType>([p, this] (RealType x)
     {
         double first = p - S(x);
         double second = f(x);
         return DoublePair(first, second);
     }, guess))
-        return guess;
-    return NAN;
+        throw std::runtime_error("Kolmogorov-Smirnov distribution: failure in numerical procedure");
+    return guess;
 }
 
 
+
+template class KolmogorovSmirnovRand<float>;
+template class KolmogorovSmirnovRand<double>;
+template class KolmogorovSmirnovRand<long double>;

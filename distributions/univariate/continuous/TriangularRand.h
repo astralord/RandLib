@@ -9,7 +9,8 @@
  *
  * Notation: X ~ Tri(a, b, c)
  */
-class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT TriangularRand : public ContinuousDistribution<RealType>
 {
     double a = 0; ///< min value
     double b = 2; ///< max value
@@ -25,24 +26,24 @@ public:
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    double MinValue() const override { return a; }
-    double MaxValue() const override { return b; }
+    RealType MinValue() const override { return a; }
+    RealType MaxValue() const override { return b; }
 
     void SetParameters(double lowerLimit, double mode, double upperLimit);
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
 public:
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

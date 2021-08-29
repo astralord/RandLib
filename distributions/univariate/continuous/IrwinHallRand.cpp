@@ -1,23 +1,27 @@
 #include "IrwinHallRand.h"
 
-IrwinHallRand::IrwinHallRand(size_t number)
+template < typename RealType >
+IrwinHallRand<RealType>::IrwinHallRand(size_t number)
 {
     SetNumber(number);
 }
 
-String IrwinHallRand::Name() const
+template < typename RealType >
+String IrwinHallRand<RealType>::Name() const
 {
-    return "Irwin-Hall(" + toStringWithPrecision(GetNumber()) + ")";
+    return "Irwin-Hall(" + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
-void IrwinHallRand::SetNumber(int number)
+template < typename RealType >
+void IrwinHallRand<RealType>::SetNumber(int number)
 {
     if (number <= 0)
         throw std::invalid_argument("Irwin-Hall distribution: number should be positive");
     n = number;
 }
 
-double IrwinHallRand::f(const double & x) const
+template < typename RealType >
+double IrwinHallRand<RealType>::f(const RealType & x) const
 {
     if (x < 0 || x > n)
         return 0.0;
@@ -40,12 +44,14 @@ double IrwinHallRand::f(const double & x) const
     return n * sum;
 }
 
-double IrwinHallRand::logf(const double & x) const
+template < typename RealType >
+double IrwinHallRand<RealType>::logf(const RealType & x) const
 {
     return std::log(f(x));
 }
 
-double IrwinHallRand::F(const double & x) const
+template < typename RealType >
+double IrwinHallRand<RealType>::F(const RealType & x) const
 {
     if (x <= 0)
         return 0.0;
@@ -74,52 +80,64 @@ double IrwinHallRand::F(const double & x) const
     return sum;
 }
 
-double IrwinHallRand::Variate() const
+template < typename RealType >
+RealType IrwinHallRand<RealType>::Variate() const
 {
-    double sum = 0.0;
+    RealType sum = 0.0;
     for (int i = 0; i != n; ++i)
         sum += U.Variate();
     return sum;
 }
 
-void IrwinHallRand::Reseed(unsigned long seed) const
+template < typename RealType >
+void IrwinHallRand<RealType>::Reseed(unsigned long seed) const
 {
     U.Reseed(seed);
 }
 
-double IrwinHallRand::Mean() const
+template < typename RealType >
+long double IrwinHallRand<RealType>::Mean() const
 {
     return 0.5 * n;
 }
 
-double IrwinHallRand::Variance() const
+template < typename RealType >
+long double IrwinHallRand<RealType>::Variance() const
 {
-    static constexpr double M_1_12 = 0.08333333333333;
+    static constexpr long double M_1_12 = 0.08333333333333l;
     return n * M_1_12;
 }
 
-std::complex<double> IrwinHallRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> IrwinHallRand<RealType>::CFImpl(double t) const
 {
     return std::pow(U.CF(t), n);
 }
 
-double IrwinHallRand::Median() const
+template < typename RealType >
+RealType IrwinHallRand<RealType>::Median() const
 {
     return 0.5 * n;
 }
 
-double IrwinHallRand::Mode() const
+template < typename RealType >
+RealType IrwinHallRand<RealType>::Mode() const
 {
     return 0.5 * n;
 }
 
-double IrwinHallRand::Skewness() const
+template < typename RealType >
+long double IrwinHallRand<RealType>::Skewness() const
 {
-    return 0.0;
+    return 0.0l;
 }
 
-double IrwinHallRand::ExcessKurtosis() const
+template < typename RealType >
+long double IrwinHallRand<RealType>::ExcessKurtosis() const
 {
     return -1.2 / n;
 }
 
+template class IrwinHallRand<float>;
+template class IrwinHallRand<double>;
+template class IrwinHallRand<long double>;

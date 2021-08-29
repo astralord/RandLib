@@ -14,10 +14,11 @@
  * Related distributions: <BR>
  * X = Y + Z, where Y ~ Normal(μ, σ) and Z ~ Exp(β)
  */
-class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public ContinuousDistribution<RealType>
 {
-    NormalRand X{};
-    ExponentialRand Y{};
+    NormalRand<RealType> X{};
+    ExponentialRand<RealType> Y{};
 
     double a = 1; ///< μ + βσ^2
     double b = M_SQRT1_2; ///< 1 / (√2 * σ)
@@ -29,26 +30,30 @@ public:
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
-    double MinValue() const override { return -INFINITY; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return -INFINITY; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double location, double variance, double rate);
     inline double GetLocation() const { return X.GetLocation(); }
     inline double GetScale() const { return X.GetScale(); }
     inline double GetRate() const { return Y.GetRate(); }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+private:
+    DoublePair faux(const RealType &x) const;
+
+public:
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

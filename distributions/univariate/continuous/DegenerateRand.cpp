@@ -35,12 +35,12 @@ double DegenerateRand::Variate() const
     return a;
 }
 
-double DegenerateRand::Mean() const
+long double DegenerateRand::Mean() const
 {
     return a;
 }
 
-double DegenerateRand::Variance() const
+long double DegenerateRand::Variance() const
 {
     return 0.0;
 }
@@ -72,17 +72,17 @@ double DegenerateRand::Mode() const
     return a;
 }
 
-double DegenerateRand::Skewness() const
+long double DegenerateRand::Skewness() const
 {
     return NAN;
 }
 
-double DegenerateRand::ExcessKurtosis() const
+long double DegenerateRand::ExcessKurtosis() const
 {
     return NAN;
 }
 
-double DegenerateRand::Entropy() const
+long double DegenerateRand::Entropy() const
 {
     return 0.0;
 }
@@ -91,6 +91,6 @@ void DegenerateRand::Fit(const std::vector<double> &sample)
 {
     auto sampleBegin = sample.begin();
     if (!std::equal(sampleBegin, sample.end(), sampleBegin))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, "All elements should be equal to each other"));
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, "All elements should be equal to each other"));
     SetValue(*sampleBegin);
 }

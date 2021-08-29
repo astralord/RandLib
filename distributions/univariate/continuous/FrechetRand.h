@@ -9,7 +9,8 @@
  *
  * Notation: X ~ Frechet(α, s, m)
  */
-class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution<RealType>
 {
     double alpha = 1; ///< shape α
     double s = 1; ///< scale
@@ -18,37 +19,37 @@ class RANDLIBSHARED_EXPORT FrechetRand : public ContinuousDistribution
     double pdfCoef = 0; ///< log(α/s)
 
 public:
-    FrechetRand(double shape, double scale, double location);
+    FrechetRand(double shape = 1, double scale = 1, double location = 0);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return m; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return m; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double shape, double scale, double location);
     inline double GetShape() const { return alpha; }
     inline double GetScale() const { return s; }
     inline double GetLocation() const { return m; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const;
 };
 
 #endif // FRECHETRAND_H

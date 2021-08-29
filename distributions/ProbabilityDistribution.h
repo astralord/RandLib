@@ -4,6 +4,7 @@
 #include <string>
 
 #include "math/RandMath.h"
+#include "math/NumericMath.h"
 #include "univariate/BasicRandGenerator.h"
 #include "RandLib_global.h"
 
@@ -25,7 +26,7 @@ protected:
      * one thousand should be enough to be sure there is a bug
      * (or rejection method is too slow to be used)
      */
-    static constexpr double MAX_ITER_REJECTION = 1000;
+    static constexpr size_t MAX_ITER_REJECTION = 1000;
 
     String toStringWithPrecision(const double a_value, const int n = 6) const;
 
@@ -109,8 +110,8 @@ protected:
 
     static constexpr char POSITIVITY_VIOLATION[] = "All elements should be positive";
     static constexpr char NON_NEGATIVITY_VIOLATION[] = "All elements should be non-negative";
-    static constexpr char UPPER_LIMIT_VIOLATION[] = "No element should be bigger than ";
-    static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be less than ";
+    static constexpr char UPPER_LIMIT_VIOLATION[] = "No element should be greater than ";
+    static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be smaller than ";
 
     String fitErrorDescription(FIT_ERROR_TYPE fet, const String &explanation);
 };

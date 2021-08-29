@@ -10,10 +10,11 @@
  *
  * Notation: X ~ Zipf(s, n)
  */
-class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution<IntType>
 {
-    double s = 1; ///< exponent
-    int n = 1; ///< number
+    double s = 2; ///< exponent
+    IntType n = 1; ///< number
     double invHarmonicNumber = 1; /// 1 / H(s, n)
 
     static constexpr int tableSize = 16;
@@ -21,26 +22,27 @@ class RANDLIBSHARED_EXPORT ZipfRand : public DiscreteDistribution
     double table[tableSize];
 
 public:
-    ZipfRand(double exponent, int number);
+    ZipfRand(double exponent = 2.0, IntType number = 1);
+
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    int MinValue() const override { return 1; }
-    int MaxValue() const override { return n; }
+    IntType MinValue() const override { return 1; }
+    IntType MaxValue() const override { return n; }
 
-    void SetParameters(double exponent, int number);
+    void SetParameters(double exponent, IntType number);
     inline double GetExponent() const { return s; }
-    inline int GetNumber() const { return n; }
+    inline IntType GetNumber() const { return n; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    int Variate() const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    IntType Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    IntType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

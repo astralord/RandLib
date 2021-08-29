@@ -2,6 +2,7 @@
 #define WEIBULLRAND_H
 
 #include "ContinuousDistribution.h"
+#include "InverseGammaRand.h"
 
 /**
  * @brief The WeibullRand class <BR>
@@ -9,7 +10,8 @@
  *
  * Notation: X ~ Weibull(λ, k)
  */
-class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT WeibullRand : public ContinuousDistribution<RealType>
 {
     double lambda = 1; ///< scale λ
     double k = 1; ///< shape k
@@ -21,34 +23,60 @@ public:
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double scale, double shape);
     inline double GetScale() const { return lambda; }
     inline double GetShape() const { return k; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const;
+
+private:
+    /**
+     * @brief getNorm
+     * @param sample
+     * @return L^k norm of the sample
+     */
+    double getNorm(const std::vector<RealType> &sample) const;
+
+public:
+    /**
+     * @fn FitScale
+     * Fit λ by maximum-likelihood
+     * @param sample
+     */
+    void FitScale(const std::vector<RealType> &sample);
+
+    /**
+     * @fn FitScaleBayes
+     * Fit λ, using bayesian inference
+     * @param sample
+     * @param priorDistribution
+     * @param MAP if true, use MAP estimator
+     * @return posterior distribution
+     */
+    InverseGammaRand<RealType> FitScaleBayes(const std::vector<RealType> &sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 #endif // WEIBULLRAND_H

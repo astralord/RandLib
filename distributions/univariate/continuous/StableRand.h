@@ -14,7 +14,8 @@
  * If X ~ Cauchy(μ, γ), then X ~ S(1, 0, γ, μ) <BR>
  * If +/-X ~ Levy(μ, γ), then X ~ S(0.5, +/-1, γ, μ)
  */
-class RANDLIBSHARED_EXPORT StableDistribution : public ContinuousDistribution
+template < typename RealType = double>
+class RANDLIBSHARED_EXPORT StableDistribution : virtual public ContinuousDistribution<RealType>
 {
 protected:
     double alpha = 2; ///< characteristic exponent α
@@ -54,12 +55,20 @@ protected:
 
 public:
     SUPPORT_TYPE SupportType() const override;
-    double MinValue() const override;
-    double MaxValue() const override;
+    RealType MinValue() const override;
+    RealType MaxValue() const override;
 
+private:
+    void parametersVerification(double exponent, double skewness, double scale);
+    void setParametersForNormal();
+    void setParametersForCauchy();
+    void setParametersForLevy();
+    void setParametersForUnityExponent();
+    void setParametersForGeneralExponent();
+    
 protected:
     void SetParameters(double exponent, double skewness, double scale = 1, double location = 0);
-
+    
 public:
     void SetLocation(double location);
     void SetScale(double scale);
@@ -96,37 +105,37 @@ protected:
      * @param x
      * @return probability density function of normal distribution
      */
-    double pdfNormal(double x) const;
+    double pdfNormal(RealType x) const;
     /**
      * @fn logpdfNormal
      * @param x
      * @return logarithm of probability density function of normal distribution
      */
-    double logpdfNormal(double x) const;
+    double logpdfNormal(RealType x) const;
     /**
      * @fn pdfCauchy
      * @param x
      * @return probability density function of Cauchy distribution
      */
-    double pdfCauchy(double x) const;
+    double pdfCauchy(RealType x) const;
     /**
      * @fn logpdfCauchy
      * @param x
      * @return logarithm of probability density function of Cauchy distribution
      */
-    double logpdfCauchy(double x) const;
+    double logpdfCauchy(RealType x) const;
     /**
      * @fn pdfLevy
      * @param x
      * @return probability density function of Levy distribution
      */
-    double pdfLevy(double x) const;
+    double pdfLevy(RealType x) const;
     /**
      * @fn logpdfLevy
      * @param x
      * @return logarithm of probability density function of Levy distribution
      */
-    double logpdfLevy(double x) const;
+    double logpdfLevy(RealType x) const;
 
 private:
     /**
@@ -235,8 +244,8 @@ private:
      */
     double pdfForGeneralExponent(double x) const;
 public:    
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
 
 protected:
     /**
@@ -244,37 +253,37 @@ protected:
      * @param x
      * @return cumulative distribution function of normal distribution
      */
-    double cdfNormal(double x) const;
+    double cdfNormal(RealType x) const;
     /**
      * @fn cdfNormalCompl
      * @param x
      * @return complementary cumulative distribution function of normal distribution
      */
-    double cdfNormalCompl(double x) const;
+    double cdfNormalCompl(RealType x) const;
     /**
      * @fn cdfCauchy
      * @param x
      * @return cumulative distribution function of Cauchy distribution
      */
-    double cdfCauchy(double x) const;
+    double cdfCauchy(RealType x) const;
     /**
      * @fn cdfCauchyCompl
      * @param x
      * @return complementary cumulative distribution function of Cauchy distribution
      */
-    double cdfCauchyCompl(double x) const;
+    double cdfCauchyCompl(RealType x) const;
     /**
      * @fn cdfLevy
      * @param x
      * @return cumulative distribution function of Levy distribution
      */
-    double cdfLevy(double x) const;
+    double cdfLevy(RealType x) const;
     /**
      * @fn cdfLevyCompl
      * @param x
      * @return complementary cumulative distribution function of Levy distribution
      */
-    double cdfLevyCompl(double x) const;
+    double cdfLevyCompl(RealType x) const;
 private:
     /**
      * @fn fastcdfExponentiation
@@ -323,8 +332,8 @@ private:
      */
     double cdfForGeneralExponent(double x) const;
 public:
-    double F(const double & x) const override;
-    double S(const double & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
 
 private:
     /**
@@ -343,16 +352,16 @@ private:
      */
     double variateForExponentEqualOneHalf() const;
 public:
-    double Variate() const override;
-    void Sample(std::vector<double> &outputData) const override;
+    RealType Variate() const override;
+    void Sample(std::vector<RealType> &outputData) const override;
 
 public:
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 protected:
     /**
@@ -360,41 +369,41 @@ protected:
      * @param p input parameter in the interval (0, 1)
      * @return quantile for Gaussian distribution
      */
-    double quantileNormal(double p) const;
+    RealType quantileNormal(double p) const;
     /**
      * @fn quantileNormal1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for Gaussian distribution
      */
-    double quantileNormal1m(double p) const;
+    RealType quantileNormal1m(double p) const;
     /**
      * @fn quantileCauchy
      * @param p input parameter in the interval (0, 1)
      * @return quantile for Cauchy distribution
      */
-    double quantileCauchy(double p) const;
+    RealType quantileCauchy(double p) const;
     /**
      * @fn quantileCauchy1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for Cauchy distribution
      */
-    double quantileCauchy1m(double p) const;
+    RealType quantileCauchy1m(double p) const;
     /**
      * @fn quantileLevy
      * @param p input parameter in the interval (0, 1)
      * @return quantile for Levy distribution
      */
-    double quantileLevy(double p) const;
+    RealType quantileLevy(double p) const;
     /**
      * @fn quantileLevy1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for Levy distribution
      */
-    double quantileLevy1m(double p) const;
+    RealType quantileLevy1m(double p) const;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
 protected:
     /**
@@ -425,12 +434,15 @@ private:
  * @brief The StableRand class <BR>
  * Stable distribution
  */
-class RANDLIBSHARED_EXPORT StableRand : public StableDistribution
+template < typename RealType = double>
+class RANDLIBSHARED_EXPORT StableRand : public StableDistribution<RealType>
 {
 public:
-    StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution(exponent, skewness, scale, location) {}
+    StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution<RealType>(exponent, skewness, scale, location) {}
     String Name() const override;
-    using StableDistribution::SetParameters;
+    
+    void SetExponent(double exponent);
+    void SetSkewness(double skewness);
 };
 
 
@@ -443,10 +455,11 @@ public:
  * Related distributions:
  * X ~ S(1.5, 0, γ, μ)
  */
-class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableDistribution
+template < typename RealType = double>
+class RANDLIBSHARED_EXPORT HoltsmarkRand : public StableDistribution<RealType>
 {
 public:
-    HoltsmarkRand(double scale = 1, double location = 0) : StableDistribution(1.5, 0.0, scale, location) {}
+    HoltsmarkRand(double scale = 1, double location = 0) : StableDistribution<RealType>(1.5, 0.0, scale, location) {}
     String Name() const override;
 };
 
@@ -460,10 +473,11 @@ public:
  * Related distributions:
  * X ~ S(1, 1, γ, μ)
  */
-class RANDLIBSHARED_EXPORT LandauRand : public StableDistribution
+template < typename RealType = double>
+class RANDLIBSHARED_EXPORT LandauRand : public StableDistribution<RealType>
 {
 public:
-    LandauRand(double scale = 1, double location = 0) : StableDistribution(1.0, 1.0, scale, location) {}
+    LandauRand(double scale = 1, double location = 0) : StableDistribution<RealType>(1.0, 1.0, scale, location) {}
     String Name() const override;
 };
 

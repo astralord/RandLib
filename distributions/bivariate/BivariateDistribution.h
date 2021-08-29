@@ -9,7 +9,7 @@
  * Abstract class for all bivariate probability distributions
  */
 template < class T1, class T2, typename T >
-class RANDLIBSHARED_EXPORT BivariateDistribution : public ProbabilityDistribution< T >
+class RANDLIBSHARED_EXPORT BivariateDistribution : public ProbabilityDistribution< Pair<T> >
 {
 protected:
     T1 X{}; ///< 1st marginal distributions
@@ -18,15 +18,16 @@ protected:
     virtual ~BivariateDistribution() {}
 
 public:
-    T MinValue() const { return T(X.MinValue(), Y.MinValue()); }
-    T MaxValue() const { return T(X.MaxValue(), Y.MaxValue()); }
+    Pair<T> MinValue() const { return Pair<T>(X.MinValue(), Y.MinValue()); }
+    Pair<T> MaxValue() const { return Pair<T>(X.MaxValue(), Y.MaxValue()); }
 
     void Reseed(unsigned long seed) const override;
 
-    virtual DoublePair Mean() const final;
-    virtual DoubleTriplet Covariance() const final;
-    virtual double Correlation() const = 0;
+    virtual LongDoublePair Mean() const final;
+    virtual LongDoubleTriplet Covariance() const final;
+    virtual long double Correlation() const = 0;
     virtual std::pair<T1, T2> GetMarginalDistributions() const final;
+    virtual Pair<T> Mode() const = 0;
 };
 
 #endif // BIVARIATEDISTRIBUTION_H

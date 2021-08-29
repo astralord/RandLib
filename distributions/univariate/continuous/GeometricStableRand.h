@@ -4,13 +4,14 @@
 #include "StableRand.h"
 
 /**
- * @brief The ShiftedGeometricStableDistribution class
- * Abstract class that unites in itself Asymmetric Laplace
+ * @brief The GeneralGeometricStableDistribution class
+ * Abstract class for general interface of Asymmetric Laplace
  * and Geometric-Stable distributions
  */
-class RANDLIBSHARED_EXPORT ShiftedGeometricStableDistribution : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT GeneralGeometricStableDistribution : public ContinuousDistribution<RealType>
 {
-    StableRand Z{};
+    StableRand<RealType> Z{};
 
 protected:
     double alpha = 2; ///< characteristic exponent α
@@ -26,11 +27,10 @@ protected:
     double kappaInv = 1; ///< 1 / κ
     double kappaSq = 1; ///< κ^2
     double log1pKappaSq = M_LN2; ///< log(1 + κ^2)
-    double pdfCoef = M_LN2; ///< log(γ * (κ + 1 / κ))
-    double cdfCoef = -M_LN2; ///< 2 * log(κ) - log(1 + κ^2)
+    double logKappa = 0; /// log(κ)
 
-    ShiftedGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
-    virtual ~ShiftedGeometricStableDistribution() {}
+    GeneralGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
+    virtual ~GeneralGeometricStableDistribution() {}
 
     void SetParameters(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.);
     void SetLocation(double location);
@@ -57,8 +57,8 @@ public:
     inline double GetLogScale() const { return logGamma; }
 
     SUPPORT_TYPE SupportType() const override;
-    double MinValue() const override;
-    double MaxValue() const override;
+    RealType MinValue() const override;
+    RealType MaxValue() const override;
 
 protected:
     double pdfLaplace(double x) const;
@@ -71,9 +71,9 @@ private:
     double pdfByCauchy(double x) const;
 
 public:
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
 
 private:
     double variateForUnityExponent(double z) const;
@@ -81,16 +81,16 @@ private:
     double variateForOneHalfExponent(double z) const;
     double variateByCauchy(double z) const;
 public:
-    double Variate() const override;
-    void Sample(std::vector<double> &outputData) const override;
+    RealType Variate() const override;
+    void Sample(std::vector<RealType> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 protected:
     /**
@@ -98,13 +98,13 @@ protected:
      * @param p input parameter in the interval (0, 1)
      * @return quantile for (Asymmetric) Laplace distribution
      */
-    double quantileLaplace(double p) const;
+    RealType quantileLaplace(double p) const;
     /**
      * @fn quantileLaplace1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for (Asymmetric) Laplace distribution
      */
-    double quantileLaplace1m(double p) const;
+    RealType quantileLaplace1m(double p) const;
 
     std::complex<double> CFImpl(double t) const override;
 };
@@ -118,10 +118,11 @@ protected:
  *
  * If X ~ Laplace(m, γ, κ), then X - m ~ GS(2, β, γ, (1/κ - κ) * γ) with arbitrary β
  */
-class RANDLIBSHARED_EXPORT GeometricStableRand : public ShiftedGeometricStableDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT GeometricStableRand : public GeneralGeometricStableDistribution<RealType>
 {
 public:
-    GeometricStableRand(double exponent, double skewness, double scale, double location);
+    GeometricStableRand(double exponent = 2, double skewness = 0, double scale = M_SQRT2, double location = 0);
     virtual ~GeometricStableRand() {}
 
     String Name() const override;
@@ -131,7 +132,7 @@ public:
     void SetParameters(double exponent, double skewness);
     void SetLocation(double location);
     void SetScale(double scale);
-    inline double GetLocation() const { return mu; }
+    inline double GetLocation() const { return this->mu; }
 };
 
 #endif // GEOMETRICSTABLERAND_H

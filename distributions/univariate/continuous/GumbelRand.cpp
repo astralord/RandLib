@@ -1,23 +1,27 @@
 #include "GumbelRand.h"
 #include "ExponentialRand.h"
 
-GumbelRand::GumbelRand(double location, double scale)
+template < typename RealType >
+GumbelRand<RealType>::GumbelRand(double location, double scale)
 {
     SetLocation(location);
     SetScale(scale);
 }
 
-String GumbelRand::Name() const
+template < typename RealType >
+String GumbelRand<RealType>::Name() const
 {
-    return "Gumbel(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Gumbel(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-void GumbelRand::SetLocation(double location)
+template < typename RealType >
+void GumbelRand<RealType>::SetLocation(double location)
 {
     mu = location;
 }
 
-void GumbelRand::SetScale(double scale)
+template < typename RealType >
+void GumbelRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Gumbel distribution: scale should be positive");
@@ -25,87 +29,106 @@ void GumbelRand::SetScale(double scale)
     logBeta = std::log(beta);
 }
 
-double GumbelRand::f(const double & x) const
+template < typename RealType >
+double GumbelRand<RealType>::f(const RealType & x) const
 {
     return std::exp(logf(x));
 }
 
-double GumbelRand::logf(const double & x) const
+template < typename RealType >
+double GumbelRand<RealType>::logf(const RealType & x) const
 {
     double z = (mu - x) / beta;
     double y = std::exp(z);
     return z - y - logBeta;
 }
 
-double GumbelRand::F(const double & x) const
+template < typename RealType >
+double GumbelRand<RealType>::F(const RealType & x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
     return std::exp(-y);
 }
 
-double GumbelRand::S(const double & x) const
+template < typename RealType >
+double GumbelRand<RealType>::S(const RealType &x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
-    return -std::expm1(-y);
+    return -std::expm1l(-y);
 }
 
-double GumbelRand::Variate() const
+template < typename RealType >
+RealType GumbelRand<RealType>::Variate() const
 {
-    return mu + beta * GumbelRand::StandardVariate(localRandGenerator);
+    return mu + beta * GumbelRand<RealType>::StandardVariate(this->localRandGenerator);
 }
 
-double GumbelRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType GumbelRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
-    double w = ExponentialRand::StandardVariate(randGenerator);
+    RealType w = ExponentialRand<RealType>::StandardVariate(randGenerator);
     return -std::log(w);
 }
 
-double GumbelRand::Mean() const
+template < typename RealType >
+long double GumbelRand<RealType>::Mean() const
 {
     return mu + beta * M_EULER;
 }
 
-double GumbelRand::Variance() const
+template < typename RealType >
+long double GumbelRand<RealType>::Variance() const
 {
     double v = M_PI * beta;
     return v * v / 6;
 }
 
-double GumbelRand::quantileImpl(double p) const
+template < typename RealType >
+RealType GumbelRand<RealType>::quantileImpl(double p) const
 {
     return mu - beta * std::log(-std::log(p));
 }
 
-double GumbelRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType GumbelRand<RealType>::quantileImpl1m(double p) const
 {
-    return mu - beta * std::log(-std::log1p(-p));
+    return mu - beta * std::log(-std::log1pl(-p));
 }
 
-double GumbelRand::Median() const
+template < typename RealType >
+RealType GumbelRand<RealType>::Median() const
 {
     static constexpr double M_LN_LN2 = std::log(M_LN2);
     return mu - beta * M_LN_LN2;
 }
 
-double GumbelRand::Mode() const
+template < typename RealType >
+RealType GumbelRand<RealType>::Mode() const
 {
     return mu;
 }
 
-double GumbelRand::Skewness() const
+template < typename RealType >
+long double GumbelRand<RealType>::Skewness() const
 {
-    static constexpr double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI_SQ * M_PI);
+    static constexpr long double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI_SQ * M_PI);
     return skew;
 }
 
-double GumbelRand::ExcessKurtosis() const
+template < typename RealType >
+long double GumbelRand<RealType>::ExcessKurtosis() const
 {
-    return 2.4;
+    return 2.4l;
 }
 
-double GumbelRand::Entropy() const
+template < typename RealType >
+long double GumbelRand<RealType>::Entropy() const
 {
     return logBeta + M_EULER + 1.0;
 }
+
+template class GumbelRand<float>;
+template class GumbelRand<double>;
+template class GumbelRand<long double>;

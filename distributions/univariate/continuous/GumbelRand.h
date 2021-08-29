@@ -12,44 +12,45 @@
  * Related distributions: <BR>
  * exp(-(X - μ) / β) ~ Exp(1)
  */
-class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT GumbelRand : public ContinuousDistribution<RealType>
 {
     double mu = 0; ///< location μ
     double beta = 1; ///< scale β
     double logBeta = 0; ///< log(β)
 public:
-    GumbelRand(double location, double scale);
+    GumbelRand(double location = 0, double scale = 1);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
-    double MinValue() const override { return -INFINITY; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return -INFINITY; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetLocation(double location);
     void SetScale(double scale);
     inline double GetLocation() const { return mu; }
     inline double GetScale() const { return beta; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
-    static double StandardVariate(RandGenerator &randGenerator = staticRandGenerator);
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
+    static RealType StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
 
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const;
 };
 
 #endif // GUMBELRAND_H

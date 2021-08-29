@@ -3,24 +3,24 @@
 #include "../continuous/ExponentialRand.h"
 #include "PoissonRand.h"
 
-template< typename T >
-NegativeBinomialDistribution<T>::NegativeBinomialDistribution(T number, double probability)
+template< typename IntType, typename T>
+NegativeBinomialDistribution<IntType, T>::NegativeBinomialDistribution(T number, double probability)
 {
     SetParameters(number, probability);
 }
 
-template< typename T >
-void NegativeBinomialDistribution<T>::SetParameters(T number, double probability)
+template< typename IntType, typename T>
+void NegativeBinomialDistribution<IntType, T>::SetParameters(T number, double probability)
 {
     if (r <= 0.0)
         throw std::invalid_argument("Negative-Binomial distribution: number parameter should be positive");
-    if (probability < 0.0 || probability > 1.0)
-        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should in interval [0, 1]");
+    if (probability <= 0.0 || probability >= 1.0)
+        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should be in interval (0, 1)");
     r = (number > 0) ? number : 1;
     p = probability;
     q = 1.0 - p;
     logProb = std::log(p);
-    log1mProb = std::log1p(-p);
+    log1mProb = std::log1pl(-p);
     GammaRV.SetParameters(r, p / q);
     qDivP = GammaRV.GetScale();
     pdfCoef = r * logProb;
@@ -38,26 +38,26 @@ void NegativeBinomialDistribution<T>::SetParameters(T number, double probability
     }
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::P(const int & k) const
+template< typename IntType, typename T>
+double NegativeBinomialDistribution<IntType, T>::P(const IntType &k) const
 {
     return (k < 0) ? 0.0 : std::exp(logP(k));
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::logP(const int & k) const
+template< typename IntType, typename T>
+double NegativeBinomialDistribution<IntType, T>::logP(const IntType &k) const
 {
     if (k < 0)
         return -INFINITY;
-    double y = std::lgamma(r + k);
+    double y = std::lgammal(r + k);
     y -= RandMath::lfact(k);
     y += k * log1mProb;
     y += pdfCoef;
     return y;
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::F(const int & k) const
+template< typename IntType, typename T>
+double NegativeBinomialDistribution<IntType, T>::F(const IntType &k) const
 {
     if (k < 0)
         return 0.0;
@@ -66,8 +66,8 @@ double NegativeBinomialDistribution<T>::F(const int & k) const
     return RandMath::ibeta(p, r, kp1, logBetaFun, logProb, log1mProb);
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::S(const int & k) const
+template< typename IntType, typename T>
+double NegativeBinomialDistribution<IntType, T>::S(const IntType &k) const
 {
     if (k < 0)
         return 0.0;
@@ -76,79 +76,55 @@ double NegativeBinomialDistribution<T>::S(const int & k) const
     return RandMath::ibeta(q, kp1, r, logBetaFun, log1mProb, logProb);
 }
 
-template< >
-NegativeBinomialRand<int>::GENERATOR_ID NegativeBinomialDistribution<int>::GetIdOfUsedGenerator() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::variateThroughGammaPoisson() const
 {
-    /// if r is small, we use two different generators for two different cases:
-    /// if p < 0.08 then the tail is too heavy
-    /// (probability to be in main body is less than 0.75),
-    /// then we return highest integer less than variate from exponential distribution
-    /// otherwise we choose table method
-    if (r < 10)
-        return (p < 0.08) ? EXPONENTIAL : TABLE;
-    return GAMMA_POISSON;
+    return PoissonRand<IntType>::Variate(GammaRV.Variate(), this->localRandGenerator);
 }
 
-template< >
-NegativeBinomialRand<double>::GENERATOR_ID NegativeBinomialDistribution<double>::GetIdOfUsedGenerator() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::variateGeometricByTable() const
 {
-    return GAMMA_POISSON;
-}
-
-template< typename T >
-int NegativeBinomialDistribution<T>::variateThroughGammaPoisson() const
-{
-    return PoissonRand::Variate(GammaRV.Variate(), localRandGenerator);
-}
-
-template< >
-int NegativeBinomialDistribution<int>::variateGeometricByTable() const
-{
-    double U = UniformRand::StandardVariate(localRandGenerator);
+    double U = UniformRand<double>::StandardVariate(this->localRandGenerator);
     /// handle tail by recursion
     if (U > table[tableSize - 1])
         return tableSize + variateGeometricByTable();
     /// handle the main body
-    int x = 0;
+    IntType x = 0;
     while (U > table[x])
         ++x;
     return x;
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateGeometricThroughExponential() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::variateGeometricThroughExponential() const
 {
-    return std::floor(-ExponentialRand::StandardVariate(localRandGenerator) / log1mProb);
+    float X = -ExponentialRand<float>::StandardVariate(this->localRandGenerator) / log1mProb;
+    return std::floor(X);
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateByTable() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::variateByTable() const
 {
-    double var = 0;
+    IntType var = 0;
     for (int i = 0; i < r; ++i) {
         var += variateGeometricByTable();
     }
     return var;
 }
 
-template< >
-int NegativeBinomialDistribution<int>::variateThroughExponential() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::variateThroughExponential() const
 {
-    double var = 0;
+    IntType var = 0;
     for (int i = 0; i < r; ++i) {
         var += variateGeometricThroughExponential();
     }
     return var;
 }
 
-template< >
-int NegativeBinomialDistribution<double>::Variate() const
-{
-    return variateThroughGammaPoisson();
-}
-
-template< >
-int NegativeBinomialDistribution<int>::Variate() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::Variate() const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE)
@@ -156,124 +132,120 @@ int NegativeBinomialDistribution<int>::Variate() const
     return (genId == EXPONENTIAL) ? variateThroughExponential() : variateThroughGammaPoisson();
 }
 
-template< >
-void NegativeBinomialDistribution<double>::Sample(std::vector<int> &outputData) const
-{
-    for (int &var : outputData)
-        var = variateThroughGammaPoisson();
-}
-
-template< >
-void NegativeBinomialDistribution<int>::Sample(std::vector<int> &outputData) const
+template< typename IntType, typename T>
+void NegativeBinomialDistribution<IntType, T>::Sample(std::vector<IntType> &outputData) const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE) {
-        for (int & var : outputData)
+        for (IntType & var : outputData)
             var = variateByTable();
     }
     else if (genId == EXPONENTIAL) {
-        for (int & var : outputData)
+        for (IntType & var : outputData)
             var = variateThroughExponential();
     }
     else {
-        for (int &var : outputData)
+        for (IntType &var : outputData)
             var = variateThroughGammaPoisson();
     }
 }
 
-template< typename T >
-void NegativeBinomialDistribution<T>::Reseed(unsigned long seed) const
+template< typename IntType, typename T>
+void NegativeBinomialDistribution<IntType, T>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     GammaRV.Reseed(seed + 1);
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::Mean() const
+template< typename IntType, typename T>
+long double NegativeBinomialDistribution<IntType, T>::Mean() const
 {
     return qDivP * r;
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::Variance() const
+template< typename IntType, typename T>
+long double NegativeBinomialDistribution<IntType, T>::Variance() const
 {
     return qDivP * r / p;
 }
 
-template< typename T >
-std::complex<double> NegativeBinomialDistribution<T>::CFImpl(double t) const
+template< typename IntType, typename T>
+std::complex<double> NegativeBinomialDistribution<IntType, T>::CFImpl(double t) const
 {
     std::complex<double> denominator(1.0 - q * std::cos(t), -q * std::sin(t));
     return std::pow(p / denominator, r);
 }
 
-template< typename T >
-int NegativeBinomialDistribution<T>::Mode() const
+template< typename IntType, typename T>
+IntType NegativeBinomialDistribution<IntType, T>::Mode() const
 {
     return (r > 1) ? std::floor((r - 1) * qDivP) : 0;
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::Skewness() const
+template< typename IntType, typename T>
+long double NegativeBinomialDistribution<IntType, T>::Skewness() const
 {
     return (1 + q) / std::sqrt(q * r);
 }
 
-template< typename T >
-double NegativeBinomialDistribution<T>::ExcessKurtosis() const
+template< typename IntType, typename T>
+long double NegativeBinomialDistribution<IntType, T>::ExcessKurtosis() const
 {
-    double kurtosis = p / qDivP;
+    long double kurtosis = p / qDivP;
     kurtosis += 6;
     return kurtosis / r;
 }
 
-template< typename T >
-BetaRand NegativeBinomialDistribution<T>::FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution)
+template< typename IntType, typename T>
+BetaRand<> NegativeBinomialDistribution<IntType, T>::FitProbabilityBayes(const std::vector<IntType> &sample, const BetaDistribution<> &priorDistribution, bool MAP)
 {
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+    if (!this->allElementsAreNonNegative(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
     int n = sample.size();
     double alpha = priorDistribution.GetAlpha();
     double beta = priorDistribution.GetBeta();
-    BetaRand posteriorDistribution(alpha + r * n, beta + GetSampleSum(sample));
-    SetParameters(r, posteriorDistribution.Mean());
+    BetaRand<> posteriorDistribution(alpha + r * n, beta + this->GetSampleSum(sample));
+    SetParameters(r, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 
+template class NegativeBinomialDistribution<int, int>;
+template class NegativeBinomialDistribution<long int, int>;
+template class NegativeBinomialDistribution<long long int, int>;
 
-template< >
-String NegativeBinomialRand<int>::Name() const
-{
-    return "Pascal" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
-}
+template class NegativeBinomialDistribution<int, double>;
+template class NegativeBinomialDistribution<long int, double>;
+template class NegativeBinomialDistribution<long long int, double>;
 
-template< >
-String NegativeBinomialRand<double>::Name() const
+template< typename IntType, typename T >
+String NegativeBinomialRand<IntType, T>::Name() const
 {
+    if (std::is_integral_v<T>)
+        return "Pascal(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
     return "Polya(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
-template< typename T >
-constexpr char NegativeBinomialRand<T>::TOO_SMALL_VARIANCE[];
+template< typename IntType, typename T>
+constexpr char NegativeBinomialRand<IntType, T>::TOO_SMALL_VARIANCE[];
 
-template< >
-void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
+template< typename IntType, typename T >
+void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
 {
     /// Check positivity of sample
-    if (!allElementsAreNonNegative(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, NON_NEGATIVITY_VIOLATION));
+    if (!this->allElementsAreNonNegative(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->NON_NEGATIVITY_VIOLATION));
     /// Initial guess by method of moments
-    DoublePair stats = GetSampleMeanAndVariance(sample);
+    DoublePair stats = this->GetSampleMeanAndVariance(sample);
     double mean = stats.first, variance = stats.second;
-    /// Method can't be applied in the case of too small variance
+    /// Method can't be applied in case of variance smaller than mean
     if (variance <= mean)
-        throw std::invalid_argument(fitErrorDescription(NOT_APPLICABLE, TOO_SMALL_VARIANCE));
+        throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, this->TOO_SMALL_VARIANCE));
     double guess = mean * mean / (variance - mean);
     size_t n = sample.size();
-    if (!RandMath::findRoot([sample, mean, n] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<double>([sample, mean, n] (double x)
     {
         double first = 0.0, second = 0.0;
-        for (const double & var : sample) {
+        for (const IntType & var : sample) {
             first += RandMath::digamma(var + x);
             second += RandMath::trigamma(var + x);
         }
@@ -281,11 +253,16 @@ void NegativeBinomialRand<double>::Fit(const std::vector<int> &sample)
         second -= n * (RandMath::trigamma(x) - mean / (x * (mean + x)));
         return DoublePair(first, second);
     }, guess))
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding algorithm"));
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding algorithm"));
     if (guess <= 0.0)
-        throw std::runtime_error(fitErrorDescription(WRONG_RETURN, "Number should be positive, but returned value is " + toStringWithPrecision(guess)));
+        throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, "Number should be positive, but returned value is " + this->toStringWithPrecision(guess)));
     SetParameters(guess, guess / (guess + mean));
 }
 
-template class NegativeBinomialDistribution<int>;
-template class NegativeBinomialDistribution<double>;
+template class NegativeBinomialRand<int, int>;
+template class NegativeBinomialRand<long int, int>;
+template class NegativeBinomialRand<long long int, int>;
+
+template class NegativeBinomialRand<int, double>;
+template class NegativeBinomialRand<long int, double>;
+template class NegativeBinomialRand<long long int, double>;

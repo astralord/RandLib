@@ -2,203 +2,269 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 
-NakagamiDistribution::NakagamiDistribution(double shape, double spread)
+template < typename RealType >
+NakagamiDistribution<RealType>::NakagamiDistribution(double shape, double spread)
 {
     SetParameters(shape, spread);
 }
 
-void NakagamiDistribution::SetParameters(double shape, double spread)
+template < typename RealType >
+void NakagamiDistribution<RealType>::SetParameters(double shape, double spread)
 {
     if (shape <= 0.0)
         throw std::invalid_argument("Nakagami distribution: shape should be positive");
     if (spread <= 0.0)
         throw std::invalid_argument("Nakagami distribution: spread should be positive");
-    m = shape;
-    w = spread;
-    Y.SetParameters(m, m / w);
-    lgammaShapeRatio = std::lgamma(m + 0.5) - Y.GetLogGammaShape();
+    mu = shape;
+    omega = spread;
+    Y.SetParameters(mu, mu / omega);
+    lgammaShapeRatio = std::lgammal(mu + 0.5) - Y.GetLogGammaShape();
 }
 
-double NakagamiDistribution::f(const double & x) const
+template < typename RealType >
+double NakagamiDistribution<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
         return 0.0;
     if (x == 0) {
-        if (m > 0.5)
+        if (mu > 0.5)
             return 0.0;
-        return (m < 0.5) ? INFINITY : std::sqrt(M_2_PI / w);
+        return (mu < 0.5) ? INFINITY : std::sqrt(M_2_PI / omega);
     }
     return 2 * x * Y.f(x * x);
 }
 
-double NakagamiDistribution::logf(const double & x) const
+template < typename RealType >
+double NakagamiDistribution<RealType>::logf(const RealType & x) const
 {
     if (x < 0.0)
         return -INFINITY;
     if (x == 0) {
-        if (m > 0.5)
-            return 0-INFINITY;
-        return (m < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(w));
+        if (mu > 0.5)
+            return -INFINITY;
+        return (mu < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(omega));
     }
-    return std::log(2 * x) + Y.logf(x * x);
+    return M_LN2 + std::log(x) + Y.logf(x * x);
 }
 
-double NakagamiDistribution::F(const double & x) const
+template < typename RealType >
+double NakagamiDistribution<RealType>::F(const RealType & x) const
 {
     return (x > 0.0) ? Y.F(x * x) : 0.0;
 }
 
-double NakagamiDistribution::S(const double & x) const
+template < typename RealType >
+double NakagamiDistribution<RealType>::S(const RealType & x) const
 {
     return (x > 0.0) ? Y.S(x * x) : 1.0;
 }
 
-double NakagamiDistribution::Variate() const
+template < typename RealType >
+RealType NakagamiDistribution<RealType>::Variate() const
 {
     return std::sqrt(Y.Variate());
 }
 
-void NakagamiDistribution::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void NakagamiDistribution<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     Y.Sample(outputData);
-    for (double & var : outputData)
+    for (RealType & var : outputData)
         var = std::sqrt(var);
 }
 
-void NakagamiDistribution::Reseed(unsigned long seed) const
+template < typename RealType >
+void NakagamiDistribution<RealType>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     Y.Reseed(seed + 1);
 }
 
-double NakagamiDistribution::Mean() const
+template < typename RealType >
+long double NakagamiDistribution<RealType>::Mean() const
 {
-    double y = lgammaShapeRatio;
+    long double y = lgammaShapeRatio;
     y -= 0.5 * Y.GetLogRate();
     return std::exp(y);
 }
 
-double NakagamiDistribution::Variance() const
+template < typename RealType >
+long double NakagamiDistribution<RealType>::Variance() const
 {
-    double y = lgammaShapeRatio;
+    long double y = lgammaShapeRatio;
     y = std::exp(2 * y);
-    return w * (1 - y / m);
+    return omega * (1 - y / mu);
 }
 
-double NakagamiDistribution::Mode() const
+template < typename RealType >
+RealType NakagamiDistribution<RealType>::Median() const
 {
-    double mode = 0.5 * w / m;
-    return std::sqrt(std::max(w - mode, 0.0));
+    return std::sqrt(Y.Quantile(0.5));
 }
 
-double NakagamiDistribution::Skewness() const
+template < typename RealType >
+RealType NakagamiDistribution<RealType>::Mode() const
 {
-    double thirdMoment = lgammaShapeRatio;
+    long double mode = 1.0 - 0.5 / mu;
+    if (mode <= 0.0)
+        return 0.0;
+    return std::sqrt(omega * mode);
+}
+
+template < typename RealType >
+long double NakagamiDistribution<RealType>::Skewness() const
+{
+    long double thirdMoment = lgammaShapeRatio;
     thirdMoment -= 1.5 * Y.GetLogRate();
-    thirdMoment = (m + 0.5) * std::exp(thirdMoment);
-    double mean = Mean();
-    double variance = Variance();
+    thirdMoment = (mu + 0.5) * std::exp(thirdMoment);
+    long double mean = Mean();
+    long double variance = Variance();
     return (thirdMoment - mean * (3 * variance + mean * mean)) / std::pow(variance, 1.5);
 }
 
-double NakagamiDistribution::FourthMoment() const
+template < typename RealType >
+long double NakagamiDistribution<RealType>::FourthMoment() const
 {
-    double fourthMoment = w / m;
+    long double fourthMoment = omega / mu;
     fourthMoment *= fourthMoment;
-    fourthMoment *= m * (m + 1);
+    fourthMoment *= mu * (mu + 1);
     return fourthMoment;
 }
 
-double NakagamiDistribution::ExcessKurtosis() const
+template < typename RealType >
+long double NakagamiDistribution<RealType>::ExcessKurtosis() const
 {
-    double mean = Mean();
-    double secondMoment = SecondMoment();
-    double thirdMoment = ThirdMoment();
-    double fourthMoment = FourthMoment();
-    double meanSq = mean * mean;
-    double variance = secondMoment - meanSq;
-    double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
-    double denominator = variance * variance;
+    long double mean = Mean();
+    long double secondMoment = this->SecondMoment();
+    long double thirdMoment = this->ThirdMoment();
+    long double fourthMoment = FourthMoment();
+    long double meanSq = mean * mean;
+    long double variance = secondMoment - meanSq;
+    long double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
+    long double denominator = variance * variance;
     return numerator / denominator - 3.0;
 }
 
-double NakagamiDistribution::quantileImpl(double p) const
+template < typename RealType >
+RealType NakagamiDistribution<RealType>::quantileImpl(double p) const
 {
     return std::sqrt(Y.Quantile(p));
 }
 
-double NakagamiDistribution::quantileImpl1m(double p) const
+template < typename RealType >
+RealType NakagamiDistribution<RealType>::quantileImpl1m(double p) const
 {
     return std::sqrt(Y.Quantile1m(p));
 }
 
-/// NAKAGAMI
-String NakagamiRand::Name() const
+template < typename RealType >
+std::complex<double> NakagamiDistribution<RealType>::CFImpl(double t) const
 {
-    return "Nakagami(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetSpread()) + ")";
+    if (mu >= 0.5)
+        return ContinuousDistribution<RealType>::CFImpl(t);
+
+    double re = this->ExpectedValue([this, t] (double x)
+    {
+        if (x == 0.0)
+            return 0.0;
+        return std::cos(t * x) - 1.0;
+    }, 0, INFINITY) + 1.0;
+
+    double im = this->ExpectedValue([this, t] (double x)
+    {
+        return std::sin(t * x);
+    }, 0, INFINITY);
+
+    return std::complex<double>(re, im);
 }
 
+template class NakagamiDistribution<float>;
+template class NakagamiDistribution<double>;
+template class NakagamiDistribution<long double>;
+
+/// NAKAGAMI
+template < typename RealType >
+String NakagamiRand<RealType>::Name() const
+{
+    return "Nakagami(" + this->toStringWithPrecision(this->GetShape()) + ", " + this->toStringWithPrecision(this->GetSpread()) + ")";
+}
+
+template class NakagamiRand<float>;
+template class NakagamiRand<double>;
+template class NakagamiRand<long double>;
 
 /// CHI
-ChiRand::ChiRand(int degree)
+template < typename RealType >
+ChiRand<RealType>::ChiRand(int degree)
 {
     SetDegree(degree);
 }
 
-String ChiRand::Name() const
+template < typename RealType >
+String ChiRand<RealType>::Name() const
 {
-    return "Chi(" + toStringWithPrecision(GetDegree()) +  ")";
+    return "Chi(" + this->toStringWithPrecision(GetDegree()) +  ")";
 }
 
-void ChiRand::SetDegree(int degree)
+template < typename RealType >
+void ChiRand<RealType>::SetDegree(int degree)
 {
     if (degree < 1)
         throw std::invalid_argument("Chi distribution: degree parameter should be positive");
-    NakagamiDistribution::SetParameters(0.5 * degree, degree);
+    NakagamiDistribution<RealType>::SetParameters(0.5 * degree, degree);
 }
 
-double ChiRand::Skewness() const
+template < typename RealType >
+long double ChiRand<RealType>::Skewness() const
 {
-    double mu = Mean();
-    double sigmaSq = Variance();
-    double skew = mu * (1 - 2 * sigmaSq);
+    long double mean = this->Mean();
+    long double sigmaSq = this->Variance();
+    long double skew = mean * (1 - 2 * sigmaSq);
     skew /= std::pow(sigmaSq, 1.5);
     return skew;
 }
 
-double ChiRand::ExcessKurtosis() const
+template < typename RealType >
+long double ChiRand<RealType>::ExcessKurtosis() const
 {
-    double mu = Mean();
-    double sigmaSq = Variance();
-    double sigma = std::sqrt(sigmaSq);
-    double skew = Skewness();
-    double kurt = 1.0 - mu * sigma * skew;
+    long double mean = this->Mean();
+    long double sigmaSq = this->Variance();
+    long double sigma = std::sqrt(sigmaSq);
+    long double skew = Skewness();
+    long double kurt = 1.0 - mean * sigma * skew;
     kurt /= sigmaSq;
     --kurt;
     return 2 * kurt;
 }
 
+template class ChiRand<float>;
+template class ChiRand<double>;
+template class ChiRand<long double>;
 
 /// MAXWELL-BOLTZMANN
-MaxwellBoltzmannRand::MaxwellBoltzmannRand(double scale)
+template < typename RealType >
+MaxwellBoltzmannRand<RealType>::MaxwellBoltzmannRand(double scale)
 {
     SetScale(scale);
 }
 
-String MaxwellBoltzmannRand::Name() const
+template < typename RealType >
+String MaxwellBoltzmannRand<RealType>::Name() const
 {
-    return "Maxwell-Boltzmann(" + toStringWithPrecision(GetScale()) + ")";
+    return "Maxwell-Boltzmann(" + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-void MaxwellBoltzmannRand::SetScale(double scale)
+template < typename RealType >
+void MaxwellBoltzmannRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Maxwell-Boltzmann distribution: scale should be positive");
     sigma = scale;
-    NakagamiDistribution::SetParameters(1.5, 3 * sigma * sigma);
+    NakagamiDistribution<RealType>::SetParameters(1.5, 3 * sigma * sigma);
 }
 
-double MaxwellBoltzmannRand::f(const double & x) const
+template < typename RealType >
+double MaxwellBoltzmannRand<RealType>::f(const RealType &x) const
 {
     if (x <= 0)
         return 0;
@@ -208,7 +274,8 @@ double MaxwellBoltzmannRand::f(const double & x) const
     return M_SQRT2 * M_1_SQRTPI * xAdjSq * y / sigma;
 }
 
-double MaxwellBoltzmannRand::F(const double & x) const
+template < typename RealType >
+double MaxwellBoltzmannRand<RealType>::F(const RealType & x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -218,7 +285,8 @@ double MaxwellBoltzmannRand::F(const double & x) const
     return std::erf(xAdj) - y;
 }
 
-double MaxwellBoltzmannRand::S(const double & x) const
+template < typename RealType >
+double MaxwellBoltzmannRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
         return 1.0;
@@ -228,71 +296,87 @@ double MaxwellBoltzmannRand::S(const double & x) const
     return std::erfc(xAdj) + y;
 }
 
-double MaxwellBoltzmannRand::Variate() const
+template < typename RealType >
+RealType MaxwellBoltzmannRand<RealType>::Variate() const
 {
-    double W = ExponentialRand::StandardVariate(localRandGenerator);
-    double N = NormalRand::StandardVariate(localRandGenerator);
+    RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
+    RealType N = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     return sigma * std::sqrt(2 * W + N * N);
 }
 
-void MaxwellBoltzmannRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void MaxwellBoltzmannRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
-    for (double & var : outputData)
+    for (RealType & var : outputData)
         var = this->Variate();
 }
 
-double MaxwellBoltzmannRand::Mean() const
+template < typename RealType >
+long double MaxwellBoltzmannRand<RealType>::Mean() const
 {
     return 2 * M_1_SQRTPI * M_SQRT2 * sigma;
 }
 
-double MaxwellBoltzmannRand::Variance() const
+template < typename RealType >
+long double MaxwellBoltzmannRand<RealType>::Variance() const
 {
     return (3 - 8.0 * M_1_PI) * sigma * sigma;
 }
 
-double MaxwellBoltzmannRand::Mode() const
+template < typename RealType >
+RealType MaxwellBoltzmannRand<RealType>::Mode() const
 {
     return M_SQRT2 * sigma;
 }
 
-double MaxwellBoltzmannRand::Skewness() const
+template < typename RealType >
+long double MaxwellBoltzmannRand<RealType>::Skewness() const
 {
-    double skewness = 3 * M_PI - 8;
+    long double skewness = 3 * M_PI - 8;
     skewness = 2.0 / skewness;
     skewness *= std::sqrt(skewness);
     return (16 - 5 * M_PI) * skewness;
 }
 
-double MaxwellBoltzmannRand::ExcessKurtosis() const
+template < typename RealType >
+long double MaxwellBoltzmannRand<RealType>::ExcessKurtosis() const
 {
-    double numerator = 40 - 3 * M_PI;
+    long double numerator = 40 - 3 * M_PI;
     numerator *= M_PI;
     numerator -= 96;
-    double denominator = 3 * M_PI - 8;
+    long double denominator = 3 * M_PI - 8;
     denominator *= denominator;
     return 4 * numerator / denominator;
 }
 
+template class MaxwellBoltzmannRand<float>;
+template class MaxwellBoltzmannRand<double>;
+template class MaxwellBoltzmannRand<long double>;
+
 /// RAYLEIGH
-RayleighRand::RayleighRand(double scale)
+template < typename RealType >
+RayleighRand<RealType>::RayleighRand(double scale)
 {
     SetScale(scale);
 }
 
-String RayleighRand::Name() const
+template < typename RealType >
+String RayleighRand<RealType>::Name() const
 {
-    return "Rayleigh(" + toStringWithPrecision(GetScale()) + ")";
+    return "Rayleigh(" + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-void RayleighRand::SetScale(double scale)
+template < typename RealType >
+void RayleighRand<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Rayleigh distribution: scale should be positive");
-    NakagamiDistribution::SetParameters(1, 2 * sigma * sigma);
+    sigma = scale;
+    NakagamiDistribution<RealType>::SetParameters(1, 2 * sigma * sigma);
 }
 
-double RayleighRand::f(const double & x) const
+template < typename RealType >
+double RayleighRand<RealType>::f(const RealType & x) const
 {
     if (x <= 0)
         return 0.0;
@@ -300,15 +384,17 @@ double RayleighRand::f(const double & x) const
     return y * std::exp(-0.5 * x * y);
 }
 
-double RayleighRand::F(const double & x) const
+template < typename RealType >
+double RayleighRand<RealType>::F(const RealType & x) const
 {
     if (x <= 0)
         return 0.0;
     double xAdj = x / sigma;
-    return -std::expm1(-0.5 * xAdj * xAdj);
+    return -std::expm1l(-0.5 * xAdj * xAdj);
 }
 
-double RayleighRand::S(const double & x) const
+template < typename RealType >
+double RayleighRand<RealType>::S(const RealType & x) const
 {
     if (x <= 0)
         return 1.0;
@@ -316,69 +402,80 @@ double RayleighRand::S(const double & x) const
     return std::exp(-0.5 * xAdj * xAdj);
 }
 
-double RayleighRand::Variate() const
+template < typename RealType >
+RealType RayleighRand<RealType>::Variate() const
 {
-    double W = ExponentialRand::StandardVariate(localRandGenerator);
+    double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
     return sigma * std::sqrt(2 * W);
 }
 
-void RayleighRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void RayleighRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
-    for (double & var : outputData)
+    for (RealType & var : outputData)
         var = this->Variate();
 }
 
-double RayleighRand::Mean() const
+template < typename RealType >
+long double RayleighRand<RealType>::Mean() const
 {
     return sigma * M_SQRTPI * M_SQRT1_2;
 }
 
-double RayleighRand::Variance() const
+template < typename RealType >
+long double RayleighRand<RealType>::Variance() const
 {
     return (2.0 - M_PI_2) * sigma * sigma;
 }
 
-double RayleighRand::quantileImpl(double p) const
+template < typename RealType >
+RealType RayleighRand<RealType>::quantileImpl(double p) const
 {
-    return sigma * std::sqrt(-2 * std::log1p(-p));
+    return sigma * std::sqrt(-2 * std::log1pl(-p));
 }
 
-double RayleighRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType RayleighRand<RealType>::quantileImpl1m(double p) const
 {
     return sigma * std::sqrt(-2 * std::log(p));
 }
 
-double RayleighRand::Median() const
+template < typename RealType >
+RealType RayleighRand<RealType>::Median() const
 {
     static constexpr double medianCoef = std::sqrt(M_LN2 + M_LN2);
     return sigma * medianCoef;
 }
 
-double RayleighRand::Mode() const
+template < typename RealType >
+RealType RayleighRand<RealType>::Mode() const
 {
     return sigma;
 }
 
-double RayleighRand::Skewness() const
+template < typename RealType >
+long double RayleighRand<RealType>::Skewness() const
 {
-    static constexpr double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    static constexpr long double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
     return skewness;
 }
 
-double RayleighRand::ExcessKurtosis() const
+template < typename RealType >
+long double RayleighRand<RealType>::ExcessKurtosis() const
 {
-    static constexpr double temp = 4 - M_PI;
-    static constexpr double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    static constexpr long double temp = 4 - M_PI;
+    static constexpr long double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
     return kurtosis;
 }
 
-void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
+template < typename RealType >
+void RayleighRand<RealType>::Fit(const std::vector<RealType> &sample, bool unbiased)
 {
     /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
     size_t n = sample.size();
-    DoublePair stats = GetSampleMeanAndVariance(sample);
+    DoublePair stats = this->GetSampleMeanAndVariance(sample);
     double rawMoment = stats.second + stats.first * stats.first;
     double sigmaBiasedSq = 0.5 * rawMoment;
     if (unbiased == false) {
@@ -389,7 +486,7 @@ void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
         double coef = 1.0 / (640 * std::pow(n, 5));
         coef -= 1.0 / (192 * std::pow(n, 3));
         coef += 0.125 / n;
-        SetScale((1.0 + coef) * std::sqrt(sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
+        SetScale(std::exp(std::log1pl(coef) + 0.5 * sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
     }
     else if (n > 15) {
         double coef = RandMath::lfact(n);
@@ -411,3 +508,7 @@ void RayleighRand::FitScale(const std::vector<double> &sample, bool unbiased)
         SetScale(scale);
     }
 }
+
+template class RayleighRand<float>;
+template class RayleighRand<double>;
+template class RayleighRand<long double>;

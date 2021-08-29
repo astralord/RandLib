@@ -8,22 +8,22 @@ UnivariateDistribution<T>::UnivariateDistribution()
 template< typename T >
 bool UnivariateDistribution<T>::isLeftBounded() const
 {
-    SUPPORT_TYPE supp = SupportType();
+    SUPPORT_TYPE supp = this->SupportType();
     return (supp == RIGHTSEMIFINITE_T || supp == FINITE_T);
 }
 
 template< typename T >
 bool UnivariateDistribution<T>::isRightBounded() const
 {
-    SUPPORT_TYPE supp = SupportType();
+    SUPPORT_TYPE supp = this->SupportType();
     return (supp == LEFTSEMIFINITE_T || supp == FINITE_T);
 }
 
 template< typename T >
-double UnivariateDistribution<T>::Quantile(double p) const
+T UnivariateDistribution<T>::Quantile(double p) const
 {
     if (p < 0.0 || p > 1.0)
-        return NAN;
+        throw std::invalid_argument("Probability p in quantile function should be in interval [0, 1]");
     double minVal = this->MinValue();
     if (p == 0.0)
         return minVal;
@@ -37,10 +37,10 @@ double UnivariateDistribution<T>::Quantile(double p) const
 }
 
 template< typename T >
-double UnivariateDistribution<T>::Quantile1m(double p) const
+T UnivariateDistribution<T>::Quantile1m(double p) const
 {
     if (p < 0.0 || p > 1.0)
-        return NAN;
+        throw std::invalid_argument("Probability p in quantile function should be in interval [0, 1]");
     double minVal = this->MinValue();
     if (p == 1.0)
         return minVal;
@@ -54,11 +54,19 @@ double UnivariateDistribution<T>::Quantile1m(double p) const
 }
 
 template< typename T >
-void UnivariateDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<double> &y)
+void UnivariateDistribution<T>::QuantileFunction(const std::vector<double> &p, std::vector<T> &y)
 {
     int size = std::min(p.size(), y.size());
     for (int i = 0; i != size; ++i)
-        y[i] = Quantile(p[i]);
+        y[i] = this->Quantile(p[i]);
+}
+
+template< typename T >
+void UnivariateDistribution<T>::QuantileFunction1m(const std::vector<double> &p, std::vector<T> &y)
+{
+    int size = std::min(p.size(), y.size());
+    for (int i = 0; i != size; ++i)
+        y[i] = this->Quantile1m(p[i]);
 }
 
 template< typename T >
@@ -76,12 +84,12 @@ std::complex<double> UnivariateDistribution<T>::CFImpl(double t) const
     if (leftBound == rightBound)
         return std::complex<double>(std::cos(t * leftBound), std::sin(t * leftBound));
 
-    double re = ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([this, t] (double x)
     {
         return std::cos(t * x);
     }, leftBound, rightBound);
 
-    double im = ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
     }, leftBound, rightBound);
@@ -94,15 +102,15 @@ void UnivariateDistribution<T>::CharacteristicFunction(const std::vector<double>
 {
     int size = std::min(t.size(), y.size());
     for (int i = 0; i != size; ++i)
-        y[i] = CF(t[i]);
+        y[i] = this->CF(t[i]);
 }
 
 template< typename T >
-void UnivariateDistribution<T>::HazardFunction(const std::vector<double> &x, std::vector<double> &y) const
+void UnivariateDistribution<T>::HazardFunction(const std::vector<T> &x, std::vector<double> &y) const
 {
     int size = std::min(x.size(), y.size());
     for (int i = 0; i != size; ++i)
-        y[i] = Hazard(x[i]);
+        y[i] = this->Hazard(x[i]);
 }
 
 template< typename T >
@@ -112,14 +120,14 @@ T UnivariateDistribution<T>::Median() const
 }
 
 template< typename T >
-double UnivariateDistribution<T>::Skewness() const
+long double UnivariateDistribution<T>::Skewness() const
 {
-    double var = Variance();
+    long double var = this->Variance();
     if (!std::isfinite(var))
         return NAN;
-    double mu = Mean(); /// var is finite, so is mu
+    long double mu = this->Mean(); /// var is finite, so is mu
 
-    double sum = ExpectedValue([this, mu] (double x)
+    long double sum = this->ExpectedValue([this, mu] (double x)
     {
         double xmmu = x - mu;
         double skewness = xmmu * xmmu * xmmu;
@@ -130,14 +138,14 @@ double UnivariateDistribution<T>::Skewness() const
 }
 
 template< typename T >
-double UnivariateDistribution<T>::ExcessKurtosis() const
+long double UnivariateDistribution<T>::ExcessKurtosis() const
 {
-    double var = Variance();
+    long double var = this->Variance();
     if (!std::isfinite(var))
         return NAN;
-    double mu = Mean(); /// var is finite, so is mu
+    long double mu = this->Mean(); /// var is finite, so is mu
 
-    double sum = ExpectedValue([this, mu] (double x)
+    long double sum = this->ExpectedValue([this, mu] (double x)
     {
         double xmmu = x - mu;
         double kurtosisSqrt = xmmu * xmmu;
@@ -149,35 +157,41 @@ double UnivariateDistribution<T>::ExcessKurtosis() const
 }
 
 template< typename T >
-double UnivariateDistribution<T>::SecondMoment() const
+long double UnivariateDistribution<T>::Kurtosis() const
 {
-    double mean = Mean();
-    return mean * mean + Variance();
+    return this->ExcessKurtosis() + 3.0;
 }
 
 template< typename T >
-double UnivariateDistribution<T>::ThirdMoment() const
+long double UnivariateDistribution<T>::SecondMoment() const
 {
-    double mean = Mean();
-    double variance = Variance();
-    double skewness = Skewness();
+    long double mean = this->Mean();
+    return mean * mean + this->Variance();
+}
 
-    double moment = skewness * std::sqrt(variance) * variance;
+template< typename T >
+long double UnivariateDistribution<T>::ThirdMoment() const
+{
+    long double mean = this->Mean();
+    long double variance = this->Variance();
+    long double skewness = this->Skewness();
+
+    long double moment = skewness * std::sqrt(variance) * variance;
     moment += mean * mean * mean;
     moment += 3 * mean * variance;
     return moment;
 }
 
 template< typename T >
-double UnivariateDistribution<T>::FourthMoment() const
+long double UnivariateDistribution<T>::FourthMoment() const
 {
-    double mean = Mean();
-    double variance = Variance();
-    double moment3 = ThirdMoment();
-    double kurtosis = Kurtosis();
-    double meanSq = mean * mean;
+    long double mean = this->Mean();
+    long double variance = this->Variance();
+    long double moment3 = this->ThirdMoment();
+    long double kurtosis = this->Kurtosis();
+    long double meanSq = mean * mean;
 
-    double moment = kurtosis * variance * variance;
+    long double moment = kurtosis * variance * variance;
     moment -= 6 * meanSq * variance;
     moment -= 3 * meanSq * meanSq;
     moment += 4 * mean * moment3;
@@ -185,7 +199,7 @@ double UnivariateDistribution<T>::FourthMoment() const
 }
 
 template< typename T >
-bool UnivariateDistribution<T>::allElementsAreNotBiggerThan(T value, const std::vector<T> &sample)
+bool UnivariateDistribution<T>::allElementsAreNotGreaterThan(T value, const std::vector<T> &sample)
 {
     for (const T & var : sample) {
         if (var > value)
@@ -221,26 +235,20 @@ bool UnivariateDistribution<T>::allElementsArePositive(const std::vector<T> &sam
 }
 
 template< typename T >
-double UnivariateDistribution<T>::Kurtosis() const
-{
-    return ExcessKurtosis() + 3.0;
-}
-
-template< typename T >
-double UnivariateDistribution<T>::GetSampleSum(const std::vector<T> &sample)
+long double UnivariateDistribution<T>::GetSampleSum(const std::vector<T> &sample)
 {
     return std::accumulate(sample.begin(), sample.end(), 0.0);
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
+long double UnivariateDistribution<T>::GetSampleMean(const std::vector<T> &sample)
 {
     size_t n = sample.size();
     return (n > 0) ? GetSampleSum(sample) / n : 0.0;
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
+long double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
 {
     long double sum = 0.0;
     for (const T & var : sample)
@@ -249,7 +257,7 @@ double UnivariateDistribution<T>::GetSampleLogMean(const std::vector<T> &sample)
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
+long double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample, double mean)
 {
     long double sum = 0.0l;
     for (const T & var : sample) {
@@ -260,7 +268,7 @@ double UnivariateDistribution<T>::GetSampleVariance(const std::vector<T> &sample
 }
 
 template< typename T >
-double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sample, double logMean)
+long double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sample, double logMean)
 {
     long double sum = 0.0l;
     for (const T & var : sample) {
@@ -271,7 +279,7 @@ double UnivariateDistribution<T>::GetSampleLogVariance(const std::vector<T> &sam
 }
 
 template< typename T >
-DoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
+LongDoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector<T> &sample)
 {
     /// Welford's stable method
     long double m = 0.0l, v = 0.0l;
@@ -286,7 +294,7 @@ DoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(const std::vector
 }
 
 template< typename T >
-DoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(const std::vector<T> &sample)
+LongDoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(const std::vector<T> &sample)
 {
     /// Welford's stable method
     long double m = 0.0l, v = 0.0l;
@@ -301,7 +309,7 @@ DoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(const std::vec
 }
 
 template< typename T >
-std::tuple<double, double, double, double> UnivariateDistribution<T>::GetSampleStatistics(const std::vector<T> &sample)
+std::tuple<long double, long double, long double, long double> UnivariateDistribution<T>::GetSampleStatistics(const std::vector<T> &sample)
 {
     /// Terriberry's extension for skewness and kurtosis
     long double M1{}, M2{}, M3{}, M4{};
@@ -347,11 +355,11 @@ std::tuple<double, double, double, double> UnivariateDistribution<T>::GetSampleS
     }
 
     /// If something left - add the residue
-    double res = static_cast<double>(k) / BIG_NUMBER;
+    long double res = static_cast<long double>(k) / BIG_NUMBER;
     if (res != 0) {
         long double Delta = m1 - M1;
         long double DeltaSq = Delta * Delta;
-        double tpres = t + res;
+        long double tpres = t + res;
         /// M4
         M4 += m4 + (DeltaSq * DeltaSq * t * res * (t * t - res * t + res * res) * BIG_NUMBER) / (tpres * tpres * tpres);
         M4 += 6 * DeltaSq * (t * t * m2 + res * res * M2) / (tpres * tpres);
@@ -364,11 +372,16 @@ std::tuple<double, double, double, double> UnivariateDistribution<T>::GetSampleS
         M1 += Delta * res / tpres;
     }
 
-    double variance = M2 / n;
-    double skewness = std::sqrt(n) * M3 / std::pow(M2, 1.5);
-    double exkurtosis = (n * M4) / (M2 * M2) - 3.0;
+    long double variance = M2 / n;
+    long double skewness = std::sqrt(n) * M3 / std::pow(M2, 1.5);
+    long double exkurtosis = (n * M4) / (M2 * M2) - 3.0;
     return std::make_tuple(M1, variance, skewness, exkurtosis);
 }
 
+template class UnivariateDistribution<float>;
 template class UnivariateDistribution<double>;
+template class UnivariateDistribution<long double>;
+
 template class UnivariateDistribution<int>;
+template class UnivariateDistribution<long int>;
+template class UnivariateDistribution<long long int>;

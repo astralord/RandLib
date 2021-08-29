@@ -1,73 +1,90 @@
 #include "LevyRand.h"
 #include "NormalRand.h"
 
-LevyRand::LevyRand(double location, double scale)
-    : StableDistribution(0.5, 1, scale, location)
+template < typename RealType >
+LevyRand<RealType>::LevyRand(double location, double scale)
+    : StableDistribution<RealType>(0.5, 1, scale, location)
 {
 }
 
-String LevyRand::Name() const
+template < typename RealType >
+String LevyRand<RealType>::Name() const
 {
-    return "Levy(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Levy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
-double LevyRand::f(const double & x) const
+template < typename RealType >
+double LevyRand<RealType>::f(const RealType &x) const
 {
-    return pdfLevy(x);
+    return this->pdfLevy(x);
 }
 
-double LevyRand::logf(const double & x) const
+template < typename RealType >
+double LevyRand<RealType>::logf(const RealType & x) const
 {
-    return logpdfLevy(x);
+    return this->logpdfLevy(x);
 }
 
-double LevyRand::F(const double & x) const
+template < typename RealType >
+double LevyRand<RealType>::F(const RealType & x) const
 {
-    return cdfLevy(x);
+    return this->cdfLevy(x);
 }
 
-double LevyRand::S(const double & x) const
+template < typename RealType >
+double LevyRand<RealType>::S(const RealType & x) const
 {
-    return cdfLevyCompl(x);
+    return this->cdfLevyCompl(x);
 }
 
-double LevyRand::Variate() const
+template < typename RealType >
+RealType LevyRand<RealType>::Variate() const
 {
-    double rv = NormalRand::StandardVariate(localRandGenerator);
+    RealType rv = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     rv *= rv;
-    rv = gamma / rv;
-    return mu + rv;
+    rv = this->gamma / rv;
+    return this->mu + rv;
 }
 
-double LevyRand::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType LevyRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
-    double rv = NormalRand::StandardVariate(randGenerator);
+    RealType rv = NormalRand<RealType>::StandardVariate(randGenerator);
     return 1.0 / (rv * rv);
 }
 
-double LevyRand::quantileImpl(double p) const
+template < typename RealType >
+RealType LevyRand<RealType>::quantileImpl(double p) const
 {
-    return quantileLevy(p);
+    return this->quantileLevy(p);
 }
 
-double LevyRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType LevyRand<RealType>::quantileImpl1m(double p) const
 {
-    return quantileLevy1m(p);
+    return this->quantileLevy1m(p);
 }
 
-std::complex<double> LevyRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> LevyRand<RealType>::CFImpl(double t) const
 {
-    return cfLevy(t);
+    return this->cfLevy(t);
 }
 
-void LevyRand::FitScale(const std::vector<double> &sample)
+template < typename RealType >
+void LevyRand<RealType>::FitScale(const std::vector<RealType> &sample)
 {
     /// Sanity check
-    if (!allElementsAreNotSmallerThan(mu, sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, LOWER_LIMIT_VIOLATION + toStringWithPrecision(mu)));
+    if (!this->allElementsAreNotSmallerThan(this->mu, sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->mu)));
     long double invSum = 0.0;
-    for (double var : sample)
-        invSum += 1.0 / (var - mu);
+    for (RealType var : sample)
+        invSum += 1.0 / (var - this->mu);
     invSum = 1.0 / invSum;
-    SetScale(sample.size() * invSum);
+    this->SetScale(sample.size() * invSum);
 }
+
+
+template class LevyRand<float>;
+template class LevyRand<double>;
+template class LevyRand<long double>;

@@ -11,7 +11,7 @@
  *
  * Notation: X ~ δ(a)
  */
-class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution
+class RANDLIBSHARED_EXPORT DegenerateRand : public ContinuousDistribution<double>
 {
     double a = 0; ///< value
 
@@ -30,12 +30,12 @@ public:
     double F(const double & x) const override;
     double Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
+    long double Mean() const override;
+    long double Variance() const override;
     double Median() const override;
     double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     double quantileImpl(double p) const override;
@@ -44,8 +44,7 @@ private:
     std::complex<double> CFImpl(double t) const override;
 
 public:
-
-    double Entropy() const;
+    long double Entropy() const;
 
     /**
      * @fn Fit

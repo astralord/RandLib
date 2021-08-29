@@ -9,34 +9,36 @@
  *
  * Notation: X ~ Sech
  */
-class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT SechRand : public ContinuousDistribution<RealType>
 {
 public:
     SechRand();
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
-    double MinValue() const override { return -INFINITY; }
-    double MaxValue() const override { return INFINITY; }
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double Variate() const override;
+    RealType MinValue() const override { return -INFINITY; }
+    RealType MaxValue() const override { return INFINITY; }
 
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    RealType Variate() const override;
+
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
-    double quantileImpl(double p) const;
-    double quantileImpl1m(double p) const;
+    RealType quantileImpl(double p) const;
+    RealType quantileImpl1m(double p) const;
 
     std::complex<double> CFImpl(double t) const override;
 public:
-    double Entropy() const;
+    long double Entropy() const;
 };
 
 #endif // SECHRAND_H

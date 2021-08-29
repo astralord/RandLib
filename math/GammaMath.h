@@ -105,7 +105,7 @@ double lpgamma(double a, double x);
 
 /**
  * @fn pgamma
- * Calculate lower regularised incomplete gamma function,
+ * Calculate lower regularized incomplete gamma function,
  * accelerated by using precalculated value of log(a) and log(Γ(a))
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -117,7 +117,7 @@ double pgamma(double a, double x, double logA, double lgammaA);
 
 /**
  * @fn pgamma
- * Calculate lower regularised incomplete gamma function,
+ * Calculate lower regularized incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -128,7 +128,7 @@ double pgamma(double a, double x, double logX);
 
  /**
  * @fn pgamma
- * Calculate lower regularised incomplete gamma function
+ * Calculate lower regularized incomplete gamma function
  * @param a non-negative parameter
  * @param x non-negative parameter
  * @return P(a, x)
@@ -169,7 +169,7 @@ double lqgamma(double a, double x);
 
 /**
  * @fn lqgamma
- * Calculate upper incomplete gamma function,
+ * Calculate upper regularized incomplete gamma function,
  * accelerated by using precalculated values of log(a) and log(Γ(a))
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -181,7 +181,7 @@ double qgamma(double a, double x, double logA, double lgammaA);
 
 /**
  * @fn qgamma
- * Calculate upper incomplete gamma function,
+ * Calculate upper regularized incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -192,13 +192,12 @@ double qgamma(double a, double x, double logX);
 
 /**
  * @fn qgamma
- * Calculate upper incomplete gamma function
+ * Calculate upper regularized incomplete gamma function
  * @param a non-negative parameter
  * @param x non-negative parameter
  * @return Q(a, x)
  */
 double qgamma(double a, double x);
-
 }
 
 #endif // GAMMAMATH

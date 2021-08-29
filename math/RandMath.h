@@ -12,10 +12,13 @@
 #include "Constants.h"
 #include "GammaMath.h"
 #include "BetaMath.h"
-#include "NumericMath.h"
 
 namespace RandMath
 {
+
+template <int TABLE_SIZE>
+constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat(const std::function<LongDoublePair (const LongDoublePair &)> &funPtr, LongDoublePair first, LongDoublePair second);
+
 /**
  * @fn areClose
  * @param a
@@ -23,7 +26,15 @@ namespace RandMath
  * @param eps
  * @return |a - b| < eps * max(a, b)
  */
-bool areClose(double a, double b, double eps = 1e-6);
+template<typename RealType>
+bool areClose(RealType a, RealType b, RealType eps = 1e-6)
+{
+    if (a == b)
+        return true;
+    RealType fa = std::fabs(a);
+    RealType fb = std::fabs(b);
+    return std::fabs(b - a) < eps * std::max(fa, fb);
+}
 
 /**
  * @fn sign
@@ -44,7 +55,7 @@ double atan(double x);
  * @param x
  * @return log(1 + exp(x))
  */
-double log1pexp(double x);
+double softplus(double x);
 
 /**
  * @fn log1mexp
@@ -58,7 +69,7 @@ double log1mexp(double x);
  * @param x
  * @return log(exp(x) - 1)
  */
-double logexpm1(double x);
+double logexpm1l(double x);
 
 /**
  * @fn log2mexp

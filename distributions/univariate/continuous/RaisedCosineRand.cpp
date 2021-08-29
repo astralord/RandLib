@@ -1,18 +1,21 @@
 #include "RaisedCosineRand.h"
 #include "UniformRand.h"
 
-RaisedCosineDistribution::RaisedCosineDistribution(double location, double scale)
+template < typename RealType >
+RaisedCosineDistribution<RealType>::RaisedCosineDistribution(double location, double scale)
 {
     SetLocation(location);
     SetScale(scale);
 }
 
-void RaisedCosineDistribution::SetLocation(double location)
+template < typename RealType >
+void RaisedCosineDistribution<RealType>::SetLocation(double location)
 {
     mu = location;
 }
 
-void RaisedCosineDistribution::SetScale(double scale)
+template < typename RealType >
+void RaisedCosineDistribution<RealType>::SetScale(double scale)
 {
     if (scale <= 0.0)
         throw std::invalid_argument("Raised-Cosine distribution: scale should be positive");
@@ -21,7 +24,8 @@ void RaisedCosineDistribution::SetScale(double scale)
     log2S = std::log(2 * s);
 }
 
-double RaisedCosineDistribution::f(const double & x) const
+template < typename RealType >
+double RaisedCosineDistribution<RealType>::f(const RealType &x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
@@ -30,17 +34,19 @@ double RaisedCosineDistribution::f(const double & x) const
     return 0.5 * y / s;
 }
 
-double RaisedCosineDistribution::logf(const double & x) const
+template < typename RealType >
+double RaisedCosineDistribution<RealType>::logf(const RealType &x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -M_PI || xAdj >= M_PI)
         return -INFINITY;
     double y = std::cos(xAdj);
-    y = std::log1p(y);
+    y = std::log1pl(y);
     return y - log2S;
 }
 
-double RaisedCosineDistribution::F(const double & x) const
+template < typename RealType >
+double RaisedCosineDistribution<RealType>::F(const RealType &x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
@@ -53,7 +59,8 @@ double RaisedCosineDistribution::F(const double & x) const
     return 0.5 * y;
 }
 
-double RaisedCosineDistribution::S(const double & x) const
+template < typename RealType >
+double RaisedCosineDistribution<RealType>::S(const RealType &x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
@@ -66,16 +73,16 @@ double RaisedCosineDistribution::S(const double & x) const
     return 0.5 - 0.5 * y;
 }
 
-double RaisedCosineDistribution::StandardVariate(RandGenerator &randGenerator)
+template < typename RealType >
+RealType RaisedCosineDistribution<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
     /// p. 160. Non-Uniform Random Variate Generation. Luc Devroye
-    double X = M_PI * UniformRand::StandardVariate(randGenerator) - M_PI_2;
-    double XSq = X * X;
-    double U = UniformRand::StandardVariate(randGenerator);
-    U += U;
+    RealType X = M_PI * UniformRand<RealType>::StandardVariate(randGenerator) - M_PI_2;
+    RealType XSq = X * X;
+    RealType U = 2 * UniformRand<RealType>::StandardVariate(randGenerator);
     int a = 0, b = -1;
-    double W = 0.0, V = 1.0;
-    int iter = 0;
+    RealType W = 0.0, V = 1.0;
+    size_t iter = 0;
     do {
         a += 2;
         b += 2;
@@ -93,27 +100,31 @@ double RaisedCosineDistribution::StandardVariate(RandGenerator &randGenerator)
                 return 0.0;
             return (X > 0.0) ? M_PI - X : -M_PI - X;
         }
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN;
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Raised-Cosine distribution: sampling failed");
 }
 
-double RaisedCosineDistribution::Variate() const
+template < typename RealType >
+RealType RaisedCosineDistribution<RealType>::Variate() const
 {
-    return mu + s_pi * StandardVariate(localRandGenerator);
+    return mu + s_pi * StandardVariate(this->localRandGenerator);
 }
 
-double RaisedCosineDistribution::Mean() const
+template < typename RealType >
+long double RaisedCosineDistribution<RealType>::Mean() const
 {
     return mu;
 }
 
-double RaisedCosineDistribution::Variance() const
+template < typename RealType >
+long double RaisedCosineDistribution<RealType>::Variance() const
 {
     static constexpr double coef = 1.0 / 3 - 2.0 / M_PI_SQ;
     return s * s * coef;
 }
 
-std::complex<double> RaisedCosineDistribution::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> RaisedCosineDistribution<RealType>::CFImpl(double t) const
 {
     double st = s * t;
     double numerator = M_PI_SQ * std::sin(st);
@@ -123,35 +134,53 @@ std::complex<double> RaisedCosineDistribution::CFImpl(double t) const
     return numerator / denominator * y;
 }
 
-double RaisedCosineDistribution::Median() const
+template < typename RealType >
+RealType RaisedCosineDistribution<RealType>::Median() const
 {
     return mu;
 }
 
-double RaisedCosineDistribution::Mode() const
+template < typename RealType >
+RealType RaisedCosineDistribution<RealType>::Mode() const
 {
     return mu;
 }
 
-double RaisedCosineDistribution::Skewness() const
+template < typename RealType >
+long double RaisedCosineDistribution<RealType>::Skewness() const
 {
-    return 0.0;
+    return 0.0l;
 }
 
-double RaisedCosineDistribution::ExcessKurtosis() const
+template < typename RealType >
+long double RaisedCosineDistribution<RealType>::ExcessKurtosis() const
 {
-    static constexpr double numerator = 1.2 * (90.0 - M_PI_SQ * M_PI_SQ);
-    static constexpr double denominator = M_PI_SQ - 6.0;
-    static constexpr double y = numerator / (denominator * denominator);
+    static constexpr long double numerator = 1.2 * (90.0 - M_PI_SQ * M_PI_SQ);
+    static constexpr long double denominator = M_PI_SQ - 6.0;
+    static constexpr long double y = numerator / (denominator * denominator);
     return y;
 }
 
-String RaisedCosineRand::Name() const
+template class RaisedCosineDistribution<float>;
+template class RaisedCosineDistribution<double>;
+template class RaisedCosineDistribution<long double>;
+
+template < typename RealType >
+String RaisedCosineRand<RealType>::Name() const
 {
-    return "Raised cosine(" + toStringWithPrecision(GetLocation()) + ", " + toStringWithPrecision(GetScale()) + ")";
+    return "Raised cosine(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
-String RaabGreenRand::Name() const
+template class RaisedCosineRand<float>;
+template class RaisedCosineRand<double>;
+template class RaisedCosineRand<long double>;
+
+template < typename RealType >
+String RaabGreenRand<RealType>::Name() const
 {
     return "Raab Green";
 }
+
+template class RaabGreenRand<float>;
+template class RaabGreenRand<double>;
+template class RaabGreenRand<long double>;

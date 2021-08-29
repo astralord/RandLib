@@ -16,7 +16,8 @@
  * If X ~ χ'^2(k, 0), then X ~ χ^2(k) <BR>
  * X ~ χ^2(k + 2J), where J ~ Po(λ)
  */
-class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribution<RealType>
 {
     double k = 1; ///< degree
     double lambda = 2; ///< noncentrality λ
@@ -25,39 +26,39 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribut
     double sqrtLambda = M_SQRT2; ///< √λ
     double logLambda = M_LN2; ///< log(λ)
 
-    PoissonRand Y{};
+    PoissonRand<int> Y{};
 
 public:
     explicit NoncentralChiSquaredRand(double degree = 1, double noncentrality = 0);
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double degree, double noncentrality);
     inline double GetDegree() const { return k; }
     inline double GetNoncentrality() const { return lambda; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
 
 private:
-    double variateForDegreeEqualOne() const;
+    RealType variateForDegreeEqualOne() const;
 
 public:
-    static double Variate(double degree, double noncentrality, RandGenerator &randGenerator = staticRandGenerator);
-    double Variate() const override;
-    void Sample(std::vector<double> &outputData) const override;
+    static RealType Variate(double degree, double noncentrality, RandGenerator &randGenerator = ProbabilityDistribution<RealType>::staticRandGenerator);
+    RealType Variate() const override;
+    void Sample(std::vector<RealType> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

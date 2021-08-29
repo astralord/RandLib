@@ -9,41 +9,42 @@
  *
  * Notation: X ~ KS
  */
-class RANDLIBSHARED_EXPORT KolmogorovSmirnovRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT KolmogorovSmirnovRand : public ContinuousDistribution<RealType>
 {
 public:
     KolmogorovSmirnovRand();
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    double MinValue() const override { return 0; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return 0; }
+    RealType MaxValue() const override { return INFINITY; }
 
 private:
-    static double L(double x);
-    static double K(double x);
+    static double L(RealType x);
+    static double K(RealType x);
 public:
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double logF(const double & x) const;
-    double logS(const double & x) const;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    double logF(const RealType & x) const;
+    double logS(const RealType & x) const;
 
 private:
-    double truncatedGammaVariate() const;
-    double variateForTheLeftMostInterval() const;
-    double variateForTheRightMostInterval() const;
+    RealType truncatedGammaVariate() const;
+    RealType variateForTheLeftMostInterval() const;
+    RealType variateForTheRightMostInterval() const;
 public:
-    double Variate() const override;
+    RealType Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Mode() const override;
-    double Median() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Mode() const override;
+    RealType Median() const override;
 
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 };
 
 #endif // KOLMOGOROVSMIRNOVRAND_H

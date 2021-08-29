@@ -6,12 +6,14 @@
 #include "ExponentialRand.h"
 #include <functional>
 
-StableDistribution::StableDistribution(double exponent, double skewness, double scale, double location)
+template < typename RealType >
+StableDistribution<RealType>::StableDistribution(double exponent, double skewness, double scale, double location)
 {
     SetParameters(exponent, skewness, scale, location);
 }
 
-SUPPORT_TYPE StableDistribution::SupportType() const
+template < typename RealType >
+SUPPORT_TYPE StableDistribution<RealType>::SupportType() const
 {
     if (alpha < 1) {
         if (beta == 1)
@@ -22,118 +24,136 @@ SUPPORT_TYPE StableDistribution::SupportType() const
     return INFINITE_T;
 }
 
-double StableDistribution::MinValue() const
+template < typename RealType >
+RealType StableDistribution<RealType>::MinValue() const
 {
     return (alpha < 1 && beta == 1) ? mu : -INFINITY;
 }
 
-double StableDistribution::MaxValue() const
+template < typename RealType >
+RealType StableDistribution<RealType>::MaxValue() const
 {
     return (alpha < 1 && beta == -1) ? mu : INFINITY;
 }
 
-void StableDistribution::SetParameters(double exponent, double skewness, double scale, double location)
+template < typename RealType >
+void StableDistribution<RealType>::parametersVerification(double exponent, double skewness, double scale)
 {
     if (exponent < 0.1 || exponent > 2.0)
-        throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2]");
+        throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to "
+                                    + std::to_string(exponent));
     if (std::fabs(skewness) > 1.0)
-        throw std::invalid_argument("Stable distribution: skewness of should be in the interval [-1, 1]");
+        throw std::invalid_argument("Stable distribution: skewness should be in the interval [-1, 1], but it's equal to "
+                                    + std::to_string(skewness));
     if (scale <= 0.0)
-        throw std::invalid_argument("Stable distribution: scale should be positive");
+        throw std::invalid_argument("Stable distribution: scale should be positive, but it's equal to "
+                                    + std::to_string(scale));
 
-    /// the following errors should be removed soon
+    /// the following errors should be removed in the future
     if (exponent != 1.0 && std::fabs(exponent - 1.0) < 0.01 && skewness != 0.0)
         throw std::invalid_argument("Stable distribution: exponent close to 1 with non-zero skewness is not yet supported");
     if (exponent == 1.0 && skewness != 0.0 && std::fabs(skewness) < 0.01)
         throw std::invalid_argument("Stable distribution: skewness close to 0 with exponent equal to 1 is not yet supported");
+}
 
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForNormal()
+{   
+    distributionType = NORMAL;
+    pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForCauchy()
+{   
+    distributionType = CAUCHY;
+    pdfCoef = -logGamma - M_LNPI;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForLevy()
+{   
+    distributionType = LEVY;
+    pdfCoef = logGamma - M_LN2 - M_LNPI;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForUnityExponent()
+{   
+    distributionType = UNITY_EXPONENT;
+    pdfCoef = 0.5 / (gamma * std::fabs(beta));
+    pdftailBound = 0; // not in the use for now
+    logGammaPi_2 = logGamma + M_LNPI - M_LN2;
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::setParametersForGeneralExponent()
+{   
+    distributionType = GENERAL;
+    if (beta != 0.0) {
+        zeta = -beta * std::tan(M_PI_2 * alpha);
+        omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
+        xi = alphaInv * RandMath::atan(-zeta);
+    }
+    else {
+        zeta = omega = xi = 0.0;
+    }
+    pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
+    pdftailBound = 3.0 / (1.0 + alpha) * M_LN10;
+    cdftailBound = 3.0 / alpha * M_LN10;
+    /// define boundaries of region near 0, where we use series expansion
+    if (alpha <= ALMOST_TWO) {
+        seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
+        seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10; /// corresponds to interval [10^(-15.5), ~0.056]
+    }
+    else {
+        seriesZeroParams.first = 85;
+        seriesZeroParams.second = M_LN2 + M_LN3;///< corresponds to 6
+    }
+}
+
+template < typename RealType >
+void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
+{
+    parametersVerification(exponent, skewness, scale);
     alpha = exponent;
     alphaInv = 1.0 / alpha;
     beta = skewness;
     mu = location;
     gamma = scale;
     logGamma = std::log(gamma);
+    alpha_alpham1 = alpha / (alpha - 1.0);
 
     /// Set id of distribution
     if (alpha == 2.0)
-        distributionType = NORMAL;
-    else if (alpha == 1.0)
-        distributionType = (beta == 0.0) ? CAUCHY : UNITY_EXPONENT;
-    else if (alpha == 0.5 && std::fabs(beta) == 1.0)
-        distributionType = LEVY;
-    else
-        distributionType = GENERAL;
-
-    alpha_alpham1 = alpha / (alpha - 1.0);
-
-    if (distributionType == NORMAL)
-        pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
-    else if (distributionType == LEVY)
-        pdfCoef = logGamma - M_LN2 - M_LNPI;
-    else if (distributionType == CAUCHY)
-        pdfCoef = -logGamma - M_LNPI;
-    else if (distributionType == UNITY_EXPONENT) {
-        pdfCoef = 0.5 / (gamma * std::fabs(beta));
-        pdftailBound = 0; // not in the use for now
-        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
-    }
-    else if (distributionType == GENERAL) {
-        if (beta != 0.0) {
-            zeta = -beta * std::tan(M_PI_2 * alpha);
-            omega = 0.5 * alphaInv * std::log1p(zeta * zeta);
-            xi = alphaInv * RandMath::atan(-zeta);
-        }
-        else {
-            zeta = omega = xi = 0.0;
-        }
-        pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
-        pdftailBound = 3.0 / (1.0 + alpha) * M_LN10;
-        cdftailBound = 3.0 / alpha * M_LN10;
-        /// define boundaries of region near 0, where we use series expansion
-        if (alpha <= ALMOST_TWO) {
-            seriesZeroParams.first = std::round(std::min(alpha * alpha * 40 + 1, 10.0));
-            /// corresponds to boundaries from 10^(-15.5) to ~ 0.056
-            seriesZeroParams.second = -(alphaInv * 1.5 + 0.5) * M_LN10;
-        }
-        else {
-            seriesZeroParams.first = 85;
-            /// corresponds to 6
-            seriesZeroParams.second = M_LN2 + M_LN3;
-        }
-    }
+        return setParametersForNormal();
+    if (alpha == 1.0)
+        return (beta == 0.0) ? setParametersForCauchy() : setParametersForUnityExponent();
+    if (alpha == 0.5 && std::fabs(beta) == 1.0)
+        return setParametersForLevy();
+    return setParametersForGeneralExponent();
 }
 
-void StableDistribution::SetLocation(double location)
+template < typename RealType >
+void StableDistribution<RealType>::SetLocation(double location)
 {
-    mu = location;
+    SetParameters(alpha, beta, gamma, location);
 }
 
-void StableDistribution::SetScale(double scale)
+template < typename RealType >
+void StableDistribution<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
-        throw std::invalid_argument("Scale of Stable distribution should be positive");
-    gamma = scale;
-    logGamma = std::log(gamma);
-    if (distributionType == NORMAL)
-        pdfCoef = M_LN2 + logGamma + 0.5 * M_LNPI;
-    else if (distributionType == LEVY)
-        pdfCoef = logGamma - M_LN2 - M_LNPI;
-    else if (distributionType == CAUCHY)
-        pdfCoef = -logGamma - M_LNPI;
-    else if (distributionType == UNITY_EXPONENT) {
-        pdfCoef = 0.5 / (gamma * std::fabs(beta));
-        logGammaPi_2 = logGamma + M_LNPI - M_LN2;
-    }
-    else if (distributionType == GENERAL)
-        pdfCoef = M_1_PI * std::fabs(alpha_alpham1) / gamma;
+    SetParameters(alpha, beta, scale, mu);
 }
 
-double StableDistribution::pdfNormal(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfNormal(RealType x) const
 {
     return std::exp(logpdfNormal(x));
 }
 
-double StableDistribution::logpdfNormal(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::logpdfNormal(RealType x) const
 {
     double y = x - mu;
     y *= 0.5 / gamma;
@@ -142,7 +162,8 @@ double StableDistribution::logpdfNormal(double x) const
     return -y;
 }
 
-double StableDistribution::pdfCauchy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfCauchy(RealType x) const
 {
     double y = x - mu;
     y *= y;
@@ -151,20 +172,23 @@ double StableDistribution::pdfCauchy(double x) const
     return M_1_PI / y;
 }
 
-double StableDistribution::logpdfCauchy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::logpdfCauchy(RealType x) const
 {
     double x0 = x - mu;
     x0 /= gamma;
     double xSq = x0 * x0;
-    return pdfCoef - std::log1p(xSq);
+    return pdfCoef - std::log1pl(xSq);
 }
 
-double StableDistribution::pdfLevy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfLevy(RealType x) const
 {
     return (x <= mu) ? 0.0 : std::exp(logpdfLevy(x));
 }
 
-double StableDistribution::logpdfLevy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::logpdfLevy(RealType x) const
 {
     double x0 = x - mu;
     if (x0 <= 0.0)
@@ -175,15 +199,16 @@ double StableDistribution::logpdfLevy(double x) const
     return -0.5 * y;
 }
 
-double StableDistribution::fastpdfExponentiation(double u)
+template < typename RealType >
+double StableDistribution<RealType>::fastpdfExponentiation(double u)
 {
     if (u > 5 || u < -50)
         return 0.0;
     return (u < -25) ? std::exp(u) : std::exp(u - std::exp(u));
 }
 
-
-double StableDistribution::pdfShortTailExpansionForUnityExponent(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfShortTailExpansionForUnityExponent(double x) const
 {
     if (x > 10)
         return 0.0;
@@ -193,7 +218,8 @@ double StableDistribution::pdfShortTailExpansionForUnityExponent(double x) const
     return std::exp(y);
 }
 
-double StableDistribution::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
 {
     if (theta > 0.0) {
         if (beta > 0.0)
@@ -205,7 +231,8 @@ double StableDistribution::limitCaseForIntegrandAuxForUnityExponent(double theta
     return (beta == 1) ? xAdj - 1.0 : -BIG_NUMBER;
 }
 
-double StableDistribution::integrandAuxForUnityExponent(double theta, double xAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::integrandAuxForUnityExponent(double theta, double xAdj) const
 {
     if (std::fabs(theta) >= M_PI_2)
         return limitCaseForIntegrandAuxForUnityExponent(theta, xAdj);
@@ -217,7 +244,8 @@ double StableDistribution::integrandAuxForUnityExponent(double theta, double xAd
     return std::isfinite(u) ? u + xAdj : limitCaseForIntegrandAuxForUnityExponent(theta, xAdj);
 }
 
-double StableDistribution::integrandForUnityExponent(double theta, double xAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::integrandForUnityExponent(double theta, double xAdj) const
 {
     if (std::fabs(theta) >= M_PI_2)
         return 0.0;
@@ -225,30 +253,31 @@ double StableDistribution::integrandForUnityExponent(double theta, double xAdj) 
     return fastpdfExponentiation(u);
 }
 
-double StableDistribution::pdfForUnityExponent(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfForUnityExponent(double x) const
 {
     double xSt = (x - mu) / gamma;
     double xAdj = -M_PI_2 * xSt / beta - logGammaPi_2;
 
-    /// We squeeze boudaries for too peaked integrands
+    /// We squeeze boudaries for extremely sharp integrands
     double boundary = RandMath::atan(M_2_PI * beta * (5.0 - xAdj));
     double upperBoundary = (beta > 0.0) ? boundary : M_PI_2;
     double lowerBoundary = (beta < 0.0) ? boundary : -M_PI_2;
 
     /// Find peak of the integrand
     double theta0 = 0;
-    std::function<double (double)> funPtr = std::bind(&StableDistribution::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
-    RandMath::findRoot(funPtr, lowerBoundary, upperBoundary, theta0);
+    std::function<double (double)> funPtr = std::bind(&StableDistribution<RealType>::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
+    RandMath::findRootNewtonFirstOrder(funPtr, lowerBoundary, upperBoundary, theta0);
 
     /// Sanity check
-    /// if we failed while looking for the peak position
+    /// if we failed to find the peak position
     /// we set it in the middle between boundaries
     if (theta0 >= upperBoundary || theta0 <= lowerBoundary)
         theta0 = 0.5 * (upperBoundary + lowerBoundary);
 
-    std::function<double (double)> integrandPtr = std::bind(&StableDistribution::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableDistribution<RealType>::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
 
-    /// If theta0 is too close to +/-π/2 then we can still underestimate the integral
+    /// If theta0 is too close to +/-π/2, we can still underestimate the value of integral
     int maxRecursionDepth = 11;
     double closeness = M_PI_2 - std::fabs(theta0);
     if (closeness < 0.1)
@@ -261,10 +290,11 @@ double StableDistribution::pdfForUnityExponent(double x) const
     return pdfCoef * (int1 + int2);
 }
 
-double StableDistribution::pdfShortTailExpansionForGeneralExponent(double logX) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfShortTailExpansionForGeneralExponent(double logX) const
 {
     double logAlpha = std::log(alpha);
-    double log1mAlpha = (alpha < 1) ? std::log1p(-alpha) : std::log(alpha - 1);
+    double log1mAlpha = (alpha < 1) ? std::log1pl(-alpha) : std::log(alpha - 1);
     double temp = logX - logAlpha;
     double y = std::exp(alpha_alpham1 * temp);
     y *= -std::fabs(1.0 - alpha);
@@ -273,22 +303,24 @@ double StableDistribution::pdfShortTailExpansionForGeneralExponent(double logX) 
     return std::exp(y + z);
 }
 
-double StableDistribution::pdfAtZero() const
+template < typename RealType >
+double StableDistribution<RealType>::pdfAtZero() const
 {
     double y0 = 0.0;
     if (beta == 0.0)
-        y0 = std::tgamma(alphaInv);
+        y0 = std::tgammal(alphaInv);
     else {
-        y0 = std::lgamma(alphaInv) - omega;
+        y0 = std::lgammal(alphaInv) - omega;
         y0 = std::exp(y0) * std::cos(xi);
     }
     return y0 * M_1_PI / alpha;
 }
 
-double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const
 {
     /// Calculate first term of the sum
-    /// (if x = 0, only this term is non-zero)
+    /// (if x is 0, only this term is non-zero)
     double y0 = pdfAtZero();
     double sum = 0.0;
     if (beta == 0.0) {
@@ -296,7 +328,7 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
         for (int n = 1; n <= k; ++n)
         {
             int n2 = n + n;
-            double term = std::lgamma((n2 + 1) / alpha);
+            double term = std::lgammal((n2 + 1) / alpha);
             term += n2 * logX;
             term -= RandMath::lfact(n2);
             term = std::exp(term);
@@ -308,7 +340,7 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
         double rhoPi_alpha = M_PI_2 + xiAdj;
         for (int n = 1; n <= k; ++n) {
             int np1 = n + 1;
-            double term = std::lgamma(np1 * alphaInv);
+            double term = std::lgammal(np1 * alphaInv);
             term += n * logX;
             term -= RandMath::lfact(n);
             term = std::exp(term - omega);
@@ -319,7 +351,8 @@ double StableDistribution::pdfSeriesExpansionAtZero(double logX, double xiAdj, i
     return y0 + sum * M_1_PI / alpha;
 }
 
-double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfSeriesExpansionAtInf(double logX, double xiAdj) const
 {
     static constexpr int k = 10; ///< number of elements in the series
     double rhoPi = M_PI_2 + xiAdj;
@@ -327,7 +360,7 @@ double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) co
     double sum = 0.0;
     for (int n = 1; n <= k; ++n) {
         double aux = n * alpha + 1.0;
-        double term = std::lgamma(aux);
+        double term = std::lgammal(aux);
         term -= aux * logX;
         term -= RandMath::lfact(n);
         term = std::exp(term - omega);
@@ -337,14 +370,15 @@ double StableDistribution::pdfSeriesExpansionAtInf(double logX, double xiAdj) co
     return M_1_PI * sum;
 }
 
-double StableDistribution::pdfTaylorExpansionTailNearCauchy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfTaylorExpansionTailNearCauchy(double x) const
 {
     double xSq = x * x;
     double y = 1.0 + xSq;
     double ySq = y * y;
     double z = RandMath::atan(x);
     double zSq = z * z;
-    double logY = std::log1p(xSq);
+    double logY = std::log1pl(xSq);
     double alpham1 = alpha - 1.0;
     double temp = 1.0 - M_EULER - 0.5 * logY;
     /// first derivative
@@ -407,7 +441,7 @@ double StableDistribution::pdfTaylorExpansionTailNearCauchy(double x) const
         gTable[i] = g;
     }
     double f_aaa = -gTable[0] + 3 * gTable[1] - gTable[2];
-    /// summarize all three derivatives
+    /// sum all three derivatives
     double tail = f_a * alpham1;
     tail += 0.5 * f_aa * alpham1 * alpham1;
     tail += std::pow(alpham1, 3) * f_aaa / 6.0;
@@ -415,7 +449,8 @@ double StableDistribution::pdfTaylorExpansionTailNearCauchy(double x) const
     return tail;
 }
 
-double StableDistribution::limitCaseForIntegrandAuxForGeneralExponent(double theta, double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::limitCaseForIntegrandAuxForGeneralExponent(double theta, double xiAdj) const
 {
     /// We got numerical error, need to investigate to which extreme point we are closer
     if (theta < 0.5 * (M_PI_2 - xiAdj))
@@ -423,7 +458,8 @@ double StableDistribution::limitCaseForIntegrandAuxForGeneralExponent(double the
     return alpha < 1 ? BIG_NUMBER : -BIG_NUMBER;
 }
 
-double StableDistribution::integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const
 {
     if (std::fabs(theta) >= M_PI_2 || theta <= -xiAdj)
         return limitCaseForIntegrandAuxForGeneralExponent(theta, xiAdj);
@@ -437,7 +473,8 @@ double StableDistribution::integrandAuxForGeneralExponent(double theta, double x
     return std::isfinite(y) ? y : limitCaseForIntegrandAuxForGeneralExponent(theta, xiAdj);
 }
 
-double StableDistribution::integrandFoGeneralExponent(double theta, double xAdj, double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::integrandFoGeneralExponent(double theta, double xAdj, double xiAdj) const
 {
     if (std::fabs(theta) >= M_PI_2)
         return 0.0;
@@ -447,7 +484,8 @@ double StableDistribution::integrandFoGeneralExponent(double theta, double xAdj,
     return fastpdfExponentiation(u);
 }
 
-double StableDistribution::pdfForGeneralExponent(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::pdfForGeneralExponent(double x) const
 {
     /// Standardize
     double xSt = (x - mu) / gamma;
@@ -493,8 +531,8 @@ double StableDistribution::pdfForGeneralExponent(double x) const
 
     /// Search for the peak of the integrand
     double theta0;
-    std::function<double (double)> funPtr = std::bind(&StableDistribution::integrandAuxForGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
-    RandMath::findRoot(funPtr, -xiAdj, M_PI_2, theta0);
+    std::function<double (double)> funPtr = std::bind(&StableDistribution<RealType>::integrandAuxForGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
+    RandMath::findRootNewtonFirstOrder(funPtr, -xiAdj, M_PI_2, theta0);
 
     /// If theta0 is too close to π/2 or -xiAdj then we can still underestimate the integral
     int maxRecursionDepth = 11;
@@ -505,7 +543,7 @@ double StableDistribution::pdfForGeneralExponent(double x) const
         maxRecursionDepth = 15;
 
     /// Calculate sum of two integrals
-    std::function<double (double)> integrandPtr = std::bind(&StableDistribution::integrandFoGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
+    std::function<double (double)> integrandPtr = std::bind(&StableDistribution<RealType>::integrandFoGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
     double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0, 1e-11, maxRecursionDepth);
     double int2 = RandMath::integral(integrandPtr, theta0, M_PI_2, 1e-11, maxRecursionDepth);
     double res = pdfCoef * (int1 + int2) / absXSt;
@@ -517,14 +555,15 @@ double StableDistribution::pdfForGeneralExponent(double x) const
     /// If α is near 2, we use tail aprroximation for large x
     /// and compare it with integral representation
     double alphap1 = alpha + 1.0;
-    double tail = std::lgamma(alphap1);
+    double tail = std::lgammal(alphap1);
     tail -= alphap1 * logAbsX;
     tail = std::exp(tail);
     tail *= (1.0 - 0.5 * alpha) / gamma;
     return std::max(tail, res);
 }
 
-double StableDistribution::f(const double & x) const
+template < typename RealType >
+double StableDistribution<RealType>::f(const RealType &x) const
 {
     switch (distributionType) {
     case NORMAL:
@@ -538,11 +577,12 @@ double StableDistribution::f(const double & x) const
     case GENERAL:
         return pdfForGeneralExponent(x);
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
-double StableDistribution::logf(const double & x) const
+template < typename RealType >
+double StableDistribution<RealType>::logf(const RealType &x) const
 {
     switch (distributionType) {
     case NORMAL:
@@ -556,39 +596,44 @@ double StableDistribution::logf(const double & x) const
     case GENERAL:
         return std::log(pdfForGeneralExponent(x));
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
-double StableDistribution::cdfNormal(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfNormal(RealType x) const
 {
     double y = mu - x;
     y *= 0.5 / gamma;
     return 0.5 * std::erfc(y);
 }
 
-double StableDistribution::cdfNormalCompl(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfNormalCompl(RealType x) const
 {
     double y = x - mu;
     y *= 0.5 / gamma;
     return 0.5 * std::erfc(y);
 }
 
-double StableDistribution::cdfCauchy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfCauchy(RealType x) const
 {
     double x0 = x - mu;
     x0 /= gamma;
     return 0.5 + M_1_PI * RandMath::atan(x0);
 }
 
-double StableDistribution::cdfCauchyCompl(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfCauchyCompl(RealType x) const
 {
     double x0 = mu - x;
     x0 /= gamma;
     return 0.5 + M_1_PI * RandMath::atan(x0);
 }
 
-double StableDistribution::cdfLevy(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfLevy(RealType x) const
 {
     if (x <= mu)
         return 0;
@@ -599,7 +644,8 @@ double StableDistribution::cdfLevy(double x) const
     return std::erfc(y);
 }
 
-double StableDistribution::cdfLevyCompl(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfLevyCompl(RealType x) const
 {
     if (x <= mu)
         return 1.0;
@@ -610,7 +656,8 @@ double StableDistribution::cdfLevyCompl(double x) const
     return std::erf(y);
 }
 
-double StableDistribution::fastcdfExponentiation(double u)
+template < typename RealType >
+double StableDistribution<RealType>::fastcdfExponentiation(double u)
 {
     if (u > 5.0)
         return 0.0;
@@ -620,12 +667,14 @@ double StableDistribution::fastcdfExponentiation(double u)
     return std::exp(-y);
 }
 
-double StableDistribution::cdfAtZero(double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfAtZero(double xiAdj) const
 {
     return 0.5 - M_1_PI * xiAdj;
 }
 
-double StableDistribution::cdfForUnityExponent(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfForUnityExponent(double x) const
 {
     double xSt = (x - mu) / gamma;
     double xAdj = -M_PI_2 * xSt / beta - logGammaPi_2;
@@ -638,7 +687,8 @@ double StableDistribution::cdfForUnityExponent(double x) const
     return (beta > 0) ? y : 1.0 - y;
 }
 
-double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const
 {
     /// Calculate first term of the sum
     /// (if x = 0, only this term is non-zero)
@@ -648,7 +698,7 @@ double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, i
         /// Symmetric distribution
         for (int m = 0; m <= k; ++m) {
             int m2p1 = 2 * m + 1;
-            double term = std::lgamma(m2p1 * alphaInv);
+            double term = std::lgammal(m2p1 * alphaInv);
             term += m2p1 * logX;
             term -= RandMath::lfact(m2p1);
             term = std::exp(term);
@@ -659,7 +709,7 @@ double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, i
         /// Asymmetric distribution
         double rhoPi_alpha = M_PI_2 + xiAdj;
         for (int n = 1; n <= k; ++n) {
-            double term = std::lgamma(n * alphaInv);
+            double term = std::lgammal(n * alphaInv);
             term += n * logX;
             term -= RandMath::lfact(n);
             term = std::exp(term);
@@ -670,7 +720,8 @@ double StableDistribution::cdfSeriesExpansionAtZero(double logX, double xiAdj, i
     return y0 + sum * M_1_PI * alphaInv;
 }
 
-double StableDistribution::cdfSeriesExpansionAtInf(double logX, double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfSeriesExpansionAtInf(double logX, double xiAdj) const
 {
     static constexpr int k = 10; /// number of elements in the series
     double rhoPi = M_PI_2 + xiAdj;
@@ -678,7 +729,7 @@ double StableDistribution::cdfSeriesExpansionAtInf(double logX, double xiAdj) co
     double sum = 0.0;
     for (int n = 1; n <= k; ++n) {
         double aux = n * alpha;
-        double term = std::lgamma(aux);
+        double term = std::lgammal(aux);
         term -= aux * logX;
         term -= RandMath::lfact(n);
         term = std::exp(term);
@@ -688,7 +739,8 @@ double StableDistribution::cdfSeriesExpansionAtInf(double logX, double xiAdj) co
     return M_1_PI * sum;
 }
 
-double StableDistribution::cdfIntegralRepresentation(double logX, double xiAdj) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfIntegralRepresentation(double logX, double xiAdj) const
 {
     double xAdj = alpha_alpham1 * logX;
     return M_1_PI * RandMath::integral([this, xAdj, xiAdj] (double theta)
@@ -699,7 +751,8 @@ double StableDistribution::cdfIntegralRepresentation(double logX, double xiAdj) 
     -xiAdj, M_PI_2);
 }
 
-double StableDistribution::cdfForGeneralExponent(double x) const
+template < typename RealType >
+double StableDistribution<RealType>::cdfForGeneralExponent(double x) const
 {
     double xSt = (x - mu) / gamma; /// Standardize
     if (xSt == 0)
@@ -727,7 +780,8 @@ double StableDistribution::cdfForGeneralExponent(double x) const
     return (beta == 1.0) ? 0.0 : cdfAtZero(xi) - cdfIntegralRepresentation(logAbsX, -xi);
 }
 
-double StableDistribution::F(const double & x) const
+template < typename RealType >
+double StableDistribution<RealType>::F(const RealType &x) const
 {
     switch (distributionType) {
     case NORMAL:
@@ -741,11 +795,12 @@ double StableDistribution::F(const double & x) const
     case GENERAL:
         return cdfForGeneralExponent(x);
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
-double StableDistribution::S(const double & x) const
+template < typename RealType >
+double StableDistribution<RealType>::S(const RealType & x) const
 {
     switch (distributionType) {
     case NORMAL:
@@ -759,17 +814,18 @@ double StableDistribution::S(const double & x) const
     case GENERAL:
         return 1.0 - cdfForGeneralExponent(x);
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
-double StableDistribution::variateForUnityExponent() const
+template < typename RealType >
+double StableDistribution<RealType>::variateForUnityExponent() const
 {
-    double U = M_PI * UniformRand::StandardVariate(localRandGenerator) - M_PI_2;
-    double W = ExponentialRand::StandardVariate(localRandGenerator);
-    double pi_2pBetaU = M_PI_2 + beta * U;
-    double Y = W * std::cos(U) / pi_2pBetaU;
-    double X = std::log(Y);
+    RealType U = M_PI * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - M_PI_2;
+    RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
+    RealType pi_2pBetaU = M_PI_2 + beta * U;
+    RealType Y = W * std::cos(U) / pi_2pBetaU;
+    RealType X = std::log(Y);
     X += logGammaPi_2;
     X *= -beta;
     X += pi_2pBetaU * std::tan(U);
@@ -777,85 +833,89 @@ double StableDistribution::variateForUnityExponent() const
     return mu + gamma * X;
 }
 
-double StableDistribution::variateForGeneralExponent() const
+template < typename RealType >
+double StableDistribution<RealType>::variateForGeneralExponent() const
 {
-    double U = M_PI * UniformRand::StandardVariate(localRandGenerator) - M_PI_2;
-    double W = ExponentialRand::StandardVariate(localRandGenerator);
-    double alphaUpxi = alpha * (U + xi);
-    double X = std::sin(alphaUpxi);
-    double W_adj = W / std::cos(U - alphaUpxi);
+    RealType U = M_PI * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - M_PI_2;
+    RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
+    RealType alphaUpxi = alpha * (U + xi);
+    RealType X = std::sin(alphaUpxi);
+    RealType W_adj = W / std::cos(U - alphaUpxi);
     X *= W_adj;
-    double R = omega - alphaInv * std::log(W_adj * std::cos(U));
+    RealType R = omega - alphaInv * std::log(W_adj * std::cos(U));
     X *= std::exp(R);
     return mu + gamma * X;
 }
 
-double StableDistribution::variateForExponentEqualOneHalf() const
+template < typename RealType >
+double StableDistribution<RealType>::variateForExponentEqualOneHalf() const
 {
-    double Z1 = NormalRand::StandardVariate(localRandGenerator);
-    double Z2 = NormalRand::StandardVariate(localRandGenerator);
-    double temp1 = (1.0 + beta) / Z1, temp2 = (1.0 - beta) / Z2;
-    double var = temp1 - temp2;
+    RealType Z1 = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
+    RealType Z2 = NormalRand<RealType>::StandardVariate(this->localRandGenerator);
+    RealType temp1 = (1.0 + beta) / Z1, temp2 = (1.0 - beta) / Z2;
+    RealType var = temp1 - temp2;
     var *= temp1 + temp2;
     var *= 0.25;
     return mu + gamma * var;
 }
 
-double StableDistribution::Variate() const
+template < typename RealType >
+RealType StableDistribution<RealType>::Variate() const
 {
     switch (distributionType) {
     case NORMAL:
-        return mu + M_SQRT2 * gamma * NormalRand::StandardVariate(localRandGenerator);
+        return mu + M_SQRT2 * gamma * NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     case CAUCHY:
-        return mu + gamma * CauchyRand::StandardVariate(localRandGenerator);
+        return mu + gamma * CauchyRand<RealType>::StandardVariate(this->localRandGenerator);
     case LEVY:
-        return mu + RandMath::sign(beta) * gamma * LevyRand::StandardVariate(localRandGenerator);
+        return mu + RandMath::sign(beta) * gamma * LevyRand<RealType>::StandardVariate(this->localRandGenerator);
     case UNITY_EXPONENT:
         return variateForUnityExponent();
     case GENERAL:
         return (alpha == 0.5) ? variateForExponentEqualOneHalf() : variateForGeneralExponent();
     default:
-        return NAN; /// unexpected return
+        throw std::runtime_error("Stable distribution: invalid distribution type");
     }
 }
 
-void StableDistribution::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void StableDistribution<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     switch (distributionType) {
     case NORMAL: {
         double stdev = M_SQRT2 * gamma;
-        for (double &var : outputData)
-            var = mu + stdev * NormalRand::StandardVariate(localRandGenerator);
+        for (RealType &var : outputData)
+            var = mu + stdev * NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     }
         break;
     case CAUCHY: {
-        for (double &var : outputData)
-            var = mu + gamma * CauchyRand::StandardVariate(localRandGenerator);
+        for (RealType &var : outputData)
+            var = mu + gamma * CauchyRand<RealType>::StandardVariate(this->localRandGenerator);
     }
         break;
     case LEVY: {
         if (beta > 0) {
-            for (double &var : outputData)
-                var = mu + gamma * LevyRand::StandardVariate(localRandGenerator);
+            for (RealType &var : outputData)
+                var = mu + gamma * LevyRand<RealType>::StandardVariate(this->localRandGenerator);
         }
         else {
-            for (double &var : outputData)
-                var = mu - gamma * LevyRand::StandardVariate(localRandGenerator);
+            for (RealType &var : outputData)
+                var = mu - gamma * LevyRand<RealType>::StandardVariate(this->localRandGenerator);
         }
     }
         break;
     case UNITY_EXPONENT: {
-        for (double &var : outputData)
+        for (RealType &var : outputData)
             var = variateForUnityExponent();
     }
         break;
     case GENERAL: {
         if (alpha == 0.5) {
-            for (double &var : outputData)
+            for (RealType &var : outputData)
                 var = variateForExponentEqualOneHalf();
         }
         else {
-            for (double &var : outputData)
+            for (RealType &var : outputData)
                 var = variateForGeneralExponent();
         }
     }
@@ -865,7 +925,8 @@ void StableDistribution::Sample(std::vector<double> &outputData) const
     }
 }
 
-double StableDistribution::Mean() const
+template < typename RealType >
+long double StableDistribution<RealType>::Mean() const
 {
     if (alpha > 1)
         return mu;
@@ -874,72 +935,84 @@ double StableDistribution::Mean() const
     return (beta == -1) ? -INFINITY : NAN;
 }
 
-double StableDistribution::Variance() const
+template < typename RealType >
+long double StableDistribution<RealType>::Variance() const
 {
     return (distributionType == NORMAL) ? 2 * gamma * gamma : INFINITY;
 }
 
-double StableDistribution::Mode() const
+template < typename RealType >
+RealType StableDistribution<RealType>::Mode() const
 {
     /// For symmetric and normal distributions mode is μ
     if (beta == 0 || distributionType == NORMAL)
         return mu;
     if (distributionType == LEVY)
         return mu + beta * gamma / 3.0;
-    return ContinuousDistribution::Mode();
+    return ContinuousDistribution<RealType>::Mode();
 }
 
-double StableDistribution::Median() const
+template < typename RealType >
+RealType StableDistribution<RealType>::Median() const
 {
     /// For symmetric and normal distributions mode is μ
     if (beta == 0 || distributionType == NORMAL)
         return mu;
-    return ContinuousDistribution::Median();
+    return ContinuousDistribution<RealType>::Median();
 }
 
-double StableDistribution::Skewness() const
+template < typename RealType >
+long double StableDistribution<RealType>::Skewness() const
 {
     return (distributionType == NORMAL) ? 0 : NAN;
 }
 
-double StableDistribution::ExcessKurtosis() const
+template < typename RealType >
+long double StableDistribution<RealType>::ExcessKurtosis() const
 {
     return (distributionType == NORMAL) ? 0 : NAN;
 }
 
-double StableDistribution::quantileNormal(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileNormal(double p) const
 {
     return mu - 2 * gamma * RandMath::erfcinv(2 * p);
 }
 
-double StableDistribution::quantileNormal1m(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileNormal1m(double p) const
 {
     return mu + 2 * gamma * RandMath::erfcinv(2 * p);
 }
 
-double StableDistribution::quantileCauchy(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileCauchy(double p) const
 {
     return mu - gamma / std::tan(M_PI * p);
 }
 
-double StableDistribution::quantileCauchy1m(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileCauchy1m(double p) const
 {
     return mu + gamma / std::tan(M_PI * p);
 }
 
-double StableDistribution::quantileLevy(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileLevy(double p) const
 {
     double y = RandMath::erfcinv(p);
     return mu + 0.5 * gamma / (y * y);
 }
 
-double StableDistribution::quantileLevy1m(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileLevy1m(double p) const
 {
     double y = RandMath::erfinv(p);
     return mu + 0.5 * gamma / (y * y);
 }
 
-double StableDistribution::quantileImpl(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileImpl(double p) const
 {
     switch (distributionType) {
     case NORMAL:
@@ -949,11 +1022,12 @@ double StableDistribution::quantileImpl(double p) const
     case LEVY:
         return (beta > 0) ? quantileLevy(p) : 2 * mu - quantileLevy1m(p);
     default:
-        return ContinuousDistribution::quantileImpl(p);
+        return ContinuousDistribution<RealType>::quantileImpl(p);
     }
 }
 
-double StableDistribution::quantileImpl1m(double p) const
+template < typename RealType >
+RealType StableDistribution<RealType>::quantileImpl1m(double p) const
 {
     switch (distributionType) {
     case NORMAL:
@@ -963,24 +1037,27 @@ double StableDistribution::quantileImpl1m(double p) const
     case LEVY:
         return (beta > 0) ? quantileLevy1m(p) : 2 * mu - quantileLevy(p);
     default:
-        return ContinuousDistribution::quantileImpl1m(p);
+        return ContinuousDistribution<RealType>::quantileImpl1m(p);
     }
 }
 
-std::complex<double> StableDistribution::cfNormal(double t) const
+template < typename RealType >
+std::complex<double> StableDistribution<RealType>::cfNormal(double t) const
 {
     double gammaT = gamma * t;
     std::complex<double> y(-gammaT * gammaT, mu * t);
     return std::exp(y);
 }
 
-std::complex<double> StableDistribution::cfCauchy(double t) const
+template < typename RealType >
+std::complex<double> StableDistribution<RealType>::cfCauchy(double t) const
 {
     std::complex<double> y(-gamma * t, mu * t);
     return std::exp(y);
 }
 
-std::complex<double> StableDistribution::cfLevy(double t) const
+template < typename RealType >
+std::complex<double> StableDistribution<RealType>::cfLevy(double t) const
 {
     std::complex<double> y(0.0, -2 * gamma * t);
     y = -std::sqrt(y);
@@ -988,7 +1065,8 @@ std::complex<double> StableDistribution::cfLevy(double t) const
     return std::exp(y);
 }
 
-std::complex<double> StableDistribution::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> StableDistribution<RealType>::CFImpl(double t) const
 {
     double x = 0;
     switch (distributionType) {
@@ -1011,26 +1089,56 @@ std::complex<double> StableDistribution::CFImpl(double t) const
     return std::exp(-psi);
 }
 
-String StableRand::Name() const
+template class StableDistribution<float>;
+template class StableDistribution<double>;
+template class StableDistribution<long double>;
+
+template < typename RealType >
+String StableRand<RealType>::Name() const
 {
     return "Stable("
-            + toStringWithPrecision(GetExponent()) + ", "
-            + toStringWithPrecision(GetSkewness()) + ", "
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(this->GetExponent()) + ", "
+            + this->toStringWithPrecision(this->GetSkewness()) + ", "
+            + this->toStringWithPrecision(this->GetScale()) + ", "
+            + this->toStringWithPrecision(this->GetLocation()) + ")";
 }
 
-String HoltsmarkRand::Name() const
+template < typename RealType >
+void StableRand<RealType>::SetExponent(double exponent)
+{
+    this->SetParameters(exponent, this->GetSkewness(), this->GetScale(), this->GetLocation());
+}
+
+template < typename RealType >
+void StableRand<RealType>::SetSkewness(double skewness)
+{
+    this->SetParameters(this->GetExponent(), skewness, this->GetScale(), this->GetLocation());
+}
+
+template class StableRand<float>;
+template class StableRand<double>;
+template class StableRand<long double>;
+
+template < typename RealType >
+String HoltsmarkRand<RealType>::Name() const
 {
     return "Holtsmark("
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(this->GetScale()) + ", "
+            + this->toStringWithPrecision(this->GetLocation()) + ")";
 }
 
+template class HoltsmarkRand<float>;
+template class HoltsmarkRand<double>;
+template class HoltsmarkRand<long double>;
 
-String LandauRand::Name() const
+template < typename RealType >
+String LandauRand<RealType>::Name() const
 {
     return "Landau("
-            + toStringWithPrecision(GetScale()) + ", "
-            + toStringWithPrecision(GetLocation()) + ")";
+            + this->toStringWithPrecision(this->GetScale()) + ", "
+            + this->toStringWithPrecision(this->GetLocation()) + ")";
 }
+
+template class LandauRand<float>;
+template class LandauRand<double>;
+template class LandauRand<long double>;

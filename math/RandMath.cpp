@@ -1,17 +1,9 @@
 ﻿#include "RandMath.h"
+#include "NumericMath.h"
 #include <functional>
 
 namespace RandMath
 {
-
-bool areClose(double a, double b, double eps)
-{
-    if (a == b)
-        return true;
-    double fa = std::fabs(a);
-    double fb = std::fabs(b);
-    return std::fabs(b - a) < eps * std::max(fa, fb);
-}
 
 int sign(double x)
 {
@@ -31,28 +23,28 @@ double atan(double x)
     return (x < -1.0) ? -M_PI_2 - std::atan(1.0 / x) : std::atan(x);
 }
 
-double log1pexp(double x)
+double softplus(double x)
 {
     if (x < 20.0)
-        return std::log1p(std::exp(x));
+        return std::log1pl(std::exp(x));
     return (x < 35.0) ? x + std::exp(-x) : x;
 }
 
 double log1mexp(double x)
 {
-    return (x < -M_LN2) ? std::log1p(-std::exp(x)) : std::log(-std::expm1(x));
+    return (x < -M_LN2) ? std::log1pl(-std::exp(x)) : std::log(-std::expm1l(x));
 }
 
-double logexpm1(double x)
+double logexpm1l(double x)
 {
     if (x < 20.0)
-        return std::log(std::expm1(x));
+        return std::log(std::expm1l(x));
     return (x < 35.0) ? x - std::exp(-x) : x;
 }
 
 double log2mexp(double x)
 {
-    return std::log1p(-std::expm1(x));
+    return std::log1pl(-std::expm1l(x));
 }
 
 double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
@@ -133,7 +125,7 @@ double erfinv(double p)
     if (p < 0.0)
         return -erfinv(-p);
     if (p > 1.0)
-        return NAN;
+        throw std::invalid_argument("Argument p should be in interval [-1, 1]");
     if (p == 1.0)
         return INFINITY;
     if (p == 0.0)
@@ -141,7 +133,7 @@ double erfinv(double p)
     if (p < 0.8)
         return erfinvAux4(p);
     /// Handle tails
-    double beta = std::sqrt(-std::log1p(-p * p));
+    double beta = std::sqrt(-std::log1pl(-p * p));
     if (p < 0.9975)
         return erfinvAux3(beta);
     return (1.0 - p < 5e-16) ? erfinvAux1(beta) : erfinvAux2(beta);
@@ -221,22 +213,26 @@ long double logBesselI(double nu, double x)
 
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
-        long double y = 0.5 * (M_LN2 - M_LNPI - std::log(x));
-        y -= M_LN2;
-        y += x;
-        y += (nu > 0) ? RandMath::log1pexp(-2 * x) : RandMath::log1mexp(-2 * x);
+        long double y = x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
+        y += (nu > 0) ? RandMath::softplus(-2 * x) : RandMath::log1mexp(-2 * x);
         return y;
     }
 
     if (nu < 0) {
-        /// I(−ν, x) = I(ν, x) + 2 / π sin(πν) K(ν, x)
+        /// I(ν, x) = I(−ν, x) - 2 / π sin(πν) K(ν, x)
         long double besseli = std::cyl_bessel_il(-nu, x);
-        long double sinPiNu = std::sin(M_PI * nu);
-        long double y = (sinPiNu == 0) ? besseli : besseli - M_2_PI * sinPiNu * std::cyl_bessel_kl(-nu, x);
-        return std::log(y);
+        long double sinPiNu = -std::sin(M_PI * nu);
+        long double y = 0;
+        if (sinPiNu == 0 || RandMath::areClose(nu, std::round(nu)))
+            y = besseli;
+        else {
+            long double besselk = std::cyl_bessel_kl(-nu, x);
+            y = besseli - M_2_PI * sinPiNu * besselk;
+        }
+        return (y <= 0) ? -INFINITY : std::log(y);
     }
 
-    long double besseli = std::cyl_bessel_il(nu, x);
+    long double besseli = std::cyl_bessel_il(nu, x); // TODO: expand Hankel asymptotic expansions
     return std::isfinite(besseli) ? std::log(besseli) : x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
 }
 
@@ -252,8 +248,8 @@ long double logBesselK(double nu, double x)
     if (nu == 0.5 || (besselk = std::cyl_bessel_kl(nu, x)) == 0)
         return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
 
-    if (!std::isfinite(besselk))
-        return (nu == 0) ? std::log(-std::log(x)) : std::lgamma(nu) - M_LN2 - nu * std::log(0.5 * x);
+    if (!std::isfinite(besselk)) // TODO: expand Hankel asymptotic expansions
+        return (nu == 0) ? std::log(-std::log(x)) : std::lgammal(nu) - M_LN2 - nu * std::log(0.5 * x);
 
     return std::log(besselk);
 }
@@ -288,7 +284,7 @@ double W0Lambert(double x, double epsilon)
 {
     double w = 0;
     if (x < -M_1_E)
-        return NAN;
+        throw std::invalid_argument("Argument x should be greater than -1/e, but it's equal to " + std::to_string(x));
     if (x > 10) {
         double logX = std::log(x);
         double loglogX = std::log(logX);
@@ -301,7 +297,7 @@ double Wm1Lambert(double x, double epsilon)
 {
     double w = -2;
     if (x < -M_1_E || x > 0)
-        return NAN;
+        throw std::invalid_argument("Argument x should be greater than -1/e and smaller or equal to 0, but it's equal to " + std::to_string(x));
     if (x > -0.1) {
         double logmX = std::log(-x);
         double logmlogmX = std::log(-logmX);
@@ -323,14 +319,14 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
 {
     /// ~log(2πε) for ε = 1e-16
     static constexpr double ln2piEps = -35.0;
-    double lgammamu = std::lgamma(mu);
+    double lgammamu = std::lgammal(mu);
     double C = lgammamu - ln2piEps + mu;
 
     /// solving equation f(n) = 0
     /// to find first negleted term
     double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
     double logXY = logX + logY;
-    if (!RandMath::findRoot([C, mu, logXY] (double n)
+    if (!RandMath::findRootNewtonSecondOrder<double>([C, mu, logXY] (double n)
     {
         double npmu = n + mu;
         double logn = std::log(n), lognpmu = std::log(npmu);
@@ -343,7 +339,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
         return DoubleTriplet(first, second, third);
     }, root))
         /// unexpected return
-        return NAN;
+        throw std::runtime_error("Marcum P function: failure in numerical procedure");
 
     /// series expansion
     double sum = 0.0;
@@ -351,7 +347,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
     int n0 = std::max(std::ceil(root), 5.0);
     double mpn0 = mu + n0;
     double P = pgamma(mpn0, y, logY);
-    double diffP = (mpn0 - 1) * logY - y - std::lgamma(mpn0);
+    double diffP = (mpn0 - 1) * logY - y - std::lgammal(mpn0);
     diffP = std::exp(diffP);
     for (int n = n0; n > 0; --n) {
         double term = n * logX - x - lfact(n);
@@ -362,7 +358,7 @@ double MarcumPSeries(double mu, double x, double y, double logX, double logY)
             /// every 5 iterations we recalculate P and diffP
             /// in order to achieve enough accuracy
             P = pgamma(mupnm1, y, logY);
-            diffP = (mupnm1 - 1) * logY - y - std::lgamma(mupnm1);
+            diffP = (mupnm1 - 1) * logY - y - std::lgammal(mupnm1);
             diffP = std::exp(diffP);
         }
         else {
@@ -425,13 +421,13 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
 }
 
 /**
- * @fn MarcumPForMuLessThanOne
+ * @fn MarcumPForMuSmallerThanOne
  * @param mu
  * @param x
  * @param y
  * @return
  */
-double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, double logY)
+double MarcumPForMuSmallerThanOne(double mu, double x, double y, double logX, double logY)
 {
     // TODO: check Krishnamoorthy paper for alternative representation
 
@@ -439,7 +435,7 @@ double MarcumPForMuLessThanOne(double mu, double x, double y, double logX, doubl
     /// however we have singularity point at 0,
     /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
-    double aux = x + mu * M_LN2 + std::lgamma(mu);
+    double aux = x + mu * M_LN2 + std::lgammal(mu);
     double log2x = M_LN2 + logX;
     double I = (M_LN2 + logY) * mu - aux;
     I = std::exp(I) / mu;
@@ -554,5 +550,6 @@ double MarcumQ(double mu, double x, double y)
     double logX = std::log(x), logY = std::log(y);
     return MarcumQ(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
+
 }
 

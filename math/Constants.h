@@ -7,10 +7,36 @@
 
 constexpr long double MIN_POSITIVE = 1e-21l;
 
-typedef std::pair <double, double> DoublePair;
-typedef std::tuple <double, double, double> DoubleTriplet;
-typedef std::pair <int, int> IntPair;
-typedef std::string String;
+template <typename T>
+using Pair = std::pair<T, T>;
+
+template < typename T >
+Pair<T> operator +(const Pair<T> & l, const Pair<T> & r) {
+    return {l.first + r.first, l.second + r.second};
+}
+
+template < typename T >
+Pair<T> operator -(const Pair<T> & l, const Pair<T> & r) {
+    return {l.first - r.first, l.second - r.second};
+}
+
+template < typename T >
+T operator *(const Pair<T> & l, const Pair<T> & r) {
+    return l.first * r.first + l.second * r.second;
+}
+
+template <typename T>
+using Triplet = std::tuple<T, T, T>;
+
+using IntPair = Pair<int>;
+using DoublePair = Pair<double>;
+using LongDoublePair = Pair<long double>;
+
+using IntTriplet = Triplet<int>;
+using DoubleTriplet = Triplet<double>;
+using LongDoubleTriplet = Triplet<long double>;
+
+using String = std::string;
 
 #ifndef INFINITY
 #include <limits>

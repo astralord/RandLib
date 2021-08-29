@@ -25,13 +25,13 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(const std::vecto
     if (size > y.size())
         return;
     for (size_t i = 0; i != size; ++i)
-        y[i] = F(x[i]);
+        y[i] = this->F(x[i]);
 }
 
 template < typename T >
 double ProbabilityDistribution<T>::S(const T &x) const
 {
-    return 1.0 - F(x);
+    return 1.0 - this->F(x);
 }
 
 template < typename T >
@@ -54,7 +54,7 @@ void ProbabilityDistribution<T>::Sample(std::vector<T> &outputData) const
 template < typename T >
 void ProbabilityDistribution<T>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
 }
 
 template < typename T >
@@ -84,7 +84,7 @@ String ProbabilityDistribution<T>::fitErrorDescription(ProbabilityDistribution::
         error += "Sample is too small. ";
         break;
     case WRONG_LEVEL:
-        error += "Significance level should be positive and less than one. ";
+        error += "Significance level should be positive and smaller than 1. ";
         break;
     case UNDEFINED_ERROR:
     default:
@@ -93,10 +93,22 @@ String ProbabilityDistribution<T>::fitErrorDescription(ProbabilityDistribution::
     return error + explanation;
 }
 
-/// Univariate
-template class ProbabilityDistribution<double>;
+/// Univariate discrete
 template class ProbabilityDistribution<int>;
+template class ProbabilityDistribution<long int>;
+template class ProbabilityDistribution<long long int>;
 
-/// Bivariate
-template class ProbabilityDistribution<DoublePair>;
-template class ProbabilityDistribution<IntPair>;
+/// Univariate continuous
+template class ProbabilityDistribution<float>;
+template class ProbabilityDistribution<double>;
+template class ProbabilityDistribution<long double>;
+
+/// Bivariate discrete
+template class ProbabilityDistribution< Pair<int> >;
+template class ProbabilityDistribution< Pair<long int> >;
+template class ProbabilityDistribution< Pair<long long int> >;
+
+/// Bivariate continuous
+template class ProbabilityDistribution< Pair<float> >;
+template class ProbabilityDistribution< Pair<double> >;
+template class ProbabilityDistribution< Pair<long double> >;

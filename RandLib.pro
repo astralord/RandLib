@@ -80,7 +80,8 @@ SOURCES += \
     distributions/univariate/continuous/circular/CircularDistribution.cpp \
     distributions/univariate/UnivariateDistribution.cpp \
     distributions/univariate/continuous/circular/WrappedExponentialRand.cpp \
-    distributions/univariate/continuous/FisherFRand.cpp
+    distributions/univariate/continuous/FisherFRand.cpp \
+    distributions/univariate/ExponentialFamily.cpp
 
 HEADERS +=\
     distributions/ProbabilityDistribution.h \
@@ -155,7 +156,8 @@ HEADERS +=\
     distributions/univariate/continuous/circular/CircularDistribution.h \
     distributions/univariate/UnivariateDistribution.h \
     distributions/univariate/continuous/circular/WrappedExponentialRand.h \
-    distributions/univariate/continuous/FisherFRand.h
+    distributions/univariate/continuous/FisherFRand.h \
+    distributions/univariate/ExponentialFamily.h
 
 unix {
     target.path = /usr/lib

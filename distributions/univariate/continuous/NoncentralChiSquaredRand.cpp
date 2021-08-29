@@ -1,17 +1,20 @@
 #include "NoncentralChiSquaredRand.h"
 
-NoncentralChiSquaredRand::NoncentralChiSquaredRand(double degree, double noncentrality)
+template < typename RealType >
+NoncentralChiSquaredRand<RealType>::NoncentralChiSquaredRand(double degree, double noncentrality)
 {
     SetParameters(degree, noncentrality);
 }
 
-String NoncentralChiSquaredRand::Name() const
+template < typename RealType >
+String NoncentralChiSquaredRand<RealType>::Name() const
 {
-    return "Noncentral Chi-Squared(" + toStringWithPrecision(GetDegree()) + ", "
-            + toStringWithPrecision(GetNoncentrality()) + ")";
+    return "Noncentral Chi-Squared(" + this->toStringWithPrecision(GetDegree()) + ", "
+            + this->toStringWithPrecision(GetNoncentrality()) + ")";
 }
 
-void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality)
+template < typename RealType >
+void NoncentralChiSquaredRand<RealType>::SetParameters(double degree, double noncentrality)
 {
     if (degree <= 0.0)
         throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
@@ -30,7 +33,8 @@ void NoncentralChiSquaredRand::SetParameters(double degree, double noncentrality
         Y.SetRate(halfLambda);
 }
 
-double NoncentralChiSquaredRand::f(const double & x) const
+template < typename RealType >
+double NoncentralChiSquaredRand<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -42,7 +46,8 @@ double NoncentralChiSquaredRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double NoncentralChiSquaredRand::logf(const double & x) const
+template < typename RealType >
+double NoncentralChiSquaredRand<RealType>::logf(const RealType & x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -58,7 +63,8 @@ double NoncentralChiSquaredRand::logf(const double & x) const
     return y + 0.5 * z - M_LN2;
 }
 
-double NoncentralChiSquaredRand::F(const double & x) const
+template < typename RealType >
+double NoncentralChiSquaredRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -68,7 +74,8 @@ double NoncentralChiSquaredRand::F(const double & x) const
     return RandMath::MarcumP(halfK, halfLambda, halfX, sqrtLambda / M_SQRT2, sqrtHalfX, logLambda - M_LN2, logHalfX);
 }
 
-double NoncentralChiSquaredRand::S(const double & x) const
+template < typename RealType >
+double NoncentralChiSquaredRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
         return 1.0;
@@ -78,75 +85,102 @@ double NoncentralChiSquaredRand::S(const double & x) const
     return RandMath::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / M_SQRT2, sqrtHalfX, logLambda - M_LN2, logHalfX);
 }
 
-double NoncentralChiSquaredRand::variateForDegreeEqualOne() const
+template < typename RealType >
+RealType NoncentralChiSquaredRand<RealType>::variateForDegreeEqualOne() const
 {
-    double y = sqrtLambda + NormalRand::StandardVariate(localRandGenerator);
+    RealType y = sqrtLambda + NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     return y * y;
 }
 
-double NoncentralChiSquaredRand::Variate(double degree, double noncentrality, RandGenerator &randGenerator)
+template < typename RealType >
+RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double noncentrality, RandGenerator &randGenerator)
 {
-    if (degree <= 0 || noncentrality <= 0)
-        return NAN;
+    if (degree <= 0.0)
+        throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
+    if (noncentrality <= 0.0)
+        throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
 
     if (degree >= 1) {
-        double rv = (degree == 1) ? 0.0 : 2 * GammaDistribution::StandardVariate(0.5 * degree - 0.5, randGenerator);
-        double y = std::sqrt(noncentrality) + NormalRand::StandardVariate(randGenerator);
+        RealType rv = (degree == 1) ? 0.0 : 2 * GammaDistribution<RealType>::StandardVariate(0.5 * degree - 0.5, randGenerator);
+        RealType y = std::sqrt(noncentrality) + NormalRand<RealType>::StandardVariate(randGenerator);
         return rv + y * y;
     }
-    double shape = 0.5 * degree + PoissonRand::Variate(0.5 * noncentrality, randGenerator);
-    return 2 * GammaDistribution::StandardVariate(shape, randGenerator);
+    RealType shape = 0.5 * degree + PoissonRand<int>::Variate(0.5 * noncentrality, randGenerator);
+    return 2 * GammaDistribution<RealType>::StandardVariate(shape, randGenerator);
 }
 
-double NoncentralChiSquaredRand::Variate() const
+template < typename RealType >
+RealType NoncentralChiSquaredRand<RealType>::Variate() const
 {
     if (k < 1)
-        return 2 * GammaDistribution::StandardVariate(halfK + Y.Variate(), localRandGenerator);
+        return 2 * GammaDistribution<RealType>::StandardVariate(halfK + Y.Variate(), this->localRandGenerator);
     double X = variateForDegreeEqualOne();
     if (k > 1)
-        X += 2 * GammaDistribution::StandardVariate(halfK - 0.5, localRandGenerator);
+        X += 2 * GammaDistribution<RealType>::StandardVariate(halfK - 0.5, this->localRandGenerator);
     return X;
 }
 
-void NoncentralChiSquaredRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void NoncentralChiSquaredRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     if (k >= 1) {
-        for (double & var : outputData)
+        for (RealType & var : outputData)
             var = variateForDegreeEqualOne();
         double halfKmHalf = halfK - 0.5;
         if (halfKmHalf == 0)
             return;
-        for (double & var : outputData)
-            var += 2 * GammaDistribution::StandardVariate(halfKmHalf, localRandGenerator);
+        for (RealType & var : outputData)
+            var += 2 * GammaDistribution<RealType>::StandardVariate(halfKmHalf, this->localRandGenerator);
     }
     else {
-        for (double & var : outputData)
-            var = 2 * GammaDistribution::StandardVariate(halfK + Y.Variate(), localRandGenerator);
+        for (RealType & var : outputData)
+            var = 2 * GammaDistribution<RealType>::StandardVariate(halfK + Y.Variate(), this->localRandGenerator);
     }
 }
 
-void NoncentralChiSquaredRand::Reseed(unsigned long seed) const
+template < typename RealType >
+void NoncentralChiSquaredRand<RealType>::Reseed(unsigned long seed) const
 {
-    localRandGenerator.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
     Y.Reseed(seed + 1);
 }
 
-double NoncentralChiSquaredRand::Mean() const
+template < typename RealType >
+long double NoncentralChiSquaredRand<RealType>::Mean() const
 {
     return k + lambda;
 }
 
-double NoncentralChiSquaredRand::Variance() const
+template < typename RealType >
+long double NoncentralChiSquaredRand<RealType>::Variance() const
 {
     return 2 * (k + 2 * lambda);
 }
 
-double NoncentralChiSquaredRand::Mode() const
+template < typename RealType >
+RealType NoncentralChiSquaredRand<RealType>::Mode() const
 {
-    return (k < 2) ? 0.0 : ContinuousDistribution::Mode();
+    return (k <= 2) ? 0.0 : ContinuousDistribution<RealType>::Mode();
 }
 
-std::complex<double> NoncentralChiSquaredRand::CFImpl(double t) const
+template < typename RealType >
+long double NoncentralChiSquaredRand<RealType>::Skewness() const
+{
+    long double y = k + 2 * lambda;
+    y = 2.0 / y;
+    long double z = y * std::sqrt(y);
+    return z * (k + 3 * lambda);
+}
+
+template < typename RealType >
+long double NoncentralChiSquaredRand<RealType>::ExcessKurtosis() const
+{
+    long double y = k + 2 * lambda;
+    return 12 * (k + 4 * lambda) / (y * y);
+}
+
+template < typename RealType >
+std::complex<double> NoncentralChiSquaredRand<RealType>::CFImpl(double t) const
 {
     std::complex<double> aux(1, -2 * t);
     std::complex<double> y(0, lambda * t);
@@ -155,16 +189,6 @@ std::complex<double> NoncentralChiSquaredRand::CFImpl(double t) const
     return std::exp(y);
 }
 
-double NoncentralChiSquaredRand::Skewness() const
-{
-    double y = k + 2 * lambda;
-    y = 2.0 / y;
-    double z = y * std::sqrt(y);
-    return z * (k + 3 * lambda);
-}
-
-double NoncentralChiSquaredRand::ExcessKurtosis() const
-{
-    double y = k + 2 * lambda;
-    return 12 * (k + 4 * lambda) / (y * y);
-}
+template class NoncentralChiSquaredRand<float>;
+template class NoncentralChiSquaredRand<double>;
+template class NoncentralChiSquaredRand<long double>;

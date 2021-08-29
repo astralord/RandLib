@@ -15,16 +15,7 @@ namespace RandMath
  * @param b positive parameter
  * @return log(B(a, b)) = log(Γ(a)) + log(Γ(b)) - log(Γ(a + b))
  */
-long double logBeta(double a, double b);
-
-/**
- * @fn beta
- * Calculate beta function
- * @param a
- * @param b
- * @return B(a, b) = Γ(a) * Γ(b) / Γ(a + b)
- */
-long double beta(double a, double b);
+long double logBeta(long double a, long double b);
 
 /**
  * @fn ibeta

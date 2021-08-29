@@ -15,35 +15,35 @@
  * Related distributions: <BR>
  * If Y ~ Pareto(ρ, 1) and Z ~ Geometric(1 / Y), then Z + 1 ~ Yule(ρ)
  */
-class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT YuleRand : public DiscreteDistribution<IntType>
 {
-    double ro = 0; ///< shape ρ
+    double rho = 0; ///< shape ρ
     double lgamma1pRo = 0; /// log(Γ(1 + ρ))
     
-    ParetoRand X;
+    ParetoRand<double> X;
 public:
     explicit YuleRand(double shape);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    int MinValue() const override { return 1; }
-    int MaxValue() const override { return INT_MAX; }
+    IntType MinValue() const override { return 1; }
+    IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
     void SetShape(double shape);
-    inline double GetShape() const { return ro; }
+    inline double GetShape() const { return rho; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    double S(const int & k) const override;
-    int Variate() const override;
-    static int Variate(double shape, RandGenerator &randGenerator = staticRandGenerator);
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
+    IntType Variate() const override;
+    static IntType Variate(double shape, RandGenerator &randGenerator = ProbabilityDistribution<IntType>::staticRandGenerator);
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    IntType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 };
 
 #endif // YULERAND_H

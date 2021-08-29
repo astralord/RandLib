@@ -1,16 +1,19 @@
 #include "BetaPrimeRand.h"
 
-BetaPrimeRand::BetaPrimeRand(double shape1, double shape2)
+template < typename RealType >
+BetaPrimeRand<RealType>::BetaPrimeRand(double shape1, double shape2)
 {
     SetShapes(shape1, shape2);
 }
 
-String BetaPrimeRand::Name() const
+template < typename RealType >
+String BetaPrimeRand<RealType>::Name() const
 {
-    return "Beta Prime(" + toStringWithPrecision(GetAlpha()) + ", " + toStringWithPrecision(GetBeta()) + ")";
+    return "Beta Prime(" + this->toStringWithPrecision(GetAlpha()) + ", " + this->toStringWithPrecision(GetBeta()) + ")";
 }
 
-void BetaPrimeRand::SetShapes(double shape1, double shape2)
+template < typename RealType >
+void BetaPrimeRand<RealType>::SetShapes(double shape1, double shape2)
 {
     if (shape1 <= 0 || shape2 <= 0)
         throw std::invalid_argument("Beta-prime distribution: shapes should be positive");
@@ -19,7 +22,8 @@ void BetaPrimeRand::SetShapes(double shape1, double shape2)
     beta = B.GetBeta();
 }
 
-double BetaPrimeRand::f(const double & x) const
+template < typename RealType >
+double BetaPrimeRand<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -31,7 +35,8 @@ double BetaPrimeRand::f(const double & x) const
     return std::exp(logf(x));
 }
 
-double BetaPrimeRand::logf(const double & x) const
+template < typename RealType >
+double BetaPrimeRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -41,44 +46,60 @@ double BetaPrimeRand::logf(const double & x) const
         return (alpha > 1) ? -INFINITY : INFINITY;
     }
     double y = (alpha - 1) * std::log(x);
-    y -= (alpha + beta) * std::log1p(x);
+    y -= (alpha + beta) * std::log1pl(x);
     return y - GetLogBetaFunction();
 }
 
-double BetaPrimeRand::F(const double & x) const
+template < typename RealType >
+double BetaPrimeRand<RealType>::F(const RealType & x) const
 {
     return (x > 0) ? B.F(x / (1.0 + x)) : 0;
 }
 
-double BetaPrimeRand::S(const double & x) const
+template < typename RealType >
+double BetaPrimeRand<RealType>::S(const RealType &x) const
 {
     return (x > 0) ? B.S(x / (1.0 + x)) : 1;
 }
 
-double BetaPrimeRand::Variate() const
+template < typename RealType >
+RealType BetaPrimeRand<RealType>::fromBetaVariate(const RealType & betaVar) const
+{
+    if (betaVar > 1e-5)
+        return betaVar / (1.0 - betaVar);
+    RealType logVar = std::log(betaVar), log1mVar = std::log1p(-betaVar);
+    return std::exp(logVar - log1mVar);
+}
+
+template < typename RealType >
+RealType BetaPrimeRand<RealType>::Variate() const
 {
     double x = B.Variate();
-    return x / (1.0 - x);
+    return fromBetaVariate(x);
 }
 
-void BetaPrimeRand::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void BetaPrimeRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
     B.Sample(outputData);
-    for (double &var : outputData)
-        var = var / (1.0 - var);
+    for (RealType &var : outputData)
+        var = fromBetaVariate(var);
 }
 
-void BetaPrimeRand::Reseed(unsigned long seed) const
+template < typename RealType >
+void BetaPrimeRand<RealType>::Reseed(unsigned long seed) const
 {
     B.Reseed(seed);
 }
 
-double BetaPrimeRand::Mean() const
+template < typename RealType >
+long double BetaPrimeRand<RealType>::Mean() const
 {
     return (beta > 1) ? alpha / (beta - 1) : INFINITY;
 }
 
-double BetaPrimeRand::Variance() const
+template < typename RealType >
+long double BetaPrimeRand<RealType>::Variance() const
 {
     if (beta <= 2)
         return INFINITY;
@@ -88,106 +109,119 @@ double BetaPrimeRand::Variance() const
     return numerator / denominator;
 }
 
-double BetaPrimeRand::Median() const
+template < typename RealType >
+RealType BetaPrimeRand<RealType>::Median() const
 {
     return (alpha == beta) ? 1.0 : quantileImpl(0.5);
 }
 
-double BetaPrimeRand::Mode() const
+template < typename RealType >
+RealType BetaPrimeRand<RealType>::Mode() const
 {
     return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
 }
 
-double BetaPrimeRand::Skewness() const
+template < typename RealType >
+long double BetaPrimeRand<RealType>::Skewness() const
 {
     if (beta <= 3)
         return INFINITY;
-    double aux = alpha + beta - 1;
-    double skewness = (beta - 2) / (alpha * aux);
+    long double aux = alpha + beta - 1;
+    long double skewness = (beta - 2) / (alpha * aux);
     skewness = std::sqrt(skewness);
     aux += alpha;
     aux += aux;
     return aux * skewness / (beta - 3);
 }
 
-double BetaPrimeRand::ExcessKurtosis() const
+template < typename RealType >
+long double BetaPrimeRand<RealType>::ExcessKurtosis() const
 {
     if (beta <= 4)
         return INFINITY;
-    double betam1 = beta - 1;
-    double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
+    long double betam1 = beta - 1;
+    long double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
     numerator += 5 * beta - 11;
-    double denominator = (beta - 3) * (beta - 4);
+    long double denominator = (beta - 3) * (beta - 4);
     return 6 * numerator / denominator;
 }
 
-double BetaPrimeRand::quantileImpl(double p) const
+template < typename RealType >
+RealType BetaPrimeRand<RealType>::quantileImpl(double p) const
 {
     double x = B.Quantile(p);
     return x / (1.0 - x);
 }
 
-double BetaPrimeRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType BetaPrimeRand<RealType>::quantileImpl1m(double p) const
 {
     double x = B.Quantile1m(p);
     return x / (1.0 - x);
 }
 
-std::complex<double> BetaPrimeRand::CFImpl(double t) const
+template < typename RealType >
+std::complex<double> BetaPrimeRand<RealType>::CFImpl(double t) const
 {
     /// if no singularity - simple numeric integration
     if (alpha >= 1)
-        return UnivariateDistribution::CFImpl(t);
+        return UnivariateDistribution<RealType>::CFImpl(t);
 
-    double re = ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([this, t] (double x)
     {
+        if (x == 0.0)
+            return 0.0;
         return std::cos(t * x) - 1.0;
-    }, 0.0, 1.0);
-    re += F(1.0);
-    re += ExpectedValue([this, t] (double x)
-    {
-        return std::cos(t * x);
-    }, 1.0, INFINITY);
+    }, 0.0, INFINITY) + 1.0;
 
-    double im = ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([this, t] (double x)
     {
         return std::sin(t * x);
     }, 0.0, INFINITY);
     return std::complex<double>(re, im);
 }
 
-void BetaPrimeRand::FitAlpha(const std::vector<double> &sample)
+template < typename RealType >
+void BetaPrimeRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
 {
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double lnG1m = -B.GetSampleLog1pMean(sample);
-    double lnG = GetSampleLogMean(sample) + lnG1m;
-    long double sum = 0.0;
-    for (const double & var : sample)
-        sum += var / (1.0 + var);
-    B.FitAlpha(lnG, lnG1m, sum / sample.size());
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
+    long double lnG = this->GetSampleLogMean(sample) - B.GetSampleLog1pMeanNorm(sample);
+    long double mean = 0.5;
+    if (beta != 1.0) {
+        mean = 0.0;
+        for (const double & var : sample)
+            mean += var / (1.0 + var);
+        mean /= sample.size();
+    }
+    B.FitAlpha(lnG, mean);
     SetShapes(B.GetAlpha(), beta);
 }
 
-void BetaPrimeRand::FitBeta(const std::vector<double> &sample)
+template < typename RealType >
+void BetaPrimeRand<RealType>::FitBeta(const std::vector<RealType> &sample)
 {
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double lnG1m = -B.GetSampleLog1pMean(sample);
-    double lnG = (alpha == 1.0) ? 0.0 : GetSampleLogMean(sample) + lnG1m;
-    long double sum = 0.0;
-    for (const double & var : sample)
-        sum += var / (1.0 + var);
-    B.FitBeta(lnG, lnG1m, sum / sample.size());
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
+    long double lnG1m = -B.GetSampleLog1pMeanNorm(sample);
+    long double mean = 0.5;
+    if (alpha != 1.0) {
+        mean = 0.0;
+        for (const double & var : sample)
+            mean += var / (1.0 + var);
+        mean /= sample.size();
+    }
+    B.FitBeta(lnG1m, mean);
     SetShapes(alpha, B.GetBeta());
 }
 
-void BetaPrimeRand::Fit(const std::vector<double> &sample)
+template < typename RealType >
+void BetaPrimeRand<RealType>::Fit(const std::vector<RealType> &sample)
 {
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double lnG1m = -B.GetSampleLog1pMean(sample);
-    double lnG = GetSampleLogMean(sample) + lnG1m;
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
+    long double lnG1m = -B.GetSampleLog1pMeanNorm(sample);
+    long double lnG = this->GetSampleLogMean(sample) + lnG1m;
     long double m = 0.0, v = 0.0;
     int n = sample.size();
     for (int i = 0; i < n; ++i) {
@@ -199,3 +233,7 @@ void BetaPrimeRand::Fit(const std::vector<double> &sample)
     B.FitShapes(lnG, lnG1m, m, v / n);
     SetShapes(B.GetAlpha(), B.GetBeta());
 }
+
+template class BetaPrimeRand<float>;
+template class BetaPrimeRand<double>;
+template class BetaPrimeRand<long double>;

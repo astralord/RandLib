@@ -16,8 +16,8 @@
  * If X ~ NB(1, p), then X ~ Geometric(p)
  * If Y ~ Γ(r, p / (1 - p), then Po(Y) ~ NB(r, p)
  */
-template < typename T >
-class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution
+template< typename IntType = int, typename T = double>
+class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistribution<IntType>
 {
 protected:
     double p = 0.5; ///< probability of failure
@@ -31,15 +31,15 @@ private:
     double qDivP = 1; ///< q / p
     static constexpr int tableSize = 16;
     double table[tableSize];
-    GammaRand GammaRV{};
+    GammaRand<float> GammaRV{};
 
 protected:
-    NegativeBinomialDistribution(T number, double probability);
+    NegativeBinomialDistribution(T number = 1, double probability = 0.5);
 
 public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }
-    int MinValue() const override { return 0; }
-    int MaxValue() const override { return INT_MAX; }
+    IntType MinValue() const override { return 0; }
+    IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
 protected:
     void SetParameters(T number, double probability);
@@ -48,10 +48,10 @@ public:
     inline double GetProbability() const { return p; }
     inline T GetNumber() const { return r; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    double S(const int & k) const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
 
 protected:
     enum GENERATOR_ID {
@@ -60,25 +60,38 @@ protected:
         GAMMA_POISSON
     };
 
-    GENERATOR_ID GetIdOfUsedGenerator() const;
+    /**
+     * @fn GetIdOfUsedGenerator
+     * If r is small, we use two different generators for two different cases:
+     * If p < 0.08 then the tail is too heavy (probability to be in main body is smaller than 0.75),
+     * then we return highest integer, smaller than variate from exponential distribution.
+     * Otherwise we choose table method
+     * @return id of generator
+     */
+    GENERATOR_ID GetIdOfUsedGenerator() const
+    {
+        if ((r < 10 || GammaRV.Mean() > 10) && r == std::round(r))
+            return (p < 0.08) ? EXPONENTIAL : TABLE;
+        return GAMMA_POISSON;
+    }
 
-    int variateGeometricByTable() const;
-    int variateGeometricThroughExponential() const;
+    IntType variateGeometricByTable() const;
+    IntType variateGeometricThroughExponential() const;
 private:
-    int variateByTable() const;
-    int variateThroughExponential() const;
-    int variateThroughGammaPoisson() const;
+    IntType variateByTable() const;
+    IntType variateThroughExponential() const;
+    IntType variateThroughGammaPoisson() const;
 
 public:
-    int Variate() const override;
-    void Sample(std::vector<int> &outputData) const override;
+    IntType Variate() const override;
+    void Sample(std::vector<IntType> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    IntType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;
@@ -87,9 +100,10 @@ public:
      * @fn FitProbabilityBayes
      * @param sample
      * @param priorDistribution
+     * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    BetaRand FitProbabilityBayes(const std::vector<int> &sample, const BetaDistribution &priorDistribution);
+    BetaRand<> FitProbabilityBayes(const std::vector<IntType> &sample, const BetaDistribution<> &priorDistribution, bool MAP = false);
 };
 
 
@@ -97,27 +111,29 @@ public:
  * @brief The NegativeBinomialRand class <BR>
  * Negative binomial distribution
  */
-template < typename T >
-class RANDLIBSHARED_EXPORT NegativeBinomialRand : public NegativeBinomialDistribution<T>
+template< typename IntType = int, typename T = double>
+class RANDLIBSHARED_EXPORT NegativeBinomialRand : public NegativeBinomialDistribution<IntType, T>
 {
 public:
-    NegativeBinomialRand(T number, double probability) : NegativeBinomialDistribution<T>(number, probability) {}
+    NegativeBinomialRand(T number = 1, double probability = 0.5) : NegativeBinomialDistribution<IntType, T>(number, probability) {}
     String Name() const override;
 
-    using NegativeBinomialDistribution<T>::SetParameters;
+    using NegativeBinomialDistribution<IntType, T>::SetParameters;
 
-    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be bigger than sample mean";
+    static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be greater than sample mean";
 
     /**
      * @fn Fit
      * set number and probability, estimated via maximum-likelihood method
      * @param sample
      */
-    void Fit(const std::vector<int> &sample);
+    void Fit(const std::vector<IntType> &sample);
 };
 
+template < typename IntType = int >
+using PascalRand = NegativeBinomialRand<IntType, int>;
 
-typedef NegativeBinomialRand<int> PascalRand;
-typedef NegativeBinomialRand<double> PolyaRand;
+template < typename IntType = int >
+using PolyaRand = NegativeBinomialRand<IntType, double>;
 
 #endif // NEGATIVEBINOMIALRAND_H

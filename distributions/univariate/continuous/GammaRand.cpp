@@ -3,153 +3,152 @@
 #include "ExponentialRand.h"
 #include "NormalRand.h"
 
-GammaDistribution::GammaDistribution(double shape, double rate)
+template < typename RealType >
+GammaDistribution<RealType>::GammaDistribution(double shape, double rate)
 {
     SetParameters(shape, rate);
 }
 
-void GammaDistribution::SetParameters(double shape, double rate)
+template < typename RealType >
+void GammaDistribution<RealType>::SetParameters(double shape, double rate)
 {
     if (shape <= 0.0)
-        throw std::invalid_argument("Gamma distribution: shape should be positive");
+        throw std::invalid_argument("Gamma distribution: shape should be positive, but it's equal to " + std::to_string(shape));
     if (rate <= 0.0)
-        throw std::invalid_argument("Gamma distribution: rate should be positive");
+        throw std::invalid_argument("Gamma distribution: rate should be positive, but it's equal to " + std::to_string(rate));
 
-    alpha = shape > 0 ? shape : 1.0;
+    this->alpha = shape > 0 ? shape : 1.0;
     
-    beta = (rate > 0.0) ? rate : 1.0;
-    theta = 1.0 / beta;
+    this->beta = (rate > 0.0) ? rate : 1.0;
+    theta = 1.0 / this->beta;
 
-    lgammaAlpha = std::lgamma(alpha);
-    logAlpha = std::log(alpha);
-    logBeta = std::log(beta);
-    pdfCoef = -lgammaAlpha + alpha * logBeta;
+    lgammaAlpha = std::lgammal(this->alpha);
+    logAlpha = std::log(this->alpha);
+    this->logBeta = std::log(this->beta);
+    pdfCoef = -lgammaAlpha + this->alpha * this->logBeta;
 
-    if (getIdOfUsedGenerator(alpha) == SMALL_SHAPE) {
+    if (getIdOfUsedGenerator(this->alpha) == SMALL_SHAPE) {
         /// set constants for generator
-        genCoef.t = 0.5 * std::log1p(-alpha);
+        genCoef.t = 0.5 * std::log1pl(-alpha);
         genCoef.t = 0.07 + 0.75 * std::exp(genCoef.t);
-        genCoef.b = 1.0 + std::exp(-genCoef.t) * alpha / genCoef.t;
+        genCoef.b = 1.0 + std::exp(-genCoef.t) * this->alpha / genCoef.t;
     }
 }
 
-void GammaDistribution::SetShape(double shape)
+template < typename RealType >
+void GammaDistribution<RealType>::SetShape(double shape)
 {
-    SetParameters(shape, beta);
+    SetParameters(shape, this->beta);
 }
 
-double GammaDistribution::f(const double & x) const
+template < typename RealType >
+double GammaDistribution<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
         return 0.0;
     if (x == 0.0)
     {
-        if (alpha > 1.0)
+        if (this->alpha > 1.0)
             return 0.0;
-        return (alpha == 1.0) ? beta : INFINITY;
+        return (this->alpha == 1.0) ? this->beta : INFINITY;
     }
     return std::exp(logf(x));
 }
 
-double GammaDistribution::logf(const double & x) const
+template < typename RealType >
+double GammaDistribution<RealType>::logf(const RealType & x) const
 {
     if (x < 0.0)
         return -INFINITY;
     if (x == 0.0)
     {
-        if (alpha > 1.0)
+        if (this->alpha > 1.0)
             return -INFINITY;
-        return (alpha == 1.0) ? logBeta : INFINITY;
+        return (this->alpha == 1.0) ? this->logBeta : INFINITY;
     }
-    double y = (alpha - 1.0) * std::log(x);
-    y -= x * beta;
+    double y = (this->alpha - 1.0) * std::log(x);
+    y -= x * this->beta;
     y += pdfCoef;
     return y;
 }
 
-double GammaDistribution::F(const double & x) const
+template < typename RealType >
+double GammaDistribution<RealType>::F(const RealType & x) const
 {
-    return (x > 0.0) ? RandMath::pgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 0.0;
+    return (x > 0.0) ? RandMath::pgamma(this->alpha, x * this->beta, logAlpha, lgammaAlpha) : 0.0;
 }
 
-double GammaDistribution::logF(const double &x) const
+template < typename RealType >
+double GammaDistribution<RealType>::logF(const RealType &x) const
 {
-    return (x > 0.0) ? RandMath::lpgamma(alpha, x * beta, logAlpha, lgammaAlpha) : -INFINITY;
+    return (x > 0.0) ? RandMath::lpgamma(this->alpha, x * this->beta, logAlpha, lgammaAlpha) : -INFINITY;
 }
 
-double GammaDistribution::S(const double & x) const
+template < typename RealType >
+double GammaDistribution<RealType>::S(const RealType & x) const
 {
-    return (x > 0.0) ? RandMath::qgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 1.0;
+    return (x > 0.0) ? RandMath::qgamma(this->alpha, x * this->beta, logAlpha, lgammaAlpha) : 1.0;
 }
 
-double GammaDistribution::logS(const double &x) const
+template < typename RealType >
+double GammaDistribution<RealType>::logS(const RealType &x) const
 {
-    return (x > 0.0) ? RandMath::lqgamma(alpha, x * beta, logAlpha, lgammaAlpha) : 0.0;
+    return (x > 0.0) ? RandMath::lqgamma(this->alpha, x * this->beta, logAlpha, lgammaAlpha) : 0.0;
 }
 
-GammaDistribution::GENERATOR_ID GammaDistribution::getIdOfUsedGenerator(double shape)
-{
-    if (shape < 0.34)
-        return SMALL_SHAPE;
-    if (shape <= 3.0 && RandMath::areClose(shape, std::round(shape)))
-        return INTEGER_SHAPE;
-    if (RandMath::areClose(shape, 1.5))
-        return ONE_AND_A_HALF_SHAPE;
-    if (shape > 1.0 && shape < 1.2)
-        return FISHMAN;
-    return MARSAGLIA_TSANG;
-}
-
-double GammaDistribution::variateThroughExponentialSum(int shape, RandGenerator& randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::variateThroughExponentialSum(int shape, RandGenerator& randGenerator)
 {
     double X = 0.0;
     for (int i = 0; i < shape; ++i)
-        X += ExponentialRand::StandardVariate(randGenerator);
+        X += ExponentialRand<RealType>::StandardVariate(randGenerator);
     return X;
 }
 
-double GammaDistribution::variateForShapeOneAndAHalf(RandGenerator& randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::variateForShapeOneAndAHalf(RandGenerator& randGenerator)
 {
-    double W = ExponentialRand::StandardVariate(randGenerator);
-    double N = NormalRand::StandardVariate(randGenerator);
+    RealType W = ExponentialRand<RealType>::StandardVariate(randGenerator);
+    RealType N = NormalRand<RealType>::StandardVariate(randGenerator);
     return W + 0.5 * N * N;
 }
 
-double GammaDistribution::variateBest(RandGenerator &randGenerator) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::variateBest(RandGenerator &randGenerator) const
 {
     /// Algorithm RGS for gamma variates (Best, 1983)
     double X = 0;
-    int iter = 0;
+    size_t iter = 0;
     do {
-        double V = genCoef.b * UniformRand::StandardVariate(randGenerator);
-        double W = UniformRand::StandardVariate(randGenerator);
+        double V = genCoef.b * UniformRand<RealType>::StandardVariate(randGenerator);
+        double W = UniformRand<RealType>::StandardVariate(randGenerator);
         if (V <= 1) {
-            X = genCoef.t * std::pow(V, 1.0 / alpha);
+            X = genCoef.t * std::pow(V, 1.0 / this->alpha);
             if (W <= (2.0 - X) / (2.0 + X) || W <= std::exp(-X))
                 return X;
         }
         else {
-            X = -std::log(genCoef.t * (genCoef.b - V) / alpha);
+            X = -std::log(genCoef.t * (genCoef.b - V) / this->alpha);
             double Y = X / genCoef.t;
-            if (W * (alpha + Y - alpha * Y) <= 1 || W <= std::pow(Y, alpha - 1))
+            if (W * (this->alpha + Y - this->alpha * Y) <= 1 || W <= std::pow(Y, this->alpha - 1))
                 return X;
         }
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN; /// shouldn't end up here
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Gamma distribution: sampling failed");
 }
 
-
-double GammaDistribution::variateAhrensDieter(double shape, RandGenerator &randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::variateAhrensDieter(double shape, RandGenerator &randGenerator)
 {
     /// Rejection algorithm GS for gamma variates (Ahrens and Dieter, 1974)
     double X = 0;
-    int iter = 0;
+    size_t iter = 0;
     double shapeInv = 1.0 / shape;
     double t = shapeInv + M_1_E;
     do {
-        double U = UniformRand::StandardVariate(randGenerator);
+        double U = UniformRand<RealType>::StandardVariate(randGenerator);
         double p = shape * t * U;
-        double W = ExponentialRand::StandardVariate(randGenerator);
+        double W = ExponentialRand<RealType>::StandardVariate(randGenerator);
         if (p <= 1)
         {
             X = std::pow(p, shapeInv);
@@ -162,48 +161,51 @@ double GammaDistribution::variateAhrensDieter(double shape, RandGenerator &randG
             if ((1 - shape) * std::log(X) <= W)
                 return X;
         }
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN; /// shouldn't end up here
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Gamma distribution: sampling failed");
 }
 
-double GammaDistribution::variateFishman(double shape, RandGenerator& randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::variateFishman(double shape, RandGenerator& randGenerator)
 {
     /// G. Fishman algorithm (shape > 1)
     double W1, W2;
     double shapem1 = shape - 1;
     do {
-        W1 = ExponentialRand::StandardVariate(randGenerator);
-        W2 = ExponentialRand::StandardVariate(randGenerator);
+        W1 = ExponentialRand<RealType>::StandardVariate(randGenerator);
+        W2 = ExponentialRand<RealType>::StandardVariate(randGenerator);
     } while (W2 < shapem1 * (W1 - std::log(W1) - 1));
     return shape * W1;
 }
 
-double GammaDistribution::variateMarsagliaTsang(double shape, RandGenerator &randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::variateMarsagliaTsang(double shape, RandGenerator &randGenerator)
 {
     /// Marsaglia and Tsang’s Method (shape > 1/3)
-    double d = shape - 1.0 / 3;
-    double c = 3 * std::sqrt(d);
-    int iter = 0;
+    RealType d = shape - 1.0 / 3;
+    RealType c = 3 * std::sqrt(d);
+    size_t iter = 0;
     do {
-        double N;
+        RealType N;
         do {
-            N = NormalRand::StandardVariate(randGenerator);
+            N = NormalRand<RealType>::StandardVariate(randGenerator);
         } while (N <= -c);
-        double v = 1 + N / c;
+        RealType v = 1 + N / c;
         v = v * v * v;
         N *= N;
-        double U = UniformRand::StandardVariate(randGenerator);
+        RealType U = UniformRand<RealType>::StandardVariate(randGenerator);
         if (U < 1.0 - 0.331 * N * N || std::log(U) < 0.5 * N + d * (1.0 - v + std::log(v))) {
             return d * v;
         }
-    } while (++iter <= MAX_ITER_REJECTION);
-    return NAN; /// shouldn't end up here
+    } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
+    throw std::runtime_error("Gamma distribution: sampling failed");
 }
 
-double GammaDistribution::StandardVariate(double shape, RandGenerator& randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::StandardVariate(double shape, RandGenerator& randGenerator)
 {
     if (shape <= 0)
-        return NAN;
+        throw std::invalid_argument("Gamma distribution: shape should be positive");
 
     GENERATOR_ID genId = getIdOfUsedGenerator(shape);
 
@@ -219,126 +221,147 @@ double GammaDistribution::StandardVariate(double shape, RandGenerator& randGener
     case MARSAGLIA_TSANG:
         return variateMarsagliaTsang(shape, randGenerator);
     default:
-        return NAN;
+        throw std::runtime_error("Gamma distribution: invalid generator id");
     }
 }
 
-double GammaDistribution::Variate(double shape, double rate, RandGenerator& randGenerator)
+template < typename RealType >
+RealType GammaDistribution<RealType>::Variate(double shape, double rate, RandGenerator& randGenerator)
 {
-    return (shape <= 0.0 || rate <= 0.0) ? NAN : StandardVariate(shape, randGenerator) / rate;
+    if (shape <= 0.0)
+        throw std::invalid_argument("Gamma distribution: shape should be positive");
+    if (rate <= 0.0)
+        throw std::invalid_argument("Gamma distribution: rate should be positive");
+    return StandardVariate(shape, randGenerator) / rate;
 }
 
-double GammaDistribution::Variate() const
+template < typename RealType >
+RealType GammaDistribution<RealType>::Variate() const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
+    GENERATOR_ID genId = getIdOfUsedGenerator(this->alpha);
 
     switch(genId) {
     case INTEGER_SHAPE:
-        return theta * variateThroughExponentialSum(alpha, localRandGenerator);
+        return theta * variateThroughExponentialSum(this->alpha, this->localRandGenerator);
     case ONE_AND_A_HALF_SHAPE:
-        return theta * variateForShapeOneAndAHalf(localRandGenerator);
+        return theta * variateForShapeOneAndAHalf(this->localRandGenerator);
     case SMALL_SHAPE:
-        return theta * variateBest(localRandGenerator);
+        return theta * variateBest(this->localRandGenerator);
     case FISHMAN:
-        return theta * variateFishman(alpha, localRandGenerator);
+        return theta * variateFishman(this->alpha, this->localRandGenerator);
     case MARSAGLIA_TSANG:
-        return theta * variateMarsagliaTsang(alpha, localRandGenerator);
+        return theta * variateMarsagliaTsang(this->alpha, this->localRandGenerator);
     default:
-        return NAN;
+        throw std::runtime_error("Gamma distribution: invalid generator id");
     }
 }
 
-void GammaDistribution::Sample(std::vector<double> &outputData) const
+template < typename RealType >
+void GammaDistribution<RealType>::Sample(std::vector<RealType> &outputData) const
 {
-    GENERATOR_ID genId = getIdOfUsedGenerator(alpha);
+    GENERATOR_ID genId = getIdOfUsedGenerator(this->alpha);
 
     switch(genId) {
     case INTEGER_SHAPE:
-        for (double &var : outputData)
-            var = theta * variateThroughExponentialSum(alpha, localRandGenerator);
+        for (RealType &var : outputData)
+            var = theta * variateThroughExponentialSum(this->alpha, this->localRandGenerator);
         break;
     case ONE_AND_A_HALF_SHAPE:
-        for (double &var : outputData)
-            var = theta * variateForShapeOneAndAHalf(localRandGenerator);
+        for (RealType &var : outputData)
+            var = theta * variateForShapeOneAndAHalf(this->localRandGenerator);
         break;
     case SMALL_SHAPE:
-        for (double &var : outputData)
-            var = theta * variateBest(localRandGenerator);
+        for (RealType &var : outputData)
+            var = theta * variateBest(this->localRandGenerator);
         break;
     case FISHMAN:
-        for (double &var : outputData)
-            var = theta * variateFishman(alpha, localRandGenerator);
+        for (RealType &var : outputData)
+            var = theta * variateFishman(this->alpha, this->localRandGenerator);
         break;
     case MARSAGLIA_TSANG:
-        for (double &var : outputData)
-            var = theta * variateMarsagliaTsang(alpha, localRandGenerator);
+        for (RealType &var : outputData)
+            var = theta * variateMarsagliaTsang(this->alpha, this->localRandGenerator);
         break;
     default:
         return;
     }
 }
 
-double GammaDistribution::Mean() const
+template < typename RealType >
+long double GammaDistribution<RealType>::Mean() const
 {
-    return alpha * theta;
+    return this->alpha * theta;
 }
 
-double GammaDistribution::GeometricMean() const
+template < typename RealType >
+long double GammaDistribution<RealType>::GeometricMean() const
 {
-    return RandMath::digamma(alpha) - logBeta;
+    return this->digammaAlpha - this->logBeta;
 }
 
-double GammaDistribution::Variance() const
+template < typename RealType >
+long double GammaDistribution<RealType>::Variance() const
 {
-    return alpha * theta * theta;
+    return this->alpha * theta * theta;
 }
 
-double GammaDistribution::GeometricVariance() const
+template < typename RealType >
+long double GammaDistribution<RealType>::GeometricVariance() const
 {
-    return RandMath::trigamma(alpha);
+    return RandMath::trigamma(this->alpha);
 }
 
-double GammaDistribution::Mode() const
+template < typename RealType >
+RealType GammaDistribution<RealType>::Mode() const
 {
-    return (alpha <= 1) ? 0 : (alpha - 1) * theta;
+    return (this->alpha <= 1) ? 0 : (this->alpha - 1) * theta;
 }
 
-double GammaDistribution::Skewness() const
+template < typename RealType >
+RealType GammaDistribution<RealType>::Median() const
 {
-    return 2.0 / std::sqrt(alpha);
+    return (this->alpha == 1.0) ? theta * M_LN2 : quantileImpl(0.5);
 }
 
-double GammaDistribution::ExcessKurtosis() const
+template < typename RealType >
+long double GammaDistribution<RealType>::Skewness() const
 {
-    return 6.0 / alpha;
+    return 2.0l / std::sqrt(this->alpha);
 }
 
-double GammaDistribution::initRootForSmallP(double r) const
+template < typename RealType >
+long double GammaDistribution<RealType>::ExcessKurtosis() const
+{
+    return 6.0l / this->alpha;
+}
+
+template < typename RealType >
+RealType GammaDistribution<RealType>::initRootForSmallP(double r) const
 {
     double root = 0;
     double c[5];
     c[4] = 1;
     /// first coefficient
-    double denominator = alpha + 1;
+    double denominator = this->alpha + 1;
     c[3] = 1.0 / denominator;
     /// second coefficient
     denominator *= denominator;
-    denominator *= alpha + 2;
-    c[2] = 0.5 * (3 * alpha + 5) / denominator;
+    denominator *= this->alpha + 2;
+    c[2] = 0.5 * (3 * this->alpha + 5) / denominator;
     /// third coefficient
-    denominator *= 3 * (alpha + 1) * (alpha + 3);
-    c[1] = 8 * alpha + 33;
-    c[1] *= alpha;
+    denominator *= 3 * (this->alpha + 1) * (this->alpha + 3);
+    c[1] = 8 * this->alpha + 33;
+    c[1] *= this->alpha;
     c[1] += 31;
     c[1] /= denominator;
     /// fourth coefficient
-    denominator *= 8 * (alpha + 1) * (alpha + 2) * (alpha + 4);
-    c[0] = 125 * alpha + 1179;
-    c[0] *= alpha;
+    denominator *= 8 * (this->alpha + 1) * (this->alpha + 2) * (this->alpha + 4);
+    c[0] = 125 * this->alpha + 1179;
+    c[0] *= this->alpha;
     c[0] += 3971;
-    c[0] *= alpha;
+    c[0] *= this->alpha;
     c[0] += 5661;
-    c[0] *= alpha;
+    c[0] *= this->alpha;
     c[0] += 2888;
     c[0] /= denominator;
     /// now calculate root
@@ -349,37 +372,41 @@ double GammaDistribution::initRootForSmallP(double r) const
     return root;
 }
 
-double GammaDistribution::initRootForLargeP(double logQ) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::initRootForLargeP(double logQ) const
 {
     /// look for approximate value of x -> INFINITY
-    double x = (logQ + lgammaAlpha) / alpha;
-    x = -std::exp(x) / alpha;
+    double x = (logQ + lgammaAlpha) / this->alpha;
+    x = -std::exp(x) / this->alpha;
     return -alpha * RandMath::Wm1Lambert(x);
 }
 
-double GammaDistribution::initRootForLargeShape(double p) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::initRootForLargeShape(double p) const
 {
     if (p == 0.5)
-        return alpha;
+        return this->alpha;
     double x = RandMath::erfcinv(2 * p);
-    double lambda = x * x / alpha + 1;
+    double lambda = x * x / this->alpha + 1;
     lambda = -std::exp(-lambda);
     lambda = (x < 0) ? -RandMath::Wm1Lambert(lambda) : -RandMath::W0Lambert(lambda);
-    return lambda * alpha;
+    return lambda * this->alpha;
 }
 
-double GammaDistribution::initRootForLargeShape1m(double p) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::initRootForLargeShape1m(double p) const
 {
     if (p == 0.5)
-        return alpha;
+        return this->alpha;
     double x = -RandMath::erfcinv(2 * p);
-    double lambda = x * x / alpha + 1;
+    double lambda = x * x / this->alpha + 1;
     lambda = -std::exp(-lambda);
     lambda = (x < 0) ? -RandMath::Wm1Lambert(lambda) : -RandMath::W0Lambert(lambda);
-    return lambda * alpha;
+    return lambda * this->alpha;
 }
 
-double GammaDistribution::quantileInitialGuess(double p) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::quantileInitialGuess(double p) const
 {
     /// Method is taken from
     /// "Efficient and accurate algorithms
@@ -387,23 +414,23 @@ double GammaDistribution::quantileInitialGuess(double p) const
     /// of the incomplete gamma function ratios"
     /// (Amparo Gil, Javier Segura and Nico M. Temme)
     double guess = 0;
-    if (alpha < 10) {
-        double r = std::log(p * alpha) + lgammaAlpha;
-        r = std::exp(r / alpha);
+    if (this->alpha < 10) {
+        double r = std::log(p * this->alpha) + lgammaAlpha;
+        r = std::exp(r / this->alpha);
         /// if p -> 0
-        if (r < 0.2 * (alpha + 1)) {
+        if (r < 0.2 * (this->alpha + 1)) {
             guess = initRootForSmallP(r);
         }
         else {
-            double logQ = std::log1p(-p);
+            double logQ = std::log1pl(-p);
             /// boundary adviced in a paper
-            double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha;
+            double maxBoundary1 = -0.5 * this->alpha - logAlpha - lgammaAlpha;
             /// the maximum possible value to have a solution
-            double maxBoundary2 = alpha * (logAlpha - 1) - lgammaAlpha;
+            double maxBoundary2 = this->alpha * (logAlpha - 1) - lgammaAlpha;
             /// if p -> 1
             if (logQ < std::min(maxBoundary1, maxBoundary2))
                 guess = initRootForLargeP(logQ);
-            else if (alpha < 1)
+            else if (this->alpha < 1)
                 guess = r;
             else
                 guess = initRootForLargeShape(p);
@@ -411,47 +438,50 @@ double GammaDistribution::quantileInitialGuess(double p) const
     }
     else
         guess = initRootForLargeShape(p);
-    return guess / beta;
+    return guess / this->beta;
 }
 
-double GammaDistribution::quantileInitialGuess1m(double p) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::quantileInitialGuess1m(double p) const
 {
-    if (alpha < 10) {
+    if (this->alpha < 10) {
         double logQ = std::log(p);
         /// boundary adviced in a paper
-        double maxBoundary1 = -0.5 * alpha - logAlpha - lgammaAlpha;
+        double maxBoundary1 = -0.5 * this->alpha - logAlpha - lgammaAlpha;
         /// the maximum possible value to have a solution
-        double maxBoundary2 = alpha * (logAlpha - 1) - lgammaAlpha;
+        double maxBoundary2 = this->alpha * (logAlpha - 1) - lgammaAlpha;
         /// if p -> 0
         if (logQ < std::min(maxBoundary1, maxBoundary2))
-            return initRootForLargeP(logQ) / beta;
+            return initRootForLargeP(logQ) / this->beta;
     }
     else {
-        return initRootForLargeShape1m(p) / beta;
+        return initRootForLargeShape1m(p) / this->beta;
     }
     return quantileInitialGuess(1.0 - p);
 }
 
-double GammaDistribution::df(double x) const
+template < typename RealType >
+double GammaDistribution<RealType>::df(RealType x) const
 {
-    double z = (alpha - 1) - beta * x;
-    double y = (alpha - 2) * std::log(x);
-    y -= beta * x;
+    double z = (this->alpha - 1) - this->beta * x;
+    double y = (this->alpha - 2) * std::log(x);
+    y -= this->beta * x;
     y += pdfCoef;
     return z * std::exp(y);
 }
 
-double GammaDistribution::dfDivf(double x) const
+template < typename RealType >
+double GammaDistribution<RealType>::dfDivf(RealType x) const
 {
-    return x / (alpha - 1 - beta * x);
+    return x / (this->alpha - 1 - this->beta * x);
 }
 
-double GammaDistribution::quantileImpl(double p) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue) const
 {
-    double guess = quantileInitialGuess(p);
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (!RandMath::findRootNewtonSecondOrder<RealType>([this, logP] (double x)
         {
             if (x <= 0)
                return DoubleTriplet(-INFINITY, 0, 0);
@@ -460,12 +490,11 @@ double GammaDistribution::quantileImpl(double p) const
             double second = std::exp(logPdf - logCdf);
             double third = second * (dfDivf(x) - second);
             return DoubleTriplet(first, second, third);
-        }, guess))
-            return guess;
-        /// if we can't find quantile, then probably something bad has happened
-        return NAN;
+        }, initValue))
+            throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+        return initValue;
     }
-    if (RandMath::findRoot([this, p] (double x)
+    if (!RandMath::findRootNewtonSecondOrder<RealType>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(-p, 0, 0);
@@ -473,18 +502,23 @@ double GammaDistribution::quantileImpl(double p) const
         double second = f(x);
         double third = df(x);
         return DoubleTriplet(first, second, third);
-    }, guess))
-        return guess;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    }, initValue))
+        throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+    return initValue;
 }
 
-double GammaDistribution::quantileImpl1m(double p) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::quantileImpl(double p) const
 {
-    double guess = quantileInitialGuess1m(p);
+    return (this->alpha == 1.0) ? -theta * std::log1pl(-p) : quantileImpl(p, quantileInitialGuess(p));
+}
+
+template < typename RealType >
+RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValue) const
+{
     if (p < 1e-5) { /// too small p
         double logP = std::log(p);
-        if (RandMath::findRoot([this, logP] (double x)
+        if (!RandMath::findRootNewtonSecondOrder<RealType>([this, logP] (double x)
         {
            if (x <= 0)
                return DoubleTriplet(logP, 0, 0);
@@ -493,12 +527,11 @@ double GammaDistribution::quantileImpl1m(double p) const
             double second = std::exp(logPdf - logCcdf);
             double third = second * (dfDivf(x) + second);
             return DoubleTriplet(first, second, third);
-        }, guess))
-            return guess;
-        /// if we can't find quantile, then probably something bad has happened
-        return NAN;
+        }, initValue))
+            throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+        return initValue;
     }
-    if (RandMath::findRoot([this, p] (double x)
+    if (!RandMath::findRootNewtonSecondOrder<RealType>([this, p] (double x)
     {
         if (x <= 0)
             return DoubleTriplet(p - 1.0, 0, 0);
@@ -506,124 +539,238 @@ double GammaDistribution::quantileImpl1m(double p) const
         double second = f(x);
         double third = df(x);
         return DoubleTriplet(first, second, third);
-    }, guess))
-        return guess;
-    /// if we can't find quantile, then probably something bad has happened
-    return NAN;
+    }, initValue))
+        throw std::runtime_error("Gamma distribution: failure in numeric procedure");
+    return initValue;
 }
 
-std::complex<double> GammaDistribution::CFImpl(double t) const
+template < typename RealType >
+RealType GammaDistribution<RealType>::quantileImpl1m(double p) const
+{
+    return (this->alpha == 1.0) ? -theta * std::log(p) : quantileImpl1m(p, quantileInitialGuess1m(p));
+}
+
+template < typename RealType >
+std::complex<double> GammaDistribution<RealType>::CFImpl(double t) const
 {
     return std::pow(std::complex<double>(1.0, -theta * t), -alpha);
 }
 
-void FreeScaleGammaDistribution::SetRate(double rate)
+template class GammaDistribution<float>;
+template class GammaDistribution<double>;
+template class GammaDistribution<long double>;
+
+
+// FREE-SCALE-GAMMA-DISTRIBUTION
+
+template < typename RealType >
+void FreeRateGammaDistribution<RealType>::SetRate(double rate)
 {
-    SetParameters(alpha, rate);
+    this->SetParameters(this->alpha, rate);
 }
 
-void FreeScaleGammaDistribution::SetScale(double scale)
+template < typename RealType >
+void FreeRateGammaDistribution<RealType>::SetScale(double scale)
 {
     SetRate(1.0 / scale);
 }
 
-void FreeScaleGammaDistribution::FitRate(const std::vector<double> &sample, bool unbiased)
+template < typename RealType >
+void FreeRateGammaDistribution<RealType>::FitRate(const std::vector<RealType> &sample, bool unbiased)
 {
     /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double mean = GetSampleMean(sample);
-    double coef = alpha - (unbiased ? 1.0 / sample.size() : 0.0);
-    SetParameters(alpha, coef / mean);
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
+    double mean = this->GetSampleMean(sample);
+    double coef = this->alpha - (unbiased ? 1.0 / sample.size() : 0.0);
+    this->SetParameters(this->alpha, coef / mean);
 }
 
-GammaRand FreeScaleGammaDistribution::FitRateBayes(const std::vector<double> &sample, const GammaDistribution & priorDistribution)
+template < typename RealType >
+GammaRand<RealType> FreeRateGammaDistribution<RealType>::FitRateBayes(const std::vector<RealType> &sample, const GammaDistribution<RealType> &priorDistribution, bool MAP)
 {
     /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
-    double alpha0 = priorDistribution.GetShape();
-    double beta0 = priorDistribution.GetRate();
-    double newAlpha = alpha * sample.size() + alpha0;
-    double newBeta = GetSampleSum(sample) + beta0;
-    GammaRand posteriorDistribution(newAlpha, newBeta);
-    SetParameters(alpha, posteriorDistribution.Mean());
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
+    double kappa = priorDistribution.GetShape();
+    double gamma = priorDistribution.GetRate();
+    double newShape = this->alpha * sample.size() + kappa;
+    double newRate = this->GetSampleSum(sample) + gamma;
+    GammaRand<RealType> posteriorDistribution(newShape, newRate);
+    this->SetParameters(this->alpha, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
     return posteriorDistribution;
 }
 
-String GammaRand::Name() const
+template class FreeRateGammaDistribution<float>;
+template class FreeRateGammaDistribution<double>;
+template class FreeRateGammaDistribution<long double>;
+
+
+// GAMMARAND
+
+template < typename RealType >
+String GammaRand<RealType>::Name() const
 {
-    return "Gamma(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
+    return "Gamma(" + this->toStringWithPrecision(this->GetShape()) + ", " + this->toStringWithPrecision(this->GetRate()) + ")";
 }
 
-void GammaRand::FitShape(const std::vector<double> &sample)
+template < typename RealType >
+void GammaRand<RealType>::FitShape(const std::vector<RealType> &sample)
 {
     /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
 
     /// Calculate initial guess via method of moments
-    double shape = GetSampleMean(sample) * beta;
+    double shape = this->GetSampleMean(sample) * this->beta;
     /// Run root-finding procedure
-    double s = GetSampleLogMean(sample) + logBeta;
-    if (!RandMath::findRoot([s] (double x)
+    double s = this->GetSampleLogMean(sample) + this->logBeta;
+    if (!RandMath::findRootNewtonFirstOrder<double>([s] (double x)
     {
         double first = RandMath::digamma(x) - s;
         double second = RandMath::trigamma(x);
         return DoublePair(first, second);
     }, shape))
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
-    SetParameters(shape, beta);
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding procedure"));
+    SetParameters(shape, this->beta);
 }
 
-void GammaRand::Fit(const std::vector<double> &sample)
+template < typename RealType >
+void GammaRand<RealType>::Fit(const std::vector<RealType> &sample)
 {
     /// Sanity check
-    if (!allElementsArePositive(sample))
-        throw std::invalid_argument(fitErrorDescription(WRONG_SAMPLE, POSITIVITY_VIOLATION));
+    if (!this->allElementsArePositive(sample))
+        throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, this->POSITIVITY_VIOLATION));
 
     /// Calculate initial guess for shape
-    double average = GetSampleLogMean(sample);
-    double s = std::log(average) - GetSampleLogMean(sample);
+    double average = this->GetSampleMean(sample);
+    double s = std::log(average) - this->GetSampleLogMean(sample);
     double sm3 = s - 3.0, sp12 = 12.0 * s;
     double shape = sm3 * sm3 + 2 * sp12;
     shape = std::sqrt(shape);
     shape -= sm3;
     shape /= sp12;
 
-    if (!RandMath::findRoot([s] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<double>([s] (double x)
     {
         double first = RandMath::digammamLog(x) + s;
         double second = RandMath::trigamma(x) - 1.0 / x;
         return DoublePair(first, second);
     }, shape))
-        throw std::runtime_error(fitErrorDescription(UNDEFINED_ERROR, "Error in root-finding procedure"));
+        throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding procedure"));
 
     SetParameters(shape, shape / average);
 }
 
-String ChiSquaredRand::Name() const
+template < typename RealType >
+DoublePair GammaRand<RealType>::SufficientStatistic(RealType x) const
 {
-    return "Chi-squared(" + toStringWithPrecision(GetDegree()) + ")";
+    return {std::log(x), x};
 }
 
-void ChiSquaredRand::SetDegree(size_t degree)
+template < typename RealType >
+DoublePair GammaRand<RealType>::SourceParameters() const
 {
-    GammaDistribution::SetParameters(0.5 * degree, 0.5);
+    return {this->alpha, this->beta};
 }
 
-
-String ErlangRand::Name() const
+template < typename RealType >
+DoublePair GammaRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
 {
-    return "Erlang(" + toStringWithPrecision(GetShape()) + ", " + toStringWithPrecision(GetRate()) + ")";
+    double shape = sourceParameters.first;
+    double rate = sourceParameters.second;
+    return {shape - 1, -rate};
 }
 
-void ErlangRand::SetParameters(size_t shape, double rate)
+template < typename RealType >
+double GammaRand<RealType>::LogNormalizer(DoublePair parameters) const
 {
-    GammaDistribution::SetParameters(shape, rate);
+    double shape = parameters.first + 1, rate = -parameters.second;
+    double F = std::lgamma(shape);
+    F -= shape * std::log(rate);
+    return F;
 }
 
-void ErlangRand::SetShape(size_t shape)
+template < typename RealType >
+DoublePair GammaRand<RealType>::LogNormalizerGradient(DoublePair parameters) const
 {
-    SetParameters(shape, beta);
+    double shape = parameters.first + 1, rate = -parameters.second;
+    double gradF1 = RandMath::digamma(shape) - std::log(rate);
+    double gradF2 = shape / rate;
+    return {gradF1, gradF2};
 }
+
+template < typename RealType >
+double GammaRand<RealType>::CarrierMeasure(RealType) const
+{
+    return 0;
+}
+
+template < typename RealType >
+double GammaRand<RealType>::CrossEntropyAdjusted(DoublePair parameters) const
+{
+    double shapeq = parameters.first + 1, rateq = -parameters.second;
+    double H = std::lgamma(shapeq);
+    H -= shapeq * std::log(rateq);
+    H -= (shapeq - 1) * (this->digammaAlpha - this->logBeta);
+    H += rateq * this->alpha / this->beta;
+    return H;
+}
+
+template < typename RealType >
+double GammaRand<RealType>::EntropyAdjusted() const
+{
+    double H = this->lgammaAlpha;
+    H -= this->logBeta;
+    H -= (this->alpha - 1) * this->digammaAlpha;
+    H += this->alpha;
+    return H;
+}
+
+template class GammaRand<float>;
+template class GammaRand<double>;
+template class GammaRand<long double>;
+
+
+// CHI-SQUAREDRAND
+
+template < typename RealType >
+String ChiSquaredRand<RealType>::Name() const
+{
+    return "Chi-squared(" + this->toStringWithPrecision(GetDegree()) + ")";
+}
+
+template < typename RealType >
+void ChiSquaredRand<RealType>::SetDegree(size_t degree)
+{
+    GammaDistribution<RealType>::SetParameters(0.5 * degree, 0.5);
+}
+
+template class ChiSquaredRand<float>;
+template class ChiSquaredRand<double>;
+template class ChiSquaredRand<long double>;
+
+
+// ERLANGRAND
+
+template < typename RealType >
+String ErlangRand<RealType>::Name() const
+{
+    return "Erlang(" + this->toStringWithPrecision(this->GetShape()) + ", " + this->toStringWithPrecision(this->GetRate()) + ")";
+}
+
+template < typename RealType >
+void ErlangRand<RealType>::SetParameters(size_t shape, double rate)
+{
+    GammaDistribution<RealType>::SetParameters(shape, rate);
+}
+
+template < typename RealType >
+void ErlangRand<RealType>::SetShape(size_t shape)
+{
+    SetParameters(shape, this->beta);
+}
+
+template class ErlangRand<float>;
+template class ErlangRand<double>;
+template class ErlangRand<long double>;

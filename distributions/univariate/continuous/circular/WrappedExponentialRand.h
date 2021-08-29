@@ -9,7 +9,8 @@
  *
  * Notation: X ~ WE(λ)
  */
-class RANDLIBSHARED_EXPORT WrappedExponentialRand : public CircularDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT WrappedExponentialRand : public CircularDistribution<RealType>
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
@@ -24,20 +25,20 @@ public:
     void SetRate(double rate);
     inline double GetRate() const { return lambda; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
-    double CircularMean() const override;
-    double CircularVariance() const override;
-    double Median() const override;
-    double Mode() const override;
+    long double CircularMean() const override;
+    long double CircularVariance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
 
 protected:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
     std::complex<double> CFImpl(double t) const override;
 };
 

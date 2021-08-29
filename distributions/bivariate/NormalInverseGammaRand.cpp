@@ -1,90 +1,111 @@
 #include "NormalInverseGammaRand.h"
 #include "../univariate/continuous/NormalRand.h"
 
-NormalInverseGammaRand::NormalInverseGammaRand(double location, double precision, double shape, double rate)
+template< typename RealType >
+NormalInverseGammaRand<RealType>::NormalInverseGammaRand(double location, double precision, double shape, double rate)
 {
     SetParameters(location, precision, shape, rate);
 }
 
-String NormalInverseGammaRand::Name() const
+template< typename RealType >
+String NormalInverseGammaRand<RealType>::Name() const
 {
-    return "Normal-Inverse-Gamma(" + toStringWithPrecision(GetLocation()) + ", "
-                                   + toStringWithPrecision(GetPrecision()) + ", "
-                                   + toStringWithPrecision(GetShape()) + ", "
-                                   + toStringWithPrecision(GetRate()) + ")";
+    return "Normal-Inverse-Gamma(" + this->toStringWithPrecision(GetLocation()) + ", "
+                                   + this->toStringWithPrecision(GetPrecision()) + ", "
+                                   + this->toStringWithPrecision(GetShape()) + ", "
+                                   + this->toStringWithPrecision(GetRate()) + ")";
 }
 
-void NormalInverseGammaRand::SetParameters(double location, double precision, double shape, double rate)
+template< typename RealType >
+void NormalInverseGammaRand<RealType>::SetParameters(double location, double precision, double shape, double rate)
 {
     if (precision <= 0.0)
-        throw std::invalid_argument("Precision of Normal-Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Precision of Normal-Inverse-Gamma distribution should be positive, but it's equal to "
+                                    + std::to_string(precision));
     if (shape <= 0.0)
-        throw std::invalid_argument("Shape of Normal-Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Shape of Normal-Inverse-Gamma distribution should be positive, but it's equal to "
+                                    + std::to_string(shape));
     if (rate <= 0.0)
-        throw std::invalid_argument("Rate of Normal-Inverse-Gamma distribution should be positive");
+        throw std::invalid_argument("Rate of Normal-Inverse-Gamma distribution should be positive, but it's equal to "
+                                    + std::to_string(rate));
 
     mu = location;
     lambda = precision;
 
-    Y.SetParameters(shape, rate);
-    alpha = Y.GetShape();
-    beta = Y.GetRate();
-    X.SetDegree(2 * alpha);
-    X.SetLocation(mu);
-    X.SetScale(std::sqrt(alpha * lambda / beta));
+    this->Y.SetParameters(shape, rate);
+    alpha = this->Y.GetShape();
+    beta = this->Y.GetRate();
+    this->X.SetDegree(2 * alpha);
+    this->X.SetLocation(mu);
+    this->X.SetScale(std::sqrt(alpha * lambda / beta));
 
     pdfCoef = 0.5 * std::log(0.5 * lambda / M_PI);
-    pdfCoef += alpha * Y.GetLogRate() - Y.GetLogGammaShape();
+    pdfCoef += alpha * this->Y.GetLogRate() - this->Y.GetLogGammaShape();
 }
 
-double NormalInverseGammaRand::f(const DoublePair &point) const
+template< typename RealType >
+double NormalInverseGammaRand<RealType>::f(const Pair<RealType> &point) const
 {
     return (point.second > 0.0) ? std::exp(logf(point)) : 0.0;
 }
 
-double NormalInverseGammaRand::logf(const DoublePair &point) const
+template< typename RealType >
+double NormalInverseGammaRand<RealType>::logf(const Pair<RealType> &point) const
 {
-    double sigmaSq = point.second;
+    RealType sigmaSq = point.second;
     if (sigmaSq <= 0)
         return -INFINITY;
-    double x = point.first;
-    double y = alpha + 1 - 1.5 * std::log(sigmaSq);
-    double degree = x - mu;
+    RealType x = point.first;
+    RealType y = (alpha + 1.5) * std::log(sigmaSq);
+    RealType degree = x - mu;
     degree *= degree;
     degree *= lambda;
     degree += 2 * beta;
     degree *= 0.5 / sigmaSq;
-    y -= degree;
-    return pdfCoef + y;
+    y += degree;
+    return pdfCoef - y;
 }
 
-double NormalInverseGammaRand::F(const DoublePair &point) const
+template< typename RealType >
+double NormalInverseGammaRand<RealType>::F(const Pair<RealType> &point) const
 {
-    double sigmaSq = point.second;
+    RealType sigmaSq = point.second;
     if (sigmaSq <= 0)
         return 0.0;
-    double x = point.first;
-    double sigma = std::sqrt(sigmaSq);
-    double y = 0.5 * lambda;
-    y *= (mu - x) / sigma;
-    y = std::erfc(y);
-    double z = beta / sigmaSq;
-    double temp = alpha * std::log(z) - z;
-    y *= std::exp(temp - Y.GetLogGammaShape());
+    RealType x = point.first;
+    RealType y = 0.5 * lambda;
+    RealType xmmu = x - mu;
+    y *= xmmu * xmmu / sigmaSq;
+    y = std::erfc(-std::sqrt(y));
+    RealType z = beta / sigmaSq;
+    RealType temp = alpha * std::log(z) - z;
+    y *= std::exp(temp - this->Y.GetLogGammaShape());
     y *= 0.5 / sigmaSq;
     return y;
 }
 
-DoublePair NormalInverseGammaRand::Variate() const
+template< typename RealType >
+Pair<RealType> NormalInverseGammaRand<RealType>::Variate() const
 {
-    DoublePair var;
-    var.second = Y.Variate();
+    Pair<RealType> var;
+    var.second = this->Y.Variate();
     double coef = std::sqrt(var.second) / lambda;
-    var.first = mu + coef * NormalRand::StandardVariate(localRandGenerator);
+    var.first = mu + coef * NormalRand<RealType>::StandardVariate(this->localRandGenerator);
     return var;
 }
 
-double NormalInverseGammaRand::Correlation() const
+template< typename RealType >
+long double NormalInverseGammaRand<RealType>::Correlation() const
 {
     return 0.0;
 }
+
+template< typename RealType >
+Pair<RealType> NormalInverseGammaRand<RealType>::Mode() const
+{
+    return std::make_pair(mu, 2 * beta / (2 * alpha + 3));
+}
+
+template class NormalInverseGammaRand<float>;
+template class NormalInverseGammaRand<double>;
+template class NormalInverseGammaRand<long double>;

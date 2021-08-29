@@ -1,19 +1,22 @@
 #include "FrechetRand.h"
 #include "ExponentialRand.h"
 
-FrechetRand::FrechetRand(double shape, double scale, double location)
+template < typename RealType >
+FrechetRand<RealType>::FrechetRand(double shape, double scale, double location)
 {
     SetParameters(shape, scale, location);
 }
 
-String FrechetRand::Name() const
+template < typename RealType >
+String FrechetRand<RealType>::Name() const
 {
-    return "Frechet(" + toStringWithPrecision(GetShape()) + ", "
-                      + toStringWithPrecision(GetScale()) + ", "
-                      + toStringWithPrecision(GetLocation()) + ")";
+    return "Frechet(" + this->toStringWithPrecision(GetShape()) + ", "
+                      + this->toStringWithPrecision(GetScale()) + ", "
+                      + this->toStringWithPrecision(GetLocation()) + ")";
 }
 
-void FrechetRand::SetParameters(double shape, double scale, double location)
+template < typename RealType >
+void FrechetRand<RealType>::SetParameters(double shape, double scale, double location)
 {
     if (shape <= 0.0)
         throw std::invalid_argument("Frechet distribution: shape should be positive");
@@ -26,12 +29,14 @@ void FrechetRand::SetParameters(double shape, double scale, double location)
     m = location;
 }
 
-double FrechetRand::f(const double & x) const
+template < typename RealType >
+double FrechetRand<RealType>::f(const RealType &x) const
 {
     return (x <= m) ? 0.0 : std::exp(logf(x));
 }
 
-double FrechetRand::logf(const double & x) const
+template < typename RealType >
+double FrechetRand<RealType>::logf(const RealType &x) const
 {
     if (x <= m)
         return -INFINITY;
@@ -42,7 +47,8 @@ double FrechetRand::logf(const double & x) const
     return pdfCoef - a - expA - logxAdj;
 }
 
-double FrechetRand::F(const double & x) const
+template < typename RealType >
+double FrechetRand<RealType>::F(const RealType & x) const
 {
     if (x <= m)
         return 0.0;
@@ -51,93 +57,108 @@ double FrechetRand::F(const double & x) const
     return std::exp(-xPow);
 }
 
-double FrechetRand::S(const double & x) const
+template < typename RealType >
+double FrechetRand<RealType>::S(const RealType & x) const
 {
     if (x <= m)
         return 1.0;
     double xAdj = (x - m) / s;
     double xPow = std::pow(xAdj, -alpha);
-    return -std::expm1(-xPow);
+    return -std::expm1l(-xPow);
 }
 
-double FrechetRand::Variate() const
+template < typename RealType >
+RealType FrechetRand<RealType>::Variate() const
 {
-    return m + s / std::pow(ExponentialRand::StandardVariate(localRandGenerator), alphaInv);
+    return m + s / std::pow(ExponentialRand<RealType>::StandardVariate(this->localRandGenerator), alphaInv);
 }
 
-double FrechetRand::Mean() const
+template < typename RealType >
+long double FrechetRand<RealType>::Mean() const
 {
     if (alpha <= 1.0)
         return INFINITY;
-    return m + s * std::tgamma(1.0 - alphaInv);
+    return m + s * std::tgammal(1.0 - alphaInv);
 }
 
-double FrechetRand::Variance() const
+template < typename RealType >
+long double FrechetRand<RealType>::Variance() const
 {
     if (alpha <= 2.0)
         return INFINITY;
-    double var = std::tgamma(1.0 - alphaInv);
+    long double var = std::tgammal(1.0 - alphaInv);
     var *= var;
-    var = std::tgamma(1.0 - 2 * alphaInv) - var;
+    var = std::tgammal(1.0 - 2 * alphaInv) - var;
     return s * s * var;
 }
 
-double FrechetRand::quantileImpl(double p) const
+template < typename RealType >
+RealType FrechetRand<RealType>::quantileImpl(double p) const
 {
-    double y = -std::log(p);
+    RealType y = -std::log(p);
     y = s / std::pow(y, alphaInv);
     return y + m;
 }
 
-double FrechetRand::quantileImpl1m(double p) const
+template < typename RealType >
+RealType FrechetRand<RealType>::quantileImpl1m(double p) const
 {
-    double y = -std::log1p(-p);
+    RealType y = -std::log1pl(-p);
     y = s / std::pow(y, alphaInv);
     return y + m;
 }
 
-double FrechetRand::Median() const
+template < typename RealType >
+RealType FrechetRand<RealType>::Median() const
 {
     return m + s / std::pow(M_LN2, alphaInv);
 }
 
-double FrechetRand::Mode() const
+template < typename RealType >
+RealType FrechetRand<RealType>::Mode() const
 {
-    double y = alpha / (1.0 + alpha);
+    RealType y = alpha / (1.0 + alpha);
     y = std::pow(y, alphaInv);
     return m + s * y;
 }
 
-double FrechetRand::Skewness() const
+template < typename RealType >
+long double FrechetRand<RealType>::Skewness() const
 {
     if (alpha <= 3.0)
         return INFINITY;
-    double x = std::tgamma(1.0 - alphaInv);
-    double y = std::tgamma(1.0 - 2.0 * alphaInv);
-    double z = std::tgamma(1.0 - 3.0 * alphaInv);
-    double numerator = 2 * x * x - 3 * y;
+    long double x = std::tgammal(1.0 - alphaInv);
+    long double y = std::tgammal(1.0 - 2.0 * alphaInv);
+    long double z = std::tgammal(1.0 - 3.0 * alphaInv);
+    long double numerator = 2 * x * x - 3 * y;
     numerator *= x;
     numerator += z;
-    double denominator = y - x * x;
+    long double denominator = y - x * x;
     denominator = std::pow(denominator, 1.5);
     return numerator / denominator;
 }
 
-double FrechetRand::ExcessKurtosis() const
+template < typename RealType >
+long double FrechetRand<RealType>::ExcessKurtosis() const
 {
     if (alpha <= 4.0)
         return INFINITY;
-    double x = std::tgamma(1.0 - alphaInv);
-    double y = std::tgamma(1.0 - 2.0 * alphaInv);
-    double z = std::tgamma(1.0 - 3.0 * alphaInv);
-    double w = std::tgamma(1.0 - 4.0 * alphaInv);
-    double numerator = w - 4 * z * x + 3 * y * y;
-    double denominator = y - x * x;
+    long double x = std::tgammal(1.0 - alphaInv);
+    long double y = std::tgammal(1.0 - 2.0 * alphaInv);
+    long double z = std::tgammal(1.0 - 3.0 * alphaInv);
+    long double w = std::tgammal(1.0 - 4.0 * alphaInv);
+    long double numerator = w - 4 * z * x + 3 * y * y;
+    long double denominator = y - x * x;
     denominator *= denominator;
     return numerator / denominator - 6.0;
 }
 
-double FrechetRand::Entropy() const
+template < typename RealType >
+long double FrechetRand<RealType>::Entropy() const
 {
     return 1.0 + M_EULER * (1.0 + alphaInv) + std::log(s / alpha);
 }
+
+template class FrechetRand<float>;
+template class FrechetRand<double>;
+template class FrechetRand<long double>;

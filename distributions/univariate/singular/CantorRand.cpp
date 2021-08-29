@@ -55,42 +55,49 @@ double CantorRand::Variate() const
 {
     long double sum = 0.0;
     for (int i = 0; i != n; ++i) {
-        sum += table[i] * BernoulliRand::StandardVariate(localRandGenerator);
+        sum += table[i] * BernoulliRand::StandardVariate(this->localRandGenerator);
     }
     return sum + sum;
 }
 
-double CantorRand::Mean() const
+long double CantorRand::Mean() const
 {
     return 0.5;
 }
 
-double CantorRand::Variance() const
+long double CantorRand::Variance() const
 {
     return 0.125;
 }
 
-double CantorRand::quantileImpl(double p) const
+double CantorRand::quantileImpl(double p, double initValue) const
 {
-    double root = p;
-    if (RandMath::findRoot([this, p] (double x)
+    if (!RandMath::findRootNewtonFirstOrder<double>([this, p] (double x)
     {
         return F(x) - p;
-    }, 0.0, 1.0, root))
-        return root;
-    return NAN;
+    }, 0.0, 1.0, initValue))
+        throw std::runtime_error("Cantor distribution: failure in numerical procedure");
+    return initValue;
+}
+
+double CantorRand::quantileImpl(double p) const
+{
+    return quantileImpl(p, p);
+}
+
+double CantorRand::quantileImpl1m(double p, double initValue) const
+{
+    if (!RandMath::findRootNewtonFirstOrder<double>([this, p] (double x)
+    {
+        return S(x) - p;
+    }, 0.0, 1.0, initValue))
+        throw std::runtime_error("Cantor distribution: failure in numerical procedure");
+    return initValue;
 }
 
 double CantorRand::quantileImpl1m(double p) const
 {
-    double root = 1.0 - p;
-    if (RandMath::findRoot([this, p] (double x)
-    {
-        double y = F(x) - 1;
-        return y + p;
-    }, 0.0, 1.0, root))
-        return root;
-    return NAN;
+    return quantileImpl1m(p, 1.0 - p);
 }
 
 std::complex<double> CantorRand::CFImpl(double t) const
@@ -105,17 +112,15 @@ std::complex<double> CantorRand::CFImpl(double t) const
 
 double CantorRand::Median() const
 {
-    double U = UniformRand::StandardVariate(localRandGenerator);
-    return (U + 1.0) / 3.0;
+    return 1.0 / 3;
 }
 
-double CantorRand::Skewness() const
+long double CantorRand::Skewness() const
 {
-    return 0.0;
+    return 0.0l;
 }
 
-double CantorRand::ExcessKurtosis() const
+long double CantorRand::ExcessKurtosis() const
 {
-    return -1.6;
+    return -1.6l;
 }
-

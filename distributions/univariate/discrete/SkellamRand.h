@@ -13,7 +13,8 @@
  * Related distributions: <BR>
  * If Y ~ Po(μ1) and Z ~ Po(μ2) then Y - Z ~ Skellam(μ1, μ2)
  */
-class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
+template < typename IntType = int >
+class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution<IntType>
 {
     double mu1 = 1; ///< first rate μ1
     double mu2 = 1; ///< second rate μ2
@@ -22,32 +23,33 @@ class RANDLIBSHARED_EXPORT SkellamRand : public DiscreteDistribution
     double sqrtMu1 = 1; ///< √μ1
     double sqrtMu2 = 1; ///< √μ2
 
-    PoissonRand X{}, Y{};
+    PoissonRand<IntType> X{}, Y{};
 
 public:
-    SkellamRand(double rate1, double rate2);
+    SkellamRand(double rate1 = 1.0, double rate2 = 1.0);
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
-    int MinValue() const override { return INT_MIN; }
-    int MaxValue() const override { return INT_MAX; }
+    IntType MinValue() const override { return std::numeric_limits<IntType>::lowest(); }
+    IntType MaxValue() const override { return std::numeric_limits<IntType>::max(); }
 
     void SetRates(double rate1, double rate2);
     inline double GetFirstRate() const { return mu1; }
     inline double GetSecondRate() const { return mu2; }
 
-    double P(const int & k) const override;
-    double logP(const int & k) const override;
-    double F(const int & k) const override;
-    double S(const int & k) const override;
-    int Variate() const override;
-    void Sample(std::vector<int> &outputData) const override;
+    double P(const IntType & k) const override;
+    double logP(const IntType & k) const override;
+    double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
+    IntType Variate() const override;
+    void Sample(std::vector<IntType> &outputData) const override;
     void Reseed(unsigned long seed) const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    int Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    IntType Median() const override;
+    IntType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 
 private:
     std::complex<double> CFImpl(double t) const override;

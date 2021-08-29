@@ -3,6 +3,7 @@
 
 #include "ContinuousDistribution.h"
 #include "UniformRand.h"
+#include "StableCountRand.h"
 
 /**
  * @brief The LogisticRand class <BR>
@@ -13,7 +14,8 @@
  * Related distributions: <BR>
  * 1 / (exp((X - μ) / s) + 1) ~ U(0, 1)
  */
-class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution
+template < typename RealType = double >
+class RANDLIBSHARED_EXPORT LogisticRand : public ContinuousDistribution<RealType>
 {
     double mu = 0; ///< location μ
     double s = 1; ///< scale s
@@ -24,41 +26,41 @@ public:
 
     String Name() const override;
     SUPPORT_TYPE SupportType() const override { return INFINITE_T; }
-    double MinValue() const override { return -INFINITY; }
-    double MaxValue() const override { return INFINITY; }
+    RealType MinValue() const override { return -INFINITY; }
+    RealType MaxValue() const override { return INFINITY; }
 
     void SetLocation(double location);
     void SetScale(double scale);
     inline double GetLocation() const { return mu; }
     inline double GetScale() const { return s; }
 
-    double f(const double & x) const override;
-    double logf(const double & x) const override;
-    double F(const double & x) const override;
-    double S(const double & x) const override;
-    double Variate() const override;
+    double f(const RealType & x) const override;
+    double logf(const RealType & x) const override;
+    double F(const RealType & x) const override;
+    double S(const RealType & x) const override;
+    RealType Variate() const override;
 
-    double Mean() const override;
-    double Variance() const override;
-    double Median() const override;
-    double Mode() const override;
-    double Skewness() const override;
-    double ExcessKurtosis() const override;
+    long double Mean() const override;
+    long double Variance() const override;
+    RealType Median() const override;
+    RealType Mode() const override;
+    long double Skewness() const override;
+    long double ExcessKurtosis() const override;
 private:
-    double quantileImpl(double p) const override;
-    double quantileImpl1m(double p) const override;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 
 public:
-    double Entropy() const;
+    long double Entropy() const;
 
     /**
      * @fn FitLocation
      * fit location parameter via maximum-likelihood
      * @param sample
      */
-    void FitLocation(const std::vector<double> &sample);
+    void FitLocation(const std::vector<RealType> &sample);
 };
 
 #endif // LOGISTICRAND_H
