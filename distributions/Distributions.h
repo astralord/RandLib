@@ -36,7 +36,6 @@
 #include "univariate/continuous/PlanckRand.h"
 #include "univariate/continuous/RaisedCosineRand.h"
 #include "univariate/continuous/SechRand.h"
-#include "univariate/continuous/StableCountRand.h"
 #include "univariate/continuous/StableRand.h"
 #include "univariate/continuous/StudentTRand.h"
 #include "univariate/continuous/UniformRand.h"

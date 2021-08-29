@@ -3,7 +3,6 @@
 
 #include "ContinuousDistribution.h"
 #include "UniformRand.h"
-#include "StableCountRand.h"
 
 /**
  * @brief The LogisticRand class <BR>
