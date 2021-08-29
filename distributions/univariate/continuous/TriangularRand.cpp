@@ -43,11 +43,11 @@ double TriangularRand<RealType>::f(const RealType & x) const
     if (x <= a)
         return 0;
     if (x < c)
-        return 2.0 * (x - a) / ((b - a) * (c - a));
+        return 2.0 * (x - a) / coefGenerator1;
     if (x == c)
         return 2.0 / (b - a);
     if (x < b)
-        return 2.0 * (b - x) / ((b - a) * (b - c));
+        return 2.0 * (b - x) / coefGenerator2;
     return 0;
 }
 
@@ -63,9 +63,9 @@ double TriangularRand<RealType>::F(const RealType & x) const
     if (x <= a)
         return 0.0;
     if (x <= c)
-        return (x - a) * (x - a) / ((b - a) * (c - a));
+        return (x - a) * (x - a) / coefGenerator1;
     if (x < b)
-        return 1.0 - (b - x) * (b - x) / ((b - a) * (b - c));
+        return 1.0 - (b - x) * (b - x) / coefGenerator2;
     return 1.0;
 }
 
@@ -75,9 +75,9 @@ double TriangularRand<RealType>::S(const RealType & x) const
     if (x <= a)
         return 1.0;
     if (x <= c)
-        return 1.0 - (x - a) * (x - a) / ((b - a) * (c - a));
+        return 1.0 - (x - a) * (x - a) / coefGenerator1;
     if (x < b)
-        return (b - x) * (b - x) / ((b - a) * (b - c));
+        return (b - x) * (b - x) / coefGenerator2;
     return 0.0;
 }
 
@@ -123,8 +123,8 @@ template < typename RealType >
 RealType TriangularRand<RealType>::Median() const
 {
     if (c + c > a + b)
-        return a + std::sqrt(0.5 * (b - a) * (c - a));
-    return b - std::sqrt(0.5 * (b - a) * (b - c));
+        return a + std::sqrt(0.5 * coefGenerator1);
+    return b - std::sqrt(0.5 * coefGenerator2);
 }
 
 template < typename RealType >

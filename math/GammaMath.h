@@ -198,7 +198,6 @@ double qgamma(double a, double x, double logX);
  * @return Q(a, x)
  */
 double qgamma(double a, double x);
-
 }
 
 #endif // GAMMAMATH

@@ -441,7 +441,7 @@ public:
     StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0) : StableDistribution<RealType>(exponent, skewness, scale, location) {}
     String Name() const override;
     
-    void SetExponent(double location);
+    void SetExponent(double exponent);
     void SetSkewness(double skewness);
 };
 

@@ -14,7 +14,8 @@
  * Related distributions: <BR>
  * If X ~ Levy(0, 1), then μ + σ * X ~ Levy(μ, σ) <BR>
  * X ~ S(0.5, 1, σ, μ) <BR>
- * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1)
+ * If Y ~ Normal(0, 1), then 1 / X^2 ~ Levy(0, 1) <BR>
+ * If X ~ Levy(0, σ), then X ~ Inv-Γ(1/2, σ/2)
  */
 template < typename RealType = double>
 class RANDLIBSHARED_EXPORT LevyRand : public StableDistribution<RealType>
