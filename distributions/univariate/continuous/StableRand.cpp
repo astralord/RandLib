@@ -530,7 +530,7 @@ double StableDistribution<RealType>::pdfForGeneralExponent(double x) const
     double xAdj = alpha_alpham1 * logAbsX;
 
     /// Search for the peak of the integrand
-    double theta0;
+    double theta0 = 0;
     std::function<double (double)> funPtr = std::bind(&StableDistribution<RealType>::integrandAuxForGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
     RandMath::findRootNewtonFirstOrder(funPtr, -xiAdj, M_PI_2, theta0);
 
