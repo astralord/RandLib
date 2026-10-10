@@ -30,7 +30,9 @@ protected:
     double logKappa = 0; /// log(κ)
 
     GeneralGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
+public:
     virtual ~GeneralGeometricStableDistribution() {}
+protected:
 
     void SetParameters(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.);
     void SetLocation(double location);
@@ -69,6 +71,15 @@ protected:
 private:
     double pdfByLevy(double x) const;
     double pdfByCauchy(double x) const;
+
+public:
+private:
+    /**
+     * @fn conditionalShift
+     * @param w value of the exponential mixing variable
+     * @return location of the conditional stable law of Y given W = w
+     */
+    double conditionalShift(double w) const;
 
 public:
     double f(const RealType & x) const override;

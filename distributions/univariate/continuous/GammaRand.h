@@ -39,7 +39,9 @@ private:
 
 protected:
     GammaDistribution(double shape, double rate);
+public:
     virtual ~GammaDistribution() {}
+protected:
 
 public:
     SUPPORT_TYPE SupportType() const override { return RIGHTSEMIFINITE_T; }

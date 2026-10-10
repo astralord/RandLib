@@ -16,7 +16,7 @@ String LogarithmicRand<IntType>::Name() const
 template < typename IntType >
 void LogarithmicRand<IntType>::SetProbability(double probability)
 {
-    if (probability <= 0.0 || probability >= 1.0)
+    if (!(probability > 0.0 && probability < 1.0))
         throw std::invalid_argument("Logarithmic distribution: probability parameter should in interval (0, 1)");
     p = probability;
     logProb = std::log(p);
@@ -38,7 +38,8 @@ double LogarithmicRand<IntType>::logP(const IntType & k) const
 template < typename IntType >
 double LogarithmicRand<IntType>::betaFun(IntType a) const
 {
-    double denom = a + 1;
+    /// Σ_{j≥0} p^j / (a + j), the first three terms written out
+    double denom = a + 2;
     double sum = p * p / (a + 2) + p / (a + 1) + 1.0 / a;
     double add = 1;
     int i = 3;

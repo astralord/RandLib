@@ -15,7 +15,7 @@ String UniformDiscreteRand<IntType>::Name() const
 template< typename IntType >
 void UniformDiscreteRand<IntType>::SetBoundaries(IntType minValue, IntType maxValue)
 {
-    if (minValue > maxValue)
+    if (!(minValue <= maxValue))
         throw std::invalid_argument("Uniform discrete distribution: minimum value shouldn't be greater than maximum value");
 
     a = minValue;
@@ -54,7 +54,7 @@ double UniformDiscreteRand<IntType>::F(const IntType & k) const
 template< typename IntType >
 IntType UniformDiscreteRand<IntType>::Variate() const
 {
-    unsigned long intVar;
+    unsigned long long intVar;
     do {
         intVar = this->localRandGenerator.Variate();
     } while (intVar > MAX_RAND_UNBIASED);
@@ -69,7 +69,7 @@ IntType UniformDiscreteRand<IntType>::StandardVariate(IntType minValue, IntType 
     if (n <= 1)
         return minValue;
     unsigned long long MAX_RAND_UNBIASED = MAX_RAND - MAX_RAND % n - 1;
-    unsigned long intVar;
+    unsigned long long intVar;
     do {
         intVar = randGenerator.Variate();
     } while (intVar > MAX_RAND_UNBIASED);

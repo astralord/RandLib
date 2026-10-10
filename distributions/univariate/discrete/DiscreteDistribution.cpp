@@ -1,4 +1,5 @@
 #include "DiscreteDistribution.h"
+#include <limits>
 #include "../continuous/GammaRand.h"
 
 template < typename IntType >
@@ -63,15 +64,7 @@ IntType DiscreteDistribution<IntType>::quantileImpl(double p, IntType initValue)
 template < typename IntType >
 IntType DiscreteDistribution<IntType>::quantileImpl(double p) const
 {
-    /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 128;
-    static std::vector<IntType> sample(SAMPLE_SIZE);
-    this->Sample(sample);
-    int index = p * SAMPLE_SIZE;
-    if (index == 0)
-        return this->quantileImpl(p, *std::min_element(sample.begin(), sample.end()));
-    std::nth_element(sample.begin(), sample.begin() + index, sample.end());
-    return this->quantileImpl(p, sample[index]);
+    return searchQuantile(p, false);
 }
 
 template < typename IntType >
@@ -98,15 +91,50 @@ IntType DiscreteDistribution<IntType>::quantileImpl1m(double p, IntType initValu
 template < typename IntType >
 IntType DiscreteDistribution<IntType>::quantileImpl1m(double p) const
 {
-    /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 128;
-    static std::vector<IntType> sample(SAMPLE_SIZE);
-    this->Sample(sample);
-    int index = p * SAMPLE_SIZE;
-    if (index == 0)
-        return this->quantileImpl1m(p, *std::max_element(sample.begin(), sample.end()));
-    std::nth_element(sample.begin(), sample.begin() + index, sample.end(), std::greater<>());
-    return this->quantileImpl1m(p, sample[index]);
+    return searchQuantile(p, true);
+}
+
+template < typename IntType >
+IntType DiscreteDistribution<IntType>::searchQuantile(double p, bool upperTail) const
+{
+    /// reached(k) is false below the quantile and true from it on
+    auto reached = [this, p, upperTail] (long long k) {
+        return upperTail ? this->S(static_cast<IntType>(k)) <= p : this->F(static_cast<IntType>(k)) >= p;
+    };
+    const long long lo = this->MinValue(), hi = this->MaxValue();
+    const bool loBounded = lo > static_cast<long long>(std::numeric_limits<IntType>::lowest());
+
+    /// Find a < b with !reached(a) and reached(b) by exponential search from the bounded end or 0
+    long long a, b;
+    if (loBounded || !reached(0)) {
+        a = loBounded ? lo - 1 : 0;
+        long long step = 1;
+        b = a + step;
+        while (b < hi && !reached(b)) {
+            a = b;
+            step *= 2;
+            b = (step > hi - a) ? hi : a + step;
+        }
+        b = std::min(b, hi);
+    }
+    else {
+        b = 0;
+        long long step = 1;
+        a = b - step;
+        while (a > lo && reached(a)) {
+            b = a;
+            step *= 2;
+            a = (step > a - lo) ? lo : b - step;
+        }
+    }
+    while (b - a > 1) {
+        long long middle = a + (b - a) / 2;
+        if (reached(middle))
+            b = middle;
+        else
+            a = middle;
+    }
+    return static_cast<IntType>(b);
 }
 
 template < typename IntType >
@@ -134,6 +162,44 @@ long double DiscreteDistribution<IntType>::ExpectedValue(const std::function<dou
         ++k;
     } while (k <= upperBoundary);
     return sum;
+}
+
+template < typename IntType >
+std::complex<double> DiscreteDistribution<IntType>::CFImpl(double t) const
+{
+    /// Σ P(k) e^{itk}, summed outwards from the median. For a slowly varying P(k) the oscillating
+    /// remainder beyond K is close to P(K + 1) z^{K + 1} / (1 - z) with z = e^{±it}, so the sum
+    /// stops once that (or the remaining mass) is negligible and adds it as a correction;
+    /// summing until P(k) itself vanishes would take ~10^10 terms for Zeta(2)
+    static constexpr long long MAX_TERMS = 1000000;
+    const long long lo = this->MinValue(), hi = this->MaxValue(), start = this->Median();
+    const std::complex<double> z(std::cos(t), std::sin(t));
+    std::complex<long double> sum = 0;
+    auto walk = [&] (long long from, long long step, long long end, bool upper) {
+        std::complex<double> zk = std::polar(1.0, t * static_cast<double>(from));
+        std::complex<double> ratio = (step > 0) ? z : std::conj(z);
+        double damping = std::abs(1.0 - ratio);
+        for (long long k = from, terms = 0; (step > 0) ? k <= end : k >= end; k += step, ++terms) {
+            double p = this->P(static_cast<IntType>(k));
+            sum += std::complex<long double>(p * zk);
+            zk *= ratio;
+            if (terms % 64 == 63)
+                zk = std::polar(1.0, t * static_cast<double>(k + step));
+            bool tailNegligible = terms > 16 && (p < 1e-17 * damping * std::abs(sum) || p == 0.0);
+            double massLeft = upper ? this->S(static_cast<IntType>(k)) : this->F(static_cast<IntType>(k - 1));
+            if (tailNegligible || massLeft < 1e-17 || terms >= MAX_TERMS) {
+                if (massLeft >= 1e-17 && damping > 0) {
+                    double next = this->P(static_cast<IntType>(k + step));
+                    sum += std::complex<long double>(next * zk / (1.0 - ratio));
+                }
+                return;
+            }
+        }
+    };
+    walk(start, 1, hi, true);
+    if (start > lo)
+        walk(start - 1, -1, lo, false);
+    return std::complex<double>(sum);
 }
 
 template < typename IntType >

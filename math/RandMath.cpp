@@ -177,6 +177,13 @@ double xexpxsqerfc(double x)
     return (1.0 + sum) / randlib::consts::sqrtpi;
 }
 
+double erfcx(double x)
+{
+    if (x < 1.0)
+        return std::exp(x * x) * std::erfc(x);
+    return xexpxsqerfc(x) / x;
+}
+
 double harmonicNumber(double exponent, int number)
 {
     if (number < 1)
@@ -214,20 +221,20 @@ long double logBesselI(double nu, double x)
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
         long double y = x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
-        y += (nu > 0) ? RandMath::softplus(-2 * x) : RandMath::log1mexp(-2 * x);
+        y += (nu > 0) ? RandMath::log1mexp(-2 * x) : RandMath::softplus(-2 * x);
         return y;
     }
 
     if (nu < 0) {
-        /// I(ν, x) = I(−ν, x) - 2 / π sin(πν) K(ν, x)
+        /// I(ν, x) = I(-ν, x) - 2 / π sin(πν) K(-ν, x), and sin(πν) = -sin(π|ν|) for ν < 0
         long double besseli = RandMath::besselI(-nu, x);
-        long double sinPiNu = -std::sin(randlib::consts::pi * nu);
+        long double sinPiAbsNu = std::sin(-randlib::consts::pi * nu);
         long double y = 0;
-        if (sinPiNu == 0 || RandMath::areClose(nu, std::round(nu)))
+        if (sinPiAbsNu == 0 || RandMath::areClose(nu, std::round(nu)))
             y = besseli;
         else {
             long double besselk = RandMath::besselK(-nu, x);
-            y = besseli - randlib::consts::two_inv_pi * sinPiNu * besselk;
+            y = besseli + randlib::consts::two_inv_pi * sinPiAbsNu * besselk;
         }
         return (y <= 0) ? -INFINITY : std::log(y);
     }

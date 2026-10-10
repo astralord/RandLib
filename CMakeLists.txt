@@ -9,9 +9,11 @@ project(RandLib
 include(GNUInstallDirs)
 
 option(RANDLIB_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+option(RANDLIB_INSTALL "Generate install and package-config rules" ${PROJECT_IS_TOP_LEVEL})
+set(RANDLIB_GENERATOR "JKISS" CACHE STRING "Engine behind RandGenerator: JKISS, JLKISS64 or PCG32")
+set_property(CACHE RANDLIB_GENERATOR PROPERTY STRINGS JKISS JLKISS64 PCG32)
 option(RANDLIB_PORTABLE_SPECIAL_FUNCTIONS
     "Use RandLib's own Bessel, beta and zeta functions even when the standard library provides them" OFF)
-option(RANDLIB_INSTALL "Generate install and package-config rules" ${PROJECT_IS_TOP_LEVEL})
 
 add_library(RandLib
     distributions/ProbabilityDistribution.cpp
@@ -102,6 +104,13 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 if(RANDLIB_PORTABLE_SPECIAL_FUNCTIONS)
     target_compile_definitions(RandLib PUBLIC RANDLIB_PORTABLE_SPECIAL_FUNCTIONS)
+endif()
+if(RANDLIB_GENERATOR STREQUAL "JLKISS64")
+    target_compile_definitions(RandLib PUBLIC RANDLIB_JLKISS64)
+elseif(RANDLIB_GENERATOR STREQUAL "PCG32")
+    target_compile_definitions(RandLib PUBLIC RANDLIB_PCG32)
+elseif(NOT RANDLIB_GENERATOR STREQUAL "JKISS")
+    message(FATAL_ERROR "RANDLIB_GENERATOR must be JKISS, JLKISS64 or PCG32, not ${RANDLIB_GENERATOR}")
 endif()
 
 if(MSVC)

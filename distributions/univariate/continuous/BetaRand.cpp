@@ -37,7 +37,7 @@ void BetaDistribution<RealType>::setCoefficientsForGenerator()
 template < typename RealType >
 void BetaDistribution<RealType>::SetShapes(double shape1, double shape2)
 {
-    if (shape1 <= 0 || shape2 <= 0)
+    if (!(shape1 > 0 && shape2 > 0))
         throw std::invalid_argument("Beta distribution: shapes should be positive");
     GammaRV1.SetParameters(shape1, 1);
     GammaRV2.SetParameters(shape2, 1);
@@ -51,7 +51,7 @@ void BetaDistribution<RealType>::SetShapes(double shape1, double shape2)
 template < typename RealType >
 void BetaDistribution<RealType>::SetSupport(double minValue, double maxValue)
 {
-    if (minValue >= maxValue)
+    if (!(minValue < maxValue))
         throw std::invalid_argument("Beta distribution: minimum value should be smaller than maximum value");
 
     a = minValue;
@@ -359,8 +359,8 @@ template < typename RealType >
 void BetaDistribution<RealType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    GammaRV1.Reseed(seed + 1);
-    GammaRV2.Reseed(seed + 2);
+    GammaRV1.Reseed(RandEngine::DeriveSeed(seed, 1));
+    GammaRV2.Reseed(RandEngine::DeriveSeed(seed, 2));
 }
 
 template < typename RealType >
@@ -845,15 +845,14 @@ String BaldingNicholsRand<RealType>::Name() const
 template < typename RealType >
 void BaldingNicholsRand<RealType>::SetFixatingIndexAndFrequency(double fixatingIndex, double frequency)
 {
-    F = fixatingIndex;
-    if (F <= 0 || F >= 1)
-        F = 0.5;
-
+    if (!(fixatingIndex > 0 && fixatingIndex < 1))
+        throw std::invalid_argument("Balding-Nichols distribution: fixation index should be in interval (0, 1)");
+    if (!(frequency > 0 && frequency < 1))
+        throw std::invalid_argument("Balding-Nichols distribution: frequency should be in interval (0, 1)");
+    fixationIndex = fixatingIndex;
     p = frequency;
-    if (p <= 0 || p >= 1)
-        p = 0.5;
 
-    double frac = (1.0 - F) / F, fracP = frac * p;
+    double frac = (1.0 - fixationIndex) / fixationIndex, fracP = frac * p;
     BetaDistribution<RealType>::SetShapes(fracP, frac - fracP);
 }
 

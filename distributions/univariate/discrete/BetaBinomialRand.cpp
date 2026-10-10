@@ -19,9 +19,9 @@ String BetaBinomialRand<IntType>::Name() const
 template< typename IntType >
 void BetaBinomialRand<IntType>::SetParameters(IntType number, double shape1, double shape2)
 {
-    if (shape1 <= 0.0 || shape2 <= 0.0)
+    if (!(shape1 > 0.0 && shape2 > 0.0))
         throw std::invalid_argument("Beta-Binomial distribution: shape parameters should be positive");
-    if (number <= 0)
+    if (!(number > 0))
         throw std::invalid_argument("Beta-Binomial distribution: number should be positive");
     n = number;
     B.SetShapes(shape1, shape2);
@@ -99,7 +99,7 @@ template< typename IntType >
 void BetaBinomialRand<IntType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    B.Reseed(seed + 1);
+    B.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template< typename IntType >

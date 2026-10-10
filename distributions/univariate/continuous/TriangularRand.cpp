@@ -19,10 +19,10 @@ String TriangularRand<RealType>::Name() const
 template < typename RealType >
 void TriangularRand<RealType>::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
-    if (lowerLimit >= mode)
-        throw std::invalid_argument("Triangular distribution: lower limit should be greater than mode");
-    if (mode >= upperLimit)
-        throw std::invalid_argument("Triangular distribution: upper limit should be smaller than mode");
+    if (!(lowerLimit < upperLimit))
+        throw std::invalid_argument("Triangular distribution: lower limit should be smaller than upper limit");
+    if (!(lowerLimit <= mode && mode <= upperLimit))
+        throw std::invalid_argument("Triangular distribution: mode should lie between the lower and upper limits");
     a = lowerLimit;
     c = mode;
     b = upperLimit;
@@ -40,7 +40,7 @@ void TriangularRand<RealType>::SetConstantsForGenerator()
 template < typename RealType >
 double TriangularRand<RealType>::f(const RealType & x) const
 {
-    if (x <= a)
+    if (x < a || x > b)
         return 0;
     if (x < c)
         return 2.0 * (x - a) / coefGenerator1;
@@ -105,6 +105,15 @@ long double TriangularRand<RealType>::Variance() const
 template < typename RealType >
 std::complex<double> TriangularRand<RealType>::CFImpl(double t) const
 {
+    if (c == a || c == b) {
+        /// Right triangle: for c = a, φ(t) = e^{ita} 2/h² ((1 - e^{ith}) / t² + ih / t) with h = b - a;
+        /// for c = b, reflect X = a + b - Y
+        double h = b - a, s = (c == a) ? t : -t;
+        std::complex<double> eish(std::cos(s * h), std::sin(s * h));
+        std::complex<double> y = 2.0 / (h * h) * ((1.0 - eish) / (s * s) + std::complex<double>(0.0, h / s));
+        double shift = (c == a) ? a * t : b * t;
+        return std::complex<double>(std::cos(shift), std::sin(shift)) * y;
+    }
     double bmc = b - c, bma = b - a, cma = c - a;
     double at = a * t, bt = b * t, ct = c * t;
     std::complex<double> x(bmc * std::cos(at), bmc * std::sin(at));

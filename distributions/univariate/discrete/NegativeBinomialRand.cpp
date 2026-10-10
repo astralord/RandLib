@@ -12,11 +12,11 @@ NegativeBinomialDistribution<IntType, T>::NegativeBinomialDistribution(T number,
 template< typename IntType, typename T>
 void NegativeBinomialDistribution<IntType, T>::SetParameters(T number, double probability)
 {
-    if (r <= 0.0)
+    if (!(number > 0))
         throw std::invalid_argument("Negative-Binomial distribution: number parameter should be positive");
-    if (probability <= 0.0 || probability >= 1.0)
+    if (!(probability > 0.0 && probability < 1.0))
         throw std::invalid_argument("Negative-Binomial distribution: probability parameter should be in interval (0, 1)");
-    r = (number > 0) ? number : 1;
+    r = number;
     p = probability;
     q = 1.0 - p;
     logProb = std::log(p);
@@ -70,7 +70,7 @@ template< typename IntType, typename T>
 double NegativeBinomialDistribution<IntType, T>::S(const IntType &k) const
 {
     if (k < 0)
-        return 0.0;
+        return 1.0;
     int kp1 = k + 1;
     double logBetaFun = RandMath::logBeta(kp1, r);
     return RandMath::ibeta(q, kp1, r, logBetaFun, log1mProb, logProb);
@@ -154,7 +154,7 @@ template< typename IntType, typename T>
 void NegativeBinomialDistribution<IntType, T>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    GammaRV.Reseed(seed + 1);
+    GammaRV.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template< typename IntType, typename T>

@@ -3,8 +3,10 @@
 template < typename RealType >
 LogNormalRand<RealType>::LogNormalRand(double location, double squaredScale)
 {
+    if (!(squaredScale > 0.0))
+        throw std::invalid_argument("Log-Normal distribution: squared scale should be positive");
     SetLocation(location);
-    SetScale(squaredScale > 0.0 ? std::sqrt(squaredScale) : 1.0);
+    SetScale(std::sqrt(squaredScale));
 }
 
 template < typename RealType >
@@ -16,6 +18,8 @@ String LogNormalRand<RealType>::Name() const
 template < typename RealType >
 void LogNormalRand<RealType>::SetLocation(double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Log-Normal distribution: location should be finite");
     X.SetLocation(location);
     expMu = std::exp(X.GetLocation());
 }
@@ -23,7 +27,7 @@ void LogNormalRand<RealType>::SetLocation(double location)
 template < typename RealType >
 void LogNormalRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Log-Normal distribution: scale should be positive");
     X.SetScale(scale);
     expHalfSigmaSq = std::exp(0.5 * X.Variance());

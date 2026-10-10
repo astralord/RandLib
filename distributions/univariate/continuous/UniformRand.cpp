@@ -1,5 +1,7 @@
 #include "UniformRand.h"
 #include "../BasicRandGenerator.h"
+#include <algorithm>
+#include <limits>
 
 template < typename RealType >
 UniformRand<RealType>::UniformRand(double minValue, double maxValue) :
@@ -50,41 +52,28 @@ RealType UniformRand<RealType>::Variate() const
 template < typename RealType >
 RealType UniformRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 {
-#ifdef RANDLIB_UNIDBL
-    /// generates this->a random number on [0,1) with 53-bit resolution, using 2 32-bit integer variate
-    double x;
-    unsigned int a, b;
-    this->a = randGenerator.Variate() >> 6; /// Upper 26 bits
-    b = randGenerator.Variate() >> 5; /// Upper 27 bits
-    x = (this->a * 134217728.0 + this->b) / 9007199254740992.0;
-    return x;
-#elif defined(RANDLIB_JLKISS64)
-    /// generates this->a random number on [0,1) with 53-bit resolution, using 64-bit integer variate
-    double x;
-    unsigned long long this->a = randGenerator.Variate();
-    this->a = (this->a >> 12) | 0x3FF0000000000000ULL; /// Take upper 52 bit
-    *(reinterpret_cast<unsigned long long *>(&x)) = a; /// Make this->a double from bits
-    return x - 1.0;
-#else
-    RealType x = randGenerator.Variate();
-    x += 0.5;
-    x /= 4294967296.0;
-    return x;
-#endif
+    /// (k + 1/2) / 2^b for b random bits, where b is one less than the mantissa width:
+    /// the result lies in (0, 1) and its largest value 1 - 2^-(b+1) is representable,
+    /// so rounding can never produce 1
+    constexpr int bits = std::min(std::numeric_limits<RealType>::digits - 1, 63);
+    RealType k = static_cast<RealType>(randGenerator.Bits(bits));
+    return std::ldexp(k + static_cast<RealType>(0.5), -bits);
 }
 
 template < typename RealType >
 RealType UniformRand<RealType>::StandardVariateClosed(RandGenerator &randGenerator)
 {
-    RealType x = randGenerator.Variate();
-    return x / 4294967295.0;
+    constexpr int bits = std::min(std::numeric_limits<RealType>::digits, 63);
+    RealType k = static_cast<RealType>(randGenerator.Bits(bits));
+    return k / (std::ldexp(static_cast<RealType>(1), bits) - 1);
 }
 
 template < typename RealType >
 RealType UniformRand<RealType>::StandardVariateHalfClosed(RandGenerator &randGenerator)
 {
-    RealType x = randGenerator.Variate();
-    return x / 4294967296.0;
+    constexpr int bits = std::min(std::numeric_limits<RealType>::digits, 63);
+    RealType k = static_cast<RealType>(randGenerator.Bits(bits));
+    return std::ldexp(k, -bits);
 }
 
 template < typename RealType >

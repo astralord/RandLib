@@ -11,7 +11,7 @@ String GeometricRand<IntType>::Name() const
 template < typename IntType >
 void GeometricRand<IntType>::SetProbability(double probability)
 {
-    if (probability < 0.0 || probability > 1.0)
+    if (!(probability >= 0.0 && probability <= 1.0))
         throw std::invalid_argument("Geometric distribution: probability parameter should be in interval [0, 1]");
     this->SetParameters(1, probability);
 }
@@ -55,7 +55,7 @@ IntType GeometricRand<IntType>::Variate() const
 template < typename IntType >
 IntType GeometricRand<IntType>::Variate(double probability, RandGenerator &randGenerator)
 {
-    if (probability > 1.0 || probability < 0.0)
+    if (!(probability <= 1.0 && probability >= 0.0))
         throw std::invalid_argument("Geometric distribution: probability parameter should be in interval [0, 1], but it's equal to "
                                     + std::to_string(probability));
 

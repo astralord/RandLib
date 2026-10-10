@@ -16,7 +16,7 @@ String YuleRand<IntType>::Name() const
 template < typename IntType >
 void YuleRand<IntType>::SetShape(double shape)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Yule distribution: shape should be positive");
     rho = shape;
     lgamma1pRo = std::lgammal(rho + 1);
@@ -69,7 +69,7 @@ IntType YuleRand<IntType>::Variate() const
 template < typename IntType >
 IntType YuleRand<IntType>::Variate(double shape, RandGenerator &randGenerator)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Yule distribution: shape should be positive");
     double prob = 1.0 / ParetoRand<double>::StandardVariate(shape, randGenerator);
     return GeometricRand<IntType>::Variate(prob, randGenerator) + 1;
@@ -79,7 +79,7 @@ template < typename IntType >
 void YuleRand<IntType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    X.Reseed(seed + 1);
+    X.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename IntType >

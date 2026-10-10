@@ -1,5 +1,6 @@
 #include "ContinuousDistribution.h"
 #include "KolmogorovSmirnovRand.h"
+#include <limits>
 
 template< typename RealType >
 void ContinuousDistribution<RealType>::ProbabilityDensityFunction(const std::vector<RealType> &x, std::vector<double> &y) const
@@ -18,103 +19,154 @@ void ContinuousDistribution<RealType>::LogProbabilityDensityFunction(const std::
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initValue) const
 {
-    static constexpr double SMALL_P = 1e-5;
-    if (p < SMALL_P) {
-        /// for small p we use logarithmic scale
-        double logP = std::log(p);
-        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (const RealType & x)
-        {
-            double logCdf = std::log(this->F(x)), logPdf = this->logf(x);
-            double first = logCdf - logP;
-            double second = std::exp(logPdf - logCdf);
-            return DoublePair(first, second);
-        }, initValue))
-            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
-        return initValue;
-    }
-
-    if (this->SupportType() == FINITE_T) {
-        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
-        {
-            return this->F(x) - p;
-        }, this->MinValue(), this->MaxValue(), initValue))
-            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
-        return initValue;
-    }
-
-    if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
-    {
-        double first = this->F(x) - p;
-        double second = this->f(x);
-        return DoublePair(first, second);
-    }, initValue))
-        throw std::runtime_error("Continuous distribution: failure in numeric procedure");
-    return initValue;
+    return searchQuantile(p, false, initValue);
 }
 
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl(double p) const
 {
-    /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 128;
-    static std::vector<RealType> sample(SAMPLE_SIZE);
-    this->Sample(sample);
-    int index = p * SAMPLE_SIZE;
-    if (index == 0.0)
-        return this->quantileImpl(p, *std::min_element(sample.begin(), sample.end()));
-    std::nth_element(sample.begin(), sample.begin() + index, sample.end());
-    return this->quantileImpl(p, sample[index]);
+    return searchQuantile(p, false, std::numeric_limits<RealType>::quiet_NaN());
 }
 
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType initValue) const
 {
-    static constexpr double SMALL_P = 1e-5;
-    if (p < SMALL_P) {
-        /// for small p we use logarithmic scale
-        double logP = std::log(p);
-        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (const RealType & x)
-        {
-            double logCcdf = std::log(this->S(x)), logPdf = this->logf(x);
-            double first = logP - logCcdf;
-            double second = std::exp(logPdf - logCcdf);
-            return DoublePair(first, second);
-        }, initValue))
-            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
-        return initValue;
-    }
-
-    if (this->SupportType() == FINITE_T) {
-        if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
-        {
-            return this->S(x) - p;
-        }, this->MinValue(), this->MaxValue(), initValue))
-            throw std::runtime_error("Continuous distribution: failure in numeric procedure");
-        return initValue;
-    }
-
-    if (!RandMath::findRootNewtonFirstOrder<RealType>([this, p] (const RealType & x)
-    {
-        double first = p - this->S(x);
-        double second = this->f(x);
-        return DoublePair(first, second);
-    }, initValue))
-        throw std::runtime_error("Continuous distribution: failure in numeric procedure");
-    return initValue;
+    return searchQuantile(p, true, initValue);
 }
 
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl1m(double p) const
 {
-    /// We use quantile from sample as an initial guess
-    static constexpr int SAMPLE_SIZE = 128;
-    static std::vector<RealType> sample(SAMPLE_SIZE);
-    this->Sample(sample);
-    int index = p * SAMPLE_SIZE;
-    if (index == 0.0)
-        return this->quantileImpl1m(p, *std::max_element(sample.begin(), sample.end()));
-    std::nth_element(sample.begin(), sample.begin() + index, sample.end(), std::greater<>());
-    return this->quantileImpl1m(p, sample[index]);
+    return searchQuantile(p, true, std::numeric_limits<RealType>::quiet_NaN());
+}
+
+template< typename RealType >
+RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTail, RealType guess) const
+{
+    /// Solve in the tail with the smaller probability: 1 - p is exact for p ≥ 1/2, and
+    /// F (or S) cannot resolve a probability close to 1 as well as the other tail resolves 1 - p
+    if (p > 0.5) {
+        p = 1.0 - p;
+        upperTail = !upperTail;
+    }
+    /// g increases through zero at the quantile; for small p it is compared on a log scale
+    const bool logScale = p < 1e-3;
+    const double logP = std::log(p);
+    auto g = [this, p, upperTail, logScale, logP] (RealType x) {
+        double v = upperTail ? this->S(x) : this->F(x);
+        if (!logScale)
+            return upperTail ? p - v : v - p;
+        double logV = (v > 0) ? std::log(v) : -INFINITY;
+        return upperTail ? logP - logV : logV - logP;
+    };
+    const RealType lo = this->MinValue(), hi = this->MaxValue();
+    const bool loFinite = std::isfinite(lo), hiFinite = std::isfinite(hi);
+
+    /// Bracket [a, b] with g(a) < 0 <= g(b), expanding geometrically from the guess,
+    /// from a finite end of the support, or from 0
+    const bool useGuess = std::isfinite(guess) && guess > lo && guess < hi;
+    const RealType origin = useGuess ? guess : (loFinite ? lo : (hiFinite ? hi : 0));
+    RealType a = lo, b = hi;
+    double ga = -INFINITY, gb = INFINITY;
+    if (useGuess || !(loFinite && hiFinite)) {
+        double gOrigin = g(origin);
+        if (gOrigin == 0)
+            return origin;
+        RealType step = useGuess ? std::max<RealType>(std::fabs(guess) * 1e-3, 1e-3) : 1;
+        bool searchUp = (useGuess || !loFinite || hiFinite) ? gOrigin < 0 : true;
+        if (!useGuess && loFinite && !hiFinite)
+            searchUp = true;
+        if (searchUp) {
+            a = origin;
+            ga = gOrigin;
+            for (;;) {
+                b = origin + step;
+                if (hiFinite && b >= hi) {
+                    b = hi;
+                    gb = INFINITY;
+                    break;
+                }
+                if (!std::isfinite(b))
+                    return b;
+                gb = g(b);
+                if (gb >= 0)
+                    break;
+                a = b;
+                ga = gb;
+                step += step;
+            }
+        }
+        else {
+            b = origin;
+            gb = gOrigin;
+            for (;;) {
+                a = origin - step;
+                if (loFinite && a <= lo) {
+                    a = lo;
+                    ga = -INFINITY;
+                    break;
+                }
+                if (!std::isfinite(a))
+                    return a;
+                ga = g(a);
+                if (ga < 0)
+                    break;
+                b = a;
+                gb = ga;
+                step += step;
+            }
+        }
+    }
+
+    /// Bisection point: geometric in the distance to a finite support end while the
+    /// bracket spans orders of magnitude, arithmetic otherwise
+    const RealType anchor = loFinite ? lo : (hiFinite ? hi : 0);
+    auto split = [anchor, loFinite, hiFinite] (RealType left, RealType right) {
+        const RealType direction = (loFinite || (!hiFinite && left >= 0)) ? 1 : -1;
+        RealType tl = direction * (left - anchor), tr = direction * (right - anchor);
+        RealType tNear = std::min(tl, tr), tFar = std::max(tl, tr), t;
+        if (tNear > 0 && tFar > 4 * tNear)
+            t = std::sqrt(tNear) * std::sqrt(tFar);
+        else if (tNear == 0 && tFar > 1e-280 && (loFinite || hiFinite))
+            t = tFar / 65536;
+        else
+            t = tNear + (tFar - tNear) / 2;
+        return anchor + direction * t;
+    };
+
+    /// Illinois regula falsi, with a bisection step whenever the bracket fails to halve
+    int retained = 0;
+    bool bisect = false;
+    for (int iter = 0; iter < 2000; ++iter) {
+        RealType width = b - a, middle;
+        if (!bisect && std::isfinite(ga) && std::isfinite(gb) && gb > ga)
+            middle = b - gb * (b - a) / (gb - ga);
+        else
+            middle = split(a, b);
+        if (!(middle > a && middle < b))
+            middle = split(a, b);
+        if (!(middle > a && middle < b))
+            break;
+        double gm = g(middle);
+        if (gm == 0)
+            return middle;
+        if (gm < 0) {
+            a = middle;
+            ga = gm;
+            if (retained == 1)
+                gb *= 0.5;
+            retained = 1;
+        }
+        else {
+            b = middle;
+            gb = gm;
+            if (retained == -1)
+                ga *= 0.5;
+            retained = -1;
+        }
+        bisect = (b - a) > 0.5 * width;
+    }
+    return (std::isfinite(ga) && std::fabs(ga) < std::fabs(gb)) ? a : b;
 }
 
 template< typename RealType >

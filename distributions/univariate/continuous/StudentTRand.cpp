@@ -23,7 +23,7 @@ String StudentTRand<RealType>::Name() const
 template < typename RealType >
 void StudentTRand<RealType>::SetDegree(double degree)
 {
-    if (degree <= 0.0)
+    if (!(degree > 0.0))
         throw std::invalid_argument("Student-t distribution: degree parameter should be positive");
     nu = degree;
     Y.SetParameters(0.5 * nu, 1.0);
@@ -38,13 +38,15 @@ void StudentTRand<RealType>::SetDegree(double degree)
 template < typename RealType >
 void StudentTRand<RealType>::SetLocation(double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Student-t distribution: location should be finite");
     mu = location;
 }
 
 template < typename RealType >
 void StudentTRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Student-t distribution: scale should be positive");
     sigma = scale;
     logSigma = std::log(sigma);
@@ -71,73 +73,73 @@ double StudentTRand<RealType>::f(const RealType & x) const
 }
 
 template < typename RealType >
+double StudentTRand<RealType>::log1pSquareOverDegree(double x0) const
+{
+    /// log(1 + x0² / ν), also when x0² overflows
+    double absX = std::fabs(x0);
+    if (absX < 1e100)
+        return std::log1pl(x0 * x0 / nu);
+    double logRatio = 2 * std::log(absX) - std::log(nu);
+    return logRatio + std::log1pl(std::exp(-logRatio));
+}
+
+template < typename RealType >
 double StudentTRand<RealType>::logf(const RealType & x) const
 {
     /// adjustment
     double x0 = x - mu;
     x0 /= sigma;
-    double xSq = x0 * x0;
+    double log1pXsqNu = log1pSquareOverDegree(x0);
     if (nu == 1) /// Cauchy distribution
-        return -logSigma - randlib::consts::lnpi - std::log1pl(xSq);
+        return -logSigma - randlib::consts::lnpi - log1pXsqNu;
     if (nu == 2)
-        return -logSigma - 1.5 * std::log(2.0 + xSq);
+        return -logSigma - 1.5 * (randlib::consts::ln2 + log1pXsqNu);
     if (nu == 3) {
-        double y = -2 * std::log(3.0 + xSq);
+        double y = -2 * (randlib::consts::ln3 + log1pXsqNu);
         y += randlib::consts::ln2 + 1.5 * randlib::consts::ln3 - randlib::consts::lnpi - logSigma;
         return y;
     }
-    double y = -nup1Half * std::log1pl(xSq / nu);
+    double y = -nup1Half * log1pXsqNu;
     return pdfCoef + y - logSigma;
+}
+
+template < typename RealType >
+double StudentTRand<RealType>::lowerTail(double x0) const
+{
+    /// P(T < x0) for x0 < 0: I_t(ν/2, 1/2) / 2 with t = ν / (ν + x0²)
+    if (nu == 1)
+        return randlib::consts::inv_pi * ((x0 < -1.0) ? std::atan(-1.0 / x0) : randlib::consts::half_pi + std::atan(x0));
+    if (x0 * x0 < nu) {
+        /// Near the median t = ν / (ν + x0²) rounds to 1; use 1/2 - I_{x0²/(ν+x0²)}(1/2, ν/2) / 2 instead
+        double xSq = x0 * x0, u = xSq / (nu + xSq);
+        return 0.5 - 0.5 * RandMath::ibeta(u, 0.5, 0.5 * nu, logBetaFun, std::log(xSq) - std::log(nu + xSq), std::log(nu) - std::log(nu + xSq));
+    }
+    double logT = -log1pSquareOverDegree(x0);
+    double t = std::exp(logT);
+    if (t < 1e-280) {
+        /// t underflows: leading term t^(ν/2) / ((ν/2) B(ν/2, 1/2)) of the incomplete beta function
+        return 0.5 * std::exp(0.5 * nu * logT - std::log(0.5 * nu) - logBetaFun);
+    }
+    double log1mT = std::log1pl(-t);
+    return 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, logT, log1mT);
 }
 
 template < typename RealType >
 double StudentTRand<RealType>::F(const RealType & x) const
 {
-    double x0 = x - mu;
-    x0 /= sigma;
+    double x0 = (x - mu) / sigma;
     if (x0 == 0.0)
         return 0.5;
-    if (nu == 1) {
-        /// Cauchy distribution
-        return 0.5 + randlib::consts::inv_pi * RandMath::atan(x0);
-    }
-    double xSq = x0 * x0;
-    if (nu == 2) {
-        return 0.5 + 0.5 * x0 / std::sqrt(2 + xSq);
-    }
-    if (nu == 3) {
-        double y = randlib::consts::sqrt3 * x0 / (xSq + 3);
-        y += RandMath::atan(x0 / randlib::consts::sqrt3);
-        return 0.5 + randlib::consts::inv_pi * y;
-    }
-    double t = nu / (xSq + nu);
-    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1pl(-t));
-    return (x0 > 0.0) ? (1.0 - y) : y;
+    return (x0 < 0.0) ? lowerTail(x0) : 1.0 - lowerTail(-x0);
 }
 
 template < typename RealType >
 double StudentTRand<RealType>::S(const RealType & x) const
 {
-    double x0 = x - mu;
-    x0 /= sigma;
+    double x0 = (x - mu) / sigma;
     if (x0 == 0.0)
         return 0.5;
-    if (nu == 1) {
-        /// Cauchy distribution
-        return 0.5 + randlib::consts::inv_pi * RandMath::atan(-x0);
-    }
-    double xSq = x0 * x0;
-    if (nu == 2) {
-        return 0.5 - 0.5 * x0 / std::sqrt(2 + xSq);
-    }
-    if (nu == 3) {
-        double y = randlib::consts::sqrt3 * x0 / (xSq + 3);
-        y += RandMath::atan(x0 / randlib::consts::sqrt3);
-        return 0.5 - randlib::consts::inv_pi * y;
-    }
-    double t = nu / (xSq + nu);
-    double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1pl(-t));
-    return (x0 > 0.0) ? y : 1.0 - y;
+    return (x0 > 0.0) ? lowerTail(-x0) : 1.0 - lowerTail(x0);
 }
 
 template < typename RealType >
@@ -166,7 +168,7 @@ template < typename RealType >
 void StudentTRand<RealType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    Y.Reseed(seed + 1);
+    Y.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >

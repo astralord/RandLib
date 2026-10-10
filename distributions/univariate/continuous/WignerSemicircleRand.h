@@ -20,6 +20,8 @@ class RANDLIBSHARED_EXPORT WignerSemicircleRand : public ContinuousDistribution<
     double logRSq = 0; /// log(R^2)
     BetaRand<RealType> X{1.5, 1.5};
     
+    double lowerTail(double x) const;
+
 public:
     explicit WignerSemicircleRand(double radius);
 
@@ -34,6 +36,7 @@ public:
 public:
     double f(const RealType & x) const override;
     double logf(const RealType & x) const override;
+    double S(const RealType & x) const override;
     double F(const RealType & x) const override;
     RealType Variate() const override;
     void Reseed(unsigned long seed) const override;

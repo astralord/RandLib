@@ -11,9 +11,9 @@ NakagamiDistribution<RealType>::NakagamiDistribution(double shape, double spread
 template < typename RealType >
 void NakagamiDistribution<RealType>::SetParameters(double shape, double spread)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Nakagami distribution: shape should be positive");
-    if (spread <= 0.0)
+    if (!(spread > 0.0))
         throw std::invalid_argument("Nakagami distribution: spread should be positive");
     mu = shape;
     omega = spread;
@@ -77,7 +77,7 @@ template < typename RealType >
 void NakagamiDistribution<RealType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    Y.Reseed(seed + 1);
+    Y.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >
@@ -209,7 +209,7 @@ String ChiRand<RealType>::Name() const
 template < typename RealType >
 void ChiRand<RealType>::SetDegree(int degree)
 {
-    if (degree < 1)
+    if (!(degree >= 1))
         throw std::invalid_argument("Chi distribution: degree parameter should be positive");
     NakagamiDistribution<RealType>::SetParameters(0.5 * degree, degree);
 }
@@ -257,7 +257,7 @@ String MaxwellBoltzmannRand<RealType>::Name() const
 template < typename RealType >
 void MaxwellBoltzmannRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Maxwell-Boltzmann distribution: scale should be positive");
     sigma = scale;
     NakagamiDistribution<RealType>::SetParameters(1.5, 3 * sigma * sigma);
@@ -369,7 +369,7 @@ String RayleighRand<RealType>::Name() const
 template < typename RealType >
 void RayleighRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Rayleigh distribution: scale should be positive");
     sigma = scale;
     NakagamiDistribution<RealType>::SetParameters(1, 2 * sigma * sigma);

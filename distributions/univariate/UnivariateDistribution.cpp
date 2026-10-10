@@ -22,7 +22,7 @@ bool UnivariateDistribution<T>::isRightBounded() const
 template< typename T >
 T UnivariateDistribution<T>::Quantile(double p) const
 {
-    if (p < 0.0 || p > 1.0)
+    if (!(p >= 0.0 && p <= 1.0))
         throw std::invalid_argument("Probability p in quantile function should be in interval [0, 1]");
     double minVal = this->MinValue();
     if (p == 0.0)
@@ -39,7 +39,7 @@ T UnivariateDistribution<T>::Quantile(double p) const
 template< typename T >
 T UnivariateDistribution<T>::Quantile1m(double p) const
 {
-    if (p < 0.0 || p > 1.0)
+    if (!(p >= 0.0 && p <= 1.0))
         throw std::invalid_argument("Probability p in quantile function should be in interval [0, 1]");
     double minVal = this->MinValue();
     if (p == 1.0)

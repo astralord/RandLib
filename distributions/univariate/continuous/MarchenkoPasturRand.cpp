@@ -17,9 +17,9 @@ String MarchenkoPasturRand<RealType>::Name() const
 template < typename RealType >
 void MarchenkoPasturRand<RealType>::SetParameters(double ratio, double scale)
 {
-    if (ratio <= 0.0)
+    if (!(ratio > 0.0))
         throw std::invalid_argument("Marchenko-Pastur distribution: ratio parameter should be positive");
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Marchenko-Pastur distribution: scale should be positive");
     lambda = ratio;
     double sqrtLambda = std::sqrt(lambda);
@@ -85,7 +85,7 @@ double MarchenkoPasturRand<RealType>::ccdfForLargeRatio(const RealType &x) const
         y1 = lambdap1 * RandMath::atan(y1);
     }
     else
-        y1 = RandMath::sign(y1) * randlib::consts::half_pi;
+        y1 = lambdap1 * RandMath::sign(y1) * randlib::consts::half_pi;
     double y2 = x * lambdap1;
     y2 -= lambdam1 * lambdam1;
     y2 /= temp * lambdam1;
@@ -107,7 +107,7 @@ double MarchenkoPasturRand<RealType>::cdfForSmallRatio(const RealType &x) const
         y1 = lambdap1 * RandMath::atan(y1);
     }
     else
-        y1 = RandMath::sign(y1) * randlib::consts::half_pi;
+        y1 = lambdap1 * RandMath::sign(y1) * randlib::consts::half_pi;
     double y2 = 0.0;
     if (lambdam1 != 0)
     {
@@ -232,13 +232,13 @@ template < typename RealType >
 void MarchenkoPasturRand<RealType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    BetaRV.Reseed(seed + 1);
+    BetaRV.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >
 long double MarchenkoPasturRand<RealType>::Moment(int n) const
 {
-    if (n < 0)
+    if (!(n >= 0))
         throw std::invalid_argument("Marchenko-Pastur distribution: degree n should be non-negative");
     switch (n) {
     case 0:

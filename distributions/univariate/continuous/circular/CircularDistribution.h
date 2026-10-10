@@ -16,7 +16,9 @@ protected:
     double loc{};
 
     CircularDistribution(double location = 0);
+public:
     virtual ~CircularDistribution() {}
+protected:
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }

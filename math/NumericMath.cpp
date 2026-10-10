@@ -1,38 +1,64 @@
 #include "NumericMath.h"
 
+#include <algorithm>
+#include <limits>
+#include <vector>
+
 namespace RandMath
 {
 
+namespace
+{
+
+struct Segment
+{
+    double a, b, estimate, error;
+    bool operator<(const Segment &other) const { return error < other.error; }
+};
+
 /**
- * @fn adaptiveSimpsonsAux
- * auxiliary function for calculation of integral
- * @param funPtr
+ * @fn gaussKronrod21
+ * 21-point Gauss-Kronrod rule with its embedded 10-point Gauss rule (QUADPACK qk21)
+ * @param funPtr integrand
  * @param a lower boundary
  * @param b upper boundary
- * @param epsilon
- * @param S
- * @param fa
- * @param fb
- * @param fc
- * @param bottom
- * @return
+ * @param absEstimate accumulates the integral of |f| over [a, b]
+ * @return segment with the Kronrod estimate and |Kronrod - Gauss| as its error
  */
-double adaptiveSimpsonsAux(const std::function<double (double)> &funPtr, double a, double b,
-                           double epsilon, double S, double fa, double fb, double fc, int bottom)
+Segment gaussKronrod21(const std::function<double (double)> &funPtr, double a, double b, double &absEstimate)
 {
-    double c = .5 * (a + b), h = (b - a) / 12.0;
-    double d = .5 * (a + c), e = .5 * (c + b);
-    double fd = funPtr(d), fe = funPtr(e);
-    double Sleft = h * (fa + 4 * fd + fc);
-    double Sright = h * (fc + 4 * fe + fb);
-    double S2 = Sleft + Sright;
-    if (bottom <= 0 || std::fabs(S2 - S) <= 15.0 * epsilon)
-        return S2 + (S2 - S) / 15.0;
-    epsilon *= .5;
-    --bottom;
+    static constexpr double xgk[11] = {
+        0.995657163025808080735527280689003, 0.973906528517171720077964012084452,
+        0.930157491355708226001207180059508, 0.865063366688984510732096688423493,
+        0.780817726586416897063717578345042, 0.679409568299024406234327365114874,
+        0.562757134668604683339000099272694, 0.433395394129247190799265943165784,
+        0.294392862701460198131126603103866, 0.148874338981631210884826001129720, 0.0};
+    static constexpr double wgk[11] = {
+        0.011694638867371874278064396062192, 0.032558162307964727478818972459390,
+        0.054755896574351996031381300244580, 0.075039674810919952767043140916190,
+        0.093125454583697605535065465083366, 0.109387158802297641899210590325805,
+        0.123491976262065851077208980292818, 0.134709217311473325928054001771707,
+        0.142775938577060080797094273138717, 0.147739104901338491374841515972068,
+        0.149445554002916905664936468389821};
+    static constexpr double wg[5] = {
+        0.066671344308688137593568809893332, 0.149451349150580593145776339657697,
+        0.219086362515982043995534934228163, 0.269266719309996355091226921569469,
+        0.295524224714752870173892994651338};
+    double center = 0.5 * (a + b), half = 0.5 * (b - a);
+    double fc = funPtr(center);
+    double kronrod = wgk[10] * fc, gauss = 0.0, absSum = wgk[10] * std::fabs(fc);
+    for (int j = 0; j < 10; ++j) {
+        double dx = half * xgk[j];
+        double f1 = funPtr(center - dx), f2 = funPtr(center + dx);
+        kronrod += wgk[j] * (f1 + f2);
+        absSum += wgk[j] * (std::fabs(f1) + std::fabs(f2));
+        if (j % 2 == 1)
+            gauss += wg[j / 2] * (f1 + f2);
+    }
+    absEstimate += std::fabs(half) * absSum;
+    return {a, b, kronrod * half, std::fabs((kronrod - gauss) * half)};
+}
 
-    return adaptiveSimpsonsAux(funPtr, a, c, epsilon, Sleft, fa, fc, fd, bottom) +
-           adaptiveSimpsonsAux(funPtr, c, b, epsilon, Sright, fc, fb, fe, bottom);
 }
 
 double integral(const std::function<double (double)> &funPtr, double a, double b, double epsilon, int maxRecursionDepth)
@@ -41,10 +67,41 @@ double integral(const std::function<double (double)> &funPtr, double a, double b
         return -integral(funPtr, b, a, epsilon, maxRecursionDepth);
     if (a == b)
         return 0.0;
-    double c = .5 * (a + b), h = (b - a) / 6.0;
-    double fa = funPtr(a), fb = funPtr(b), fc = funPtr(c);
-    double S = h * (fa + 4 * fc + fb);
-    return adaptiveSimpsonsAux(funPtr, a, b, epsilon, S, fa, fb, fc, maxRecursionDepth);
+    /// Global adaptive scheme (QUADPACK QAG): always bisect the segment with the largest
+    /// error estimate until the total error is below epsilon relative to the integral,
+    /// or to a few ulps of the integral of |f| when the integrand cancels
+    const int maxSubdivisions = std::max(64, (1 << std::min(maxRecursionDepth, 24)) / 4);
+    double absEstimate = 0.0;
+    std::vector<Segment> heap{gaussKronrod21(funPtr, a, b, absEstimate)};
+    double estimate = heap.front().estimate, error = heap.front().error;
+    for (int i = 0; i < maxSubdivisions; ++i) {
+        double tolerance = std::max(epsilon * std::fabs(estimate), 50 * std::numeric_limits<double>::epsilon() * absEstimate);
+        if (!(error > tolerance) || !std::isfinite(estimate))
+            break;
+        std::pop_heap(heap.begin(), heap.end());
+        Segment worst = heap.back();
+        heap.pop_back();
+        double middle = 0.5 * (worst.a + worst.b);
+        if (!(middle > worst.a && middle < worst.b)) {
+            heap.push_back(worst);
+            std::push_heap(heap.begin(), heap.end());
+            break;
+        }
+        double newAbs = 0.0;
+        Segment left = gaussKronrod21(funPtr, worst.a, middle, newAbs);
+        Segment right = gaussKronrod21(funPtr, middle, worst.b, newAbs);
+        estimate += left.estimate + right.estimate - worst.estimate;
+        error += left.error + right.error - worst.error;
+        heap.push_back(left);
+        std::push_heap(heap.begin(), heap.end());
+        heap.push_back(right);
+        std::push_heap(heap.begin(), heap.end());
+    }
+    /// Re-sum to avoid drift from the running updates
+    double sum = 0.0;
+    for (const Segment &segment : heap)
+        sum += segment.estimate;
+    return sum;
 }
 
 bool findRootNewtonFirstOrder2d(const std::function<DoublePair (DoublePair)> &funPtr,

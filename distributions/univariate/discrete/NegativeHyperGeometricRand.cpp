@@ -17,11 +17,11 @@ String NegativeHyperGeometricRand<IntType>::Name() const
 template < typename IntType >
 void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType totalSuccessesNum, IntType limitSuccessesNum)
 {
-    if (totalSize <= 0 || totalSuccessesNum <= 0 || limitSuccessesNum <= 0)
+    if (!(totalSize > 0 && totalSuccessesNum > 0 && limitSuccessesNum > 0))
         throw std::invalid_argument("Negative-HyperGeometric distribution: all parameters should be positive");
-    if (totalSuccessesNum > totalSize)
+    if (!(totalSuccessesNum <= totalSize))
         throw std::invalid_argument("Negative-HyperGeometric distribution: total size shouldn't be smaller than total successes number");
-    if (limitSuccessesNum > totalSuccessesNum)
+    if (!(limitSuccessesNum <= totalSuccessesNum))
         throw std::invalid_argument("Negative-HyperGeometric distribution: total successes number shouldn't be smaller than limit successes number");
 
     N = totalSize;

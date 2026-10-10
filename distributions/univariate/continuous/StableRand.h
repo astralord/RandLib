@@ -30,7 +30,7 @@ private:
     double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
     double xi = 0; ///< ξ = atan(-ζ) / α;
     double alpha_alpham1 = 2; ///< α / (α - 1)
-    double logGammaPi_2 = randlib::consts::lnpi - 1.5 * randlib::consts::ln2; ///< log(γπ/2)
+    double logGammaPi_2 = randlib::consts::lnpi - 1.5 * randlib::consts::ln2; ///< log(π/(2γ)), used for α = 1
 
     static constexpr double BIG_NUMBER = 1e9; ///< a.k.a. infinity for pdf and cdf calculations
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
@@ -51,7 +51,9 @@ protected:
     double cdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use cdf tail approximation
 
     StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
+public:
     virtual ~StableDistribution() {}
+protected:
 
 public:
     SUPPORT_TYPE SupportType() const override;
@@ -60,6 +62,13 @@ public:
 
 private:
     void parametersVerification(double exponent, double skewness, double scale);
+    /**
+     * @fn checkDensitySupport
+     * Throws randlib::not_implemented for parameters where the density, the distribution
+     * function and everything derived from them are not yet implemented (exponent close
+     * to 1 with non-zero skewness); sampling and the characteristic function still work
+     */
+    void checkDensitySupport() const;
     void setParametersForNormal();
     void setParametersForCauchy();
     void setParametersForLevy();
@@ -179,6 +188,23 @@ private:
      * @return value of probability density function for α = 1
      */
     double pdfForUnityExponent(double x) const;
+    /**
+     * @fn rootOfMonotone
+     * @return the point in (a, b) where u, monotone on that interval, changes sign
+     */
+    static double rootOfMonotone(const std::function<double (double)> &u, double a, double b);
+    /**
+     * @fn integrateAroundRoot
+     * @return integral of the integrand over [a, b], with breakpoints around the root of u
+     */
+    static double integrateAroundRoot(const std::function<double (double)> &integrand,
+                                      const std::function<double (double)> &u, double a, double b, double root);
+    /**
+     * @fn peakForUnityExponent
+     * @param xAdj
+     * @return the root of the integrand exponent u(θ) for α = 1
+     */
+    double peakForUnityExponent(double xAdj) const;
 
     DoublePair seriesZeroParams{};
 
@@ -188,6 +214,12 @@ private:
      * @return leading term of pdf short tail series expansion for |β| = 1 and [(large x and α > 1) or (small x and α < 1)]
      */
     double pdfShortTailExpansionForGeneralExponent(double logX) const;
+    /**
+     * @fn cdfShortTailExpansion
+     * @param logX
+     * @return leading term of the mass between a totally skewed law with α < 1 and its support boundary
+     */
+    double cdfShortTailExpansion(double logX) const;
     /**
      * @fn pdfAtZero
      * @return probability density function for x = 0
@@ -292,6 +324,12 @@ private:
      */
     static double fastcdfExponentiation(double u);
     /**
+     * @fn fastccdfExponentiation
+     * @param u
+     * @return 1 - exp(-exp(u)), computed without cancellation
+     */
+    static double fastccdfExponentiation(double u);
+    /**
      * @fn cdfAtZero
      * @param xiAdj adjusted ξ
      * @return cumulative distribution function for x = 0
@@ -300,9 +338,10 @@ private:
     /**
      * @fn cdfForUnityExponent
      * @param x
-     * @return cumulative distribution function for α = 1, β ≠ 0
+     * @param complement return the survival function instead
+     * @return cumulative distribution function (or its complement) for α = 1, β ≠ 0
      */
-    double cdfForUnityExponent(double x) const;
+    double cdfForUnityExponent(double x, bool complement) const;
     /**
      * @fn cdfSeriesExpansionAtZero
      * @param logX log(x)
@@ -324,13 +363,19 @@ private:
      * @param xiAdj adjusted ξ
      * @return integral representation of cumulative distribution function for general case of α ≠ 1
      */
-    double cdfIntegralRepresentation(double logX, double xiAdj) const;
+    double cdfIntegralRepresentation(double logX, double xiAdj, bool complement) const;
     /**
      * @fn cdfForGeneralExponent
      * @param x
      * @return cumulative distribution function for general case of α ≠ 1
      */
     double cdfForGeneralExponent(double x) const;
+    /**
+     * @fn ccdfForGeneralExponent
+     * @param x
+     * @return survival function for general case of α ≠ 1, computed directly in the upper tail
+     */
+    double ccdfForGeneralExponent(double x) const;
 public:
     double F(const RealType & x) const override;
     double S(const RealType & x) const override;

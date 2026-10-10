@@ -30,10 +30,10 @@ void BivariateNormalRand<RealType>::SetLocations(double location1, double locati
 template< typename RealType >
 void BivariateNormalRand<RealType>::SetCovariance(double scale1, double scale2, double correlation)
 {
-    if (scale1 <= 0.0 || scale2 <= 0.0)
+    if (!(scale1 > 0.0 && scale2 > 0.0))
         throw std::invalid_argument("Scales of Bivariate-Normal distribution should be positive, but they're equal to "
                                     + std::to_string(scale1) + " and " + std::to_string(scale2) + " respectively");
-    if (std::fabs(correlation) > 1.0)
+    if (!(std::fabs(correlation) <= 1.0))
         throw std::invalid_argument("Correlation of Bivariate-Normal distribution should be in interval [-1, 1], but it's equal to "
                                     + std::to_string(correlation));
     sigma1 = scale1;

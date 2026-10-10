@@ -1,7 +1,9 @@
 #include "BasicRandGenerator.h"
+#include <atomic>
 #include <chrono>
-#include <ctime>
+#include <exception>
 #include <functional>
+#include <random>
 #include <thread>
 
 unsigned long RandEngine::mix(unsigned long a, unsigned long b, unsigned long c)
@@ -18,18 +20,39 @@ unsigned long RandEngine::mix(unsigned long a, unsigned long b, unsigned long c)
     return c;
 }
 
+unsigned long long RandEngine::splitMix64(unsigned long long &state)
+{
+    unsigned long long z = (state += 0x9E3779B97F4A7C15ULL);
+    z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+    z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+    return z ^ (z >> 31);
+}
+
 unsigned long RandEngine::getRandomSeed()
 {
-    static thread_local unsigned long dummy = 123456789;
-    return mix(time(0), std::hash<std::thread::id>()(std::this_thread::get_id()), ++dummy);
+    static std::atomic<unsigned long long> counter{0};
+    unsigned long long entropy = 0;
+    try {
+        std::random_device device;
+        entropy = (static_cast<unsigned long long>(device()) << 32) ^ device();
+    } catch (const std::exception &) {
+        /// std::random_device may be unavailable; the other sources still differ per call
+    }
+    entropy ^= static_cast<unsigned long long>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    entropy ^= static_cast<unsigned long long>(std::hash<std::thread::id>()(std::this_thread::get_id())) << 1;
+    entropy += 0x9E3779B97F4A7C15ULL * ++counter;
+    return static_cast<unsigned long>(splitMix64(entropy));
 }
 
 void JKissRandEngine::Reseed(unsigned long seed)
 {
-    X = 123456789 ^ seed;
-    C = 6543217;
-    Y = 987654321;
-    Z = 43219876;
+    unsigned long long s = seed;
+    X = static_cast<unsigned int>(splitMix64(s));
+    do {
+        Y = static_cast<unsigned int>(splitMix64(s)); /// xorshift state must not be zero
+    } while (Y == 0);
+    Z = static_cast<unsigned int>(splitMix64(s));
+    C = 1 + static_cast<unsigned int>(splitMix64(s) % 698769067ULL); /// carry in [1, a - 2]
 }
 
 unsigned long long JKissRandEngine::Next()
@@ -51,12 +74,15 @@ unsigned long long JKissRandEngine::Next()
 
 void JLKiss64RandEngine::Reseed(unsigned long seed)
 {
-    X = 123456789123ULL ^ seed;
-    Y = 987654321987ULL;
-    Z1 = 43219876;
-    Z2 = 6543217;
-    C1 = 21987643;
-    C2 = 1732654;
+    unsigned long long s = seed;
+    X = splitMix64(s);
+    do {
+        Y = splitMix64(s); /// xorshift state must not be zero
+    } while (Y == 0);
+    Z1 = static_cast<unsigned int>(splitMix64(s));
+    Z2 = static_cast<unsigned int>(splitMix64(s));
+    C1 = 1 + static_cast<unsigned int>(splitMix64(s) % 4294584391ULL); /// carries in [1, a - 2]
+    C2 = 1 + static_cast<unsigned int>(splitMix64(s) % 4246477507ULL);
 }
 
 unsigned long long JLKiss64RandEngine::Next()
@@ -77,8 +103,16 @@ unsigned long long JLKiss64RandEngine::Next()
 
 void PCGRandEngine::Reseed(unsigned long seed)
 {
-    state = seed;
-    inc = seed;
+    Reseed(seed, DEFAULT_SEQUENCE);
+}
+
+void PCGRandEngine::Reseed(unsigned long long seed, unsigned long long sequence)
+{
+    state = 0;
+    inc = (sequence << 1u) | 1u;
+    Next();
+    state += seed;
+    Next();
 }
 
 unsigned long long PCGRandEngine::Next()

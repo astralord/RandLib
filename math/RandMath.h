@@ -94,6 +94,13 @@ double erfinv(double p);
 double erfcinv(double p);
 
 /**
+ * @fn erfcx
+ * @param x
+ * @return scaled complementary error function exp(x^2) erfc(x)
+ */
+double erfcx(double x);
+
+/**
  * @brief xexpxsqerfc
  * @param x
  * @return x * exp(x^2) * erfc(x)

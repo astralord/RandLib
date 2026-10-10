@@ -11,13 +11,15 @@ RaisedCosineDistribution<RealType>::RaisedCosineDistribution(double location, do
 template < typename RealType >
 void RaisedCosineDistribution<RealType>::SetLocation(double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Raised cosine distribution: location should be finite");
     mu = location;
 }
 
 template < typename RealType >
 void RaisedCosineDistribution<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Raised-Cosine distribution: scale should be positive");
     s = scale;
     s_pi = s * randlib::consts::inv_pi;
@@ -28,7 +30,7 @@ template < typename RealType >
 double RaisedCosineDistribution<RealType>::f(const RealType &x) const
 {
     double xAdj = (x - mu) / s_pi;
-    if (xAdj <= -randlib::consts::pi || xAdj >= randlib::consts::pi)
+    if (xAdj <= -static_cast<double>(randlib::consts::pi) || xAdj >= static_cast<double>(randlib::consts::pi))
         return 0.0;
     double y = std::cos(xAdj) + 1.0;
     return 0.5 * y / s;
@@ -38,7 +40,7 @@ template < typename RealType >
 double RaisedCosineDistribution<RealType>::logf(const RealType &x) const
 {
     double xAdj = (x - mu) / s_pi;
-    if (xAdj <= -randlib::consts::pi || xAdj >= randlib::consts::pi)
+    if (xAdj <= -static_cast<double>(randlib::consts::pi) || xAdj >= static_cast<double>(randlib::consts::pi))
         return -INFINITY;
     double y = std::cos(xAdj);
     y = std::log1pl(y);

@@ -8,8 +8,8 @@ template < class T1, class T2, typename T >
 void BivariateDistribution<T1, T2, T>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    X.Reseed(seed + 1);
-    Y.Reseed(seed + 2);
+    X.Reseed(RandEngine::DeriveSeed(seed, 1));
+    Y.Reseed(RandEngine::DeriveSeed(seed, 2));
 }
 
 template < class T1, class T2, typename T >

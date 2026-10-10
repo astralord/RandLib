@@ -14,7 +14,7 @@ String BernoulliRand::Name() const
 
 void BernoulliRand::SetProbability(double probability)
 {
-    if (probability < 0.0 || probability > 1.0)
+    if (!(probability >= 0.0 && probability <= 1.0))
         throw std::invalid_argument("Bernoulli distribution: probability parameter should in interval [0, 1]");
     SetParameters(1, probability);
     boundary = q * this->localRandGenerator.MaxValue();
@@ -27,7 +27,7 @@ double BernoulliRand::P(const int & k) const
 
 double BernoulliRand::logP(const int & k) const
 {
-    return (k == 0) ? log1mProb : ((k == 1) ? logProb : 0);
+    return (k == 0) ? log1mProb : ((k == 1) ? logProb : -INFINITY);
 }
 
 double BernoulliRand::F(const int & k) const
@@ -47,28 +47,14 @@ int BernoulliRand::Variate() const
 
 int BernoulliRand::Variate(double probability, RandGenerator &randGenerator)
 {
-    if (probability < 0.0 || probability > 1.0)
+    if (!(probability >= 0.0 && probability <= 1.0))
         throw std::invalid_argument("Bernoulli distribution: probability parameter should be in interval [0, 1]");
     return UniformRand<float>::StandardVariate(randGenerator) <= probability;
 }
 
 int BernoulliRand::StandardVariate(RandGenerator &randGenerator)
 {
-    static const size_t maxDecimals = randGenerator.maxDecimals();
-    static size_t decimals = 1;
-    static unsigned long long X = 0;
-    if (decimals == 1)
-    {
-        /// refresh
-        decimals = maxDecimals;
-        X = randGenerator.Variate();
-    }
-    else
-    {
-        --decimals;
-        X >>= 1;
-    }
-    return X & 1;
+    return static_cast<int>(randGenerator.Bits(1));
 }
 
 void BernoulliRand::Sample(std::vector<int> &outputData) const

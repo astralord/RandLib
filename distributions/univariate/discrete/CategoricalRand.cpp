@@ -19,12 +19,16 @@ String CategoricalRand<IntType>::Name() const
 template < typename IntType >
 void CategoricalRand<IntType>::SetProbabilities(std::vector<double> &&probabilities)
 {
-    if (probabilities.size() == 0 || std::accumulate(probabilities.begin(), probabilities.end(), 0.0) != 1.0)
-        throw std::invalid_argument("Categorical distribution: probability parameters should sum to 1");
-    else {
-        prob = std::move(probabilities);
+    if (probabilities.empty())
+        throw std::invalid_argument("Categorical distribution: there should be at least one probability");
+    for (double probability : probabilities) {
+        if (!(probability >= 0.0))
+            throw std::invalid_argument("Categorical distribution: probabilities should be non-negative");
     }
-
+    double sum = std::accumulate(probabilities.begin(), probabilities.end(), 0.0);
+    if (!(std::fabs(sum - 1.0) <= 1e-12 * probabilities.size()))
+        throw std::invalid_argument("Categorical distribution: probability parameters should sum to 1");
+    prob = std::move(probabilities);
     K = prob.size();
 }
 
@@ -97,10 +101,11 @@ IntType CategoricalRand<IntType>::Mode() const
 template < typename IntType >
 IntType CategoricalRand<IntType>::quantileImpl(double p) const
 {
+    /// smallest k with F(k) ≥ p
     double sum = 0.0;
     for (IntType i = 0; i != K; ++i) {
         sum += prob[i];
-        if (RandMath::areClose(sum, p) || sum > p)
+        if (sum >= p)
             return i;
     }
     return K - 1;
@@ -109,13 +114,14 @@ IntType CategoricalRand<IntType>::quantileImpl(double p) const
 template < typename IntType >
 IntType CategoricalRand<IntType>::quantileImpl1m(double p) const
 {
-    double sum = 0;
-    for (IntType i = K - 1; i >= 0; --i) {
-        sum += prob[i];
-        if (RandMath::areClose(sum, p) || sum > p)
-            return i;
+    /// smallest k with S(k) ≤ p, where S(k - 1) = S(k) + P(k)
+    double tail = 0.0;
+    for (IntType k = K - 1; k > 0; --k) {
+        tail += prob[k];
+        if (tail > p)
+            return k;
     }
-    return 0.0;
+    return 0;
 }
 
 template < typename IntType >

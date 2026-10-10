@@ -11,7 +11,9 @@ class RANDLIBSHARED_EXPORT SingularDistribution : public UnivariateDistribution<
 {
 protected:
     SingularDistribution();
+public:
     virtual ~SingularDistribution() {}
+protected:
 
 private:
     double Hazard(const double&) const override;

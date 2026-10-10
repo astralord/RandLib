@@ -16,9 +16,9 @@ String WeibullRand<RealType>::Name() const
 template < typename RealType >
 void WeibullRand<RealType>::SetParameters(double scale, double shape)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Weibull distribution: scale should be positive");
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Weibull distribution: shape should be positive");
     lambda = scale;
     k = shape;

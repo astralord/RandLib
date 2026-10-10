@@ -45,7 +45,9 @@ private:
 
 protected:
     BetaDistribution(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
+public:
     virtual ~BetaDistribution() {}
+protected:
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
@@ -372,13 +374,13 @@ public:
 template < typename RealType = double >
 class RANDLIBSHARED_EXPORT BaldingNicholsRand : public BetaDistribution<RealType>
 {
-    double F = 0.5, p = 0.5;
+    double fixationIndex = 0.5, p = 0.5;
 public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
     String Name() const override;
 
     void SetFixatingIndexAndFrequency(double fixatingIndex, double frequency);
-    inline double GetFixatingIndex() const { return F; }
+    inline double GetFixatingIndex() const { return fixationIndex; }
     inline double GetFrequency() const { return p; }
 };
 

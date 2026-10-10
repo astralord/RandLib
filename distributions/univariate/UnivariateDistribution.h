@@ -19,7 +19,9 @@ class RANDLIBSHARED_EXPORT UnivariateDistribution : public ProbabilityDistributi
 {
 protected:
     UnivariateDistribution();
+public:
     virtual ~UnivariateDistribution() {}
+protected:
 
 public:
     /**

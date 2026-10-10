@@ -141,6 +141,7 @@ HEADERS +=\
     distributions/bivariate/BivariateNormalRand.h \
     distributions/univariate/continuous/DegenerateRand.h \
     distributions/Distributions.h \
+    distributions/Errors.h \
     RandLib.h \
     distributions/univariate/continuous/ExponentiallyModifiedGaussianRand.h \
     distributions/univariate/discrete/NegativeHyperGeometricRand.h \

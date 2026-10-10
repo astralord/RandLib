@@ -17,7 +17,9 @@ class RANDLIBSHARED_EXPORT ContinuousBivariateDistribution : public BivariateDis
 
 protected:
     ContinuousBivariateDistribution() {}
+public:
     virtual ~ContinuousBivariateDistribution() {}
+protected:
 
 public:
     virtual double f(const Pair<RealType> &point) const = 0;

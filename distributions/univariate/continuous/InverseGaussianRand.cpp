@@ -17,9 +17,9 @@ String InverseGaussianRand<RealType>::Name() const
 template < typename RealType >
 void InverseGaussianRand<RealType>::SetParameters(double mean, double shape)
 {
-    if (mean <= 0.0)
+    if (!(mean > 0.0))
         throw std::invalid_argument("Inverse-Gaussian distribution: mean should be positive");
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Inverse-Gaussian distribution: shape should be positive");
     mu = mean;
     lambda = shape;
@@ -54,9 +54,14 @@ double InverseGaussianRand<RealType>::F(const RealType & x) const
         return 0.0;
     double b = std::sqrt(0.5 * lambda / x);
     double a = b * x / mu;
-    double y = std::erfc(b - a);
-    y += cdfCoef * std::erfc(a + b);
-    return 0.5 * y;
+    if (b > a) {
+        /// Lower tail. With 2λ/μ - (a + b)² = -(b - a)² both terms share the factor
+        /// exp(-(b - a)²), so F = exp(-(b - a)²) (erfcx(b - a) + erfcx(a + b)) / 2 neither
+        /// cancels nor overflows
+        double d = b - a;
+        return 0.5 * std::exp(-d * d) * (RandMath::erfcx(d) + RandMath::erfcx(a + b));
+    }
+    return 1.0 - S(x);
 }
 
 template < typename RealType >
@@ -66,9 +71,12 @@ double InverseGaussianRand<RealType>::S(const RealType & x) const
         return 1.0;
     double b = std::sqrt(0.5 * lambda / x);
     double a = b * x / mu;
-    double y = std::erfc(a - b);
-    y -= cdfCoef * std::erfc(a + b);
-    return 0.5 * y;
+    if (a >= b) {
+        /// Upper tail: S = exp(-(a - b)²) (erfcx(a - b) - erfcx(a + b)) / 2, see F
+        double d = a - b;
+        return 0.5 * std::exp(-d * d) * (RandMath::erfcx(d) - RandMath::erfcx(a + b));
+    }
+    return 1.0 - F(x);
 }
 
 template < typename RealType >

@@ -40,6 +40,12 @@ public:
 
     double f(const RealType & x) const override;
     double logf(const RealType & x) const override;
+
+private:
+    double log1pSquareOverDegree(double x0) const;
+    double lowerTail(double x0) const;
+
+public:
     double F(const RealType & x) const override;
     double S(const RealType & x) const override;
     RealType Variate() const override;

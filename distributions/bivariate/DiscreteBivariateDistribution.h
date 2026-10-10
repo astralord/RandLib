@@ -17,7 +17,9 @@ class RANDLIBSHARED_EXPORT DiscreteBivariateDistribution : public BivariateDistr
 
 protected:
     DiscreteBivariateDistribution() {}
+public:
     virtual ~DiscreteBivariateDistribution() {}
+protected:
 
 public:
     virtual double P(const Pair<IntType> &point) const = 0;

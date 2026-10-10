@@ -1,4 +1,6 @@
 #include "DegenerateRand.h"
+#include <algorithm>
+#include <functional>
 
 DegenerateRand::DegenerateRand(double value)
 {
@@ -12,6 +14,8 @@ String DegenerateRand::Name() const
 
 void DegenerateRand::SetValue(double value)
 {
+    if (!std::isfinite(value))
+        throw std::invalid_argument("Degenerate distribution: value should be finite");
     a = value;
 }
 
@@ -89,8 +93,9 @@ long double DegenerateRand::Entropy() const
 
 void DegenerateRand::Fit(const std::vector<double> &sample)
 {
-    auto sampleBegin = sample.begin();
-    if (!std::equal(sampleBegin, sample.end(), sampleBegin))
+    if (sample.empty())
+        throw std::invalid_argument(this->fitErrorDescription(this->TOO_FEW_ELEMENTS, "The sample is empty"));
+    if (std::adjacent_find(sample.begin(), sample.end(), std::not_equal_to<>()) != sample.end())
         throw std::invalid_argument(this->fitErrorDescription(this->WRONG_SAMPLE, "All elements should be equal to each other"));
-    SetValue(*sampleBegin);
+    SetValue(sample.front());
 }

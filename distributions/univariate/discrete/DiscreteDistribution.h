@@ -15,7 +15,9 @@ class RANDLIBSHARED_EXPORT DiscreteDistribution : virtual public UnivariateDistr
 
 protected:
     DiscreteDistribution() {}
+public:
     virtual ~DiscreteDistribution() {}
+protected:
 
 public:
     /**
@@ -56,6 +58,17 @@ protected:
     IntType quantileImpl1m(double p, IntType initValue) const override;
     IntType quantileImpl1m(double p) const override;
     long double ExpectedValue(const std::function<double (IntType)> &funPtr, IntType minPoint, IntType maxPoint) const override;
+    std::complex<double> CFImpl(double t) const override;
+
+private:
+    /**
+     * @fn searchQuantile
+     * Deterministic exponential and binary search over the support
+     * @param p probability in (0, 1)
+     * @param upperTail search for the smallest k with S(k) ≤ p instead of F(k) ≥ p
+     * @return the smallest k with F(k) ≥ p (or S(k) ≤ p)
+     */
+    IntType searchQuantile(double p, bool upperTail) const;
 
 public:
     /**

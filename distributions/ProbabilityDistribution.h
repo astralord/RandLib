@@ -7,6 +7,7 @@
 #include "math/NumericMath.h"
 #include "univariate/BasicRandGenerator.h"
 #include "RandLib_global.h"
+#include "Errors.h"
 
 /**
  * @brief The ProbabilityDistribution class <BR>
@@ -31,7 +32,9 @@ protected:
     String toStringWithPrecision(const double a_value, const int n = 6) const;
 
     ProbabilityDistribution();
+public:
     virtual ~ProbabilityDistribution() {}
+protected:
 
 public:
     /**

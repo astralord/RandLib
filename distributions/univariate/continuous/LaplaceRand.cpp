@@ -18,7 +18,7 @@ void AsymmetricLaplaceDistribution<RealType>::ChangeLocation()
 template < typename RealType >
 void AsymmetricLaplaceDistribution<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Laplace distribution: scale should be positive, but it's equal to "
                                     + std::to_string(scale));
     GeneralGeometricStableDistribution<RealType>::SetScale(scale);
@@ -151,6 +151,59 @@ void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShiftAndScale(const std:
 template class AsymmetricLaplaceDistribution<float>;
 template class AsymmetricLaplaceDistribution<double>;
 template class AsymmetricLaplaceDistribution<long double>;
+
+template < typename RealType >
+String CenteredAsymmetricLaplaceRand<RealType>::Name() const
+{
+    return "Centered Asymmetric-Laplace(" + this->toStringWithPrecision(this->GetScale()) + ", "
+            + this->toStringWithPrecision(this->GetAsymmetry()) + ")";
+}
+
+template < typename RealType >
+DoublePair CenteredAsymmetricLaplaceRand<RealType>::SufficientStatistic(RealType x) const
+{
+    return {std::max<double>(x, 0.0), std::max<double>(-x, 0.0)};
+}
+
+template < typename RealType >
+DoublePair CenteredAsymmetricLaplaceRand<RealType>::SourceParameters() const
+{
+    return {this->GetScale(), this->GetAsymmetry()};
+}
+
+template < typename RealType >
+DoublePair CenteredAsymmetricLaplaceRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
+{
+    double scale = sourceParameters.first, asymmetry = sourceParameters.second;
+    return {-asymmetry / scale, -1.0 / (scale * asymmetry)};
+}
+
+template < typename RealType >
+double CenteredAsymmetricLaplaceRand<RealType>::LogNormalizer(DoublePair theta) const
+{
+    return std::log(-1.0 / theta.first - 1.0 / theta.second);
+}
+
+template < typename RealType >
+DoublePair CenteredAsymmetricLaplaceRand<RealType>::LogNormalizerGradient(DoublePair theta) const
+{
+    double sum = -1.0 / theta.first - 1.0 / theta.second;
+    return {1.0 / (theta.first * theta.first * sum), 1.0 / (theta.second * theta.second * sum)};
+}
+
+template < typename RealType >
+double CenteredAsymmetricLaplaceRand<RealType>::CarrierMeasure(RealType) const
+{
+    return 0.0;
+}
+
+template class CenteredAsymmetricLaplaceRand<float>;
+template class CenteredAsymmetricLaplaceRand<double>;
+template class CenteredAsymmetricLaplaceRand<long double>;
+
+template class ShiftedAsymmetricLaplaceDistribution<float>;
+template class ShiftedAsymmetricLaplaceDistribution<double>;
+template class ShiftedAsymmetricLaplaceDistribution<long double>;
 
 template < typename RealType >
 String AsymmetricLaplaceRand<RealType>::Name() const

@@ -17,9 +17,11 @@ String ExponentiallyModifiedGaussianRand<RealType>::Name() const
 template < typename RealType >
 void ExponentiallyModifiedGaussianRand<RealType>::SetParameters(double location, double variance, double rate)
 {
-    if (variance <= 0)
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Exponentially modified Gaussian distribution: location should be finite");
+    if (!(variance > 0))
         throw std::invalid_argument("Exponentially modified Gaussian distribution: variance should be positive");
-    if (rate <= 0)
+    if (!(rate > 0))
         throw std::invalid_argument("Exponentially modified Gaussian distribution: rate should be positive");
 
     X.SetLocation(location);
@@ -102,7 +104,7 @@ template < typename RealType >
 void ExponentiallyModifiedGaussianRand<RealType>::Reseed(unsigned long seed) const
 {
     X.Reseed(seed);
-    Y.Reseed(seed + 1);
+    Y.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >

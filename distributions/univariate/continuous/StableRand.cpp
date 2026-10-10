@@ -4,7 +4,9 @@
 #include "NormalRand.h"
 #include "UniformRand.h"
 #include "ExponentialRand.h"
+#include <algorithm>
 #include <functional>
+#include <vector>
 
 template < typename RealType >
 StableDistribution<RealType>::StableDistribution(double exponent, double skewness, double scale, double location)
@@ -39,21 +41,26 @@ RealType StableDistribution<RealType>::MaxValue() const
 template < typename RealType >
 void StableDistribution<RealType>::parametersVerification(double exponent, double skewness, double scale)
 {
-    if (exponent < 0.1 || exponent > 2.0)
+    if (!(exponent >= 0.1 && exponent <= 2.0))
         throw std::invalid_argument("Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to "
                                     + std::to_string(exponent));
-    if (std::fabs(skewness) > 1.0)
+    if (!(std::fabs(skewness) <= 1.0))
         throw std::invalid_argument("Stable distribution: skewness should be in the interval [-1, 1], but it's equal to "
                                     + std::to_string(skewness));
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Stable distribution: scale should be positive, but it's equal to "
                                     + std::to_string(scale));
+}
 
-    /// the following errors should be removed in the future
-    if (exponent != 1.0 && std::fabs(exponent - 1.0) < 0.01 && skewness != 0.0)
-        throw std::invalid_argument("Stable distribution: exponent close to 1 with non-zero skewness is not yet supported");
-    if (exponent == 1.0 && skewness != 0.0 && std::fabs(skewness) < 0.01)
-        throw std::invalid_argument("Stable distribution: skewness close to 0 with exponent equal to 1 is not yet supported");
+template < typename RealType >
+void StableDistribution<RealType>::checkDensitySupport() const
+{
+    bool exponentNearOne = alpha != 1.0 && std::fabs(alpha - 1.0) < 0.01 && beta != 0.0;
+    bool skewnessNearZero = alpha == 1.0 && beta != 0.0 && std::fabs(beta) < 0.01;
+    if (exponentNearOne || skewnessNearZero)
+        throw randlib::not_implemented("Stable distribution: the density and distribution function are not yet implemented "
+                                       "for exponent within 0.01 of 1 and non-zero skewness, or for exponent 1 and skewness "
+                                       "within 0.01 of 0; sampling and the characteristic function are available");
 }
 
 template < typename RealType >
@@ -83,7 +90,8 @@ void StableDistribution<RealType>::setParametersForUnityExponent()
     distributionType = UNITY_EXPONENT;
     pdfCoef = 0.5 / (gamma * std::fabs(beta));
     pdftailBound = 0; // not in the use for now
-    logGammaPi_2 = logGamma + randlib::consts::lnpi - randlib::consts::ln2;
+    /// In S1, X = γZ + (2/π)βγ log γ + μ for α = 1, which is where log γ enters
+    logGammaPi_2 = randlib::consts::lnpi - randlib::consts::ln2 - logGamma;
 }
 
 template < typename RealType >
@@ -115,6 +123,8 @@ void StableDistribution<RealType>::setParametersForGeneralExponent()
 template < typename RealType >
 void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Stable distribution: location should be finite");
     parametersVerification(exponent, skewness, scale);
     alpha = exponent;
     alphaInv = 1.0 / alpha;
@@ -202,9 +212,8 @@ double StableDistribution<RealType>::logpdfLevy(RealType x) const
 template < typename RealType >
 double StableDistribution<RealType>::fastpdfExponentiation(double u)
 {
-    if (u > 5 || u < -50)
-        return 0.0;
-    return (u < -25) ? std::exp(u) : std::exp(u - std::exp(u));
+    /// exp(u - exp(u)); for very negative u, exp(u) alone, and for large u it underflows to 0 by itself
+    return (u < -700) ? std::exp(u) : std::exp(u - std::exp(u));
 }
 
 template < typename RealType >
@@ -254,40 +263,66 @@ double StableDistribution<RealType>::integrandForUnityExponent(double theta, dou
 }
 
 template < typename RealType >
+double StableDistribution<RealType>::rootOfMonotone(const std::function<double (double)> &u, double a, double b)
+{
+    /// Bisection on the sign of u, which changes exactly once on (a, b)
+    bool increasing = u(b) > u(a);
+    for (int i = 0; i < 200; ++i) {
+        double middle = 0.5 * (a + b);
+        if (!(middle > a && middle < b))
+            break;
+        bool belowRoot = (u(middle) < 0) == increasing;
+        (belowRoot ? a : b) = middle;
+    }
+    return 0.5 * (a + b);
+}
+
+template < typename RealType >
+double StableDistribution<RealType>::integrateAroundRoot(const std::function<double (double)> &integrand,
+                                                         const std::function<double (double)> &u,
+                                                         double a, double b, double root)
+{
+    /// In the tails the integrand is concentrated in a region of width ~1/|u'(root)| around the
+    /// root of u, which can be far narrower than [a, b]: a quadrature rule over the whole
+    /// interval may not place a single node there. Break the interval at log-spaced distances
+    /// from the root, scaled by that width.
+    double h = 1e-7 * std::max(std::min(root - a, b - root), 1e-300);
+    double slope = (u(root + h) - u(root - h)) / (2 * h);
+    double width = (std::isfinite(slope) && slope != 0.0) ? 1.0 / std::fabs(slope) : b - a;
+    std::vector<double> points = {a, root, b};
+    for (double scale : {1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0, 1000.0}) {
+        points.push_back(root - scale * width);
+        points.push_back(root + scale * width);
+    }
+    std::sort(points.begin(), points.end());
+    double sum = 0.0, left = a;
+    for (double point : points) {
+        if (point <= left || point > b)
+            continue;
+        sum += RandMath::integral(integrand, left, point, 1e-11, 20);
+        left = point;
+    }
+    return sum;
+}
+
+template < typename RealType >
+double StableDistribution<RealType>::peakForUnityExponent(double xAdj) const
+{
+    return rootOfMonotone([this, xAdj] (double theta) { return integrandAuxForUnityExponent(theta, xAdj); },
+                          -randlib::consts::half_pi, randlib::consts::half_pi);
+}
+
+template < typename RealType >
 double StableDistribution<RealType>::pdfForUnityExponent(double x) const
 {
     double xSt = (x - mu) / gamma;
     double xAdj = -randlib::consts::half_pi * xSt / beta - logGammaPi_2;
-
-    /// We squeeze boudaries for extremely sharp integrands
-    double boundary = RandMath::atan(randlib::consts::two_inv_pi * beta * (5.0 - xAdj));
-    double upperBoundary = (beta > 0.0) ? boundary : randlib::consts::half_pi;
-    double lowerBoundary = (beta < 0.0) ? boundary : -randlib::consts::half_pi;
-
-    /// Find peak of the integrand
-    double theta0 = 0;
-    std::function<double (double)> funPtr = std::bind(&StableDistribution<RealType>::integrandAuxForUnityExponent, this, std::placeholders::_1, xAdj);
-    RandMath::findRootNewtonFirstOrder(funPtr, lowerBoundary, upperBoundary, theta0);
-
-    /// Sanity check
-    /// if we failed to find the peak position
-    /// we set it in the middle between boundaries
-    if (theta0 >= upperBoundary || theta0 <= lowerBoundary)
-        theta0 = 0.5 * (upperBoundary + lowerBoundary);
-
-    std::function<double (double)> integrandPtr = std::bind(&StableDistribution<RealType>::integrandForUnityExponent, this, std::placeholders::_1, xAdj);
-
-    /// If theta0 is too close to +/-π/2, we can still underestimate the value of integral
-    int maxRecursionDepth = 11;
-    double closeness = randlib::consts::half_pi - std::fabs(theta0);
-    if (closeness < 0.1)
-        maxRecursionDepth = 20;
-    else if (closeness < 0.2)
-        maxRecursionDepth = 15;
-
-    double int1 = RandMath::integral(integrandPtr, lowerBoundary, theta0, 1e-11, maxRecursionDepth);
-    double int2 = RandMath::integral(integrandPtr, theta0, upperBoundary, 1e-11, maxRecursionDepth);
-    return pdfCoef * (int1 + int2);
+    /// The integrand g exp(-g) with g = exp(u) peaks where u = 0, which approaches ±π/2 in the
+    /// tails; integrating on both sides of the peak lets the quadrature resolve it
+    double theta0 = peakForUnityExponent(xAdj);
+    auto integrand = [this, xAdj] (double theta) { return integrandForUnityExponent(theta, xAdj); };
+    auto u = [this, xAdj] (double theta) { return integrandAuxForUnityExponent(theta, xAdj); };
+    return pdfCoef * integrateAroundRoot(integrand, u, -randlib::consts::half_pi, randlib::consts::half_pi, theta0);
 }
 
 template < typename RealType >
@@ -301,6 +336,17 @@ double StableDistribution<RealType>::pdfShortTailExpansionForGeneralExponent(dou
     double z = (1.0 - 0.5 * alpha) / (alpha - 1) * temp;
     z -= 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + logAlpha + log1mAlpha);
     return std::exp(y + z);
+}
+
+template < typename RealType >
+double StableDistribution<RealType>::cdfShortTailExpansion(double logX) const
+{
+    /// Mass between a totally skewed law (α < 1) and its support boundary at distance x:
+    /// exp(-(1 - α) u) / sqrt(2π α (1 - α) u) with u = (x/α)^(-α/(1-α)), to leading order
+    double logU = alpha / (alpha - 1.0) * (logX - std::log(alpha));
+    double u = std::exp(logU);
+    double y = -(1.0 - alpha) * u - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(alpha) + std::log1p(-alpha) + logU);
+    return std::exp(y);
 }
 
 template < typename RealType >
@@ -522,31 +568,21 @@ double StableDistribution<RealType>::pdfForGeneralExponent(double x) const
 
     /// If x is large enough we use tail approximation
     if (logAbsX > pdftailBound && alpha <= ALMOST_TWO) {
-        if (alpha > 1 && std::fabs(beta) == 1)
+        /// for α > 1 and |β| = 1 only the tail on the side of -β is short; the other one is heavy
+        double skewnessTowardsX = (xSt > 0) ? beta : -beta;
+        if (alpha > 1 && skewnessTowardsX == -1)
             return pdfShortTailExpansionForGeneralExponent(logAbsX);
         return pdfSeriesExpansionAtInf(logAbsX, xiAdj) / gamma;
     }
 
     double xAdj = alpha_alpham1 * logAbsX;
 
-    /// Search for the peak of the integrand
-    double theta0 = 0;
-    std::function<double (double)> funPtr = std::bind(&StableDistribution<RealType>::integrandAuxForGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
-    RandMath::findRootNewtonFirstOrder<double>(funPtr, -xiAdj, randlib::consts::half_pi, theta0);
-
-    /// If theta0 is too close to π/2 or -xiAdj then we can still underestimate the integral
-    int maxRecursionDepth = 11;
-    double closeness = std::min<double>(randlib::consts::half_pi - theta0, theta0 + xiAdj);
-    if (closeness < 0.1)
-        maxRecursionDepth = 20;
-    else if (closeness < 0.2)
-        maxRecursionDepth = 15;
-
-    /// Calculate sum of two integrals
-    std::function<double (double)> integrandPtr = std::bind(&StableDistribution<RealType>::integrandFoGeneralExponent, this, std::placeholders::_1, xAdj, xiAdj);
-    double int1 = RandMath::integral(integrandPtr, -xiAdj, theta0, 1e-11, maxRecursionDepth);
-    double int2 = RandMath::integral(integrandPtr, theta0, randlib::consts::half_pi, 1e-11, maxRecursionDepth);
-    double res = pdfCoef * (int1 + int2) / absXSt;
+    /// Integrate around the peak of the integrand, where its exponent u vanishes
+    auto u = [this, xAdj, xiAdj] (double theta) { return integrandAuxForGeneralExponent(theta, xAdj, xiAdj); };
+    auto integrand = [this, xAdj, xiAdj] (double theta) { return integrandFoGeneralExponent(theta, xAdj, xiAdj); };
+    double theta0 = rootOfMonotone(u, -xiAdj, randlib::consts::half_pi);
+    double integral = integrateAroundRoot(integrand, u, -xiAdj, randlib::consts::half_pi, theta0);
+    double res = pdfCoef * integral / absXSt;
 
     /// Finally we check if α is not too close to 2
     if (alpha <= ALMOST_TWO)
@@ -565,6 +601,7 @@ double StableDistribution<RealType>::pdfForGeneralExponent(double x) const
 template < typename RealType >
 double StableDistribution<RealType>::f(const RealType &x) const
 {
+    checkDensitySupport();
     switch (distributionType) {
     case NORMAL:
         return pdfNormal(x);
@@ -584,6 +621,7 @@ double StableDistribution<RealType>::f(const RealType &x) const
 template < typename RealType >
 double StableDistribution<RealType>::logf(const RealType &x) const
 {
+    checkDensitySupport();
     switch (distributionType) {
     case NORMAL:
         return logpdfNormal(x);
@@ -621,7 +659,8 @@ double StableDistribution<RealType>::cdfCauchy(RealType x) const
 {
     double x0 = x - mu;
     x0 /= gamma;
-    return 0.5 + randlib::consts::inv_pi * RandMath::atan(x0);
+    /// In the lower tail 1/2 + atan(x)/π cancels; atan(-1/x)/π does not
+    return (x0 < -1.0) ? randlib::consts::inv_pi * std::atan(-1.0 / x0) : 0.5 + randlib::consts::inv_pi * std::atan(x0);
 }
 
 template < typename RealType >
@@ -629,7 +668,7 @@ double StableDistribution<RealType>::cdfCauchyCompl(RealType x) const
 {
     double x0 = mu - x;
     x0 /= gamma;
-    return 0.5 + randlib::consts::inv_pi * RandMath::atan(x0);
+    return (x0 < -1.0) ? randlib::consts::inv_pi * std::atan(-1.0 / x0) : 0.5 + randlib::consts::inv_pi * std::atan(x0);
 }
 
 template < typename RealType >
@@ -659,12 +698,14 @@ double StableDistribution<RealType>::cdfLevyCompl(RealType x) const
 template < typename RealType >
 double StableDistribution<RealType>::fastcdfExponentiation(double u)
 {
-    if (u > 5.0)
-        return 0.0;
-    else if (u < -50.0)
-        return 1.0;
-    double y = std::exp(u);
-    return std::exp(-y);
+    /// exp(-exp(u)), which underflows to 0 by itself for large u
+    return std::exp(-std::exp(u));
+}
+
+template < typename RealType >
+double StableDistribution<RealType>::fastccdfExponentiation(double u)
+{
+    return (u > 5.0) ? 1.0 : -std::expm1(-std::exp(u));
 }
 
 template < typename RealType >
@@ -674,17 +715,22 @@ double StableDistribution<RealType>::cdfAtZero(double xiAdj) const
 }
 
 template < typename RealType >
-double StableDistribution<RealType>::cdfForUnityExponent(double x) const
+double StableDistribution<RealType>::cdfForUnityExponent(double x, bool complement) const
 {
+    /// y = (1/π) ∫ exp(-exp(u(θ))) dθ is F for β > 0 and S for β < 0; the complementary
+    /// integrand 1 - exp(-exp(u)) gives the other one without cancellation. The integrand
+    /// switches between 0 and 1 around the root θ0 of u, so integrate on both sides of it.
     double xSt = (x - mu) / gamma;
     double xAdj = -randlib::consts::half_pi * xSt / beta - logGammaPi_2;
-    double y = randlib::consts::inv_pi * RandMath::integral([this, xAdj] (double theta)
+    bool useComplement = complement == (beta > 0);
+    auto integrand = [this, xAdj, useComplement] (double theta)
     {
         double u = integrandAuxForUnityExponent(theta, xAdj);
-        return fastcdfExponentiation(u);
-    },
-    -randlib::consts::half_pi, randlib::consts::half_pi);
-    return (beta > 0) ? y : 1.0 - y;
+        return useComplement ? fastccdfExponentiation(u) : fastcdfExponentiation(u);
+    };
+    double theta0 = peakForUnityExponent(xAdj);
+    auto u = [this, xAdj] (double theta) { return integrandAuxForUnityExponent(theta, xAdj); };
+    return randlib::consts::inv_pi * integrateAroundRoot(integrand, u, -randlib::consts::half_pi, randlib::consts::half_pi, theta0);
 }
 
 template < typename RealType >
@@ -740,49 +786,83 @@ double StableDistribution<RealType>::cdfSeriesExpansionAtInf(double logX, double
 }
 
 template < typename RealType >
-double StableDistribution<RealType>::cdfIntegralRepresentation(double logX, double xiAdj) const
+double StableDistribution<RealType>::cdfIntegralRepresentation(double logX, double xiAdj, bool complement) const
 {
+    /// (1/π) ∫_{-ξ}^{π/2} exp(-exp(u(θ))) dθ, or the same integral of 1 - exp(-exp(u(θ)))
     double xAdj = alpha_alpham1 * logX;
-    return randlib::consts::inv_pi * RandMath::integral([this, xAdj, xiAdj] (double theta)
-    {
-        double u = integrandAuxForGeneralExponent(theta, xAdj, xiAdj);
-        return fastcdfExponentiation(u);
-    },
-    -xiAdj, randlib::consts::half_pi);
+    auto u = [this, xAdj, xiAdj] (double theta) { return integrandAuxForGeneralExponent(theta, xAdj, xiAdj); };
+    auto integrand = [&u, complement] (double theta) {
+        return complement ? fastccdfExponentiation(u(theta)) : fastcdfExponentiation(u(theta));
+    };
+    double theta0 = rootOfMonotone(u, -xiAdj, randlib::consts::half_pi);
+    return randlib::consts::inv_pi * integrateAroundRoot(integrand, u, -xiAdj, randlib::consts::half_pi, theta0);
 }
 
 template < typename RealType >
 double StableDistribution<RealType>::cdfForGeneralExponent(double x) const
 {
     double xSt = (x - mu) / gamma; /// Standardize
-    if (xSt == 0)
+    if (xSt == 0) {
+        /// totally skewed laws with α < 1 start (or end) exactly at μ
+        if (alpha < 1 && std::fabs(beta) == 1)
+            return (beta > 0) ? 0.0 : 1.0;
         return cdfAtZero(xi);
+    }
     if (xSt > 0.0) {
+        if (alpha > 1.0)
+            return 1.0 - ccdfForGeneralExponent(x);
+        /// α < 1: F is small near 0, so compute it directly rather than as 1 - S
+        if (beta == -1.0)
+            return 1.0;
         double logAbsX = std::log(xSt) - omega;
-        /// If x is too close to 0, we do series expansion avoiding numerical problems
-        if (logAbsX < seriesZeroParams.second)
-            return cdfSeriesExpansionAtZero(logAbsX, xi, seriesZeroParams.first);
-        /// If x is large enough we use tail approximation
         if (logAbsX > cdftailBound)
             return 1.0 - cdfSeriesExpansionAtInf(logAbsX, xi);
-        if (alpha > 1.0)
-            return 1.0 - cdfIntegralRepresentation(logAbsX, xi);
-        return (beta == -1.0) ? 1.0 : cdfAtZero(xi) + cdfIntegralRepresentation(logAbsX, xi);
+        if (logAbsX < seriesZeroParams.second)
+            return (beta == 1.0) ? cdfShortTailExpansion(logAbsX) : cdfSeriesExpansionAtZero(logAbsX, xi, seriesZeroParams.first);
+        double atZero = (beta == 1.0) ? 0.0 : cdfAtZero(xi);
+        return atZero + cdfIntegralRepresentation(logAbsX, xi, false);
     }
-    /// For x < 0 we use relation F(-x, xi) + F(x, -xi) = 1
+    /// For x < 0 we use relation F(x, ξ) = S(-x, -ξ)
     double logAbsX = std::log(-xSt) - omega;
-    if (logAbsX < seriesZeroParams.second)
+    if (logAbsX < seriesZeroParams.second) {
+        if (alpha < 1.0 && beta == -1.0)
+            return 1.0 - cdfShortTailExpansion(logAbsX);
         return 1.0 - cdfSeriesExpansionAtZero(logAbsX, -xi, seriesZeroParams.first);
+    }
     if (logAbsX > cdftailBound)
         return cdfSeriesExpansionAtInf(logAbsX, -xi);
     if (alpha > 1.0)
-        return cdfIntegralRepresentation(logAbsX, -xi);
-    return (beta == 1.0) ? 0.0 : cdfAtZero(xi) - cdfIntegralRepresentation(logAbsX, -xi);
+        return cdfIntegralRepresentation(logAbsX, -xi, false);
+    return (beta == 1.0) ? 0.0 : cdfIntegralRepresentation(logAbsX, -xi, true);
+}
+
+template < typename RealType >
+double StableDistribution<RealType>::ccdfForGeneralExponent(double x) const
+{
+    double xSt = (x - mu) / gamma; /// Standardize
+    if (xSt <= 0)
+        return 1.0 - cdfForGeneralExponent(x);
+    double logAbsX = std::log(xSt) - omega;
+    /// If x is too close to 0, we do series expansion avoiding numerical problems
+    if (logAbsX < seriesZeroParams.second) {
+        if (alpha < 1.0 && beta == 1.0)
+            return 1.0 - cdfShortTailExpansion(logAbsX);
+        if (alpha < 1.0 && beta == -1.0)
+            return cdfShortTailExpansion(logAbsX);
+        return 1.0 - cdfSeriesExpansionAtZero(logAbsX, xi, seriesZeroParams.first);
+    }
+    /// If x is large enough we use tail approximation
+    if (logAbsX > cdftailBound)
+        return cdfSeriesExpansionAtInf(logAbsX, xi);
+    if (alpha > 1.0)
+        return cdfIntegralRepresentation(logAbsX, xi, false);
+    return (beta == -1.0) ? 0.0 : cdfIntegralRepresentation(logAbsX, xi, true);
 }
 
 template < typename RealType >
 double StableDistribution<RealType>::F(const RealType &x) const
 {
+    checkDensitySupport();
     switch (distributionType) {
     case NORMAL:
         return cdfNormal(x);
@@ -791,7 +871,7 @@ double StableDistribution<RealType>::F(const RealType &x) const
     case LEVY:
         return (beta > 0) ? cdfLevy(x) : cdfLevyCompl(2 * mu - x);
     case UNITY_EXPONENT:
-        return cdfForUnityExponent(x);
+        return cdfForUnityExponent(x, false);
     case GENERAL:
         return cdfForGeneralExponent(x);
     default:
@@ -802,6 +882,7 @@ double StableDistribution<RealType>::F(const RealType &x) const
 template < typename RealType >
 double StableDistribution<RealType>::S(const RealType & x) const
 {
+    checkDensitySupport();
     switch (distributionType) {
     case NORMAL:
         return cdfNormalCompl(x);
@@ -810,9 +891,9 @@ double StableDistribution<RealType>::S(const RealType & x) const
     case LEVY:
         return (beta > 0) ? cdfLevyCompl(x) : cdfLevy(2 * mu - x);
     case UNITY_EXPONENT:
-        return 1.0 - cdfForUnityExponent(x);
+        return cdfForUnityExponent(x, true);
     case GENERAL:
-        return 1.0 - cdfForGeneralExponent(x);
+        return ccdfForGeneralExponent(x);
     default:
         throw std::runtime_error("Stable distribution: invalid distribution type");
     }
@@ -944,6 +1025,7 @@ long double StableDistribution<RealType>::Variance() const
 template < typename RealType >
 RealType StableDistribution<RealType>::Mode() const
 {
+    checkDensitySupport();
     /// For symmetric and normal distributions mode is μ
     if (beta == 0 || distributionType == NORMAL)
         return mu;
@@ -955,6 +1037,7 @@ RealType StableDistribution<RealType>::Mode() const
 template < typename RealType >
 RealType StableDistribution<RealType>::Median() const
 {
+    checkDensitySupport();
     /// For symmetric and normal distributions mode is μ
     if (beta == 0 || distributionType == NORMAL)
         return mu;
@@ -1014,6 +1097,7 @@ RealType StableDistribution<RealType>::quantileLevy1m(double p) const
 template < typename RealType >
 RealType StableDistribution<RealType>::quantileImpl(double p) const
 {
+    checkDensitySupport();
     switch (distributionType) {
     case NORMAL:
         return quantileNormal(p);
@@ -1029,6 +1113,7 @@ RealType StableDistribution<RealType>::quantileImpl(double p) const
 template < typename RealType >
 RealType StableDistribution<RealType>::quantileImpl1m(double p) const
 {
+    checkDensitySupport();
     switch (distributionType) {
     case NORMAL:
         return quantileNormal1m(p);
@@ -1082,7 +1167,7 @@ std::complex<double> StableDistribution<RealType>::CFImpl(double t) const
         x = beta * randlib::consts::two_inv_pi * std::log(t);
         break;
     default:
-        x = -zeta;
+        x = zeta;
     }
     double re = std::pow(gamma * t, alpha);
     std::complex<double> psi = std::complex<double>(re, re * x - mu * t);

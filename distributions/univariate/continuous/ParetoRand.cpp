@@ -17,7 +17,7 @@ String ParetoRand<RealType>::Name() const
 template < typename RealType >
 void ParetoRand<RealType>::SetShape(double shape)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Pareto distribution: shape should be positive");
     alpha = shape;
     logAlpha = std::log(alpha);
@@ -26,7 +26,7 @@ void ParetoRand<RealType>::SetShape(double shape)
 template < typename RealType >
 void ParetoRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Pareto distribution: scale should be positive");
     sigma = scale;
     logSigma = std::log(sigma);

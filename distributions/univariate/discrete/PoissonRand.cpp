@@ -42,7 +42,7 @@ void PoissonRand<IntType>::SetGeneratorConstants()
 template < typename IntType >
 void PoissonRand<IntType>::SetRate(double rate)
 {
-    if (rate <= 0.0)
+    if (!(rate > 0.0))
         throw std::invalid_argument("Poisson distribution: rate should be positive, but it's equal to " + std::to_string(rate));
     lambda = rate;
 
@@ -237,7 +237,7 @@ template < typename IntType >
 IntType PoissonRand<IntType>::Variate(double rate, RandGenerator &randGenerator)
 {
     /// check validness of parameter
-    if (rate <= 0.0)
+    if (!(rate > 0.0))
         throw std::invalid_argument("Poisson distribution: rate should be positive");
     if (rate > 1000) {
         /// approximate with normal distribution

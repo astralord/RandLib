@@ -16,7 +16,7 @@ String SkellamRand<IntType>::Name() const
 template < typename IntType >
 void SkellamRand<IntType>::SetRates(double rate1, double rate2)
 {
-    if (rate1 <= 0.0 || rate2 <= 0.0)
+    if (!(rate1 > 0.0 && rate2 > 0.0))
         throw std::invalid_argument("Skellam distribution: rates should be positive");
 
     X.SetRate(rate1);
@@ -75,7 +75,7 @@ template < typename IntType >
 void SkellamRand<IntType>::Reseed(unsigned long seed) const
 {
     X.Reseed(seed);
-    Y.Reseed(seed + 1);
+    Y.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename IntType >

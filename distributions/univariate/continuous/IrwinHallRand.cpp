@@ -15,7 +15,7 @@ String IrwinHallRand<RealType>::Name() const
 template < typename RealType >
 void IrwinHallRand<RealType>::SetNumber(int number)
 {
-    if (number <= 0)
+    if (!(number > 0))
         throw std::invalid_argument("Irwin-Hall distribution: number should be positive");
     n = number;
 }

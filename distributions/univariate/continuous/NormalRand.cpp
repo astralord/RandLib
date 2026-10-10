@@ -21,7 +21,7 @@ String NormalRand<RealType>::Name() const
 template < typename RealType >
 void NormalRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Normal distribution: scale should be positive, but it's equal to " + std::to_string(scale));
     sigma = scale;
     StableDistribution<RealType>::SetScale(sigma * randlib::consts::inv_sqrt2);
@@ -30,7 +30,7 @@ void NormalRand<RealType>::SetScale(double scale)
 template < typename RealType >
 void NormalRand<RealType>::SetVariance(double variance)
 {
-    if (variance <= 0.0)
+    if (!(variance > 0.0))
         throw std::invalid_argument("Variance of Normal distribution should be positive, but it's equal to " + std::to_string(variance));
     SetScale(std::sqrt(variance));
 }
@@ -117,31 +117,25 @@ RealType NormalRand<RealType>::StandardVariate(RandGenerator &randGenerator)
     do {
         unsigned long long B = randGenerator.Variate();
         int stairId = B & 255;
+        bool positive = (B >> 8) & 1;
         RealType x = UniformRand<RealType>::StandardVariate(randGenerator) * ziggurat[stairId].second; /// Get horizontal coordinate
         if (x < ziggurat[stairId + 1].second)
-            return ((signed)B > 0) ? x : -x;
+            return positive ? x : -x;
         if (stairId == 0) /// handle the base layer
         {
-            static thread_local RealType z = -1;
-            if (z > 0) /// we don't have to generate another exponential variable as we already have one
-            {
+            /// Marsaglia's method for the tail beyond r: accept x if E > x^2 / 2
+            RealType e = 0;
+            do {
                 x = ExponentialRand<RealType>::StandardVariate(randGenerator) / ziggurat[1].second;
-                z -= 0.5 * x * x;
-            }
-            if (z <= 0) /// if previous generation wasn't successful
-            {
-                do {
-                    x = ExponentialRand<RealType>::StandardVariate(randGenerator) / ziggurat[1].second;
-                    z = ExponentialRand<RealType>::StandardVariate(randGenerator) - 0.5 * x * x; /// we storage this value as after acceptance it becomes exponentially distributed
-                } while (z <= 0);
-            }
+                e = ExponentialRand<RealType>::StandardVariate(randGenerator);
+            } while (e + e <= x * x);
             x += ziggurat[1].second;
-            return ((signed)B > 0) ? x : -x;
+            return positive ? x : -x;
         }
         /// handle the wedges of other stairs
         RealType height = ziggurat[stairId].first - ziggurat[stairId - 1].first;
         if (ziggurat[stairId - 1].first + height * UniformRand<RealType>::StandardVariate(randGenerator) < std::exp(-.5 * x * x))
-            return ((signed)B > 0) ? x : -x;
+            return positive ? x : -x;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     throw std::runtime_error("Normal distribution: sampling failed");
 }
@@ -174,9 +168,13 @@ RealType NormalRand<RealType>::quantileImpl1m(double p) const
 template < typename RealType >
 long double NormalRand<RealType>::Moment(size_t n) const
 {
-    if (n == 0)
-        return 1;
-    return (n & 1) ? std::exp(n * this->GetLogScale() + RandMath::ldfact(n - 1)) : 0.0;
+    /// E[X^n] = Σ_{even k} C(n, k) μ^(n - k) σ^k (k - 1)!!
+    long double sum = 0.0;
+    for (size_t k = 0; k <= n; k += 2) {
+        long double centralMoment = (k == 0) ? 1.0 : std::exp(k * std::log(sigma) + RandMath::ldfact(k - 1));
+        sum += RandMath::binom(n, k) * std::pow(static_cast<long double>(this->mu), static_cast<long double>(n - k)) * centralMoment;
+    }
+    return sum;
 }
 
 template < typename RealType >

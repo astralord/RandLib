@@ -15,7 +15,9 @@ class RANDLIBSHARED_EXPORT ContinuousDistribution : virtual public UnivariateDis
 
 protected:
     ContinuousDistribution() {}
+public:
     virtual ~ContinuousDistribution() {}
+protected:
 
 public:
     /**
@@ -56,6 +58,20 @@ protected:
     RealType quantileImpl1m(double p, RealType initValue) const override;
     RealType quantileImpl1m(double p) const override;
     long double ExpectedValue(const std::function<double (RealType)> &funPtr, RealType minPoint, RealType maxPoint) const override;
+
+private:
+    /**
+     * @fn searchQuantile
+     * Deterministic root search for the quantile: brackets the root, starting from the
+     * guess when it is finite, then refines it with the Illinois variant of regula falsi
+     * (on a logarithmic scale for small p), falling back to bisection whenever the bracket
+     * does not halve. It stops when the bracket cannot shrink in floating point.
+     * @param p probability in (0, 1)
+     * @param upperTail search for S(x) = p instead of F(x) = p
+     * @param guess initial guess, or NaN
+     * @return such x that F(x) = p (or S(x) = p)
+     */
+    RealType searchQuantile(double p, bool upperTail, RealType guess) const;
 
 public:
     double Hazard(const RealType &x) const override;

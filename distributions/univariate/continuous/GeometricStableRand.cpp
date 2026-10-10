@@ -13,10 +13,10 @@ GeneralGeometricStableDistribution<RealType>::GeneralGeometricStableDistribution
 template < typename RealType >
 void GeneralGeometricStableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location, double shift)
 {
-    if (exponent < 0.1 || exponent > 2.0)
+    if (!(exponent >= 0.1 && exponent <= 2.0))
         throw std::invalid_argument("Geometric-Stable distribution: exponent should be inside the interval [0.1, 2], but it's equal to "
                                     + std::to_string(exponent));
-    if (std::fabs(skewness) > 1.0)
+    if (!(std::fabs(skewness) <= 1.0))
         throw std::invalid_argument("Geometric-Stable distribution: skewness should be inside the interval [-1, 1], but it's equal to "
                                     + std::to_string(skewness));
 
@@ -43,19 +43,23 @@ void GeneralGeometricStableDistribution<RealType>::SetParameters(double exponent
 template < typename RealType >
 void GeneralGeometricStableDistribution<RealType>::SetLocation(double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Geometric-Stable distribution: location should be finite");
     mu = location;
 }
 
 template < typename RealType >
 void GeneralGeometricStableDistribution<RealType>::SetShift(double shift)
 {
+    if (!std::isfinite(shift))
+        throw std::invalid_argument("Geometric-Stable distribution: shift should be finite");
     m = shift;
 }
 
 template < typename RealType >
 void GeneralGeometricStableDistribution<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Asymmetric-Laplace distribution: scale should be positive, but it's equal to "
                                     + std::to_string(scale));
     gamma = scale;
@@ -65,7 +69,7 @@ void GeneralGeometricStableDistribution<RealType>::SetScale(double scale)
 template < typename RealType >
 void GeneralGeometricStableDistribution<RealType>::SetAsymmetry(double asymmetry)
 {
-    if (asymmetry <= 0.0)
+    if (!(asymmetry > 0.0))
         throw std::invalid_argument("Asymmetric-Laplace distribution: asymmetry parameter should be positive, but it's equal to "
                                     + std::to_string(asymmetry));
     kappa = asymmetry;
@@ -238,6 +242,17 @@ double GeneralGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
 }
 
 template < typename RealType >
+double GeneralGeometricStableDistribution<RealType>::conditionalShift(double w) const
+{
+    /// Given W = w, Y = S(w) ~ S1(α, β, γ w^(1/α), μ w); for α = 1 the S1 scale family also
+    /// shifts the location by (2/π) β γ w log(γ w)
+    double shift = mu * w;
+    if (distributionType == UNITY_EXPONENT)
+        shift += randlib::consts::two_inv_pi * beta * gamma * w * std::log(gamma * w);
+    return shift;
+}
+
+template < typename RealType >
 double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
 {
     double x0 = x - m;
@@ -274,10 +289,10 @@ double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
             return 0.0;
         double logz = std::log(z);
         double tau = 1.0 / (gamma * std::pow(-logz, alphaInv));
-        double par = tau * (x0 + mu * logz);
+        double par = tau * (x0 - conditionalShift(-logz));
         return tau * Z.f(par);
     },
-    0, 1);
+    0, 1, 1e-13);
 }
 
 template < typename RealType >
@@ -318,12 +333,12 @@ double GeneralGeometricStableDistribution<RealType>::F(const RealType &x) const
 
         double denominator = 1.0 - z;
         double t = z / denominator;
-        double par = x0 - mu * t;
+        double par = x0 - conditionalShift(t);
         par /= std::pow(t, alphaInv) * gamma;
         double y = std::exp(-t) * Z.F(par);
         return y / (denominator * denominator);
     },
-    0, 1);
+    0, 1, 1e-13);
 }
 
 template < typename RealType >
@@ -429,7 +444,8 @@ void GeneralGeometricStableDistribution<RealType>::Sample(std::vector<RealType> 
 template < typename RealType >
 void GeneralGeometricStableDistribution<RealType>::Reseed(unsigned long seed) const
 {
-    Z.Reseed(seed);
+    this->localRandGenerator.Reseed(seed);
+    Z.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >

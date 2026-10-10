@@ -16,9 +16,9 @@ String NoncentralChiSquaredRand<RealType>::Name() const
 template < typename RealType >
 void NoncentralChiSquaredRand<RealType>::SetParameters(double degree, double noncentrality)
 {
-    if (degree <= 0.0)
+    if (!(degree > 0.0))
         throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
-    if (noncentrality <= 0.0)
+    if (!(noncentrality > 0.0))
         throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
 
     k = degree;
@@ -95,9 +95,9 @@ RealType NoncentralChiSquaredRand<RealType>::variateForDegreeEqualOne() const
 template < typename RealType >
 RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double noncentrality, RandGenerator &randGenerator)
 {
-    if (degree <= 0.0)
+    if (!(degree > 0.0))
         throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
-    if (noncentrality <= 0.0)
+    if (!(noncentrality > 0.0))
         throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
 
     if (degree >= 1) {
@@ -142,7 +142,7 @@ template < typename RealType >
 void NoncentralChiSquaredRand<RealType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    Y.Reseed(seed + 1);
+    Y.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >
@@ -160,7 +160,12 @@ long double NoncentralChiSquaredRand<RealType>::Variance() const
 template < typename RealType >
 RealType NoncentralChiSquaredRand<RealType>::Mode() const
 {
-    return (k <= 2) ? 0.0 : ContinuousDistribution<RealType>::Mode();
+    /// For k < 2 the density is unbounded at 0; for k = 2 it is finite there, and the
+    /// maximum moves away from 0 for large enough noncentrality
+    if (k < 2)
+        return 0.0;
+    RealType mode = ContinuousDistribution<RealType>::Mode();
+    return (mode > 0 && this->f(mode) > this->f(0)) ? mode : 0.0;
 }
 
 template < typename RealType >

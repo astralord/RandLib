@@ -15,7 +15,7 @@ String FisherFRand<RealType>::Name() const
 template < typename RealType >
 void FisherFRand<RealType>::SetDegrees(int degree1, int degree2)
 {
-    if (degree1 <= 0 || degree2 <= 0)
+    if (!(degree1 > 0 && degree2 > 0))
         throw std::invalid_argument("F-distribution: degrees of should be positive");
 
     d1 = degree1;

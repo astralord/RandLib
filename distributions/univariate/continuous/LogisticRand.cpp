@@ -16,13 +16,15 @@ String LogisticRand<RealType>::Name() const
 template < typename RealType >
 void LogisticRand<RealType>::SetLocation(double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Logistic distribution: location should be finite");
     mu = location;
 }
 
 template < typename RealType >
 void LogisticRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Logistic distribution: scale of should be positive");
     s = scale;
     logS = std::log(s);
@@ -31,11 +33,10 @@ void LogisticRand<RealType>::SetScale(double scale)
 template < typename RealType >
 double LogisticRand<RealType>::f(const RealType & x) const
 {
-    double numerator = std::exp((mu - x) / s);
-    double denominator = (1 + numerator);
-    denominator *= denominator;
-    denominator *= s;
-    return numerator / denominator;
+    /// symmetric form exp(-|z|) / (1 + exp(-|z|))^2 never overflows
+    double expMinusAbsZ = std::exp(-std::fabs(x - mu) / s);
+    double denominator = 1 + expMinusAbsZ;
+    return expMinusAbsZ / (denominator * denominator * s);
 }
 
 template < typename RealType >

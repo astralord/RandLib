@@ -15,7 +15,9 @@ protected:
     T1 X{}; ///< 1st marginal distributions
     T2 Y{}; ///< 2nd marginal distributions
     BivariateDistribution() {}
+public:
     virtual ~BivariateDistribution() {}
+protected:
 
 public:
     Pair<T> MinValue() const override { return Pair<T>(X.MinValue(), Y.MinValue()); }

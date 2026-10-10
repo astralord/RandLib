@@ -17,7 +17,7 @@ String VonMisesRand<RealType>::Name() const
 template < typename RealType >
 void VonMisesRand<RealType>::SetConcentration(double concentration)
 {
-    if (concentration <= 0.0)
+    if (!(concentration > 0.0))
         throw std::invalid_argument("von Mises distribution: concentration parameter should be positive");
     k = concentration;
     logI0k = RandMath::logBesselI(0, k);
@@ -87,13 +87,13 @@ double VonMisesRand<RealType>::ccdfErfc(RealType x) const
 template < typename RealType >
 double VonMisesRand<RealType>::f(const RealType & x) const
 {
-    return (x < this->loc - randlib::consts::pi || x > this->loc + randlib::consts::pi) ? 0.0 : std::exp(logf(x));
+    return (x < this->MinValue() || x > this->MaxValue()) ? 0.0 : std::exp(logf(x));
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::logf(const RealType & x) const
 {
-    if (x < this->loc - randlib::consts::pi || x > this->loc + randlib::consts::pi)
+    if (x < this->MinValue() || x > this->MaxValue())
         return -INFINITY;
     double y = k * std::cos(x - this->loc) - logI0k;
     y -= randlib::consts::lnpi + randlib::consts::ln2;
@@ -103,24 +103,22 @@ double VonMisesRand<RealType>::logf(const RealType & x) const
 template < typename RealType >
 double VonMisesRand<RealType>::F(const RealType & x) const
 {
-    if (x <= this->loc - randlib::consts::pi)
+    if (x <= this->MinValue())
         return 0.0;
-    if (x >= this->loc + randlib::consts::pi)
+    if (x >= this->MaxValue())
         return 1.0;
     double xAdj = x - this->loc;
-    xAdj -= randlib::consts::two_inv_pi * std::round(0.5 * xAdj / randlib::consts::pi);
     return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::S(const RealType &x) const
 {
-    if (x <= this->loc - randlib::consts::pi)
+    if (x <= this->MinValue())
         return 1.0;
-    if (x >= this->loc + randlib::consts::pi)
+    if (x >= this->MaxValue())
         return 0.0;
     double xAdj = x - this->loc;
-    xAdj -= randlib::consts::two_inv_pi * std::round(0.5 * xAdj / randlib::consts::pi);
     return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
 }
 
@@ -158,6 +156,9 @@ long double VonMisesRand<RealType>::CircularVariance() const
 template < typename RealType >
 std::complex<double> VonMisesRand<RealType>::CFImpl(double t) const
 {
+    /// I_t(κ) / I_0(κ) is the trigonometric moment, which equals E[exp(itX)] only for integer t
+    if (t != std::round(t))
+        return CircularDistribution<RealType>::CFImpl(t);
     double tloc = t * this->loc;
     double cosTloc = std::cos(tloc), sinTloc = std::sin(tloc);
     std::complex<double> y(cosTloc, sinTloc);

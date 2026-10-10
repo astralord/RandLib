@@ -15,7 +15,7 @@ String BetaPrimeRand<RealType>::Name() const
 template < typename RealType >
 void BetaPrimeRand<RealType>::SetShapes(double shape1, double shape2)
 {
-    if (shape1 <= 0 || shape2 <= 0)
+    if (!(shape1 > 0 && shape2 > 0))
         throw std::invalid_argument("Beta-prime distribution: shapes should be positive");
     B.SetShapes(shape1, shape2);
     alpha = B.GetAlpha();
@@ -59,7 +59,11 @@ double BetaPrimeRand<RealType>::F(const RealType & x) const
 template < typename RealType >
 double BetaPrimeRand<RealType>::S(const RealType &x) const
 {
-    return (x > 0) ? B.S(x / (1.0 + x)) : 1;
+    if (x <= 0)
+        return 1;
+    /// I_{1/(1+x)}(β, α) directly: forming x / (1 + x) would round to 1 for large x
+    double y = 1.0 / (1.0 + x);
+    return RandMath::ibeta(y, beta, alpha, GetLogBetaFunction(), -std::log1pl(x), std::log(x) - std::log1pl(x));
 }
 
 template < typename RealType >
@@ -149,15 +153,16 @@ long double BetaPrimeRand<RealType>::ExcessKurtosis() const
 template < typename RealType >
 RealType BetaPrimeRand<RealType>::quantileImpl(double p) const
 {
-    double x = B.Quantile(p);
-    return x / (1.0 - x);
+    /// y / (1 - y) for the beta quantile y is only a guess: it loses accuracy as y → 1
+    double y = B.Quantile(p);
+    return ContinuousDistribution<RealType>::quantileImpl(p, y / (1.0 - y));
 }
 
 template < typename RealType >
 RealType BetaPrimeRand<RealType>::quantileImpl1m(double p) const
 {
-    double x = B.Quantile1m(p);
-    return x / (1.0 - x);
+    double y = B.Quantile1m(p);
+    return ContinuousDistribution<RealType>::quantileImpl1m(p, y / (1.0 - y));
 }
 
 template < typename RealType >

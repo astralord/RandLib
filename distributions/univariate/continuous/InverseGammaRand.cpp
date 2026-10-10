@@ -15,9 +15,9 @@ String InverseGammaRand<RealType>::Name() const
 template < typename RealType >
 void InverseGammaRand<RealType>::SetParameters(double shape, double rate)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Inverse-Gamma distribution: shape should be positive");
-    if (rate <= 0.0)
+    if (!(rate > 0.0))
         throw std::invalid_argument("Inverse-Gamma distribution: rate should be positive");
     X.SetParameters(shape, rate);
     alpha = X.GetShape();

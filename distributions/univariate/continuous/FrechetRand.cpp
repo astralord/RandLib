@@ -18,9 +18,11 @@ String FrechetRand<RealType>::Name() const
 template < typename RealType >
 void FrechetRand<RealType>::SetParameters(double shape, double scale, double location)
 {
-    if (shape <= 0.0)
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Frechet distribution: location should be finite");
+    if (!(shape > 0.0))
         throw std::invalid_argument("Frechet distribution: shape should be positive");
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Frechet distribution: scale should be positive");
     alpha = shape;
     alphaInv = 1.0 / alpha;

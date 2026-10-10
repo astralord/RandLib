@@ -16,7 +16,7 @@ String WrappedExponentialRand<RealType>::Name() const
 template < typename RealType >
 void WrappedExponentialRand<RealType>::SetRate(double rate)
 {
-    if (lambda <= 0.0)
+    if (!(rate > 0.0))
         throw std::invalid_argument("Wrapped Exponential distribution: rate parameter should be positive");
     lambda = rate;
     logLambda = std::log(lambda);
@@ -29,13 +29,13 @@ void WrappedExponentialRand<RealType>::SetRate(double rate)
 template < typename RealType >
 double WrappedExponentialRand<RealType>::f(const RealType &x) const
 {
-    return (x < 0 || x > 2 * randlib::consts::pi) ? 0.0 : std::exp(logf(x));
+    return (x < this->MinValue() || x > this->MaxValue()) ? 0.0 : std::exp(logf(x));
 }
 
 template < typename RealType >
 double WrappedExponentialRand<RealType>::logf(const RealType &x) const
 {
-    return (x < 0 || x > 2 * randlib::consts::pi) ? - INFINITY : logLambda - lambda * x - logpdfCoef;
+    return (x < this->MinValue() || x > this->MaxValue()) ? - INFINITY : logLambda - lambda * x - logpdfCoef;
 }
 
 template < typename RealType >
@@ -43,7 +43,7 @@ double WrappedExponentialRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0.0)
         return 0.0;
-    return (x < 2 * randlib::consts::pi) ? std::exp(RandMath::log1mexp(-lambda * x) - logpdfCoef) : 1.0;
+    return (x < this->MaxValue()) ? std::exp(RandMath::log1mexp(-lambda * x) - logpdfCoef) : 1.0;
 }
 
 template < typename RealType >
@@ -51,7 +51,7 @@ double WrappedExponentialRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
         return 1.0;
-    if (x >= 2 * randlib::consts::pi)
+    if (x >= this->MaxValue())
         return 0.0;
     double y = std::expm1l(scaledLambda - lambda * x);
     y /= pdfCoef;
@@ -73,7 +73,7 @@ long double WrappedExponentialRand<RealType>::CircularMean() const
 template < typename RealType >
 long double WrappedExponentialRand<RealType>::CircularVariance() const
 {
-    return 1.0 - 1.0 / std::sqrt(1.0 + lambda * lambda);
+    return 1.0 - lambda / std::sqrt(1.0 + lambda * lambda);
 }
 
 template < typename RealType >
@@ -103,8 +103,13 @@ RealType WrappedExponentialRand<RealType>::quantileImpl1m(double p) const
 template < typename RealType >
 std::complex<double> WrappedExponentialRand<RealType>::CFImpl(double t) const
 {
-    double temp = t / lambda;
-    double coef = 1.0 / (1.0 + temp * temp);
-    return std::complex<double>(coef, temp * coef);
+    /// φ(t) = λ (1 - e^{2π(it - λ)}) / ((λ - it)(1 - e^{-2πλ})), which reduces to λ / (λ - it) for integer t
+    std::complex<double> lambdaMinusIt(lambda, -t);
+    std::complex<double> wrap = 1.0 - std::exp(-lambdaMinusIt * static_cast<double>(2 * randlib::consts::pi));
+    return lambda * wrap / (lambdaMinusIt * pdfCoef);
 }
 
+
+template class WrappedExponentialRand<float>;
+template class WrappedExponentialRand<double>;
+template class WrappedExponentialRand<long double>;

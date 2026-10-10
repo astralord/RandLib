@@ -17,10 +17,10 @@ String ZipfRand<IntType>::Name() const
 template < typename IntType >
 void ZipfRand<IntType>::SetParameters(double exponent, IntType number)
 {
-    if (exponent <= 1.0)
+    if (!(exponent > 1.0))
         throw std::invalid_argument("Zipf distribution: exponent should be greater than 1, but it's equal to "
                                     + std::to_string(exponent));
-    if (number <= 0)
+    if (!(number > 0))
         throw std::invalid_argument("Zipf distribution: number should be positive, but it's equal to "
                                     + std::to_string(number));
     s = exponent;

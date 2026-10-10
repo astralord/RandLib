@@ -17,13 +17,15 @@ String GumbelRand<RealType>::Name() const
 template < typename RealType >
 void GumbelRand<RealType>::SetLocation(double location)
 {
+    if (!std::isfinite(location))
+        throw std::invalid_argument("Gumbel distribution: location should be finite");
     mu = location;
 }
 
 template < typename RealType >
 void GumbelRand<RealType>::SetScale(double scale)
 {
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Gumbel distribution: scale should be positive");
     beta = scale;
     logBeta = std::log(beta);

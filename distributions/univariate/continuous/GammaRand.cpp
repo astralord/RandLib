@@ -12,9 +12,9 @@ GammaDistribution<RealType>::GammaDistribution(double shape, double rate)
 template < typename RealType >
 void GammaDistribution<RealType>::SetParameters(double shape, double rate)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Gamma distribution: shape should be positive, but it's equal to " + std::to_string(shape));
-    if (rate <= 0.0)
+    if (!(rate > 0.0))
         throw std::invalid_argument("Gamma distribution: rate should be positive, but it's equal to " + std::to_string(rate));
 
     this->alpha = shape > 0 ? shape : 1.0;
@@ -204,7 +204,7 @@ RealType GammaDistribution<RealType>::variateMarsagliaTsang(double shape, RandGe
 template < typename RealType >
 RealType GammaDistribution<RealType>::StandardVariate(double shape, RandGenerator& randGenerator)
 {
-    if (shape <= 0)
+    if (!(shape > 0))
         throw std::invalid_argument("Gamma distribution: shape should be positive");
 
     GENERATOR_ID genId = getIdOfUsedGenerator(shape);
@@ -228,9 +228,9 @@ RealType GammaDistribution<RealType>::StandardVariate(double shape, RandGenerato
 template < typename RealType >
 RealType GammaDistribution<RealType>::Variate(double shape, double rate, RandGenerator& randGenerator)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Gamma distribution: shape should be positive");
-    if (rate <= 0.0)
+    if (!(rate > 0.0))
         throw std::invalid_argument("Gamma distribution: rate should be positive");
     return StandardVariate(shape, randGenerator) / rate;
 }
@@ -479,32 +479,7 @@ double GammaDistribution<RealType>::dfDivf(RealType x) const
 template < typename RealType >
 RealType GammaDistribution<RealType>::quantileImpl(double p, RealType initValue) const
 {
-    if (p < 1e-5) { /// too small p
-        double logP = std::log(p);
-        if (!RandMath::findRootNewtonSecondOrder<RealType>([this, logP] (double x)
-        {
-            if (x <= 0)
-               return DoubleTriplet(-INFINITY, 0, 0);
-            double logCdf = logF(x), logPdf = logf(x);
-            double first = logCdf - logP;
-            double second = std::exp(logPdf - logCdf);
-            double third = second * (dfDivf(x) - second);
-            return DoubleTriplet(first, second, third);
-        }, initValue))
-            throw std::runtime_error("Gamma distribution: failure in numeric procedure");
-        return initValue;
-    }
-    if (!RandMath::findRootNewtonSecondOrder<RealType>([this, p] (double x)
-    {
-        if (x <= 0)
-            return DoubleTriplet(-p, 0, 0);
-        double first = F(x) - p;
-        double second = f(x);
-        double third = df(x);
-        return DoubleTriplet(first, second, third);
-    }, initValue))
-        throw std::runtime_error("Gamma distribution: failure in numeric procedure");
-    return initValue;
+    return ContinuousDistribution<RealType>::quantileImpl(p, initValue);
 }
 
 template < typename RealType >
@@ -516,32 +491,7 @@ RealType GammaDistribution<RealType>::quantileImpl(double p) const
 template < typename RealType >
 RealType GammaDistribution<RealType>::quantileImpl1m(double p, RealType initValue) const
 {
-    if (p < 1e-5) { /// too small p
-        double logP = std::log(p);
-        if (!RandMath::findRootNewtonSecondOrder<RealType>([this, logP] (double x)
-        {
-           if (x <= 0)
-               return DoubleTriplet(logP, 0, 0);
-            double logCcdf = logS(x), logPdf = logf(x);
-            double first = logP - logCcdf;
-            double second = std::exp(logPdf - logCcdf);
-            double third = second * (dfDivf(x) + second);
-            return DoubleTriplet(first, second, third);
-        }, initValue))
-            throw std::runtime_error("Gamma distribution: failure in numeric procedure");
-        return initValue;
-    }
-    if (!RandMath::findRootNewtonSecondOrder<RealType>([this, p] (double x)
-    {
-        if (x <= 0)
-            return DoubleTriplet(p - 1.0, 0, 0);
-        double first = p - S(x);
-        double second = f(x);
-        double third = df(x);
-        return DoubleTriplet(first, second, third);
-    }, initValue))
-        throw std::runtime_error("Gamma distribution: failure in numeric procedure");
-    return initValue;
+    return ContinuousDistribution<RealType>::quantileImpl1m(p, initValue);
 }
 
 template < typename RealType >

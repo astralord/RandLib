@@ -56,6 +56,17 @@ class RANDLIBSHARED_EXPORT CenteredAsymmetricLaplaceRand : public AsymmetricLapl
 public:
     CenteredAsymmetricLaplaceRand(double scale = 1, double asymmetry = 1) :
         AsymmetricLaplaceDistribution<RealType>(0.0, scale, asymmetry) {}
+    String Name() const override;
+
+    using GeneralGeometricStableDistribution<RealType>::SetAsymmetry;
+
+    /// Sufficient statistic (max(x, 0), max(-x, 0)) with natural parameters (-κ/γ, -1/(γκ))
+    DoublePair SufficientStatistic(RealType x) const override;
+    DoublePair SourceParameters() const override;
+    DoublePair SourceToNatural(DoublePair sourceParameters) const override;
+    double LogNormalizer(DoublePair theta) const override;
+    DoublePair LogNormalizerGradient(DoublePair theta) const override;
+    double CarrierMeasure(RealType) const override;
 };
 
 

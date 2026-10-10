@@ -15,9 +15,9 @@ String PlanckRand<RealType>::Name() const
 template < typename RealType >
 void PlanckRand<RealType>::SetParameters(double shape, double scale)
 {
-    if (shape <= 0.0)
+    if (!(shape > 0.0))
         throw std::invalid_argument("Planck distribution: shape should be positive, but it's equal to " + std::to_string(shape));
-    if (scale <= 0.0)
+    if (!(scale > 0.0))
         throw std::invalid_argument("Planck distribution: scale should be positive, but it's equal to " + std::to_string(scale));
     a = shape;
     b = scale;
@@ -100,6 +100,13 @@ double PlanckRand<RealType>::F(const RealType &x) const
     },
     0, x);
     return integral1 + integral2;
+}
+
+template < typename RealType >
+void PlanckRand<RealType>::Reseed(unsigned long seed) const
+{
+    G.Reseed(seed);
+    Z.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template < typename RealType >

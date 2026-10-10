@@ -35,6 +35,7 @@ public:
     RealType MaxValue() const override { return INFINITY; }
 
     void SetParameters(double shape, double scale);
+    void Reseed(unsigned long seed) const override;
     inline double GetShape() const { return a; }
     inline double GetScale() const { return b; }
 

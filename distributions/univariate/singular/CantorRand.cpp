@@ -104,7 +104,7 @@ std::complex<double> CantorRand::CFImpl(double t) const
 {
     double prod = 1.0;
     for (int i = 0; i != n; ++i)
-        prod *= std::cos(table[i]);
+        prod *= std::cos(t * table[i]);
     std::complex<double> y(0.0, 0.5 * t);
     y = std::exp(y);
     return y * prod;

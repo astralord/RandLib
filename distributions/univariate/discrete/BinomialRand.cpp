@@ -79,9 +79,9 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
 template< typename IntType >
 void BinomialDistribution<IntType>::SetParameters(IntType number, double probability)
 {
-    if (probability < 0.0 || probability > 1.0)
+    if (!(probability >= 0.0 && probability <= 1.0))
         throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1]");
-    if (number <= 0)
+    if (!(number > 0))
         throw std::invalid_argument("Binomial distribution: number should be positive");
     n = number;
     p = probability;
@@ -343,10 +343,10 @@ template< typename IntType >
 IntType BinomialDistribution<IntType>::Variate(IntType number, double probability, RandGenerator &randGenerator)
 {
     /// sanity check
-    if (number < 0)
+    if (!(number >= 0))
         throw std::invalid_argument("Binomial distribution: number should be positive, but it's equal to "
                                     + std::to_string(number));
-    if (probability < 0.0 || probability > 1.0)
+    if (!(probability >= 0.0 && probability <= 1.0))
         throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1], but it's equal to "
                                     + std::to_string(probability));
     if (probability == 0.0)
@@ -415,7 +415,7 @@ template< typename IntType >
 void BinomialDistribution<IntType>::Reseed(unsigned long seed) const
 {
     this->localRandGenerator.Reseed(seed);
-    G.Reseed(seed);
+    G.Reseed(RandEngine::DeriveSeed(seed, 1));
 }
 
 template< typename IntType >
@@ -433,7 +433,9 @@ long double BinomialDistribution<IntType>::Variance() const
 template< typename IntType >
 IntType BinomialDistribution<IntType>::Median() const
 {
-    return std::floor(np);
+    /// The median is floor(np) or ceil(np)
+    IntType lower = std::floor(np);
+    return (this->F(lower) >= 0.5) ? lower : lower + 1;
 }
 
 template< typename IntType >
