@@ -1,0 +1,185 @@
+case,function,arg,value,status
+"ArcsineRand(0.5)",__ctor__,,0,ok
+"ArcsineRand(0.5)",Name,,"Arcsine(0.5, 0, 1)",ok
+"ArcsineRand(0.5)",MinValue,,0,ok
+"ArcsineRand(0.5)",MaxValue,,1,ok
+"ArcsineRand(0.5)",Mean,,0.5,ok
+"ArcsineRand(0.5)",Variance,,0.125,ok
+"ArcsineRand(0.5)",Skewness,,0,ok
+"ArcsineRand(0.5)",ExcessKurtosis,,-1.5,ok
+"ArcsineRand(0.5)",Median,,0.5,ok
+"ArcsineRand(0.5)",Mode,,0,ok
+"ArcsineRand(0.5)",f,-1,0,ok
+"ArcsineRand(0.5)",logf,-1,-inf,ok
+"ArcsineRand(0.5)",F,-1,0,ok
+"ArcsineRand(0.5)",S,-1,1,ok
+"ArcsineRand(0.5)",f,0,inf,ok
+"ArcsineRand(0.5)",logf,0,inf,ok
+"ArcsineRand(0.5)",F,0,0,ok
+"ArcsineRand(0.5)",S,0,1,ok
+"ArcsineRand(0.5)",f,1.1829999999999999e-06,292.6563904915688,ok
+"ArcsineRand(0.5)",logf,1.1829999999999999e-06,5.6789991921349623,ok
+"ArcsineRand(0.5)",F,1.1829999999999999e-06,0.00069242474685665613,ok
+"ArcsineRand(0.5)",S,1.1829999999999999e-06,0.9993075752531434,ok
+"ArcsineRand(0.5)",f,0.00021210000000000001,21.858776767146065,ok
+"ArcsineRand(0.5)",logf,0.00021210000000000001,3.0846025235956116,ok
+"ArcsineRand(0.5)",F,0.00021210000000000001,0.0092718374837359643,ok
+"ArcsineRand(0.5)",S,0.00021210000000000001,0.99072816251626405,ok
+"ArcsineRand(0.5)",f,0.0060470000000000003,4.1057945941619476,ok
+"ArcsineRand(0.5)",logf,0.0060470000000000003,1.4123992915689734,ok
+"ArcsineRand(0.5)",F,0.0060470000000000003,0.049555147991350711,ok
+"ArcsineRand(0.5)",S,0.0060470000000000003,0.95044485200864937,ok
+"ArcsineRand(0.5)",f,0.023949999999999999,2.0819070484928477,ok
+"ArcsineRand(0.5)",logf,0.023949999999999999,0.73328432389972331,ok
+"ArcsineRand(0.5)",F,0.023949999999999999,0.098919489947358441,ok
+"ArcsineRand(0.5)",S,0.023949999999999999,0.90108051005264156,ok
+"ArcsineRand(0.5)",f,0.14810000000000001,0.89614500601729674,ok
+"ArcsineRand(0.5)",logf,0.14810000000000001,-0.1096530420285371,ok
+"ArcsineRand(0.5)",F,0.14810000000000001,0.25148511542456597,ok
+"ArcsineRand(0.5)",S,0.14810000000000001,0.74851488457543414,ok
+"ArcsineRand(0.5)",f,0.50029999999999997,0.63661988695917138,ok
+"ArcsineRand(0.5)",logf,0.50029999999999997,-0.45158252528942244,ok
+"ArcsineRand(0.5)",F,0.50029999999999997,0.50019098594316946,ok
+"ArcsineRand(0.5)",S,0.50029999999999997,0.49980901405683059,ok
+"ArcsineRand(0.5)",f,0.85389999999999999,0.9012006837602351,ok
+"ArcsineRand(0.5)",logf,0.85389999999999999,-0.10402731170237023,ok
+"ArcsineRand(0.5)",F,0.85389999999999999,0.75031221126900605,ok
+"ArcsineRand(0.5)",S,0.85389999999999999,0.24968778873099406,ok
+"ArcsineRand(0.5)",f,0.97640000000000005,2.0969121709608354,ok
+"ArcsineRand(0.5)",logf,0.97640000000000005,0.74046586785755308,ok
+"ArcsineRand(0.5)",F,0.97640000000000005,0.90181179366544684,ok
+"ArcsineRand(0.5)",S,0.97640000000000005,0.098188206334553274,ok
+"ArcsineRand(0.5)",f,0.99429999999999996,4.2281849862828258,ok
+"ArcsineRand(0.5)",logf,0.99429999999999996,1.4417728197194675,ok
+"ArcsineRand(0.5)",F,0.99429999999999996,0.95189048313396085,ok
+"ArcsineRand(0.5)",S,0.99429999999999996,0.048109516866039204,ok
+"ArcsineRand(0.5)",f,0.99980000000000002,22.510159032394181,ok
+"ArcsineRand(0.5)",logf,0.99980000000000002,3.1139667198601071,ok
+"ArcsineRand(0.5)",F,0.99980000000000002,0.9909965367059802,ok
+"ArcsineRand(0.5)",S,0.99980000000000002,0.0090034632940198082,ok
+"ArcsineRand(0.5)",f,1,inf,ok
+"ArcsineRand(0.5)",logf,1,inf,ok
+"ArcsineRand(0.5)",F,1,1,ok
+"ArcsineRand(0.5)",S,1,0,ok
+"ArcsineRand(0.5)",f,2,0,ok
+"ArcsineRand(0.5)",logf,2,-inf,ok
+"ArcsineRand(0.5)",F,2,1,ok
+"ArcsineRand(0.5)",S,2,0,ok
+"ArcsineRand(0.5)",Quantile,1e-10,2.4674011002723397e-20,ok
+"ArcsineRand(0.5)",Quantile1m,1e-10,1,ok
+"ArcsineRand(0.5)",Quantile,9.9999999999999995e-07,2.4674011002703099e-12,ok
+"ArcsineRand(0.5)",Quantile1m,9.9999999999999995e-07,0.99999999999753264,ok
+"ArcsineRand(0.5)",Quantile,0.001,2.4673990709169446e-06,ok
+"ArcsineRand(0.5)",Quantile1m,0.001,0.99999753260092905,ok
+"ArcsineRand(0.5)",Quantile,0.050000000000000003,0.0061558297024311365,ok
+"ArcsineRand(0.5)",Quantile1m,0.050000000000000003,0.99384417029756889,ok
+"ArcsineRand(0.5)",Quantile,0.29999999999999999,0.2061073738537634,ok
+"ArcsineRand(0.5)",Quantile1m,0.29999999999999999,0.79389262614623668,ok
+"ArcsineRand(0.5)",Quantile,0.5,0.49999999999999989,ok
+"ArcsineRand(0.5)",Quantile1m,0.5,0.50000000000000011,ok
+"ArcsineRand(0.5)",Quantile,0.69999999999999996,0.79389262614623646,ok
+"ArcsineRand(0.5)",Quantile1m,0.69999999999999996,0.20610737385376346,ok
+"ArcsineRand(0.5)",Quantile,0.94999999999999996,0.99384417029756889,ok
+"ArcsineRand(0.5)",Quantile1m,0.94999999999999996,0.0061558297024311452,ok
+"ArcsineRand(0.5)",Quantile,0.999,0.99999753260092905,ok
+"ArcsineRand(0.5)",Quantile1m,0.999,2.4673990709168294e-06,ok
+"ArcsineRand(0.5)",Quantile,0.99999899999999997,0.99999999999753264,ok
+"ArcsineRand(0.5)",Quantile1m,0.99999899999999997,2.4674011004428381e-12,ok
+"ArcsineRand(0.5)",CF_re,0.10000000000000001,0.99812613878055523,ok
+"ArcsineRand(0.5)",CF_im,0.10000000000000001,0.049947935627377114,ok
+"ArcsineRand(0.5)",CF_re,0.5,0.95383219480990256,ok
+"ArcsineRand(0.5)",CF_im,0.5,0.24355333733072304,ok
+"ArcsineRand(0.5)",CF_re,1,0.82358471897649799,ok
+"ArcsineRand(0.5)",CF_im,1,0.44992636585505136,ok
+"ArcsineRand(0.5)",CF_re,2,0.41343804050487459,ok
+"ArcsineRand(0.5)",CF_im,2,0.64389155028538048,ok
+"ArcsineRand(0.5)",CF_re,5,0.038762511302624737,ok
+"ArcsineRand(0.5)",CF_im,5,-0.028956437378063679,ok
+"ArcsineRand(0.3, -1, 3)",__ctor__,,0,ok
+"ArcsineRand(0.3, -1, 3)",Name,,"Arcsine(0.3, -1, 3)",ok
+"ArcsineRand(0.3, -1, 3)",MinValue,,-1,ok
+"ArcsineRand(0.3, -1, 3)",MaxValue,,3,ok
+"ArcsineRand(0.3, -1, 3)",Mean,,1.7999999999999998,ok
+"ArcsineRand(0.3, -1, 3)",Variance,,1.6799999999999999,ok
+"ArcsineRand(0.3, -1, 3)",Skewness,,-0.8229511997978235,ok
+"ArcsineRand(0.3, -1, 3)",ExcessKurtosis,,-0.73809523809523825,ok
+"ArcsineRand(0.3, -1, 3)",Median,,2.3649012458083662,ok
+"ArcsineRand(0.3, -1, 3)",Mode,,3,ok
+"ArcsineRand(0.3, -1, 3)",f,-2,0,ok
+"ArcsineRand(0.3, -1, 3)",logf,-2,-inf,ok
+"ArcsineRand(0.3, -1, 3)",F,-2,0,ok
+"ArcsineRand(0.3, -1, 3)",S,-2,1,ok
+"ArcsineRand(0.3, -1, 3)",f,-1,inf,ok
+"ArcsineRand(0.3, -1, 3)",logf,-1,inf,ok
+"ArcsineRand(0.3, -1, 3)",F,-1,0,ok
+"ArcsineRand(0.3, -1, 3)",S,-1,1,ok
+"ArcsineRand(0.3, -1, 3)",f,-0.99929999999999997,0.86275914560103806,ok
+"ArcsineRand(0.3, -1, 3)",logf,-0.99929999999999997,-0.14761971653741823,ok
+"ArcsineRand(0.3, -1, 3)",F,-0.99929999999999997,0.00086269697216217914,ok
+"ArcsineRand(0.3, -1, 3)",S,-0.99929999999999997,0.99913730302783776,ok
+"ArcsineRand(0.3, -1, 3)",f,-0.97360000000000002,0.29167398211544981,ok
+"ArcsineRand(0.3, -1, 3)",logf,-0.97360000000000002,-1.2321186000684838,ok
+"ArcsineRand(0.3, -1, 3)",F,-0.97360000000000002,0.010970307691337187,ok
+"ArcsineRand(0.3, -1, 3)",S,-0.97360000000000002,0.98902969230866289,ok
+"ArcsineRand(0.3, -1, 3)",f,-0.7853,0.16091181935531879,ok
+"ArcsineRand(0.3, -1, 3)",logf,-0.7853,-1.8268987699109076,ok
+"ArcsineRand(0.3, -1, 3)",F,-0.7853,0.048240822632653127,ok
+"ArcsineRand(0.3, -1, 3)",S,-0.7853,0.95175917736734683,ok
+"ArcsineRand(0.3, -1, 3)",f,-0.43120000000000003,0.1286789985460228,ok
+"ArcsineRand(0.3, -1, 3)",logf,-0.43120000000000003,-2.0504343591561836,ok
+"ArcsineRand(0.3, -1, 3)",F,-0.43120000000000003,0.098088801680474846,ok
+"ArcsineRand(0.3, -1, 3)",S,-0.43120000000000003,0.90191119831952515,ok
+"ArcsineRand(0.3, -1, 3)",f,0.80740000000000001,0.12445716433128259,ok
+"ArcsineRand(0.3, -1, 3)",logf,0.80740000000000001,-2.0837936838762694,ok
+"ArcsineRand(0.3, -1, 3)",F,0.80740000000000001,0.24806432717341997,ok
+"ArcsineRand(0.3, -1, 3)",S,0.80740000000000001,0.75193567282658003,ok
+"ArcsineRand(0.3, -1, 3)",f,2.3439999999999999,0.24082147036187646,ok
+"ArcsineRand(0.3, -1, 3)",logf,2.3439999999999999,-1.423699406889845,ok
+"ArcsineRand(0.3, -1, 3)",F,2.3439999999999999,0.49491414064697903,ok
+"ArcsineRand(0.3, -1, 3)",S,2.3439999999999999,0.50508585935302097,ok
+"ArcsineRand(0.3, -1, 3)",f,2.9369999999999998,1.1822784208434616,ok
+"ArcsineRand(0.3, -1, 3)",logf,2.9369999999999998,0.16744344187519888,ok
+"ArcsineRand(0.3, -1, 3)",F,2.9369999999999998,0.75263016746132205,ok
+"ArcsineRand(0.3, -1, 3)",S,2.9369999999999998,0.24736983253867792,ok
+"ArcsineRand(0.3, -1, 3)",f,2.9969999999999999,9.9152267187791523,ok
+"ArcsineRand(0.3, -1, 3)",logf,2.9969999999999999,2.2940716279512943,ok
+"ArcsineRand(0.3, -1, 3)",F,2.9969999999999999,0.90086489938003889,ok
+"ArcsineRand(0.3, -1, 3)",S,2.9969999999999999,0.099135100619961142,ok
+"ArcsineRand(0.3, -1, 3)",f,3,inf,ok
+"ArcsineRand(0.3, -1, 3)",logf,3,inf,ok
+"ArcsineRand(0.3, -1, 3)",F,3,1,ok
+"ArcsineRand(0.3, -1, 3)",S,3,0,ok
+"ArcsineRand(0.3, -1, 3)",f,4,0,ok
+"ArcsineRand(0.3, -1, 3)",logf,4,-inf,ok
+"ArcsineRand(0.3, -1, 3)",F,4,1,ok
+"ArcsineRand(0.3, -1, 3)",S,4,0,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,1e-10,-0.99999999999991351,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,1e-10,2.9999999999999996,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,9.9999999999999995e-07,-0.99999995522391827,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,9.9999999999999995e-07,2.9999999999999996,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.001,-0.99913558602826535,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.001,3,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.050000000000000003,-0.77429572390296975,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.050000000000000003,2.9996935704758849,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.29999999999999999,1.2092866443533812,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.29999999999999999,2.8805591370940364,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.5,2.3649012458083662,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.5,2.3649012458083662,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.69999999999999996,2.8805591370940364,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.69999999999999996,1.2092866443533816,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.94999999999999996,2.9996935704758849,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.94999999999999996,-0.77429572390296986,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.999,3,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.999,-0.99913558602826547,ok
+"ArcsineRand(0.3, -1, 3)",Quantile,0.99999899999999997,3,ok
+"ArcsineRand(0.3, -1, 3)",Quantile1m,0.99999899999999997,-0.9999999552107951,ok
+"ArcsineRand(0.3, -1, 3)",CF_re,0.10000000000000001,0.97555222078444614,ok
+"ArcsineRand(0.3, -1, 3)",CF_im,0.10000000000000001,0.1778233312748253,ok
+"ArcsineRand(0.3, -1, 3)",CF_re,0.5,0.47424777192218814,ok
+"ArcsineRand(0.3, -1, 3)",CF_im,0.5,0.65245426211528523,ok
+"ArcsineRand(0.3, -1, 3)",CF_re,1,-0.28740820425217739,ok
+"ArcsineRand(0.3, -1, 3)",CF_im,1,0.32547981262001635,ok
+"ArcsineRand(0.3, -1, 3)",CF_re,2,0.3488997633098766,ok
+"ArcsineRand(0.3, -1, 3)",CF_im,2,-0.34339656133339225,ok
+"ArcsineRand(0.3, -1, 3)",CF_re,5,-0.14880290204638699,ok
+"ArcsineRand(0.3, -1, 3)",CF_im,5,0.31783101587854895,ok
