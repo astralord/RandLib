@@ -1,0 +1,168 @@
+// Invalid parameters throw std::invalid_argument, both out-of-range values and NaN.
+
+#include <catch2/catch_test_macros.hpp>
+
+#include "RandLib.h"
+
+#include <cmath>
+#include <functional>
+#include <string>
+#include <vector>
+
+namespace
+{
+
+struct Invalid
+{
+    std::string description;
+    std::function<void()> construct;
+};
+
+#define RL_INVALID(T, ...) {#T "(" #__VA_ARGS__ ")", [] { T d(__VA_ARGS__); (void)d; }},
+
+const double nan = std::nan("");
+
+const std::vector<Invalid> INVALID = {
+    RL_INVALID(NormalRand<>, 0, 0)
+    RL_INVALID(NormalRand<>, 0, -1)
+    RL_INVALID(NormalRand<>, 0, nan)
+    RL_INVALID(NormalRand<>, nan, 1)
+    RL_INVALID(LogNormalRand<>, 0, 0)
+    RL_INVALID(LogNormalRand<>, 0, nan)
+    RL_INVALID(ExponentialRand<>, 0)
+    RL_INVALID(ExponentialRand<>, -1)
+    RL_INVALID(ExponentialRand<>, nan)
+    RL_INVALID(GammaRand<>, 0, 1)
+    RL_INVALID(GammaRand<>, -1, 1)
+    RL_INVALID(GammaRand<>, 1, 0)
+    RL_INVALID(GammaRand<>, nan, 1)
+    RL_INVALID(GammaRand<>, 1, nan)
+    RL_INVALID(ChiSquaredRand<>, 0)
+    RL_INVALID(ErlangRand<>, 0, 1)
+    RL_INVALID(ErlangRand<>, 2, 0)
+    RL_INVALID(BetaRand<>, 0, 1)
+    RL_INVALID(BetaRand<>, 1, 0)
+    RL_INVALID(BetaRand<>, nan, 1)
+    RL_INVALID(BetaRand<>, 1, 1, 2, 2)
+    RL_INVALID(BetaRand<>, 1, 1, 2, 1)
+    RL_INVALID(ArcsineRand<>, 0)
+    RL_INVALID(ArcsineRand<>, 1)
+    RL_INVALID(ArcsineRand<>, 1.5)
+    RL_INVALID(BaldingNicholsRand<>, 0, 0.5)
+    RL_INVALID(BaldingNicholsRand<>, 1, 0.5)
+    RL_INVALID(BaldingNicholsRand<>, 0.5, 0)
+    RL_INVALID(BaldingNicholsRand<>, 0.5, 1)
+    RL_INVALID(BetaPrimeRand<>, 0, 1)
+    RL_INVALID(BetaPrimeRand<>, 1, -1)
+    RL_INVALID(StudentTRand<>, 0)
+    RL_INVALID(StudentTRand<>, nan)
+    RL_INVALID(StudentTRand<>, 1, 0, 0)
+    RL_INVALID(CauchyRand<>, 0, 0)
+    RL_INVALID(CauchyRand<>, 0, nan)
+    RL_INVALID(LevyRand<>, 0, 0)
+    RL_INVALID(StableRand<>, 0, 0, 1, 0)
+    RL_INVALID(StableRand<>, 2.5, 0, 1, 0)
+    RL_INVALID(StableRand<>, 1.5, 1.5, 1, 0)
+    RL_INVALID(StableRand<>, 1.5, -1.1, 1, 0)
+    RL_INVALID(StableRand<>, 1.5, 0, 0, 0)
+    RL_INVALID(StableRand<>, nan, 0, 1, 0)
+    RL_INVALID(StableRand<>, 1.5, nan, 1, 0)
+    RL_INVALID(HoltsmarkRand<>, 0, 0)
+    RL_INVALID(LandauRand<>, -1, 0)
+    RL_INVALID(GeometricStableRand<>, 0, 0, 1, 0)
+    RL_INVALID(GeometricStableRand<>, 2.5, 0, 1, 0)
+    RL_INVALID(GeometricStableRand<>, 1.5, 2, 1, 0)
+    RL_INVALID(GeometricStableRand<>, 1.5, 0, 0, 0)
+    RL_INVALID(LaplaceRand<>, 0, 0)
+    RL_INVALID(LaplaceRand<>, 0, -1)
+    RL_INVALID(AsymmetricLaplaceRand<>, 0, 1, 0)
+    RL_INVALID(AsymmetricLaplaceRand<>, 0, 0, 1)
+    RL_INVALID(LogisticRand<>, 0, 0)
+    RL_INVALID(ParetoRand<>, 0, 1)
+    RL_INVALID(ParetoRand<>, 1, 0)
+    RL_INVALID(WeibullRand<>, 0, 1)
+    RL_INVALID(WeibullRand<>, 1, 0)
+    RL_INVALID(FrechetRand<>, 0, 1, 0)
+    RL_INVALID(FrechetRand<>, 1, 0, 0)
+    RL_INVALID(GumbelRand<>, 0, 0)
+    RL_INVALID(InverseGammaRand<>, 0, 1)
+    RL_INVALID(InverseGammaRand<>, 1, 0)
+    RL_INVALID(InverseGaussianRand<>, 0, 1)
+    RL_INVALID(InverseGaussianRand<>, 1, 0)
+    RL_INVALID(UniformRand<>, 1, 1)
+    RL_INVALID(UniformRand<>, 2, 1)
+    RL_INVALID(UniformRand<>, 0, nan)
+    RL_INVALID(FisherFRand<>, 0, 1)
+    RL_INVALID(FisherFRand<>, 1, 0)
+    RL_INVALID(NoncentralChiSquaredRand<>, 0, 1)
+    RL_INVALID(NoncentralChiSquaredRand<>, 1, -1)
+    RL_INVALID(ExponentiallyModifiedGaussianRand<>, 0, 0, 1)
+    RL_INVALID(ExponentiallyModifiedGaussianRand<>, 0, 1, 0)
+    RL_INVALID(IrwinHallRand<>, 0)
+    RL_INVALID(MarchenkoPasturRand<>, 0, 1)
+    RL_INVALID(MarchenkoPasturRand<>, 1, 0)
+    RL_INVALID(NakagamiRand<>, 0, 1)
+    RL_INVALID(NakagamiRand<>, 1, 0)
+    RL_INVALID(ChiRand<>, 0)
+    RL_INVALID(MaxwellBoltzmannRand<>, 0)
+    RL_INVALID(RayleighRand<>, 0)
+    RL_INVALID(PlanckRand<>, 0, 1)
+    RL_INVALID(PlanckRand<>, 1, 0)
+    RL_INVALID(RaisedCosineRand<>, 0, 0)
+    RL_INVALID(TriangularRand<>, 1, 0.5, 0)
+    RL_INVALID(TriangularRand<>, 0, 2, 1)
+    RL_INVALID(TriangularRand<>, 0, -1, 1)
+    RL_INVALID(WignerSemicircleRand<>, 0)
+    RL_INVALID(VonMisesRand<>, 0, -1)
+    RL_INVALID(PoissonRand<>, -1)
+    RL_INVALID(PoissonRand<>, nan)
+    RL_INVALID(BinomialRand<>, -1, 0.5)
+    RL_INVALID(BinomialRand<>, 10, -0.1)
+    RL_INVALID(BinomialRand<>, 10, 1.1)
+    RL_INVALID(BinomialRand<>, 10, nan)
+    RL_INVALID(BernoulliRand, -0.1)
+    RL_INVALID(BernoulliRand, 1.1)
+    RL_INVALID(NegativeBinomialRand<>, 0, 0.5)
+    RL_INVALID(NegativeBinomialRand<>, -1, 0.5)
+    RL_INVALID(NegativeBinomialRand<>, 1, 0)
+    RL_INVALID(NegativeBinomialRand<>, 1, 1.5)
+    RL_INVALID(PascalRand<>, 0, 0.5)
+    RL_INVALID(GeometricRand<>, 0)
+    RL_INVALID(GeometricRand<>, 1.5)
+    RL_INVALID(UniformDiscreteRand<>, 1, 0)
+    RL_INVALID(BetaBinomialRand<>, 0, 1, 1)
+    RL_INVALID(BetaBinomialRand<>, 10, 0, 1)
+    RL_INVALID(BetaBinomialRand<>, 10, 1, 0)
+    RL_INVALID(CategoricalRand<>, std::vector<double>{0.5, 0.6})
+    RL_INVALID(CategoricalRand<>, std::vector<double>{-0.1, 1.1})
+    RL_INVALID(HyperGeometricRand<>, 0, 1, 1)
+    RL_INVALID(HyperGeometricRand<>, 10, 11, 5)
+    RL_INVALID(HyperGeometricRand<>, 10, 5, 11)
+    RL_INVALID(NegativeHyperGeometricRand<>, 10, 11, 1)
+    RL_INVALID(NegativeHyperGeometricRand<>, 10, 5, 6)
+    RL_INVALID(LogarithmicRand<>, 0)
+    RL_INVALID(LogarithmicRand<>, 1)
+    RL_INVALID(SkellamRand<>, 0, 1)
+    RL_INVALID(SkellamRand<>, 1, 0)
+    RL_INVALID(YuleRand<>, 0)
+    RL_INVALID(ZetaRand<>, 1)
+    RL_INVALID(ZipfRand<>, 2, 0)
+    RL_INVALID(BivariateNormalRand<>, 0, 0, 0, 1, 0)
+    RL_INVALID(BivariateNormalRand<>, 0, 0, 1, 1, 1.5)
+    RL_INVALID(NormalInverseGammaRand<>, 0, 0, 1, 1)
+    RL_INVALID(NormalInverseGammaRand<>, 0, 1, 0, 1)
+    RL_INVALID(NormalInverseGammaRand<>, 0, 1, 1, 0)
+    RL_INVALID(TrinomialRand<>, 10, 0.6, 0.6)
+    RL_INVALID(TrinomialRand<>, -1, 0.2, 0.3)
+    RL_INVALID(TrinomialRand<>, 10, -0.1, 0.5)
+};
+
+}
+
+TEST_CASE("Invalid parameters are rejected", "[parameters]")
+{
+    for (const Invalid &invalid : INVALID) {
+        INFO(invalid.description);
+        CHECK_THROWS_AS(invalid.construct(), std::invalid_argument);
+    }
+}

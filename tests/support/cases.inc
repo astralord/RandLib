@@ -73,8 +73,7 @@ RL_CONT(LaplaceRand<>, 0, 1)
 RL_CONT(LaplaceRand<>, 2, 0.5)
 RL_CONT(AsymmetricLaplaceRand<>, 0, 1, 2)
 RL_CONT(AsymmetricLaplaceRand<>, 1, 0.5, 0.7)
-// v1.1 cannot instantiate CenteredAsymmetricLaplaceRand (abstract class).
-// RL_CONT(CenteredAsymmetricLaplaceRand<>, 1, 2)
+RL_CONT(CenteredAsymmetricLaplaceRand<>, 1, 2)
 RL_CONT(LogisticRand<>, 0, 1)
 RL_CONT(LogisticRand<>, 3, 0.4)
 RL_CONT(ParetoRand<>, 1, 1)
@@ -137,9 +136,8 @@ RL_CONT(RL_PLAIN(DegenerateRand), 1.5)
 RL_CONT(VonMisesRand<>, 0, 1)
 RL_CONT(VonMisesRand<>, 1, 5)
 RL_CONT(VonMisesRand<>, 0, 0.1)
-// v1.1 never instantiates WrappedExponentialRand, so it cannot be linked.
-// RL_CONT(WrappedExponentialRand<>, 1)
-// RL_CONT(WrappedExponentialRand<>, 0.2)
+RL_CONT(WrappedExponentialRand<>, 1)
+RL_CONT(WrappedExponentialRand<>, 0.2)
 
 RL_SING(RL_PLAIN(CantorRand))
 

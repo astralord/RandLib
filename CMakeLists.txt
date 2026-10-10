@@ -8,6 +8,7 @@ project(RandLib
 
 include(GNUInstallDirs)
 
+option(RANDLIB_BUILD_TESTS "Build the RandLib test suite" ${PROJECT_IS_TOP_LEVEL})
 option(RANDLIB_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(RANDLIB_INSTALL "Generate install and package-config rules" ${PROJECT_IS_TOP_LEVEL})
 set(RANDLIB_GENERATOR "JKISS" CACHE STRING "Engine behind RandGenerator: JKISS, JLKISS64 or PCG32")
@@ -123,6 +124,11 @@ else()
     if(RANDLIB_WARNINGS_AS_ERRORS)
         target_compile_options(RandLib PRIVATE -Werror)
     endif()
+endif()
+
+if(RANDLIB_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
 endif()
 
 if(RANDLIB_INSTALL)
