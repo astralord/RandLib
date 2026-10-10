@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {name: gcc-11, os: ubuntu-22.04, cc: gcc-11, cxx: g++-11, install: g++-11}
+          - {name: gcc-12, os: ubuntu-24.04, cc: gcc-12, cxx: g++-12, install: g++-12}
+          - {name: gcc-13, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13}
+          - {name: gcc-14, os: ubuntu-24.04, cc: gcc-14, cxx: g++-14, install: g++-14}
+          - {name: clang-15, os: ubuntu-22.04, cc: clang-15, cxx: clang++-15, install: clang-15}
+          - {name: clang-16, os: ubuntu-24.04, cc: clang-16, cxx: clang++-16, install: clang-16}
+          - {name: clang-17, os: ubuntu-24.04, cc: clang-17, cxx: clang++-17, install: clang-17}
+          - {name: clang-18, os: ubuntu-24.04, cc: clang-18, cxx: clang++-18, install: clang-18}
+          - {name: appleclang, os: macos-14}
+          - {name: msvc-2022, os: windows-2022}
+          - {name: gcc-13 jlkiss64 engine, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_GENERATOR=JLKISS64}
+          - {name: gcc-13 pcg32 engine, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_GENERATOR=PCG32}
+          - {name: gcc-13 portable special functions, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_PORTABLE_SPECIAL_FUNCTIONS=ON}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install compiler
+        if: matrix.install
+        run: sudo apt-get update && sudo apt-get install -y ${{ matrix.install }} ninja-build
+      - name: Install Ninja (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+      - name: Set up MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure
+        shell: bash
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: >
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          -DRANDLIB_BUILD_TESTS=ON -DRANDLIB_WARNINGS_AS_ERRORS=ON ${{ matrix.extra }}
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Unit tests
+        run: ctest --test-dir build --label-regex unit --output-on-failure --parallel 4
+      - name: Statistical tests
+        run: ctest --test-dir build --label-regex statistical --output-on-failure --parallel 4
+      - name: Install and consume with find_package
+        shell: bash
+        run: |
+          cmake --install build --prefix "$PWD/install"
+          cmake -S examples/consumer -B build-consumer -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/install"
+          cmake --build build-consumer
+          ./build-consumer/consumer
+
+  sanitizers:
+    name: clang-18 ASan + UBSan
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y clang-18 ninja-build
+      - name: Configure
+        env:
+          CC: clang-18
+          CXX: clang++-18
+        run: >
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DRANDLIB_BUILD_TESTS=ON
+          "-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer"
+          "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+      - run: cmake --build build --parallel
+      - name: Unit tests
+        run: ctest --test-dir build --label-regex unit --output-on-failure --parallel 4
+
+  coverage:
+    name: coverage (informational)
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y g++-13 ninja-build gcovr
+      - name: Build with coverage
+        env:
+          CXX: g++-13
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DRANDLIB_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS=--coverage
+          cmake --build build --parallel
+      - run: ctest --test-dir build --label-regex unit --output-on-failure --parallel 4
+      - run: gcovr --root . --filter distributions/ --filter math/ --xml coverage.xml --print-summary
+      - uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  clang-tidy:
+    name: clang-tidy (informational)
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y clang-18 clang-tidy-18 ninja-build
+      - name: Configure
+        env:
+          CXX: clang++-18
+        run: cmake -S . -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DRANDLIB_BUILD_TESTS=OFF
+      - name: clang-tidy
+        run: run-clang-tidy-18 -p build -quiet 'distributions/|math/'
