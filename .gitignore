@@ -1,4 +1,22 @@
-Randlib.pro.user
-unit_tests/*
-cov-int/*
-documentation/document.log
+# Build output
+build/
+out/
+cov-int/
+
+# IDE files
+*.pro.user
+*.pro.user.*
+.vscode/
+.idea/
+CMakeUserPresets.json
+
+# LaTeX intermediates
+*.aux
+*.toc
+*.log
+*.synctex.gz
+*.out
+
+# Python tooling
+__pycache__/
+*.pyc
