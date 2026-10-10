@@ -1,3 +1,5 @@
+# Deprecated: kept for the 1.x series only. Use CMake (see README.md); this file is removed in v2.
+
 TARGET = RandLib
 TEMPLATE = lib
 DESTDIR = ../bin/RandLib
