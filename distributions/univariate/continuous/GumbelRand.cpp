@@ -75,13 +75,13 @@ RealType GumbelRand<RealType>::StandardVariate(RandGenerator &randGenerator)
 template < typename RealType >
 long double GumbelRand<RealType>::Mean() const
 {
-    return mu + beta * M_EULER;
+    return mu + beta * randlib::consts::egamma;
 }
 
 template < typename RealType >
 long double GumbelRand<RealType>::Variance() const
 {
-    double v = M_PI * beta;
+    double v = randlib::consts::pi * beta;
     return v * v / 6;
 }
 
@@ -100,7 +100,7 @@ RealType GumbelRand<RealType>::quantileImpl1m(double p) const
 template < typename RealType >
 RealType GumbelRand<RealType>::Median() const
 {
-    static constexpr double M_LN_LN2 = std::log(M_LN2);
+    static const double M_LN_LN2 = std::log(randlib::consts::ln2);
     return mu - beta * M_LN_LN2;
 }
 
@@ -113,7 +113,7 @@ RealType GumbelRand<RealType>::Mode() const
 template < typename RealType >
 long double GumbelRand<RealType>::Skewness() const
 {
-    static constexpr long double skew = 12 * M_SQRT2 * M_SQRT3 * M_APERY / (M_PI_SQ * M_PI);
+    static constexpr long double skew = 12 * randlib::consts::sqrt2 * randlib::consts::sqrt3 * randlib::consts::apery / (randlib::consts::pi_sq * randlib::consts::pi);
     return skew;
 }
 
@@ -126,7 +126,7 @@ long double GumbelRand<RealType>::ExcessKurtosis() const
 template < typename RealType >
 long double GumbelRand<RealType>::Entropy() const
 {
-    return logBeta + M_EULER + 1.0;
+    return logBeta + randlib::consts::egamma + 1.0;
 }
 
 template class GumbelRand<float>;

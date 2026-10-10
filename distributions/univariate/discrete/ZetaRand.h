@@ -16,8 +16,8 @@ class RANDLIBSHARED_EXPORT ZetaRand : public DiscreteDistribution<IntType>
 {
     double s = 2; ///< exponent
     double sm1 = 1; ///< s - 1
-    double zetaS = M_PI_SQ / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
-    double logZetaS = 2 * M_LNPI - M_LN2 - M_LN3;///< ln(ζ(s))
+    double zetaS = randlib::consts::pi_sq / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
+    double logZetaS = 2 * randlib::consts::lnpi - randlib::consts::ln2 - randlib::consts::ln3;///< ln(ζ(s))
     double b = 0.5; ///< 1 - 2^(1-s)
 
 public:

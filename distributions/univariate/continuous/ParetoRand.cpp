@@ -135,7 +135,7 @@ long double ParetoRand<RealType>::Variance() const
 template < typename RealType >
 RealType ParetoRand<RealType>::Median() const
 {
-    return std::exp(logSigma + M_LN2 / alpha);
+    return std::exp(logSigma + randlib::consts::ln2 / alpha);
 }
 
 template < typename RealType >

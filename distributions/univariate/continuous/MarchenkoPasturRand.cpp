@@ -56,7 +56,7 @@ double MarchenkoPasturRand<RealType>::f(const RealType &x) const
         return 0.0;
     double y = 0.5 * std::sqrt((b - xSt) * (xSt - a));
     y /= (lambda * xSt);
-    y /= (M_PI * sigmaSq);
+    y /= (randlib::consts::pi * sigmaSq);
     return y;
 }
 
@@ -69,7 +69,7 @@ double MarchenkoPasturRand<RealType>::logf(const RealType &x) const
     if (xSt < a || xSt > b)
         return -INFINITY;
     double y = 0.5 * std::log((b - xSt) * (xSt - a));
-    y -= M_LN2 + M_LNPI + logLambda + std::log(x);
+    y -= randlib::consts::ln2 + randlib::consts::lnpi + logLambda + std::log(x);
     return y;
 }
 
@@ -85,13 +85,13 @@ double MarchenkoPasturRand<RealType>::ccdfForLargeRatio(const RealType &x) const
         y1 = lambdap1 * RandMath::atan(y1);
     }
     else
-        y1 = RandMath::sign(y1) * M_PI_2;
+        y1 = RandMath::sign(y1) * randlib::consts::half_pi;
     double y2 = x * lambdap1;
     y2 -= lambdam1 * lambdam1;
     y2 /= temp * lambdam1;
     y2 = lambdam1 * RandMath::atan(y2);
-    double y = M_PI - temp + y1 + y2;
-    y /= M_PI * lambda;
+    double y = randlib::consts::pi - temp + y1 + y2;
+    y /= randlib::consts::pi * lambda;
     return 0.5 * y;
 }
 
@@ -107,7 +107,7 @@ double MarchenkoPasturRand<RealType>::cdfForSmallRatio(const RealType &x) const
         y1 = lambdap1 * RandMath::atan(y1);
     }
     else
-        y1 = RandMath::sign(y1) * M_PI_2;
+        y1 = RandMath::sign(y1) * randlib::consts::half_pi;
     double y2 = 0.0;
     if (lambdam1 != 0)
     {
@@ -116,8 +116,8 @@ double MarchenkoPasturRand<RealType>::cdfForSmallRatio(const RealType &x) const
         y2 /= -temp * lambdam1;
         y2 = lambdam1 * RandMath::atan(y2);
     }
-    double y = M_PI * lambda + temp - y1 + y2;
-    y /= M_PI * lambda;
+    double y = randlib::consts::pi * lambda + temp - y1 + y2;
+    y /= randlib::consts::pi * lambda;
     return 0.5 * y;
 }
 
@@ -347,22 +347,22 @@ std::complex<double> MarchenkoPasturRand<RealType>::CFImpl(double t) const
     /// otherwise we have singularity at point 0
     if (lambda == 1) {
         /// we split integrand for real part on (cos(tx)-1)f(x) and f(x)
-        double re = this->ExpectedValue([this, t] (double x)
+        double re = this->ExpectedValue([t] (double x)
         {
             return std::cos(t * x) - 1.0;
         }, 0, 4 * sigmaSq);
-        double im = this->ExpectedValue([this, t] (double x)
+        double im = this->ExpectedValue([t] (double x)
         {
             return std::sin(t * x);
         }, 0, 4 * sigmaSq);
         return std::complex<double>(1.0 + re, im);
     }
     /// for λ > 1 we split integral on 2 parts: at point 0 and the rest
-    double re = this->ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([t] (double x)
     {
         return std::cos(t * x);
     }, sigmaSq * a, sigmaSq * b);
-    double im = this->ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([t] (double x)
     {
         return std::sin(t * x);
     }, sigmaSq * a, sigmaSq * b);

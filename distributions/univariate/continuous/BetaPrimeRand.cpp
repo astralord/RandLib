@@ -167,14 +167,14 @@ std::complex<double> BetaPrimeRand<RealType>::CFImpl(double t) const
     if (alpha >= 1)
         return UnivariateDistribution<RealType>::CFImpl(t);
 
-    double re = this->ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([t] (double x)
     {
         if (x == 0.0)
             return 0.0;
         return std::cos(t * x) - 1.0;
     }, 0.0, INFINITY) + 1.0;
 
-    double im = this->ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([t] (double x)
     {
         return std::sin(t * x);
     }, 0.0, INFINITY);
@@ -190,7 +190,7 @@ void BetaPrimeRand<RealType>::FitAlpha(const std::vector<RealType> &sample)
     long double mean = 0.5;
     if (beta != 1.0) {
         mean = 0.0;
-        for (const double & var : sample)
+        for (const RealType & var : sample)
             mean += var / (1.0 + var);
         mean /= sample.size();
     }
@@ -207,7 +207,7 @@ void BetaPrimeRand<RealType>::FitBeta(const std::vector<RealType> &sample)
     long double mean = 0.5;
     if (alpha != 1.0) {
         mean = 0.0;
-        for (const double & var : sample)
+        for (const RealType & var : sample)
             mean += var / (1.0 + var);
         mean /= sample.size();
     }

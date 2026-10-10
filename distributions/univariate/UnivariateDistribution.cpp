@@ -84,12 +84,12 @@ std::complex<double> UnivariateDistribution<T>::CFImpl(double t) const
     if (leftBound == rightBound)
         return std::complex<double>(std::cos(t * leftBound), std::sin(t * leftBound));
 
-    double re = this->ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([t] (double x)
     {
         return std::cos(t * x);
     }, leftBound, rightBound);
 
-    double im = this->ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([t] (double x)
     {
         return std::sin(t * x);
     }, leftBound, rightBound);
@@ -127,7 +127,7 @@ long double UnivariateDistribution<T>::Skewness() const
         return NAN;
     long double mu = this->Mean(); /// var is finite, so is mu
 
-    long double sum = this->ExpectedValue([this, mu] (double x)
+    long double sum = this->ExpectedValue([mu] (double x)
     {
         double xmmu = x - mu;
         double skewness = xmmu * xmmu * xmmu;
@@ -145,7 +145,7 @@ long double UnivariateDistribution<T>::ExcessKurtosis() const
         return NAN;
     long double mu = this->Mean(); /// var is finite, so is mu
 
-    long double sum = this->ExpectedValue([this, mu] (double x)
+    long double sum = this->ExpectedValue([mu] (double x)
     {
         double xmmu = x - mu;
         double kurtosisSqrt = xmmu * xmmu;

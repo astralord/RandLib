@@ -13,9 +13,9 @@ template < typename RealType = double >
 class RANDLIBSHARED_EXPORT RaisedCosineDistribution : public ContinuousDistribution<RealType>
 {
     double mu = 0; ///< location μ
-    double s = M_PI; ///< scale
+    double s = randlib::consts::pi; ///< scale
     double s_pi = 1; ///< s / π
-    double log2S = M_LN2 + M_LNPI; ///< log(2s)
+    double log2S = randlib::consts::ln2 + randlib::consts::lnpi; ///< log(2s)
 
 protected:
     RaisedCosineDistribution(double location, double scale);
@@ -60,7 +60,7 @@ template < typename RealType = double >
 class RANDLIBSHARED_EXPORT RaisedCosineRand : public RaisedCosineDistribution<RealType>
 {
 public:
-    RaisedCosineRand(double location = 0, double scale = M_PI) : RaisedCosineDistribution<RealType>(location, scale) {}
+    RaisedCosineRand(double location = 0, double scale = randlib::consts::pi) : RaisedCosineDistribution<RealType>(location, scale) {}
     String Name() const override;
 
     using RaisedCosineDistribution<RealType>::SetLocation;
@@ -80,7 +80,7 @@ template < typename RealType = double >
 class RANDLIBSHARED_EXPORT RaabGreenRand : public RaisedCosineDistribution<RealType>
 {
 public:
-    RaabGreenRand() : RaisedCosineDistribution<RealType>(0.0, M_PI) {}
+    RaabGreenRand() : RaisedCosineDistribution<RealType>(0.0, randlib::consts::pi) {}
     String Name() const override;
 };
 

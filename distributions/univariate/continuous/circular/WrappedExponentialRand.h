@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT WrappedExponentialRand : public CircularDistribution<
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
-    double scaledLambda = 2 * M_PI; ///< 2πλ
+    double scaledLambda = 2 * randlib::consts::pi; ///< 2πλ
     double pdfCoef = 0, logpdfCoef = 0, expmScaledLambda = 0;
 
 public:

@@ -29,7 +29,7 @@ double NakagamiDistribution<RealType>::f(const RealType & x) const
     if (x == 0) {
         if (mu > 0.5)
             return 0.0;
-        return (mu < 0.5) ? INFINITY : std::sqrt(M_2_PI / omega);
+        return (mu < 0.5) ? INFINITY : std::sqrt(randlib::consts::two_inv_pi / omega);
     }
     return 2 * x * Y.f(x * x);
 }
@@ -42,9 +42,9 @@ double NakagamiDistribution<RealType>::logf(const RealType & x) const
     if (x == 0) {
         if (mu > 0.5)
             return -INFINITY;
-        return (mu < 0.5) ? INFINITY : 0.5 * (M_LN2 - M_LNPI - std::log(omega));
+        return (mu < 0.5) ? INFINITY : 0.5 * (randlib::consts::ln2 - randlib::consts::lnpi - std::log(omega));
     }
-    return M_LN2 + std::log(x) + Y.logf(x * x);
+    return randlib::consts::ln2 + std::log(x) + Y.logf(x * x);
 }
 
 template < typename RealType >
@@ -163,14 +163,14 @@ std::complex<double> NakagamiDistribution<RealType>::CFImpl(double t) const
     if (mu >= 0.5)
         return ContinuousDistribution<RealType>::CFImpl(t);
 
-    double re = this->ExpectedValue([this, t] (double x)
+    double re = this->ExpectedValue([t] (double x)
     {
         if (x == 0.0)
             return 0.0;
         return std::cos(t * x) - 1.0;
     }, 0, INFINITY) + 1.0;
 
-    double im = this->ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([t] (double x)
     {
         return std::sin(t * x);
     }, 0, INFINITY);
@@ -271,7 +271,7 @@ double MaxwellBoltzmannRand<RealType>::f(const RealType &x) const
     double xAdj = x / sigma;
     double xAdjSq = xAdj * xAdj;
     double y = std::exp(-0.5 * xAdjSq);
-    return M_SQRT2 * M_1_SQRTPI * xAdjSq * y / sigma;
+    return randlib::consts::sqrt2 * randlib::consts::inv_sqrtpi * xAdjSq * y / sigma;
 }
 
 template < typename RealType >
@@ -279,9 +279,9 @@ double MaxwellBoltzmannRand<RealType>::F(const RealType & x) const
 {
     if (x <= 0.0)
         return 0.0;
-    double xAdj = M_SQRT1_2 * x / sigma;
+    double xAdj = randlib::consts::inv_sqrt2 * x / sigma;
     double y = std::exp(-xAdj * xAdj);
-    y *= 2 * xAdj * M_1_SQRTPI;
+    y *= 2 * xAdj * randlib::consts::inv_sqrtpi;
     return std::erf(xAdj) - y;
 }
 
@@ -290,9 +290,9 @@ double MaxwellBoltzmannRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
         return 1.0;
-    double xAdj = M_SQRT1_2 * x / sigma;
+    double xAdj = randlib::consts::inv_sqrt2 * x / sigma;
     double y = std::exp(-xAdj * xAdj);
-    y *= 2 * xAdj * M_1_SQRTPI;
+    y *= 2 * xAdj * randlib::consts::inv_sqrtpi;
     return std::erfc(xAdj) + y;
 }
 
@@ -314,37 +314,37 @@ void MaxwellBoltzmannRand<RealType>::Sample(std::vector<RealType> &outputData) c
 template < typename RealType >
 long double MaxwellBoltzmannRand<RealType>::Mean() const
 {
-    return 2 * M_1_SQRTPI * M_SQRT2 * sigma;
+    return 2 * randlib::consts::inv_sqrtpi * randlib::consts::sqrt2 * sigma;
 }
 
 template < typename RealType >
 long double MaxwellBoltzmannRand<RealType>::Variance() const
 {
-    return (3 - 8.0 * M_1_PI) * sigma * sigma;
+    return (3 - 8.0 * randlib::consts::inv_pi) * sigma * sigma;
 }
 
 template < typename RealType >
 RealType MaxwellBoltzmannRand<RealType>::Mode() const
 {
-    return M_SQRT2 * sigma;
+    return randlib::consts::sqrt2 * sigma;
 }
 
 template < typename RealType >
 long double MaxwellBoltzmannRand<RealType>::Skewness() const
 {
-    long double skewness = 3 * M_PI - 8;
+    long double skewness = 3 * randlib::consts::pi - 8;
     skewness = 2.0 / skewness;
     skewness *= std::sqrt(skewness);
-    return (16 - 5 * M_PI) * skewness;
+    return (16 - 5 * randlib::consts::pi) * skewness;
 }
 
 template < typename RealType >
 long double MaxwellBoltzmannRand<RealType>::ExcessKurtosis() const
 {
-    long double numerator = 40 - 3 * M_PI;
-    numerator *= M_PI;
+    long double numerator = 40 - 3 * randlib::consts::pi;
+    numerator *= randlib::consts::pi;
     numerator -= 96;
-    long double denominator = 3 * M_PI - 8;
+    long double denominator = 3 * randlib::consts::pi - 8;
     denominator *= denominator;
     return 4 * numerator / denominator;
 }
@@ -419,13 +419,13 @@ void RayleighRand<RealType>::Sample(std::vector<RealType> &outputData) const
 template < typename RealType >
 long double RayleighRand<RealType>::Mean() const
 {
-    return sigma * M_SQRTPI * M_SQRT1_2;
+    return sigma * randlib::consts::sqrtpi * randlib::consts::inv_sqrt2;
 }
 
 template < typename RealType >
 long double RayleighRand<RealType>::Variance() const
 {
-    return (2.0 - M_PI_2) * sigma * sigma;
+    return (2.0 - randlib::consts::half_pi) * sigma * sigma;
 }
 
 template < typename RealType >
@@ -443,7 +443,7 @@ RealType RayleighRand<RealType>::quantileImpl1m(double p) const
 template < typename RealType >
 RealType RayleighRand<RealType>::Median() const
 {
-    static constexpr double medianCoef = std::sqrt(M_LN2 + M_LN2);
+    static const double medianCoef = std::sqrt(randlib::consts::ln2 + randlib::consts::ln2);
     return sigma * medianCoef;
 }
 
@@ -456,15 +456,15 @@ RealType RayleighRand<RealType>::Mode() const
 template < typename RealType >
 long double RayleighRand<RealType>::Skewness() const
 {
-    static constexpr long double skewness = 2 * M_SQRTPI * (M_PI - 3) / std::pow(4.0 - M_PI, 1.5);
+    static const long double skewness = 2 * randlib::consts::sqrtpi * (randlib::consts::pi - 3) / std::pow(4.0 - randlib::consts::pi, 1.5);
     return skewness;
 }
 
 template < typename RealType >
 long double RayleighRand<RealType>::ExcessKurtosis() const
 {
-    static constexpr long double temp = 4 - M_PI;
-    static constexpr long double kurtosis = -(6 * M_PI * M_PI - 24 * M_PI + 16) / (temp * temp);
+    static constexpr long double temp = 4 - randlib::consts::pi;
+    static constexpr long double kurtosis = -(6 * randlib::consts::pi * randlib::consts::pi - 24 * randlib::consts::pi + 16) / (temp * temp);
     return kurtosis;
 }
 
@@ -491,10 +491,10 @@ void RayleighRand<RealType>::Fit(const std::vector<RealType> &sample, bool unbia
     else if (n > 15) {
         double coef = RandMath::lfact(n);
         coef += RandMath::lfact(n - 1);
-        coef += 2 * n * M_LN2;
+        coef += 2 * n * randlib::consts::ln2;
         coef += 0.5 * std::log(n);
         coef -= RandMath::lfact(2 * n);
-        coef -= 0.5 * M_LNPI;
+        coef -= 0.5 * randlib::consts::lnpi;
         coef += 0.5 * std::log(sigmaBiasedSq);
         SetScale(std::exp(coef));
     }
@@ -502,8 +502,8 @@ void RayleighRand<RealType>::Fit(const std::vector<RealType> &sample, bool unbia
     {
         double scale = RandMath::lfact(n - 1);
         scale += RandMath::lfact(n);
-        scale += 0.5 * std::log(n / M_PI * sigmaBiasedSq);
-        scale += 2 * n * M_LN2;
+        scale += 0.5 * std::log(n / randlib::consts::pi * sigmaBiasedSq);
+        scale += 2 * n * randlib::consts::ln2;
         scale -= RandMath::lfact(2 * n);
         SetScale(scale);
     }

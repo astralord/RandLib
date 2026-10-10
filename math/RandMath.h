@@ -11,6 +11,7 @@
 
 #include "Constants.h"
 #include "GammaMath.h"
+#include "SpecialFunctions.h"
 #include "BetaMath.h"
 
 namespace RandMath

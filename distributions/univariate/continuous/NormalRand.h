@@ -13,7 +13,7 @@
 class RANDLIBSHARED_EXPORT NormalZiggurat {
 
     static constexpr size_t TABLE_SIZE = 257;
-    static constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
+    static std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
     {
         constexpr long double A = 4.92867323399e-3l; /// area under rectangle
         std::array<LongDoublePair, TABLE_SIZE> table{};
@@ -53,7 +53,7 @@ class RANDLIBSHARED_EXPORT NormalRand : public StableDistribution<RealType>,
 {
     double sigma = 1; ///< scale σ
 
-    static constexpr auto ziggurat = NormalZiggurat::createZiggurat();
+    static inline const auto ziggurat = NormalZiggurat::createZiggurat();
 
 public:
     NormalRand(double location = 0, double variance = 1);
@@ -71,7 +71,7 @@ public:
      * @fn GetLogScale
      * @return log(σ)
      */
-    inline double GetLogScale() const { return StableDistribution<RealType>::GetLogScale() - 0.5 * M_LN2; }
+    inline double GetLogScale() const { return StableDistribution<RealType>::GetLogScale() - 0.5 * randlib::consts::ln2; }
     /**
      * @fn GetPrecision
      * @return 1/σ^2

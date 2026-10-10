@@ -22,8 +22,8 @@ class RANDLIBSHARED_EXPORT BinomialDistribution : public DiscreteDistribution<In
 protected:
     double p = 0.5; ///< probability of success
     double q = 0.5; ///< probability of failure
-    double logProb = -M_LN2; ///< log(p)
-    double log1mProb = -M_LN2; ///< log(q)
+    double logProb = -randlib::consts::ln2; ///< log(p)
+    double log1mProb = -randlib::consts::ln2; ///< log(q)
 
 private:
     IntType n = 1; ///< number of experiments

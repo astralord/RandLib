@@ -30,7 +30,7 @@ void StudentTRand<RealType>::SetDegree(double degree)
 
     nup1Half = 0.5 * (nu + 1);
     pdfCoef = Y.GetLogGammaShapeRatio();
-    pdfCoef -= 0.5 * M_LNPI;
+    pdfCoef -= 0.5 * randlib::consts::lnpi;
     logBetaFun = -pdfCoef;
     pdfCoef -= 0.5 * std::log(nu);
 }
@@ -58,14 +58,14 @@ double StudentTRand<RealType>::f(const RealType & x) const
     x0 /= sigma;
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
-        return M_1_PI / (sigma * (1 + xSq));
+        return randlib::consts::inv_pi / (sigma * (1 + xSq));
     if (nu == 2) {
         double tmp = 2.0 + xSq;
         return 1.0 / (sigma * tmp * std::sqrt(tmp));
     }
     if (nu == 3) {
         double y = 3 + xSq;
-        return 6 * M_SQRT3 * M_1_PI / (sigma * y * y);
+        return 6 * randlib::consts::sqrt3 * randlib::consts::inv_pi / (sigma * y * y);
     }
     return std::exp(logf(x));
 }
@@ -78,12 +78,12 @@ double StudentTRand<RealType>::logf(const RealType & x) const
     x0 /= sigma;
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
-        return -logSigma - M_LNPI - std::log1pl(xSq);
+        return -logSigma - randlib::consts::lnpi - std::log1pl(xSq);
     if (nu == 2)
         return -logSigma - 1.5 * std::log(2.0 + xSq);
     if (nu == 3) {
         double y = -2 * std::log(3.0 + xSq);
-        y += M_LN2 + 1.5 * M_LN3 - M_LNPI - logSigma;
+        y += randlib::consts::ln2 + 1.5 * randlib::consts::ln3 - randlib::consts::lnpi - logSigma;
         return y;
     }
     double y = -nup1Half * std::log1pl(xSq / nu);
@@ -99,16 +99,16 @@ double StudentTRand<RealType>::F(const RealType & x) const
         return 0.5;
     if (nu == 1) {
         /// Cauchy distribution
-        return 0.5 + M_1_PI * RandMath::atan(x0);
+        return 0.5 + randlib::consts::inv_pi * RandMath::atan(x0);
     }
     double xSq = x0 * x0;
     if (nu == 2) {
         return 0.5 + 0.5 * x0 / std::sqrt(2 + xSq);
     }
     if (nu == 3) {
-        double y = M_SQRT3 * x0 / (xSq + 3);
-        y += RandMath::atan(x0 / M_SQRT3);
-        return 0.5 + M_1_PI * y;
+        double y = randlib::consts::sqrt3 * x0 / (xSq + 3);
+        y += RandMath::atan(x0 / randlib::consts::sqrt3);
+        return 0.5 + randlib::consts::inv_pi * y;
     }
     double t = nu / (xSq + nu);
     double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1pl(-t));
@@ -124,16 +124,16 @@ double StudentTRand<RealType>::S(const RealType & x) const
         return 0.5;
     if (nu == 1) {
         /// Cauchy distribution
-        return 0.5 + M_1_PI * RandMath::atan(-x0);
+        return 0.5 + randlib::consts::inv_pi * RandMath::atan(-x0);
     }
     double xSq = x0 * x0;
     if (nu == 2) {
         return 0.5 - 0.5 * x0 / std::sqrt(2 + xSq);
     }
     if (nu == 3) {
-        double y = M_SQRT3 * x0 / (xSq + 3);
-        y += RandMath::atan(x0 / M_SQRT3);
-        return 0.5 - M_1_PI * y;
+        double y = randlib::consts::sqrt3 * x0 / (xSq + 3);
+        y += RandMath::atan(x0 / randlib::consts::sqrt3);
+        return 0.5 - randlib::consts::inv_pi * y;
     }
     double t = nu / (xSq + nu);
     double y = 0.5 * RandMath::ibeta(t, 0.5 * nu, 0.5, logBetaFun, std::log(t), std::log1pl(-t));
@@ -190,7 +190,7 @@ std::complex<double> StudentTRand<RealType>::CFImpl(double t) const
     double vHalf = 0.5 * nu;
     double y = vHalf * std::log(x);
     y -= Y.GetLogGammaFunction();
-    y -= (vHalf - 1) * M_LN2;
+    y -= (vHalf - 1) * randlib::consts::ln2;
     y += RandMath::logBesselK(vHalf, x);
     double costmu = std::cos(t * mu), sintmu = std::sin(t * mu);
     std::complex<double> cf(costmu, sintmu);
@@ -202,7 +202,7 @@ RealType StudentTRand<RealType>::quantileImpl(double p) const
 {
     double temp = p - 0.5;
     if (nu == 1)
-        return std::tan(M_PI * temp) * sigma + mu;
+        return std::tan(randlib::consts::pi * temp) * sigma + mu;
     double pq = p * (1.0 - p);
     if (nu == 2)
         return sigma * 2.0 * temp * std::sqrt(0.5 / pq) + mu;
@@ -220,7 +220,7 @@ RealType StudentTRand<RealType>::quantileImpl1m(double p) const
 {
     double temp = 0.5 - p;
     if (nu == 1)
-        return std::tan(M_PI * temp) * sigma + mu;
+        return std::tan(randlib::consts::pi * temp) * sigma + mu;
     double pq = p * (1.0 - p);
     if (nu == 2)
         return sigma * 2 * temp * std::sqrt(0.5 / pq) + mu;

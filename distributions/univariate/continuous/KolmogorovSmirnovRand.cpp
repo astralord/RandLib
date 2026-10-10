@@ -20,7 +20,7 @@ double KolmogorovSmirnovRand<RealType>::L(RealType x)
         return 0.0;
     double sum = 0.0, addon = 0.0;
     int k = 1;
-    double aux = M_PI_SQ * 0.125 / (x * x);
+    double aux = randlib::consts::pi_sq * 0.125 / (x * x);
     do {
         int temp = (2 * k - 1);
         temp *= temp;
@@ -28,7 +28,7 @@ double KolmogorovSmirnovRand<RealType>::L(RealType x)
         sum += addon;
         ++k;
     } while (addon > MIN_POSITIVE * sum);
-    return M_SQRT2PI * sum / x;
+    return randlib::consts::sqrt2pi * sum / x;
 }
 
 template < typename RealType >
@@ -59,14 +59,14 @@ double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
     if (x < 1.0) {
         double aux = 0.125 / xSq;
         do {
-            double temp = M_PI * (2 * k - 1);
+            double temp = randlib::consts::pi * (2 * k - 1);
             temp *= temp;
             addon = temp - 4 * xSq;
             addon *= std::exp(-temp * aux);
             sum += addon;
             ++k;
         } while (addon > MIN_POSITIVE * sum);
-        return M_SQRT2PI * sum * 0.25 / std::pow(x, 4);
+        return randlib::consts::sqrt2pi * sum * 0.25 / std::pow(x, 4);
     }
     /// x > 1.0
     do {
@@ -135,7 +135,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheLeftMostInterval() const
     size_t iter1 = 0;
     do {
         RealType G = truncatedGammaVariate();
-        RealType X = M_PI / std::sqrt(8 * G);
+        RealType X = randlib::consts::pi / std::sqrt(8 * G);
         RealType W = 0.0;
         RealType Z = 0.5 / G;
         size_t n = 1, iter2 = 0;
@@ -192,14 +192,14 @@ RealType KolmogorovSmirnovRand<RealType>::Variate() const
 template < typename RealType >
 long double KolmogorovSmirnovRand<RealType>::Mean() const
 {
-    return M_SQRTPI * M_SQRT1_2 * M_LN2;
+    return randlib::consts::sqrtpi * randlib::consts::inv_sqrt2 * randlib::consts::ln2;
 }
 
 template < typename RealType >
 long double KolmogorovSmirnovRand<RealType>::Variance() const
 {
     long double mean = Mean();
-    return M_PI_SQ / 12 - mean * mean;
+    return randlib::consts::pi_sq / 12 - mean * mean;
 }
 
 template < typename RealType >
@@ -217,7 +217,7 @@ RealType KolmogorovSmirnovRand<RealType>::Median() const
 template < typename RealType >
 RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
 {
-    RealType guess = std::sqrt(-0.5 * (std::log1pl(-p) - M_LN2));
+    RealType guess = std::sqrt(-0.5 * (std::log1pl(-p) - randlib::consts::ln2));
     if (p < 1e-5) {
         double logP = std::log(p);
         if (!RandMath::findRootNewtonFirstOrder<RealType>([this, logP] (RealType x)

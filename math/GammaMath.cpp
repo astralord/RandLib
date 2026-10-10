@@ -350,7 +350,7 @@ long double ldfact(size_t n)
     if (n & 1)
         return lfact(n) - ldfact(n - 1);
     size_t k = n >> 1;
-    return k * M_LN2 + lfact(k);
+    return k * randlib::consts::ln2 + lfact(k);
 }
 
 long double binom(size_t n, size_t k)
@@ -407,7 +407,7 @@ double digamma(double x)
     /// Negative argument
     if (x < 0.0) {
         double y = 1.0 - x;
-        double z = M_PI / std::tan(M_PI * y);
+        double z = randlib::consts::pi / std::tan(randlib::consts::pi * y);
         return digamma(y) + z;
     }
     /// shift to minimum value,
@@ -434,7 +434,7 @@ double trigamma(double x)
     /// Negative argument
     if (x < 0.0)
     {
-        double z = M_PI / std::sin(M_PI * x);
+        double z = randlib::consts::pi / std::sin(randlib::consts::pi * x);
         return z * z - trigamma(1.0 - x);
     }
     /// set up tables
@@ -491,7 +491,7 @@ REGULARISED_GAMMA_METHOD_ID getRegularizedGammaMethodId(double a, double x, doub
 {
     if (x < 0.0 || a < 0.0)
         return UNDEFINED;
-    double alpha = (x < 0.5) ? M_LN2 / (M_LN2 - logX) : x;
+    double alpha = (x < 0.5) ? randlib::consts::ln2 / (randlib::consts::ln2 - logX) : x;
     if ((a <= 12 && a >= alpha) || 0.3 * a >= x)
         return PT;
     if (x <= 1.5 && a <= alpha)
@@ -530,7 +530,7 @@ double incompleteGammaUniformExpansion(double a, double x, double logX, double l
         betanp1 = beta;
     }
     sum *= a / (a + betanp2);
-    double z = aux + 0.5 * (M_LN2 + M_LNPI + logA);
+    double z = aux + 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + logA);
     double y = std::exp(-z) * sum;
     return base + (isP ? -y : y);
 }

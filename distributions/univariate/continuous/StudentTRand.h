@@ -19,9 +19,9 @@ class RANDLIBSHARED_EXPORT StudentTRand : public ContinuousDistribution<RealType
     double sigma = 1; ///< scale σ
     double logSigma = 0; ///< log(σ)
     NakagamiRand<RealType> Y{};
-    double pdfCoef = -M_LNPI; ///< coefficient for faster pdf calculation
+    double pdfCoef = -randlib::consts::lnpi; ///< coefficient for faster pdf calculation
     double nup1Half = 1; ///< 0.5 * (ν + 1)
-    double logBetaFun = M_LNPI; ///< log(B(0.5 * ν, 0.5))
+    double logBetaFun = randlib::consts::lnpi; ///< log(B(0.5 * ν, 0.5))
 
 public:
     explicit StudentTRand(double degree = 1.0, double location = 0.0, double scale = 1.0);

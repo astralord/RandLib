@@ -12,7 +12,7 @@
 class RANDLIBSHARED_EXPORT ExpZiggurat {
 
     static constexpr size_t TABLE_SIZE = 257;
-    static constexpr std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
+    static std::array<LongDoublePair, TABLE_SIZE> createZiggurat()
     {
         constexpr long double A = 3.9496598225815571993e-3l; /// area under rectangle
         std::array<LongDoublePair, TABLE_SIZE> table{};
@@ -50,7 +50,7 @@ template < typename RealType = double >
 class RANDLIBSHARED_EXPORT ExponentialRand : public FreeRateGammaDistribution<RealType>,
                                              public ExponentialFamily<RealType, double>
 {
-    static constexpr auto ziggurat = ExpZiggurat::createZiggurat();
+    static inline const auto ziggurat = ExpZiggurat::createZiggurat();
 
 public:
     explicit ExponentialRand(double rate = 1) : FreeRateGammaDistribution<RealType>(1, rate) {}

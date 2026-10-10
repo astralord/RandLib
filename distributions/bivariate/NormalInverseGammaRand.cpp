@@ -39,7 +39,7 @@ void NormalInverseGammaRand<RealType>::SetParameters(double location, double pre
     this->X.SetLocation(mu);
     this->X.SetScale(std::sqrt(alpha * lambda / beta));
 
-    pdfCoef = 0.5 * std::log(0.5 * lambda / M_PI);
+    pdfCoef = 0.5 * std::log(0.5 * lambda / randlib::consts::pi);
     pdfCoef += alpha * this->Y.GetLogRate() - this->Y.GetLogGammaShape();
 }
 

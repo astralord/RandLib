@@ -136,7 +136,7 @@ RealType TriangularRand<RealType>::Mode() const
 template < typename RealType >
 long double TriangularRand<RealType>::Skewness() const
 {
-    double numerator = M_SQRT2;
+    double numerator = randlib::consts::sqrt2;
     numerator *= (a + b - c - c);
     numerator *= (a + a - b - c);
     numerator *= (a - b - b + c);

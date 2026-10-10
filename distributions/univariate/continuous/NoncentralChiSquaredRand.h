@@ -23,8 +23,8 @@ class RANDLIBSHARED_EXPORT NoncentralChiSquaredRand : public ContinuousDistribut
     double lambda = 2; ///< noncentrality λ
     double halfK = 0.5; ///< k / 2
     double halfLambda = 1; ///< λ / 2
-    double sqrtLambda = M_SQRT2; ///< √λ
-    double logLambda = M_LN2; ///< log(λ)
+    double sqrtLambda = randlib::consts::sqrt2; ///< √λ
+    double logLambda = randlib::consts::ln2; ///< log(λ)
 
     PoissonRand<int> Y{};
 

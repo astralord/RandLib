@@ -53,14 +53,14 @@ double NoncentralChiSquaredRand<RealType>::logf(const RealType & x) const
         return -INFINITY;
     if (x == 0.0) {
         if (k == 2)
-            return -halfLambda - M_LN2;
+            return -halfLambda - randlib::consts::ln2;
         return (k > 2) ? -INFINITY : INFINITY;
     }
     double halfKm1 = halfK - 1;
     double y = RandMath::logBesselI(halfKm1, std::sqrt(lambda * x));
     double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
-    return y + 0.5 * z - M_LN2;
+    return y + 0.5 * z - randlib::consts::ln2;
 }
 
 template < typename RealType >
@@ -71,7 +71,7 @@ double NoncentralChiSquaredRand<RealType>::F(const RealType &x) const
     double halfX = 0.5 * x;
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
-    return RandMath::MarcumP(halfK, halfLambda, halfX, sqrtLambda / M_SQRT2, sqrtHalfX, logLambda - M_LN2, logHalfX);
+    return RandMath::MarcumP(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
 }
 
 template < typename RealType >
@@ -82,7 +82,7 @@ double NoncentralChiSquaredRand<RealType>::S(const RealType &x) const
     double halfX = 0.5 * x;
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
-    return RandMath::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / M_SQRT2, sqrtHalfX, logLambda - M_LN2, logHalfX);
+    return RandMath::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
 }
 
 template < typename RealType >

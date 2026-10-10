@@ -120,7 +120,7 @@ template < typename RealType >
 long double PlanckRand<RealType>::Mean() const
 {
     double y = (a + 1) / b;
-    y *= std::riemann_zetal(a + 2);
+    y *= RandMath::riemannZeta(a + 2);
     return y / Z.GetZetaFunction();
 }
 
@@ -129,7 +129,7 @@ long double PlanckRand<RealType>::SecondMoment() const
 {
     long double secondMoment = (a + 1) * (a + 2);
     secondMoment /= (b * b);
-    secondMoment *= std::riemann_zetal(a + 3);
+    secondMoment *= RandMath::riemannZeta(a + 3);
     secondMoment /= Z.GetZetaFunction();
     return secondMoment;
 }
@@ -156,7 +156,7 @@ long double PlanckRand<RealType>::ThirdMoment() const
 {
     long double thirdMoment = (a + 3) * (a + 2) * (a + 1);
     thirdMoment /= (b * b * b);
-    thirdMoment *= std::riemann_zetal(a + 4);
+    thirdMoment *= RandMath::riemannZeta(a + 4);
     thirdMoment /= Z.GetZetaFunction();
     return thirdMoment;
 }
@@ -180,7 +180,7 @@ long double PlanckRand<RealType>::FourthMoment() const
     long double fourthMoment = (a + 4) * (a + 3) * (a + 2) * (a + 1);
     long double bSq = b * b;
     fourthMoment /= (bSq * bSq);
-    fourthMoment *= std::riemann_zetal(a + 5);
+    fourthMoment *= RandMath::riemannZeta(a + 5);
     fourthMoment /= Z.GetZetaFunction();
     return fourthMoment;
 }
@@ -217,7 +217,7 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
     },
     0.0, 1.0);
 
-    double re2 = this->ExpectedValue([this, t] (double x)
+    double re2 = this->ExpectedValue([t] (double x)
     {
         return std::cos(t * x);
     },
@@ -234,7 +234,7 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
     re3 += std::cos(t);
     re3 *= std::exp(pdfCoef) / (b * a);
 
-    double im = this->ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([t] (double x)
     {
         return std::sin(t * x);
     },

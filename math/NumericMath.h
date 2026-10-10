@@ -267,7 +267,7 @@ double parabolicMinimum(RealType a, RealType b, RealType c, double fa, double fb
 template<typename RealType>
 bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealType> & abc, double &fx, RealType &root, double epsilon)
 {
-    static constexpr double K = 0.5 * (3 - M_SQRT5);
+    static constexpr double K = 0.5 * (3 - randlib::consts::sqrt5);
     auto [a, x, c] = abc;
     double w = x, v = x, fw = fx, fv = fx;
     double d = c - a, e = d;
@@ -358,7 +358,7 @@ template<typename RealType>
 bool findMin(const std::function<double (RealType)> &funPtr, RealType closePoint, RealType &root, long double epsilon = 1e-8)
 {
     Triplet<RealType> abc;
-    static constexpr double K = 0.5 * (M_SQRT5 + 1);
+    static constexpr double K = 0.5 * (randlib::consts::sqrt5 + 1);
     static constexpr int L = 100;
     double a = closePoint, fa = funPtr(a);
     double b = a + 1.0, fb = funPtr(b);

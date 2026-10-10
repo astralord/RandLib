@@ -33,7 +33,7 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
 
     /// Set deltas
     double npq = npFloor * qFloor;
-    double coef = 128.0 * n / M_PI;
+    double coef = 128.0 * n / randlib::consts::pi;
     delta1 = coef * pFloor / (81.0 * qFloor);
     delta1 = npq * std::log(delta1);
     if (delta1 > 1.0)
@@ -54,9 +54,9 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
     c = 2.0 * delta1 / npFloor;
 
     /// Set a's
-    a1 = 0.5 * std::exp(c) * sigma1 * M_SQRT2PI;
+    a1 = 0.5 * std::exp(c) * sigma1 * randlib::consts::sqrt2pi;
 
-    a2 = 0.5 * sigma2 * M_SQRT2PI;
+    a2 = 0.5 * sigma2 * randlib::consts::sqrt2pi;
     a2 += a1;
 
     coefa3 = 0.5 * delta1 / (sigma1 * sigma1);

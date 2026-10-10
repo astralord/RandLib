@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT PlanckRand : public ContinuousDistribution<RealType>
 {
     double a = 1; ///< shape
     double b = 1; ///< scale
-    double pdfCoef = M_LN2 + M_LN3 - 2 * M_LNPI; ///< coefficient for faster pdf calculations
+    double pdfCoef = randlib::consts::ln2 + randlib::consts::ln3 - 2 * randlib::consts::lnpi; ///< coefficient for faster pdf calculations
 
     ZetaRand<long long int> Z{};
     GammaRand<RealType> G{2};

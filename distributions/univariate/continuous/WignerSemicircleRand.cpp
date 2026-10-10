@@ -30,7 +30,7 @@ double WignerSemicircleRand<RealType>::f(const RealType & x) const
         return 0.0;
     double y = RSq - xSq;
     y = std::sqrt(y);
-    y *= M_1_PI / RSq;
+    y *= randlib::consts::inv_pi / RSq;
     return 2 * y;
 }
 
@@ -40,7 +40,7 @@ double WignerSemicircleRand<RealType>::logf(const RealType & x) const
     double xSq = x * x;
     if (xSq >= RSq)
         return -INFINITY;
-    return M_LN2 + 0.5 * std::log(RSq - xSq) - M_LNPI - logRSq;
+    return randlib::consts::ln2 + 0.5 * std::log(RSq - xSq) - randlib::consts::lnpi - logRSq;
 }
 
 template < typename RealType >
@@ -53,7 +53,7 @@ double WignerSemicircleRand<RealType>::F(const RealType &x) const
     double y = RSq - x * x;
     y = x * std::sqrt(y) / RSq;
     double z = std::asin(x / R);
-    return 0.5 + (y + z) / M_PI;
+    return 0.5 + (y + z) / randlib::consts::pi;
 }
 
 template < typename RealType >
@@ -109,7 +109,7 @@ long double WignerSemicircleRand<RealType>::ExcessKurtosis() const
 template < typename RealType >
 long double WignerSemicircleRand<RealType>::Entropy() const
 {
-    return M_LNPI + 0.5 * logRSq - 0.5;
+    return randlib::consts::lnpi + 0.5 * logRSq - 0.5;
 }
 
 template class WignerSemicircleRand<float>;

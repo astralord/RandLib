@@ -24,7 +24,7 @@ void NormalRand<RealType>::SetScale(double scale)
     if (scale <= 0.0)
         throw std::invalid_argument("Normal distribution: scale should be positive, but it's equal to " + std::to_string(scale));
     sigma = scale;
-    StableDistribution<RealType>::SetScale(sigma * M_SQRT1_2);
+    StableDistribution<RealType>::SetScale(sigma * randlib::consts::inv_sqrt2);
 }
 
 template < typename RealType >
@@ -60,7 +60,7 @@ double NormalRand<RealType>::LogNormalizer(DoublePair theta) const
 {
     double theta1 = theta.first, theta2 = theta.second;
     double F = -0.25 * theta1 * theta1 / theta2;
-    F += 0.5 * std::log(-M_PI / theta2);
+    F += 0.5 * std::log(-randlib::consts::pi / theta2);
     return F;
 }
 

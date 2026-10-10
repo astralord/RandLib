@@ -90,7 +90,7 @@ long double WeibullRand<RealType>::Variance() const
 template < typename RealType >
 RealType WeibullRand<RealType>::Median() const
 {
-    return lambda * std::pow(M_LN2, kInv);
+    return lambda * std::pow(randlib::consts::ln2, kInv);
 }
 
 template < typename RealType >
@@ -199,7 +199,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
     },
     0.0, 1.0);
 
-    double re2 = this->ExpectedValue([this, t] (double x)
+    double re2 = this->ExpectedValue([t] (double x)
     {
         return std::cos(t * x);
     },
@@ -217,7 +217,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
 
     double re = re1 + re2 + re3;
 
-    double im = this->ExpectedValue([this, t] (double x)
+    double im = this->ExpectedValue([t] (double x)
     {
         return std::sin(t * x);
     },
@@ -229,7 +229,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
 template < typename RealType >
 long double WeibullRand<RealType>::Entropy() const
 {
-    return M_EULER * (1.0 - kInv) + std::log(lambda * kInv) + 1.0;
+    return randlib::consts::egamma * (1.0 - kInv) + std::log(lambda * kInv) + 1.0;
 }
 
 template < typename RealType >

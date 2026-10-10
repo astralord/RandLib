@@ -18,8 +18,8 @@ class RANDLIBSHARED_EXPORT PoissonRand : public DiscreteDistribution<IntType>,
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
-    double Fmu = 2 * M_1_E; ///< P(X < [λ])
-    double Pmu = M_1_E; ///< P(X = [λ])
+    double Fmu = 2 * randlib::consts::inv_e; ///< P(X < [λ])
+    double Pmu = randlib::consts::inv_e; ///< P(X = [λ])
 
     double mu = 1, delta = 6;
     double zeta{};
@@ -64,7 +64,7 @@ private:
 public:
     IntType Variate() const override;
     static IntType Variate(double rate, RandGenerator &randGenerator = ProbabilityDistribution<IntType>::staticRandGenerator);
-    void Sample(std::vector<IntType> &outputData) const;
+    void Sample(std::vector<IntType> &outputData) const override;
 
     long double Mean() const override;
     long double Variance() const override;

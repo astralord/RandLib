@@ -153,7 +153,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
             return INFINITY;
         double halfSigmaInv = 0.5 / gamma;
         double z = std::sqrt(halfSigmaInv * x);
-        double y = M_1_SQRTPI - RandMath::xexpxsqerfc(z);
+        double y = randlib::consts::inv_sqrtpi - RandMath::xexpxsqerfc(z);
         return 0.5 * y / (gamma * z);
     }
 
@@ -174,7 +174,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
         double hm1 = h - 1;
         double y = 2 * a / (hm1 * hm1);
         y -= std::log(gamma * hm1 * h);
-        y += M_LN2;
+        y += randlib::consts::ln2;
         return std::exp(y);
     }
 
@@ -193,14 +193,14 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
     if (c == 0.5) {
         double y = RandMath::xexpxsqerfc(sqrt2a);
         y *= (8.0 * a + 2.0) / sqrt2a;
-        y -= 4 * sqrt2a / M_SQRTPI;
+        y -= 4 * sqrt2a / randlib::consts::sqrtpi;
         return y / gamma;
     }
 
     /// we do numerical integration in the case of c > 0.5
     // (as I wasn't able to handle complex integrals)
     double adivc = x / mu;
-    double y = RandMath::integral([this, a, c, adivc] (double t)
+    double y = RandMath::integral([a, c, adivc] (double t)
     {
         if (t <= 0 || t >= adivc)
             return 0.0;
@@ -213,7 +213,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
         integrand /= amct * std::sqrt(amct);
         return integrand;
     }, 0, adivc);
-    return y / (gamma * M_SQRT2PI);
+    return y / (gamma * randlib::consts::sqrt2pi);
 }
 
 template < typename RealType >
@@ -224,7 +224,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
     // to split the integral on two
     if (x == 0)
         return INFINITY;
-    return -gamma * M_1_PI * RandMath::integral([this, x] (double t)
+    return -gamma * randlib::consts::inv_pi * RandMath::integral([this, x] (double t)
     {
         if (t <= 0.0 || t >= 1.0)
             return 0.0;
@@ -330,7 +330,7 @@ template < typename RealType >
 double GeneralGeometricStableDistribution<RealType>::variateForUnityExponent(double z) const
 {
     double W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
-    double X = z + 2 * beta * std::log(gamma * W) / M_PI;
+    double X = z + 2 * beta * std::log(gamma * W) / randlib::consts::pi;
     X *= gamma;
     X += mu;
     return X * W;
@@ -455,7 +455,7 @@ std::complex<double> GeneralGeometricStableDistribution<RealType>::CFImpl(double
 {
     double x = 0;
     if (alpha != 2 && beta != 0) {
-        x = (alpha == 1) ? M_2_PI * std::log(t) : -std::tan(M_PI_2 * alpha);
+        x = (alpha == 1) ? randlib::consts::two_inv_pi * std::log(t) : -std::tan(randlib::consts::half_pi * alpha);
         x *= beta;
     }
     double re = std::pow(gamma * t, alpha);

@@ -33,7 +33,7 @@ void ExponentiallyModifiedGaussianRand<RealType>::SetParameters(double location,
     a = 0.5 * beta * var;
     c = mu + a;
     a += c;
-    b = M_SQRT1_2 / sigma;
+    b = randlib::consts::inv_sqrt2 / sigma;
     v = beta * sigma;
 }
 

@@ -21,7 +21,7 @@ class RANDLIBSHARED_EXPORT ExponentiallyModifiedGaussianRand : public Continuous
     ExponentialRand<RealType> Y{};
 
     double a = 1; ///< μ + βσ^2
-    double b = M_SQRT1_2; ///< 1 / (√2 * σ)
+    double b = randlib::consts::inv_sqrt2; ///< 1 / (√2 * σ)
     double c = 0.5; ///< μ + βσ^2 / 2
     double v = 1; /// βσ
 

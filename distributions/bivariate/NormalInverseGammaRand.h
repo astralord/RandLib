@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT NormalInverseGammaRand : public ContinuousBivariateDi
     double lambda = 1; ///< precision λ
     double alpha = 1; ///< shape α
     double beta = 1; ///< rate β
-    double pdfCoef = 0.5 * (M_LNPI - M_LN2); ///< coefficient for faster pdf calculation
+    double pdfCoef = 0.5 * (randlib::consts::lnpi - randlib::consts::ln2); ///< coefficient for faster pdf calculation
 
 public:
     NormalInverseGammaRand(double location = 0, double precision = 1, double shape = 1, double rate = 1);

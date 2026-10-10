@@ -24,7 +24,7 @@ void InverseGaussianRand<RealType>::SetParameters(double mean, double shape)
     mu = mean;
     lambda = shape;
 
-    pdfCoef = 0.5 * std::log(0.5 * lambda * M_1_PI);
+    pdfCoef = 0.5 * std::log(0.5 * lambda * randlib::consts::inv_pi);
     cdfCoef = std::exp(2 * lambda / mu);
 }
 

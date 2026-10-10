@@ -144,7 +144,7 @@ RealType GammaDistribution<RealType>::variateAhrensDieter(double shape, RandGene
     double X = 0;
     size_t iter = 0;
     double shapeInv = 1.0 / shape;
-    double t = shapeInv + M_1_E;
+    double t = shapeInv + randlib::consts::inv_e;
     do {
         double U = UniformRand<RealType>::StandardVariate(randGenerator);
         double p = shape * t * U;
@@ -320,7 +320,7 @@ RealType GammaDistribution<RealType>::Mode() const
 template < typename RealType >
 RealType GammaDistribution<RealType>::Median() const
 {
-    return (this->alpha == 1.0) ? theta * M_LN2 : quantileImpl(0.5);
+    return (this->alpha == 1.0) ? theta * randlib::consts::ln2 : quantileImpl(0.5);
 }
 
 template < typename RealType >

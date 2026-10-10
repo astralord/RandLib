@@ -111,7 +111,7 @@ RealType FrechetRand<RealType>::quantileImpl1m(double p) const
 template < typename RealType >
 RealType FrechetRand<RealType>::Median() const
 {
-    return m + s / std::pow(M_LN2, alphaInv);
+    return m + s / std::pow(randlib::consts::ln2, alphaInv);
 }
 
 template < typename RealType >
@@ -156,7 +156,7 @@ long double FrechetRand<RealType>::ExcessKurtosis() const
 template < typename RealType >
 long double FrechetRand<RealType>::Entropy() const
 {
-    return 1.0 + M_EULER * (1.0 + alphaInv) + std::log(s / alpha);
+    return 1.0 + randlib::consts::egamma * (1.0 + alphaInv) + std::log(s / alpha);
 }
 
 template class FrechetRand<float>;

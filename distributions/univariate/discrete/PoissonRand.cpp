@@ -17,13 +17,13 @@ String PoissonRand<IntType>::Name() const
 template < typename IntType >
 void PoissonRand<IntType>::SetGeneratorConstants()
 {
-    delta = std::round(std::sqrt(2 * mu * std::log(M_1_PI * 128 * mu)));
+    delta = std::round(std::sqrt(2 * mu * std::log(randlib::consts::inv_pi * 128 * mu)));
     delta = std::max(6.0, std::min(mu, delta));
 
-    c1 = std::sqrt(0.5 * M_PI * mu * M_E);
+    c1 = std::sqrt(0.5 * randlib::consts::pi * mu * randlib::consts::e);
 
     c2 = 1.0 / (2 * mu + delta);
-    c2 += 0.5 * (M_LNPI - M_LN2 + std::log(mu + 0.5 * delta));
+    c2 += 0.5 * (randlib::consts::lnpi - randlib::consts::ln2 + std::log(mu + 0.5 * delta));
     c2 = c1 + std::exp(c2);
 
     c3 = c2 + 1.0;

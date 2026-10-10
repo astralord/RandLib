@@ -9,6 +9,8 @@ project(RandLib
 include(GNUInstallDirs)
 
 option(RANDLIB_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+option(RANDLIB_PORTABLE_SPECIAL_FUNCTIONS
+    "Use RandLib's own Bessel, beta and zeta functions even when the standard library provides them" OFF)
 option(RANDLIB_INSTALL "Generate install and package-config rules" ${PROJECT_IS_TOP_LEVEL})
 
 add_library(RandLib
@@ -82,6 +84,7 @@ add_library(RandLib
     math/GammaMath.cpp
     math/NumericMath.cpp
     math/RandMath.cpp
+    math/SpecialFunctions.cpp
 )
 add_library(RandLib::RandLib ALIAS RandLib)
 
@@ -97,6 +100,10 @@ target_compile_definitions(RandLib PRIVATE RANDLIB_LIBRARY)
 if(NOT BUILD_SHARED_LIBS)
     target_compile_definitions(RandLib PUBLIC RANDLIB_STATIC)
 endif()
+if(RANDLIB_PORTABLE_SPECIAL_FUNCTIONS)
+    target_compile_definitions(RandLib PUBLIC RANDLIB_PORTABLE_SPECIAL_FUNCTIONS)
+endif()
+
 if(MSVC)
     target_compile_options(RandLib PRIVATE /W4 /permissive- /bigobj)
     if(RANDLIB_WARNINGS_AS_ERRORS)

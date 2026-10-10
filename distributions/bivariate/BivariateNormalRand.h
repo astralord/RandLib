@@ -18,7 +18,7 @@ class RANDLIBSHARED_EXPORT BivariateNormalRand : public ContinuousBivariateDistr
     double sigma1 = 1; ///< first scale σ1
     double sigma2 = 1; ///< second scale σ2
     double rho = 0; ///< correlation coefficient ρ
-    double pdfCoef = 1 + M_LN2 + M_LNPI; ///< coefficient for faster pdf calculation
+    double pdfCoef = 1 + randlib::consts::ln2 + randlib::consts::lnpi; ///< coefficient for faster pdf calculation
     double sqrt1mroSq = 1; ///< √(1 - ρ)
 
 public:

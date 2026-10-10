@@ -17,7 +17,7 @@ double RademacherRand::P(const int & k) const
 
 double RademacherRand::logP(const int & k) const
 {
-    return (k == 1 || k == -1) ? -M_LN2 : -INFINITY;
+    return (k == 1 || k == -1) ? -randlib::consts::ln2 : -INFINITY;
 }
 
 double RademacherRand::F(const int & k) const
@@ -80,5 +80,5 @@ int RademacherRand::quantileImpl1m(double p) const
 
 double RademacherRand::Entropy()
 {
-    return M_LN2;
+    return randlib::consts::ln2;
 }

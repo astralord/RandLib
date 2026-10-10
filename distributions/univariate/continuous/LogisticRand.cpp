@@ -78,14 +78,14 @@ long double LogisticRand<RealType>::Mean() const
 template < typename RealType >
 long double LogisticRand<RealType>::Variance() const
 {
-    double sPi = s * M_PI;
+    double sPi = s * randlib::consts::pi;
     return sPi * sPi / 3;
 }
 
 template < typename RealType >
 std::complex<double> LogisticRand<RealType>::CFImpl(double t) const
 {
-    double pist = M_PI * s * t;
+    double pist = randlib::consts::pi * s * t;
     std::complex<double> y(0.0, t * mu);
     y = std::exp(y);
     y *= pist;
@@ -143,7 +143,7 @@ void LogisticRand<RealType>::FitLocation(const std::vector<RealType> &sample)
     if (!RandMath::findRootNewtonFirstOrder<RealType>([this, sample, nHalf](RealType m)
     {
         double f1 = 0, f2 = 0;
-        for (const double & x : sample)
+        for (const RealType & x : sample)
         {
             double aux = std::exp((m - x) / s);
             double denom = 1.0 + aux;

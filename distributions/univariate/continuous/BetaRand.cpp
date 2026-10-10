@@ -43,8 +43,8 @@ void BetaDistribution<RealType>::SetShapes(double shape1, double shape2)
     GammaRV2.SetParameters(shape2, 1);
     alpha = GammaRV1.GetShape();
     beta = GammaRV2.GetShape();
-    betaFun = std::betal(alpha, beta);
-    logBetaFun = std::log(betaFun);
+    logBetaFun = RandMath::logBeta(alpha, beta);
+    betaFun = std::exp(logBetaFun);
     setCoefficientsForGenerator();
 }
 
@@ -112,7 +112,7 @@ double BetaDistribution<RealType>::F(const RealType &x) const
     double xSt = (x - a) * bmaInv;
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
-        return M_2_PI * std::asin(std::sqrt(xSt));
+        return randlib::consts::two_inv_pi * std::asin(std::sqrt(xSt));
     return RandMath::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1pl(-xSt));
 }
 
@@ -127,7 +127,7 @@ double BetaDistribution<RealType>::S(const RealType &x) const
     double xSt = (x - a) / bma;
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
-        return M_2_PI * std::acos(std::sqrt(xSt));
+        return randlib::consts::two_inv_pi * std::acos(std::sqrt(xSt));
     return RandMath::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1pl(-xSt), std::log(xSt));
 }
 
@@ -135,7 +135,7 @@ template < typename RealType >
 RealType BetaDistribution<RealType>::variateArcsine() const
 {
     RealType U = 2 * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - 1;
-    RealType X = std::sin(M_PI * U);
+    RealType X = std::sin(randlib::consts::pi * U);
     return X * X;
 }
 
@@ -156,7 +156,7 @@ template < typename RealType >
 RealType BetaDistribution<RealType>::variateRejectionUniformExtended() const
 {
     size_t iter = 0;
-    static constexpr double M_LN4 = M_LN2 + M_LN2;
+    static constexpr double M_LN4 = randlib::consts::ln2 + randlib::consts::ln2;
     do {
         RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         RealType W = ExponentialRand<RealType>::StandardVariate(this->localRandGenerator);
@@ -397,9 +397,9 @@ RealType BetaDistribution<RealType>::Median() const
     if (alpha == beta)
         return a + bma * 0.5;
     if (alpha == 1.0)
-        return a - bma * std::expm1l(-M_LN2 / beta);
+        return a - bma * std::expm1l(-randlib::consts::ln2 / beta);
     if (beta == 1.0)
-        return a + bma * std::exp(-M_LN2 / alpha);
+        return a + bma * std::exp(-randlib::consts::ln2 / alpha);
     if (alpha >= 1.0 && beta >= 1.0) {
         double initValue = 3 * alpha - 1.0;
         initValue /= 3 * (alpha + beta) - 2.0;
@@ -447,7 +447,7 @@ long double BetaDistribution<RealType>::ExcessKurtosis() const
 template < typename RealType >
 long double BetaDistribution<RealType>::MeanAbsoluteDeviation() const
 {
-    double y = M_LN2;
+    double y = randlib::consts::ln2;
     y += alpha * std::log(alpha);
     y += beta * std::log(beta);
     y -= (alpha + beta + 1) * std::log(alpha + beta);
@@ -462,7 +462,7 @@ RealType BetaDistribution<RealType>::quantileImpl(double p) const
     if (alpha == beta)
     {
         if (alpha == 0.5) {
-            double x = std::sin(0.5 * M_PI * p);
+            double x = std::sin(0.5 * randlib::consts::pi * p);
             return a + bma * x * x;
         }
         if (alpha == 1.0)
@@ -481,7 +481,7 @@ RealType BetaDistribution<RealType>::quantileImpl1m(double p) const
     if (alpha == beta)
     {
         if (alpha == 0.5) {
-            double x = std::cos(0.5 * M_PI * p);
+            double x = std::cos(0.5 * randlib::consts::pi * p);
             return a + bma * x * x;
         }
         if (alpha == 1.0)
@@ -793,10 +793,10 @@ void ArcsineRand<RealType>::SetShape(double shape)
 template < typename RealType >
 void ArcsineRand<RealType>::FitShape(long double lnG, long double lnG1m)
 {
-    double shape = M_PI / (lnG1m - lnG);
+    double shape = randlib::consts::pi / (lnG1m - lnG);
     if (!std::isfinite(shape))
         SetShape(0.5);
-    shape = -M_1_PI * RandMath::atan(shape);
+    shape = -randlib::consts::inv_pi * RandMath::atan(shape);
     SetShape(shape > 0 ? shape : shape + 1);
 }
 

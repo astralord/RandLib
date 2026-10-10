@@ -6,18 +6,18 @@ long double logBeta(long double a, long double b)
 {
     if (a <= 0 || b <= 0)
         throw std::invalid_argument("Parameters (a, b) of beta function should be both positive");
-    double beta = std::betal(a, b);
-    if (std::isfinite(beta))
-        return std::log(beta);
-    double apb = a + b;
-    int roundA = std::round(a), roundB = std::round(b);
-    int roundApB = std::round(apb); 
-    long double lgammaA = (a == roundA) ? lfact(roundA - 1) : std::lgammal(a);
-    long double lgammaB = lgammaA;
-    if (a != b)
-        lgammaB = (b == roundB) ? lfact(roundB - 1) : std::lgammal(b);
-    long double lgammaApB = (apb == roundApB) ? lfact(roundApB - 1) : std::lgammal(apb);
-    return lgammaA + lgammaB - lgammaApB;
+    /// Stirling corrections avoid both overflow of Γ and cancellation between large log Γ values
+    long double p = std::min(a, b), q = std::max(a, b);
+    if (p >= 10) {
+        long double corr = lgammaCorrection(p) + lgammaCorrection(q) - lgammaCorrection(p + q);
+        return -0.5l * std::log(q) + 0.5l * (randlib::consts::ln2 + randlib::consts::lnpi) + corr
+               + (p - 0.5l) * std::log(p / (p + q)) + q * std::log1p(-p / (p + q));
+    }
+    if (q >= 10) {
+        long double corr = lgammaCorrection(q) - lgammaCorrection(p + q);
+        return std::lgamma(p) + corr + p - p * std::log(p + q) + (q - 0.5l) * std::log1p(-p / (p + q));
+    }
+    return std::log(std::tgamma(p) * (std::tgamma(q) / std::tgamma(p + q)));
 }
 
 double ibetaPowerSeries1(double x, double a, double b, double logBetaFun, double logX, double log1mX)

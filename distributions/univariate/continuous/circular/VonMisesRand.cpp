@@ -21,7 +21,7 @@ void VonMisesRand<RealType>::SetConcentration(double concentration)
         throw std::invalid_argument("von Mises distribution: concentration parameter should be positive");
     k = concentration;
     logI0k = RandMath::logBesselI(0, k);
-    s = (k > 1.3) ? 1.0 / std::sqrt(k) : M_PI * std::exp(-k);
+    s = (k > 1.3) ? 1.0 / std::sqrt(k) : randlib::consts::pi * std::exp(-k);
     if (k < CK) {
         /// set coefficients for cdf
         static constexpr double a[] = {28.0, 0.5, 100.0, 5.0};
@@ -48,8 +48,8 @@ double VonMisesRand<RealType>::cdfSeries(double x) const
         V += sn / n;
         V *= R;
     }
-    V /= M_PI;
-    V += 0.5 * x / M_PI;
+    V /= randlib::consts::pi;
+    V += 0.5 * x / randlib::consts::pi;
     V += 0.5;
     return V;
 }
@@ -87,40 +87,40 @@ double VonMisesRand<RealType>::ccdfErfc(RealType x) const
 template < typename RealType >
 double VonMisesRand<RealType>::f(const RealType & x) const
 {
-    return (x < this->loc - M_PI || x > this->loc + M_PI) ? 0.0 : std::exp(logf(x));
+    return (x < this->loc - randlib::consts::pi || x > this->loc + randlib::consts::pi) ? 0.0 : std::exp(logf(x));
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::logf(const RealType & x) const
 {
-    if (x < this->loc - M_PI || x > this->loc + M_PI)
+    if (x < this->loc - randlib::consts::pi || x > this->loc + randlib::consts::pi)
         return -INFINITY;
     double y = k * std::cos(x - this->loc) - logI0k;
-    y -= M_LNPI + M_LN2;
+    y -= randlib::consts::lnpi + randlib::consts::ln2;
     return y;
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::F(const RealType & x) const
 {
-    if (x <= this->loc - M_PI)
+    if (x <= this->loc - randlib::consts::pi)
         return 0.0;
-    if (x >= this->loc + M_PI)
+    if (x >= this->loc + randlib::consts::pi)
         return 1.0;
     double xAdj = x - this->loc;
-    xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
+    xAdj -= randlib::consts::two_inv_pi * std::round(0.5 * xAdj / randlib::consts::pi);
     return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::S(const RealType &x) const
 {
-    if (x <= this->loc - M_PI)
+    if (x <= this->loc - randlib::consts::pi)
         return 1.0;
-    if (x >= this->loc + M_PI)
+    if (x >= this->loc + randlib::consts::pi)
         return 0.0;
     double xAdj = x - this->loc;
-    xAdj -= M_2_PI * std::round(0.5 * xAdj / M_PI);
+    xAdj -= randlib::consts::two_inv_pi * std::round(0.5 * xAdj / randlib::consts::pi);
     return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
 }
 
@@ -134,7 +134,7 @@ RealType VonMisesRand<RealType>::Variate() const
         RealType U = UniformRand<RealType>::StandardVariate(this->localRandGenerator);
         RealType V = 2 * UniformRand<RealType>::StandardVariate(this->localRandGenerator) - 1;
         RealType theta = s * V / U;
-        if ((std::fabs(theta) <= M_PI) &&
+        if ((std::fabs(theta) <= randlib::consts::pi) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
             return this->loc + theta;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);

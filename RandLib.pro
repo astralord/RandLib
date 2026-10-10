@@ -38,6 +38,7 @@ SOURCES += \
     distributions/univariate/continuous/WeibullRand.cpp \
     distributions/univariate/discrete/RademacherRand.cpp \
     math/RandMath.cpp \
+    math/SpecialFunctions.cpp \
     distributions/univariate/discrete/BernoulliRand.cpp \
     distributions/univariate/discrete/GeometricRand.cpp \
     distributions/univariate/discrete/BinomialRand.cpp \
@@ -110,6 +111,7 @@ HEADERS +=\
     distributions/univariate/continuous/WeibullRand.h \
     distributions/univariate/discrete/RademacherRand.h \
     math/RandMath.h \
+    math/SpecialFunctions.h \
     distributions/univariate/discrete/BernoulliRand.h \
     distributions/univariate/discrete/GeometricRand.h \
     distributions/univariate/discrete/BinomialRand.h \

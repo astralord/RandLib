@@ -14,7 +14,7 @@ class RANDLIBSHARED_EXPORT VonMisesRand : public CircularDistribution<RealType>
 {
     double k = 1; ///< concentration
     double logI0k = 1; ///< log(I_0(k)), where I_0 stands for modified Bessel function of the first kind of order 0
-    double s = M_PI / M_E; ///< generator coefficient
+    double s = randlib::consts::pi / randlib::consts::e; ///< generator coefficient
     int p = 12; /// coefficient for faster cdf calculation
     static constexpr double CK = 10.5;
 

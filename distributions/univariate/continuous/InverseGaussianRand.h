@@ -14,8 +14,8 @@ class RANDLIBSHARED_EXPORT InverseGaussianRand : public ContinuousDistribution<R
 {
     double mu = 1; ///< mean μ
     double lambda = 1; ///< shape λ
-    double pdfCoef = M_SQRT1_2 / M_SQRTPI; ///< (λ/(2π))^(1/2)
-    double cdfCoef = M_E * M_E; ///< exp(2λ/μ)
+    double pdfCoef = randlib::consts::inv_sqrt2 / randlib::consts::sqrtpi; ///< (λ/(2π))^(1/2)
+    double cdfCoef = randlib::consts::e * randlib::consts::e; ///< exp(2λ/μ)
 public:
     InverseGaussianRand(double mean = 1, double shape = 1);
 

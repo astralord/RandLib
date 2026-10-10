@@ -19,14 +19,14 @@ protected:
     double beta = 0; ///< skewness β
     double mu = 0; ///< location μ
     double m = 0; ///< shift m
-    double gamma = M_SQRT2; ///< scale γ
-    double logGamma = 0.5 * M_LN2; ///< log(γ)
+    double gamma = randlib::consts::sqrt2; ///< scale γ
+    double logGamma = 0.5 * randlib::consts::ln2; ///< log(γ)
 
     /// parameters for α = 2
     double kappa = 1; ///< asymmetry coefficient κ
     double kappaInv = 1; ///< 1 / κ
     double kappaSq = 1; ///< κ^2
-    double log1pKappaSq = M_LN2; ///< log(1 + κ^2)
+    double log1pKappaSq = randlib::consts::ln2; ///< log(1 + κ^2)
     double logKappa = 0; /// log(κ)
 
     GeneralGeometricStableDistribution(double exponent, double skewness, double scale = 1.0, double location = 0.0, double shift = 0.0);
@@ -122,7 +122,7 @@ template < typename RealType = double >
 class RANDLIBSHARED_EXPORT GeometricStableRand : public GeneralGeometricStableDistribution<RealType>
 {
 public:
-    GeometricStableRand(double exponent = 2, double skewness = 0, double scale = M_SQRT2, double location = 0);
+    GeometricStableRand(double exponent = 2, double skewness = 0, double scale = randlib::consts::sqrt2, double location = 0);
     virtual ~GeometricStableRand() {}
 
     String Name() const override;

@@ -29,7 +29,7 @@ protected:
     double pdfCoef = 0; ///< α * log(β) - log(Γ(α))
     double logAlpha = 0; ///< log(α)
     double logBeta = 0; ///< log(β)
-    double digammaAlpha = -M_EULER; ///< ψ(α)
+    double digammaAlpha = -randlib::consts::egamma; ///< ψ(α)
 
 private:
     /// constants for faster sampling

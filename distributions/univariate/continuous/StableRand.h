@@ -21,8 +21,8 @@ protected:
     double alpha = 2; ///< characteristic exponent α
     double beta = 0; ///< skewness β
     double mu = 0; ///< location μ
-    double gamma = M_SQRT2; ///< scale γ
-    double logGamma = 0.5 * M_LN2; ///< log(γ)
+    double gamma = randlib::consts::sqrt2; ///< scale γ
+    double logGamma = 0.5 * randlib::consts::ln2; ///< log(γ)
 
 private:
     double alphaInv = 0.5; ///< 1/α
@@ -30,7 +30,7 @@ private:
     double omega = 0; ///< ω = log(1 + ζ^2) / (2α)
     double xi = 0; ///< ξ = atan(-ζ) / α;
     double alpha_alpham1 = 2; ///< α / (α - 1)
-    double logGammaPi_2 = M_LNPI - 1.5 * M_LN2; ///< log(γπ/2)
+    double logGammaPi_2 = randlib::consts::lnpi - 1.5 * randlib::consts::ln2; ///< log(γπ/2)
 
     static constexpr double BIG_NUMBER = 1e9; ///< a.k.a. infinity for pdf and cdf calculations
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
@@ -46,7 +46,7 @@ private:
     DISTRIBUTION_TYPE distributionType = NORMAL; ///< type of distribution (Gaussian by default)
 
 protected:
-    double pdfCoef = 0.5 * (M_LN2 + M_LNPI); ///< hashed coefficient for faster pdf calculations
+    double pdfCoef = 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi); ///< hashed coefficient for faster pdf calculations
     double pdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use pdf tail approximation
     double cdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use cdf tail approximation
 

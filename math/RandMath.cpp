@@ -19,8 +19,8 @@ double atan(double x)
     if (x == 0.0)
         return 0.0;
     if (x > 1.0)
-        return M_PI_2 - std::atan(1.0 / x);
-    return (x < -1.0) ? -M_PI_2 - std::atan(1.0 / x) : std::atan(x);
+        return randlib::consts::half_pi - std::atan(1.0 / x);
+    return (x < -1.0) ? -randlib::consts::half_pi - std::atan(1.0 / x) : std::atan(x);
 }
 
 double softplus(double x)
@@ -32,7 +32,7 @@ double softplus(double x)
 
 double log1mexp(double x)
 {
-    return (x < -M_LN2) ? std::log1pl(-std::exp(x)) : std::log(-std::expm1l(x));
+    return (x < -randlib::consts::ln2) ? std::log1pl(-std::exp(x)) : std::log(-std::expm1l(x));
 }
 
 double logexpm1l(double x)
@@ -166,7 +166,7 @@ double xexpxsqerfc(double x)
         y += std::log(std::erfc(x));
         return x * std::exp(y);
     }
-    double log2xSq = M_LN2 + 2 * std::log(x);
+    double log2xSq = randlib::consts::ln2 + 2 * std::log(x);
     double sum = 0.0;
     for (int n = 1; n != N; ++n) {
         double add = RandMath::ldfact(2 * n - 1);
@@ -174,7 +174,7 @@ double xexpxsqerfc(double x)
         add = std::exp(add);
         sum += (n & 1) ? -add : add;
     }
-    return (1.0 + sum) / M_SQRTPI;
+    return (1.0 + sum) / randlib::consts::sqrtpi;
 }
 
 double harmonicNumber(double exponent, int number)
@@ -182,9 +182,9 @@ double harmonicNumber(double exponent, int number)
     if (number < 1)
         return 0;
     if (exponent == 1)
-        return M_EULER + digamma(number + 1);
+        return randlib::consts::egamma + digamma(number + 1);
     if (exponent == 2)
-        return M_PI_SQ / 6.0 - trigamma(number + 1);
+        return randlib::consts::pi_sq / 6.0 - trigamma(number + 1);
     double res = 1.0;
     for (int i = 2; i <= number; ++i)
         res += std::pow(i, -exponent);
@@ -213,27 +213,27 @@ long double logBesselI(double nu, double x)
 
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
-        long double y = x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
+        long double y = x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
         y += (nu > 0) ? RandMath::softplus(-2 * x) : RandMath::log1mexp(-2 * x);
         return y;
     }
 
     if (nu < 0) {
         /// I(ν, x) = I(−ν, x) - 2 / π sin(πν) K(ν, x)
-        long double besseli = std::cyl_bessel_il(-nu, x);
-        long double sinPiNu = -std::sin(M_PI * nu);
+        long double besseli = RandMath::besselI(-nu, x);
+        long double sinPiNu = -std::sin(randlib::consts::pi * nu);
         long double y = 0;
         if (sinPiNu == 0 || RandMath::areClose(nu, std::round(nu)))
             y = besseli;
         else {
-            long double besselk = std::cyl_bessel_kl(-nu, x);
-            y = besseli - M_2_PI * sinPiNu * besselk;
+            long double besselk = RandMath::besselK(-nu, x);
+            y = besseli - randlib::consts::two_inv_pi * sinPiNu * besselk;
         }
         return (y <= 0) ? -INFINITY : std::log(y);
     }
 
-    long double besseli = std::cyl_bessel_il(nu, x); // TODO: expand Hankel asymptotic expansions
-    return std::isfinite(besseli) ? std::log(besseli) : x - 0.5 * (M_LN2 + M_LNPI + std::log(x));
+    long double besseli = RandMath::besselI(nu, x); // TODO: expand Hankel asymptotic expansions
+    return std::isfinite(besseli) ? std::log(besseli) : x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
 }
 
 long double logBesselK(double nu, double x)
@@ -245,11 +245,11 @@ long double logBesselK(double nu, double x)
         return INFINITY;
 
     long double besselk = 0;
-    if (nu == 0.5 || (besselk = std::cyl_bessel_kl(nu, x)) == 0)
-        return 0.5 * (M_LNPI - M_LN2 - std::log(x)) - x;
+    if (nu == 0.5 || (besselk = RandMath::besselK(nu, x)) == 0)
+        return 0.5 * (randlib::consts::lnpi - randlib::consts::ln2 - std::log(x)) - x;
 
     if (!std::isfinite(besselk)) // TODO: expand Hankel asymptotic expansions
-        return (nu == 0) ? std::log(-std::log(x)) : std::lgammal(nu) - M_LN2 - nu * std::log(0.5 * x);
+        return (nu == 0) ? std::log(-std::log(x)) : std::lgammal(nu) - randlib::consts::ln2 - nu * std::log(0.5 * x);
 
     return std::log(besselk);
 }
@@ -283,7 +283,7 @@ double WLambert(double x, double w0, double epsilon)
 double W0Lambert(double x, double epsilon)
 {
     double w = 0;
-    if (x < -M_1_E)
+    if (x < -randlib::consts::inv_e)
         throw std::invalid_argument("Argument x should be greater than -1/e, but it's equal to " + std::to_string(x));
     if (x > 10) {
         double logX = std::log(x);
@@ -296,7 +296,7 @@ double W0Lambert(double x, double epsilon)
 double Wm1Lambert(double x, double epsilon)
 {
     double w = -2;
-    if (x < -M_1_E || x > 0)
+    if (x < -randlib::consts::inv_e || x > 0)
         throw std::invalid_argument("Argument x should be greater than -1/e and smaller or equal to 0, but it's equal to " + std::to_string(x));
     if (x > -0.1) {
         double logmX = std::log(-x);
@@ -390,9 +390,9 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
     double sigmaXi = sigma * xi;
     double rho = sqrtY / sqrtX;
     double aux = std::erfc(sqrtX - sqrtY);
-    double Phi = (sigma == 0) ? 0.0 : sign(x - y) * std::sqrt(M_PI / sigma) * aux;
+    double Phi = (sigma == 0) ? 0.0 : sign(x - y) * std::sqrt(randlib::consts::pi / sigma) * aux;
     double Psi0 = aux / std::sqrt(rho);
-    double logXi = M_LN2 + 0.5 * std::log(x * y);
+    double logXi = randlib::consts::ln2 + 0.5 * std::log(x * y);
     /// sanity check
     int n0 = std::max(std::ceil(sigmaXi), 7.0);
     double sum = 0.0;
@@ -414,7 +414,7 @@ double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, 
         double Psi = Phi * (A2 - A1 / rho);
         sum += (n & 1) ? Psi : -Psi;
     }
-    sum /= M_SQRT2PI;
+    sum /= randlib::consts::sqrt2pi;
     sum += Psi0;
     sum *= 0.5 * std::pow(rho, mu);
     return sum;
@@ -435,9 +435,9 @@ double MarcumPForMuSmallerThanOne(double mu, double x, double y, double logX, do
     /// however we have singularity point at 0,
     /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
-    double aux = x + mu * M_LN2 + std::lgammal(mu);
-    double log2x = M_LN2 + logX;
-    double I = (M_LN2 + logY) * mu - aux;
+    double aux = x + mu * randlib::consts::ln2 + std::lgammal(mu);
+    double log2x = randlib::consts::ln2 + logX;
+    double I = (randlib::consts::ln2 + logY) * mu - aux;
     I = std::exp(I) / mu;
 
     double mum1 = mu - 1.0;
@@ -488,8 +488,8 @@ double MarcumQIntergralRepresentation(double mu, double x, double y, double sqrt
     double s0 = 0.5 * (1.0 + sqrt1pXiSq) / yPrime;
     double phi = x / s0 + y * s0 - std::log(s0) * mu;
     std::function<double (double)> integrandPtr = std::bind(&MarcumQIntegrand, std::placeholders::_1, xi, sqrt1pXiSq, mu, yPrime);
-    double integral = RandMath::integral(integrandPtr, -M_PI, M_PI);
-    return 0.5 * std::exp(-x - y + phi) / M_PI * integral;
+    double integral = RandMath::integral(integrandPtr, -randlib::consts::pi, randlib::consts::pi);
+    return 0.5 * std::exp(-x - y + phi) / randlib::consts::pi * integral;
 }
 
 double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)

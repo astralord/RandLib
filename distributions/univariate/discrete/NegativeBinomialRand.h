@@ -22,12 +22,12 @@ class RANDLIBSHARED_EXPORT NegativeBinomialDistribution : public DiscreteDistrib
 protected:
     double p = 0.5; ///< probability of failure
     double q = 0.5; ///< probability of success
-    double logProb = -M_LN2; ///< log(p)
-    double log1mProb = -M_LN2; ///< log(q)
+    double logProb = -randlib::consts::ln2; ///< log(p)
+    double log1mProb = -randlib::consts::ln2; ///< log(q)
 
 private:
     T r = 1; ///< number of failures until the experiment is stopped
-    double pdfCoef = -M_LN2; ///< coefficient for faster pdf calculation
+    double pdfCoef = -randlib::consts::ln2; ///< coefficient for faster pdf calculation
     double qDivP = 1; ///< q / p
     static constexpr int tableSize = 16;
     double table[tableSize];

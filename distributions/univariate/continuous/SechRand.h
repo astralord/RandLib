@@ -33,8 +33,8 @@ public:
     long double ExcessKurtosis() const override;
 
 private:
-    RealType quantileImpl(double p) const;
-    RealType quantileImpl1m(double p) const;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
 public:

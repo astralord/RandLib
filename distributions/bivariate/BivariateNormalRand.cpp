@@ -44,7 +44,7 @@ void BivariateNormalRand<RealType>::SetCovariance(double scale1, double scale2, 
     this->Y.SetScale(sigma2);
 
     sqrt1mroSq = 0.5 * std::log1pl(-rho * rho);
-    pdfCoef = this->X.GetLogScale() + this->Y.GetLogScale() + sqrt1mroSq + M_LN2 + M_LNPI;
+    pdfCoef = this->X.GetLogScale() + this->Y.GetLogScale() + sqrt1mroSq + randlib::consts::ln2 + randlib::consts::lnpi;
     sqrt1mroSq = std::exp(sqrt1mroSq);
 }
 
@@ -89,8 +89,8 @@ double BivariateNormalRand<RealType>::F(const Pair<RealType> &point) const
         p1 = std::max(this->X.F(x) - this->Y.F(-y), 0.0);
     if (std::fabs(rho) < 1.0) {
         RealType lowLimit = std::asin(rho);
-        RealType highLimit = RandMath::sign(rho) * M_PI_2;
-        p2 = RandMath::integral([this, xAdj, yAdj] (double theta) {
+        RealType highLimit = RandMath::sign(rho) * randlib::consts::half_pi;
+        p2 = RandMath::integral([xAdj, yAdj] (double theta) {
             /// Integrand is exp(-(x^2 + y^2 - 2xysin(θ)) / (2cos(θ)^2))
             RealType cosTheta = std::cos(theta);
             RealType tanTheta = std::tan(theta);
@@ -101,7 +101,7 @@ double BivariateNormalRand<RealType>::F(const Pair<RealType> &point) const
             return integrand;
         }, lowLimit, highLimit);
     }
-    return p1 - 0.5 * p2 / M_PI;
+    return p1 - 0.5 * p2 / randlib::consts::pi;
 }
 
 template< typename RealType >

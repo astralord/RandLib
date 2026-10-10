@@ -20,8 +20,8 @@ protected:
 
 public:
     SUPPORT_TYPE SupportType() const override { return FINITE_T; }
-    RealType MinValue() const override { return loc - M_PI; }
-    RealType MaxValue() const override { return loc + M_PI; }
+    RealType MinValue() const override { return loc - randlib::consts::pi; }
+    RealType MaxValue() const override { return loc + randlib::consts::pi; }
 
     void SetLocation(double location);
     inline double GetLocation() const { return loc; }

@@ -21,9 +21,9 @@ void ZetaRand<IntType>::SetExponent(double exponent)
         throw std::invalid_argument("Zeta distribution: exponent should be greater than 1, but it's equal to " + std::to_string(exponent));
     s = exponent;
     sm1 = s - 1.0;
-    zetaS = std::riemann_zetal(s);
+    zetaS = RandMath::riemannZeta(s);
     logZetaS = std::log(zetaS);
-    b = -std::expm1l(-sm1 * M_LN2);
+    b = -std::expm1l(-sm1 * randlib::consts::ln2);
 }
 
 template < typename IntType >
@@ -67,7 +67,7 @@ IntType ZetaRand<IntType>::Variate() const
 template < typename IntType >
 long double ZetaRand<IntType>::Mean() const
 {
-    return (s > 2) ? std::riemann_zetal(sm1) / zetaS : INFINITY;
+    return (s > 2) ? RandMath::riemannZeta(sm1) / zetaS : INFINITY;
 }
 
 template < typename IntType >
@@ -76,7 +76,7 @@ long double ZetaRand<IntType>::Variance() const
     if (s <= 3)
         return INFINITY;
     double y = Mean();
-    double z = std::riemann_zetal(s - 2) / zetaS;
+    double z = RandMath::riemannZeta(s - 2) / zetaS;
     return z - y * y;
 }
 
@@ -91,9 +91,9 @@ long double ZetaRand<IntType>::Skewness() const
 {
     if (s <= 4)
         return INFINITY;
-    long double z1 = std::riemann_zetal(sm1), z1Sq = z1 * z1;
-    long double z2 = std::riemann_zetal(s - 2);
-    long double z3 = std::riemann_zetal(s - 3);
+    long double z1 = RandMath::riemannZeta(sm1), z1Sq = z1 * z1;
+    long double z2 = RandMath::riemannZeta(s - 2);
+    long double z3 = RandMath::riemannZeta(s - 3);
     long double z = zetaS, zSq = z * z;
     long double logskew = zSq * z3;
     logskew -= 3 * z2 * z1 * z;
@@ -123,7 +123,7 @@ long double ZetaRand<IntType>::ExcessKurtosis() const
 template < typename IntType >
 long double ZetaRand<IntType>::Moment(int n) const
 {
-    return (s > n + 1) ? std::riemann_zetal(s - n) / zetaS : INFINITY;
+    return (s > n + 1) ? RandMath::riemannZeta(s - n) / zetaS : INFINITY;
 }
 
 template class ZetaRand<int>;

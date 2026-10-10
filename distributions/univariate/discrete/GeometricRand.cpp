@@ -94,7 +94,7 @@ void GeometricRand<IntType>::Sample(std::vector<IntType> &outputData) const
 template < typename IntType >
 IntType GeometricRand<IntType>::Median() const
 {
-    double median = -M_LN2 / this->log1mProb;
+    double median = -randlib::consts::ln2 / this->log1mProb;
     double flooredMedian = std::floor(median);
     return (RandMath::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
 }
@@ -104,7 +104,7 @@ long double GeometricRand<IntType>::Entropy() const
 {
     double a = -this->q * this->log1mProb;
     double b = -this->p * this->logProb;
-    return (a + b) / (M_LN2 * this->p);
+    return (a + b) / (randlib::consts::ln2 * this->p);
 }
 
 template class GeometricRand<int>;
