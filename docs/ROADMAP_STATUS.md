@@ -5,6 +5,9 @@ the GitHub milestones and issues of plan task 0.5 until they are created.
 
 Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs the maintainer
 
+The plan was revised on 2026-10-11 to do the hard numerics last; the `2.x` branch has the current
+plan and status.
+
 ## Phase 0: Preparation
 
 | Task | Status | Notes |
@@ -23,9 +26,9 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 13/14 and Clang 18 build warning-free locally; libc++ needs no C++17 special math functions. |
 | 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 20 further bugs (B11–B30) found by the test suite and fixed; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | `.github/workflows/ci.yml` written and checked locally for GCC 13/14, Clang 18, ASan+UBSan and all three engines; it has not run on GitHub yet. |
+| 1.5 Continuous integration | 🟡 | Runs on GitHub; the first run found an MSVC build error, a macOS accuracy difference and a 20-minute unit suite, all fixed in the following commits. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
-| 1.7 Release v1.2 | ✅ | CHANGELOG written, `v1.2.0` tagged locally on `1.x`. |
+| 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 
 ## Phase 2: Modern architecture (v2.0-alpha)
 
