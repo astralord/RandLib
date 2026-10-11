@@ -253,6 +253,34 @@ double GeneralGeometricStableDistribution<RealType>::conditionalShift(double w) 
 }
 
 template < typename RealType >
+double GeneralGeometricStableDistribution<RealType>::lowerLogMixingVariable(double x0) const
+{
+    /// Given W = w, (x0 - shift) / (γ w^(1/α)) leaves the bulk of the stable law below
+    /// w = (|x0| / γ)^α; twenty e-folds below that, the integrands no longer change
+    if (x0 == 0)
+        return -40.0;
+    return std::min(-20.0, alpha * std::log(std::fabs(x0) / gamma) - 20.0);
+}
+
+template < typename RealType >
+template < typename Function >
+double GeneralGeometricStableDistribution<RealType>::mixtureIntegral(const Function &g, double logWMin) const
+{
+    /// ∫ e^(-w) g(w) dw over W ~ Exp(1), integrated in u = log(w): the features of g have unit
+    /// width in u even in the far tails, where they sit at w ~ |x|^α. Below w = exp(logWMin),
+    /// g is taken constant; above w = e^7, e^(-w) underflows
+    static constexpr double LOG_W_MAX = 7.0;
+    double wMin = std::exp(logWMin);
+    double head = -std::expm1(-wMin) * g(wMin);
+    return head + RandMath::integral([&g] (double u)
+    {
+        double w = std::exp(u);
+        return w * std::exp(-w) * g(w);
+    },
+    logWMin, LOG_W_MAX, 1e-13);
+}
+
+template < typename RealType >
 double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
 {
     double x0 = x - m;
@@ -283,6 +311,16 @@ double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
         }
     }
 
+    if (distributionType != UNITY_EXPONENT) {
+        return mixtureIntegral([this, x0] (double w)
+        {
+            double tau = 1.0 / (gamma * std::pow(w, alphaInv));
+            return tau * Z.f(tau * x0 - tau * conditionalShift(w));
+        }, lowerLogMixingVariable(x0));
+    }
+
+    /// For α = 1, small w would need the stable law far in its tails, where it is slow (#1);
+    /// integrate in z = exp(-w) instead
     return RandMath::integral([this, x0] (double z)
     {
         if (z <= 0 || z >= 1)
@@ -307,30 +345,20 @@ double GeneralGeometricStableDistribution<RealType>::F(const RealType &x) const
     double x0 = x - m;
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
         return cdfLaplace(x0);
+    if (distributionType != UNITY_EXPONENT) {
+        return mixtureIntegral([this, x0] (double w)
+        {
+            return Z.F((x0 - conditionalShift(w)) / (gamma * std::pow(w, alphaInv)));
+        }, lowerLogMixingVariable(x0));
+    }
+
+    /// For α = 1, integrate in t = z / (1 - z) instead (see f)
     return RandMath::integral([this, x0] (double z)
     {
-        if (z <= 0) {
-            if (x0 != 0.0)
-                return (x0 < 0.0) ? 0.0 : 1.0;
-            if (mu == 0)
-                return Z.F(0);
-            if (distributionType == UNITY_EXPONENT)
-                return Z.F(-mu / gamma);
-            if (alpha < 1.0)
-                return Z.F(0);
-            return (mu < 0.0) ? 1.0 : 0.0;
-        }
-
-        if (z >= 1) {
-            if (mu == 0.0)
-                return Z.F(0);
-            if (distributionType == UNITY_EXPONENT)
-                return Z.F(-mu / gamma);
-            if (alpha > 1.0)
-                return Z.F(0);
-            return (mu < 0.0) ? 1.0 : 0.0;
-        }
-
+        if (z <= 0)
+            return (x0 == 0.0) ? Z.F(-mu / gamma) : ((x0 < 0.0) ? 0.0 : 1.0);
+        if (z >= 1)
+            return Z.F(-mu / gamma);
         double denominator = 1.0 - z;
         double t = z / denominator;
         double par = x0 - conditionalShift(t);

@@ -80,6 +80,21 @@ private:
      * @return location of the conditional stable law of Y given W = w
      */
     double conditionalShift(double w) const;
+    /**
+     * @fn lowerLogMixingVariable
+     * @param x0 argument minus shift
+     * @return log of the smallest mixing variable w that matters for the density and the
+     * distribution function at x0
+     */
+    double lowerLogMixingVariable(double x0) const;
+    /**
+     * @fn mixtureIntegral
+     * @param g function of the mixing variable w
+     * @param logWMin log of the smallest w that matters
+     * @return E[g(W)] for W ~ Exp(1)
+     */
+    template < typename Function >
+    double mixtureIntegral(const Function &g, double logWMin) const;
 
 public:
     double f(const RealType & x) const override;
