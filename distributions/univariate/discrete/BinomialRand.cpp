@@ -172,12 +172,14 @@ double BinomialDistribution<IntType>::logP(const IntType & k) const
 {
     if (k < 0 || k > n)
         return -INFINITY;
-    double y = lfactn;
-    y -= RandMath::lfact(n - k);
-    y -= RandMath::lfact(k);
-    y += k * logProb;
-    y += (n - k) * log1mProb;
-    return y;
+    if (k == 0)
+        return n * log1mProb;
+    if (k == n)
+        return n * logProb;
+    /// saddle-point form; the direct sum of logarithms cancels catastrophically for large n
+    double y = RandMath::stirlingError(n) - RandMath::stirlingError(k) - RandMath::stirlingError(n - k);
+    y -= RandMath::bd0(k, n * p) + RandMath::bd0(n - k, n * q);
+    return y - 0.5 * std::log(2 * randlib::consts::pi * k * (1.0 - static_cast<double>(k) / n));
 }
 
 template< typename IntType >

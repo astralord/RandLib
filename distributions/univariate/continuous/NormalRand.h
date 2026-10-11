@@ -2,6 +2,7 @@
 #define NORMALRAND_H
 
 #include "StableRand.h"
+#include <array>
 #include "InverseGammaRand.h"
 #include "../../bivariate/NormalInverseGammaRand.h"
 

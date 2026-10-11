@@ -256,6 +256,16 @@ TEST_CASE("B27: heavy-tailed discrete characteristic functions terminate", "[reg
     CHECK_THAT(phi.real(), WithinAbs(0.56053061459019065698, 1e-12));
     CHECK_THAT(phi.imag(), WithinAbs(0.51571178128074520922, 1e-12));
     CHECK(zeta.Quantile1m(1e-10) > 0);
+
+    /// the tail is summed with Euler's transformation instead of term by term: Li_s(e^{it}) / zeta(s)
+    ZetaRand<int> heavy(1.1), light(3.5);
+    start = std::chrono::steady_clock::now();
+    std::complex<double> heavyPhi = heavy.CF(1.0), lightPhi = light.CF(0.1);
+    CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(1));
+    CHECK_THAT(heavyPhi.real(), WithinAbs(0.0076240340145568357863, 1e-14));
+    CHECK_THAT(heavyPhi.imag(), WithinAbs(0.10101969240488333018, 1e-14));
+    CHECK_THAT(lightPhi.real(), WithinAbs(0.99028256032171156432, 1e-14));
+    CHECK_THAT(lightPhi.imag(), WithinAbs(0.1173998095713813435, 1e-14));
 }
 
 TEST_CASE("B28: Cantor characteristic function depends on t", "[regression]")
@@ -285,4 +295,19 @@ TEST_CASE("B30: Marchenko-Pastur distribution function next to the lower edge", 
     MarchenkoPasturRand<double> X(1, 1);
     CHECK(X.F(1e-17) < 1e-8);
     CHECK_THAT(X.F(1e-10), WithinRel(2 / PI * 1e-5, 1e-4));
+}
+
+TEST_CASE("B31: Rademacher mode is deterministic", "[regression]")
+{
+    RademacherRand X;
+    for (int i = 0; i < 20; ++i)
+        CHECK(X.Mode() == -1);
+}
+
+TEST_CASE("B32: Poisson and binomial probabilities do not depend on the accuracy of lgamma", "[regression]")
+{
+    /// k log(λ) - λ - log(k!) cancelled about four digits; the saddle-point form keeps full precision
+    CHECK_THAT(PoissonRand<int>(1000).P(977), WithinRel(0.009776061021570442222212799, 1e-14));
+    CHECK_THAT(BinomialRand<int>(1000, 0.5).P(480), WithinRel(0.01134098237118772746599741, 1e-14));
+    CHECK_THAT(BinomialRand<int>(100, 0.02).P(7), WithinRel(0.003130114101451260277632229, 1e-14));
 }

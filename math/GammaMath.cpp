@@ -345,6 +345,32 @@ long double lfact(size_t n)
     return (n > LOGFACTORIAL_TABLESIZE) ? std::lgammal(n + 1) : LOGFACTORIAL_TABLE[n];
 }
 
+double stirlingError(size_t n)
+{
+    if (n >= 10)
+        return lgammaCorrection(n);
+    long double x = n;
+    return lfact(n) - (x + 0.5l) * std::log(x) + x - 0.5l * std::log(2 * randlib::consts::pi);
+}
+
+double bd0(double x, double m)
+{
+    if (std::fabs(x - m) < 0.1 * (x + m)) {
+        double v = (x - m) / (x + m);
+        double sum = (x - m) * v;
+        double term = 2 * x * v;
+        double vSq = v * v;
+        for (int j = 1; j < 1000; ++j) {
+            term *= vSq;
+            double next = sum + term / (2 * j + 1);
+            if (next == sum)
+                return sum;
+            sum = next;
+        }
+    }
+    return x * std::log(x / m) + m - x;
+}
+
 long double ldfact(size_t n)
 {
     if (n & 1)

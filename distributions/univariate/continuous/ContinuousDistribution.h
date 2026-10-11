@@ -59,7 +59,7 @@ protected:
     RealType quantileImpl1m(double p) const override;
     long double ExpectedValue(const std::function<double (RealType)> &funPtr, RealType minPoint, RealType maxPoint) const override;
 
-private:
+protected:
     /**
      * @fn searchQuantile
      * Deterministic root search for the quantile: brackets the root, starting from the
@@ -69,9 +69,10 @@ private:
      * @param p probability in (0, 1)
      * @param upperTail search for S(x) = p instead of F(x) = p
      * @param guess initial guess, or NaN
+     * @param relativeStep first step of the bracket expansion, relative to the guess
      * @return such x that F(x) = p (or S(x) = p)
      */
-    RealType searchQuantile(double p, bool upperTail, RealType guess) const;
+    RealType searchQuantile(double p, bool upperTail, RealType guess, double relativeStep = 1e-3) const;
 
 public:
     double Hazard(const RealType &x) const override;

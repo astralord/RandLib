@@ -41,7 +41,7 @@ RealType ContinuousDistribution<RealType>::quantileImpl1m(double p) const
 }
 
 template< typename RealType >
-RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTail, RealType guess) const
+RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTail, RealType guess, double relativeStep) const
 {
     /// Solve in the tail with the smaller probability: 1 - p is exact for p ≥ 1/2, and
     /// F (or S) cannot resolve a probability close to 1 as well as the other tail resolves 1 - p
@@ -72,7 +72,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
         double gOrigin = g(origin);
         if (gOrigin == 0)
             return origin;
-        RealType step = useGuess ? std::max<RealType>(std::fabs(guess) * 1e-3, 1e-3) : 1;
+        RealType step = useGuess ? std::max<RealType>(std::fabs(guess) * relativeStep, 1e-3) : 1;
         bool searchUp = (useGuess || !loFinite || hiFinite) ? gOrigin < 0 : true;
         if (!useGuess && loFinite && !hiFinite)
             searchUp = true;

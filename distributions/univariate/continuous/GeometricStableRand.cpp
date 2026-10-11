@@ -520,6 +520,26 @@ long double GeneralGeometricStableDistribution<RealType>::ExcessKurtosis() const
 }
 
 template < typename RealType >
+RealType GeneralGeometricStableDistribution<RealType>::searchTailQuantile(double p, bool upperTail) const
+{
+    double tail = std::min(p, 1.0 - p);
+    double guess = (tail < 0.05) ? stableTailQuantile(tail, upperTail != (p > 0.5), alpha, beta, gamma, mu) : NAN;
+    return this->searchQuantile(p, upperTail, guess, 0.05);
+}
+
+template < typename RealType >
+RealType GeneralGeometricStableDistribution<RealType>::quantileImpl(double p) const
+{
+    return searchTailQuantile(p, false);
+}
+
+template < typename RealType >
+RealType GeneralGeometricStableDistribution<RealType>::quantileImpl1m(double p) const
+{
+    return searchTailQuantile(p, true);
+}
+
+template < typename RealType >
 RealType GeneralGeometricStableDistribution<RealType>::quantileLaplace(double p) const
 {
     if (p < kappaSq / (1 + kappaSq)) {

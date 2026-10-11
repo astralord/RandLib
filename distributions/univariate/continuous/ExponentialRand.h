@@ -2,6 +2,7 @@
 #define EXPONENTIALRAND_H
 
 #include "GammaRand.h"
+#include <array>
 #include <functional>
 
 /**

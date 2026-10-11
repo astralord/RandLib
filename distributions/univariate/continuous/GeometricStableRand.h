@@ -117,6 +117,14 @@ protected:
      */
     RealType quantileLaplace1m(double p) const;
 
+    /**
+     * @fn searchTailQuantile
+     * Quantile search that starts far tails from their power-law asymptote
+     */
+    RealType searchTailQuantile(double p, bool upperTail) const;
+    RealType quantileImpl(double p) const override;
+    RealType quantileImpl1m(double p) const override;
+
     std::complex<double> CFImpl(double t) const override;
 };
 

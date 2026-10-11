@@ -1,6 +1,7 @@
 #ifndef RANDMATH_H
 #define RANDMATH_H
 
+#include <array>
 #include <cmath>
 #include <functional>
 #include <complex>

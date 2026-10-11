@@ -4,6 +4,25 @@
 #include "ContinuousDistribution.h"
 
 /**
+ * @fn stableTailQuantile
+ * Quantile of the power-law tails of a stable law with α < 2:
+ * P(X > x) ~ C (1 + β) γ^α x^(-α) and P(X < -x) ~ C (1 - β) γ^α x^(-α) as x → ∞, with
+ * C = Γ(α) sin(πα/2) / π (1/π for α = 1). Geometric stable laws have the same tails.
+ * @param p probability of the tail, small
+ * @param upperTail true for P(X > x) = p, false for P(X < x) = p
+ * @return asymptotic quantile, or NaN if that tail is not a power law
+ */
+inline double stableTailQuantile(double p, bool upperTail, double alpha, double beta, double gamma, double mu)
+{
+    double weight = upperTail ? 1 + beta : 1 - beta;
+    if (alpha >= 2 || weight <= 0)
+        return NAN;
+    double C = (alpha == 1) ? randlib::consts::inv_pi : std::tgamma(alpha) * std::sin(0.5 * randlib::consts::pi * alpha) * randlib::consts::inv_pi;
+    double distance = gamma * std::pow(C * weight / p, 1.0 / alpha);
+    return upperTail ? mu + distance : mu - distance;
+}
+
+/**
  * @brief The StableDistribution class <BR>
  * Abstract class for Stable distribution
  *
@@ -447,6 +466,13 @@ protected:
     RealType quantileLevy1m(double p) const;
 
 private:
+    /**
+     * @fn searchTailQuantile
+     * Quantile search that starts far tails from their power-law asymptote
+     * @param p probability
+     * @param upperTail search for S(x) = p instead of F(x) = p
+     */
+    RealType searchTailQuantile(double p, bool upperTail) const;
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p) const override;
 

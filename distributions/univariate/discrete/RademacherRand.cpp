@@ -54,8 +54,8 @@ int RademacherRand::Median() const
 
 int RademacherRand::Mode() const
 {
-    /// any from {-1, 1}
-    return Variate();
+    /// both -1 and 1 are modes; the smaller one, like the median
+    return -1;
 }
 
 long double RademacherRand::Skewness() const

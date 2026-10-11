@@ -167,34 +167,52 @@ long double DiscreteDistribution<IntType>::ExpectedValue(const std::function<dou
 template < typename IntType >
 std::complex<double> DiscreteDistribution<IntType>::CFImpl(double t) const
 {
-    /// Σ P(k) e^{itk}, summed outwards from the median. For a slowly varying P(k) the oscillating
-    /// remainder beyond K is close to P(K + 1) z^{K + 1} / (1 - z) with z = e^{±it}, so the sum
-    /// stops once that (or the remaining mass) is negligible and adds it as a correction;
-    /// summing until P(k) itself vanishes would take ~10^10 terms for Zeta(2)
+    /// Σ P(k) e^{itk}, summed outwards from the median. Beyond the last term K of a walk with
+    /// ratio r = e^{±it}, the remainder Σ_{m≥1} P(K + m) r^{K+m} is replaced by the first terms of
+    /// Euler's transformation r^{K+1} / (1 - r) Σ_j (r / (1 - r))^j Δ^j P(K + 1), with forward
+    /// differences Δ along the walk. The walk stops once the next term of that series is negligible
+    /// or the remaining mass is; summing until P(k) itself vanishes would take ~10^10 terms for Zeta(2)
     static constexpr long long MAX_TERMS = 1000000;
+    static constexpr double EPSILON = 1e-17;
     const long long lo = this->MinValue(), hi = this->MaxValue(), start = this->Median();
-    const std::complex<double> z(std::cos(t), std::sin(t));
     std::complex<long double> sum = 0;
     auto walk = [&] (long long from, long long step, long long end, bool upper) {
+        const std::complex<double> ratio = std::polar(1.0, step * t);
+        const std::complex<double> w = ratio / (1.0 - ratio);
+        const double damping = std::abs(1.0 - ratio);
         std::complex<double> zk = std::polar(1.0, t * static_cast<double>(from));
-        std::complex<double> ratio = (step > 0) ? z : std::conj(z);
-        double damping = std::abs(1.0 - ratio);
-        for (long long k = from, terms = 0; (step > 0) ? k <= end : k >= end; k += step, ++terms) {
+        double last[4] = {0, 0, 0, 0};
+        long long k = from;
+        for (long long terms = 0; (step > 0) ? k <= end : k >= end; k += step, ++terms) {
             double p = this->P(static_cast<IntType>(k));
             sum += std::complex<long double>(p * zk);
             zk *= ratio;
             if (terms % 64 == 63)
                 zk = std::polar(1.0, t * static_cast<double>(k + step));
-            bool tailNegligible = terms > 16 && (p < 1e-17 * damping * std::abs(sum) || p == 0.0);
-            double massLeft = upper ? this->S(static_cast<IntType>(k)) : this->F(static_cast<IntType>(k - 1));
-            if (tailNegligible || massLeft < 1e-17 || terms >= MAX_TERMS) {
-                if (massLeft >= 1e-17 && damping > 0) {
-                    double next = this->P(static_cast<IntType>(k + step));
-                    sum += std::complex<long double>(next * zk / (1.0 - ratio));
-                }
+            last[3] = last[2]; last[2] = last[1]; last[1] = last[0]; last[0] = p;
+            if (p == 0.0 && terms > 16)
                 return;
-            }
+            if (terms < 16 || damping == 0.0)
+                continue;
+            double thirdDifference = std::fabs(last[0] - 3 * last[1] + 3 * last[2] - last[3]);
+            double nextTerm = std::pow(std::abs(w), 3) * thirdDifference / damping;
+            bool unbounded = (step > 0) ? end - k > MAX_TERMS : k - end > MAX_TERMS;
+            bool decreasing = last[0] < last[1] && last[1] < last[2] && last[2] < last[3];
+            bool converged = unbounded && decreasing && nextTerm < EPSILON * std::abs(sum);
+            bool powerOfTwo = ((terms + 1) & terms) == 0;
+            bool massGone = powerOfTwo
+                    && (upper ? this->S(static_cast<IntType>(k)) : this->F(static_cast<IntType>(k - 1))) < EPSILON;
+            if (converged || massGone || terms >= MAX_TERMS)
+                break;
         }
+        if ((step > 0) ? k > end : k < end)
+            return;
+        k += step;
+        double next[3];
+        for (int j = 0; j < 3; ++j)
+            next[j] = ((step > 0) ? k + j * step <= end : k + j * step >= end) ? this->P(static_cast<IntType>(k + j * step)) : 0.0;
+        std::complex<double> series = next[0] + w * (next[1] - next[0]) + w * w * (next[2] - 2 * next[1] + next[0]);
+        sum += std::complex<long double>(zk * series / (1.0 - ratio));
     };
     walk(start, 1, hi, true);
     if (start > lo)

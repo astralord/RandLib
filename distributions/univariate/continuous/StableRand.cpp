@@ -1095,6 +1095,14 @@ RealType StableDistribution<RealType>::quantileLevy1m(double p) const
 }
 
 template < typename RealType >
+RealType StableDistribution<RealType>::searchTailQuantile(double p, bool upperTail) const
+{
+    double tail = std::min(p, 1.0 - p);
+    double guess = (tail < 0.05) ? stableTailQuantile(tail, upperTail != (p > 0.5), alpha, beta, gamma, mu) : NAN;
+    return this->searchQuantile(p, upperTail, guess, 0.05);
+}
+
+template < typename RealType >
 RealType StableDistribution<RealType>::quantileImpl(double p) const
 {
     checkDensitySupport();
@@ -1106,7 +1114,7 @@ RealType StableDistribution<RealType>::quantileImpl(double p) const
     case LEVY:
         return (beta > 0) ? quantileLevy(p) : 2 * mu - quantileLevy1m(p);
     default:
-        return ContinuousDistribution<RealType>::quantileImpl(p);
+        return searchTailQuantile(p, false);
     }
 }
 
@@ -1122,7 +1130,7 @@ RealType StableDistribution<RealType>::quantileImpl1m(double p) const
     case LEVY:
         return (beta > 0) ? quantileLevy1m(p) : 2 * mu - quantileLevy(p);
     default:
-        return ContinuousDistribution<RealType>::quantileImpl1m(p);
+        return searchTailQuantile(p, true);
     }
 }
 

@@ -115,7 +115,8 @@ elseif(NOT RANDLIB_GENERATOR STREQUAL "JKISS")
 endif()
 
 if(MSVC)
-    target_compile_options(RandLib PRIVATE /W4 /permissive- /bigobj)
+    # implicit narrowing conversions (C4244, C4267, C4305) are not warned about by GCC and Clang either
+    target_compile_options(RandLib PRIVATE /W4 /permissive- /bigobj /wd4244 /wd4267 /wd4305)
     if(RANDLIB_WARNINGS_AS_ERRORS)
         target_compile_options(RandLib PRIVATE /WX)
     endif()

@@ -114,8 +114,10 @@ double PoissonRand<IntType>::logP(const IntType & k) const
 {
     if (k < 0)
         return -INFINITY;
-    double y = k * logLambda - lambda;
-    return y - RandMath::lfact(k);
+    if (k == 0)
+        return -lambda;
+    /// saddle-point form; k log λ - λ - log(k!) cancels catastrophically for large k
+    return -RandMath::stirlingError(k) - RandMath::bd0(k, lambda) - 0.5 * std::log(2 * randlib::consts::pi * k);
 }
 
 template < typename IntType >

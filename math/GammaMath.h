@@ -51,6 +51,23 @@ long double ldfact(size_t n);
 long double binom(size_t n, size_t k);
 
 /**
+ * @fn stirlingError
+ * @param n positive integer number
+ * @return log(n!) - (n + 1/2) log(n) + n - log(2π)/2, the error of Stirling's formula
+ */
+double stirlingError(size_t n);
+
+/**
+ * @fn bd0
+ * Deviance term of the saddle-point expansions of Poisson and binomial probabilities
+ * (C. Loader, "Fast and accurate computation of binomial probabilities", 2000)
+ * @param x non-negative number
+ * @param m positive number
+ * @return x log(x / m) + m - x, without cancellation for x close to m
+ */
+double bd0(double x, double m);
+
+/**
  * @fn digamma
  * @param x input parameter
  * @return digamma(x) = ln(Γ(x))' = d(Γ(x))/Γ(x)

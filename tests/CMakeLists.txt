@@ -19,7 +19,7 @@ target_link_libraries(randlib_test_support PUBLIC RandLib::RandLib Catch2::Catch
 target_compile_definitions(randlib_test_support PUBLIC RANDLIB_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
 target_compile_features(randlib_test_support PUBLIC cxx_std_17)
 if(MSVC)
-    target_compile_options(randlib_test_support PUBLIC /bigobj)
+    target_compile_options(randlib_test_support PUBLIC /bigobj /wd4244 /wd4267 /wd4305)
 endif()
 
 add_executable(randlib_unit_tests
