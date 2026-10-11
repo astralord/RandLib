@@ -91,7 +91,7 @@ NoncentralChiSquaredRand<RealType>::NoncentralChiSquaredRand(double degree, doub
 template < typename RealType >
 std::string NoncentralChiSquaredRand<RealType>::Name() const
 {
-  return "Noncentral Chi-Squared(" + this->toStringWithPrecision(GetDegree()) + ", "
+    return "Noncentral Chi-Squared(" + this->toStringWithPrecision(GetDegree()) + ", "
             + this->toStringWithPrecision(GetNoncentrality()) + ")";
 }
 
@@ -119,52 +119,52 @@ template < typename RealType >
 double NoncentralChiSquaredRand<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
-      return 0.0;
+        return 0.0;
     if (x == 0.0) {
         if (k == 2)
-          return 0.5 * std::exp(-halfLambda);
-      return (k > 2) ? 0.0 : INFINITY;
+            return 0.5 * std::exp(-halfLambda);
+        return (k > 2) ? 0.0 : INFINITY;
     }
-  return std::exp(logf(x));
+    return std::exp(logf(x));
 }
 
 template < typename RealType >
 double NoncentralChiSquaredRand<RealType>::logf(const RealType & x) const
 {
     if (x < 0.0)
-      return -INFINITY;
+        return -INFINITY;
     if (x == 0.0) {
         if (k == 2)
-          return -halfLambda - randlib::consts::ln2;
-      return (k > 2) ? -INFINITY : INFINITY;
+            return -halfLambda - randlib::consts::ln2;
+        return (k > 2) ? -INFINITY : INFINITY;
     }
     double halfKm1 = halfK - 1;
     double y = math::logBesselI(halfKm1, std::sqrt(lambda * x));
     double z = halfKm1 * (std::log(x) - logLambda);
     z -= x + lambda;
-  return y + 0.5 * z - randlib::consts::ln2;
+    return y + 0.5 * z - randlib::consts::ln2;
 }
 
 template < typename RealType >
 double NoncentralChiSquaredRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0.0)
-      return 0.0;
+        return 0.0;
     double halfX = 0.5 * x;
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
-  return math::MarcumP(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
+    return math::MarcumP(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
 }
 
 template < typename RealType >
 double NoncentralChiSquaredRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
-      return 1.0;
+        return 1.0;
     double halfX = 0.5 * x;
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
-  return math::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
+    return math::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
 }
 
 template < typename RealType >
@@ -172,7 +172,7 @@ template <std::uniform_random_bit_generator G>
 RealType NoncentralChiSquaredRand<RealType>::variateForDegreeEqualOne(G &g) const
 {
     RealType y = sqrtLambda + detail::standardNormal<RealType>(g);
-  return y * y;
+    return y * y;
 }
 
 template < typename RealType >
@@ -187,10 +187,10 @@ RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double nonce
     if (degree >= 1) {
         RealType rv = (degree == 1) ? 0.0 : 2 * GammaDistribution<RealType>::StandardVariate(0.5 * degree - 0.5, g);
         RealType y = std::sqrt(noncentrality) + detail::standardNormal<RealType>(g);
-      return rv + y * y;
+        return rv + y * y;
     }
     RealType shape = 0.5 * degree + PoissonRand<int>::Variate(0.5 * noncentrality, g);
-  return 2 * GammaDistribution<RealType>::StandardVariate(shape, g);
+    return 2 * GammaDistribution<RealType>::StandardVariate(shape, g);
 }
 
 template < typename RealType >
@@ -198,11 +198,11 @@ template <std::uniform_random_bit_generator G>
 RealType NoncentralChiSquaredRand<RealType>::operator()(G &g) const
 {
     if (k < 1)
-      return 2 * GammaDistribution<RealType>::StandardVariate(halfK + Y(g), g);
+        return 2 * GammaDistribution<RealType>::StandardVariate(halfK + Y(g), g);
     double X = variateForDegreeEqualOne(g);
     if (k > 1)
         X += 2 * GammaDistribution<RealType>::StandardVariate(halfK - 0.5, g);
-  return X;
+    return X;
 }
 
 template < typename RealType >
@@ -213,7 +213,7 @@ void NoncentralChiSquaredRand<RealType>::sample(detail::EngineRef g, std::span<R
             var = variateForDegreeEqualOne(g);
         double halfKmHalf = halfK - 0.5;
         if (halfKmHalf == 0)
-          return;
+            return;
         for (RealType & var : outputData)
             var += 2 * GammaDistribution<RealType>::StandardVariate(halfKmHalf, g);
     }
@@ -228,13 +228,13 @@ void NoncentralChiSquaredRand<RealType>::sample(detail::EngineRef g, std::span<R
 template < typename RealType >
 long double NoncentralChiSquaredRand<RealType>::Mean() const
 {
-  return k + lambda;
+    return k + lambda;
 }
 
 template < typename RealType >
 long double NoncentralChiSquaredRand<RealType>::Variance() const
 {
-  return 2 * (k + 2 * lambda);
+    return 2 * (k + 2 * lambda);
 }
 
 template < typename RealType >
@@ -243,9 +243,9 @@ RealType NoncentralChiSquaredRand<RealType>::Mode() const
     /// For k < 2 the density is unbounded at 0; for k = 2 it is finite there, and the
     /// maximum moves away from 0 for large enough noncentrality
     if (k < 2)
-      return 0.0;
+        return 0.0;
     RealType mode = ContinuousDistribution<RealType>::Mode();
-  return (mode > 0 && this->f(mode) > this->f(0)) ? mode : 0.0;
+    return (mode > 0 && this->f(mode) > this->f(0)) ? mode : 0.0;
 }
 
 template < typename RealType >
@@ -254,14 +254,14 @@ long double NoncentralChiSquaredRand<RealType>::Skewness() const
     long double y = k + 2 * lambda;
     y = 2.0 / y;
     long double z = y * std::sqrt(y);
-  return z * (k + 3 * lambda);
+    return z * (k + 3 * lambda);
 }
 
 template < typename RealType >
 long double NoncentralChiSquaredRand<RealType>::ExcessKurtosis() const
 {
     long double y = k + 2 * lambda;
-  return 12 * (k + 4 * lambda) / (y * y);
+    return 12 * (k + 4 * lambda) / (y * y);
 }
 
 template < typename RealType >
@@ -271,7 +271,7 @@ std::complex<double> NoncentralChiSquaredRand<RealType>::CFImpl(double t) const
     std::complex<double> y(0, lambda * t);
     y /= aux;
     y -= halfK * std::log(aux);
-  return std::exp(y);
+    return std::exp(y);
 }
 
 } // namespace randlib

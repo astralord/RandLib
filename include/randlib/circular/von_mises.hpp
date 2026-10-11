@@ -73,7 +73,7 @@ VonMisesRand<RealType>::VonMisesRand(double location, double concentration) : Ci
 template < typename RealType >
 std::string VonMisesRand<RealType>::Name() const
 {
-  return "von Mises(" + this->toStringWithPrecision(this->GetLocation()) + ", "
+    return "von Mises(" + this->toStringWithPrecision(this->GetLocation()) + ", "
                         + this->toStringWithPrecision(this->GetConcentration()) + ")";
 }
 
@@ -114,7 +114,7 @@ double VonMisesRand<RealType>::cdfSeries(double x) const
     V /= randlib::consts::pi;
     V += 0.5 * x / randlib::consts::pi;
     V += 0.5;
-  return V;
+    return V;
 }
 
 template < typename RealType >
@@ -130,59 +130,59 @@ double VonMisesRand<RealType>::cdfErfcAux(RealType x) const
     double y = (c - 2 * twoZSq - 16.0) / 3.0;
     y = ((twoZSq + 1.75) * twoZSq + 83.5) / v - y;
     y *= y;
-  return z * (1.0 - twoZSq / y);
+    return z * (1.0 - twoZSq / y);
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::cdfErfc(RealType x) const
 {
     double arg = cdfErfcAux(x);
-  return 0.5 * std::erfc(arg);
+    return 0.5 * std::erfc(arg);
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::ccdfErfc(RealType x) const
 {
     double arg = cdfErfcAux(x);
-  return 0.5 * std::erfc(-arg);
+    return 0.5 * std::erfc(-arg);
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::f(const RealType & x) const
 {
-  return (x < this->MinValue() || x > this->MaxValue()) ? 0.0 : std::exp(logf(x));
+    return (x < this->MinValue() || x > this->MaxValue()) ? 0.0 : std::exp(logf(x));
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::logf(const RealType & x) const
 {
     if (x < this->MinValue() || x > this->MaxValue())
-      return -INFINITY;
+        return -INFINITY;
     double y = k * std::cos(x - this->loc) - logI0k;
     y -= randlib::consts::lnpi + randlib::consts::ln2;
-  return y;
+    return y;
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::F(const RealType & x) const
 {
     if (x <= this->MinValue())
-      return 0.0;
+        return 0.0;
     if (x >= this->MaxValue())
-      return 1.0;
+        return 1.0;
     double xAdj = x - this->loc;
-  return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
+    return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
 }
 
 template < typename RealType >
 double VonMisesRand<RealType>::S(const RealType &x) const
 {
     if (x <= this->MinValue())
-      return 1.0;
+        return 1.0;
     if (x >= this->MaxValue())
-      return 0.0;
+        return 0.0;
     double xAdj = x - this->loc;
-  return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
+    return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
 }
 
 template < typename RealType >
@@ -198,7 +198,7 @@ RealType VonMisesRand<RealType>::operator()(G &g) const
         RealType theta = s * V / U;
         if ((std::fabs(theta) <= randlib::consts::pi) &&
            ((k * theta * theta < 4.0 * (1.0 - U)) || (k * std::cos(theta) >= 2 * std::log(U) + k)))
-          return this->loc + theta;
+            return this->loc + theta;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     throw std::runtime_error("von Mises distribution: sampling failed");
 }
@@ -206,7 +206,7 @@ RealType VonMisesRand<RealType>::operator()(G &g) const
 template < typename RealType >
 long double VonMisesRand<RealType>::CircularMean() const
 {
-  return this->loc;
+    return this->loc;
 }
 
 template < typename RealType >
@@ -214,7 +214,7 @@ long double VonMisesRand<RealType>::CircularVariance() const
 {
     double var = math::logBesselI(1, k);
     var -= logI0k;
-  return -std::expm1l(var);
+    return -std::expm1l(var);
 }
 
 template < typename RealType >
@@ -222,24 +222,24 @@ std::complex<double> VonMisesRand<RealType>::CFImpl(double t) const
 {
     /// I_t(κ) / I_0(κ) is the trigonometric moment, which equals E[exp(itX)] only for integer t
     if (t != std::round(t))
-      return CircularDistribution<RealType>::CFImpl(t);
+        return CircularDistribution<RealType>::CFImpl(t);
     double tloc = t * this->loc;
     double cosTloc = std::cos(tloc), sinTloc = std::sin(tloc);
     std::complex<double> y(cosTloc, sinTloc);
     double z = math::logBesselI(t, k) - logI0k;
-  return y * std::exp(z);
+    return y * std::exp(z);
 }
 
 template < typename RealType >
 RealType VonMisesRand<RealType>::Median() const
 {
-  return this->loc;
+    return this->loc;
 }
 
 template < typename RealType >
 RealType VonMisesRand<RealType>::Mode() const
 {
-  return this->loc;
+    return this->loc;
 }
 
 } // namespace randlib

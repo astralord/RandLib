@@ -86,6 +86,21 @@ private:
      * @return location of the conditional stable law of Y given W = w
      */
     double conditionalShift(double w) const;
+    /**
+     * @fn lowerLogMixingVariable
+     * @param x0 argument minus shift
+     * @return log of the smallest mixing variable w that matters for the density and the
+     * distribution function at x0
+     */
+    double lowerLogMixingVariable(double x0) const;
+    /**
+     * @fn mixtureIntegral
+     * @param g function of the mixing variable w
+     * @param logWMin log of the smallest w that matters
+     * @return E[g(W)] for W ~ Exp(1)
+     */
+    template < typename Function >
+    double mixtureIntegral(const Function &g, double logWMin) const;
 
 public:
     [[nodiscard]] double f(const RealType & x) const override;
@@ -258,33 +273,33 @@ Support GeneralGeometricStableDistribution<RealType>::SupportType() const
 {
     if (alpha < 1) {
         if (beta == 1 && mu >= 0)
-          return Support::RightSemiFinite;
+            return Support::RightSemiFinite;
         if (beta == -1 && mu <= 0)
-          return Support::LeftSemiFinite;
+            return Support::LeftSemiFinite;
     }
-  return Support::Infinite;
+    return Support::Infinite;
 }
 
 template < typename RealType >
 RealType GeneralGeometricStableDistribution<RealType>::MinValue() const
 {
     if (alpha < 1 && beta == 1 && mu >= 0)
-      return m;
-  return -INFINITY;
+        return m;
+    return -INFINITY;
 }
 
 template < typename RealType >
 RealType GeneralGeometricStableDistribution<RealType>::MaxValue() const
 {
     if (alpha < 1 && beta == -1 && mu <= 0)
-      return m;
-  return INFINITY;
+        return m;
+    return INFINITY;
 }
 
 template < typename RealType >
 double GeneralGeometricStableDistribution<RealType>::pdfLaplace(double x) const
 {
-  return std::exp(logpdfLaplace(x));
+    return std::exp(logpdfLaplace(x));
 }
 
 template < typename RealType >
@@ -292,7 +307,7 @@ double GeneralGeometricStableDistribution<RealType>::logpdfLaplace(double x) con
 {
     double y = x / gamma;
     y *= (x < 0) ? kappaInv : -kappa;
-  return y - logGamma - log1pKappaSq + logKappa;
+    return y - logGamma - log1pKappaSq + logKappa;
 }
 
 template < typename RealType >
@@ -302,9 +317,9 @@ double GeneralGeometricStableDistribution<RealType>::cdfLaplace(double x) const
     if (x < 0) {
         y *= kappaInv;
         y += 2 * logKappa - log1pKappaSq;
-      return std::exp(y);
+        return std::exp(y);
     }
-  return -std::expm1l(-log1pKappaSq - kappa * y);
+    return -std::expm1l(-log1pKappaSq - kappa * y);
 }
 
 template < typename RealType >
@@ -314,9 +329,9 @@ double GeneralGeometricStableDistribution<RealType>::cdfLaplaceCompl(double x) c
     if (x < 0) {
         y *= kappaInv;
         y += 2 * logKappa - log1pKappaSq;
-      return -std::expm1l(y);
+        return -std::expm1l(y);
     }
-  return std::exp(-log1pKappaSq - kappa * y);
+    return std::exp(-log1pKappaSq - kappa * y);
 }
 
 template < typename RealType >
@@ -326,17 +341,17 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
         /// Invert parameter for case of -Levy
         x *= beta;
         if (x < 0)
-          return 0.0;
+            return 0.0;
         if (x == 0)
-          return INFINITY;
+            return INFINITY;
         double halfSigmaInv = 0.5 / gamma;
         double z = std::sqrt(halfSigmaInv * x);
         double y = randlib::consts::inv_sqrtpi - math::xexpxsqerfc(z);
-      return 0.5 * y / (gamma * z);
+        return 0.5 * y / (gamma * z);
     }
 
     if (x == 0) {
-      return std::fabs(1.0 / mu);
+        return std::fabs(1.0 / mu);
     }
 
     double a = x / gamma, c = mu / gamma;
@@ -347,13 +362,13 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
 
     if (a < 0) {
         if (c >= 0.0)
-          return 0.0;
+            return 0.0;
         double h = std::sqrt(1 - 2 * c); // can be hashed
         double hm1 = h - 1;
         double y = 2 * a / (hm1 * hm1);
         y -= std::log(gamma * hm1 * h);
         y += randlib::consts::ln2;
-      return std::exp(y);
+        return std::exp(y);
     }
 
     double sqrt2a = std::sqrt(2 * a);
@@ -365,14 +380,14 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
         double y = math::xexpxsqerfc(term1);
         y -= math::xexpxsqerfc(term2);
         y /= h * gamma * sqrt2a;
-      return y;
+        return y;
     }
 
     if (c == 0.5) {
         double y = math::xexpxsqerfc(sqrt2a);
         y *= (8.0 * a + 2.0) / sqrt2a;
         y -= 4 * sqrt2a / randlib::consts::sqrtpi;
-      return y / gamma;
+        return y / gamma;
     }
 
     /// we do numerical integration in the case of c > 0.5
@@ -381,7 +396,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
     double y = math::integral([a, c, adivc] (double t)
     {
         if (t <= 0 || t >= adivc)
-          return 0.0;
+            return 0.0;
         double amct = a - c * t;
         double integrand = 0.5 * t / amct;
         ++integrand;
@@ -389,9 +404,9 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
         integrand = std::exp(-integrand);
         integrand *= t;
         integrand /= amct * std::sqrt(amct);
-      return integrand;
+        return integrand;
     }, 0, adivc);
-  return y / (gamma * randlib::consts::sqrt2pi);
+    return y / (gamma * randlib::consts::sqrt2pi);
 }
 
 template < typename RealType >
@@ -401,17 +416,17 @@ double GeneralGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
     // otherwise, use peak, which is t = exp(x / sqrt(mu^2 + sigma^2))
     // to split the integral on two
     if (x == 0)
-      return INFINITY;
-  return -gamma * randlib::consts::inv_pi * math::integral([this, x] (double t)
+        return INFINITY;
+    return -gamma * randlib::consts::inv_pi * math::integral([this, x] (double t)
     {
         if (t <= 0.0 || t >= 1.0)
-          return 0.0;
+            return 0.0;
         double logt = std::log(t);
         double a = gamma * logt;
         a *= a;
         double b = x + mu * logt;
         b *= b;
-      return logt / (a + b);
+        return logt / (a + b);
     }, 0, 1);
 }
 
@@ -423,7 +438,35 @@ double GeneralGeometricStableDistribution<RealType>::conditionalShift(double w) 
     double shift = mu * w;
     if (distributionType == UNITY_EXPONENT)
         shift += randlib::consts::two_inv_pi * beta * gamma * w * std::log(gamma * w);
-  return shift;
+    return shift;
+}
+
+template < typename RealType >
+double GeneralGeometricStableDistribution<RealType>::lowerLogMixingVariable(double x0) const
+{
+    /// Given W = w, (x0 - shift) / (γ w^(1/α)) leaves the bulk of the stable law below
+    /// w = (|x0| / γ)^α; twenty e-folds below that, the integrands no longer change
+    if (x0 == 0)
+        return -40.0;
+    return std::min(-20.0, alpha * std::log(std::fabs(x0) / gamma) - 20.0);
+}
+
+template < typename RealType >
+template < typename Function >
+double GeneralGeometricStableDistribution<RealType>::mixtureIntegral(const Function &g, double logWMin) const
+{
+    /// ∫ e^(-w) g(w) dw over W ~ Exp(1), integrated in u = log(w): the features of g have unit
+    /// width in u even in the far tails, where they sit at w ~ |x|^α. Below w = exp(logWMin),
+    /// g is taken constant; above w = e^7, e^(-w) underflows
+    static constexpr double LOG_W_MAX = 7.0;
+    double wMin = std::exp(logWMin);
+    double head = -std::expm1(-wMin) * g(wMin);
+    return head + math::integral([&g] (double u)
+    {
+        double w = std::exp(u);
+        return w * std::exp(-w) * g(w);
+    },
+    logWMin, LOG_W_MAX, 1e-13);
 }
 
 template < typename RealType >
@@ -433,38 +476,48 @@ double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
     /// Cut zeros for semi-infinite distribution
     if (alpha < 1 && std::fabs(beta) == 1) {
         if (x0 < 0 && mu >= 0 && beta > 0)
-          return 0.0;
+            return 0.0;
         if (x0 > 0 && mu <= 0 && beta < 0)
-          return 0.0;
+            return 0.0;
     }
 
     /// Verify if any of analytical expressions is applicable
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
-      return pdfLaplace(x0);
+        return pdfLaplace(x0);
     if (distributionType == CAUCHY)
-      return pdfByCauchy(x0);
+        return pdfByCauchy(x0);
     if (distributionType == LEVY)
-      return pdfByLevy(x0);
+        return pdfByLevy(x0);
 
     if (x0 == 0) {
         if (alpha == 1)
-          return INFINITY;
+            return INFINITY;
         if (mu == 0) {
             double coef = std::tgammal(1.0 - alphaInv);
             if (!std::isfinite(coef))
-              return INFINITY;
-          return Z.f(0) * coef / gamma;
+                return INFINITY;
+            return Z.f(0) * coef / gamma;
         }
     }
 
-  return math::integral([this, x0] (double z)
+    if (distributionType != UNITY_EXPONENT) {
+        return mixtureIntegral([this, x0] (double w)
+        {
+            double tau = 1.0 / (gamma * std::pow(w, alphaInv));
+            return tau * Z.f(tau * x0 - tau * conditionalShift(w));
+        }, lowerLogMixingVariable(x0));
+    }
+
+    /// For α = 1, small w would need the stable law far in its tails, where it is slow (#1);
+    /// integrate in z = exp(-w) instead
+    return math::integral([this, x0] (double z)
     {
         if (z <= 0 || z >= 1)
-          return 0.0;
+            return 0.0;
         double logz = std::log(z);
         double tau = 1.0 / (gamma * std::pow(-logz, alphaInv));
         double par = tau * (x0 - conditionalShift(-logz));
-      return tau * Z.f(par);
+        return tau * Z.f(par);
     },
     0, 1, 1e-13);
 }
@@ -472,7 +525,7 @@ double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
 template < typename RealType >
 double GeneralGeometricStableDistribution<RealType>::logf(const RealType & x) const
 {
-  return (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) ? logpdfLaplace(x - m) : std::log(f(x));
+    return (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE) ? logpdfLaplace(x - m) : std::log(f(x));
 }
 
 template < typename RealType >
@@ -480,37 +533,27 @@ double GeneralGeometricStableDistribution<RealType>::F(const RealType &x) const
 {
     double x0 = x - m;
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
-      return cdfLaplace(x0);
-  return math::integral([this, x0] (double z)
+        return cdfLaplace(x0);
+    if (distributionType != UNITY_EXPONENT) {
+        return mixtureIntegral([this, x0] (double w)
+        {
+            return Z.F((x0 - conditionalShift(w)) / (gamma * std::pow(w, alphaInv)));
+        }, lowerLogMixingVariable(x0));
+    }
+
+    /// For α = 1, integrate in t = z / (1 - z) instead (see f)
+    return math::integral([this, x0] (double z)
     {
-        if (z <= 0) {
-            if (x0 != 0.0)
-              return (x0 < 0.0) ? 0.0 : 1.0;
-            if (mu == 0)
-              return Z.F(0);
-            if (distributionType == UNITY_EXPONENT)
-              return Z.F(-mu / gamma);
-            if (alpha < 1.0)
-              return Z.F(0);
-          return (mu < 0.0) ? 1.0 : 0.0;
-        }
-
-        if (z >= 1) {
-            if (mu == 0.0)
-              return Z.F(0);
-            if (distributionType == UNITY_EXPONENT)
-              return Z.F(-mu / gamma);
-            if (alpha > 1.0)
-              return Z.F(0);
-          return (mu < 0.0) ? 1.0 : 0.0;
-        }
-
+        if (z <= 0)
+            return (x0 == 0.0) ? Z.F(-mu / gamma) : ((x0 < 0.0) ? 0.0 : 1.0);
+        if (z >= 1)
+            return Z.F(-mu / gamma);
         double denominator = 1.0 - z;
         double t = z / denominator;
         double par = x0 - conditionalShift(t);
         par /= std::pow(t, alphaInv) * gamma;
         double y = std::exp(-t) * Z.F(par);
-      return y / (denominator * denominator);
+        return y / (denominator * denominator);
     },
     0, 1, 1e-13);
 }
@@ -523,7 +566,7 @@ double GeneralGeometricStableDistribution<RealType>::variateForUnityExponent(dou
     double X = z + 2 * beta * std::log(gamma * W) / randlib::consts::pi;
     X *= gamma;
     X += mu;
-  return X * W;
+    return X * W;
 }
 
 template < typename RealType >
@@ -532,7 +575,7 @@ double GeneralGeometricStableDistribution<RealType>::variateForGeneralExponent(d
 {
     double W = detail::standardExponential<RealType>(g);
     double X = std::pow(W, alphaInv) * gamma * z;
-  return mu * W + X;
+    return mu * W + X;
 }
 
 template < typename RealType >
@@ -541,7 +584,7 @@ double GeneralGeometricStableDistribution<RealType>::variateForOneHalfExponent(d
 {
     double W = detail::standardExponential<RealType>(g);
     double X = mu + gamma * W * z;
-  return X * W;
+    return X * W;
 }
 
 template < typename RealType >
@@ -550,7 +593,7 @@ double GeneralGeometricStableDistribution<RealType>::variateByCauchy(double z, G
 {
     double W = detail::standardExponential<RealType>(g);
     double X = mu + gamma * z;
-  return X * W;
+    return X * W;
 }
 
 template < typename RealType >
@@ -559,18 +602,18 @@ RealType GeneralGeometricStableDistribution<RealType>::operator()(G &g) const
 {
     switch (distributionType) {
     case LAPLACE:
-      return gamma * LaplaceRand<RealType>::StandardVariate(g);
+        return gamma * LaplaceRand<RealType>::StandardVariate(g);
     case ASYMMETRIC_LAPLACE:
-      return gamma * AsymmetricLaplaceRand<RealType>::StandardVariate(kappa, g);
+        return gamma * AsymmetricLaplaceRand<RealType>::StandardVariate(kappa, g);
     case ONEHALF_EXPONENT:
     case LEVY:
-      return variateForOneHalfExponent(Z(g), g);
+        return variateForOneHalfExponent(Z(g), g);
     case CAUCHY:
-      return variateByCauchy(Z(g), g);
+        return variateByCauchy(Z(g), g);
     case UNITY_EXPONENT:
-      return variateForUnityExponent(Z(g), g);
+        return variateForUnityExponent(Z(g), g);
     case GENERAL:
-      return variateForGeneralExponent(Z(g), g);
+        return variateForGeneralExponent(Z(g), g);
     default:
         throw std::runtime_error("Shifted Geometric Stable distribution: invalid distribution type");
     }
@@ -626,18 +669,18 @@ template < typename RealType >
 long double GeneralGeometricStableDistribution<RealType>::Mean() const
 {
     if (alpha > 1)
-      return m + mu;
+        return m + mu;
     if (beta == 1)
-      return INFINITY;
-  return (beta == -1) ? -INFINITY : NAN;
+        return INFINITY;
+    return (beta == -1) ? -INFINITY : NAN;
 }
 
 template < typename RealType >
 long double GeneralGeometricStableDistribution<RealType>::Variance() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
-      return mu * mu + 2 * gamma * gamma;
-  return INFINITY;
+        return mu * mu + 2 * gamma * gamma;
+    return INFINITY;
 }
 
 template < typename RealType >
@@ -650,15 +693,15 @@ std::complex<double> GeneralGeometricStableDistribution<RealType>::CFImpl(double
     }
     double re = std::pow(gamma * t, alpha);
     std::complex<double> psi = std::complex<double>(re, re * x - mu * t);
-  return 1.0 / (1.0 + psi);
+    return 1.0 / (1.0 + psi);
 }
 
 template < typename RealType >
 RealType GeneralGeometricStableDistribution<RealType>::Median() const
 {
     if (distributionType == LAPLACE || distributionType == ASYMMETRIC_LAPLACE)
-      return quantileLaplace(0.5);
-  return ContinuousDistribution<RealType>::Median();
+        return quantileLaplace(0.5);
+    return ContinuousDistribution<RealType>::Median();
 }
 
 template < typename RealType >
@@ -666,31 +709,31 @@ RealType GeneralGeometricStableDistribution<RealType>::Mode() const
 {
     // TODO: calculate mode for more cases
     if (alpha == 1 || alpha == 2)
-      return m;
-  return ContinuousDistribution<RealType>::Mode();
+        return m;
+    return ContinuousDistribution<RealType>::Mode();
 }
 
 template < typename RealType >
 long double GeneralGeometricStableDistribution<RealType>::Skewness() const
 {
     if (distributionType != LAPLACE && distributionType != ASYMMETRIC_LAPLACE)
-      return NAN;
+        return NAN;
     long double k4 = kappaSq * kappaSq;
     long double k6 = k4 * kappaSq;
     long double z = (k4 + 1);
     z *= std::sqrt(z);
     long double y = 2 * (1 - k6);
-  return y / z;
+    return y / z;
 }
 
 template < typename RealType >
 long double GeneralGeometricStableDistribution<RealType>::ExcessKurtosis() const
 {
     if (distributionType != LAPLACE && distributionType != ASYMMETRIC_LAPLACE)
-      return NAN;
+        return NAN;
     long double denominator = kappaSq + kappaInv * kappaInv;
     denominator *= denominator;
-  return 6.0 - 12.0 / denominator;
+    return 6.0 - 12.0 / denominator;
 }
 
 template < typename RealType >
@@ -698,19 +741,19 @@ RealType GeneralGeometricStableDistribution<RealType>::searchTailQuantile(double
 {
     double tail = std::min(p, 1.0 - p);
     double guess = (tail < 0.05) ? stableTailQuantile(tail, upperTail != (p > 0.5), alpha, beta, gamma, mu) : NAN;
-  return this->searchQuantile(p, upperTail, guess, 0.05);
+    return this->searchQuantile(p, upperTail, guess, 0.05);
 }
 
 template < typename RealType >
 RealType GeneralGeometricStableDistribution<RealType>::quantileImpl(double p) const
 {
-  return searchTailQuantile(p, false);
+    return searchTailQuantile(p, false);
 }
 
 template < typename RealType >
 RealType GeneralGeometricStableDistribution<RealType>::quantileImpl1m(double p) const
 {
-  return searchTailQuantile(p, true);
+    return searchTailQuantile(p, true);
 }
 
 template < typename RealType >
@@ -720,13 +763,13 @@ RealType GeneralGeometricStableDistribution<RealType>::quantileLaplace(double p)
         RealType q = p / kappaSq + p;
         q = std::log(q);
         q *= kappa * gamma;
-      return m + q;
+        return m + q;
     }
     else {
         RealType q = (kappaSq + 1) * (1 - p);
         q = std::log(q);
         q *= gamma / kappa;
-      return m - q;
+        return m - q;
     }
 }
 
@@ -738,13 +781,13 @@ RealType GeneralGeometricStableDistribution<RealType>::quantileLaplace1m(double 
         RealType q = -pm1 / kappaSq - pm1;
         q = std::log(q);
         q *= kappa * gamma;
-      return m + q;
+        return m + q;
     }
     else {
         RealType q = (kappaSq + 1) * p;
         q = std::log(q);
         q *= gamma / kappa;
-      return m - q;
+        return m - q;
     }
 }
 template < typename RealType >
@@ -757,7 +800,7 @@ GeometricStableRand<RealType>::GeometricStableRand(double exponent, double skewn
 template < typename RealType >
 std::string GeometricStableRand<RealType>::Name() const
 {
-  return "Geometric Stable("
+    return "Geometric Stable("
             + this->toStringWithPrecision(this->GetExponent()) + ", "
             + this->toStringWithPrecision(this->GetSkewness()) + ", "
             + this->toStringWithPrecision(this->GetScale()) + ", "
@@ -768,7 +811,7 @@ template < typename RealType >
 void GeometricStableRand<RealType>::ChangeAsymmetry()
 {
     if (this->distributionType != this->LAPLACE && this->distributionType != this->ASYMMETRIC_LAPLACE)
-      return;
+        return;
     double gamma2 = 2 * this->gamma;
     double asymmetry = this->mu * this->mu + gamma2 * gamma2;
     asymmetry = std::sqrt(asymmetry) - this->mu;

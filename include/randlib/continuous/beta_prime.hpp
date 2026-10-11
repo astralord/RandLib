@@ -121,7 +121,7 @@ BetaPrimeRand<RealType>::BetaPrimeRand(double shape1, double shape2)
 template < typename RealType >
 std::string BetaPrimeRand<RealType>::Name() const
 {
-  return "Beta Prime(" + this->toStringWithPrecision(GetAlpha()) + ", " + this->toStringWithPrecision(GetBeta()) + ")";
+    return "Beta Prime(" + this->toStringWithPrecision(GetAlpha()) + ", " + this->toStringWithPrecision(GetBeta()) + ")";
 }
 
 template < typename RealType >
@@ -138,53 +138,53 @@ template < typename RealType >
 double BetaPrimeRand<RealType>::f(const RealType & x) const
 {
     if (x < 0.0)
-      return 0.0;
+        return 0.0;
     if (x == 0.0) {
         if (alpha == 1.0)
-          return 1.0 / GetBetaFunction();
-      return (alpha > 1) ? 0.0 : INFINITY;
+            return 1.0 / GetBetaFunction();
+        return (alpha > 1) ? 0.0 : INFINITY;
     }
-  return std::exp(logf(x));
+    return std::exp(logf(x));
 }
 
 template < typename RealType >
 double BetaPrimeRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
-      return -INFINITY;
+        return -INFINITY;
     if (x == 0.0) {
         if (alpha == 1.0)
-          return -GetLogBetaFunction();
-      return (alpha > 1) ? -INFINITY : INFINITY;
+            return -GetLogBetaFunction();
+        return (alpha > 1) ? -INFINITY : INFINITY;
     }
     double y = (alpha - 1) * std::log(x);
     y -= (alpha + beta) * std::log1pl(x);
-  return y - GetLogBetaFunction();
+    return y - GetLogBetaFunction();
 }
 
 template < typename RealType >
 double BetaPrimeRand<RealType>::F(const RealType & x) const
 {
-  return (x > 0) ? B.F(x / (1.0 + x)) : 0;
+    return (x > 0) ? B.F(x / (1.0 + x)) : 0;
 }
 
 template < typename RealType >
 double BetaPrimeRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0)
-      return 1;
+        return 1;
     /// I_{1/(1+x)}(β, α) directly: forming x / (1 + x) would round to 1 for large x
     double y = 1.0 / (1.0 + x);
-  return math::ibeta(y, beta, alpha, GetLogBetaFunction(), -std::log1pl(x), std::log(x) - std::log1pl(x));
+    return math::ibeta(y, beta, alpha, GetLogBetaFunction(), -std::log1pl(x), std::log(x) - std::log1pl(x));
 }
 
 template < typename RealType >
 RealType BetaPrimeRand<RealType>::fromBetaVariate(const RealType & betaVar) const
 {
     if (betaVar > 1e-5)
-      return betaVar / (1.0 - betaVar);
+        return betaVar / (1.0 - betaVar);
     RealType logVar = std::log(betaVar), log1mVar = std::log1p(-betaVar);
-  return std::exp(logVar - log1mVar);
+    return std::exp(logVar - log1mVar);
 }
 
 template < typename RealType >
@@ -192,7 +192,7 @@ template <std::uniform_random_bit_generator G>
 RealType BetaPrimeRand<RealType>::operator()(G &g) const
 {
     double x = B(g);
-  return fromBetaVariate(x);
+    return fromBetaVariate(x);
 }
 
 template < typename RealType >
@@ -208,55 +208,55 @@ void BetaPrimeRand<RealType>::sample(detail::EngineRef g, std::span<RealType> ou
 template < typename RealType >
 long double BetaPrimeRand<RealType>::Mean() const
 {
-  return (beta > 1) ? alpha / (beta - 1) : INFINITY;
+    return (beta > 1) ? alpha / (beta - 1) : INFINITY;
 }
 
 template < typename RealType >
 long double BetaPrimeRand<RealType>::Variance() const
 {
     if (beta <= 2)
-      return INFINITY;
+        return INFINITY;
     double betam1 = beta - 1;
     double numerator = alpha * (alpha + betam1);
     double denominator = (betam1 - 1) * betam1 * betam1;
-  return numerator / denominator;
+    return numerator / denominator;
 }
 
 template < typename RealType >
 RealType BetaPrimeRand<RealType>::Median() const
 {
-  return (alpha == beta) ? 1.0 : quantileImpl(0.5);
+    return (alpha == beta) ? 1.0 : quantileImpl(0.5);
 }
 
 template < typename RealType >
 RealType BetaPrimeRand<RealType>::Mode() const
 {
-  return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
+    return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
 }
 
 template < typename RealType >
 long double BetaPrimeRand<RealType>::Skewness() const
 {
     if (beta <= 3)
-      return INFINITY;
+        return INFINITY;
     long double aux = alpha + beta - 1;
     long double skewness = (beta - 2) / (alpha * aux);
     skewness = std::sqrt(skewness);
     aux += alpha;
     aux += aux;
-  return aux * skewness / (beta - 3);
+    return aux * skewness / (beta - 3);
 }
 
 template < typename RealType >
 long double BetaPrimeRand<RealType>::ExcessKurtosis() const
 {
     if (beta <= 4)
-      return INFINITY;
+        return INFINITY;
     long double betam1 = beta - 1;
     long double numerator = betam1 * betam1 * (beta - 2) / (alpha * (alpha + betam1));
     numerator += 5 * beta - 11;
     long double denominator = (beta - 3) * (beta - 4);
-  return 6 * numerator / denominator;
+    return 6 * numerator / denominator;
 }
 
 template < typename RealType >
@@ -264,14 +264,14 @@ RealType BetaPrimeRand<RealType>::quantileImpl(double p) const
 {
     /// y / (1 - y) for the beta quantile y is only a guess: it loses accuracy as y → 1
     double y = B.Quantile(p);
-  return ContinuousDistribution<RealType>::quantileImpl(p, y / (1.0 - y));
+    return ContinuousDistribution<RealType>::quantileImpl(p, y / (1.0 - y));
 }
 
 template < typename RealType >
 RealType BetaPrimeRand<RealType>::quantileImpl1m(double p) const
 {
     double y = B.Quantile1m(p);
-  return ContinuousDistribution<RealType>::quantileImpl1m(p, y / (1.0 - y));
+    return ContinuousDistribution<RealType>::quantileImpl1m(p, y / (1.0 - y));
 }
 
 template < typename RealType >
@@ -279,20 +279,20 @@ std::complex<double> BetaPrimeRand<RealType>::CFImpl(double t) const
 {
     /// if no singularity - simple numeric integration
     if (alpha >= 1)
-      return UnivariateDistribution<RealType>::CFImpl(t);
+        return UnivariateDistribution<RealType>::CFImpl(t);
 
     double re = this->ExpectedValue([t] (double x)
     {
         if (x == 0.0)
-          return 0.0;
-      return std::cos(t * x) - 1.0;
+            return 0.0;
+        return std::cos(t * x) - 1.0;
     }, 0.0, INFINITY) + 1.0;
 
     double im = this->ExpectedValue([t] (double x)
     {
-      return std::sin(t * x);
+        return std::sin(t * x);
     }, 0.0, INFINITY);
-  return std::complex<double>(re, im);
+    return std::complex<double>(re, im);
 }
 
 template < typename RealType >

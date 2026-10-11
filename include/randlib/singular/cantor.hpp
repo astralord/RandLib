@@ -25,7 +25,7 @@ class CantorRand final : public SingularDistribution
         double power = 1.0;
         for (double &p : powers)
             p = power /= 3.0;
-      return powers;
+        return powers;
     }();
 
 public:
@@ -71,15 +71,15 @@ inline CantorRand::CantorRand()
 
 inline std::string CantorRand::Name() const
 {
-  return "Cantor";
+    return "Cantor";
 }
 
 inline double CantorRand::F(const double & x) const
 {
     if (x <= 0.0)
-      return 0.0;
+        return 0.0;
     if (x >= 1.0)
-      return 1.0;
+        return 1.0;
     double a = 0.0, b = 1.0;
     double v = 0.5, d = 0.5, delta = 1.0;
     while (delta > MIN_POSITIVE)
@@ -98,9 +98,9 @@ inline double CantorRand::F(const double & x) const
             v += d;
         }
         else
-          return v;
+            return v;
     }
-  return v;
+    return v;
 }
 
 template <std::uniform_random_bit_generator G>
@@ -110,17 +110,17 @@ double CantorRand::operator()(G &g) const
     for (int i = 0; i != n; ++i) {
         sum += table[i] * BernoulliRand::StandardVariate(g);
     }
-  return sum + sum;
+    return sum + sum;
 }
 
 inline long double CantorRand::Mean() const
 {
-  return 0.5;
+    return 0.5;
 }
 
 inline long double CantorRand::Variance() const
 {
-  return 0.125;
+    return 0.125;
 }
 
 inline double CantorRand::quantileImpl(double p, double initValue) const
@@ -130,12 +130,12 @@ inline double CantorRand::quantileImpl(double p, double initValue) const
         return F(x) - p;
     }, 0.0, 1.0, initValue))
         throw std::runtime_error("Cantor distribution: failure in numerical procedure");
-  return initValue;
+    return initValue;
 }
 
 inline double CantorRand::quantileImpl(double p) const
 {
-  return quantileImpl(p, p);
+    return quantileImpl(p, p);
 }
 
 inline double CantorRand::quantileImpl1m(double p, double initValue) const
@@ -145,12 +145,12 @@ inline double CantorRand::quantileImpl1m(double p, double initValue) const
         return S(x) - p;
     }, 0.0, 1.0, initValue))
         throw std::runtime_error("Cantor distribution: failure in numerical procedure");
-  return initValue;
+    return initValue;
 }
 
 inline double CantorRand::quantileImpl1m(double p) const
 {
-  return quantileImpl1m(p, 1.0 - p);
+    return quantileImpl1m(p, 1.0 - p);
 }
 
 inline std::complex<double> CantorRand::CFImpl(double t) const
@@ -160,22 +160,22 @@ inline std::complex<double> CantorRand::CFImpl(double t) const
         prod *= std::cos(t * table[i]);
     std::complex<double> y(0.0, 0.5 * t);
     y = std::exp(y);
-  return y * prod;
+    return y * prod;
 }
 
 inline double CantorRand::Median() const
 {
-  return 1.0 / 3;
+    return 1.0 / 3;
 }
 
 inline long double CantorRand::Skewness() const
 {
-  return 0.0l;
+    return 0.0l;
 }
 
 inline long double CantorRand::ExcessKurtosis() const
 {
-  return -1.6l;
+    return -1.6l;
 }
 
 } // namespace randlib

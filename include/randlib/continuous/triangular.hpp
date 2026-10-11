@@ -74,7 +74,7 @@ TriangularRand<RealType>::TriangularRand(double lowerLimit, double mode, double 
 template < typename RealType >
 std::string TriangularRand<RealType>::Name() const
 {
-  return "Triangular("
+    return "Triangular("
             + this->toStringWithPrecision(MinValue()) + ", "
             + this->toStringWithPrecision(Mode()) + ", "
             + this->toStringWithPrecision(MaxValue()) + ")";
@@ -105,44 +105,44 @@ template < typename RealType >
 double TriangularRand<RealType>::f(const RealType & x) const
 {
     if (x < a || x > b)
-      return 0;
+        return 0;
     if (x < c)
-      return 2.0 * (x - a) / coefGenerator1;
+        return 2.0 * (x - a) / coefGenerator1;
     if (x == c)
-      return 2.0 / (b - a);
+        return 2.0 / (b - a);
     if (x < b)
-      return 2.0 * (b - x) / coefGenerator2;
-  return 0;
+        return 2.0 * (b - x) / coefGenerator2;
+    return 0;
 }
 
 template < typename RealType >
 double TriangularRand<RealType>::logf(const RealType & x) const
 {
-  return std::log(f(x));
+    return std::log(f(x));
 }
 
 template < typename RealType >
 double TriangularRand<RealType>::F(const RealType & x) const
 {
     if (x <= a)
-      return 0.0;
+        return 0.0;
     if (x <= c)
-      return (x - a) * (x - a) / coefGenerator1;
+        return (x - a) * (x - a) / coefGenerator1;
     if (x < b)
-      return 1.0 - (b - x) * (b - x) / coefGenerator2;
-  return 1.0;
+        return 1.0 - (b - x) * (b - x) / coefGenerator2;
+    return 1.0;
 }
 
 template < typename RealType >
 double TriangularRand<RealType>::S(const RealType & x) const
 {
     if (x <= a)
-      return 1.0;
+        return 1.0;
     if (x <= c)
-      return 1.0 - (x - a) * (x - a) / coefGenerator1;
+        return 1.0 - (x - a) * (x - a) / coefGenerator1;
     if (x < b)
-      return (b - x) * (b - x) / coefGenerator2;
-  return 0.0;
+        return (b - x) * (b - x) / coefGenerator2;
+    return 0.0;
 }
 
 template < typename RealType >
@@ -151,20 +151,20 @@ RealType TriangularRand<RealType>::operator()(G &g) const
 {
     RealType U = detail::uniform01<RealType>(g);
     if (U < constForGenerator)
-      return a + std::sqrt(U * coefGenerator1);
-  return b - std::sqrt((1 - U) * coefGenerator2);
+        return a + std::sqrt(U * coefGenerator1);
+    return b - std::sqrt((1 - U) * coefGenerator2);
 }
 
 template < typename RealType >
 long double TriangularRand<RealType>::Mean() const
 {
-  return (a + b + c) / 3.0;
+    return (a + b + c) / 3.0;
 }
 
 template < typename RealType >
 long double TriangularRand<RealType>::Variance() const
 {
-  return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
+    return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }
 
 template < typename RealType >
@@ -177,7 +177,7 @@ std::complex<double> TriangularRand<RealType>::CFImpl(double t) const
         std::complex<double> eish(std::cos(s * h), std::sin(s * h));
         std::complex<double> y = 2.0 / (h * h) * ((1.0 - eish) / (s * s) + std::complex<double>(0.0, h / s));
         double shift = (c == a) ? a * t : b * t;
-      return std::complex<double>(std::cos(shift), std::sin(shift)) * y;
+        return std::complex<double>(std::cos(shift), std::sin(shift)) * y;
     }
     double bmc = b - c, bma = b - a, cma = c - a;
     double at = a * t, bt = b * t, ct = c * t;
@@ -187,24 +187,24 @@ std::complex<double> TriangularRand<RealType>::CFImpl(double t) const
     std::complex<double> numerator = x - y + z;
     /// in order to avoid numerical errors
     if (t < 1e-10 && std::fabs(numerator.real()) < 1e-10)
-      return 1;
+        return 1;
     double denominator = bma * cma * bmc * t * t;
     std::complex<double> frac = -numerator / denominator;
-  return frac + frac;
+    return frac + frac;
 }
 
 template < typename RealType >
 RealType TriangularRand<RealType>::Median() const
 {
     if (c + c > a + b)
-      return a + std::sqrt(0.5 * coefGenerator1);
-  return b - std::sqrt(0.5 * coefGenerator2);
+        return a + std::sqrt(0.5 * coefGenerator1);
+    return b - std::sqrt(0.5 * coefGenerator2);
 }
 
 template < typename RealType >
 RealType TriangularRand<RealType>::Mode() const
 {
-  return c;
+    return c;
 }
 
 template < typename RealType >
@@ -218,13 +218,13 @@ long double TriangularRand<RealType>::Skewness() const
     denominator += b * (b - c);
     denominator += c * (c - a);
     denominator *= std::sqrt(denominator);
-  return 0.2 * numerator / denominator;
+    return 0.2 * numerator / denominator;
 }
 
 template < typename RealType >
 long double TriangularRand<RealType>::ExcessKurtosis() const
 {
-  return -0.6;
+    return -0.6;
 }
 
 } // namespace randlib

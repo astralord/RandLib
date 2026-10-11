@@ -96,8 +96,8 @@ template < typename RealType >
 std::string StudentTRand<RealType>::Name() const
 {
     if (mu == 0.0 && sigma == 1.0)
-      return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ")";
-  return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ", "
+        return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ")";
+    return "Student-t(" + this->toStringWithPrecision(GetDegree()) + ", "
                           + this->toStringWithPrecision(GetLocation()) + ", "
                           + this->toStringWithPrecision(GetScale()) + ")";
 }
@@ -142,16 +142,16 @@ double StudentTRand<RealType>::f(const RealType & x) const
     x0 /= sigma;
     double xSq = x0 * x0;
     if (nu == 1) /// Cauchy distribution
-      return randlib::consts::inv_pi / (sigma * (1 + xSq));
+        return randlib::consts::inv_pi / (sigma * (1 + xSq));
     if (nu == 2) {
         double tmp = 2.0 + xSq;
-      return 1.0 / (sigma * tmp * std::sqrt(tmp));
+        return 1.0 / (sigma * tmp * std::sqrt(tmp));
     }
     if (nu == 3) {
         double y = 3 + xSq;
-      return 6 * randlib::consts::sqrt3 * randlib::consts::inv_pi / (sigma * y * y);
+        return 6 * randlib::consts::sqrt3 * randlib::consts::inv_pi / (sigma * y * y);
     }
-  return std::exp(logf(x));
+    return std::exp(logf(x));
 }
 
 template < typename RealType >
@@ -160,9 +160,9 @@ double StudentTRand<RealType>::log1pSquareOverDegree(double x0) const
     /// log(1 + x0² / ν), also when x0² overflows
     double absX = std::fabs(x0);
     if (absX < 1e100)
-      return std::log1pl(x0 * x0 / nu);
+        return std::log1pl(x0 * x0 / nu);
     double logRatio = 2 * std::log(absX) - std::log(nu);
-  return logRatio + std::log1pl(std::exp(-logRatio));
+    return logRatio + std::log1pl(std::exp(-logRatio));
 }
 
 template < typename RealType >
@@ -173,16 +173,16 @@ double StudentTRand<RealType>::logf(const RealType & x) const
     x0 /= sigma;
     double log1pXsqNu = log1pSquareOverDegree(x0);
     if (nu == 1) /// Cauchy distribution
-      return -logSigma - randlib::consts::lnpi - log1pXsqNu;
+        return -logSigma - randlib::consts::lnpi - log1pXsqNu;
     if (nu == 2)
-      return -logSigma - 1.5 * (randlib::consts::ln2 + log1pXsqNu);
+        return -logSigma - 1.5 * (randlib::consts::ln2 + log1pXsqNu);
     if (nu == 3) {
         double y = -2 * (randlib::consts::ln3 + log1pXsqNu);
         y += randlib::consts::ln2 + 1.5 * randlib::consts::ln3 - randlib::consts::lnpi - logSigma;
-      return y;
+        return y;
     }
     double y = -nup1Half * log1pXsqNu;
-  return pdfCoef + y - logSigma;
+    return pdfCoef + y - logSigma;
 }
 
 template < typename RealType >
@@ -190,20 +190,20 @@ double StudentTRand<RealType>::lowerTail(double x0) const
 {
     /// P(T < x0) for x0 < 0: I_t(ν/2, 1/2) / 2 with t = ν / (ν + x0²)
     if (nu == 1)
-      return randlib::consts::inv_pi * ((x0 < -1.0) ? std::atan(-1.0 / x0) : randlib::consts::half_pi + std::atan(x0));
+        return randlib::consts::inv_pi * ((x0 < -1.0) ? std::atan(-1.0 / x0) : randlib::consts::half_pi + std::atan(x0));
     if (x0 * x0 < nu) {
         /// Near the median t = ν / (ν + x0²) rounds to 1; use 1/2 - I_{x0²/(ν+x0²)}(1/2, ν/2) / 2 instead
         double xSq = x0 * x0, u = xSq / (nu + xSq);
-      return 0.5 - 0.5 * math::ibeta(u, 0.5, 0.5 * nu, logBetaFun, std::log(xSq) - std::log(nu + xSq), std::log(nu) - std::log(nu + xSq));
+        return 0.5 - 0.5 * math::ibeta(u, 0.5, 0.5 * nu, logBetaFun, std::log(xSq) - std::log(nu + xSq), std::log(nu) - std::log(nu + xSq));
     }
     double logT = -log1pSquareOverDegree(x0);
     double t = std::exp(logT);
     if (t < 1e-280) {
         /// t underflows: leading term t^(ν/2) / ((ν/2) B(ν/2, 1/2)) of the incomplete beta function
-      return 0.5 * std::exp(0.5 * nu * logT - std::log(0.5 * nu) - logBetaFun);
+        return 0.5 * std::exp(0.5 * nu * logT - std::log(0.5 * nu) - logBetaFun);
     }
     double log1mT = std::log1pl(-t);
-  return 0.5 * math::ibeta(t, 0.5 * nu, 0.5, logBetaFun, logT, log1mT);
+    return 0.5 * math::ibeta(t, 0.5 * nu, 0.5, logBetaFun, logT, log1mT);
 }
 
 template < typename RealType >
@@ -211,8 +211,8 @@ double StudentTRand<RealType>::F(const RealType & x) const
 {
     double x0 = (x - mu) / sigma;
     if (x0 == 0.0)
-      return 0.5;
-  return (x0 < 0.0) ? lowerTail(x0) : 1.0 - lowerTail(-x0);
+        return 0.5;
+    return (x0 < 0.0) ? lowerTail(x0) : 1.0 - lowerTail(-x0);
 }
 
 template < typename RealType >
@@ -220,8 +220,8 @@ double StudentTRand<RealType>::S(const RealType & x) const
 {
     double x0 = (x - mu) / sigma;
     if (x0 == 0.0)
-      return 0.5;
-  return (x0 > 0.0) ? lowerTail(-x0) : 1.0 - lowerTail(x0);
+        return 0.5;
+    return (x0 > 0.0) ? lowerTail(-x0) : 1.0 - lowerTail(x0);
 }
 
 template < typename RealType >
@@ -229,8 +229,8 @@ template <std::uniform_random_bit_generator G>
 RealType StudentTRand<RealType>::operator()(G &g) const
 {
     if (nu == 1)
-      return mu + sigma * CauchyRand<RealType>::StandardVariate(g);
-  return mu + sigma * detail::standardNormal<RealType>(g) / Y(g);
+        return mu + sigma * CauchyRand<RealType>::StandardVariate(g);
+    return mu + sigma * detail::standardNormal<RealType>(g) / Y(g);
 }
 
 template < typename RealType >
@@ -252,15 +252,15 @@ void StudentTRand<RealType>::sample(detail::EngineRef g, std::span<RealType> out
 template < typename RealType >
 long double StudentTRand<RealType>::Mean() const
 {
-  return (nu > 1) ? mu : NAN;
+    return (nu > 1) ? mu : NAN;
 }
 
 template < typename RealType >
 long double StudentTRand<RealType>::Variance() const
 {
     if (nu > 2)
-      return sigma * sigma * nu / (nu - 2);
-  return (nu > 1) ? INFINITY : NAN;
+        return sigma * sigma * nu / (nu - 2);
+    return (nu > 1) ? INFINITY : NAN;
 }
 
 template < typename RealType >
@@ -274,7 +274,7 @@ std::complex<double> StudentTRand<RealType>::CFImpl(double t) const
     y += math::logBesselK(vHalf, x);
     double costmu = std::cos(t * mu), sintmu = std::sin(t * mu);
     std::complex<double> cf(costmu, sintmu);
-  return std::exp(y) * cf;
+    return std::exp(y) * cf;
 }
 
 template < typename RealType >
@@ -282,17 +282,17 @@ RealType StudentTRand<RealType>::quantileImpl(double p) const
 {
     double temp = p - 0.5;
     if (nu == 1)
-      return std::tan(randlib::consts::pi * temp) * sigma + mu;
+        return std::tan(randlib::consts::pi * temp) * sigma + mu;
     double pq = p * (1.0 - p);
     if (nu == 2)
-      return sigma * 2.0 * temp * std::sqrt(0.5 / pq) + mu;
+        return sigma * 2.0 * temp * std::sqrt(0.5 / pq) + mu;
     if (nu == 4)
     {
         double alpha = 2 * std::sqrt(pq);
         double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
-      return mu + sigma * 2 * math::sign(temp) * std::sqrt(beta);
+        return mu + sigma * 2 * math::sign(temp) * std::sqrt(beta);
     }
-  return ContinuousDistribution<RealType>::quantileImpl(p);
+    return ContinuousDistribution<RealType>::quantileImpl(p);
 }
 
 template < typename RealType >
@@ -300,43 +300,43 @@ RealType StudentTRand<RealType>::quantileImpl1m(double p) const
 {
     double temp = 0.5 - p;
     if (nu == 1)
-      return std::tan(randlib::consts::pi * temp) * sigma + mu;
+        return std::tan(randlib::consts::pi * temp) * sigma + mu;
     double pq = p * (1.0 - p);
     if (nu == 2)
-      return sigma * 2 * temp * std::sqrt(0.5 / pq) + mu;
+        return sigma * 2 * temp * std::sqrt(0.5 / pq) + mu;
     if (nu == 4)
     {
         double alpha = 2 * std::sqrt(pq);
         double beta = std::cos(std::acos(alpha) / 3.0) / alpha - 1;
-      return mu + sigma * 2 * math::sign(temp) * std::sqrt(beta);
+        return mu + sigma * 2 * math::sign(temp) * std::sqrt(beta);
     }
-  return ContinuousDistribution<RealType>::quantileImpl1m(p);
+    return ContinuousDistribution<RealType>::quantileImpl1m(p);
 }
 
 template < typename RealType >
 RealType StudentTRand<RealType>::Median() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 RealType StudentTRand<RealType>::Mode() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 long double StudentTRand<RealType>::Skewness() const
 {
-  return (nu > 3) ? 0.0 : NAN;
+    return (nu > 3) ? 0.0 : NAN;
 }
 
 template < typename RealType >
 long double StudentTRand<RealType>::ExcessKurtosis() const
 {
     if (nu > 4)
-      return 6.0 / (nu - 4);
-  return (nu > 2) ? INFINITY : NAN;
+        return 6.0 / (nu - 4);
+    return (nu > 2) ? INFINITY : NAN;
 }
 
 } // namespace randlib

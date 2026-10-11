@@ -76,31 +76,31 @@ LevyRand<RealType>::LevyRand(double location, double scale)
 template < typename RealType >
 std::string LevyRand<RealType>::Name() const
 {
-  return "Levy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
+    return "Levy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
 template < typename RealType >
 double LevyRand<RealType>::f(const RealType &x) const
 {
-  return this->pdfLevy(x);
+    return this->pdfLevy(x);
 }
 
 template < typename RealType >
 double LevyRand<RealType>::logf(const RealType & x) const
 {
-  return this->logpdfLevy(x);
+    return this->logpdfLevy(x);
 }
 
 template < typename RealType >
 double LevyRand<RealType>::F(const RealType & x) const
 {
-  return this->cdfLevy(x);
+    return this->cdfLevy(x);
 }
 
 template < typename RealType >
 double LevyRand<RealType>::S(const RealType & x) const
 {
-  return this->cdfLevyCompl(x);
+    return this->cdfLevyCompl(x);
 }
 
 template < typename RealType >
@@ -110,7 +110,7 @@ RealType LevyRand<RealType>::operator()(G &g) const
     RealType rv = detail::standardNormal<RealType>(g);
     rv *= rv;
     rv = this->gamma / rv;
-  return this->mu + rv;
+    return this->mu + rv;
 }
 
 template < typename RealType >
@@ -118,25 +118,25 @@ template <std::uniform_random_bit_generator G>
 RealType LevyRand<RealType>::StandardVariate(G &g)
 {
     RealType rv = detail::standardNormal<RealType>(g);
-  return 1.0 / (rv * rv);
+    return 1.0 / (rv * rv);
 }
 
 template < typename RealType >
 RealType LevyRand<RealType>::quantileImpl(double p) const
 {
-  return this->quantileLevy(p);
+    return this->quantileLevy(p);
 }
 
 template < typename RealType >
 RealType LevyRand<RealType>::quantileImpl1m(double p) const
 {
-  return this->quantileLevy1m(p);
+    return this->quantileLevy1m(p);
 }
 
 template < typename RealType >
 std::complex<double> LevyRand<RealType>::CFImpl(double t) const
 {
-  return this->cfLevy(t);
+    return this->cfLevy(t);
 }
 
 template < typename RealType >

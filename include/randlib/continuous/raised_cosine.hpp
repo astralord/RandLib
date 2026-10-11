@@ -131,9 +131,9 @@ double RaisedCosineDistribution<RealType>::f(const RealType &x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -static_cast<double>(randlib::consts::pi) || xAdj >= static_cast<double>(randlib::consts::pi))
-      return 0.0;
+        return 0.0;
     double y = std::cos(xAdj) + 1.0;
-  return 0.5 * y / s;
+    return 0.5 * y / s;
 }
 
 template < typename RealType >
@@ -141,10 +141,10 @@ double RaisedCosineDistribution<RealType>::logf(const RealType &x) const
 {
     double xAdj = (x - mu) / s_pi;
     if (xAdj <= -static_cast<double>(randlib::consts::pi) || xAdj >= static_cast<double>(randlib::consts::pi))
-      return -INFINITY;
+        return -INFINITY;
     double y = std::cos(xAdj);
     y = std::log1pl(y);
-  return y - log2S;
+    return y - log2S;
 }
 
 template < typename RealType >
@@ -152,13 +152,13 @@ double RaisedCosineDistribution<RealType>::F(const RealType &x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
-      return 0.0;
+        return 0.0;
     if (xAdj >= 1)
-      return 1.0;
+        return 1.0;
     double y = std::sin(xAdj * randlib::consts::pi);
     y *= randlib::consts::inv_pi;
     y += xAdj + 1;
-  return 0.5 * y;
+    return 0.5 * y;
 }
 
 template < typename RealType >
@@ -166,13 +166,13 @@ double RaisedCosineDistribution<RealType>::S(const RealType &x) const
 {
     double xAdj = (x - mu) / s;
     if (xAdj <= -1)
-      return 1.0;
+        return 1.0;
     if (xAdj >= 1)
-      return 0.0;
+        return 0.0;
     double y = std::sin(xAdj * randlib::consts::pi);
     y *= randlib::consts::inv_pi;
     y += xAdj;
-  return 0.5 - 0.5 * y;
+    return 0.5 - 0.5 * y;
 }
 
 template < typename RealType >
@@ -192,7 +192,7 @@ RealType RaisedCosineDistribution<RealType>::StandardVariate(G &g)
         V *= XSq / (a * b);
         W += V;
         if (U >= W)
-          return X;
+            return X;
         a += 2;
         b += 2;
         V *= XSq / (a * b);
@@ -200,8 +200,8 @@ RealType RaisedCosineDistribution<RealType>::StandardVariate(G &g)
         if (U <= W)
         {
             if (X == 0.0)
-              return 0.0;
-          return (X > 0.0) ? randlib::consts::pi - X : -randlib::consts::pi - X;
+                return 0.0;
+            return (X > 0.0) ? randlib::consts::pi - X : -randlib::consts::pi - X;
         }
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     throw std::runtime_error("Raised-Cosine distribution: sampling failed");
@@ -211,20 +211,20 @@ template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType RaisedCosineDistribution<RealType>::operator()(G &g) const
 {
-  return mu + s_pi * StandardVariate(g);
+    return mu + s_pi * StandardVariate(g);
 }
 
 template < typename RealType >
 long double RaisedCosineDistribution<RealType>::Mean() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 long double RaisedCosineDistribution<RealType>::Variance() const
 {
     static constexpr double coef = 1.0 / 3 - 2.0 / randlib::consts::pi_sq;
-  return s * s * coef;
+    return s * s * coef;
 }
 
 template < typename RealType >
@@ -235,25 +235,25 @@ std::complex<double> RaisedCosineDistribution<RealType>::CFImpl(double t) const
     double denominator = st * (randlib::consts::pi_sq - st * st);
     std::complex<double> y(0.0, mu * t);
     y = std::exp(y);
-  return numerator / denominator * y;
+    return numerator / denominator * y;
 }
 
 template < typename RealType >
 RealType RaisedCosineDistribution<RealType>::Median() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 RealType RaisedCosineDistribution<RealType>::Mode() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 long double RaisedCosineDistribution<RealType>::Skewness() const
 {
-  return 0.0l;
+    return 0.0l;
 }
 
 template < typename RealType >
@@ -262,17 +262,17 @@ long double RaisedCosineDistribution<RealType>::ExcessKurtosis() const
     static constexpr long double numerator = 1.2 * (90.0 - randlib::consts::pi_sq * randlib::consts::pi_sq);
     static constexpr long double denominator = randlib::consts::pi_sq - 6.0;
     static constexpr long double y = numerator / (denominator * denominator);
-  return y;
+    return y;
 }
 template < typename RealType >
 std::string RaisedCosineRand<RealType>::Name() const
 {
-  return "Raised cosine(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
+    return "Raised cosine(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 template < typename RealType >
 std::string RaabGreenRand<RealType>::Name() const
 {
-  return "Raab Green";
+    return "Raab Green";
 }
 
 } // namespace randlib

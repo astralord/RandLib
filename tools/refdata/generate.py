@@ -55,6 +55,8 @@ def parse_case(case_id):
 def golden_cases():
     cases = {}
     for path in sorted(glob.glob(os.path.join(GOLDEN, "*.csv"))):
+        if os.path.basename(path) == "known_deviations.csv":
+            continue
         with open(path, newline="") as f:
             for row in csv.DictReader(f):
                 entry = cases.setdefault(row["case"], {"x": []})

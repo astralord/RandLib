@@ -137,7 +137,7 @@ ParetoRand<RealType>::ParetoRand(double shape, double scale)
 template < typename RealType >
 std::string ParetoRand<RealType>::Name() const
 {
-  return "Pareto(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Pareto(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 template < typename RealType >
@@ -161,53 +161,53 @@ void ParetoRand<RealType>::SetScale(double scale)
 template < typename RealType >
 double ParetoRand<RealType>::f(const RealType &x) const
 {
-  return (x < sigma) ? 0.0 : std::exp(logf(x));
+    return (x < sigma) ? 0.0 : std::exp(logf(x));
 }
 
 template < typename RealType >
 double ParetoRand<RealType>::logf(const RealType & x) const
 {
     if (x < sigma)
-      return -INFINITY;
+        return -INFINITY;
     double logX = std::log(x);
     double y = logSigma - logX;
     y *= alpha;
     y -= logX;
     y += logAlpha;
-  return y;
+    return y;
 }
 
 template < typename RealType >
 double ParetoRand<RealType>::F(const RealType & x) const
 {
-  return (x > sigma) ? -std::expm1l(alpha * std::log(sigma / x)) : 0.0;
+    return (x > sigma) ? -std::expm1l(alpha * std::log(sigma / x)) : 0.0;
 }
 
 template < typename RealType >
 double ParetoRand<RealType>::S(const RealType & x) const
 {
-  return (x > sigma) ? std::pow(sigma / x, alpha) : 1.0;
+    return (x > sigma) ? std::pow(sigma / x, alpha) : 1.0;
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::variateForAlphaEqualOne(G &g)
 {
-  return 1.0 / detail::uniform01<RealType>(g);
+    return 1.0 / detail::uniform01<RealType>(g);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::variateForAlphaEqualTwo(G &g)
 {
-  return 1.0 / std::sqrt(detail::uniform01<RealType>(g));
+    return 1.0 / std::sqrt(detail::uniform01<RealType>(g));
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::variateForGeneralAlpha(double shape, G &g)
 {
-  return std::exp(detail::standardExponential<RealType>(g) / shape);
+    return std::exp(detail::standardExponential<RealType>(g) / shape);
 }
 
 template < typename RealType >
@@ -222,10 +222,10 @@ template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::StandardVariate(double shape, G &g)
 {
     if (math::areClose(shape, 1.0))
-      return variateForAlphaEqualOne(g);
+        return variateForAlphaEqualOne(g);
     if (math::areClose(shape, 2.0))
-      return variateForAlphaEqualTwo(g);
-  return variateForGeneralAlpha(shape, g);
+        return variateForAlphaEqualTwo(g);
+    return variateForGeneralAlpha(shape, g);
 }
 
 template < typename RealType >
@@ -248,7 +248,7 @@ void ParetoRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outpu
 template < typename RealType >
 long double ParetoRand<RealType>::Mean() const
 {
-  return (alpha > 1) ? alpha * sigma / (alpha - 1) : INFINITY;
+    return (alpha > 1) ? alpha * sigma / (alpha - 1) : INFINITY;
 }
 
 template < typename RealType >
@@ -258,66 +258,66 @@ long double ParetoRand<RealType>::Variance() const
     {
         long double var = sigma / (alpha - 1);
         var *= var;
-      return alpha * var / (alpha - 2);
+        return alpha * var / (alpha - 2);
     }
-  return (alpha > 1) ? INFINITY : NAN;
+    return (alpha > 1) ? INFINITY : NAN;
 }
 
 template < typename RealType >
 RealType ParetoRand<RealType>::Median() const
 {
-  return std::exp(logSigma + randlib::consts::ln2 / alpha);
+    return std::exp(logSigma + randlib::consts::ln2 / alpha);
 }
 
 template < typename RealType >
 RealType ParetoRand<RealType>::Mode() const
 {
-  return sigma;
+    return sigma;
 }
 
 template < typename RealType >
 long double ParetoRand<RealType>::Skewness() const
 {
     if (alpha <= 3)
-      return INFINITY;
+        return INFINITY;
     double skewness = (alpha - 2.0) / alpha;
     skewness = std::sqrt(skewness);
     skewness *= (1 + alpha) / (alpha - 3);
-  return skewness + skewness;
+    return skewness + skewness;
 }
 
 template < typename RealType >
 long double ParetoRand<RealType>::ExcessKurtosis() const
 {
     if (alpha <= 4)
-      return INFINITY;
+        return INFINITY;
     double numerator = alpha + 1;
     numerator *= alpha;
     numerator -= 6;
     numerator *= alpha;
     numerator -= 2;
     double denominator = alpha * (alpha - 3) * (alpha - 4);
-  return 6.0 * numerator / denominator;
+    return 6.0 * numerator / denominator;
 }
 
 template < typename RealType >
 RealType ParetoRand<RealType>::quantileImpl(double p) const
 {
     double y = logSigma - std::log1pl(-p) / alpha;
-  return std::exp(y);
+    return std::exp(y);
 }
 
 template < typename RealType >
 RealType ParetoRand<RealType>::quantileImpl1m(double p) const
 {
     double y = logSigma - std::log(p) / alpha;
-  return std::exp(y);
+    return std::exp(y);
 }
 
 template < typename RealType >
 long double ParetoRand<RealType>::Entropy() const
 {
-  return logSigma - logAlpha + 1.0 / alpha + 1;
+    return logSigma - logAlpha + 1.0 / alpha + 1;
 }
 
 template < typename RealType >
@@ -377,7 +377,7 @@ GammaRand<RealType> ParetoRand<RealType>::FitShapeBayes(std::span<const RealType
     double newRate = priorDistribution.GetRate() + n * (this->GetSampleLogMean(sample) - logSigma);
     GammaRand<RealType> posteriorDistribution(newShape, newRate);
     SetShape(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 } // namespace randlib

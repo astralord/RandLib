@@ -74,7 +74,7 @@ std::string CategoricalRand<IntType>::Name() const
     std::string str = "Categorical(";
     for (int i = 0; i != K - 1; ++i)
         str += this->toStringWithPrecision(prob[i]) + ", ";
-  return str + this->toStringWithPrecision(prob[K - 1]) + ")";
+    return str + this->toStringWithPrecision(prob[K - 1]) + ")";
 }
 
 template < typename IntType >
@@ -96,32 +96,32 @@ void CategoricalRand<IntType>::SetProbabilities(std::vector<double> &&probabilit
 template < typename IntType >
 double CategoricalRand<IntType>::P(const IntType & k) const
 {
-  return (k < 0 || k >= K) ? 0.0 : prob[k];
+    return (k < 0 || k >= K) ? 0.0 : prob[k];
 }
 
 template < typename IntType >
 double CategoricalRand<IntType>::logP(const IntType & k) const
 {
-  return std::log(P(k));
+    return std::log(P(k));
 }
 
 template < typename IntType >
 double CategoricalRand<IntType>::F(const IntType & k) const
 {
     if (k < 0)
-      return 0.0;
+        return 0.0;
     if (k >= K)
-      return 1.0;
+        return 1.0;
     if (2 * k <= K) {
         double sum = 0.0;
         for (int i = 0; i <= k; ++i)
             sum += prob[i];
-      return sum;
+        return sum;
     }
     double sum = 1.0;
     for (int i = K - 1; i > k; --i)
         sum -= prob[i];
-  return sum;
+    return sum;
 }
 
 template < typename IntType >
@@ -129,7 +129,7 @@ template <std::uniform_random_bit_generator G>
 IntType CategoricalRand<IntType>::operator()(G &g) const
 {
     double U = detail::uniform01<double>(g);
-  return quantileImpl(U);
+    return quantileImpl(U);
 }
 
 template < typename IntType >
@@ -138,7 +138,7 @@ long double CategoricalRand<IntType>::Mean() const
     long double sum = 0.0;
     for (int i = 1; i != K; ++i)
         sum += i * prob[i];
-  return sum;
+    return sum;
 }
 
 template < typename IntType >
@@ -150,14 +150,14 @@ long double CategoricalRand<IntType>::Variance() const
         mean += aux;
         secMom += i * aux;
     }
-  return secMom - mean * mean;
+    return secMom - mean * mean;
 }
 
 template < typename IntType >
 IntType CategoricalRand<IntType>::Mode() const
 {
     auto maxProbIt = std::max_element(prob.begin(), prob.end());
-  return std::distance(prob.begin(), maxProbIt);
+    return std::distance(prob.begin(), maxProbIt);
 }
 
 template < typename IntType >
@@ -168,9 +168,9 @@ IntType CategoricalRand<IntType>::quantileImpl(double p) const
     for (IntType i = 0; i != K; ++i) {
         sum += prob[i];
         if (sum >= p)
-          return i;
+            return i;
     }
-  return K - 1;
+    return K - 1;
 }
 
 template < typename IntType >
@@ -181,9 +181,9 @@ IntType CategoricalRand<IntType>::quantileImpl1m(double p) const
     for (IntType k = K - 1; k > 0; --k) {
         tail += prob[k];
         if (tail > p)
-          return k;
+            return k;
     }
-  return 0;
+    return 0;
 }
 
 template < typename IntType >
@@ -195,7 +195,7 @@ std::complex<double> CategoricalRand<IntType>::CFImpl(double t) const
         re += prob[i] * std::cos(t * i);
         im += prob[i] * std::sin(t * i);
     }
-  return std::complex<double>(re, im);
+    return std::complex<double>(re, im);
 }
 
 } // namespace randlib

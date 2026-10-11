@@ -20,7 +20,8 @@ coherence and sampling statistics. Every fix below has a regression test in
 - CMake build with `RandLib::RandLib` target, install rules and
   `find_package(RandLib)` support; presets `dev`, `release`, `asan`, `ubsan`.
   `RandLib.pro` (qmake) is deprecated and will be removed in 2.0.
-- Builds without warnings on GCC 11–14, Clang 15–18, AppleClang and MSVC 2022 (#18).
+- Builds without warnings on GCC 11–14, Clang 15–18, AppleClang and MSVC 2022 (#18); MSVC's
+  narrowing-conversion warnings, which GCC and Clang do not emit, are disabled.
   Ziggurat tables and a few constants no longer use `constexpr` initializers that call
   non-`constexpr` math functions.
 - The library no longer requires the optional C++17 special math functions, which libc++
@@ -98,13 +99,20 @@ coherence and sampling statistics. Every fix below has a regression test in
   (log-normal variance, Balding-Nichols, negative binomial), and NaN parameters and non-finite
   locations are rejected throughout.
 - **B27** Characteristic functions of heavy-tailed discrete laws (Zeta, Yule) terminate; their
-  summation used to need about 10¹⁰ terms.
+  summation used to need about 10¹⁰ terms. The tail beyond the summed terms is estimated with
+  Euler's transformation, so a value takes milliseconds and is accurate to about 1e-16.
 - **B28** The Cantor characteristic function ignored `t`.
 - **B29** The geometric stable density and distribution function for α = 1 missed the S1 location
   shift of the mixing representation.
+- **B30** The Marchenko–Pastur distribution function next to the lower edge of the support.
+- **B31** `RademacherRand::Mode` returned a random value; it is now −1, like the median.
+- **B32** Poisson and binomial probabilities use Loader's saddle-point form: the sum of logarithms
+  lost up to four digits for large arguments, which depended on the platform's `lgamma`.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).
+- Quantile searches of stable and geometric stable laws start the far tails from their power-law
+  asymptote.
 
 ### Known limitations
 
@@ -114,7 +122,11 @@ Tracked by the tolerance overrides in `tests/data/reference_tolerances.csv`:
   about 1e-3 (#10), the log-normal one to about 1e-4 for large variance (#6);
 - noncentral chi-squared upper tails come from 1 − Marcum P (#4);
 - stable densities near α = 1 with β ≠ 0 are not implemented (#1);
-- geometric stable densities and distribution functions take about 0.1 s per evaluation.
+- geometric stable densities and distribution functions take about 0.1 s per evaluation (up to a
+  few seconds in the far tails for α = 1);
+- high-precision reference values for the skewed stable and geometric stable laws with α = 1 are
+  still being computed; these cases are covered by spot checks against mpmath in the regression
+  tests.
 
 ## [1.1.0]
 

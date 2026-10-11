@@ -121,25 +121,25 @@ void ContinuousDistribution<RealType>::LogProbabilityDensityFunction(std::span<c
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initValue) const
 {
-  return searchQuantile(p, false, initValue);
+    return searchQuantile(p, false, initValue);
 }
 
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl(double p) const
 {
-  return searchQuantile(p, false, std::numeric_limits<RealType>::quiet_NaN());
+    return searchQuantile(p, false, std::numeric_limits<RealType>::quiet_NaN());
 }
 
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType initValue) const
 {
-  return searchQuantile(p, true, initValue);
+    return searchQuantile(p, true, initValue);
 }
 
 template< typename RealType >
 RealType ContinuousDistribution<RealType>::quantileImpl1m(double p) const
 {
-  return searchQuantile(p, true, std::numeric_limits<RealType>::quiet_NaN());
+    return searchQuantile(p, true, std::numeric_limits<RealType>::quiet_NaN());
 }
 
 template< typename RealType >
@@ -157,9 +157,9 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
     auto g = [this, p, upperTail, logScale, logP] (RealType x) {
         double v = upperTail ? this->S(x) : this->F(x);
         if (!logScale)
-          return upperTail ? p - v : v - p;
+            return upperTail ? p - v : v - p;
         double logV = (v > 0) ? std::log(v) : -INFINITY;
-      return upperTail ? logP - logV : logV - logP;
+        return upperTail ? logP - logV : logV - logP;
     };
     const RealType lo = this->MinValue(), hi = this->MaxValue();
     const bool loFinite = std::isfinite(lo), hiFinite = std::isfinite(hi);
@@ -173,7 +173,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
     if (useGuess || !(loFinite && hiFinite)) {
         double gOrigin = g(origin);
         if (gOrigin == 0)
-          return origin;
+            return origin;
         RealType step = useGuess ? std::max<RealType>(std::fabs(guess) * relativeStep, 1e-3) : 1;
         bool searchUp = (useGuess || !loFinite || hiFinite) ? gOrigin < 0 : true;
         if (!useGuess && loFinite && !hiFinite)
@@ -189,7 +189,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
                     break;
                 }
                 if (!std::isfinite(b))
-                  return b;
+                    return b;
                 gb = g(b);
                 if (gb >= 0)
                     break;
@@ -209,7 +209,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
                     break;
                 }
                 if (!std::isfinite(a))
-                  return a;
+                    return a;
                 ga = g(a);
                 if (ga < 0)
                     break;
@@ -233,7 +233,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
             t = tFar / 65536;
         else
             t = tNear + (tFar - tNear) / 2;
-      return anchor + direction * t;
+        return anchor + direction * t;
     };
 
     /// Illinois regula falsi, with a bisection step whenever the bracket fails to halve
@@ -251,7 +251,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
             break;
         double gm = g(middle);
         if (gm == 0)
-          return middle;
+            return middle;
         if (gm < 0) {
             a = middle;
             ga = gm;
@@ -268,7 +268,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
         }
         bisect = (b - a) > 0.5 * width;
     }
-  return (std::isfinite(ga) && std::fabs(ga) < std::fabs(gb)) ? a : b;
+    return (std::isfinite(ga) && std::fabs(ga) < std::fabs(gb)) ? a : b;
 }
 
 template< typename RealType >
@@ -280,9 +280,9 @@ RealType ContinuousDistribution<RealType>::Mode() const
     RealType root = 0;
     math::findMin<RealType>([this] (const RealType &x)
     {
-      return -this->logf(x);
+        return -this->logf(x);
     }, guess, root);
-  return root;
+    return root;
 }
 
 template< typename RealType >
@@ -297,68 +297,68 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
         upperBoundary = std::min(maxPoint, upperBoundary);
 
     if (lowerBoundary >= upperBoundary)
-      return 0.0;
+        return 0.0;
 
     bool isLeftBoundFinite = std::isfinite(lowerBoundary), isRightBoundFinite = std::isfinite(upperBoundary);
 
     /// Integrate on finite interval [a, b]
     if (isLeftBoundFinite && isRightBoundFinite) {
-      return math::integral([this, funPtr] (double x)
+        return math::integral([this, funPtr] (double x)
         {
             double y = funPtr(x);
-          return (y == 0.0) ? 0.0 : y * f(x);
+            return (y == 0.0) ? 0.0 : y * f(x);
         },
         lowerBoundary, upperBoundary);
     }
 
     /// Integrate on semifinite interval [a, inf)
     if (isLeftBoundFinite) {
-      return math::integral([this, funPtr, lowerBoundary] (double x)
+        return math::integral([this, funPtr, lowerBoundary] (double x)
         {
             if (x >= 1.0)
-              return 0.0;
+                return 0.0;
             double denom = 1.0 - x;
             double t = lowerBoundary + x / denom;
             double y = funPtr(t);
             if (y == 0.0)
-              return 0.0;
+                return 0.0;
             y *= this->f(t);
             denom *= denom;
-          return y / denom;
+            return y / denom;
         },
         0.0, 1.0);
     }
 
     /// Integrate on semifinite intervale (-inf, b]
     if (isRightBoundFinite) {
-      return math::integral([this, funPtr, upperBoundary] (double x)
+        return math::integral([this, funPtr, upperBoundary] (double x)
         {
             if (x <= 0.0)
-              return 0.0;
+                return 0.0;
             double t = upperBoundary - (1.0 - x) / x;
             double y = funPtr(t);
             if (y == 0.0)
-              return 0.0;
+                return 0.0;
             y *= this->f(t);
-          return y / (x * x);
+            return y / (x * x);
         },
         0.0, 1.0);
     }
 
     /// Infinite case
-  return math::integral([this, funPtr] (double x)
+    return math::integral([this, funPtr] (double x)
     {
         if (std::fabs(x) >= 1.0)
-          return 0.0;
+            return 0.0;
         double x2 = x * x;
         double denom = 1.0 - x2;
         double t = x / denom;
         double y = funPtr(t);
         if (y == 0.0)
-          return 0.0;
+            return 0.0;
         y *= this->f(t);
         denom *= denom;
-      return y * (1.0 + x2) / denom;
+        return y * (1.0 + x2) / denom;
     }, -1.0, 1.0);
 }
 
@@ -366,16 +366,16 @@ template< typename RealType >
 double ContinuousDistribution<RealType>::Hazard(const RealType &x) const
 {
     if (x < this->MinValue())
-      return 0.0; /// 0/1
+        return 0.0; /// 0/1
     if (x > this->MaxValue())
-      return NAN; /// 0/0
-  return this->f(x) / this->S(x);
+        return NAN; /// 0/0
+    return this->f(x) / this->S(x);
 }
 
 template< typename RealType >
 double ContinuousDistribution<RealType>::LikelihoodFunction(std::span<const RealType> sample) const
 {
-  return std::exp(LogLikelihoodFunction(sample));
+    return std::exp(LogLikelihoodFunction(sample));
 }
 
 template< typename RealType >
@@ -384,7 +384,7 @@ double ContinuousDistribution<RealType>::LogLikelihoodFunction(std::span<const R
     long double res = 0.0;
     for (const RealType & var : sample)
         res += this->logf(var);
-  return res;
+    return res;
 }
 
 template< typename RealType >
@@ -405,10 +405,10 @@ bool ContinuousDistribution<RealType>::KolmogorovSmirnovTest(std::span<const Rea
         double lowerBound = Fn - interval;
         double FReal = this->F(x);
         if (FReal < lowerBound || FReal > upperBound)
-          return false;
+            return false;
     }
     double SReal = this->S(orderStatistic[n - 1]);
-  return (SReal > interval || SReal < nInv - interval) ? false : true;
+    return (SReal > interval || SReal < nInv - interval) ? false : true;
 }
 
 } // namespace randlib

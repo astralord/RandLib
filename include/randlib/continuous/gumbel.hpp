@@ -80,7 +80,7 @@ GumbelRand<RealType>::GumbelRand(double location, double scale)
 template < typename RealType >
 std::string GumbelRand<RealType>::Name() const
 {
-  return "Gumbel(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Gumbel(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 template < typename RealType >
@@ -103,7 +103,7 @@ void GumbelRand<RealType>::SetScale(double scale)
 template < typename RealType >
 double GumbelRand<RealType>::f(const RealType & x) const
 {
-  return std::exp(logf(x));
+    return std::exp(logf(x));
 }
 
 template < typename RealType >
@@ -111,7 +111,7 @@ double GumbelRand<RealType>::logf(const RealType & x) const
 {
     double z = (mu - x) / beta;
     double y = std::exp(z);
-  return z - y - logBeta;
+    return z - y - logBeta;
 }
 
 template < typename RealType >
@@ -119,7 +119,7 @@ double GumbelRand<RealType>::F(const RealType & x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
-  return std::exp(-y);
+    return std::exp(-y);
 }
 
 template < typename RealType >
@@ -127,14 +127,14 @@ double GumbelRand<RealType>::S(const RealType &x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
-  return -std::expm1l(-y);
+    return -std::expm1l(-y);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType GumbelRand<RealType>::operator()(G &g) const
 {
-  return mu + beta * GumbelRand<RealType>::StandardVariate(g);
+    return mu + beta * GumbelRand<RealType>::StandardVariate(g);
 }
 
 template < typename RealType >
@@ -142,64 +142,64 @@ template <std::uniform_random_bit_generator G>
 RealType GumbelRand<RealType>::StandardVariate(G &g)
 {
     RealType w = detail::standardExponential<RealType>(g);
-  return -std::log(w);
+    return -std::log(w);
 }
 
 template < typename RealType >
 long double GumbelRand<RealType>::Mean() const
 {
-  return mu + beta * randlib::consts::egamma;
+    return mu + beta * randlib::consts::egamma;
 }
 
 template < typename RealType >
 long double GumbelRand<RealType>::Variance() const
 {
     double v = randlib::consts::pi * beta;
-  return v * v / 6;
+    return v * v / 6;
 }
 
 template < typename RealType >
 RealType GumbelRand<RealType>::quantileImpl(double p) const
 {
-  return mu - beta * std::log(-std::log(p));
+    return mu - beta * std::log(-std::log(p));
 }
 
 template < typename RealType >
 RealType GumbelRand<RealType>::quantileImpl1m(double p) const
 {
-  return mu - beta * std::log(-std::log1pl(-p));
+    return mu - beta * std::log(-std::log1pl(-p));
 }
 
 template < typename RealType >
 RealType GumbelRand<RealType>::Median() const
 {
     static const double M_LN_LN2 = std::log(randlib::consts::ln2);
-  return mu - beta * M_LN_LN2;
+    return mu - beta * M_LN_LN2;
 }
 
 template < typename RealType >
 RealType GumbelRand<RealType>::Mode() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 long double GumbelRand<RealType>::Skewness() const
 {
     static constexpr long double skew = 12 * randlib::consts::sqrt2 * randlib::consts::sqrt3 * randlib::consts::apery / (randlib::consts::pi_sq * randlib::consts::pi);
-  return skew;
+    return skew;
 }
 
 template < typename RealType >
 long double GumbelRand<RealType>::ExcessKurtosis() const
 {
-  return 2.4l;
+    return 2.4l;
 }
 
 template < typename RealType >
 long double GumbelRand<RealType>::Entropy() const
 {
-  return logBeta + randlib::consts::egamma + 1.0;
+    return logBeta + randlib::consts::egamma + 1.0;
 }
 
 } // namespace randlib

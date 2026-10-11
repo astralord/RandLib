@@ -77,7 +77,7 @@ FrechetRand<RealType>::FrechetRand(double shape, double scale, double location)
 template < typename RealType >
 std::string FrechetRand<RealType>::Name() const
 {
-  return "Frechet(" + this->toStringWithPrecision(GetShape()) + ", "
+    return "Frechet(" + this->toStringWithPrecision(GetShape()) + ", "
                       + this->toStringWithPrecision(GetScale()) + ", "
                       + this->toStringWithPrecision(GetLocation()) + ")";
 }
@@ -101,65 +101,65 @@ void FrechetRand<RealType>::SetParameters(double shape, double scale, double loc
 template < typename RealType >
 double FrechetRand<RealType>::f(const RealType &x) const
 {
-  return (x <= m) ? 0.0 : std::exp(logf(x));
+    return (x <= m) ? 0.0 : std::exp(logf(x));
 }
 
 template < typename RealType >
 double FrechetRand<RealType>::logf(const RealType &x) const
 {
     if (x <= m)
-      return -INFINITY;
+        return -INFINITY;
     double xAdj = (x - m) / s;
     double logxAdj = std::log(xAdj);
     double a = alpha * logxAdj;
     double expA = std::exp(-a);
-  return pdfCoef - a - expA - logxAdj;
+    return pdfCoef - a - expA - logxAdj;
 }
 
 template < typename RealType >
 double FrechetRand<RealType>::F(const RealType & x) const
 {
     if (x <= m)
-      return 0.0;
+        return 0.0;
     double xAdj = (x - m) / s;
     double xPow = std::pow(xAdj, -alpha);
-  return std::exp(-xPow);
+    return std::exp(-xPow);
 }
 
 template < typename RealType >
 double FrechetRand<RealType>::S(const RealType & x) const
 {
     if (x <= m)
-      return 1.0;
+        return 1.0;
     double xAdj = (x - m) / s;
     double xPow = std::pow(xAdj, -alpha);
-  return -std::expm1l(-xPow);
+    return -std::expm1l(-xPow);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType FrechetRand<RealType>::operator()(G &g) const
 {
-  return m + s / std::pow(detail::standardExponential<RealType>(g), alphaInv);
+    return m + s / std::pow(detail::standardExponential<RealType>(g), alphaInv);
 }
 
 template < typename RealType >
 long double FrechetRand<RealType>::Mean() const
 {
     if (alpha <= 1.0)
-      return INFINITY;
-  return m + s * std::tgammal(1.0 - alphaInv);
+        return INFINITY;
+    return m + s * std::tgammal(1.0 - alphaInv);
 }
 
 template < typename RealType >
 long double FrechetRand<RealType>::Variance() const
 {
     if (alpha <= 2.0)
-      return INFINITY;
+        return INFINITY;
     long double var = std::tgammal(1.0 - alphaInv);
     var *= var;
     var = std::tgammal(1.0 - 2 * alphaInv) - var;
-  return s * s * var;
+    return s * s * var;
 }
 
 template < typename RealType >
@@ -167,7 +167,7 @@ RealType FrechetRand<RealType>::quantileImpl(double p) const
 {
     RealType y = -std::log(p);
     y = s / std::pow(y, alphaInv);
-  return y + m;
+    return y + m;
 }
 
 template < typename RealType >
@@ -175,13 +175,13 @@ RealType FrechetRand<RealType>::quantileImpl1m(double p) const
 {
     RealType y = -std::log1pl(-p);
     y = s / std::pow(y, alphaInv);
-  return y + m;
+    return y + m;
 }
 
 template < typename RealType >
 RealType FrechetRand<RealType>::Median() const
 {
-  return m + s / std::pow(randlib::consts::ln2, alphaInv);
+    return m + s / std::pow(randlib::consts::ln2, alphaInv);
 }
 
 template < typename RealType >
@@ -189,14 +189,14 @@ RealType FrechetRand<RealType>::Mode() const
 {
     RealType y = alpha / (1.0 + alpha);
     y = std::pow(y, alphaInv);
-  return m + s * y;
+    return m + s * y;
 }
 
 template < typename RealType >
 long double FrechetRand<RealType>::Skewness() const
 {
     if (alpha <= 3.0)
-      return INFINITY;
+        return INFINITY;
     long double x = std::tgammal(1.0 - alphaInv);
     long double y = std::tgammal(1.0 - 2.0 * alphaInv);
     long double z = std::tgammal(1.0 - 3.0 * alphaInv);
@@ -205,14 +205,14 @@ long double FrechetRand<RealType>::Skewness() const
     numerator += z;
     long double denominator = y - x * x;
     denominator = std::pow(denominator, 1.5);
-  return numerator / denominator;
+    return numerator / denominator;
 }
 
 template < typename RealType >
 long double FrechetRand<RealType>::ExcessKurtosis() const
 {
     if (alpha <= 4.0)
-      return INFINITY;
+        return INFINITY;
     long double x = std::tgammal(1.0 - alphaInv);
     long double y = std::tgammal(1.0 - 2.0 * alphaInv);
     long double z = std::tgammal(1.0 - 3.0 * alphaInv);
@@ -220,13 +220,13 @@ long double FrechetRand<RealType>::ExcessKurtosis() const
     long double numerator = w - 4 * z * x + 3 * y * y;
     long double denominator = y - x * x;
     denominator *= denominator;
-  return numerator / denominator - 6.0;
+    return numerator / denominator - 6.0;
 }
 
 template < typename RealType >
 long double FrechetRand<RealType>::Entropy() const
 {
-  return 1.0 + randlib::consts::egamma * (1.0 + alphaInv) + std::log(s / alpha);
+    return 1.0 + randlib::consts::egamma * (1.0 + alphaInv) + std::log(s / alpha);
 }
 
 } // namespace randlib

@@ -107,15 +107,15 @@ private:
         /// if (n is tiny and minpq is big) or (p ~= 0.5 and n is not that large),
         /// we just sum Bernoulli random variables
         if ((n <= 3) || (n <= 13 && minpq > 0.025 * (n + 6)) || (n <= 200 && math::areClose(p, 0.5)))
-          return BERNOULLI_SUM;
+            return BERNOULLI_SUM;
 
         /// for small [np] we use simple waiting algorithm
         if ((npFloor <= 12) ||
             (pRes > 0 && npFloor <= 16))
-          return WAITING;
+            return WAITING;
 
         /// otherwise
-      return REJECTION;
+        return REJECTION;
     }
 
     template <std::uniform_random_bit_generator G>
@@ -232,10 +232,10 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
 
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == BERNOULLI_SUM)
-      return;
+        return;
     else if (genId == WAITING) {
         geometric.SetProbability(minpq);
-      return;
+        return;
     }
 
     nqFloor = n - npFloor;
@@ -308,25 +308,25 @@ void BinomialDistribution<IntType>::SetParameters(IntType number, double probabi
 template< typename IntType >
 double BinomialDistribution<IntType>::SufficientStatistic(IntType x) const
 {
-  return x;
+    return x;
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::SourceParameters() const
 {
-  return this->p;
+    return this->p;
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::SourceToNatural(double sourceParameters) const
 {
-  return std::log(sourceParameters) - std::log1p(-sourceParameters);
+    return std::log(sourceParameters) - std::log1p(-sourceParameters);
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::NaturalParameters() const
 {
-  return this->logProb - this->log1mProb;
+    return this->logProb - this->log1mProb;
 }
 
 template< typename IntType >
@@ -334,14 +334,14 @@ double BinomialDistribution<IntType>::LogNormalizer(double theta) const
 {
     double F = n * math::softplus(theta);
     F -= this->lfactn;
-  return F;
+    return F;
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::LogNormalizerGradient(double theta) const
 {
     double expTheta = std::exp(theta);
-  return this->n * expTheta / (1.0 + expTheta);
+    return this->n * expTheta / (1.0 + expTheta);
 }
 
 template< typename IntType >
@@ -349,7 +349,7 @@ double BinomialDistribution<IntType>::CarrierMeasure(IntType x) const
 {
     double k = -math::lfact(x);
     k -= math::lfact(n - x);
-  return k;
+    return k;
 }
 
 template < typename IntType >
@@ -359,7 +359,7 @@ double BinomialDistribution<IntType>::EntropyAdjusted() const
     H += this->q * this->log1mProb;
     H *= this->n;
     H += this->lfactn;
-  return -H;
+    return -H;
 }
 
 template< typename IntType >
@@ -370,54 +370,54 @@ double BinomialDistribution<IntType>::logProbFloor(int k) const
     y -= math::lfact(k);
     y += k * logPFloor;
     y += (n - k) * logQFloor;
-  return y;
+    return y;
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::P(const IntType & k) const
 {
-  return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
+    return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::logP(const IntType & k) const
 {
     if (k < 0 || k > n)
-      return -INFINITY;
+        return -INFINITY;
     if (k == 0)
-      return n * log1mProb;
+        return n * log1mProb;
     if (k == n)
-      return n * logProb;
+        return n * logProb;
     /// saddle-point form; the direct sum of logarithms cancels catastrophically for large n
     double y = math::stirlingError(n) - math::stirlingError(k) - math::stirlingError(n - k);
     y -= math::bd0(k, n * p) + math::bd0(n - k, n * q);
-  return y - 0.5 * std::log(2 * randlib::consts::pi * k * (1.0 - static_cast<double>(k) / n));
+    return y - 0.5 * std::log(2 * randlib::consts::pi * k * (1.0 - static_cast<double>(k) / n));
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::F(const IntType & k) const
 {
     if (k < 0)
-      return 0.0;
+        return 0.0;
     if (k >= n)
-      return 1.0;
+        return 1.0;
     int nmk = n - k, kp1 = k + 1;
     double logBetaFun = math::lfact(n - kp1);
     logBetaFun += math::lfact(k);
     logBetaFun -= lfactn;
-  return math::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
+    return math::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 
 template< typename IntType >
 double BinomialDistribution<IntType>::S(const IntType & k) const
 {
     if (k < 0)
-      return 1.0;
+        return 1.0;
     if (k >= n)
-      return 0.0;
+        return 0.0;
     int nmk = n - k, kp1 = k + 1;
     double logBetaFun = math::logBeta(kp1, nmk);
-  return math::ibeta(p, kp1, nmk, logBetaFun, logProb, log1mProb);
+    return math::ibeta(p, kp1, nmk, logBetaFun, logProb, log1mProb);
 }
 
 template< typename IntType >
@@ -479,7 +479,7 @@ IntType BinomialDistribution<IntType>::variateRejection(G &g) const
         if (!reject) {
             X += npFloor;
             if (X >= 0 && X <= n && V <= logProbFloor(X) - logPnpInv)
-              return X;
+                return X;
         }
     } while (++iter <= ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
     throw std::runtime_error("Binomial distribution: sampling failed");
@@ -496,7 +496,7 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number, G &g) cons
         sum += geometric(g) + 1;
         ++X;
     } while (sum <= number);
-  return X;
+    return X;
 }
 
 template< typename IntType >
@@ -508,11 +508,11 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double pro
     do {
         IntType add = GeometricRand<IntType>::Variate(probability, g) + 1;
         if (add < 0) /// we catched overflow
-          return X + 1;
+            return X + 1;
         sum += add;
         ++X;
     } while (sum <= number);
-  return X;
+    return X;
 }
 
 template< typename IntType >
@@ -528,7 +528,7 @@ IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, doubl
         for (int i = 0; i != number; ++i)
             var += BernoulliRand::Variate(probability, g);
     }
-  return var;
+    return var;
 }
 
 template< typename IntType >
@@ -540,7 +540,7 @@ IntType BinomialDistribution<IntType>::operator()(G &g) const
     case WAITING:
     {
         IntType var = variateWaiting(n, g);
-      return (p <= 0.5) ? var : n - var;
+        return (p <= 0.5) ? var : n - var;
     }
     case REJECTION:
     {
@@ -549,10 +549,10 @@ IntType BinomialDistribution<IntType>::operator()(G &g) const
         IntType Z = variateRejection(g);
         if (pRes > 0)
             Z += variateWaiting(n - Z, g);
-      return (p > 0.5) ? n - Z : Z;
+        return (p > 0.5) ? n - Z : Z;
     }
     case BERNOULLI_SUM:
-      return variateBernoulliSum(n, p, g);
+        return variateBernoulliSum(n, p, g);
     default:
         throw std::invalid_argument("Binomial distribution: invalid generator id");
     }
@@ -570,15 +570,15 @@ IntType BinomialDistribution<IntType>::Variate(IntType number, double probabilit
         throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1], but it's equal to "
                                     + std::to_string(probability));
     if (probability == 0.0)
-      return 0;
+        return 0;
     if (probability == 1.0)
-      return number;
+        return number;
 
     if (number < 10)
-      return variateBernoulliSum(number, probability, g);
+        return variateBernoulliSum(number, probability, g);
     if (probability < 0.5)
-      return variateWaiting(number, probability, g);
-  return number - variateWaiting(number, 1.0 - probability, g);
+        return variateWaiting(number, probability, g);
+    return number - variateWaiting(number, 1.0 - probability, g);
 }
 
 template< typename IntType >
@@ -586,11 +586,11 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
 {
     if (p == 0.0) {
         std::fill(outputData.begin(), outputData.end(), 0);
-      return;
+        return;
     }
     if (math::areClose(p, 1.0)) {
         std::fill(outputData.begin(), outputData.end(), n);
-      return;
+        return;
     }
 
     GENERATOR_ID genId = GetIdOfUsedGenerator();
@@ -605,7 +605,7 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
             for (IntType &var : outputData)
                var = n - variateWaiting(n, g);
         }
-      return;
+        return;
     }
     case REJECTION:
     {
@@ -619,14 +619,14 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
             for (IntType &var : outputData)
                var = n - var;
         }
-      return;
+        return;
     }
     case BERNOULLI_SUM:
     default:
     {
         for (IntType &var : outputData)
            var = variateBernoulliSum(n, p, g);
-      return;
+        return;
     }
     }
 }
@@ -636,13 +636,13 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
 template< typename IntType >
 long double BinomialDistribution<IntType>::Mean() const
 {
-  return np;
+    return np;
 }
 
 template< typename IntType >
 long double BinomialDistribution<IntType>::Variance() const
 {
-  return np * q;
+    return np * q;
 }
 
 template< typename IntType >
@@ -650,19 +650,19 @@ IntType BinomialDistribution<IntType>::Median() const
 {
     /// The median is floor(np) or ceil(np)
     IntType lower = std::floor(np);
-  return (this->F(lower) >= 0.5) ? lower : lower + 1;
+    return (this->F(lower) >= 0.5) ? lower : lower + 1;
 }
 
 template< typename IntType >
 IntType BinomialDistribution<IntType>::Mode() const
 {
-  return std::floor(np + p);
+    return std::floor(np + p);
 }
 
 template< typename IntType >
 long double BinomialDistribution<IntType>::Skewness() const
 {
-  return (q - p) / std::sqrt(np * q);
+    return (q - p) / std::sqrt(np * q);
 }
 
 template< typename IntType >
@@ -670,14 +670,14 @@ long double BinomialDistribution<IntType>::ExcessKurtosis() const
 {
     long double y = 1.0 / (p * q);
     y -= 6.0;
-  return y / n;
+    return y / n;
 }
 
 template< typename IntType >
 std::complex<double> BinomialDistribution<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(q + p * std::cos(t), p * std::sin(t));
-  return std::pow(y, n);
+    return std::pow(y, n);
 }
 
 template< typename IntType >
@@ -703,7 +703,7 @@ BetaRand<> BinomialDistribution<IntType>::FitProbabilityBayes(std::span<const In
     double beta = priorDistribution.GetBeta();
     BetaRand posteriorDistribution(sum + alpha, N * n - sum + beta);
     SetParameters(n, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 template< typename IntType >
@@ -711,12 +711,12 @@ BetaRand<> BinomialDistribution<IntType>::FitProbabilityMinimax(std::span<const 
 {
     double shape = 0.5 * std::sqrt(n);
     BetaRand B(shape, shape);
-  return FitProbabilityBayes(sample, B);
+    return FitProbabilityBayes(sample, B);
 }
 template< typename IntType >
 std::string BinomialRand<IntType>::Name() const
 {
-  return "Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+    return "Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
 } // namespace randlib

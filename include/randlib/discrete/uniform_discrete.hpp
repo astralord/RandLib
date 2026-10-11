@@ -87,7 +87,7 @@ UniformDiscreteRand<IntType>::UniformDiscreteRand(IntType minValue, IntType maxV
 template< typename IntType >
 std::string UniformDiscreteRand<IntType>::Name() const
 {
-  return "Uniform Discrete(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
+    return "Uniform Discrete(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
 template< typename IntType >
@@ -107,30 +107,30 @@ void UniformDiscreteRand<IntType>::SetBoundaries(IntType minValue, IntType maxVa
 template< typename IntType >
 double UniformDiscreteRand<IntType>::P(const IntType & k) const
 {
-  return (k < a || k > b) ? 0.0 : nInv;
+    return (k < a || k > b) ? 0.0 : nInv;
 }
 
 template< typename IntType >
 double UniformDiscreteRand<IntType>::logP(const IntType & k) const
 {
-  return (k < a || k > b) ? -INFINITY : -logN;
+    return (k < a || k > b) ? -INFINITY : -logN;
 }
 
 template< typename IntType >
 double UniformDiscreteRand<IntType>::F(const IntType & k) const
 {
     if (k < a)
-      return 0.0;
+        return 0.0;
     if (k > b)
-      return 1.0;
-  return (k - a + 1) * nInv;
+        return 1.0;
+    return (k - a + 1) * nInv;
 }
 
 template< typename IntType >
 template <std::uniform_random_bit_generator G>
 IntType UniformDiscreteRand<IntType>::operator()(G &g) const
 {
-  return a + static_cast<IntType>(detail::uniformBelow(g, n));
+    return a + static_cast<IntType>(detail::uniformBelow(g, n));
 }
 
 template< typename IntType >
@@ -138,15 +138,15 @@ template <std::uniform_random_bit_generator G>
 IntType UniformDiscreteRand<IntType>::StandardVariate(IntType minValue, IntType maxValue, G &g)
 {
     if (maxValue <= minValue)
-      return minValue;
+        return minValue;
     auto n = static_cast<std::uint64_t>(maxValue - minValue) + 1;
-  return minValue + static_cast<IntType>(detail::uniformBelow(g, n));
+    return minValue + static_cast<IntType>(detail::uniformBelow(g, n));
 }
 
 template< typename IntType >
 long double UniformDiscreteRand<IntType>::Mean() const
 {
-  return 0.5 * (b + a);
+    return 0.5 * (b + a);
 }
 
 template< typename IntType >
@@ -154,26 +154,26 @@ long double UniformDiscreteRand<IntType>::Variance() const
 {
     double nm1 = n - 1;
     double np1 = n + 1;
-  return nm1 * np1 / 12;
+    return nm1 * np1 / 12;
 }
 
 template< typename IntType >
 IntType UniformDiscreteRand<IntType>::Median() const
 {
-  return (b + a) >> 1;
+    return (b + a) >> 1;
 }
 
 template< typename IntType >
 IntType UniformDiscreteRand<IntType>::Mode() const
 {
     /// this can be any value in [a, b]
-  return 0.5 * (a + b);
+    return 0.5 * (a + b);
 }
 
 template< typename IntType >
 long double UniformDiscreteRand<IntType>::Skewness() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template< typename IntType >
@@ -184,7 +184,7 @@ long double UniformDiscreteRand<IntType>::ExcessKurtosis() const
     --kurt;
     kurt = 2.0 / kurt;
     ++kurt;
-  return -1.2 * kurt;
+    return -1.2 * kurt;
 }
 
 template< typename IntType >
@@ -196,20 +196,20 @@ std::complex<double> UniformDiscreteRand<IntType>::CFImpl(double t) const
     double imNum = std::sin(at) - std::sin(bp1t);
     std::complex<double> numerator(reNum, imNum);
     std::complex<double> denominator(1.0 - std::cos(t), -std::sin(t));
-  return nInv * numerator / denominator;
+    return nInv * numerator / denominator;
 }
 
 template< typename IntType >
 long double UniformDiscreteRand<IntType>::Entropy() const
 {
-  return logN;
+    return logN;
 }
 
 template< typename IntType >
 double UniformDiscreteRand<IntType>::LikelihoodFunction(std::span<const IntType> sample) const
 {
     bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
-  return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
+    return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
 }
 
 template< typename IntType >
@@ -217,7 +217,7 @@ double UniformDiscreteRand<IntType>::LogLikelihoodFunction(std::span<const IntTy
 {
     bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
     int sample_size = sample.size();
-  return sampleIsInsideInterval ? -sample_size * logN : -INFINITY;
+    return sampleIsInsideInterval ? -sample_size * logN : -INFINITY;
 }
 
 template< typename IntType >

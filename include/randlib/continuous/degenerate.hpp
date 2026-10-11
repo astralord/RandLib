@@ -79,7 +79,7 @@ inline DegenerateRand::DegenerateRand(double value)
 
 inline std::string DegenerateRand::Name() const
 {
-  return "Degenerate";
+    return "Degenerate";
 }
 
 inline void DegenerateRand::SetValue(double value)
@@ -91,75 +91,75 @@ inline void DegenerateRand::SetValue(double value)
 
 inline double DegenerateRand::f(const double & x) const
 {
-  return (x == a) ? INFINITY : 0.0;
+    return (x == a) ? INFINITY : 0.0;
 }
 
 inline double DegenerateRand::logf(const double & x) const
 {
-  return (x == a) ? INFINITY : -INFINITY;
+    return (x == a) ? INFINITY : -INFINITY;
 }
 
 inline double DegenerateRand::F(const double & x) const
 {
-  return (x < a) ? 0.0 : 1.0;
+    return (x < a) ? 0.0 : 1.0;
 }
 
 template <std::uniform_random_bit_generator G>
 double DegenerateRand::operator()(G &) const
 {
-  return a;
+    return a;
 }
 
 inline long double DegenerateRand::Mean() const
 {
-  return a;
+    return a;
 }
 
 inline long double DegenerateRand::Variance() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 inline std::complex<double> DegenerateRand::CFImpl(double t) const
 {
     double re = std::cos(a * t);
     double im = std::sin(a * t);
-  return std::complex<double>(re, im);
+    return std::complex<double>(re, im);
 }
 
 inline double DegenerateRand::quantileImpl(double) const
 {
-  return a;
+    return a;
 }
 
 inline double DegenerateRand::quantileImpl1m(double) const
 {
-  return a;
+    return a;
 }
 
 inline double DegenerateRand::Median() const
 {
-  return a;
+    return a;
 }
 
 inline double DegenerateRand::Mode() const
 {
-  return a;
+    return a;
 }
 
 inline long double DegenerateRand::Skewness() const
 {
-  return NAN;
+    return NAN;
 }
 
 inline long double DegenerateRand::ExcessKurtosis() const
 {
-  return NAN;
+    return NAN;
 }
 
 inline long double DegenerateRand::Entropy() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 inline void DegenerateRand::Fit(std::span<const double> sample)

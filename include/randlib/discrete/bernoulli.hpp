@@ -62,7 +62,7 @@ inline BernoulliRand::BernoulliRand(double probability) : BinomialDistribution(1
 
 inline std::string BernoulliRand::Name() const
 {
-  return "Bernoulli(" + this->toStringWithPrecision(GetProbability()) + ")";
+    return "Bernoulli(" + this->toStringWithPrecision(GetProbability()) + ")";
 }
 
 inline void BernoulliRand::SetProbability(double probability)
@@ -74,28 +74,28 @@ inline void BernoulliRand::SetProbability(double probability)
 
 inline double BernoulliRand::P(const int & k) const
 {
-  return (k == 0) ? q : ((k == 1) ? p : 0);
+    return (k == 0) ? q : ((k == 1) ? p : 0);
 }
 
 inline double BernoulliRand::logP(const int & k) const
 {
-  return (k == 0) ? log1mProb : ((k == 1) ? logProb : -INFINITY);
+    return (k == 0) ? log1mProb : ((k == 1) ? logProb : -INFINITY);
 }
 
 inline double BernoulliRand::F(const int & k) const
 {
-  return (k < 0) ? 0.0 : ((k < 1) ? q : 1);
+    return (k < 0) ? 0.0 : ((k < 1) ? q : 1);
 }
 
 inline double BernoulliRand::S(const int & k) const
 {
-  return (k < 0) ? 1.0 : ((k < 1) ? p : 0.0);
+    return (k < 0) ? 1.0 : ((k < 1) ? p : 0.0);
 }
 
 template <std::uniform_random_bit_generator G>
 int BernoulliRand::operator()(G &g) const
 {
-  return detail::uniform01<double>(g) < p;
+    return detail::uniform01<double>(g) < p;
 }
 
 template <std::uniform_random_bit_generator G>
@@ -103,13 +103,13 @@ int BernoulliRand::Variate(double probability, G &g)
 {
     if (!(probability >= 0.0 && probability <= 1.0))
         throw std::invalid_argument("Bernoulli distribution: probability parameter should be in interval [0, 1]");
-  return detail::uniform01<double>(g) < probability;
+    return detail::uniform01<double>(g) < probability;
 }
 
 template <std::uniform_random_bit_generator G>
 int BernoulliRand::StandardVariate(G &g)
 {
-  return static_cast<int>(detail::randomBits(g, 1));
+    return static_cast<int>(detail::randomBits(g, 1));
 }
 
 inline void BernoulliRand::sample(detail::EngineRef g, std::span<int> outputData) const
@@ -126,7 +126,7 @@ inline void BernoulliRand::sample(detail::EngineRef g, std::span<int> outputData
 
 inline double BernoulliRand::Entropy()
 {
-  return -(p * logProb + q * log1mProb);
+    return -(p * logProb + q * log1mProb);
 }
 
 } // namespace randlib

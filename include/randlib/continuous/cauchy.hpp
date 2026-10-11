@@ -70,32 +70,32 @@ CauchyRand<RealType>::CauchyRand(double location, double scale)
 template < typename RealType >
 std::string CauchyRand<RealType>::Name() const
 {
-  return "Cauchy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
+    return "Cauchy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
 template < typename RealType >
 double CauchyRand<RealType>::f(const RealType & x) const
 {
-  return this->pdfCauchy(x);
+    return this->pdfCauchy(x);
 }
 
 template < typename RealType >
 double CauchyRand<RealType>::F(const RealType & x) const
 {
-  return this->cdfCauchy(x);
+    return this->cdfCauchy(x);
 }
 
 template < typename RealType >
 double CauchyRand<RealType>::S(const RealType & x) const
 {
-  return this->cdfCauchyCompl(x);
+    return this->cdfCauchyCompl(x);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType CauchyRand<RealType>::operator()(G &g) const
 {
-  return this->mu + this->gamma * StandardVariate(g);
+    return this->mu + this->gamma * StandardVariate(g);
 }
 
 template < typename RealType >
@@ -107,31 +107,31 @@ RealType CauchyRand<RealType>::StandardVariate(G &g)
         x = 2 * detail::uniform01<RealType>(g) - 1;
         y = 2 * detail::uniform01<RealType>(g) - 1;
     } while (y == 0.0 || x * x + y * y > 1.0);
-  return x / y;
+    return x / y;
 }
 
 template < typename RealType >
 std::complex<double> CauchyRand<RealType>::CFImpl(double t) const
 {
-  return this->cfCauchy(t);
+    return this->cfCauchy(t);
 }
 
 template < typename RealType >
 RealType CauchyRand<RealType>::quantileImpl(double p) const
 {
-  return this->quantileCauchy(p);
+    return this->quantileCauchy(p);
 }
 
 template < typename RealType >
 RealType CauchyRand<RealType>::quantileImpl1m(double p) const
 {
-  return this->quantileCauchy1m(p);
+    return this->quantileCauchy1m(p);
 }
 
 template < typename RealType >
 long double CauchyRand<RealType>::Entropy() const
 {
-  return 2 * randlib::consts::ln2 + this->logGamma + randlib::consts::lnpi;
+    return 2 * randlib::consts::ln2 + this->logGamma + randlib::consts::lnpi;
 }
 
 } // namespace randlib

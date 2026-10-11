@@ -74,7 +74,7 @@ WignerSemicircleRand<RealType>::WignerSemicircleRand(double radius)
 template < typename RealType >
 std::string WignerSemicircleRand<RealType>::Name() const
 {
-  return "Wigner Semicircle(" + this->toStringWithPrecision(GetRadius()) + ")";
+    return "Wigner Semicircle(" + this->toStringWithPrecision(GetRadius()) + ")";
 }
 
 template < typename RealType >
@@ -92,11 +92,11 @@ double WignerSemicircleRand<RealType>::f(const RealType & x) const
 {
     double xSq = x * x;
     if (xSq >= RSq)
-      return 0.0;
+        return 0.0;
     double y = RSq - xSq;
     y = std::sqrt(y);
     y *= randlib::consts::inv_pi / RSq;
-  return 2 * y;
+    return 2 * y;
 }
 
 template < typename RealType >
@@ -104,8 +104,8 @@ double WignerSemicircleRand<RealType>::logf(const RealType & x) const
 {
     double xSq = x * x;
     if (xSq >= RSq)
-      return -INFINITY;
-  return randlib::consts::ln2 + 0.5 * std::log(RSq - xSq) - randlib::consts::lnpi - logRSq;
+        return -INFINITY;
+    return randlib::consts::ln2 + 0.5 * std::log(RSq - xSq) - randlib::consts::lnpi - logRSq;
 }
 
 template < typename RealType >
@@ -118,27 +118,27 @@ double WignerSemicircleRand<RealType>::lowerTail(double x) const
     double y = 2 * phi, ySq = y * y;
     double yMinusSinY = (y < 0.5) ? y * ySq / 6 * (1 - ySq / 20 * (1 - ySq / 42 * (1 - ySq / 72 * (1 - ySq / 110))))
                                   : y - std::sin(y);
-  return yMinusSinY / (2 * randlib::consts::pi);
+    return yMinusSinY / (2 * randlib::consts::pi);
 }
 
 template < typename RealType >
 double WignerSemicircleRand<RealType>::F(const RealType &x) const
 {
     if (x <= -R)
-      return 0.0;
+        return 0.0;
     if (x >= R)
-      return 1.0;
-  return (x <= 0) ? lowerTail(x) : 1.0 - lowerTail(-x);
+        return 1.0;
+    return (x <= 0) ? lowerTail(x) : 1.0 - lowerTail(-x);
 }
 
 template < typename RealType >
 double WignerSemicircleRand<RealType>::S(const RealType &x) const
 {
     if (x <= -R)
-      return 1.0;
+        return 1.0;
     if (x >= R)
-      return 0.0;
-  return (x >= 0) ? lowerTail(-x) : 1.0 - lowerTail(x);
+        return 0.0;
+    return (x >= 0) ? lowerTail(-x) : 1.0 - lowerTail(x);
 }
 
 template < typename RealType >
@@ -147,7 +147,7 @@ RealType WignerSemicircleRand<RealType>::operator()(G &g) const
 {
     RealType x = X(g);
     x += x - 1;
-  return R * x;
+    return R * x;
 }
 
 
@@ -155,43 +155,43 @@ RealType WignerSemicircleRand<RealType>::operator()(G &g) const
 template < typename RealType >
 long double WignerSemicircleRand<RealType>::Mean() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template < typename RealType >
 long double WignerSemicircleRand<RealType>::Variance() const
 {
-  return 0.25 * RSq;
+    return 0.25 * RSq;
 }
 
 template < typename RealType >
 RealType WignerSemicircleRand<RealType>::Median() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template < typename RealType >
 RealType WignerSemicircleRand<RealType>::Mode() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template < typename RealType >
 long double WignerSemicircleRand<RealType>::Skewness() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template < typename RealType >
 long double WignerSemicircleRand<RealType>::ExcessKurtosis() const
 {
-  return -1.0;
+    return -1.0;
 }
 
 template < typename RealType >
 long double WignerSemicircleRand<RealType>::Entropy() const
 {
-  return randlib::consts::lnpi + 0.5 * logRSq - 0.5;
+    return randlib::consts::lnpi + 0.5 * logRSq - 0.5;
 }
 
 } // namespace randlib

@@ -62,7 +62,7 @@ TrinomialRand<IntType>::TrinomialRand(int number, double probability1, double pr
 template< typename IntType >
 std::string TrinomialRand<IntType>::Name() const
 {
-  return "Trinomial(" + this->toStringWithPrecision(GetNumber()) + ", "
+    return "Trinomial(" + this->toStringWithPrecision(GetNumber()) + ", "
                         + this->toStringWithPrecision(GetFirstProbability()) + ", "
                         + this->toStringWithPrecision(GetSecondProbability()) + ")";
 }
@@ -91,7 +91,7 @@ template< typename IntType >
 double TrinomialRand<IntType>::P(const Pair<IntType> &point) const
 {
     IntType x = point.first, y = point.second;
-  return (x < 0 || x > n || y < 0 || y > n) ? 0.0 : std::exp(logP(point));
+    return (x < 0 || x > n || y < 0 || y > n) ? 0.0 : std::exp(logP(point));
 }
 
 template< typename IntType >
@@ -99,7 +99,7 @@ double TrinomialRand<IntType>::logP(const Pair<IntType> &point) const
 {
     IntType x = point.first, y = point.second;
     if (x < 0 || y < 0 || x + y > n)
-      return -INFINITY;
+        return -INFINITY;
     IntType nmxmy = n - x - y;
     double res = this->X.GetLogFactorialN();
     res -= math::lfact(x);
@@ -108,7 +108,7 @@ double TrinomialRand<IntType>::logP(const Pair<IntType> &point) const
     res += x * this->X.GetLogProbability();
     res += y * this->Y.GetLogProbability();
     res += nmxmy * log1mProb;
-  return res;
+    return res;
 }
 
 template< typename IntType >
@@ -116,11 +116,11 @@ double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
 {
     int x = point.first, y = point.second;
     if (x < 0 || y < 0)
-      return 0.0;
+        return 0.0;
     if (x >= n)
-      return this->Y.F(y);
+        return this->Y.F(y);
     if (y >= n)
-      return this->X.F(x);
+        return this->X.F(x);
     double sum = 0.0;
     double p1 = this->X.GetProbability(), p2 = this->Y.GetProbability();
     if (x > y) {
@@ -131,7 +131,7 @@ double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
             double prob2 = this->Y.P(i);
             sum += prob1 * prob2;
         }
-      return sum;
+        return sum;
     }
     double ratio = (1 - p1 - p2) / (1 - p1);
     for (int i = 0; i <= x; ++i) {
@@ -140,7 +140,7 @@ double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
         double prob2 = this->X.P(i);
         sum += prob1 * prob2;
     }
-  return sum;
+    return sum;
 }
 
 template< typename IntType >
@@ -150,11 +150,11 @@ Pair<IntType> TrinomialRand<IntType>::operator()(G &g) const
     if (this->X.GetProbability() > this->Y.GetProbability()) {
         IntType x = this->X(g);
         IntType y = BinomialDistribution<IntType>::Variate(n - x, p2_1mp1, g);
-      return IntPair(x, y);
+        return IntPair(x, y);
     }
     IntType y = this->Y(g);
     IntType x = BinomialDistribution<IntType>::Variate(n - y, p1_1mp2, g);
-  return IntPair(x, y);
+    return IntPair(x, y);
 }
 
 template< typename IntType >
@@ -162,7 +162,7 @@ long double TrinomialRand<IntType>::Correlation() const
 {
     long double logp1 = this->X.GetLogProbability(), logp2 = this->Y.GetLogProbability();
     long double log1mp1 = this->X.GetLog1mProbability(), log1mp2 = this->Y.GetLog1mProbability();
-  return -std::exp(logp1 + logp2 - log1mp1 - log1mp2);
+    return -std::exp(logp1 + logp2 - log1mp1 - log1mp2);
 }
 
 template< typename IntType >
@@ -199,7 +199,7 @@ Pair<IntType> TrinomialRand<IntType>::Mode() const
         modeValueym1 = this->P(std::make_pair(modeX, modeY - 1));
     }
 
-  return std::make_pair(modeX, modeY);
+    return std::make_pair(modeX, modeY);
 }
 
 } // namespace randlib

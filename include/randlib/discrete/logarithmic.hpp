@@ -75,7 +75,7 @@ LogarithmicRand<IntType>::LogarithmicRand(double probability)
 template < typename IntType >
 std::string LogarithmicRand<IntType>::Name() const
 {
-  return "Logarithmic(" + this->toStringWithPrecision(GetProbability()) + ")";
+    return "Logarithmic(" + this->toStringWithPrecision(GetProbability()) + ")";
 }
 
 template < typename IntType >
@@ -91,13 +91,13 @@ void LogarithmicRand<IntType>::SetProbability(double probability)
 template < typename IntType >
 double LogarithmicRand<IntType>::P(const IntType & k) const
 {
-  return (k < 1) ? 0.0 : -std::pow(p, k) / (k * log1mProb);
+    return (k < 1) ? 0.0 : -std::pow(p, k) / (k * log1mProb);
 }
 
 template < typename IntType >
 double LogarithmicRand<IntType>::logP(const IntType & k) const
 {
-  return (k < 1) ? -INFINITY : k * logProb - std::log(-k * log1mProb);
+    return (k < 1) ? -INFINITY : k * logProb - std::log(-k * log1mProb);
 }
 
 template < typename IntType >
@@ -113,19 +113,19 @@ double LogarithmicRand<IntType>::betaFun(IntType a) const
         sum += add;
         ++i;
     } while (add > MIN_POSITIVE * sum);
-  return std::exp(a * logProb) * sum;
+    return std::exp(a * logProb) * sum;
 }
 
 template < typename IntType >
 double LogarithmicRand<IntType>::F(const IntType & k) const
 {
-  return (k < 1) ? 0.0 : 1 + betaFun(k + 1) / log1mProb;
+    return (k < 1) ? 0.0 : 1 + betaFun(k + 1) / log1mProb;
 }
 
 template < typename IntType >
 double LogarithmicRand<IntType>::S(const IntType & k) const
 {
-  return (k < 1) ? 1.0 : -betaFun(k + 1) / log1mProb;
+    return (k < 1) ? 1.0 : -betaFun(k + 1) / log1mProb;
 }
 
 template < typename IntType >
@@ -136,20 +136,20 @@ IntType LogarithmicRand<IntType>::operator()(G &g) const
     /// p. 548, "Non-Uniform Random Variate Generation" by Luc Devroye
     float V = detail::uniform01<float>(g);
     if (V >= p)
-      return 1.0;
+        return 1.0;
     float U = detail::uniform01<float>(g);
     double y = -std::expm1l(U * log1mProb);
     if (V > y)
-      return 1.0;
+        return 1.0;
     if (V > y * y)
-      return 2.0;
-  return std::floor(1.0 + std::log(V) / std::log(y));
+        return 2.0;
+    return std::floor(1.0 + std::log(V) / std::log(y));
 }
 
 template < typename IntType >
 long double LogarithmicRand<IntType>::Mean() const
 {
-  return -p / (1.0 - p) / log1mProb;
+    return -p / (1.0 - p) / log1mProb;
 }
 
 template < typename IntType >
@@ -159,7 +159,7 @@ long double LogarithmicRand<IntType>::Variance() const
     var /= log1mProb;
     var *= p;
     long double q = 1.0 - p;
-  return -var / (q * q);
+    return -var / (q * q);
 }
 
 template < typename IntType >
@@ -167,13 +167,13 @@ std::complex<double> LogarithmicRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(std::cos(t), std::sin(t));
     y = std::log(1.0 - p * y);
-  return y / log1mProb;
+    return y / log1mProb;
 }
 
 template < typename IntType >
 IntType LogarithmicRand<IntType>::Mode() const
 {
-  return 1.0;
+    return 1.0;
 }
 
 } // namespace randlib

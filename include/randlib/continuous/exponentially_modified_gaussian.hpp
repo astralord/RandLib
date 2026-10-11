@@ -82,7 +82,7 @@ ExponentiallyModifiedGaussianRand<RealType>::ExponentiallyModifiedGaussianRand(d
 template < typename RealType >
 std::string ExponentiallyModifiedGaussianRand<RealType>::Name() const
 {
-  return "Exponentially modified Gaussian(" + this->toStringWithPrecision(GetLocation()) + ", "
+    return "Exponentially modified Gaussian(" + this->toStringWithPrecision(GetLocation()) + ", "
                                               + this->toStringWithPrecision(X.Variance()) + ", "
                                               + this->toStringWithPrecision(GetRate()) + ")";
 }
@@ -122,21 +122,21 @@ DoublePair ExponentiallyModifiedGaussianRand<RealType>::faux(const RealType &x) 
     y *= 0.5 * lambda;
     double exponent = c - x;
     exponent *= lambda;
-  return std::make_pair(y, exponent);
+    return std::make_pair(y, exponent);
 }
 
 template < typename RealType >
 double ExponentiallyModifiedGaussianRand<RealType>::f(const RealType & x) const
 {
     auto [y, exponent] = faux(x);
-  return y * std::exp(exponent);
+    return y * std::exp(exponent);
 }
 
 template < typename RealType >
 double ExponentiallyModifiedGaussianRand<RealType>::logf(const RealType & x) const
 {
     auto [y, exponent] = faux(x);
-  return std::log(y) + exponent;
+    return std::log(y) + exponent;
 }
 
 template < typename RealType >
@@ -147,7 +147,7 @@ double ExponentiallyModifiedGaussianRand<RealType>::F(const RealType & x) const
     double exponent = -u + 0.5 * v * v;
     exponent = std::exp(exponent);
     exponent *= X.F(x - v * X.GetScale());
-  return y - exponent;
+    return y - exponent;
 }
 
 template < typename RealType >
@@ -158,21 +158,21 @@ double ExponentiallyModifiedGaussianRand<RealType>::S(const RealType & x) const
     double exponent = -u + 0.5 * v * v;
     exponent = std::exp(exponent);
     exponent *= X.F(x - v * X.GetScale());
-  return y + exponent;
+    return y + exponent;
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType ExponentiallyModifiedGaussianRand<RealType>::operator()(G &g) const
 {
-  return X(g) + Y(g);
+    return X(g) + Y(g);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType ExponentiallyModifiedGaussianRand<RealType>::StandardVariate(G &g)
 {
-  return detail::standardNormal<RealType>(g) + detail::standardExponential<RealType>(g);
+    return detail::standardNormal<RealType>(g) + detail::standardExponential<RealType>(g);
 }
 
 
@@ -180,19 +180,19 @@ RealType ExponentiallyModifiedGaussianRand<RealType>::StandardVariate(G &g)
 template < typename RealType >
 long double ExponentiallyModifiedGaussianRand<RealType>::Mean() const
 {
-  return X.Mean() + Y.Mean();
+    return X.Mean() + Y.Mean();
 }
 
 template < typename RealType >
 long double ExponentiallyModifiedGaussianRand<RealType>::Variance() const
 {
-  return X.Variance() + Y.Variance();
+    return X.Variance() + Y.Variance();
 }
 
 template < typename RealType >
 std::complex<double> ExponentiallyModifiedGaussianRand<RealType>::CFImpl(double t) const
 {
-  return X.CF(t) * Y.CF(t);
+    return X.CF(t) * Y.CF(t);
 }
 
 template < typename RealType >
@@ -206,7 +206,7 @@ long double ExponentiallyModifiedGaussianRand<RealType>::Skewness() const
     y = y * y * y;
     y = std::sqrt(y);
     y = tmpSq * tmp / y;
-  return y + y;
+    return y + y;
 }
 
 template < typename RealType >
@@ -220,7 +220,7 @@ long double ExponentiallyModifiedGaussianRand<RealType>::ExcessKurtosis() const
     long double denominator = 1.0 + tmp;
     denominator *= denominator;
     long double y = numerator / denominator - 1.0;
-  return 3.0 * y;
+    return 3.0 * y;
 }
 
 } // namespace randlib

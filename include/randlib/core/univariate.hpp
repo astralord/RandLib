@@ -328,14 +328,14 @@ template< typename T >
 bool UnivariateDistribution<T>::isLeftBounded() const
 {
     Support supp = this->SupportType();
-  return (supp == Support::RightSemiFinite || supp == Support::Finite);
+    return (supp == Support::RightSemiFinite || supp == Support::Finite);
 }
 
 template< typename T >
 bool UnivariateDistribution<T>::isRightBounded() const
 {
     Support supp = this->SupportType();
-  return (supp == Support::LeftSemiFinite || supp == Support::Finite);
+    return (supp == Support::LeftSemiFinite || supp == Support::Finite);
 }
 
 template< typename T >
@@ -345,14 +345,14 @@ T UnivariateDistribution<T>::Quantile(double p) const
         throw std::invalid_argument("Probability p in quantile function should be in interval [0, 1]");
     double minVal = this->MinValue();
     if (p == 0.0)
-      return minVal;
+        return minVal;
     double maxVal = this->MaxValue();
     if (p == 1.0)
-      return maxVal;
+        return maxVal;
     double x = this->quantileImpl(p);
     if (x < minVal)
-      return minVal;
-  return (x > maxVal) ? maxVal : x;
+        return minVal;
+    return (x > maxVal) ? maxVal : x;
 }
 
 template< typename T >
@@ -362,14 +362,14 @@ T UnivariateDistribution<T>::Quantile1m(double p) const
         throw std::invalid_argument("Probability p in quantile function should be in interval [0, 1]");
     double minVal = this->MinValue();
     if (p == 1.0)
-      return minVal;
+        return minVal;
     double maxVal = this->MaxValue();
     if (p == 0.0)
-      return maxVal;
+        return maxVal;
     double x = this->quantileImpl1m(p);
     if (x < minVal)
-      return minVal;
-  return (x > maxVal) ? maxVal : x;
+        return minVal;
+    return (x > maxVal) ? maxVal : x;
 }
 
 template< typename T >
@@ -392,8 +392,8 @@ template< typename T >
 std::complex<double> UnivariateDistribution<T>::CF(double t) const
 {
     if (t == 0.0)
-      return 1.0;
-  return (t > 0.0) ? this->CFImpl(t) : std::conj(this->CFImpl(-t));
+        return 1.0;
+    return (t > 0.0) ? this->CFImpl(t) : std::conj(this->CFImpl(-t));
 }
 
 template< typename T >
@@ -401,19 +401,19 @@ std::complex<double> UnivariateDistribution<T>::CFImpl(double t) const
 {
     T leftBound = this->MinValue(), rightBound = this->MaxValue();
     if (leftBound == rightBound)
-      return std::complex<double>(std::cos(t * leftBound), std::sin(t * leftBound));
+        return std::complex<double>(std::cos(t * leftBound), std::sin(t * leftBound));
 
     double re = this->ExpectedValue([t] (double x)
     {
-      return std::cos(t * x);
+        return std::cos(t * x);
     }, leftBound, rightBound);
 
     double im = this->ExpectedValue([t] (double x)
     {
-      return std::sin(t * x);
+        return std::sin(t * x);
     }, leftBound, rightBound);
 
-  return std::complex<double>(re, im);
+    return std::complex<double>(re, im);
 }
 
 template< typename T >
@@ -435,7 +435,7 @@ void UnivariateDistribution<T>::HazardFunction(std::span<const T> x, std::span<d
 template< typename T >
 T UnivariateDistribution<T>::Median() const
 {
-  return quantileImpl(0.5);
+    return quantileImpl(0.5);
 }
 
 template< typename T >
@@ -443,17 +443,17 @@ long double UnivariateDistribution<T>::Skewness() const
 {
     long double var = this->Variance();
     if (!std::isfinite(var))
-      return NAN;
+        return NAN;
     long double mu = this->Mean(); /// var is finite, so is mu
 
     long double sum = this->ExpectedValue([mu] (double x)
     {
         double xmmu = x - mu;
         double skewness = xmmu * xmmu * xmmu;
-      return skewness;
+        return skewness;
     }, this->MinValue(), this->MaxValue());
 
-  return sum / std::pow(var, 1.5);
+    return sum / std::pow(var, 1.5);
 }
 
 template< typename T >
@@ -461,7 +461,7 @@ long double UnivariateDistribution<T>::ExcessKurtosis() const
 {
     long double var = this->Variance();
     if (!std::isfinite(var))
-      return NAN;
+        return NAN;
     long double mu = this->Mean(); /// var is finite, so is mu
 
     long double sum = this->ExpectedValue([mu] (double x)
@@ -469,23 +469,23 @@ long double UnivariateDistribution<T>::ExcessKurtosis() const
         double xmmu = x - mu;
         double kurtosisSqrt = xmmu * xmmu;
         double kurtosis = kurtosisSqrt * kurtosisSqrt;
-      return kurtosis;
+        return kurtosis;
     }, this->MinValue(), this->MaxValue());
 
-  return sum / (var * var) - 3;
+    return sum / (var * var) - 3;
 }
 
 template< typename T >
 long double UnivariateDistribution<T>::Kurtosis() const
 {
-  return this->ExcessKurtosis() + 3.0;
+    return this->ExcessKurtosis() + 3.0;
 }
 
 template< typename T >
 long double UnivariateDistribution<T>::SecondMoment() const
 {
     long double mean = this->Mean();
-  return mean * mean + this->Variance();
+    return mean * mean + this->Variance();
 }
 
 template< typename T >
@@ -498,7 +498,7 @@ long double UnivariateDistribution<T>::ThirdMoment() const
     long double moment = skewness * std::sqrt(variance) * variance;
     moment += mean * mean * mean;
     moment += 3 * mean * variance;
-  return moment;
+    return moment;
 }
 
 template< typename T >
@@ -514,7 +514,7 @@ long double UnivariateDistribution<T>::FourthMoment() const
     moment -= 6 * meanSq * variance;
     moment -= 3 * meanSq * meanSq;
     moment += 4 * mean * moment3;
-  return moment;
+    return moment;
 }
 
 template< typename T >
@@ -522,9 +522,9 @@ bool UnivariateDistribution<T>::allElementsAreNotGreaterThan(T value, std::span<
 {
     for (const T & var : sample) {
         if (var > value)
-          return false;
+            return false;
     }
-  return true;
+    return true;
 }
 
 template< typename T >
@@ -532,15 +532,15 @@ bool UnivariateDistribution<T>::allElementsAreNotSmallerThan(T value, std::span<
 {
     for (const T & var : sample) {
         if (var < value)
-          return false;
+            return false;
     }
-  return true;
+    return true;
 }
 
 template< typename T >
 bool UnivariateDistribution<T>::allElementsAreNonNegative(std::span<const T> sample)
 {
-  return allElementsAreNotSmallerThan(0, sample);
+    return allElementsAreNotSmallerThan(0, sample);
 }
 
 template< typename T >
@@ -548,22 +548,22 @@ bool UnivariateDistribution<T>::allElementsArePositive(std::span<const T> sample
 {
     for (const T & var : sample) {
         if (var <= 0)
-          return false;
+            return false;
     }
-  return true;
+    return true;
 }
 
 template< typename T >
 long double UnivariateDistribution<T>::GetSampleSum(std::span<const T> sample)
 {
-  return std::accumulate(sample.begin(), sample.end(), 0.0);
+    return std::accumulate(sample.begin(), sample.end(), 0.0);
 }
 
 template< typename T >
 long double UnivariateDistribution<T>::GetSampleMean(std::span<const T> sample)
 {
     size_t n = sample.size();
-  return (n > 0) ? GetSampleSum(sample) / n : 0.0;
+    return (n > 0) ? GetSampleSum(sample) / n : 0.0;
 }
 
 template< typename T >
@@ -572,7 +572,7 @@ long double UnivariateDistribution<T>::GetSampleLogMean(std::span<const T> sampl
     long double sum = 0.0;
     for (const T & var : sample)
         sum += std::log(var);
-  return sum / sample.size();
+    return sum / sample.size();
 }
 
 template< typename T >
@@ -583,7 +583,7 @@ long double UnivariateDistribution<T>::GetSampleVariance(std::span<const T> samp
         double temp = var - mean;
         sum += temp * temp;
     }
-  return sum / sample.size();
+    return sum / sample.size();
 }
 
 template< typename T >
@@ -594,7 +594,7 @@ long double UnivariateDistribution<T>::GetSampleLogVariance(std::span<const T> s
         double temp = std::log(var) - logMean;
         sum += temp * temp;
     }
-  return sum / sample.size();
+    return sum / sample.size();
 }
 
 template< typename T >
@@ -609,7 +609,7 @@ LongDoublePair UnivariateDistribution<T>::GetSampleMeanAndVariance(std::span<con
         m += diff / (i + 1);
         v += diff * (x - m);
     }
-  return std::make_pair(m, v / n);
+    return std::make_pair(m, v / n);
 }
 
 template< typename T >
@@ -624,7 +624,7 @@ LongDoublePair UnivariateDistribution<T>::GetSampleLogMeanAndVariance(std::span<
         m += diff / (i + 1);
         v += diff * (logX - m);
     }
-  return std::make_pair(m, v / n);
+    return std::make_pair(m, v / n);
 }
 
 template< typename T >
@@ -694,7 +694,7 @@ std::tuple<long double, long double, long double, long double> UnivariateDistrib
     long double variance = M2 / n;
     long double skewness = std::sqrt(n) * M3 / std::pow(M2, 1.5);
     long double exkurtosis = (n * M4) / (M2 * M2) - 3.0;
-  return std::make_tuple(M1, variance, skewness, exkurtosis);
+    return std::make_tuple(M1, variance, skewness, exkurtosis);
 }
 
 } // namespace randlib

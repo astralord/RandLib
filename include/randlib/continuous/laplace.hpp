@@ -186,25 +186,25 @@ void AsymmetricLaplaceDistribution<RealType>::SetScale(double scale)
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::f(const RealType & x) const
 {
-  return this->pdfLaplace(x - this->m);
+    return this->pdfLaplace(x - this->m);
 }
 
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::logf(const RealType & x) const
 {
-  return this->logpdfLaplace(x - this->m);
+    return this->logpdfLaplace(x - this->m);
 }
 
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::F(const RealType & x) const
 {
-  return this->cdfLaplace(x - this->m);
+    return this->cdfLaplace(x - this->m);
 }
 
 template < typename RealType >
 double AsymmetricLaplaceDistribution<RealType>::S(const RealType & x) const
 {
-  return this->cdfLaplaceCompl(x - this->m);
+    return this->cdfLaplaceCompl(x - this->m);
 }
 
 template < typename RealType >
@@ -213,7 +213,7 @@ RealType AsymmetricLaplaceDistribution<RealType>::operator()(G &g) const
 {
     RealType X = (this->kappa == 1) ? LaplaceRand<RealType>::StandardVariate(g)
                                     : AsymmetricLaplaceRand<RealType>::StandardVariate(this->kappa, g);
-  return this->m + this->gamma * X;
+    return this->m + this->gamma * X;
 }
 
 template < typename RealType >
@@ -237,26 +237,26 @@ std::complex<double> AsymmetricLaplaceDistribution<RealType>::CFImpl(double t) c
     double denominator = (1 + this->kappaSq * btSq) * (1 + btSq / this->kappaSq);
     std::complex<double> y(std::cos(this->m * t), std::sin(this->m * t));
     std::complex<double> x(1, -this->kappa * bt), z(1, bt * this->kappaInv);
-  return x * y * z / denominator;
+    return x * y * z / denominator;
 }
 
 template < typename RealType >
 RealType AsymmetricLaplaceDistribution<RealType>::quantileImpl(double p) const
 {
-  return this->quantileLaplace(p);
+    return this->quantileLaplace(p);
 }
 
 template < typename RealType >
 RealType AsymmetricLaplaceDistribution<RealType>::quantileImpl1m(double p) const
 {
-  return this->quantileLaplace1m(p);
+    return this->quantileLaplace1m(p);
 }
 
 template < typename RealType >
 long double AsymmetricLaplaceDistribution<RealType>::Entropy() const
 {
     double y = this->kappaInv + this->kappa;
-  return std::log1pl(this->gamma * y);
+    return std::log1pl(this->gamma * y);
 }
 
 template < typename RealType >
@@ -291,7 +291,7 @@ void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShift(std::span<const Re
             else if (x < med)
                 ++y;
         }
-      return y;
+        return y;
     },
     minVar, maxVar, median
     ))
@@ -309,51 +309,51 @@ void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShiftAndScale(std::span<
 template < typename RealType >
 std::string CenteredAsymmetricLaplaceRand<RealType>::Name() const
 {
-  return "Centered Asymmetric-Laplace(" + this->toStringWithPrecision(this->GetScale()) + ", "
+    return "Centered Asymmetric-Laplace(" + this->toStringWithPrecision(this->GetScale()) + ", "
             + this->toStringWithPrecision(this->GetAsymmetry()) + ")";
 }
 
 template < typename RealType >
 DoublePair CenteredAsymmetricLaplaceRand<RealType>::SufficientStatistic(RealType x) const
 {
-  return {std::max<double>(x, 0.0), std::max<double>(-x, 0.0)};
+    return {std::max<double>(x, 0.0), std::max<double>(-x, 0.0)};
 }
 
 template < typename RealType >
 DoublePair CenteredAsymmetricLaplaceRand<RealType>::SourceParameters() const
 {
-  return {this->GetScale(), this->GetAsymmetry()};
+    return {this->GetScale(), this->GetAsymmetry()};
 }
 
 template < typename RealType >
 DoublePair CenteredAsymmetricLaplaceRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
 {
     double scale = sourceParameters.first, asymmetry = sourceParameters.second;
-  return {-asymmetry / scale, -1.0 / (scale * asymmetry)};
+    return {-asymmetry / scale, -1.0 / (scale * asymmetry)};
 }
 
 template < typename RealType >
 double CenteredAsymmetricLaplaceRand<RealType>::LogNormalizer(DoublePair theta) const
 {
-  return std::log(-1.0 / theta.first - 1.0 / theta.second);
+    return std::log(-1.0 / theta.first - 1.0 / theta.second);
 }
 
 template < typename RealType >
 DoublePair CenteredAsymmetricLaplaceRand<RealType>::LogNormalizerGradient(DoublePair theta) const
 {
     double sum = -1.0 / theta.first - 1.0 / theta.second;
-  return {1.0 / (theta.first * theta.first * sum), 1.0 / (theta.second * theta.second * sum)};
+    return {1.0 / (theta.first * theta.first * sum), 1.0 / (theta.second * theta.second * sum)};
 }
 
 template < typename RealType >
 double CenteredAsymmetricLaplaceRand<RealType>::CarrierMeasure(RealType) const
 {
-  return 0.0;
+    return 0.0;
 }
 template < typename RealType >
 std::string AsymmetricLaplaceRand<RealType>::Name() const
 {
-  return "Asymmetric-Laplace(" + this->toStringWithPrecision(this->GetShift()) + ", "
+    return "Asymmetric-Laplace(" + this->toStringWithPrecision(this->GetShift()) + ", "
                                  + this->toStringWithPrecision(this->GetScale()) + ", "
                                  + this->toStringWithPrecision(this->GetAsymmetry()) + ")";
 }
@@ -371,7 +371,7 @@ RealType AsymmetricLaplaceRand<RealType>::StandardVariate(double asymmetry, G &g
 {
     RealType x = detail::standardExponential<RealType>(g) / asymmetry;
     RealType y = detail::standardExponential<RealType>(g) * asymmetry;
-  return x - y;
+    return x - y;
 }
 
 template < typename RealType >
@@ -384,7 +384,7 @@ DoublePair AsymmetricLaplaceRand<RealType>::getOneSidedSums(std::span<const Real
         else
             xPlus += (x - this->m);
     }
-  return DoublePair(xPlus, xMinus);
+    return DoublePair(xPlus, xMinus);
 }
 
 template < typename RealType >
@@ -428,7 +428,7 @@ void AsymmetricLaplaceRand<RealType>::FitAsymmetry(std::span<const RealType> sam
 template < typename RealType >
 std::string LaplaceRand<RealType>::Name() const
 {
-  return "Laplace(" + this->toStringWithPrecision(this->GetShift()) + ", "
+    return "Laplace(" + this->toStringWithPrecision(this->GetShift()) + ", "
                       + this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
@@ -437,7 +437,7 @@ template <std::uniform_random_bit_generator G>
 RealType LaplaceRand<RealType>::StandardVariate(G &g)
 {
     RealType W = detail::standardExponential<RealType>(g);
-  return BernoulliRand::StandardVariate(g) ? W : -W;
+    return BernoulliRand::StandardVariate(g) ? W : -W;
 }
 
 } // namespace randlib

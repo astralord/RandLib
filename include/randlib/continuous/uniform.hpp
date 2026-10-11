@@ -143,113 +143,113 @@ UniformRand<RealType>::UniformRand(double minValue, double maxValue) :
 template < typename RealType >
 std::string UniformRand<RealType>::Name() const
 {
-  return "Uniform(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
+    return "Uniform(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
 template < typename RealType >
 double UniformRand<RealType>::f(const RealType & x) const
 {
-  return (x < this->a || x > this->b) ? 0.0 : this->bmaInv;
+    return (x < this->a || x > this->b) ? 0.0 : this->bmaInv;
 }
 
 template < typename RealType >
 double UniformRand<RealType>::logf(const RealType & x) const
 {
-  return (x < this->a || x > this->b) ? -INFINITY : -this->logbma;
+    return (x < this->a || x > this->b) ? -INFINITY : -this->logbma;
 }
 
 template < typename RealType >
 double UniformRand<RealType>::F(const RealType & x) const
 {
     if (x < this->a)
-      return 0.0;
-  return (x > this->b) ? 1.0 : this->bmaInv * (x - this->a);
+        return 0.0;
+    return (x > this->b) ? 1.0 : this->bmaInv * (x - this->a);
 }
 
 template < typename RealType >
 double UniformRand<RealType>::S(const RealType & x) const
 {
     if (x < this->a)
-      return 1.0;
-  return (x > this->b) ? 0.0 : this->bmaInv * (this->b - x);
+        return 1.0;
+    return (x > this->b) ? 0.0 : this->bmaInv * (this->b - x);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::operator()(G &g) const
 {
-  return this->a + StandardVariate(g) * this->bma;
+    return this->a + StandardVariate(g) * this->bma;
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::StandardVariate(G &g)
 {
-  return detail::uniform01<RealType>(g);
+    return detail::uniform01<RealType>(g);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::StandardVariateClosed(G &g)
 {
-  return detail::uniform01Closed<RealType>(g);
+    return detail::uniform01Closed<RealType>(g);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::StandardVariateHalfClosed(G &g)
 {
-  return detail::uniform01HalfClosed<RealType>(g);
+    return detail::uniform01HalfClosed<RealType>(g);
 }
 
 
 template < typename RealType >
 long double UniformRand<RealType>::Mean() const
 {
-  return 0.5 * (this->b + this->a);
+    return 0.5 * (this->b + this->a);
 }
 
 template < typename RealType >
 long double UniformRand<RealType>::Variance() const
 {
-  return this->bma * this->bma / 12;
+    return this->bma * this->bma / 12;
 }
 
 template < typename RealType >
 RealType UniformRand<RealType>::Median() const
 {
-  return 0.5 * (this->b + this->a);
+    return 0.5 * (this->b + this->a);
 }
 
 template < typename RealType >
 RealType UniformRand<RealType>::Mode() const
 {
     /// this can be any value in [a, b]
-  return 0.5 * (this->b + this->a);
+    return 0.5 * (this->b + this->a);
 }
 
 template < typename RealType >
 long double UniformRand<RealType>::Skewness() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template < typename RealType >
 long double UniformRand<RealType>::ExcessKurtosis() const
 {
-  return -1.2;
+    return -1.2;
 }
 
 template < typename RealType >
 RealType UniformRand<RealType>::quantileImpl(double p) const
 {
-  return this->a + this->bma * p;
+    return this->a + this->bma * p;
 }
 
 template < typename RealType >
 RealType UniformRand<RealType>::quantileImpl1m(double p) const
 {
-  return this->b - this->bma * p;
+    return this->b - this->bma * p;
 }
 
 template < typename RealType >
@@ -259,20 +259,20 @@ std::complex<double> UniformRand<RealType>::CFImpl(double t) const
     double cosY = std::cos(t * this->a), sinY = std::sin(t * this->a);
     std::complex<double> numerator(cosX - cosY, sinX - sinY);
     std::complex<double> denominator(0, t * this->bma);
-  return numerator / denominator;
+    return numerator / denominator;
 }
 
 template < typename RealType >
 long double UniformRand<RealType>::Entropy() const
 {
-  return (this->b == this->a) ? -INFINITY : std::log(this->bma);
+    return (this->b == this->a) ? -INFINITY : std::log(this->bma);
 }
 
 template < typename RealType >
 double UniformRand<RealType>::LikelihoodFunction(std::span<const RealType> sample) const
 {
     bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
-  return sampleIsInsideInterval ? std::pow(this->bma, -sample.size()) : 0.0;
+    return sampleIsInsideInterval ? std::pow(this->bma, -sample.size()) : 0.0;
 }
 
 template < typename RealType >
@@ -280,7 +280,7 @@ double UniformRand<RealType>::LogLikelihoodFunction(std::span<const RealType> sa
 {
     bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
     int sample_size = sample.size();
-  return sampleIsInsideInterval ? -sample_size * this->logbma : -INFINITY;
+    return sampleIsInsideInterval ? -sample_size * this->logbma : -INFINITY;
 }
 
 template < typename RealType >
@@ -362,7 +362,7 @@ ParetoRand<RealType> UniformRand<RealType>::FitMaximumBayes(std::span<const Real
     ParetoRand<RealType> posteriorDistribution(newShape, newScale);
     double theta = MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean();
     SetSupport(this->a, this->a + theta);
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 } // namespace randlib

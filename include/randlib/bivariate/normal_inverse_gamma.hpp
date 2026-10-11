@@ -65,7 +65,7 @@ NormalInverseGammaRand<RealType>::NormalInverseGammaRand(double location, double
 template< typename RealType >
 std::string NormalInverseGammaRand<RealType>::Name() const
 {
-  return "Normal-Inverse-Gamma(" + this->toStringWithPrecision(GetLocation()) + ", "
+    return "Normal-Inverse-Gamma(" + this->toStringWithPrecision(GetLocation()) + ", "
                                    + this->toStringWithPrecision(GetPrecision()) + ", "
                                    + this->toStringWithPrecision(GetShape()) + ", "
                                    + this->toStringWithPrecision(GetRate()) + ")";
@@ -103,7 +103,7 @@ void NormalInverseGammaRand<RealType>::SetParameters(double location, double pre
 template< typename RealType >
 double NormalInverseGammaRand<RealType>::f(const Pair<RealType> &point) const
 {
-  return (point.second > 0.0) ? std::exp(logf(point)) : 0.0;
+    return (point.second > 0.0) ? std::exp(logf(point)) : 0.0;
 }
 
 template< typename RealType >
@@ -111,7 +111,7 @@ double NormalInverseGammaRand<RealType>::logf(const Pair<RealType> &point) const
 {
     RealType sigmaSq = point.second;
     if (sigmaSq <= 0)
-      return -INFINITY;
+        return -INFINITY;
     RealType x = point.first;
     RealType y = (alpha + 1.5) * std::log(sigmaSq);
     RealType degree = x - mu;
@@ -120,7 +120,7 @@ double NormalInverseGammaRand<RealType>::logf(const Pair<RealType> &point) const
     degree += 2 * beta;
     degree *= 0.5 / sigmaSq;
     y += degree;
-  return pdfCoef - y;
+    return pdfCoef - y;
 }
 
 template< typename RealType >
@@ -128,7 +128,7 @@ double NormalInverseGammaRand<RealType>::F(const Pair<RealType> &point) const
 {
     RealType sigmaSq = point.second;
     if (sigmaSq <= 0)
-      return 0.0;
+        return 0.0;
     RealType x = point.first;
     RealType y = 0.5 * lambda;
     RealType xmmu = x - mu;
@@ -138,7 +138,7 @@ double NormalInverseGammaRand<RealType>::F(const Pair<RealType> &point) const
     RealType temp = alpha * std::log(z) - z;
     y *= std::exp(temp - this->Y.GetLogGammaShape());
     y *= 0.5 / sigmaSq;
-  return y;
+    return y;
 }
 
 template< typename RealType >
@@ -149,19 +149,19 @@ Pair<RealType> NormalInverseGammaRand<RealType>::operator()(G &g) const
     var.second = this->Y(g);
     double coef = std::sqrt(var.second) / lambda;
     var.first = mu + coef * detail::standardNormal<RealType>(g);
-  return var;
+    return var;
 }
 
 template< typename RealType >
 long double NormalInverseGammaRand<RealType>::Correlation() const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template< typename RealType >
 Pair<RealType> NormalInverseGammaRand<RealType>::Mode() const
 {
-  return std::make_pair(mu, 2 * beta / (2 * alpha + 3));
+    return std::make_pair(mu, 2 * beta / (2 * alpha + 3));
 }
 
 } // namespace randlib

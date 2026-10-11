@@ -172,7 +172,7 @@ IntType DiscreteDistribution<IntType>::Mode() const
             newLogProb = this->logP(x - 1);
         }
     }
-  return x;
+    return x;
 }
 
 template < typename IntType >
@@ -192,13 +192,13 @@ IntType DiscreteDistribution<IntType>::quantileImpl(double p, IntType initValue)
     }
     up = down + 1;
     /// if lower quantile is not equal probability, we return upper quantile
-  return (fd < p) ? up : down;
+    return (fd < p) ? up : down;
 }
 
 template < typename IntType >
 IntType DiscreteDistribution<IntType>::quantileImpl(double p) const
 {
-  return searchQuantile(p, false);
+    return searchQuantile(p, false);
 }
 
 template < typename IntType >
@@ -219,13 +219,13 @@ IntType DiscreteDistribution<IntType>::quantileImpl1m(double p, IntType initValu
     up = down + 1;
 
     /// if lower quantile is not equal probability, we return upper quantile
-  return (sd > p) ? up : down;
+    return (sd > p) ? up : down;
 }
 
 template < typename IntType >
 IntType DiscreteDistribution<IntType>::quantileImpl1m(double p) const
 {
-  return searchQuantile(p, true);
+    return searchQuantile(p, true);
 }
 
 template < typename IntType >
@@ -233,7 +233,7 @@ IntType DiscreteDistribution<IntType>::searchQuantile(double p, bool upperTail) 
 {
     /// reached(k) is false below the quantile and true from it on
     auto reached = [this, p, upperTail] (long long k) {
-      return upperTail ? this->S(static_cast<IntType>(k)) <= p : this->F(static_cast<IntType>(k)) >= p;
+        return upperTail ? this->S(static_cast<IntType>(k)) <= p : this->F(static_cast<IntType>(k)) >= p;
     };
     const long long lo = this->MinValue(), hi = this->MaxValue();
     const bool loBounded = lo > static_cast<long long>(std::numeric_limits<IntType>::lowest());
@@ -268,7 +268,7 @@ IntType DiscreteDistribution<IntType>::searchQuantile(double p, bool upperTail) 
         else
             a = middle;
     }
-  return static_cast<IntType>(b);
+    return static_cast<IntType>(b);
 }
 
 template < typename IntType >
@@ -289,13 +289,13 @@ long double DiscreteDistribution<IntType>::ExpectedValue(const std::function<dou
         if (addon != 0.0) {
             double prob = this->P(k);
             if (prob < MIN_POSITIVE)
-              return sum;
+                return sum;
             addon *= this->P(k);
             sum += addon;
         }
         ++k;
     } while (k <= upperBoundary);
-  return sum;
+    return sum;
 }
 
 template < typename IntType >
@@ -325,7 +325,7 @@ std::complex<double> DiscreteDistribution<IntType>::CFImpl(double t) const
                 zk = std::polar(1.0, t * static_cast<double>(k + step));
             last[3] = last[2]; last[2] = last[1]; last[1] = last[0]; last[0] = p;
             if (p == 0.0 && terms > 16)
-              return;
+                return;
             if (terms < 16 || damping == 0.0)
                 continue;
             double thirdDifference = std::fabs(last[0] - 3 * last[1] + 3 * last[2] - last[3]);
@@ -340,7 +340,7 @@ std::complex<double> DiscreteDistribution<IntType>::CFImpl(double t) const
                 break;
         }
         if ((step > 0) ? k > end : k < end)
-          return;
+            return;
         k += step;
         double next[3];
         for (int j = 0; j < 3; ++j)
@@ -351,17 +351,17 @@ std::complex<double> DiscreteDistribution<IntType>::CFImpl(double t) const
     walk(start, 1, hi, true);
     if (start > lo)
         walk(start - 1, -1, lo, false);
-  return std::complex<double>(sum);
+    return std::complex<double>(sum);
 }
 
 template < typename IntType >
 double DiscreteDistribution<IntType>::Hazard(const IntType &x) const
 {
     if (x < this->MinValue())
-      return 0.0; /// 0/1
+        return 0.0; /// 0/1
     if (x > this->MaxValue())
-      return NAN; /// 0/0
-  return this->P(x) / this->S(x);
+        return NAN; /// 0/0
+    return this->P(x) / this->S(x);
 }
 
 template < typename IntType >
@@ -370,7 +370,7 @@ double DiscreteDistribution<IntType>::LikelihoodFunction(std::span<const IntType
     long double res = 1.0;
     for (const IntType & var : sample )
         res *= this->P(var);
-  return res;
+    return res;
 }
 
 template < typename IntType >
@@ -379,7 +379,7 @@ double DiscreteDistribution<IntType>::LogLikelihoodFunction(std::span<const IntT
     long double res = 0.0;
     for (const IntType & var : sample )
         res += this->logP(var);
-  return res;
+    return res;
 }
 
 template < typename IntType >
@@ -447,13 +447,13 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(std::span<const IntTyp
     double statistic = n * sum;
     ChiSquaredRand X(k - 1);
     double q = X.Quantile1m(alpha);
-  return statistic <= q;
+    return statistic <= q;
 }
 
 template < typename IntType >
 bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(std::span<const IntType> orderStatistic, double alpha, size_t numberOfEstimatedParameters) const
 {
-  return PearsonChiSquaredTest(orderStatistic, alpha, this->MinValue(), this->MaxValue(), numberOfEstimatedParameters);
+    return PearsonChiSquaredTest(orderStatistic, alpha, this->MinValue(), this->MaxValue(), numberOfEstimatedParameters);
 }
 
 } // namespace randlib

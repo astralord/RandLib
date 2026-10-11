@@ -50,7 +50,7 @@ protected:
     {
         if (!ownEngine)
             ownEngine.emplace(random_seed());
-      return *ownEngine;
+        return *ownEngine;
     }
 
     /**
@@ -191,7 +191,7 @@ std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_val
 {
     std::ostringstream out;
     out << std::setprecision(n) << a_value;
-  return out.str();
+    return out.str();
 }
 
 template < typename T >
@@ -199,7 +199,7 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(std::span<const 
 {
     size_t size = x.size();
     if (size > y.size())
-      return;
+        return;
     for (size_t i = 0; i != size; ++i)
         y[i] = this->F(x[i]);
 }
@@ -207,7 +207,7 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(std::span<const 
 template < typename T >
 double ProbabilityDistribution<T>::S(const T &x) const
 {
-  return 1.0 - this->F(x);
+    return 1.0 - this->F(x);
 }
 
 template < typename T >
@@ -215,7 +215,7 @@ void ProbabilityDistribution<T>::SurvivalFunction(std::span<const T> x, std::spa
 {
     size_t size = x.size();
     if (size > y.size())
-      return;
+        return;
     for (size_t i = 0; i != size; ++i)
         y[i] = this->S(x[i]);
 }
@@ -253,7 +253,7 @@ fit_error ProbabilityDistribution<T>::fitError(FitErrorCode code, const std::str
         reason = "Unknown type of error. ";
         break;
     }
-  return fit_error(code, this->Name() + ": " + reason + explanation);
+    return fit_error(code, this->Name() + ": " + reason + explanation);
 }
 
 /// Univariate discrete

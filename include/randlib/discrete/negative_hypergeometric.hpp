@@ -64,7 +64,7 @@ NegativeHyperGeometricRand<IntType>::NegativeHyperGeometricRand(IntType totalSiz
 template < typename IntType >
 std::string NegativeHyperGeometricRand<IntType>::Name() const
 {
-  return "Negative hypergeometric(" + this->toStringWithPrecision(N) + ", "
+    return "Negative hypergeometric(" + this->toStringWithPrecision(N) + ", "
                                       + this->toStringWithPrecision(M) + ", "
                                       + this->toStringWithPrecision(m) + ")";
 }
@@ -94,19 +94,19 @@ void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntTy
 template < typename IntType >
 double NegativeHyperGeometricRand<IntType>::P(const IntType & k) const
 {
-  return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
+    return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
 }
 
 template < typename IntType >
 double NegativeHyperGeometricRand<IntType>::logP(const IntType & k) const
 {
     if (k < MinValue() || k > MaxValue())
-      return -INFINITY;
+        return -INFINITY;
     double p = math::lfact(k + m - 1);
     p += math::lfact(N - m - k);
     p -= math::lfact(k);
     p -= math::lfact(N - M - k);
-  return p + pmfCoef;
+    return p + pmfCoef;
 }
 
 template < typename IntType >
@@ -114,22 +114,22 @@ double NegativeHyperGeometricRand<IntType>::F(const IntType &k) const
 {
     // relation with hypergeometric distribution can be used here instead
     if (k < MinValue())
-      return 0.0;
+        return 0.0;
     IntType maxVal = MaxValue();
     if (k >= maxVal)
-      return 1.0;
+        return 1.0;
     if (k <= 0.5 * maxVal) {
         /// sum P(X = i) going forward until k
         double sum = 0;
         for (IntType i = 0; i <= k; ++i)
             sum += P(i);
-      return sum;
+        return sum;
     }
     /// going backwards is faster
     double sum = 1.0;
     for (IntType i = k + 1; i <= maxVal; ++i)
         sum -= P(i);
-  return sum;
+    return sum;
 }
 
 template < typename IntType >
@@ -142,11 +142,11 @@ IntType NegativeHyperGeometricRand<IntType>::operator()(G &g) const
     while (successesNum < m) {
         ++num;
         if (BernoulliRand::Variate(p, g) && ++successesNum == num - N + M)
-          return N - M;
+            return N - M;
         p = M - successesNum;
         p /= N - num;
     }
-  return num - successesNum;
+    return num - successesNum;
 }
 
 template < typename IntType >
@@ -155,7 +155,7 @@ long double NegativeHyperGeometricRand<IntType>::Mean() const
     double mean = m;
     mean *= N - M;
     mean /= M + 1;
-  return mean;
+    return mean;
 }
 
 template < typename IntType >
@@ -166,7 +166,7 @@ long double NegativeHyperGeometricRand<IntType>::Variance() const
     var *= N + 1;
     var *= N - M;
     var /= Mp1 * (Mp1 + 1);
-  return m * var;
+    return m * var;
 }
 
 } // namespace randlib

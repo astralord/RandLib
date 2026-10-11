@@ -89,7 +89,7 @@ LogisticRand<RealType>::LogisticRand(double location, double scale)
 template < typename RealType >
 std::string LogisticRand<RealType>::Name() const
 {
-  return "Logistic(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Logistic(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 template < typename RealType >
@@ -115,7 +115,7 @@ double LogisticRand<RealType>::f(const RealType & x) const
     /// symmetric form exp(-|z|) / (1 + exp(-|z|))^2 never overflows
     double expMinusAbsZ = std::exp(-std::fabs(x - mu) / s);
     double denominator = 1 + expMinusAbsZ;
-  return expMinusAbsZ / (denominator * denominator * s);
+    return expMinusAbsZ / (denominator * denominator * s);
 }
 
 template < typename RealType >
@@ -125,21 +125,21 @@ double LogisticRand<RealType>::logf(const RealType & x) const
     double y = math::softplus(x0);
     y *= 2;
     y += logS;
-  return x0 - y;
+    return x0 - y;
 }
 
 template < typename RealType >
 double LogisticRand<RealType>::F(const RealType & x) const
 {
     double expX = std::exp((mu - x) / s);
-  return 1.0 / (1 + expX);
+    return 1.0 / (1 + expX);
 }
 
 template < typename RealType >
 double LogisticRand<RealType>::S(const RealType & x) const
 {
     double expX = std::exp((mu - x) / s);
-  return expX / (1 + expX);
+    return expX / (1 + expX);
 }
 
 template < typename RealType >
@@ -147,20 +147,20 @@ template <std::uniform_random_bit_generator G>
 RealType LogisticRand<RealType>::operator()(G &g) const
 {
     /// there can be used rejection method from Laplace or Cauchy (Luc Devroye, p. 471) or ziggurat
-  return mu + s * std::log(1.0 / detail::uniform01<RealType>(g) - 1);
+    return mu + s * std::log(1.0 / detail::uniform01<RealType>(g) - 1);
 }
 
 template < typename RealType >
 long double LogisticRand<RealType>::Mean() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 long double LogisticRand<RealType>::Variance() const
 {
     double sPi = s * randlib::consts::pi;
-  return sPi * sPi / 3;
+    return sPi * sPi / 3;
 }
 
 template < typename RealType >
@@ -171,49 +171,49 @@ std::complex<double> LogisticRand<RealType>::CFImpl(double t) const
     y = std::exp(y);
     y *= pist;
     y /= std::sinh(pist);
-  return y;
+    return y;
 }
 
 template < typename RealType >
 long double LogisticRand<RealType>::Entropy() const
 {
-  return 2 + logS;
+    return 2 + logS;
 }
 
 template < typename RealType >
 RealType LogisticRand<RealType>::quantileImpl(double p) const
 {
-  return mu - s * (std::log1pl(-p) - std::log(p));
+    return mu - s * (std::log1pl(-p) - std::log(p));
 }
 
 template < typename RealType >
 RealType LogisticRand<RealType>::quantileImpl1m(double p) const
 {
-  return mu - s * (std::log(p) - std::log1pl(-p));
+    return mu - s * (std::log(p) - std::log1pl(-p));
 }
 
 template < typename RealType >
 RealType LogisticRand<RealType>::Median() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 RealType LogisticRand<RealType>::Mode() const
 {
-  return mu;
+    return mu;
 }
 
 template < typename RealType >
 long double LogisticRand<RealType>::Skewness() const
 {
-  return 0;
+    return 0;
 }
 
 template < typename RealType >
 long double LogisticRand<RealType>::ExcessKurtosis() const
 {
-  return 1.2;
+    return 1.2;
 }
 
 template < typename RealType >
@@ -233,7 +233,7 @@ void LogisticRand<RealType>::FitLocation(std::span<const RealType> sample)
             f2 -= aux / denom;
         }
         f1 -= nHalf;
-      return DoublePair(f1, f2);
+        return DoublePair(f1, f2);
     }, root))
         throw this->fitError(FitErrorCode::Undefined, "Error in root-finding procedure");
     SetLocation(root);

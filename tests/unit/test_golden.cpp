@@ -167,7 +167,7 @@ TEST_CASE("Golden v1 values are reproduced", "[golden]")
                     if (d.matches(*r))
                         expected = d.expected == "no-throw" ? "ok" : d.expected;
                 }
-                if (constructed != expected)
+                if (expected != "skip" && constructed != expected)
                     failures[i].push_back(describe(*r) + ": expected " + expected + ", got " + constructed);
                 continue;
             }

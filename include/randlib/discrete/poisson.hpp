@@ -135,7 +135,7 @@ PoissonRand<IntType>::PoissonRand(double rate)
 template < typename IntType >
 std::string PoissonRand<IntType>::Name() const
 {
-  return "Poisson(" + this->toStringWithPrecision(GetRate()) + ")";
+    return "Poisson(" + this->toStringWithPrecision(GetRate()) + ")";
 }
 
 template < typename IntType >
@@ -182,89 +182,89 @@ void PoissonRand<IntType>::SetRate(double rate)
 template < typename IntType >
 double PoissonRand<IntType>::SufficientStatistic(IntType x) const
 {
-  return x;
+    return x;
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::SourceParameters() const
 {
-  return lambda;
+    return lambda;
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::SourceToNatural(double sourceParameters) const
 {
-  return std::log(sourceParameters);
+    return std::log(sourceParameters);
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::NaturalParameters() const
 {
-  return logLambda;
+    return logLambda;
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::LogNormalizer(double theta) const
 {
-  return std::exp(theta);
+    return std::exp(theta);
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::LogNormalizerGradient(double theta) const
 {
-  return std::exp(theta);
+    return std::exp(theta);
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::CarrierMeasure(IntType x) const
 {
-  return -math::lfact(x);
+    return -math::lfact(x);
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::CrossEntropyAdjusted(double parameters) const
 {
-  return parameters - lambda * std::log(parameters);
+    return parameters - lambda * std::log(parameters);
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::EntropyAdjusted() const
 {
-  return lambda - lambda * logLambda;
+    return lambda - lambda * logLambda;
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::logP(const IntType & k) const
 {
     if (k < 0)
-      return -INFINITY;
+        return -INFINITY;
     if (k == 0)
-      return -lambda;
+        return -lambda;
     /// saddle-point form; k log λ - λ - log(k!) cancels catastrophically for large k
-  return -math::stirlingError(k) - math::bd0(k, lambda) - 0.5 * std::log(2 * randlib::consts::pi * k);
+    return -math::stirlingError(k) - math::bd0(k, lambda) - 0.5 * std::log(2 * randlib::consts::pi * k);
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::F(const IntType & k) const
 {
-  return (k >= 0.0) ? math::qgamma(k + 1, lambda, logLambda) : 0.0;
+    return (k >= 0.0) ? math::qgamma(k + 1, lambda, logLambda) : 0.0;
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::S(const IntType & k) const
 {
-  return (k >= 0.0) ? math::pgamma(k + 1, lambda, logLambda) : 1.0;
+    return (k >= 0.0) ? math::pgamma(k + 1, lambda, logLambda) : 1.0;
 }
 
 template < typename IntType >
 double PoissonRand<IntType>::acceptanceFunction(IntType X) const
 {
     if (X == 0)
-      return 0.0;
+        return 0.0;
     double q = X * logLambda;
     q += lfactMu;
     q -= math::lfact(X + mu);
-  return q;
+    return q;
 }
 
 template < typename IntType >
@@ -272,7 +272,7 @@ bool PoissonRand<IntType>::generateByInversion() const
 {
     /// the inversion generator is much faster than rejection,
     /// however precision loss for large rate increases drastically
-  return lambda < 10;
+    return lambda < 10;
 }
 
 template < typename IntType >
@@ -308,7 +308,7 @@ IntType PoissonRand<IntType>::variateRejection(G &g) const
             }
         }
         else if (U <= c3) {
-          return mu;
+            return mu;
         }
         else if (U <= c4) {
             X = 1;
@@ -321,7 +321,7 @@ IntType PoissonRand<IntType>::variateRejection(G &g) const
         }
 
         if (!reject && W - detail::standardExponential<float>(g) <= acceptanceFunction(X)) {
-          return X + mu;
+            return X + mu;
         }
 
     } while (++iter < ProbabilityDistribution<IntType>::MAX_ITER_REJECTION);
@@ -352,14 +352,14 @@ IntType PoissonRand<IntType>::variateInversion(G &g) const
             s -= p;
         }
     }
-  return k;
+    return k;
 }
 
 template < typename IntType >
 template <std::uniform_random_bit_generator G>
 IntType PoissonRand<IntType>::operator()(G &g) const
 {
-  return generateByInversion() ? variateInversion(g) : variateRejection(g);
+    return generateByInversion() ? variateInversion(g) : variateRejection(g);
 }
 
 template < typename IntType >
@@ -372,7 +372,7 @@ IntType PoissonRand<IntType>::Variate(double rate, G &g)
     if (rate > 1000) {
         /// approximate with normal distribution
         float X = detail::standardNormal<float>(g);
-      return std::floor(rate + std::sqrt(rate) * X);
+        return std::floor(rate + std::sqrt(rate) * X);
     }
     int k = -1;
     double s = 0;
@@ -380,7 +380,7 @@ IntType PoissonRand<IntType>::Variate(double rate, G &g)
         s += detail::standardExponential<double>(g);
         ++k;
     } while (s < rate);
-  return k;
+    return k;
 }
 
 template < typename IntType >
@@ -399,48 +399,48 @@ void PoissonRand<IntType>::sample(detail::EngineRef g, std::span<IntType> output
 template < typename IntType >
 long double PoissonRand<IntType>::Mean() const
 {
-  return lambda;
+    return lambda;
 }
 
 template < typename IntType >
 long double PoissonRand<IntType>::Variance() const
 {
-  return lambda;
+    return lambda;
 }
 
 template < typename IntType >
 std::complex<double> PoissonRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(std::cos(t) - 1.0, std::sin(t));
-  return std::exp(lambda * y);
+    return std::exp(lambda * y);
 }
 
 template < typename IntType >
 IntType PoissonRand<IntType>::Median() const
 {
     /// this value is approximate
-  return std::max(std::floor(lambda + 1.0 / 3 - 0.02 / lambda), 0.0);
+    return std::max(std::floor(lambda + 1.0 / 3 - 0.02 / lambda), 0.0);
 }
 
 template < typename IntType >
 IntType PoissonRand<IntType>::Mode() const
 {
     if (math::areClose(mu, lambda)) {
-      return (Pmu < this->P(mu + 1)) ? mu + 1 : mu;
+        return (Pmu < this->P(mu + 1)) ? mu + 1 : mu;
     }
-  return mu;
+    return mu;
 }
 
 template < typename IntType >
 long double PoissonRand<IntType>::Skewness() const
 {
-  return 1.0 / std::sqrt(lambda);
+    return 1.0 / std::sqrt(lambda);
 }
 
 template < typename IntType >
 long double PoissonRand<IntType>::ExcessKurtosis() const
 {
-  return 1.0 / lambda;
+    return 1.0 / lambda;
 }
 
 template < typename IntType >
@@ -477,7 +477,7 @@ GammaRand<> PoissonRand<IntType>::FitBayes(std::span<const IntType> sample, cons
     double beta = priorDistribution.GetRate();
     GammaRand<> posteriorDistribution(alpha + this->GetSampleSum(sample), beta + sample.size());
     SetRate(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 } // namespace randlib

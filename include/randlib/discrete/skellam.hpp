@@ -81,7 +81,7 @@ SkellamRand<IntType>::SkellamRand(double rate1, double rate2)
 template < typename IntType >
 std::string SkellamRand<IntType>::Name() const
 {
-  return "Skellam(" + this->toStringWithPrecision(GetFirstRate()) + ", " + this->toStringWithPrecision(GetSecondRate()) + ")";
+    return "Skellam(" + this->toStringWithPrecision(GetFirstRate()) + ", " + this->toStringWithPrecision(GetSecondRate()) + ")";
 }
 
 template < typename IntType >
@@ -104,7 +104,7 @@ void SkellamRand<IntType>::SetRates(double rate1, double rate2)
 template < typename IntType >
 double SkellamRand<IntType>::P(const IntType & k) const
 {
-  return std::exp(logP(k));
+    return std::exp(logP(k));
 }
 
 template < typename IntType >
@@ -113,26 +113,26 @@ double SkellamRand<IntType>::logP(const IntType & k) const
     double y = math::logBesselI(k, 2 * sqrtMu1 * sqrtMu2);
     y += 0.5 * k * (logMu1 - logMu2);
     y -= mu1 + mu2;
-  return y;
+    return y;
 }
 
 template < typename IntType >
 double SkellamRand<IntType>::F(const IntType & k) const
 {
-  return (k < 0) ? math::MarcumP(-k, mu1, mu2, sqrtMu1, sqrtMu2, logMu1, logMu2) : math::MarcumQ(k + 1, mu2, mu1, sqrtMu2, sqrtMu1, logMu2, logMu1);
+    return (k < 0) ? math::MarcumP(-k, mu1, mu2, sqrtMu1, sqrtMu2, logMu1, logMu2) : math::MarcumQ(k + 1, mu2, mu1, sqrtMu2, sqrtMu1, logMu2, logMu1);
 }
 
 template < typename IntType >
 double SkellamRand<IntType>::S(const IntType & k) const
 {
-  return (k < 0) ? math::MarcumQ(-k, mu1, mu2, sqrtMu1, sqrtMu2, logMu1, logMu2) : math::MarcumP(k + 1, mu2, mu1, sqrtMu2, sqrtMu1, logMu2, logMu1);
+    return (k < 0) ? math::MarcumQ(-k, mu1, mu2, sqrtMu1, sqrtMu2, logMu1, logMu2) : math::MarcumP(k + 1, mu2, mu1, sqrtMu2, sqrtMu1, logMu2, logMu1);
 }
 
 template < typename IntType >
 template <std::uniform_random_bit_generator G>
 IntType SkellamRand<IntType>::operator()(G &g) const
 {
-  return X(g) - Y(g);
+    return X(g) - Y(g);
 }
 
 template < typename IntType >
@@ -148,19 +148,19 @@ void SkellamRand<IntType>::sample(detail::EngineRef g, std::span<IntType> output
 template < typename IntType >
 long double SkellamRand<IntType>::Mean() const
 {
-  return mu1 - mu2;
+    return mu1 - mu2;
 }
 
 template < typename IntType >
 long double SkellamRand<IntType>::Variance() const
 {
-  return mu1 + mu2;
+    return mu1 + mu2;
 }
 
 template < typename IntType >
 IntType SkellamRand<IntType>::Median() const
 {
-  return DiscreteDistribution<IntType>::quantileImpl(0.5, mu1 - mu2);
+    return DiscreteDistribution<IntType>::quantileImpl(0.5, mu1 - mu2);
 }
 
 template < typename IntType >
@@ -170,7 +170,7 @@ std::complex<double> SkellamRand<IntType>::CFImpl(double t) const
     double x = (cosT - 1) * (mu1 + mu2);
     double y = sinT * (mu1 - mu2);
     std::complex<double> z(x, y);
-  return std::exp(z);
+    return std::exp(z);
 }
 
 template < typename IntType >
@@ -182,13 +182,13 @@ IntType SkellamRand<IntType>::Mode() const
 template < typename IntType >
 long double SkellamRand<IntType>::Skewness() const
 {
-  return (mu1 - mu2) / std::pow(mu1 + mu2, 1.5);
+    return (mu1 - mu2) / std::pow(mu1 + mu2, 1.5);
 }
 
 template < typename IntType >
 long double SkellamRand<IntType>::ExcessKurtosis() const
 {
-  return 1.0 / (mu1 + mu2);
+    return 1.0 / (mu1 + mu2);
 }
 
 } // namespace randlib

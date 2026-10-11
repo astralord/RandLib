@@ -75,14 +75,14 @@ KolmogorovSmirnovRand<RealType>::KolmogorovSmirnovRand()
 template < typename RealType >
 std::string KolmogorovSmirnovRand<RealType>::Name() const
 {
-  return "Kolmogorov-Smirnov";
+    return "Kolmogorov-Smirnov";
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::L(RealType x)
 {
     if (x <= 0.0)
-      return 0.0;
+        return 0.0;
     double sum = 0.0, addon = 0.0;
     int k = 1;
     double aux = randlib::consts::pi_sq * 0.125 / (x * x);
@@ -93,14 +93,14 @@ double KolmogorovSmirnovRand<RealType>::L(RealType x)
         sum += addon;
         ++k;
     } while (addon > MIN_POSITIVE * sum);
-  return randlib::consts::sqrt2pi * sum / x;
+    return randlib::consts::sqrt2pi * sum / x;
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::K(RealType x)
 {
     if (x <= 0.0)
-      return 1.0;
+        return 1.0;
     double sum = 0.0, addon = 0.0;
     int k = 1;
     double xSq = x * x;
@@ -110,14 +110,14 @@ double KolmogorovSmirnovRand<RealType>::K(RealType x)
         sum += (k & 1) ? addon : -addon;
         ++k;
     } while (addon > MIN_POSITIVE * sum);
-  return 2 * sum;
+    return 2 * sum;
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
 {
     if (x <= 0.0)
-      return 0.0;
+        return 0.0;
     double sum = 0.0, addon = 0.0;
     int k = 1;
     double xSq = x * x;
@@ -131,7 +131,7 @@ double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
             sum += addon;
             ++k;
         } while (addon > MIN_POSITIVE * sum);
-      return randlib::consts::sqrt2pi * sum * 0.25 / std::pow(x, 4);
+        return randlib::consts::sqrt2pi * sum * 0.25 / std::pow(x, 4);
     }
     /// x > 1.0
     do {
@@ -141,37 +141,37 @@ double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
         sum += (k & 1) ? addon : -addon;
         ++k;
     } while (addon > MIN_POSITIVE * sum);
-  return 8 * sum * x;
+    return 8 * sum * x;
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::logf(const RealType & x) const
 {
-  return std::log(f(x));
+    return std::log(f(x));
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::F(const RealType & x) const
 {
-  return (x > 1.0) ? 1.0 - K(x) : L(x);
+    return (x > 1.0) ? 1.0 - K(x) : L(x);
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::S(const RealType & x) const
 {
-  return (x > 1.0) ? K(x) : 1.0 - L(x);
+    return (x > 1.0) ? K(x) : 1.0 - L(x);
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::logF(const RealType & x) const
 {
-  return (x > 1.0) ? std::log1pl(-K(x)) : std::log(L(x));
+    return (x > 1.0) ? std::log1pl(-K(x)) : std::log(L(x));
 }
 
 template < typename RealType >
 double KolmogorovSmirnovRand<RealType>::logS(const RealType & x) const
 {
-  return (x > 1.0) ? std::log(K(x)) : std::log1pl(-L(x));
+    return (x > 1.0) ? std::log(K(x)) : std::log1pl(-L(x));
 }
 
 template < typename RealType >
@@ -187,10 +187,10 @@ RealType KolmogorovSmirnovRand<RealType>::truncatedGammaVariate(G &g) const
         RealType E1 = 2 * detail::standardExponential<RealType>(g);
         RealType gammaValue = tp + E0;
         if (E0 * E0 <= tp * E1 * (gammaValue + tp))
-          return gammaValue;
+            return gammaValue;
         RealType Wp = E0 / tp;
         if (Wp - std::log1pl(Wp) <= E1)
-          return gammaValue;
+            return gammaValue;
     } while (++iter <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION);
     throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
@@ -211,7 +211,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheLeftMostInterval(G &g) co
         while (U >= W && ++iter2 <= ProbabilityDistribution<RealType>::MAX_ITER_REJECTION) {
             W += Z * Q;
             if (U >= W)
-              return X;
+                return X;
             n += 2;
             int nSq = n * n;
             Q = std::exp(gammaValue - gammaValue * nSq);
@@ -239,7 +239,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheRightMostInterval(G &g) c
             int nSq = n * n;
             W += nSq * std::exp(Z * (nSq - 1));
             if (U >= W)
-              return X;
+                return X;
             ++n;
             nSq = n * n;
             W -= nSq * std::exp(Z * (nSq - 1));
@@ -255,46 +255,46 @@ RealType KolmogorovSmirnovRand<RealType>::operator()(G &g) const
     /// Luc Devroye, pp. 163-165
     /// alternating series method
     bool isLeft = detail::uniform01<RealType>(g) < 0.3728329582237386; /// F(0.75)
-  return isLeft ? variateForTheLeftMostInterval(g) : variateForTheRightMostInterval(g);
+    return isLeft ? variateForTheLeftMostInterval(g) : variateForTheRightMostInterval(g);
 }
 
 template < typename RealType >
 long double KolmogorovSmirnovRand<RealType>::Mean() const
 {
-  return randlib::consts::sqrtpi * randlib::consts::inv_sqrt2 * randlib::consts::ln2;
+    return randlib::consts::sqrtpi * randlib::consts::inv_sqrt2 * randlib::consts::ln2;
 }
 
 template < typename RealType >
 long double KolmogorovSmirnovRand<RealType>::Variance() const
 {
     long double mean = Mean();
-  return randlib::consts::pi_sq / 12 - mean * mean;
+    return randlib::consts::pi_sq / 12 - mean * mean;
 }
 
 template < typename RealType >
 RealType KolmogorovSmirnovRand<RealType>::Mode() const
 {
-  return 0.735467812776958l;
+    return 0.735467812776958l;
 }
 
 template < typename RealType >
 RealType KolmogorovSmirnovRand<RealType>::Median() const
 {
-  return 0.82757355518990761l;
+    return 0.82757355518990761l;
 }
 
 template < typename RealType >
 RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
 {
     RealType guess = std::sqrt(-0.5 * (std::log1pl(-p) - randlib::consts::ln2));
-  return ContinuousDistribution<RealType>::quantileImpl(p, guess);
+    return ContinuousDistribution<RealType>::quantileImpl(p, guess);
 }
 
 template < typename RealType >
 RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
 {
     RealType guess = std::sqrt(-0.5 * std::log(0.5 * p));
-  return ContinuousDistribution<RealType>::quantileImpl1m(p, guess);
+    return ContinuousDistribution<RealType>::quantileImpl1m(p, guess);
 }
 
 } // namespace randlib

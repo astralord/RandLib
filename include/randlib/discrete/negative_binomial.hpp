@@ -78,8 +78,8 @@ protected:
     [[nodiscard]] GENERATOR_ID GetIdOfUsedGenerator() const
     {
         if ((r < 10 || GammaRV.Mean() > 10) && r == std::round(r))
-          return (p < 0.08) ? EXPONENTIAL : TABLE;
-      return GAMMA_POISSON;
+            return (p < 0.08) ? EXPONENTIAL : TABLE;
+        return GAMMA_POISSON;
     }
 
     template <std::uniform_random_bit_generator G>
@@ -200,46 +200,46 @@ void NegativeBinomialDistribution<IntType, T>::SetParameters(T number, double pr
 template< typename IntType, typename T>
 double NegativeBinomialDistribution<IntType, T>::P(const IntType &k) const
 {
-  return (k < 0) ? 0.0 : std::exp(logP(k));
+    return (k < 0) ? 0.0 : std::exp(logP(k));
 }
 
 template< typename IntType, typename T>
 double NegativeBinomialDistribution<IntType, T>::logP(const IntType &k) const
 {
     if (k < 0)
-      return -INFINITY;
+        return -INFINITY;
     double y = std::lgammal(r + k);
     y -= math::lfact(k);
     y += k * log1mProb;
     y += pdfCoef;
-  return y;
+    return y;
 }
 
 template< typename IntType, typename T>
 double NegativeBinomialDistribution<IntType, T>::F(const IntType &k) const
 {
     if (k < 0)
-      return 0.0;
+        return 0.0;
     int kp1 = k + 1;
     double logBetaFun = math::logBeta(r, kp1);
-  return math::ibeta(p, r, kp1, logBetaFun, logProb, log1mProb);
+    return math::ibeta(p, r, kp1, logBetaFun, logProb, log1mProb);
 }
 
 template< typename IntType, typename T>
 double NegativeBinomialDistribution<IntType, T>::S(const IntType &k) const
 {
     if (k < 0)
-      return 1.0;
+        return 1.0;
     int kp1 = k + 1;
     double logBetaFun = math::logBeta(kp1, r);
-  return math::ibeta(q, kp1, r, logBetaFun, log1mProb, logProb);
+    return math::ibeta(q, kp1, r, logBetaFun, log1mProb, logProb);
 }
 
 template< typename IntType, typename T>
 template <std::uniform_random_bit_generator G>
 IntType NegativeBinomialDistribution<IntType, T>::variateThroughGammaPoisson(G &g) const
 {
-  return PoissonRand<IntType>::Variate(GammaRV(g), g);
+    return PoissonRand<IntType>::Variate(GammaRV(g), g);
 }
 
 template< typename IntType, typename T>
@@ -249,12 +249,12 @@ IntType NegativeBinomialDistribution<IntType, T>::variateGeometricByTable(G &g) 
     double U = detail::uniform01<double>(g);
     /// handle tail by recursion
     if (U > table[tableSize - 1])
-      return tableSize + variateGeometricByTable(g);
+        return tableSize + variateGeometricByTable(g);
     /// handle the main body
     IntType x = 0;
     while (U > table[x])
         ++x;
-  return x;
+    return x;
 }
 
 template< typename IntType, typename T>
@@ -262,7 +262,7 @@ template <std::uniform_random_bit_generator G>
 IntType NegativeBinomialDistribution<IntType, T>::variateGeometricThroughExponential(G &g) const
 {
     float X = -detail::standardExponential<float>(g) / log1mProb;
-  return std::floor(X);
+    return std::floor(X);
 }
 
 template< typename IntType, typename T>
@@ -273,7 +273,7 @@ IntType NegativeBinomialDistribution<IntType, T>::variateByTable(G &g) const
     for (int i = 0; i < r; ++i) {
         var += variateGeometricByTable(g);
     }
-  return var;
+    return var;
 }
 
 template< typename IntType, typename T>
@@ -284,7 +284,7 @@ IntType NegativeBinomialDistribution<IntType, T>::variateThroughExponential(G &g
     for (int i = 0; i < r; ++i) {
         var += variateGeometricThroughExponential(g);
     }
-  return var;
+    return var;
 }
 
 template< typename IntType, typename T>
@@ -293,8 +293,8 @@ IntType NegativeBinomialDistribution<IntType, T>::operator()(G &g) const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE)
-      return variateByTable(g);
-  return (genId == EXPONENTIAL) ? variateThroughExponential(g) : variateThroughGammaPoisson(g);
+        return variateByTable(g);
+    return (genId == EXPONENTIAL) ? variateThroughExponential(g) : variateThroughGammaPoisson(g);
 }
 
 template< typename IntType, typename T>
@@ -320,32 +320,32 @@ void NegativeBinomialDistribution<IntType, T>::sample(detail::EngineRef g, std::
 template< typename IntType, typename T>
 long double NegativeBinomialDistribution<IntType, T>::Mean() const
 {
-  return qDivP * r;
+    return qDivP * r;
 }
 
 template< typename IntType, typename T>
 long double NegativeBinomialDistribution<IntType, T>::Variance() const
 {
-  return qDivP * r / p;
+    return qDivP * r / p;
 }
 
 template< typename IntType, typename T>
 std::complex<double> NegativeBinomialDistribution<IntType, T>::CFImpl(double t) const
 {
     std::complex<double> denominator(1.0 - q * std::cos(t), -q * std::sin(t));
-  return std::pow(p / denominator, r);
+    return std::pow(p / denominator, r);
 }
 
 template< typename IntType, typename T>
 IntType NegativeBinomialDistribution<IntType, T>::Mode() const
 {
-  return (r > 1) ? std::floor((r - 1) * qDivP) : 0;
+    return (r > 1) ? std::floor((r - 1) * qDivP) : 0;
 }
 
 template< typename IntType, typename T>
 long double NegativeBinomialDistribution<IntType, T>::Skewness() const
 {
-  return (1 + q) / std::sqrt(q * r);
+    return (1 + q) / std::sqrt(q * r);
 }
 
 template< typename IntType, typename T>
@@ -353,7 +353,7 @@ long double NegativeBinomialDistribution<IntType, T>::ExcessKurtosis() const
 {
     long double kurtosis = p / qDivP;
     kurtosis += 6;
-  return kurtosis / r;
+    return kurtosis / r;
 }
 
 template< typename IntType, typename T>
@@ -366,14 +366,14 @@ BetaRand<> NegativeBinomialDistribution<IntType, T>::FitProbabilityBayes(std::sp
     double beta = priorDistribution.GetBeta();
     BetaRand<> posteriorDistribution(alpha + r * n, beta + this->GetSampleSum(sample));
     SetParameters(r, MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 template< typename IntType, typename T >
 std::string NegativeBinomialRand<IntType, T>::Name() const
 {
     if (std::is_integral_v<T>)
-      return "Pascal(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
-  return "Polya(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+        return "Pascal(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+    return "Polya(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
 template< typename IntType, typename T>
@@ -402,7 +402,7 @@ void NegativeBinomialRand<IntType, T>::Fit(std::span<const IntType> sample)
         }
         first -= n * (math::digammamLog(x) + std::log(x + mean));
         second -= n * (math::trigamma(x) - mean / (x * (mean + x)));
-      return DoublePair(first, second);
+        return DoublePair(first, second);
     }, guess))
         throw this->fitError(FitErrorCode::Undefined, "Error in root-finding algorithm");
     if (guess <= 0.0)

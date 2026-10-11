@@ -1,6 +1,9 @@
 case,function,arg,expected,reason
 # Golden-value changes without reference values, reviewed by hand. tools/golden/classify_deviations.py
 # merges these rules with the reference-verified ones into tests/data/golden_v1/known_deviations.csv.
+"StableRand(0.995, 0.5, 1, 0)",__ctor__,,no-throw,"B7: stable laws with exponent close to 1 and non-zero skewness can be constructed and sampled; f and F throw randlib::not_implemented"
+"StableRand(1, 0.005, 1, 0)",__ctor__,,no-throw,"B7: as above"
+"TriangularRand(0, 0, 1)",__ctor__,,no-throw,"B19: the mode may equal a limit"
 "IrwinHallRand(3)",Quantile,*,skip,"B11: quantiles are solved to full precision (v1.1 Newton stopped at a 1e-6 step); checked by the coherence test Quantile(F(x)) = x"
 "IrwinHallRand(3)",Quantile1m,*,skip,"B11: as above"
 "IrwinHallRand(12)",Quantile,*,skip,"B11: as above"
@@ -45,3 +48,9 @@ case,function,arg,expected,reason
 "NoncentralChiSquaredRand(2, 20)",Mode,,skip,"v1.1 returned 0 for 2 degrees of freedom; checked by the mode test"
 "NoncentralChiSquaredRand(3, 1.5)",Mode,,skip,"B20: the v1.1 density was wrong for 3 degrees of freedom; checked by the mode test"
 "LandauRand(1, 0)",Mode,,skip,"numerical mode now -0.42931454 against the mpmath maximum -0.4293145299; v1.1 -0.42931610"
+"StableRand(1.3, 1, 1, 0)",Mode,,skip,"mode now -2.21811120 against the mpmath maximum -2.218111218; v1.1 -2.21809577"
+"StableRand(1, 0.5, 1, 0)",*,*,skip,"B11 and B22: v1.1 tails and quantiles were wrong (quantiles off by factors up to 1e5); f and F agree with mpmath to 2e-16 at x = -3, 0.5 and 20 and are checked in test_regressions B22; reference values are still being computed"
+"StableRand(1, 0.5, 2, 1)",*,*,skip,"B21: v1.1 used the opposite sign of the S1 shift (2/pi) beta gamma log(gamma); f and F agree with mpmath to 2e-16 at x = -3, 1 and 20 and F(1) is checked in test_regressions B21; reference values are still being computed"
+"GeometricStableRand(1, 0.5, 1, 0)",*,*,skip,"B29: v1.1 omitted the S1 shift of the mixture for exponent 1; checked by the sampling test in test_regressions B29; reference values are still being computed"
+"GeometricStableRand(1.5, 0.5, 1, 0)",*,*,skip,"integration accuracy: v1.1 adaptive Simpson errors reached 2e-2 in F and v1.1 threw for the far quantiles; the reference test checks every third grid point to 1e-9 and the coherence test checks the quantiles"
+"GeometricStableRand(0.8, -0.3, 1, 0)",*,*,skip,"integration accuracy as above; the density is unbounded at the mode 0, which the numerical maximization now finds to -9e-9 (v1.1 -9.7e-6)"

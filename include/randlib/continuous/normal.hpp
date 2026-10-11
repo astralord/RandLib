@@ -220,7 +220,7 @@ NormalRand<RealType>::NormalRand(double location, double variance)
 template < typename RealType >
 std::string NormalRand<RealType>::Name() const
 {
-  return "Normal(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->Variance()) + ")";
+    return "Normal(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->Variance()) + ")";
 }
 
 template < typename RealType >
@@ -243,13 +243,13 @@ void NormalRand<RealType>::SetVariance(double variance)
 template < typename RealType >
 DoublePair NormalRand<RealType>::SufficientStatistic(RealType x) const
 {
-  return {x, x * x};
+    return {x, x * x};
 }
 
 template < typename RealType >
 DoublePair NormalRand<RealType>::SourceParameters() const
 {
-  return {this->mu, this->sigma * this->sigma};
+    return {this->mu, this->sigma * this->sigma};
 }
 
 template < typename RealType >
@@ -257,7 +257,7 @@ DoublePair NormalRand<RealType>::SourceToNatural(DoublePair sourceParameters) co
 {
     double mean = sourceParameters.first;
     double scaleSq = sourceParameters.second;
-  return {mean / scaleSq, -0.5 / scaleSq};
+    return {mean / scaleSq, -0.5 / scaleSq};
 }
 
 template < typename RealType >
@@ -266,7 +266,7 @@ double NormalRand<RealType>::LogNormalizer(DoublePair theta) const
     double theta1 = theta.first, theta2 = theta.second;
     double F = -0.25 * theta1 * theta1 / theta2;
     F += 0.5 * std::log(-randlib::consts::pi / theta2);
-  return F;
+    return F;
 }
 
 template < typename RealType >
@@ -275,70 +275,70 @@ DoublePair NormalRand<RealType>::LogNormalizerGradient(DoublePair theta) const
     double theta1 = theta.first, theta2 = theta.second;
     double grad1 = -0.5 * theta1 / theta2;
     double grad2 = -0.5 / theta2 + grad1 * grad1;
-  return {grad1, grad2};
+    return {grad1, grad2};
 }
 
 template < typename RealType >
 double NormalRand<RealType>::CarrierMeasure(RealType) const
 {
-  return 0.0;
+    return 0.0;
 }
 
 template < typename RealType >
 double NormalRand<RealType>::f(const RealType &x) const
 {
-  return this->pdfNormal(x);
+    return this->pdfNormal(x);
 }
 
 template < typename RealType >
 double NormalRand<RealType>::logf(const RealType &x) const
 {
-  return this->logpdfNormal(x);
+    return this->logpdfNormal(x);
 }
 
 template < typename RealType >
 double NormalRand<RealType>::F(const RealType & x) const
 {
-  return this->cdfNormal(x);
+    return this->cdfNormal(x);
 }
 
 template < typename RealType >
 double NormalRand<RealType>::S(const RealType & x) const
 {
-  return this->cdfNormalCompl(x);
+    return this->cdfNormalCompl(x);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType NormalRand<RealType>::operator()(G &g) const
 {
-  return this->mu + sigma * StandardVariate(g);
+    return this->mu + sigma * StandardVariate(g);
 }
 
 template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType NormalRand<RealType>::StandardVariate(G &g)
 {
-  return detail::standardNormal<RealType>(g);
+    return detail::standardNormal<RealType>(g);
 }
 
 
 template < typename RealType >
 std::complex<double> NormalRand<RealType>::CFImpl(double t) const
 {
-  return this->cfNormal(t);
+    return this->cfNormal(t);
 }
 
 template < typename RealType >
 RealType NormalRand<RealType>::quantileImpl(double p) const
 {
-  return this->quantileNormal(p);
+    return this->quantileNormal(p);
 }
 
 template < typename RealType >
 RealType NormalRand<RealType>::quantileImpl1m(double p) const
 {
-  return this->quantileNormal1m(p);
+    return this->quantileNormal1m(p);
 }
 
 template < typename RealType >
@@ -350,7 +350,7 @@ long double NormalRand<RealType>::Moment(size_t n) const
         long double centralMoment = (k == 0) ? 1.0 : std::exp(k * std::log(sigma) + math::ldfact(k - 1));
         sum += math::binom(n, k) * std::pow(static_cast<long double>(this->mu), static_cast<long double>(n - k)) * centralMoment;
     }
-  return sum;
+    return sum;
 }
 
 template < typename RealType >
@@ -401,7 +401,7 @@ template < typename RealType >
 void NormalRand<RealType>::FitScale(std::span<const RealType> sample, bool unbiased)
 {
     if (unbiased == false)
-      return FitVariance(sample);
+        return FitVariance(sample);
     size_t n = sample.size();
     double halfN = 0.5 * n;
     double s = this->GetSampleVariance(sample, this->mu);
@@ -461,7 +461,7 @@ NormalRand<RealType> NormalRand<RealType>::FitLocationBayes(std::span<const Real
     double denominator = sample.size() * tau + tau0;
     NormalRand<RealType> posteriorDistribution(numerator / denominator, 1.0 / denominator);
     this->SetLocation(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 template < typename RealType >
@@ -474,7 +474,7 @@ InverseGammaRand<RealType> NormalRand<RealType>::FitVarianceBayes(std::span<cons
     double betaPosterior = betaPrior + halfN * this->GetSampleVariance(sample, this->mu);
     InverseGammaRand<RealType> posteriorDistribution(alphaPosterior, betaPosterior);
     SetVariance(MAP ? posteriorDistribution.Mode() : posteriorDistribution.Mean());
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 template < typename RealType >
@@ -496,7 +496,7 @@ NormalInverseGammaRand<RealType> NormalRand<RealType>::FitBayes(std::span<const 
     DoublePair newParams = MAP ? static_cast<DoublePair>(posteriorDistribution.Mode()) : static_cast<DoublePair>(posteriorDistribution.Mean());
     this->SetLocation(newParams.first);
     this->SetVariance(newParams.second);
-  return posteriorDistribution;
+    return posteriorDistribution;
 }
 
 } // namespace randlib

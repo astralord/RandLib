@@ -50,7 +50,7 @@ namespace randlib
 template < class T1, class T2, typename T >
 LongDoublePair BivariateDistribution<T1, T2, T>::Mean() const
 {
-  return std::make_pair(X.Mean(), Y.Mean());
+    return std::make_pair(X.Mean(), Y.Mean());
 }
 
 template < class T1, class T2, typename T >
@@ -59,13 +59,13 @@ LongDoubleTriplet BivariateDistribution<T1, T2, T>::Covariance() const
     double var1 = X.Variance();
     double var2 = Y.Variance();
     double corr = Correlation() * var1 * var2;
-  return std::make_tuple(var1, corr, var2);
+    return std::make_tuple(var1, corr, var2);
 }
 
 template < class T1, class T2, typename T >
 std::pair<T1, T2> BivariateDistribution<T1, T2, T>::GetMarginalDistributions() const
 {
-  return std::make_pair(X, Y);
+    return std::make_pair(X, Y);
 }
 
 } // namespace randlib

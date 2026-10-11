@@ -42,27 +42,27 @@ inline SingularDistribution::SingularDistribution()
 
 inline double SingularDistribution::Hazard(const double &) const
 {
-  return NAN;
+    return NAN;
 }
 
 inline long double SingularDistribution::ExpectedValue(const std::function<double (double)> &, double, double ) const
 {
-  return NAN;
+    return NAN;
 }
 
 inline double SingularDistribution::Mode() const
 {
-  return NAN;
+    return NAN;
 }
 
 inline double SingularDistribution::LikelihoodFunction(std::span<const double>) const
 {
-  return NAN;
+    return NAN;
 }
 
 inline double SingularDistribution::LogLikelihoodFunction(std::span<const double>) const
 {
-  return NAN;
+    return NAN;
 }
 
 } // namespace randlib

@@ -83,7 +83,7 @@ BetaBinomialRand<IntType>::BetaBinomialRand(IntType number, double shape1, doubl
 template< typename IntType >
 std::string BetaBinomialRand<IntType>::Name() const
 {
-  return "Beta-Binomial(" + this->toStringWithPrecision(GetNumber()) + ", "
+    return "Beta-Binomial(" + this->toStringWithPrecision(GetNumber()) + ", "
                             + this->toStringWithPrecision(GetAlpha()) + ", "
                             + this->toStringWithPrecision(GetBeta()) + ")";
 }
@@ -105,41 +105,41 @@ void BetaBinomialRand<IntType>::SetParameters(IntType number, double shape1, dou
 template< typename IntType >
 double BetaBinomialRand<IntType>::P(const IntType &k) const
 {
-  return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
+    return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
 template< typename IntType >
 double BetaBinomialRand<IntType>::logP(const IntType &k) const
 {
     if (k < 0 || k > n)
-      return -INFINITY;
+        return -INFINITY;
     double y = std::lgammal(k + B.GetAlpha());
     y += std::lgammal(n - k + B.GetBeta());
     y -= math::lfact(k);
     y -= math::lfact(n - k);
-  return pmfCoef + y;
+    return pmfCoef + y;
 }
 
 template< typename IntType >
 double BetaBinomialRand<IntType>::F(const IntType & k) const
 {
     if (k < 0)
-      return 0.0;
+        return 0.0;
     if (k >= n)
-      return 1.0;
+        return 1.0;
     double sum = 0.0;
     int i = 0;
     do {
         sum += P(i);
     } while (++i <= k);
-  return sum;
+    return sum;
 }
 
 template< typename IntType >
 template <std::uniform_random_bit_generator G>
 IntType BetaBinomialRand<IntType>::VariateUniform(G &g) const
 {
-  return UniformDiscreteRand<IntType>::StandardVariate(0, n, g);
+    return UniformDiscreteRand<IntType>::StandardVariate(0, n, g);
 }
 
 template< typename IntType >
@@ -147,14 +147,14 @@ template <std::uniform_random_bit_generator G>
 IntType BetaBinomialRand<IntType>::VariateBeta(G &g) const
 {
     double p = B(g);
-  return BinomialDistribution<IntType>::Variate(n, p, g);
+    return BinomialDistribution<IntType>::Variate(n, p, g);
 }
 
 template< typename IntType >
 template <std::uniform_random_bit_generator G>
 IntType BetaBinomialRand<IntType>::operator()(G &g) const
 {
-  return (B.GetAlpha() == 1 && B.GetBeta() == 1) ? VariateUniform(g) : VariateBeta(g);
+    return (B.GetAlpha() == 1 && B.GetBeta() == 1) ? VariateUniform(g) : VariateBeta(g);
 }
 
 template< typename IntType >
@@ -177,7 +177,7 @@ long double BetaBinomialRand<IntType>::Mean() const
 {
     double alpha = B.GetAlpha();
     double beta = B.GetBeta();
-  return n * alpha / (alpha + beta);
+    return n * alpha / (alpha + beta);
 }
 
 template< typename IntType >
@@ -189,7 +189,7 @@ long double BetaBinomialRand<IntType>::Variance() const
     double numerator = n * alpha * beta * (alphaPBeta + n);
     double denominator = alphaPBeta * alphaPBeta;
     denominator *= (alphaPBeta + 1);
-  return numerator / denominator;
+    return numerator / denominator;
 }
 
 template< typename IntType >
@@ -198,10 +198,10 @@ IntType BetaBinomialRand<IntType>::Mode() const
     IntType mode = (IntType)(n * B.Mode());
     double logPmode = this->logP(mode);
     if (this->logP(mode + 1) > logPmode)
-      return mode + 1;
+        return mode + 1;
     if (this->logP(mode - 1) > logPmode)
-      return mode - 1;
-  return mode;
+        return mode - 1;
+    return mode;
 }
 
 template< typename IntType >
@@ -214,7 +214,7 @@ long double BetaBinomialRand<IntType>::Skewness() const
     res = std::sqrt(res);
     res *= (alphaPBeta + 2 * n) * (beta - alpha);
     res /= alphaPBeta + 2;
-  return res;
+    return res;
 }
 
 template< typename IntType >
@@ -232,7 +232,7 @@ long double BetaBinomialRand<IntType>::ExcessKurtosis() const
     res += alphaPBeta * (alphaPBeta - 1 + 6 * n);
     res *= alphaPBeta * alphaPBeta * (1 + alphaPBeta);
     res /= (alphaBetaN * (alphaPBeta + 2) * (alphaPBeta + 3) * (alphaPBeta + n));
-  return res - 3.0;
+    return res - 3.0;
 }
 
 } // namespace randlib

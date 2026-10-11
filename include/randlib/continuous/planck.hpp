@@ -92,7 +92,7 @@ PlanckRand<RealType>::PlanckRand(double shape, double scale)
 template < typename RealType >
 std::string PlanckRand<RealType>::Name() const
 {
-  return "Planck(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Planck(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
 template < typename RealType >
@@ -118,56 +118,56 @@ template < typename RealType >
 double PlanckRand<RealType>::h(double t) const
 {
     if (t <= 0)
-      return 0.0;
+        return 0.0;
     double y = pdfCoef + a * std::log(t);
     double expY = std::exp(y);
     double bt = b * t;
     double z = 1.0 / std::expm1l(bt) - 1.0 / bt;
-  return expY * z;
+    return expY * z;
 }
 
 template < typename RealType >
 double PlanckRand<RealType>::f(const RealType &x) const
 {
     if (x < 0)
-      return 0;
+        return 0;
     if (x == 0)
     {
         if (a > 1)
-          return 0.0;
+            return 0.0;
         if (a == 1)
-          return std::exp(pdfCoef) / b;
-      return INFINITY;
+            return std::exp(pdfCoef) / b;
+        return INFINITY;
     }
     double y = pdfCoef + a * std::log(x);
-  return std::exp(y) / std::expm1l(b * x);
+    return std::exp(y) / std::expm1l(b * x);
 }
 
 template < typename RealType >
 double PlanckRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
-      return -INFINITY;
+        return -INFINITY;
     if (x == 0)
     {
         if (a > 1)
-          return -INFINITY;
+            return -INFINITY;
         if (a == 1)
-          return pdfCoef - gammaVariable.GetLogRate();
-      return INFINITY;
+            return pdfCoef - gammaVariable.GetLogRate();
+        return INFINITY;
     }
     double y = pdfCoef + a * std::log(x);
-  return y - math::logexpm1l(b * x);
+    return y - math::logexpm1l(b * x);
 }
 
 template < typename RealType >
 double PlanckRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0)
-      return 0.0;
+        return 0.0;
 
     if (a >= 1) {
-      return math::integral([this] (double t)
+        return math::integral([this] (double t)
         {
             return f(t);
         },
@@ -179,10 +179,10 @@ double PlanckRand<RealType>::F(const RealType &x) const
     double integral1 = std::exp(aux) / (b * a);
     double integral2 = math::integral([this] (double t)
     {
-      return h(t);
+        return h(t);
     },
     0, x);
-  return integral1 + integral2;
+    return integral1 + integral2;
 }
 
 
@@ -191,7 +191,7 @@ template < typename RealType >
 template <std::uniform_random_bit_generator G>
 RealType PlanckRand<RealType>::operator()(G &g) const
 {
-  return gammaVariable(g) / Z(g);
+    return gammaVariable(g) / Z(g);
 }
 
 template < typename RealType >
@@ -207,7 +207,7 @@ long double PlanckRand<RealType>::Mean() const
 {
     double y = (a + 1) / b;
     y *= math::riemannZeta(a + 2);
-  return y / Z.GetZetaFunction();
+    return y / Z.GetZetaFunction();
 }
 
 template < typename RealType >
@@ -217,7 +217,7 @@ long double PlanckRand<RealType>::SecondMoment() const
     secondMoment /= (b * b);
     secondMoment *= math::riemannZeta(a + 3);
     secondMoment /= Z.GetZetaFunction();
-  return secondMoment;
+    return secondMoment;
 }
 
 template < typename RealType >
@@ -231,10 +231,10 @@ template < typename RealType >
 RealType PlanckRand<RealType>::Mode() const
 {
     if (a <= 1)
-      return 0.0;
+        return 0.0;
     double y = -a * std::exp(-a);
     y = math::W0Lambert(y);
-  return (y + a) / b;
+    return (y + a) / b;
 }
 
 template < typename RealType >
@@ -244,7 +244,7 @@ long double PlanckRand<RealType>::ThirdMoment() const
     thirdMoment /= (b * b * b);
     thirdMoment *= math::riemannZeta(a + 4);
     thirdMoment /= Z.GetZetaFunction();
-  return thirdMoment;
+    return thirdMoment;
 }
 
 template < typename RealType >
@@ -257,7 +257,7 @@ long double PlanckRand<RealType>::Skewness() const
     long double variance = secondMoment - meanSq;
     long double numerator = thirdMoment - 3 * mean * variance - mean * meanSq;
     long double denominator = std::pow(variance, 1.5);
-  return numerator / denominator;
+    return numerator / denominator;
 }
 
 template < typename RealType >
@@ -268,7 +268,7 @@ long double PlanckRand<RealType>::FourthMoment() const
     fourthMoment /= (bSq * bSq);
     fourthMoment *= math::riemannZeta(a + 5);
     fourthMoment /= Z.GetZetaFunction();
-  return fourthMoment;
+    return fourthMoment;
 }
 
 template < typename RealType >
@@ -282,14 +282,14 @@ long double PlanckRand<RealType>::ExcessKurtosis() const
     long double variance = secondMoment - meanSq;
     long double numerator = fourthMoment - 4 * thirdMoment * mean + 6 * secondMoment * meanSq - 3 * meanSq * meanSq;
     long double denominator = variance * variance;
-  return numerator / denominator - 3.0;
+    return numerator / denominator - 3.0;
 }
 
 template < typename RealType >
 std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
 {
     if (a >= 1)
-      return ContinuousDistribution<RealType>::CFImpl(t);
+        return ContinuousDistribution<RealType>::CFImpl(t);
 
     /// We have singularity point at 0 for real part,
     /// so we split the integral in two intervals:
@@ -299,21 +299,21 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
     /// simple expected value for the rest of the function
     double re1 = math::integral([this, t] (double x)
     {
-      return std::cos(t * x) * h(x);
+        return std::cos(t * x) * h(x);
     },
     0.0, 1.0);
 
     double re2 = this->ExpectedValue([t] (double x)
     {
-      return std::cos(t * x);
+        return std::cos(t * x);
     },
     1.0, INFINITY);
 
     double re3 = t * math::integral([this, t] (double x)
     {
         if (x <= 0.0)
-          return 0.0;
-      return std::sin(t * x) * std::pow(x, a);
+            return 0.0;
+        return std::sin(t * x) * std::pow(x, a);
     },
     0.0, 1.0);
 
@@ -322,12 +322,12 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
 
     double im = this->ExpectedValue([t] (double x)
     {
-      return std::sin(t * x);
+        return std::sin(t * x);
     },
     0.0, INFINITY);
 
     double re = re1 + re2 + re3;
-  return std::complex<double>(re, im);
+    return std::complex<double>(re, im);
 }
 
 } // namespace randlib

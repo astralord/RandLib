@@ -71,7 +71,7 @@ IrwinHallRand<RealType>::IrwinHallRand(size_t number)
 template < typename RealType >
 std::string IrwinHallRand<RealType>::Name() const
 {
-  return "Irwin-Hall(" + this->toStringWithPrecision(GetNumber()) + ")";
+    return "Irwin-Hall(" + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
 template < typename RealType >
@@ -86,13 +86,13 @@ template < typename RealType >
 double IrwinHallRand<RealType>::f(const RealType & x) const
 {
     if (x < 0 || x > n)
-      return 0.0;
+        return 0.0;
 
     /// Check simplest cases
     if (n == 1)
-      return 1.0;
+        return 1.0;
     if (n == 2)
-      return (x <= 1.0) ? x : 2.0 - x;
+        return (x <= 1.0) ? x : 2.0 - x;
     /// General case
     double sum = 0.0;
     int last = std::floor(x);
@@ -103,31 +103,31 @@ double IrwinHallRand<RealType>::f(const RealType & x) const
         add = std::exp(add);
         sum += (i % 2) ? -add : add;
     }
-  return n * sum;
+    return n * sum;
 }
 
 template < typename RealType >
 double IrwinHallRand<RealType>::logf(const RealType & x) const
 {
-  return std::log(f(x));
+    return std::log(f(x));
 }
 
 template < typename RealType >
 double IrwinHallRand<RealType>::F(const RealType & x) const
 {
     if (x <= 0)
-      return 0.0;
+        return 0.0;
     if (x >= n)
-      return 1.0;
+        return 1.0;
 
     /// Check simplest cases
     if (n == 1)
-      return x;
+        return x;
     if (n == 2) {
         if (x <= 1.0)
-          return 0.5 * x * x;
+            return 0.5 * x * x;
         double temp = 2.0 - x;
-      return 1.0 - 0.5 * temp * temp;
+        return 1.0 - 0.5 * temp * temp;
     }
     /// General case
     double sum = 0.0;
@@ -139,7 +139,7 @@ double IrwinHallRand<RealType>::F(const RealType & x) const
         add = std::exp(add);
         sum += (i % 2) ? -add : add;
     }
-  return sum;
+    return sum;
 }
 
 template < typename RealType >
@@ -149,7 +149,7 @@ RealType IrwinHallRand<RealType>::operator()(G &g) const
     RealType sum = 0.0;
     for (int i = 0; i != n; ++i)
         sum += U(g);
-  return sum;
+    return sum;
 }
 
 
@@ -157,43 +157,43 @@ RealType IrwinHallRand<RealType>::operator()(G &g) const
 template < typename RealType >
 long double IrwinHallRand<RealType>::Mean() const
 {
-  return 0.5 * n;
+    return 0.5 * n;
 }
 
 template < typename RealType >
 long double IrwinHallRand<RealType>::Variance() const
 {
-  return n / 12.0l;
+    return n / 12.0l;
 }
 
 template < typename RealType >
 std::complex<double> IrwinHallRand<RealType>::CFImpl(double t) const
 {
-  return std::pow(U.CF(t), n);
+    return std::pow(U.CF(t), n);
 }
 
 template < typename RealType >
 RealType IrwinHallRand<RealType>::Median() const
 {
-  return 0.5 * n;
+    return 0.5 * n;
 }
 
 template < typename RealType >
 RealType IrwinHallRand<RealType>::Mode() const
 {
-  return 0.5 * n;
+    return 0.5 * n;
 }
 
 template < typename RealType >
 long double IrwinHallRand<RealType>::Skewness() const
 {
-  return 0.0l;
+    return 0.0l;
 }
 
 template < typename RealType >
 long double IrwinHallRand<RealType>::ExcessKurtosis() const
 {
-  return -1.2 / n;
+    return -1.2 / n;
 }
 
 } // namespace randlib
