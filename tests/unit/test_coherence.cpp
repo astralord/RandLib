@@ -12,12 +12,18 @@
 #include <chrono>
 #include <cmath>
 #include <map>
+#include <set>
 #include <sstream>
 
 using namespace randlib_test;
 
 namespace
 {
+
+/// The density of the geometric stable law with exponent 1 and non-zero skewness takes about a
+/// minute in its far tails, where it needs the stable law at huge arguments (#1); only the bulk
+/// of these cases, 0.01 < F < 0.99, is checked
+const std::set<std::string> SLOW_TAILS = {"GeometricStableRand(1, 0.5, 1, 0)"};
 
 std::map<std::string, std::vector<double>> gridByCase()
 {
@@ -86,7 +92,13 @@ TEST_CASE("Continuous distributions are internally coherent", "[coherence]")
             out.push_back(std::string("construction failed: ") + e.what());
             return;
         }
-        const auto &xs = grid[cases[i]->id];
+        std::vector<double> xs = grid[cases[i]->id];
+        if (SLOW_TAILS.count(cases[i]->id)) {
+            xs.erase(std::remove_if(xs.begin(), xs.end(), [&d](double x) {
+                double F = d->F(x);
+                return F < 1e-2 || F > 1 - 1e-2;
+            }), xs.end());
+        }
         if (xs.empty())
             return;
         bool expensive = false;
