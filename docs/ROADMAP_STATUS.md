@@ -9,49 +9,44 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 0.1 Coordinate upstream | 🚫 | Tracking issue on `astralord/RandLib` and agreement on the branch model are for the maintainer. |
+| 0.1 Coordinate upstream | 🚫 | Tracking issue on `astralord/RandLib` is for the maintainer. Branch model agreed: `1.x` for 1.2, `2.x` for v2, `master` untouched. |
 | 0.2 Tag the baseline | ✅ | `v1.1.0-baseline` at 6536dad. |
-| 0.3 Golden outputs | ✅ | `tools/golden/` records 14.6k values for 160 cases from the baseline library; calls that hang in the baseline are recorded as `timeout`. |
-| 0.4 Reference data | ✅ | `tools/refdata/` (mpmath, 40 digits). Stable laws use CF inversion, convergent or asymptotic series and rotated contours, never SciPy; every method is cross-checked. Geometric stable is not covered yet. |
+| 0.3 Golden outputs | ✅ | `tools/golden/` records 14.6k values for 160 cases from the baseline library. |
+| 0.4 Reference data | 🟡 | `tools/refdata/` (mpmath, 40 digits). The skewed stable and geometric stable laws with α = 1 are still being computed (Phase 5). |
 | 0.5 Project tracking | 🚫 | Milestones and issues need repository access; this file tracks progress meanwhile. |
 
-## Phase 1: Stabilize (v1.2)
+## Phase 1: Stabilize (v1.2, branch `1.x`)
 
 | Task | Status | Notes |
 |---|---|---|
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
-| 1.3 Compiler portability (#18) | ✅ | GCC 13/14 and Clang 18 build warning-free locally; libc++ needs no C++17 special math functions. |
-| 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 20 further bugs (B11–B30) found by the test suite and fixed; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | `.github/workflows/ci.yml` written and checked locally for GCC 13/14, Clang 18, ASan+UBSan and all three engines; it has not run on GitHub yet. |
-| 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
-| 1.7 Release v1.2 | ✅ | CHANGELOG written, `v1.2.0` tagged locally on `1.x`. |
+| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14, Clang 15–18 and AppleClang build in CI; the MSVC fixes from the first CI run await the next run. |
+| 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B32 found by the test suite; see CHANGELOG.md. |
+| 1.5 Continuous integration | 🟡 | Runs on GitHub; green once the fixes and data of the latest 1.x commits are pushed. |
+| 1.6 Test suite (#12) | ✅ | Unit tests take 12 s, statistical tests about 6 min. |
+| 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 
-## Phase 2: Modern architecture (v2.0-alpha)
+## Phase 2: Modern architecture (v2.0-alpha, branch `2.x`)
 
 | Task | Status | Notes |
 |---|---|---|
-| 2.1 Header-only layout and namespace | ⏳ | |
-| 2.2 URBG interoperability | ⏳ | |
-| 2.3 Remove hidden state | 🟡 | The static mutable state found in v1.1 is gone in v1.2 (B1, B11, B12); the CI grep check comes with 2.1. |
-| 2.4 API cleanup | ⏳ | |
-| 2.5 Numerical kernel (#10) | 🟡 | Adaptive Gauss–Kronrod replaced adaptive Simpson in v1.2; quantiles use a bracketing root finder. Tanh-sinh, oscillatory quadrature, TOMS 748 and optimizers remain. |
+| 2.1 Header-only layout and namespace | ✅ | `include/randlib/...`, namespace `randlib`, `RANDLIB_PRECOMPILED`, generated ziggurat tables. |
+| 2.2 URBG interoperability | ✅ | `operator()(G &)` on every distribution; Pcg32, Pcg64, Xoshiro256pp, SplitMix64, legacy engines, `make_streams`. |
+| 2.3 Remove hidden state | ✅ | CI job fails on static or `thread_local` variables that are not constant. |
+| 2.4 API cleanup | ✅ | Non-const `Reseed`, `std::span`, `[[nodiscard]]`, `enum class Support`, `fit_error`, `final`, named factories. |
+| 2.5 Numerical building blocks | 🟡 | Global adaptive Gauss–Kronrod since v1.2; quadrature policy, TOMS 748 and optimizers remain. |
 | 2.6 Tooling | ⏳ | |
 
-## Phase 3: The niche features (v2.0)
+## Phase 3: Fitting and features (v2.0-beta)
 
 | Task | Status | Notes |
 |---|---|---|
 | 3.1 Fitting API | ⏳ | |
-| 3.2 Heavy-tail toolkit | ⏳ | |
-| 3.3 Stable distributions (#1) | 🟡 | v1.2 fixes the CF sign, the α = 1 location, the B8 floor and the tails; S0 and the near-α = 1 region remain. |
-| 3.4 Noncentral t (#7) | ⏳ | |
-| 3.5 Marcum Q (#4) | 🟡 | v1.2 fixes the noncentral χ² density (Bessel bug); with the new incomplete gamma and quadrature the distribution function meets 1e-12 in the bulk, but the upper tail is still 1 − Marcum P. |
-| 3.6 Log-normal CF (#6) | 🟡 | With Gauss–Kronrod the CF meets the 1e-8 target for σ² ≤ 1; for σ² = 4 the error is 6e-5 (was 4e-3). |
-| 3.7 Log-stable (#5) | ⏳ | |
-| 3.8 Close #11 | 🚫 | Closing the issue needs the maintainer. |
+| 3.2 Tail estimators and extreme-value distributions | ⏳ | |
+| 3.3 Close #11 | 🚫 | Closing the issue needs the maintainer. |
 
-## Phase 4: Documentation, packaging, release
+## Phase 4: Documentation, packaging, release (v2.0)
 
 | Task | Status | Notes |
 |---|---|---|
@@ -59,3 +54,13 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 4.2 Migration guide | ⏳ | |
 | 4.3 Packaging | ⏳ | |
 | 4.4 Release v2.0.0 | 🚫 | Release candidates, announcements and the upstream vcpkg PR need the maintainer. |
+
+## Phase 5: Hard numerics (v2.1)
+
+| Task | Status | Notes |
+|---|---|---|
+| 5.1 Stable distributions (#1) | 🟡 | v1.2 fixed the CF sign, the α = 1 location, the B8 floor and the tails. Open: S0, the region near α = 1, the slow far tails of the α = 1 geometric stable density. |
+| 5.2 Heavy-tailed characteristic functions (#6, #10) | 🟡 | Heavy-tailed CFs are accurate to about 1e-3, the log-normal one to 6e-5 at σ² = 4 (tracked in `tests/data/reference_tolerances.csv`). |
+| 5.3 Marcum Q (#4) | 🟡 | v1.2 fixed the noncentral χ² density; the upper tail is still 1 − Marcum P. |
+| 5.4 Noncentral t (#7) | ⏳ | |
+| 5.5 Log-stable (#5) | ⏳ | |
