@@ -2,12 +2,14 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "RandLib.h"
+#include <randlib/randlib.hpp>
 
 #include <cmath>
 #include <functional>
 #include <string>
 #include <vector>
+
+using namespace randlib;
 
 namespace
 {
@@ -165,4 +167,27 @@ TEST_CASE("Invalid parameters are rejected", "[parameters]")
         INFO(invalid.description);
         CHECK_THROWS_AS(invalid.construct(), std::invalid_argument);
     }
+}
+
+TEST_CASE("Named factories state which parameter they take", "[parameters]")
+{
+    auto byStd = NormalRand<double>::FromMeanStd(1, 2);
+    auto byVariance = NormalRand<double>::FromMeanVariance(1, 4);
+    CHECK(std::fabs(byStd.Variance() - 4) < 1e-15);
+    CHECK(std::fabs(byVariance.Variance() - 4) < 1e-15);
+    CHECK(byStd.F(3) == byVariance.F(3));
+
+    CHECK(LogNormalRand<double>::FromLogMeanLogStd(0, 2).GetScale() == 2);
+    CHECK(LogNormalRand<double>::FromLogMeanLogVariance(0, 4).GetScale() == 2);
+
+    CHECK(GammaRand<double>::FromShapeRate(2, 4).Mean() == 0.5);
+    CHECK(GammaRand<double>::FromShapeScale(2, 4).Mean() == 8);
+    CHECK(ErlangRand<double>::FromShapeScale(3, 2).Mean() == 6);
+    CHECK(ExponentialRand<double>::FromRate(4).Mean() == 0.25);
+    CHECK(ExponentialRand<double>::FromScale(4).Mean() == 4);
+    CHECK(InverseGammaRand<double>::FromShapeRate(3, 4).Mean() == 2);
+
+    CHECK_THROWS_AS(GammaRand<double>::FromShapeScale(2, 0), std::invalid_argument);
+    CHECK_THROWS_AS(ExponentialRand<double>::FromScale(-1), std::invalid_argument);
+    CHECK_THROWS_AS(LogNormalRand<double>::FromLogMeanLogStd(0, 0), std::invalid_argument);
 }

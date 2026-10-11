@@ -5,11 +5,13 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "RandLib.h"
+#include <randlib/randlib.hpp>
 
 #include <cmath>
 #include <functional>
 #include <vector>
+
+using namespace randlib;
 
 namespace
 {
@@ -250,5 +252,10 @@ TEST_CASE("Degenerate fit", "[fitting]")
     fitted.Fit(sample);
     CHECK(fitted.Mean() == 2.5);
     sample.push_back(3);
-    CHECK_THROWS_AS(fitted.Fit(sample), std::invalid_argument);
+    CHECK_THROWS_AS(fitted.Fit(sample), fit_error);
+    try {
+        fitted.Fit(sample);
+    } catch (const fit_error &e) {
+        CHECK(e.code() == FitErrorCode::WrongSample);
+    }
 }

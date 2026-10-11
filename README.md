@@ -1,19 +1,18 @@
 # RandLib
 
-[![CI](https://github.com/astralord/RandLib/actions/workflows/ci.yml/badge.svg?branch=1.x)](https://github.com/astralord/RandLib/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/astralord/RandLib/branch/1.x/graph/badge.svg)](https://codecov.io/gh/astralord/RandLib)
+[![CI](https://github.com/astralord/RandLib/actions/workflows/ci.yml/badge.svg?branch=2.x)](https://github.com/astralord/RandLib/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/astralord/RandLib/branch/2.x/graph/badge.svg)](https://codecov.io/gh/astralord/RandLib)
 [![CodeFactor](https://www.codefactor.io/repository/github/astralord/randlib/badge/master)](https://www.codefactor.io/repository/github/astralord/randlib/overview/master)
 
-With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is C++17 compiler support.
+With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is a C++20 compiler.
 
-Version 1.2 is a stabilization release: it fixes many correctness bugs and checks every
-distribution against high-precision reference values. Note that **sampled values differ from
-1.1 for the same seed**. See [CHANGELOG.md](CHANGELOG.md) and the
-[modernization plan](docs/MODERNIZATION_PLAN.md).
+This is the 2.x development branch: a header-only library in namespace `randlib` whose samplers
+accept any standard random engine. The stable 1.x series lives on the `1.x` branch. See
+[CHANGELOG.md](CHANGELOG.md) and the [modernization plan](docs/MODERNIZATION_PLAN.md).
 
 ## Building
 
-RandLib builds with CMake 3.21 or newer:
+RandLib is header-only: add `include/` to the include path, or use CMake 3.21 or newer:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -23,15 +22,15 @@ ctest --test-dir build --label-regex statistical
 cmake --install build --prefix /usr/local
 ```
 
-and is consumed with
+and consume it with
 
 ```cmake
-find_package(RandLib 1.2 REQUIRED)
+find_package(RandLib 2 REQUIRED)
 target_link_libraries(my_target PRIVATE RandLib::RandLib)
 ```
 
-Options: `BUILD_SHARED_LIBS` (static by default), `RANDLIB_BUILD_TESTS`,
-`RANDLIB_WARNINGS_AS_ERRORS`, `RANDLIB_GENERATOR` (`JKISS`, `JLKISS64` or `PCG32`) and
+Options: `RANDLIB_BUILD_TESTS`, `RANDLIB_WARNINGS_AS_ERRORS`, `RANDLIB_PRECOMPILED` (compiles the
+`double` and `int` instantiations once, for faster builds of code that includes everything) and
 `RANDLIB_PORTABLE_SPECIAL_FUNCTIONS`. The presets in `CMakePresets.json` cover development,
 release and sanitizer builds (`cmake --preset dev`).
 
@@ -39,12 +38,18 @@ release and sanitizer builds (`cmake --preset dev`).
 
 What can be done via RandLib? Here are some useful examples:
 
-* Fast sampling. For instance, generate million variates from standard normal distribution:
+* Fast sampling with any standard engine. For instance, generate a million variates from the
+  standard normal distribution:
 ```c++
+#include <randlib/randlib.hpp>
+using namespace randlib;
+
 NormalRand X(0, 1);
-X.Reseed(42); // reproducible stream
+std::mt19937_64 engine(42);
 std::vector<double> data(1e6);
-X.Sample(data);
+X.Sample(engine, data);   // or x = X(engine) for one variate
+
+auto streams = make_streams(42, 8); // independent DefaultEngine (xoshiro256++) streams, one per thread
 ```
 ![alt tag](images/standardNormal.png)
 

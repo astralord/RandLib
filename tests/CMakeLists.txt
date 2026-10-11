@@ -17,7 +17,7 @@ add_library(randlib_test_support STATIC
 target_include_directories(randlib_test_support PUBLIC support)
 target_link_libraries(randlib_test_support PUBLIC RandLib::RandLib Catch2::Catch2)
 target_compile_definitions(randlib_test_support PUBLIC RANDLIB_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
-target_compile_features(randlib_test_support PUBLIC cxx_std_17)
+target_link_libraries(randlib_test_support PUBLIC randlib_warnings)
 if(MSVC)
     target_compile_options(randlib_test_support PUBLIC /bigobj)
 endif()

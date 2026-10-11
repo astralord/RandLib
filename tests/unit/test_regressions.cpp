@@ -5,7 +5,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include "RandLib.h"
+#include <randlib/randlib.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -13,6 +13,8 @@
 #include <complex>
 #include <memory>
 #include <vector>
+
+using namespace randlib;
 
 using Catch::Matchers::WithinAbs;
 using Catch::Matchers::WithinRel;
@@ -35,13 +37,12 @@ TEST_CASE("B1: normal samples do not depend on other instances", "[regression]")
     CHECK(first == second);
 }
 
-TEST_CASE("B5: the selected generator yields uniforms in (0, 1)", "[regression]")
+TEST_CASE("B5: 64-bit engines yield uniforms in (0, 1)", "[regression]")
 {
-    RandGenerator generator;
-    generator.Reseed(5);
+    DefaultEngine generator(5);
     double smallest = 1, largest = 0;
     for (int i = 0; i < 100000; ++i) {
-        double u = UniformRand<double>::StandardVariate(generator);
+        double u = detail::uniform01<double>(generator);
         smallest = std::min(smallest, u);
         largest = std::max(largest, u);
     }
@@ -97,9 +98,7 @@ TEST_CASE("B11: quantiles are deterministic", "[regression]")
 
 TEST_CASE("B12: Bernoulli bits come from the generator that is passed", "[regression]")
 {
-    RandGenerator first, second;
-    first.Reseed(12);
-    second.Reseed(12);
+    Pcg32 first(12), second(12);
     std::vector<int> a, b;
     for (int i = 0; i < 1000; ++i) {
         a.push_back(BernoulliRand::StandardVariate(first));
@@ -158,7 +157,7 @@ TEST_CASE("B17: incomplete gamma ratios keep full precision for large shapes", "
 
 TEST_CASE("B18: logarithm of the beta function does not underflow", "[regression]")
 {
-    CHECK_THAT(static_cast<double>(RandMath::logBeta(600, 600)), WithinRel(-833.70936104274857839, 1e-15));
+    CHECK_THAT(static_cast<double>(math::logBeta(600, 600)), WithinRel(-833.70936104274857839, 1e-15));
     BetaRand<double> X(600, 600);
     CHECK(std::isfinite(X.f(0.5)));
 }
@@ -175,8 +174,8 @@ TEST_CASE("B20: modified Bessel function of negative and half-integer order", "[
 {
     /// I_{1/2}(x) = sqrt(2 / (pi x)) sinh x and I_{-1/2}(x) = sqrt(2 / (pi x)) cosh x
     double x = 2.0;
-    CHECK_THAT(static_cast<double>(RandMath::logBesselI(0.5, x)), WithinRel(std::log(std::sinh(x) * std::sqrt(2 / (PI * x))), 1e-14));
-    CHECK_THAT(static_cast<double>(RandMath::logBesselI(-0.5, x)), WithinRel(std::log(std::cosh(x) * std::sqrt(2 / (PI * x))), 1e-14));
+    CHECK_THAT(static_cast<double>(math::logBesselI(0.5, x)), WithinRel(std::log(std::sinh(x) * std::sqrt(2 / (PI * x))), 1e-14));
+    CHECK_THAT(static_cast<double>(math::logBesselI(-0.5, x)), WithinRel(std::log(std::cosh(x) * std::sqrt(2 / (PI * x))), 1e-14));
 }
 
 TEST_CASE("B21: stable characteristic function and location for exponent 1", "[regression]")
@@ -243,7 +242,6 @@ TEST_CASE("B26: composite distributions reseed every generator they use", "[regr
     c.Reseed(26);
     d.Reseed(26);
     CHECK(c.Variate() == d.Variate());
-    CHECK(RandEngine::DeriveSeed(42, 1) != 43UL);
 }
 
 TEST_CASE("B27: heavy-tailed discrete characteristic functions terminate", "[regression]")

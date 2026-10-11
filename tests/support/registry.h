@@ -1,7 +1,7 @@
 #ifndef RANDLIB_TESTS_REGISTRY_H
 #define RANDLIB_TESTS_REGISTRY_H
 
-#include "RandLib.h"
+#include <randlib/randlib.hpp>
 
 #include <functional>
 #include <memory>
@@ -10,6 +10,8 @@
 
 namespace randlib_test
 {
+
+using namespace randlib;
 
 enum class Kind { Continuous, Discrete, Singular, BivariateContinuous, BivariateDiscrete };
 

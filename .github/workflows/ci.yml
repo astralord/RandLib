@@ -26,8 +26,7 @@ jobs:
           - {name: clang-18, os: ubuntu-24.04, cc: clang-18, cxx: clang++-18, install: clang-18}
           - {name: appleclang, os: macos-14}
           - {name: msvc-2022, os: windows-2022}
-          - {name: gcc-13 jlkiss64 engine, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_GENERATOR=JLKISS64}
-          - {name: gcc-13 pcg32 engine, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_GENERATOR=PCG32}
+          - {name: gcc-13 precompiled, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_PRECOMPILED=ON}
           - {name: gcc-13 portable special functions, os: ubuntu-24.04, cc: gcc-13, cxx: g++-13, install: g++-13, extra: -DRANDLIB_PORTABLE_SPECIAL_FUNCTIONS=ON}
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +93,7 @@ jobs:
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DRANDLIB_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS=--coverage
           cmake --build build --parallel
       - run: ctest --test-dir build --label-regex unit --output-on-failure --parallel 4
-      - run: gcovr --root . --filter distributions/ --filter math/ --xml coverage.xml --print-summary
+      - run: gcovr --root . --filter include/ --xml coverage.xml --print-summary
       - uses: codecov/codecov-action@v4
         with:
           files: coverage.xml
@@ -110,6 +109,19 @@ jobs:
       - name: Configure
         env:
           CXX: clang++-18
-        run: cmake -S . -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DRANDLIB_BUILD_TESTS=OFF
+        run: cmake -S . -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DRANDLIB_PRECOMPILED=ON -DRANDLIB_BUILD_TESTS=OFF
       - name: clang-tidy
-        run: run-clang-tidy-18 -p build -quiet 'distributions/|math/'
+        run: run-clang-tidy-18 -p build -quiet -header-filter='include/randlib/' 'src/'
+
+  hidden-state:
+    name: no static mutable state
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Look for static or thread_local variables that are not constant
+        run: |
+          if grep -rnP 'thread_local|^\s*static\s+(?!constexpr\b|const\b|inline\s+const|inline\s+constexpr)[\w:<>, ]+\s+\w+\s*(=|\{|;|\[)' include \
+              | grep -vP '^\S+:\d+:\s*static\s+[\w:<>, ]+\s+\w+\s*\('; then
+            echo "::error::static mutable state found (plan task 2.3)"
+            exit 1
+          fi

@@ -36,7 +36,7 @@ void checkReproducible(const Case &c, Make make)
 
     other->Reseed(SEED + 1);
     for (int i = 0; i < DRAWS; ++i)
-        other->Variate();
+        static_cast<void>(other->Variate());
 
     b->Reseed(SEED);
     std::vector<double> second;
@@ -46,9 +46,9 @@ void checkReproducible(const Case &c, Make make)
 
     b->Reseed(SEED);
     try {
-        b->Median();
-        b->Quantile(0.3);
-        b->Quantile1m(0.2);
+        static_cast<void>(b->Median());
+        static_cast<void>(b->Quantile(0.3));
+        static_cast<void>(b->Quantile1m(0.2));
     } catch (const randlib::not_implemented &) {
     }
     std::vector<double> third;
