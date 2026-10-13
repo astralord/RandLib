@@ -1,7 +1,8 @@
 # Roadmap status
 
 Status of each task in [MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md). This file stands in for
-the GitHub milestones and issues of plan task 0.5 until they are created.
+the GitHub milestones and issues of plan task 0.5 until they are created. [NEXT_STEPS.md](NEXT_STEPS.md)
+describes how to continue.
 
 Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs the maintainer
 
@@ -21,8 +22,8 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 |---|---|---|
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
-| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14, Clang 15–18 and AppleClang build in CI; the MSVC fixes from the first CI run await the next run. |
-| 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B32 found by the test suite; see CHANGELOG.md. |
+| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14, Clang 15–18 and AppleClang build in CI; MSVC fixes from the second CI run await the next run. |
+| 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B34 found by the test suite; see CHANGELOG.md. |
 | 1.5 Continuous integration | 🟡 | Runs on GitHub; green once the fixes and data of the latest 1.x commits are pushed. |
 | 1.6 Test suite (#12) | ✅ | Unit tests take 12 s, statistical tests about 6 min. |
 | 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
@@ -35,7 +36,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 2.2 URBG interoperability | ✅ | `operator()(G &)` on every distribution; Pcg32, Pcg64, Xoshiro256pp, SplitMix64, legacy engines, `make_streams`. |
 | 2.3 Remove hidden state | ✅ | CI job fails on static or `thread_local` variables that are not constant. |
 | 2.4 API cleanup | ✅ | Non-const `Reseed`, `std::span`, `[[nodiscard]]`, `enum class Support`, `fit_error`, `final`, named factories. |
-| 2.5 Numerical building blocks | 🟡 | Global adaptive Gauss–Kronrod since v1.2; quadrature policy, TOMS 748 and optimizers remain. |
+| 2.5 Numerical building blocks | 🟡 | `math/quadrature.hpp` (adaptive Gauss–Kronrod, infinite limits), `math/roots.hpp` (TOMS 748, Newton, Halley; used by the quantile search), `math/optimize.hpp` (Brent, Nelder–Mead, BFGS). The special functions are still `double` only. |
 | 2.6 Tooling | ⏳ | |
 
 ## Phase 3: Fitting and features (v2.0-beta)
