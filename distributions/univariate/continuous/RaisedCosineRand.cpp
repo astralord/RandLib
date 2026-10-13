@@ -128,12 +128,12 @@ long double RaisedCosineDistribution<RealType>::Variance() const
 template < typename RealType >
 std::complex<double> RaisedCosineDistribution<RealType>::CFImpl(double t) const
 {
+    /// π² sin(st) / (st (π² - (st)²)) = π² sinc(π - st) / (st (π + st)), without 0 / 0 at st = π
     double st = s * t;
-    double numerator = randlib::consts::pi_sq * std::sin(st);
-    double denominator = st * (randlib::consts::pi_sq - st * st);
-    std::complex<double> y(0.0, mu * t);
-    y = std::exp(y);
-    return numerator / denominator * y;
+    double u = static_cast<double>(randlib::consts::pi - st);
+    double sinc = (u == 0.0) ? 1.0 : std::sin(u) / u;
+    double y = randlib::consts::pi_sq * sinc / (st * (randlib::consts::pi + st));
+    return y * std::exp(std::complex<double>(0.0, mu * t));
 }
 
 template < typename RealType >

@@ -121,5 +121,5 @@ unsigned long long PCGRandEngine::Next()
     state = oldstate * 6364136223846793005ULL + (inc|1);
     unsigned int xorshifted = ((oldstate >> 18u) ^ oldstate) >> 27u;
     unsigned int rot = oldstate >> 59u;
-    return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
+    return (xorshifted >> rot) | (xorshifted << ((0u - rot) & 31));
 }

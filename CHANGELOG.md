@@ -108,6 +108,10 @@ coherence and sampling statistics. Every fix below has a regression test in
 - **B31** `RademacherRand::Mode` returned a random value; it is now −1, like the median.
 - **B32** Poisson and binomial probabilities use Loader's saddle-point form: the sum of logarithms
   lost up to four digits for large arguments, which depended on the platform's `lgamma`.
+- **B33** The raised cosine (and Raab–Green) characteristic function at st = π evaluated 0 / 0;
+  it is now computed as π² sinc(π − st) / (st (π + st)).
+- **B34** Discrete quantiles at a probability level that F reaches exactly no longer depend on the
+  last bits of the platform's special functions.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).

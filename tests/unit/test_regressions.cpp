@@ -311,3 +311,18 @@ TEST_CASE("B32: Poisson and binomial probabilities do not depend on the accuracy
     CHECK_THAT(BinomialRand<int>(1000, 0.5).P(480), WithinRel(0.01134098237118772746599741, 1e-14));
     CHECK_THAT(BinomialRand<int>(100, 0.02).P(7), WithinRel(0.003130114101451260277632229, 1e-14));
 }
+
+TEST_CASE("B33: raised cosine characteristic function at st = pi", "[regression]")
+{
+    /// (1 + cos x) / (2 pi) on [-pi, pi]: CF(1) = 1/2, the limit of a 0 / 0 expression
+    CHECK_THAT(RaisedCosineRand<double>(0, PI).CF(1).real(), WithinAbs(0.5, 1e-15));
+    CHECK_THAT(RaabGreenRand<double>().CF(1).real(), WithinAbs(0.5, 1e-15));
+    CHECK_THAT(RaisedCosineRand<double>(0, PI).CF(1 + 1e-9).real(), WithinAbs(0.5, 1e-8));
+}
+
+TEST_CASE("B34: discrete quantiles at an exact probability level", "[regression]")
+{
+    /// F(2) = 1/2 exactly for NB(3, 1/2); a last-bit error in F must not move the median
+    CHECK(PascalRand<int>(3, 0.5).Quantile(0.5) == 2);
+    CHECK(PascalRand<int>(3, 0.5).Median() == 2);
+}
