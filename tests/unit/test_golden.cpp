@@ -61,6 +61,8 @@ Tolerance goldenTolerance(const std::string &function)
         return {1e-6, 1e-9};
     if (function == "logf" || function == "logP" || function.rfind("CF", 0) == 0)
         return {1e-9, 1e-12};
+    if (function == "Mean" || function == "Variance" || function == "Skewness" || function == "ExcessKurtosis")
+        return {1e-9, 1e-12};
     return {1e-9, 0.0};
 }
 

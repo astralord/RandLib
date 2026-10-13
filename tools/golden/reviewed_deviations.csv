@@ -56,3 +56,6 @@ case,function,arg,expected,reason
 "GeometricStableRand(0.8, -0.3, 1, 0)",*,*,skip,"integration accuracy as above; the density is unbounded at the mode 0, which the numerical maximization now finds to -9e-9 (v1.1 -9.7e-6)"
 "CantorRand()",Quantile,*,skip,"quantiles are solved with TOMS 748 to full precision; they agree with the exact inverse of the Cantor function (binary digits of p as ternary digits 0 and 2) to 1e-16, v1.1 stopped at an absolute tolerance of 1e-8"
 "CantorRand()",Quantile1m,*,skip,"as above"
+
+"GeometricRand(0.3)",Quantile1m,0.69999999999999996,skip,"B34: S(0) = 0.7 exactly, so the smallest k with S(k) <= 0.7 is 0; v1.1 depended on the last bit of S"
+"YuleRand(3)",Quantile1m,0.050000000000000003,skip,"B34: S(3) = 3! 3! / 6! = 0.05 exactly, so the quantile is 3"

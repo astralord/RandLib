@@ -231,9 +231,11 @@ IntType DiscreteDistribution<IntType>::quantileImpl1m(double p) const
 template < typename IntType >
 IntType DiscreteDistribution<IntType>::searchQuantile(double p, bool upperTail) const
 {
-    /// reached(k) is false below the quantile and true from it on
+    /// reached(k) is false below the quantile and true from it on; F(k) = p exactly must not
+    /// depend on the last bits of the platform's special functions
+    static constexpr double slack = 8 * std::numeric_limits<double>::epsilon();
     auto reached = [this, p, upperTail] (long long k) {
-        return upperTail ? this->S(static_cast<IntType>(k)) <= p : this->F(static_cast<IntType>(k)) >= p;
+        return upperTail ? this->S(static_cast<IntType>(k)) <= p * (1 + slack) : this->F(static_cast<IntType>(k)) >= p * (1 - slack);
     };
     const long long lo = this->MinValue(), hi = this->MaxValue();
     const bool loBounded = lo > static_cast<long long>(std::numeric_limits<IntType>::lowest());

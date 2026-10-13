@@ -329,3 +329,18 @@ TEST_CASE("Cantor quantiles are exact", "[regression]")
     for (double p : {1e-6, 0.001, 0.3, 0.7})
         CHECK_THAT(X.Quantile(p), WithinRel(exact(p), 1e-12));
 }
+
+TEST_CASE("B33: raised cosine characteristic function at st = pi", "[regression]")
+{
+    /// (1 + cos x) / (2 pi) on [-pi, pi]: CF(1) = 1/2, the limit of a 0 / 0 expression
+    CHECK_THAT(RaisedCosineRand<double>(0, PI).CF(1).real(), WithinAbs(0.5, 1e-15));
+    CHECK_THAT(RaabGreenRand<double>().CF(1).real(), WithinAbs(0.5, 1e-15));
+    CHECK_THAT(RaisedCosineRand<double>(0, PI).CF(1 + 1e-9).real(), WithinAbs(0.5, 1e-8));
+}
+
+TEST_CASE("B34: discrete quantiles at an exact probability level", "[regression]")
+{
+    /// F(2) = 1/2 exactly for NB(3, 1/2); a last-bit error in F must not move the median
+    CHECK(PascalRand<int>(3, 0.5).Quantile(0.5) == 2);
+    CHECK(PascalRand<int>(3, 0.5).Median() == 2);
+}
