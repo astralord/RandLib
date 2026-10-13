@@ -236,39 +236,31 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
         return anchor + direction * t;
     };
 
-    /// Illinois regula falsi, with a bisection step whenever the bracket fails to halve
-    int retained = 0;
-    bool bisect = false;
+    /// While the bracket spans orders of magnitude or g is infinite at an end, split it
+    /// geometrically; then TOMS 748 refines it to full precision
     for (int iter = 0; iter < 2000; ++iter) {
-        RealType width = b - a, middle;
-        if (!bisect && std::isfinite(ga) && std::isfinite(gb) && gb > ga)
-            middle = b - gb * (b - a) / (gb - ga);
-        else
-            middle = split(a, b);
-        if (!(middle > a && middle < b))
-            middle = split(a, b);
-        if (!(middle > a && middle < b))
+        RealType tl = std::fabs(a - anchor), tr = std::fabs(b - anchor);
+        bool spansMagnitudes = std::min(tl, tr) == 0 ? std::max(tl, tr) > 1e-280 : std::max(tl, tr) > 4 * std::min(tl, tr);
+        if (std::isfinite(ga) && std::isfinite(gb) && !(spansMagnitudes && (loFinite || hiFinite)))
             break;
+        RealType middle = split(a, b);
+        if (!(middle > a && middle < b))
+            return middle;
         double gm = g(middle);
         if (gm == 0)
             return middle;
         if (gm < 0) {
             a = middle;
             ga = gm;
-            if (retained == 1)
-                gb *= 0.5;
-            retained = 1;
         }
         else {
             b = middle;
             gb = gm;
-            if (retained == -1)
-                ga *= 0.5;
-            retained = -1;
         }
-        bisect = (b - a) > 0.5 * width;
     }
-    return (std::isfinite(ga) && std::fabs(ga) < std::fabs(gb)) ? a : b;
+    auto [left, right] = math::toms748<RealType>([&g] (RealType x) { return static_cast<RealType>(g(x)); }, a, b,
+                                                  static_cast<RealType>(ga), static_cast<RealType>(gb));
+    return left + (right - left) / 2;
 }
 
 template< typename RealType >
@@ -303,7 +295,7 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
 
     /// Integrate on finite interval [a, b]
     if (isLeftBoundFinite && isRightBoundFinite) {
-        return math::integral([this, funPtr] (double x)
+        return math::integrate([this, funPtr] (double x)
         {
             double y = funPtr(x);
             return (y == 0.0) ? 0.0 : y * f(x);
@@ -313,7 +305,7 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
 
     /// Integrate on semifinite interval [a, inf)
     if (isLeftBoundFinite) {
-        return math::integral([this, funPtr, lowerBoundary] (double x)
+        return math::integrate([this, funPtr, lowerBoundary] (double x)
         {
             if (x >= 1.0)
                 return 0.0;
@@ -331,7 +323,7 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
 
     /// Integrate on semifinite intervale (-inf, b]
     if (isRightBoundFinite) {
-        return math::integral([this, funPtr, upperBoundary] (double x)
+        return math::integrate([this, funPtr, upperBoundary] (double x)
         {
             if (x <= 0.0)
                 return 0.0;
@@ -346,7 +338,7 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
     }
 
     /// Infinite case
-    return math::integral([this, funPtr] (double x)
+    return math::integrate([this, funPtr] (double x)
     {
         if (std::fabs(x) >= 1.0)
             return 0.0;

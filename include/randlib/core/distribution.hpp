@@ -181,7 +181,9 @@ protected:
 
 } // namespace randlib
 
-#include <randlib/math/numeric.hpp>
+#include <randlib/math/quadrature.hpp>
+#include <randlib/math/roots.hpp>
+#include <randlib/math/optimize.hpp>
 
 namespace randlib
 {

@@ -280,9 +280,11 @@ void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShift(std::span<const Re
     /// we use root-finding algorithm for median search
     double minVar = *std::min_element(sample.begin(), sample.end());
     double maxVar = *std::max_element(sample.begin(), sample.end());
-    double median = this->GetSampleMean(sample);
-
-    if (!math::findRootNewtonFirstOrder<double>([this, sample] (double med)
+    if (minVar == maxVar) {
+        this->SetShift(minVar);
+        return;
+    }
+    double median = math::findRoot([this, sample] (double med)
     {
         double y = 0.0;
         for (const RealType & x : sample) {
@@ -292,10 +294,7 @@ void ShiftedAsymmetricLaplaceDistribution<RealType>::FitShift(std::span<const Re
                 ++y;
         }
         return y;
-    },
-    minVar, maxVar, median
-    ))
-        throw this->fitError(FitErrorCode::Undefined, "Error in root-finding procedure");
+    }, minVar, maxVar);
 
     this->SetShift(median);
 }

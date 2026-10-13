@@ -285,7 +285,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
     }
 
     /// For real part with k < 1 we split the integral on two intervals
-    double re1 = math::integral([this, t] (double x)
+    double re1 = math::integrate([this, t] (double x)
     {
         if (x <= 0.0 || x > 1.0)
             return 0.0;
@@ -302,7 +302,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
     },
     1.0, INFINITY);
 
-    double re3 = t * math::integral([this, t] (double x)
+    double re3 = t * math::integrate([this, t] (double x)
     {
         if (x <= 0.0)
             return 0.0;

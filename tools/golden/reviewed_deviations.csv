@@ -54,3 +54,5 @@ case,function,arg,expected,reason
 "GeometricStableRand(1, 0.5, 1, 0)",*,*,skip,"B29: v1.1 omitted the S1 shift of the mixture for exponent 1; checked by the sampling test in test_regressions B29; reference values are still being computed"
 "GeometricStableRand(1.5, 0.5, 1, 0)",*,*,skip,"integration accuracy: v1.1 adaptive Simpson errors reached 2e-2 in F and v1.1 threw for the far quantiles; the reference test checks every third grid point to 1e-9 and the coherence test checks the quantiles"
 "GeometricStableRand(0.8, -0.3, 1, 0)",*,*,skip,"integration accuracy as above; the density is unbounded at the mode 0, which the numerical maximization now finds to -9e-9 (v1.1 -9.7e-6)"
+"CantorRand()",Quantile,*,skip,"quantiles are solved with TOMS 748 to full precision; they agree with the exact inverse of the Cantor function (binary digits of p as ternary digits 0 and 2) to 1e-16, v1.1 stopped at an absolute tolerance of 1e-8"
+"CantorRand()",Quantile1m,*,skip,"as above"

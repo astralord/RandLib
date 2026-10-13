@@ -147,7 +147,7 @@ double BivariateNormalRand<RealType>::F(const Pair<RealType> &point) const
     if (std::fabs(rho) < 1.0) {
         RealType lowLimit = std::asin(rho);
         RealType highLimit = math::sign(rho) * randlib::consts::half_pi;
-        p2 = math::integral([xAdj, yAdj] (double theta) {
+        p2 = math::integrate([xAdj, yAdj] (double theta) {
             /// Integrand is exp(-(x^2 + y^2 - 2xysin(θ)) / (2cos(θ)^2))
             RealType cosTheta = std::cos(theta);
             RealType tanTheta = std::tan(theta);

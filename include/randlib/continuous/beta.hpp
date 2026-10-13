@@ -918,7 +918,7 @@ std::complex<double> BetaDistribution<RealType>::CFImpl(double t) const
     double sinZ = std::sin(z);
     double cosZm1 = std::cos(z) - 1.0;
 
-    double re = math::integral([this, z, cosZm1](double x) {
+    double re = math::integrate([this, z, cosZm1](double x) {
         if (x >= 1)
             return 0.0;
         if (x <= 0)
@@ -931,7 +931,7 @@ std::complex<double> BetaDistribution<RealType>::CFImpl(double t) const
     re += betaFun;
     re += cosZm1 / beta;
 
-    double im = math::integral([this, z, sinZ](double x) {
+    double im = math::integrate([this, z, sinZ](double x) {
         if (x >= 1)
             return 0.0;
         if (x <= 0)

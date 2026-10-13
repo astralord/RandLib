@@ -123,14 +123,12 @@ inline long double CantorRand::Variance() const
     return 0.125;
 }
 
-inline double CantorRand::quantileImpl(double p, double initValue) const
+inline double CantorRand::quantileImpl(double p, double) const
 {
-    if (!math::findRootNewtonFirstOrder<double>([this, p] (double x)
+    return math::findRoot([this, p] (double x)
     {
         return F(x) - p;
-    }, 0.0, 1.0, initValue))
-        throw std::runtime_error("Cantor distribution: failure in numerical procedure");
-    return initValue;
+    }, 0.0, 1.0);
 }
 
 inline double CantorRand::quantileImpl(double p) const
@@ -138,14 +136,12 @@ inline double CantorRand::quantileImpl(double p) const
     return quantileImpl(p, p);
 }
 
-inline double CantorRand::quantileImpl1m(double p, double initValue) const
+inline double CantorRand::quantileImpl1m(double p, double) const
 {
-    if (!math::findRootNewtonFirstOrder<double>([this, p] (double x)
+    return math::findRoot([this, p] (double x)
     {
         return S(x) - p;
-    }, 0.0, 1.0, initValue))
-        throw std::runtime_error("Cantor distribution: failure in numerical procedure");
-    return initValue;
+    }, 0.0, 1.0);
 }
 
 inline double CantorRand::quantileImpl1m(double p) const

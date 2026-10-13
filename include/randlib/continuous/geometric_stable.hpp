@@ -393,7 +393,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByLevy(double x) const
     /// we do numerical integration in the case of c > 0.5
     // (as I wasn't able to handle complex integrals)
     double adivc = x / mu;
-    double y = math::integral([a, c, adivc] (double t)
+    double y = math::integrate([a, c, adivc] (double t)
     {
         if (t <= 0 || t >= adivc)
             return 0.0;
@@ -417,7 +417,7 @@ double GeneralGeometricStableDistribution<RealType>::pdfByCauchy(double x) const
     // to split the integral on two
     if (x == 0)
         return INFINITY;
-    return -gamma * randlib::consts::inv_pi * math::integral([this, x] (double t)
+    return -gamma * randlib::consts::inv_pi * math::integrate([this, x] (double t)
     {
         if (t <= 0.0 || t >= 1.0)
             return 0.0;
@@ -461,7 +461,7 @@ double GeneralGeometricStableDistribution<RealType>::mixtureIntegral(const Funct
     static constexpr double LOG_W_MAX = 7.0;
     double wMin = std::exp(logWMin);
     double head = -std::expm1(-wMin) * g(wMin);
-    return head + math::integral([&g] (double u)
+    return head + math::integrate([&g] (double u)
     {
         double w = std::exp(u);
         return w * std::exp(-w) * g(w);
@@ -510,7 +510,7 @@ double GeneralGeometricStableDistribution<RealType>::f(const RealType &x) const
 
     /// For α = 1, small w would need the stable law far in its tails, where it is slow (#1);
     /// integrate in z = exp(-w) instead
-    return math::integral([this, x0] (double z)
+    return math::integrate([this, x0] (double z)
     {
         if (z <= 0 || z >= 1)
             return 0.0;
@@ -542,7 +542,7 @@ double GeneralGeometricStableDistribution<RealType>::F(const RealType &x) const
     }
 
     /// For α = 1, integrate in t = z / (1 - z) instead (see f)
-    return math::integral([this, x0] (double z)
+    return math::integrate([this, x0] (double z)
     {
         if (z <= 0)
             return (x0 == 0.0) ? Z.F(-mu / gamma) : ((x0 < 0.0) ? 0.0 : 1.0);

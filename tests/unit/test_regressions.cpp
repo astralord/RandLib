@@ -309,3 +309,23 @@ TEST_CASE("B32: Poisson and binomial probabilities do not depend on the accuracy
     CHECK_THAT(BinomialRand<int>(1000, 0.5).P(480), WithinRel(0.01134098237118772746599741, 1e-14));
     CHECK_THAT(BinomialRand<int>(100, 0.02).P(7), WithinRel(0.003130114101451260277632229, 1e-14));
 }
+
+TEST_CASE("Cantor quantiles are exact", "[regression]")
+{
+    /// the inverse of the Cantor function maps the binary digits of p to ternary digits 0 and 2
+    auto exact = [] (double p) {
+        double x = 0, power = 1;
+        for (int k = 0; k < 60; ++k) {
+            p *= 2;
+            power /= 3;
+            if (p >= 1) {
+                x += 2 * power;
+                p -= 1;
+            }
+        }
+        return x;
+    };
+    CantorRand X;
+    for (double p : {1e-6, 0.001, 0.3, 0.7})
+        CHECK_THAT(X.Quantile(p), WithinRel(exact(p), 1e-12));
+}

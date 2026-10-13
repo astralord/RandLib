@@ -27,6 +27,7 @@ add_executable(randlib_unit_tests
     unit/test_engines.cpp
     unit/test_golden.cpp
     unit/test_mode_median.cpp
+    unit/test_numerics.cpp
     unit/test_parameters.cpp
     unit/test_reference.cpp
     unit/test_regressions.cpp

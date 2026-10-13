@@ -167,7 +167,7 @@ double PlanckRand<RealType>::F(const RealType &x) const
         return 0.0;
 
     if (a >= 1) {
-        return math::integral([this] (double t)
+        return math::integrate([this] (double t)
         {
             return f(t);
         },
@@ -177,7 +177,7 @@ double PlanckRand<RealType>::F(const RealType &x) const
     /// split F(x) by two integrals
     double aux = pdfCoef + a * std::log(x);
     double integral1 = std::exp(aux) / (b * a);
-    double integral2 = math::integral([this] (double t)
+    double integral2 = math::integrate([this] (double t)
     {
         return h(t);
     },
@@ -297,7 +297,7 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
     /// numerically leveled pdf and add known solution for level.
     /// Second one from 1 to infinity, for which we use
     /// simple expected value for the rest of the function
-    double re1 = math::integral([this, t] (double x)
+    double re1 = math::integrate([this, t] (double x)
     {
         return std::cos(t * x) * h(x);
     },
@@ -309,7 +309,7 @@ std::complex<double> PlanckRand<RealType>::CFImpl(double t) const
     },
     1.0, INFINITY);
 
-    double re3 = t * math::integral([this, t] (double x)
+    double re3 = t * math::integrate([this, t] (double x)
     {
         if (x <= 0.0)
             return 0.0;

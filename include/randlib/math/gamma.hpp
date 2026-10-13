@@ -223,7 +223,9 @@ double qgamma(double a, double x);
 
 #include <randlib/math/functions.hpp>
 #include <randlib/math/beta.hpp>
-#include <randlib/math/numeric.hpp>
+#include <randlib/math/quadrature.hpp>
+#include <randlib/math/roots.hpp>
+#include <randlib/math/optimize.hpp>
 #include <randlib/math/special_functions.hpp>
 
 namespace randlib

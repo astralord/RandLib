@@ -869,7 +869,7 @@ double StableDistribution<RealType>::integrateAroundRoot(const std::function<dou
     for (double point : points) {
         if (point <= left || point > b)
             continue;
-        sum += math::integral(integrand, left, point, 1e-11, 20);
+        sum += math::integrate(integrand, left, point, 1e-11, 262144);
         left = point;
     }
     return sum;

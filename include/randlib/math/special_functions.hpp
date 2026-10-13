@@ -64,7 +64,9 @@ long double riemannZeta(double s);
 #include <randlib/math/beta.hpp>
 #include <randlib/math/functions.hpp>
 #include <randlib/math/gamma.hpp>
-#include <randlib/math/numeric.hpp>
+#include <randlib/math/quadrature.hpp>
+#include <randlib/math/roots.hpp>
+#include <randlib/math/optimize.hpp>
 
 namespace randlib
 {

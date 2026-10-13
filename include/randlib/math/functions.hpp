@@ -199,7 +199,9 @@ double MarcumQ(double mu, double x, double y);
 #include <randlib/math/gamma.hpp>
 #include <randlib/math/special_functions.hpp>
 #include <randlib/math/beta.hpp>
-#include <randlib/math/numeric.hpp>
+#include <randlib/math/quadrature.hpp>
+#include <randlib/math/roots.hpp>
+#include <randlib/math/optimize.hpp>
 
 namespace randlib
 {
@@ -650,7 +652,7 @@ inline double MarcumPForMuSmallerThanOne(double mu, double x, double y, double l
     I = std::exp(I) / mu;
 
     double mum1 = mu - 1.0;
-    I += math::integral([x, log2x, mum1, aux] (double t)
+    I += math::integrate([x, log2x, mum1, aux] (double t)
     {
         if (t <= 0)
             return 0.0;
@@ -697,7 +699,7 @@ inline double MarcumQIntergralRepresentation(double mu, double x, double y, doub
     double s0 = 0.5 * (1.0 + sqrt1pXiSq) / yPrime;
     double phi = x / s0 + y * s0 - std::log(s0) * mu;
     std::function<double (double)> integrandPtr = std::bind(&MarcumQIntegrand, std::placeholders::_1, xi, sqrt1pXiSq, mu, yPrime);
-    double integral = math::integral(integrandPtr, -randlib::consts::pi, randlib::consts::pi);
+    double integral = math::integrate(integrandPtr, -randlib::consts::pi, randlib::consts::pi);
     return 0.5 * std::exp(-x - y + phi) / randlib::consts::pi * integral;
 }
 
@@ -728,7 +730,7 @@ inline double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY,
     // TODO: implement the rest techniques
 
     double mum1 = mu - 1;
-    return math::integral([mum1, logX, x](double t) {
+    return math::integrate([mum1, logX, x](double t) {
         if (t < 0.0)
             return 0.0;
         if (t == 0.0)

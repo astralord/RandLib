@@ -48,7 +48,9 @@ double ibeta(double x, double a, double b);
 
 #include <randlib/math/functions.hpp>
 #include <randlib/math/gamma.hpp>
-#include <randlib/math/numeric.hpp>
+#include <randlib/math/quadrature.hpp>
+#include <randlib/math/roots.hpp>
+#include <randlib/math/optimize.hpp>
 #include <randlib/math/special_functions.hpp>
 
 namespace randlib
