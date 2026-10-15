@@ -44,7 +44,8 @@ coherence and sampling statistics. Every fix below has a regression test in
 - Builds without warnings on GCC 11–14, Clang 15–18, AppleClang and MSVC 2022 (#18); MSVC's
   narrowing-conversion warnings, which GCC and Clang do not emit, are disabled.
   Ziggurat tables and a few constants no longer use `constexpr` initializers that call
-  non-`constexpr` math functions.
+  non-`constexpr` math functions. Test constants also avoid names that can trigger MSVC's
+  template-instantiation shadow warnings.
 - The library no longer requires the optional C++17 special math functions, which libc++
   does not provide: Bessel I and K, beta and Riemann zeta have portable implementations,
   used automatically when the standard library lacks them
