@@ -137,8 +137,8 @@ private:
 
         friend constexpr UInt128 operator+(UInt128 a, UInt128 b) noexcept
         {
-            std::uint64_t lo = a.lo + b.lo;
-            return {a.hi + b.hi + (lo < a.lo ? 1 : 0), lo};
+            std::uint64_t lowSum = a.lo + b.lo;
+            return {a.hi + b.hi + (lowSum < a.lo ? 1 : 0), lowSum};
         }
 
         friend constexpr UInt128 operator*(UInt128 a, UInt128 b) noexcept
@@ -147,10 +147,10 @@ private:
             std::uint64_t a0 = a.lo & 0xFFFFFFFFULL, a1 = a.lo >> 32, b0 = b.lo & 0xFFFFFFFFULL, b1 = b.lo >> 32;
             std::uint64_t p00 = a0 * b0, p01 = a0 * b1, p10 = a1 * b0, p11 = a1 * b1;
             std::uint64_t middle = (p00 >> 32) + (p01 & 0xFFFFFFFFULL) + (p10 & 0xFFFFFFFFULL);
-            std::uint64_t lo = (middle << 32) | (p00 & 0xFFFFFFFFULL);
-            std::uint64_t hi = p11 + (p01 >> 32) + (p10 >> 32) + (middle >> 32);
-            hi += a.hi * b.lo + a.lo * b.hi;
-            return {hi, lo};
+            std::uint64_t lowProduct = (middle << 32) | (p00 & 0xFFFFFFFFULL);
+            std::uint64_t highProduct = p11 + (p01 >> 32) + (p10 >> 32) + (middle >> 32);
+            highProduct += a.hi * b.lo + a.lo * b.hi;
+            return {highProduct, lowProduct};
         }
     };
 

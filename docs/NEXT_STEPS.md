@@ -96,6 +96,9 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 
 ### 3.2 Phase 2 remainder (branch `2.x`)
 
+- **CI portability**: local commits after `origin/2.x` fix the Clang/AppleClang `-Wshadow` errors in
+  `Pcg64`, discarded `[[nodiscard]]` results in the coherence test, MSVC's empty variadic macro and
+  secure-CRT failures, and the coverage parser error. Check these jobs after the next maintainer push.
 - **2.5 Numerical building blocks**: done except "all math functions are templates on `Real`". The new
   modules (`math/quadrature.hpp`, `math/roots.hpp`, `math/optimize.hpp`) are templates; the special
   functions (`math/functions.hpp`, `gamma.hpp`, `beta.hpp`, `special_functions.hpp`) are still `double`.

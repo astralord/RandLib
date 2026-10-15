@@ -104,8 +104,8 @@ TEST_CASE("Continuous distributions are internally coherent", "[coherence]")
         bool expensive = false;
         try {
             auto start = std::chrono::steady_clock::now();
-            d->F(xs.front());
-            d->f(xs.front());
+            static_cast<void>(d->F(xs.front()));
+            static_cast<void>(d->f(xs.front()));
             expensive = std::chrono::steady_clock::now() - start > std::chrono::milliseconds(1);
         } catch (const randlib::not_implemented &e) {
             out.push_back(std::string("SKIPPED: ") + e.what());
