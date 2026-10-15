@@ -3,8 +3,10 @@
 
 #include <randlib/randlib.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
+#include <variant>
 #include <vector>
 
 using namespace randlib;
@@ -301,4 +303,136 @@ TEST_CASE("Unified fitting searches integer-valued Tier 1 parameters", "[fit]")
     auto fixedErlang = fit<ErlangRand<double>>(erlangSample, options);
     CHECK(fixedErlang.converged);
     CHECK(fixedErlang.distribution.GetShape() == 4);
+}
+
+TEST_CASE("Conjugate Bayesian fitting returns posterior distributions", "[fit][bayes]")
+{
+    const std::vector<double> normalSample = {1, 2, 3};
+    const NormalInverseGammaRand<double> normalPrior(0, 1, 2, 3);
+    auto normalPosterior = fit_bayes(normalSample, normalPrior);
+    CHECK_THAT(normalPosterior.GetLocation(), WithinAbs(1.5, 1e-14));
+    CHECK_THAT(normalPosterior.GetPrecision(), WithinAbs(4.0, 1e-14));
+    CHECK_THAT(normalPosterior.GetShape(), WithinAbs(3.5, 1e-14));
+    CHECK_THAT(normalPosterior.GetRate(), WithinAbs(5.5, 1e-14));
+
+    auto normalLocationPosterior = fit_bayes<NormalRand<double>>(normalSample, NormalRand<double>(0, 1), 2.0);
+    CHECK_THAT(normalLocationPosterior.GetLocation(), WithinAbs(1.2, 1e-14));
+    CHECK_THAT(static_cast<double>(normalLocationPosterior.Variance()), WithinAbs(0.4, 1e-14));
+
+    auto normalVariancePosterior = fit_bayes<NormalRand<double>>(normalSample, InverseGammaRand<double>(2, 3), 2.0);
+    CHECK_THAT(normalVariancePosterior.GetShape(), WithinAbs(3.5, 1e-14));
+    CHECK_THAT(normalVariancePosterior.GetRate(), WithinAbs(4.0, 1e-14));
+
+    const std::vector<double> logNormalSample = {std::exp(1.0), std::exp(2.0), std::exp(3.0)};
+    auto logNormalPosterior = fit_bayes<LogNormalRand<double>>(logNormalSample, normalPrior);
+    CHECK_THAT(logNormalPosterior.GetLocation(), WithinAbs(normalPosterior.GetLocation(), 1e-14));
+    CHECK_THAT(logNormalPosterior.GetPrecision(), WithinAbs(normalPosterior.GetPrecision(), 1e-14));
+    CHECK_THAT(logNormalPosterior.GetShape(), WithinAbs(normalPosterior.GetShape(), 1e-14));
+    CHECK_THAT(logNormalPosterior.GetRate(), WithinAbs(normalPosterior.GetRate(), 1e-14));
+
+    auto logNormalLocationPosterior = fit_bayes<LogNormalRand<double>>(logNormalSample, NormalRand<double>(0, 1), 2.0);
+    CHECK_THAT(logNormalLocationPosterior.GetLocation(), WithinAbs(1.2, 1e-14));
+    CHECK_THAT(static_cast<double>(logNormalLocationPosterior.Variance()), WithinAbs(0.4, 1e-14));
+
+    auto logNormalVariancePosterior =
+        fit_bayes<LogNormalRand<double>>(logNormalSample, InverseGammaRand<double>(2, 3), 2.0);
+    CHECK_THAT(logNormalVariancePosterior.GetShape(), WithinAbs(3.5, 1e-14));
+    CHECK_THAT(logNormalVariancePosterior.GetRate(), WithinAbs(4.0, 1e-14));
+
+    const GammaRand<double> gammaPrior(2, 3);
+    auto exponentialPosterior = fit_bayes(std::vector<double>{0.5, 1.0, 1.5}, gammaPrior);
+    CHECK_THAT(exponentialPosterior.GetShape(), WithinAbs(5.0, 1e-14));
+    CHECK_THAT(exponentialPosterior.GetRate(), WithinAbs(6.0, 1e-14));
+
+    auto poissonPosterior = fit_bayes(std::vector<int>{1, 2, 3}, gammaPrior);
+    CHECK_THAT(poissonPosterior.GetShape(), WithinAbs(8.0, 1e-14));
+    CHECK_THAT(poissonPosterior.GetRate(), WithinAbs(6.0, 1e-14));
+
+    const BetaRand<double> betaPrior(1, 1);
+    auto binomialPosterior = fit_bayes<BinomialRand<int>>(std::vector<int>{1, 2, 3}, betaPrior, 5);
+    CHECK_THAT(binomialPosterior.GetAlpha(), WithinAbs(7.0, 1e-14));
+    CHECK_THAT(binomialPosterior.GetBeta(), WithinAbs(10.0, 1e-14));
+
+    auto negativeBinomialPosterior =
+        fit_bayes<NegativeBinomialRand<int, double>>(std::vector<int>{1, 2, 3}, betaPrior, 2.0);
+    CHECK_THAT(negativeBinomialPosterior.GetAlpha(), WithinAbs(7.0, 1e-14));
+    CHECK_THAT(negativeBinomialPosterior.GetBeta(), WithinAbs(7.0, 1e-14));
+
+    const InverseGammaRand<double> inverseGammaPrior(2, 3);
+    auto weibullPosterior = fit_bayes<WeibullRand<double>>(std::vector<double>{1, 2}, inverseGammaPrior, 2.0);
+    CHECK_THAT(weibullPosterior.GetShape(), WithinAbs(4.0, 1e-14));
+    CHECK_THAT(weibullPosterior.GetRate(), WithinAbs(8.0, 1e-14));
+
+    auto paretoPosterior = fit_bayes<ParetoRand<double>>(std::vector<double>{1, 2, 4}, GammaRand<double>(2, 3), 1.0);
+    CHECK_THAT(paretoPosterior.GetShape(), WithinAbs(5.0, 1e-14));
+    CHECK_THAT(paretoPosterior.GetRate(), WithinAbs(3.0 + std::log(8.0), 1e-14));
+
+    auto uniformPosterior =
+        fit_bayes<UniformRand<double>>(std::vector<double>{0.2, 0.6, 0.8}, ParetoRand<double>(2, 0.5), 0.0);
+    CHECK_THAT(uniformPosterior.GetShape(), WithinAbs(5.0, 1e-14));
+    CHECK_THAT(uniformPosterior.GetScale(), WithinAbs(0.8, 1e-14));
+
+    CHECK_THROWS_AS(fit_bayes<NormalRand<double>>(std::vector<double>{}, normalPrior), fit_error);
+}
+
+TEST_CASE("Method-of-moments fitting has a named entry point", "[fit]")
+{
+    const std::vector<double> sample = {1, 2, 3, 4};
+    auto result = fit_moments<NormalRand<double>>(sample);
+    CHECK(result.method == Method::MethodOfMoments);
+    CHECK_THAT(result.distribution.GetLocation(), WithinAbs(2.5, 1e-14));
+    CHECK_THAT(static_cast<double>(result.distribution.Variance()), WithinAbs(1.25, 1e-14));
+}
+
+TEST_CASE("Model selection chooses the smallest information criterion", "[fit]")
+{
+    constexpr int sampleSize = 400;
+    std::vector<double> sample;
+    sample.reserve(sampleSize);
+    const ExponentialRand<double> reference(2.0);
+    for (int i = 0; i < sampleSize; ++i)
+        sample.push_back(reference.Quantile((i + 0.5) / sampleSize));
+
+    auto result = fit_best<ExponentialRand<double>, GammaRand<double>, LogNormalRand<double>>(sample, Criterion::AIC);
+    CHECK(result.index == 0);
+    CHECK(result.criterion == Criterion::AIC);
+    CHECK(std::holds_alternative<FitResult<ExponentialRand<double>>>(result.fit));
+    CHECK_THAT(result.value, WithinAbs(std::get<0>(result.fit).aic, 0));
+}
+
+TEST_CASE("Goodness-of-fit reports continuous EDF statistics", "[fit][gof]")
+{
+    constexpr int sampleSize = 100;
+    std::vector<double> sample;
+    sample.reserve(sampleSize);
+    const UniformRand<double> distribution;
+    for (int i = 0; i < sampleSize; ++i)
+        sample.push_back((i + 0.5) / sampleSize);
+
+    auto result = goodness_of_fit(distribution, sample);
+    CHECK_THAT(result.kolmogorov_smirnov, WithinAbs(0.005, 1e-14));
+    CHECK(result.kolmogorov_smirnov_p_value > 0.99);
+    CHECK(result.anderson_darling >= 0);
+    CHECK(result.anderson_darling_p_value > 0.99);
+    CHECK_THAT(result.cramer_von_mises, WithinAbs(1.0 / 1200.0, 1e-14));
+    CHECK(result.cramer_von_mises_p_value > 0.99);
+
+    const std::vector<double> referenceSample = {0.05, 0.1, 0.2, 0.35, 0.8, 0.9};
+    auto reference = goodness_of_fit(distribution, referenceSample);
+    CHECK_THAT(reference.cramer_von_mises, WithinAbs(0.1416666666666667, 1e-14));
+    CHECK_THAT(reference.cramer_von_mises_p_value, WithinAbs(0.42549025501331084, 1e-10));
+}
+
+TEST_CASE("Goodness-of-fit reports a discrete chi-squared test", "[fit][gof]")
+{
+    std::vector<int> sample(100);
+    std::fill(sample.begin() + 50, sample.end(), 1);
+    auto result = goodness_of_fit(BernoulliRand(0.5), sample);
+
+    CHECK_THAT(result.chi_squared, WithinAbs(0, 1e-14));
+    CHECK_THAT(result.p_value, WithinAbs(1, 1e-14));
+    CHECK(result.degrees_of_freedom == 1);
+    CHECK(result.bins == 2);
+
+    CHECK_THROWS_AS(goodness_of_fit(BernoulliRand(0.5), std::vector<int>{0, 1}), std::invalid_argument);
 }

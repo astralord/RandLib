@@ -15,6 +15,12 @@ All notable changes to RandLib are documented here. The project follows
   logistic MLEs, plus MLEs for Student t, Cauchy, Gumbel, Fréchet, inverse-gamma,
   inverse-Gaussian and noncentral chi-squared laws. Bernoulli and geometric fits are closed form;
   chi-squared, Erlang and Fisher F use bounded integer likelihood searches.
+- Added named method-of-moments fitting, conjugate Bayesian posterior updates for the existing
+  normal, log-normal, exponential, Poisson, binomial, negative-binomial, Weibull, Pareto and uniform
+  models, and AIC/BIC model selection across candidate distributions.
+- Added continuous goodness-of-fit results for Kolmogorov--Smirnov, Anderson--Darling and
+  Cramer--von Mises statistics with p-values, plus a discrete chi-squared test that combines sparse
+  bins and accounts for fitted parameters.
 
 ### Build and tooling
 

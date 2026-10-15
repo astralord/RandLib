@@ -67,7 +67,11 @@
 #include <randlib/bivariate/normal_inverse_gamma.hpp>
 #include <randlib/bivariate/bivariate_normal.hpp>
 #include <randlib/bivariate/trinomial.hpp>
+#include <randlib/fit/bayes.hpp>
+#include <randlib/fit/gof.hpp>
 #include <randlib/fit/mle.hpp>
+#include <randlib/fit/moments.hpp>
+#include <randlib/fit/select.hpp>
 
 #ifdef RANDLIB_PRECOMPILED
 #include <randlib/precompiled.hpp>

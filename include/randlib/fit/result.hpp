@@ -13,6 +13,7 @@ enum class Method
     MLE,
     MethodOfMoments,
     UMVU,
+    Bayes,
     Quantile
 };
 

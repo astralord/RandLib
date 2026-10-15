@@ -139,8 +139,13 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   `FitResult`, `FitOptions`, fixed-parameter constrained MLE, AIC/BIC and observed-information
   covariance are covered. The free API covers 31 distribution types, including fixed structural
   parameters, generic multi-parameter MLEs and bounded searches for integer-valued parameters.
-  Stable-family fitting remains with Phase 5; continue with Bayes, model selection and
-  goodness-of-fit.
+  The free API now also has a named method-of-moments entry point, conjugate Bayesian updates,
+  AIC/BIC model selection, and continuous/discrete goodness-of-fit tests. Conditional Bayesian
+  overloads take the model's fixed parameter as their third argument (variance for normal,
+  variance of the logarithms for log-normal, trial count for binomial, shape/count for
+  negative-binomial, shape for Weibull, scale for Pareto, and minimum for uniform). Stable-family
+  fitting remains with Phase 5; next add recovery grids, SciPy comparison data and deprecated
+  member wrappers.
 - Fitting today: ~20 member functions per distribution (`Fit`, `FitScale`, `FitShapeBayes`, …) that
   mutate the object and throw `randlib::fit_error` (with `FitErrorCode`). Keep them as deprecated
   wrappers.
