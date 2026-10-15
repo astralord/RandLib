@@ -21,6 +21,8 @@ namespace randlib
  */
 class RademacherRand final : public DiscreteDistribution<int>
 {
+    int variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     RademacherRand();
     [[nodiscard]] std::string Name() const override;
@@ -34,10 +36,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] int operator()(G &g) const;
 
-protected:
-    int variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] int Median() const override;

@@ -19,6 +19,8 @@ template <typename RealType>
 class BivariateNormalRand final
     : public ContinuousBivariateDistribution<NormalRand<RealType>, NormalRand<RealType>, RealType>
 {
+    Pair<RealType> variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double mu1 = 0; ///< first location μ1
     double mu2 = 0; ///< second location μ2
     double sigma1 = 1; ///< first scale σ1
@@ -46,10 +48,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] Pair<RealType> operator()(G &g) const;
 
-protected:
-    Pair<RealType> variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     long double Correlation() const override;
 
     [[nodiscard]] Pair<RealType> Mode() const override;

@@ -17,6 +17,8 @@ namespace randlib
 template <typename RealType>
 class VonMisesRand final : public CircularDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double k = 1; ///< concentration
     double logI0k = 1; ///< log(I_0(k)), where I_0 stands for modified Bessel function of the first kind of order 0
     double s = randlib::consts::pi / randlib::consts::e; ///< generator coefficient
@@ -45,10 +47,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double CircularMean() const override;
     [[nodiscard]] long double CircularVariance() const override;
     [[nodiscard]] RealType Median() const override;

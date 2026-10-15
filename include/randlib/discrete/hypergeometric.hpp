@@ -17,6 +17,8 @@ namespace randlib
 template <typename IntType>
 class HyperGeometricRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     IntType N = 1; ///< population size
     IntType K = 1; /// number of possible successes
     IntType n = 1; /// number of draws
@@ -41,10 +43,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

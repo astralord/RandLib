@@ -17,6 +17,9 @@ namespace randlib
 template <typename RealType>
 class GeneralGeometricStableDistribution : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
     StableRand<RealType> Z{};
 
 protected:
@@ -81,8 +84,6 @@ private:
     double pdfByLevy(double x) const;
     double pdfByCauchy(double x) const;
 
-public:
-private:
     /**
      * @fn conditionalShift
      * @param w value of the exponential mixing variable
@@ -124,14 +125,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

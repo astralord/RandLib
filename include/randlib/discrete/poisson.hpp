@@ -22,6 +22,9 @@ namespace randlib
 template <typename IntType>
 class PoissonRand final : public DiscreteDistribution<IntType>, public ExponentialFamily<IntType, double>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
     double Fmu = 2 * randlib::consts::inv_e; ///< P(X < [λ])
@@ -73,17 +76,9 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(double rate, G &g);
 
-protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Median() const override;

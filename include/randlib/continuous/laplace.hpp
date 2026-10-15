@@ -18,6 +18,9 @@ namespace randlib
 template <typename RealType>
 class AsymmetricLaplaceDistribution : public GeneralGeometricStableDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
 public:
     AsymmetricLaplaceDistribution(double shift = 0, double scale = 1, double asymmetry = 1);
 
@@ -37,14 +40,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-
-public:
 private:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p) const override;

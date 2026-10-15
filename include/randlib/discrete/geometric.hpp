@@ -22,11 +22,13 @@ namespace randlib
 template <typename IntType>
 class GeometricRand final : public PascalRand<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
 public:
     explicit GeometricRand(double probability = 0.5) : PascalRand<IntType>(1, probability) {}
     [[nodiscard]] std::string Name() const override;
 
-public:
     void SetProbability(double probability);
 
     [[nodiscard]] double P(const IntType &k) const override;
@@ -36,17 +38,9 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(double probability, G &g);
 
-protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-
-public:
     [[nodiscard]] IntType Median() const override;
 
     [[nodiscard]] long double Entropy() const;

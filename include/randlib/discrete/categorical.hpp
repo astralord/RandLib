@@ -23,6 +23,8 @@ namespace randlib
 template <typename IntType>
 class CategoricalRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     std::vector<double> prob{1.0}; ///< vector of probabilities
     IntType K = 1; ///< number of possible outcomes
 
@@ -42,10 +44,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

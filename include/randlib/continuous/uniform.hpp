@@ -28,6 +28,8 @@ namespace randlib
 template <typename RealType>
 class UniformRand final : public BetaDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     UniformRand(double minValue = 0, double maxValue = 1);
     [[nodiscard]] std::string Name() const override;
@@ -45,10 +47,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     /**
      * @fn StandardVariate
      * @param g

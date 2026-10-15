@@ -20,6 +20,8 @@ template <typename RealType>
 class NormalInverseGammaRand final
     : public ContinuousBivariateDistribution<StudentTRand<RealType>, InverseGammaRand<RealType>, RealType>
 {
+    Pair<RealType> variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double mu = 0; ///< location μ
     double lambda = 1; ///< precision λ
     double alpha = 1; ///< shape α
@@ -42,10 +44,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] Pair<RealType> operator()(G &g) const;
 
-protected:
-    Pair<RealType> variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     long double Correlation() const override;
 
     [[nodiscard]] Pair<RealType> Mode() const override;

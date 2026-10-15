@@ -21,6 +21,8 @@ namespace randlib
 template <typename IntType>
 class TrinomialRand final : public DiscreteBivariateDistribution<BinomialRand<IntType>, BinomialRand<IntType>, IntType>
 {
+    Pair<IntType> variate(detail::EngineRef g) const override { return (*this)(g); }
+
     int n = 1; ///< number of trials
     double log1mProb = -randlib::consts::ln3; ///< log(1 - p_1 - p_2)
     double p1_1mp2 = 0.5; ///< p_1 / (1 - p_2)
@@ -40,10 +42,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] Pair<IntType> operator()(G &g) const;
 
-protected:
-    Pair<IntType> variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     long double Correlation() const override;
 
     [[nodiscard]] Pair<IntType> Mode() const override;

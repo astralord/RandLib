@@ -23,6 +23,9 @@ namespace randlib
 template <typename IntType>
 class BetaBinomialRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
     IntType n = 1; ///< number of experiments
     double pmfCoef = 0; ///< log(n!) - log(Γ(α + β + n)) - log(B(α, β))
     BetaRand<double> B{};
@@ -53,14 +56,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

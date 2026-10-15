@@ -26,6 +26,9 @@ namespace randlib
 template <typename IntType, typename T>
 class NegativeBinomialDistribution : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
 protected:
     double p = 0.5; ///< probability of failure
     double q = 0.5; ///< probability of success
@@ -100,14 +103,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

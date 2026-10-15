@@ -19,6 +19,8 @@ namespace randlib
 template <typename IntType>
 class ZetaRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double s = 2; ///< exponent
     double sm1 = 1; ///< s - 1
     double zetaS = randlib::consts::pi_sq / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
@@ -42,10 +44,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

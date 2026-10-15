@@ -47,6 +47,9 @@ inline double stableTailQuantile(double p, bool upperTail, double alpha, double 
 template <typename RealType>
 class StableDistribution : virtual public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
 protected:
     double alpha = 2; ///< characteristic exponent α
     double beta = 0; ///< skewness β
@@ -87,8 +90,6 @@ protected:
 public:
     virtual ~StableDistribution() {}
 
-protected:
-public:
     [[nodiscard]] Support SupportType() const override;
     [[nodiscard]] RealType MinValue() const override;
     [[nodiscard]] RealType MaxValue() const override;
@@ -440,15 +441,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-
-public:
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

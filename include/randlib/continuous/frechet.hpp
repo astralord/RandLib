@@ -17,6 +17,8 @@ namespace randlib
 template <typename RealType>
 class FrechetRand final : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double alpha = 1; ///< shape α
     double s = 1; ///< scale
     double m = 0; ///< location
@@ -43,10 +45,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

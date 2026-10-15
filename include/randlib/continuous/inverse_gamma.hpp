@@ -21,6 +21,9 @@ namespace randlib
 template <typename RealType>
 class InverseGammaRand final : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
     double alpha = 1; ///< shape α
     double beta = 1; ///< rate β
     double pdfCoef = 0; ///< coefficient for faster pdf calculation
@@ -53,14 +56,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

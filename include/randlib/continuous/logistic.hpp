@@ -22,6 +22,8 @@ namespace randlib
 template <typename RealType>
 class LogisticRand final : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double mu = 0; ///< location μ
     double s = 1; ///< scale s
     double logS = 0; ///< log(s)
@@ -46,10 +48,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

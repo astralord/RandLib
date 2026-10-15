@@ -24,6 +24,8 @@ namespace randlib
 template <typename RealType>
 class CauchyRand final : public StableDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     CauchyRand(double location = 0, double scale = 1);
     [[nodiscard]] std::string Name() const override;
@@ -31,17 +33,12 @@ public:
     [[nodiscard]] RealType MinValue() const override { return -INFINITY; }
     [[nodiscard]] RealType MaxValue() const override { return INFINITY; }
 
-public:
     [[nodiscard]] double f(const RealType &x) const override;
     [[nodiscard]] double F(const RealType &x) const override;
     [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
 

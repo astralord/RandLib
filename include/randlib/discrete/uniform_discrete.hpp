@@ -21,6 +21,8 @@ namespace randlib
 template <typename IntType>
 class UniformDiscreteRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     size_t n = 1; ///< number of possible outcomes
     IntType a = 0; ///< min bound
     IntType b = 0; ///< max bound
@@ -43,10 +45,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType StandardVariate(IntType minValue, IntType maxValue, G &g);
 

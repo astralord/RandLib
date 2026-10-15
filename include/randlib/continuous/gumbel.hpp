@@ -20,6 +20,8 @@ namespace randlib
 template <typename RealType>
 class GumbelRand final : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double mu = 0; ///< location μ
     double beta = 1; ///< scale β
     double logBeta = 0; ///< log(β)
@@ -43,10 +45,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
 

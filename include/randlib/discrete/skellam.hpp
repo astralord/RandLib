@@ -20,6 +20,9 @@ namespace randlib
 template <typename IntType>
 class SkellamRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
     double mu1 = 1; ///< first rate μ1
     double mu2 = 1; ///< second rate μ2
     double logMu1 = 0; ///< log(μ1)
@@ -47,14 +50,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Median() const override;

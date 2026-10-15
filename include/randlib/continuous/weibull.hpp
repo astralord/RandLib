@@ -19,6 +19,8 @@ namespace randlib
 template <typename RealType>
 class WeibullRand final : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double lambda = 1; ///< scale λ
     double k = 1; ///< shape k
     double kInv = 1; /// 1 /k
@@ -43,10 +45,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

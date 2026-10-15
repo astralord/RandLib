@@ -23,11 +23,13 @@ namespace randlib
  */
 class BernoulliRand final : public BinomialDistribution<int>
 {
+    int variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<int> outputData) const override;
+
 public:
     explicit BernoulliRand(double probability = 0.5);
     [[nodiscard]] std::string Name() const override;
 
-public:
     void SetProbability(double probability);
 
     [[nodiscard]] double P(const int &k) const override;
@@ -37,19 +39,11 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] int operator()(G &g) const;
 
-protected:
-    int variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static int Variate(double probability, G &g);
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static int StandardVariate(G &g);
 
-protected:
-    void sample(detail::EngineRef g, std::span<int> outputData) const override;
-
-public:
     [[nodiscard]] inline double Entropy();
 };
 

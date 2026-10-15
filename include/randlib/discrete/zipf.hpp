@@ -17,6 +17,8 @@ namespace randlib
 template <typename IntType>
 class ZipfRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double s = 2; ///< exponent
     IntType n = 1; ///< number
     double invHarmonicNumber = 1; /// 1 / H(s, n)
@@ -43,10 +45,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

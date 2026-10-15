@@ -21,6 +21,8 @@ namespace randlib
 template <typename RealType>
 class WignerSemicircleRand final : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     RealType R = 1; ///< radius
     double RSq = 1; ///< R^2
     double logRSq = 0; /// log(R^2)
@@ -39,7 +41,6 @@ public:
     void SetRadius(double radius);
     [[nodiscard]] inline double GetRadius() const noexcept { return R; }
 
-public:
     [[nodiscard]] double f(const RealType &x) const override;
     [[nodiscard]] double logf(const RealType &x) const override;
     [[nodiscard]] double S(const RealType &x) const override;
@@ -47,10 +48,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

@@ -14,6 +14,11 @@ All notable changes to RandLib are documented here. The project follows
 - Added opt-in Google Benchmark sampling comparisons for normal, exponential, gamma and Poisson
   distributions against the standard library, plus stable-law sampling.
 
+### API cleanup
+
+- Kept the type-erased `EngineRef` sampling adapters private and removed the access-specifier churn
+  left by the automated header conversion.
+
 ## [1.2.0]
 
 A stabilization release: no API is removed and the file layout is unchanged, but

@@ -120,8 +120,8 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
     /tmp/randlib-bench/benchmarks/randlib_benchmarks
     ```
 - **Clean-ups left by the automated header conversion** (worth doing with or before 2.6):
-  - access-specifier toggles around each `variate(detail::EngineRef)` override
-    (`protected: … public:` in the middle of public sections);
+  - Done locally: `variate(detail::EngineRef)` and bulk `sample` overrides are private adapters at
+    the start of each class; the redundant access-specifier toggles are removed.
   - helpers that were in anonymous namespaces of the old `.cpp` files now live in `randlib::math`
     (for example `SERIES_MAX_ITER`, `erfinvAux*`, `MarcumP*`); move them to `randlib::math::detail`;
   - `math::areClose`, `MIN_POSITIVE`, `Pair`/`Triplet` aliases and `operator+` on `std::pair` in

@@ -25,6 +25,9 @@ namespace randlib
 template <typename IntType>
 class BinomialDistribution : public DiscreteDistribution<IntType>, public ExponentialFamily<IntType, double>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
 protected:
     double p = 0.5; ///< probability of success
     double q = 0.5; ///< probability of failure
@@ -130,17 +133,9 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(IntType number, double probability, G &g);
 
-protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Median() const override;

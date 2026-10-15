@@ -18,6 +18,8 @@ namespace randlib
  */
 class CantorRand final : public SingularDistribution
 {
+    double variate(detail::EngineRef g) const override { return (*this)(g); }
+
     static constexpr int n = 30;
     /// powers 3^-1, ..., 3^-n
     static constexpr std::array<double, n> table = [] {
@@ -39,10 +41,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] double operator()(G &g) const;
 
-protected:
-    double variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] double Median() const override;

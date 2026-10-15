@@ -17,6 +17,8 @@ namespace randlib
 template <typename RealType>
 class WrappedExponentialRand final : public CircularDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
     double scaledLambda = 2 * randlib::consts::pi; ///< 2πλ
@@ -37,10 +39,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double CircularMean() const override;
     [[nodiscard]] long double CircularVariance() const override;
     [[nodiscard]] RealType Median() const override;

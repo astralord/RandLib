@@ -29,6 +29,9 @@ namespace randlib
 template <typename RealType>
 class BetaDistribution : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
 protected:
     double alpha = 1; ///< first shape α
     double beta = 1; ///< second shape β
@@ -57,8 +60,6 @@ protected:
 public:
     virtual ~BetaDistribution() {}
 
-protected:
-public:
     [[nodiscard]] Support SupportType() const override { return Support::Finite; }
     [[nodiscard]] RealType MinValue() const override { return a; }
     [[nodiscard]] RealType MaxValue() const override { return b; }
@@ -216,14 +217,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     /**
      * @fn GeometricMean

@@ -23,6 +23,8 @@ namespace randlib
  */
 class DegenerateRand final : public ContinuousDistribution<double>
 {
+    double variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double a = 0; ///< value
 
 public:
@@ -41,10 +43,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] double operator()(G &g) const;
 
-protected:
-    double variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] double Median() const override;

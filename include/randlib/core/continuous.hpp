@@ -69,7 +69,6 @@ protected:
     long double ExpectedValue(const std::function<double(RealType)> &funPtr, RealType minPoint,
                               RealType maxPoint) const override;
 
-protected:
     /**
      * @fn searchQuantile
      * Deterministic root search for the quantile: brackets the root, starting from the

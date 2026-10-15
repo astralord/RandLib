@@ -27,6 +27,8 @@ namespace randlib
 template <typename RealType>
 class NormalRand final : public StableDistribution<RealType>, public ExponentialFamily<RealType, DoublePair>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double sigma = 1; ///< scale σ
 
 public:
@@ -57,7 +59,6 @@ public:
     }
     [[nodiscard]] std::string Name() const override;
 
-public:
     void SetScale(double scale);
     void SetVariance(double variance);
     /**
@@ -93,10 +94,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
 

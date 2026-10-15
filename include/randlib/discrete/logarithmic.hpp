@@ -19,6 +19,8 @@ namespace randlib
 template <typename IntType>
 class LogarithmicRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double p = 0.5; ///< parameter of distribution
     double logProb = -randlib::consts::ln2; ///< log(p)
     double log1mProb = -randlib::consts::ln2; ///< log(q)
@@ -50,10 +52,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;

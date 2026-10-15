@@ -21,6 +21,8 @@ namespace randlib
 template <typename IntType>
 class YuleRand final : public DiscreteDistribution<IntType>
 {
+    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double rho = 0; ///< shape ρ
     double lgamma1pRo = 0; /// log(Γ(1 + ρ))
 
@@ -42,10 +44,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
-protected:
-    IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(double shape, G &g);
 

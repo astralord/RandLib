@@ -24,6 +24,9 @@ namespace randlib
 template <typename RealType>
 class NakagamiDistribution : public ContinuousDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
     double mu = 0.5; ///< shape μ
     double omega = 1; ///< spread ω
     GammaRand<RealType> Y{};
@@ -74,14 +77,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
-protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -129,7 +124,6 @@ public:
     explicit ChiRand(int degree);
     [[nodiscard]] std::string Name() const override;
 
-public:
     /**
      * @fn SetDegree
      * set degree k
@@ -159,12 +153,13 @@ public:
 template <typename RealType>
 class MaxwellBoltzmannRand final : public NakagamiDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double sigma = 1; ///< scale σ
 public:
     explicit MaxwellBoltzmannRand(double scale);
     [[nodiscard]] std::string Name() const override;
 
-public:
     /**
      * @fn SetScale
      * set scale σ
@@ -183,10 +178,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Mode() const override;
@@ -207,12 +198,13 @@ public:
 template <typename RealType>
 class RayleighRand final : public NakagamiDistribution<RealType>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
     double sigma = 1; ///< scale σ
 public:
     explicit RayleighRand(double scale = 1);
     [[nodiscard]] std::string Name() const override;
 
-public:
     /**
      * @fn SetScale
      * set scale σ
@@ -231,10 +223,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;

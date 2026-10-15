@@ -26,6 +26,7 @@ namespace randlib
 template <typename RealType>
 class ExponentialRand final : public FreeRateGammaDistribution<RealType>, public ExponentialFamily<RealType, double>
 {
+    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
 
 public:
     explicit ExponentialRand(double rate = 1) : FreeRateGammaDistribution<RealType>(1, rate) {}
@@ -58,10 +59,6 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
-protected:
-    RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-
-public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
 
