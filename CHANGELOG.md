@@ -5,6 +5,12 @@ All notable changes to RandLib are documented here. The project follows
 
 ## [2.0.0-alpha.1] - Unreleased
 
+### Fitting
+
+- Began the unified non-mutating fitting API with `FitResult`, `FitOptions`, likelihood-based
+  AIC/BIC, observed-information covariance and standard errors, and fixed-parameter MLE. Normal and
+  Poisson distributions provide the first closed-form continuous and discrete adapters.
+
 ### Build and tooling
 
 - Added a pinned Clang 18 formatting policy and pre-commit hook, and applied it to the public headers

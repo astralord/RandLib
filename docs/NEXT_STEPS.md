@@ -135,6 +135,11 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 ### 3.3 Phase 3: fitting and features (v2.0-beta)
 
 Follow plan 3.1–3.3. Design notes gathered so far:
+- Landed locally: `math::numericalHessian` and the first `include/randlib/fit/` vertical slice.
+  `FitResult`, `FitOptions`, fixed-parameter constrained MLE, AIC/BIC and observed-information
+  covariance are covered for Normal and Poisson. Extend the `detail::FitModel` adapters across the
+  existing member-fit distributions before relying on the generic optimizer for the remaining Tier 1
+  laws.
 - Fitting today: ~20 member functions per distribution (`Fit`, `FitScale`, `FitShapeBayes`, …) that
   mutate the object and throw `randlib::fit_error` (with `FitErrorCode`). Keep them as deprecated
   wrappers.

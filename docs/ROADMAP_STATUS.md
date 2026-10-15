@@ -43,7 +43,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 3.1 Fitting API | ⏳ | |
+| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical Hessian covariance, and closed-form Normal/Poisson adapters are implemented; distribution coverage, Bayes, model selection and goodness-of-fit remain. |
 | 3.2 Tail estimators and extreme-value distributions | ⏳ | |
 | 3.3 Close #11 | 🚫 | Closing the issue needs the maintainer. |
 

@@ -26,6 +26,7 @@ endif()
 add_executable(randlib_unit_tests
     unit/test_coherence.cpp
     unit/test_engines.cpp
+    unit/test_fit_api.cpp
     unit/test_golden.cpp
     unit/test_mode_median.cpp
     unit/test_numerics.cpp
