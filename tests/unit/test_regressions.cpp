@@ -344,3 +344,11 @@ TEST_CASE("B34: discrete quantiles at an exact probability level", "[regression]
     CHECK(PascalRand<int>(3, 0.5).Quantile(0.5) == 2);
     CHECK(PascalRand<int>(3, 0.5).Median() == 2);
 }
+
+TEST_CASE("B35: zeta probabilities in the far tail terminate", "[regression]")
+{
+    ZetaRand<int> X(3.5);
+    /// mpmath Hurwitz-zeta references at 80 decimal digits
+    CHECK_THAT(X.S(100001), WithinRel(1.122593069926359984040757874880502e-13, 1e-15));
+    CHECK_THAT(X.S(1000000000), WithinRel(1.122635166277711578412826611568585e-23, 1e-15));
+}

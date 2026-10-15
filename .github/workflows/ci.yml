@@ -93,7 +93,7 @@ jobs:
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DRANDLIB_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS=--coverage
           cmake --build build --parallel
       - run: ctest --test-dir build --label-regex unit --output-on-failure --parallel 4
-      - run: gcovr --root . --filter include/ --exclude build/ --gcov-ignore-errors=no_working_dir_found --xml coverage.xml --print-summary
+      - run: gcovr --root . --filter include/ --exclude build/ --gcov-ignore-errors=no_working_dir_found --gcov-ignore-parse-errors=negative_hits.warn_once_per_file --xml coverage.xml --print-summary
       - uses: codecov/codecov-action@v4
         with:
           files: coverage.xml

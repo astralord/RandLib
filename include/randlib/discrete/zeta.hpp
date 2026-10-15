@@ -38,6 +38,7 @@ public:
 
     [[nodiscard]] double logP(const IntType & k) const override;
     [[nodiscard]] double F(const IntType & k) const override;
+    [[nodiscard]] double S(const IntType & k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 protected:
@@ -64,6 +65,29 @@ public:
 
 namespace randlib
 {
+
+namespace detail
+{
+
+inline long double zetaTail(double exponent, long double firstTerm)
+{
+    static constexpr long double B2jOverFact[] = {
+        1.0L / 12, -1.0L / 720, 1.0L / 30240, -1.0L / 1209600, 1.0L / 47900160,
+        -691.0L / 1307674368000.0L, 1.0L / 74724249600.0L, -3617.0L / 10670622842880000.0L,
+        43867.0L / 5109094217170944000.0L, -174611.0L / 802857662698291200000.0L
+    };
+    long double nPow = std::pow(firstTerm, -static_cast<long double>(exponent));
+    long double sum = firstTerm * nPow / (exponent - 1.0L) + 0.5L * nPow;
+    long double rising = exponent, term = nPow / firstTerm;
+    for (int j = 0; j < 10; ++j) {
+        sum += B2jOverFact[j] * rising * term;
+        rising *= (exponent + 2 * j + 1) * (exponent + 2 * j + 2);
+        term /= firstTerm * firstTerm;
+    }
+    return sum;
+}
+
+} // namespace detail
 
 template < typename IntType >
 ZetaRand<IntType>::ZetaRand(double exponent)
@@ -98,7 +122,19 @@ double ZetaRand<IntType>::logP(const IntType & k) const
 template < typename IntType >
 double ZetaRand<IntType>::F(const IntType & k) const
 {
-    return (k < 1) ? 0.0 : math::harmonicNumber(s, k) / zetaS;
+    if (k < 1)
+        return 0.0;
+    return (k <= 100000) ? math::harmonicNumber(s, k) / zetaS : 1.0 - S(k);
+}
+
+template < typename IntType >
+double ZetaRand<IntType>::S(const IntType & k) const
+{
+    if (k < 1)
+        return 1.0;
+    if (k <= 100000)
+        return 1.0 - F(k);
+    return static_cast<double>(detail::zetaTail(s, static_cast<long double>(k) + 1.0L) / zetaS);
 }
 
 template < typename IntType >

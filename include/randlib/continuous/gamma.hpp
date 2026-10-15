@@ -238,7 +238,6 @@ private:
     /// quantile auxiliary functions
     RealType initRootForSmallP(double r) const;
     RealType initRootForLargeP(double logQ) const;
-    RealType initRootForSmallShape(double p) const;
     RealType initRootForLargeShape(double p) const;
     RealType initRootForLargeShape1m(double p) const;
     RealType quantileInitialGuess(double p) const;

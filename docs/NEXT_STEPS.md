@@ -2,7 +2,7 @@
 
 Written so that work can resume with no other context. Read together with
 [MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md) (the plan, revised on 2026-10-11) and
-[ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-13.
+[ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-15.
 
 ## 1. Repository, branches and how changes reach GitHub
 
@@ -85,11 +85,11 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. After the maintainer pushes, check the CI run of `1.x`. The previous run was green on all Linux
-   compilers and sanitizers; the latest commit (e2f31bc) fixes the MSVC warning C4146, the macOS
-   failures (raised cosine CF at st = π, discrete quantiles at exact levels, vanishing kurtosis) and
-   the coverage job. MSVC has only ever compiled one file in CI, so expect further MSVC errors;
-   fix them one CI round at a time (MSVC flags: `/W4 /permissive- /wd4244 /wd4267 /wd4305`).
+1. Push local commit 4efa8bd on `history`, then check the next CI run of `1.x`. It fixes the third
+   run's MSVC C4661 warning (an unused Gamma declaration), gcovr negative-hit parser failure and the
+   macOS statistical timeout caused by summing a Zeta CDF through a very large heavy-tail draw.
+   MSVC has only compiled part of the library in CI so far, so further errors may surface one round
+   at a time (MSVC flags: `/W4 /permissive- /wd4244 /wd4267 /wd4305`).
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
