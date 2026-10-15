@@ -381,6 +381,50 @@ std::vector<Real> numericalGradient(const F &f, const std::vector<Real> &x)
 }
 
 /**
+ * @fn numericalHessian
+ * @param f function of a std::span<const Real>
+ * @param x point
+ * @return symmetric central-difference Hessian with steps proportional to the fourth root of the machine epsilon
+ */
+template <std::floating_point Real = double, class F>
+std::vector<std::vector<Real>> numericalHessian(const F &f, const std::vector<Real> &x)
+{
+    const Real h0 = std::sqrt(std::sqrt(std::numeric_limits<Real>::epsilon()));
+    const std::size_t n = x.size();
+    std::vector<Real> steps(n);
+    for (std::size_t i = 0; i < n; ++i)
+        steps[i] = h0 * std::max<Real>(std::fabs(x[i]), 1);
+
+    std::vector<std::vector<Real>> hessian(n, std::vector<Real>(n));
+    std::vector<Real> y = x;
+    const Real center = f(std::span<const Real>(x));
+    for (std::size_t i = 0; i < n; ++i) {
+        y[i] = x[i] + steps[i];
+        const Real up = f(std::span<const Real>(y));
+        y[i] = x[i] - steps[i];
+        const Real down = f(std::span<const Real>(y));
+        y[i] = x[i];
+        hessian[i][i] = (up - 2 * center + down) / (steps[i] * steps[i]);
+
+        for (std::size_t j = 0; j < i; ++j) {
+            y[i] = x[i] + steps[i];
+            y[j] = x[j] + steps[j];
+            const Real upUp = f(std::span<const Real>(y));
+            y[j] = x[j] - steps[j];
+            const Real upDown = f(std::span<const Real>(y));
+            y[i] = x[i] - steps[i];
+            const Real downDown = f(std::span<const Real>(y));
+            y[j] = x[j] + steps[j];
+            const Real downUp = f(std::span<const Real>(y));
+            y[i] = x[i];
+            y[j] = x[j];
+            hessian[i][j] = hessian[j][i] = (upUp - upDown - downUp + downDown) / (4 * steps[i] * steps[j]);
+        }
+    }
+    return hessian;
+}
+
+/**
  * @fn bfgs
  * Quasi-Newton minimization of Broyden, Fletcher, Goldfarb and Shanno with central-difference
  * gradients and a backtracking line search under the Armijo condition

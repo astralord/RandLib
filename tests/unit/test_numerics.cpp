@@ -125,6 +125,20 @@ TEST_CASE("Multivariate minimization", "[numerics]")
         CHECK_THAT(result.x[i], WithinAbs(static_cast<double>(i), 1e-6));
 }
 
+TEST_CASE("Numerical Hessian recovers quadratic curvature", "[numerics]")
+{
+    auto quadratic = [](std::span<const double> x) {
+        return 2 * x[0] * x[0] + 3 * x[0] * x[1] + 5 * x[1] * x[1] + 7 * x[0] - 11 * x[1];
+    };
+    auto hessian = math::numericalHessian(quadratic, std::vector<double>{1.25, -0.75});
+    REQUIRE(hessian.size() == 2);
+    REQUIRE(hessian[0].size() == 2);
+    CHECK_THAT(hessian[0][0], WithinAbs(4.0, 1e-6));
+    CHECK_THAT(hessian[0][1], WithinAbs(3.0, 1e-6));
+    CHECK_THAT(hessian[1][0], WithinAbs(3.0, 1e-6));
+    CHECK_THAT(hessian[1][1], WithinAbs(10.0, 1e-6));
+}
+
 TEST_CASE("Exponential-family measures support scalar and pair parameters", "[numerics]")
 {
     NormalRand<double> normal(1.5, 2.0);
