@@ -2,19 +2,29 @@
 
 #include <randlib/continuous/beta.hpp>
 #include <randlib/continuous/beta_prime.hpp>
+#include <randlib/continuous/cauchy.hpp>
 #include <randlib/continuous/degenerate.hpp>
 #include <randlib/continuous/exponential.hpp>
+#include <randlib/continuous/fisher_f.hpp>
+#include <randlib/continuous/frechet.hpp>
 #include <randlib/continuous/gamma.hpp>
+#include <randlib/continuous/gumbel.hpp>
+#include <randlib/continuous/inverse_gamma.hpp>
+#include <randlib/continuous/inverse_gaussian.hpp>
 #include <randlib/continuous/laplace.hpp>
 #include <randlib/continuous/levy.hpp>
 #include <randlib/continuous/log_normal.hpp>
 #include <randlib/continuous/logistic.hpp>
 #include <randlib/continuous/nakagami.hpp>
+#include <randlib/continuous/noncentral_chi_squared.hpp>
 #include <randlib/continuous/normal.hpp>
 #include <randlib/continuous/pareto.hpp>
+#include <randlib/continuous/student_t.hpp>
 #include <randlib/continuous/uniform.hpp>
 #include <randlib/continuous/weibull.hpp>
+#include <randlib/discrete/bernoulli.hpp>
 #include <randlib/discrete/binomial.hpp>
+#include <randlib/discrete/geometric.hpp>
 #include <randlib/discrete/negative_binomial.hpp>
 #include <randlib/discrete/poisson.hpp>
 #include <randlib/discrete/uniform_discrete.hpp>
@@ -120,6 +130,52 @@ inline void requireMethod(Method method, std::string_view distribution,
                         std::string(distribution) + " distribution: requested fitting method is not implemented");
 }
 
+template <class Distribution>
+bool requiresOptimization(Method method, const FixedParameterMap &fixed)
+{
+    if constexpr (requires { FitModel<Distribution>::requiresOptimization(method, fixed); })
+        return FitModel<Distribution>::requiresOptimization(method, fixed);
+    return !FitModel<Distribution>::hasClosedForm(method) || !fixed.empty();
+}
+
+template <class T>
+DoublePair sampleMeanAndVariance(std::span<const T> sample)
+{
+    const long double sum = std::accumulate(sample.begin(), sample.end(), 0.0L);
+    const long double mean = sum / sample.size();
+    long double squaredDeviation = 0;
+    for (T value : sample) {
+        const long double difference = value - mean;
+        squaredDeviation += difference * difference;
+    }
+    return {static_cast<double>(mean), static_cast<double>(squaredDeviation / sample.size())};
+}
+
+template <class T>
+double sampleQuantile(std::span<const T> sample, double probability)
+{
+    std::vector<T> sorted(sample.begin(), sample.end());
+    std::ranges::sort(sorted);
+    const double index = probability * (sorted.size() - 1);
+    const std::size_t lower = static_cast<std::size_t>(index);
+    const std::size_t upper = std::min(lower + 1, sorted.size() - 1);
+    const double fraction = index - lower;
+    return static_cast<double>(sorted[lower]) * (1 - fraction) + static_cast<double>(sorted[upper]) * fraction;
+}
+
+inline std::optional<int> fixedPositiveInteger(const FixedParameterMap &fixed, std::string_view name,
+                                               std::string_view distribution)
+{
+    const auto found = fixed.find(name);
+    if (found == fixed.end())
+        return std::nullopt;
+    if (found->second < 1 || found->second > std::numeric_limits<int>::max() ||
+        found->second != std::round(found->second))
+        throw std::invalid_argument("Fixed " + std::string(distribution) + " " + std::string(name) +
+                                    " should be a positive integer");
+    return static_cast<int>(found->second);
+}
+
 inline std::vector<std::vector<double>> inverse(std::vector<std::vector<double>> matrix)
 {
     const std::size_t n = matrix.size();
@@ -170,20 +226,29 @@ double negativeLogLikelihood(const std::vector<double> &parameters,
 }
 
 template <class Distribution>
-void addUncertainty(FitResult<Distribution> &result, std::span<const typename Distribution::value_type> sample)
+void addUncertainty(FitResult<Distribution> &result, std::span<const typename Distribution::value_type> sample,
+                    std::span<const FitParameter> specifications)
 {
+    const std::size_t dimension = result.parameters.size();
+    result.covariance.assign(dimension, std::vector<double>(dimension));
+    result.std_errors.assign(dimension, 0);
     std::vector<std::size_t> freeIndices;
     std::vector<double> freeParameters;
+    const double nan = std::numeric_limits<double>::quiet_NaN();
     for (std::size_t i = 0; i < result.parameters.size(); ++i) {
         if (!result.fixed[i]) {
+            if (specifications[i].integral) {
+                result.std_errors[i] = nan;
+                std::ranges::fill(result.covariance[i], nan);
+                for (auto &row : result.covariance)
+                    row[i] = nan;
+                continue;
+            }
             freeIndices.push_back(i);
             freeParameters.push_back(result.parameters[i]);
         }
     }
 
-    const std::size_t dimension = result.parameters.size();
-    result.covariance.assign(dimension, std::vector<double>(dimension));
-    result.std_errors.assign(dimension, 0);
     if (freeIndices.empty())
         return;
 
@@ -196,7 +261,6 @@ void addUncertainty(FitResult<Distribution> &result, std::span<const typename Di
     auto information = math::numericalHessian(objective, freeParameters);
     auto covariance = inverse(std::move(information));
     if (covariance.empty()) {
-        const double nan = std::numeric_limits<double>::quiet_NaN();
         for (std::size_t index : freeIndices) {
             result.std_errors[index] = nan;
             for (std::size_t other : freeIndices)
@@ -239,6 +303,249 @@ struct FitModel<NormalRand<Real>>
     }
 
     static bool hasClosedForm(Method) { return true; }
+};
+
+template <std::floating_point Real>
+struct FitModel<StudentTRand<Real>>
+{
+    using Distribution = StudentTRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"degree", distribution.GetDegree(), 0.0, std::nullopt},
+                {"location", distribution.GetLocation(), std::nullopt, std::nullopt},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], parameters[2]);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Student-t", {Method::MLE});
+        const double location = sampleQuantile(sample, 0.5);
+        const double scale = (sampleQuantile(sample, 0.75) - sampleQuantile(sample, 0.25)) / 1.35;
+        if (!(scale > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Student-t distribution: sample spread should be positive");
+        return Distribution(5.0, location, scale);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<CauchyRand<Real>>
+{
+    using Distribution = CauchyRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"location", distribution.GetLocation(), std::nullopt, std::nullopt},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0], parameters[1]); }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Cauchy", {Method::MLE});
+        const double scale = 0.5 * (sampleQuantile(sample, 0.75) - sampleQuantile(sample, 0.25));
+        if (!(scale > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Cauchy distribution: sample spread should be positive");
+        return Distribution(sampleQuantile(sample, 0.5), scale);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<GumbelRand<Real>>
+{
+    using Distribution = GumbelRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"location", distribution.GetLocation(), std::nullopt, std::nullopt},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0], parameters[1]); }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Gumbel", {Method::MLE});
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        const double scale = std::sqrt(6 * variance) / std::numbers::pi;
+        if (!(scale > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Gumbel distribution: sample variance should be positive");
+        return Distribution(mean - static_cast<double>(randlib::consts::egamma) * scale, scale);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<FrechetRand<Real>>
+{
+    using Distribution = FrechetRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"shape", distribution.GetShape(), 0.0, std::nullopt},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt},
+                {"location", distribution.GetLocation(), std::nullopt, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], parameters[2]);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Frechet", {Method::MLE});
+        const auto [minimum, maximum] = std::ranges::minmax(sample);
+        const double spread = static_cast<double>(maximum - minimum);
+        if (!(spread > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Frechet distribution: sample spread should be positive");
+        return Distribution(1.0, spread, static_cast<double>(minimum) - 0.1 * spread);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<FisherFRand<Real>>
+{
+    using Distribution = FisherFRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"degree1", static_cast<double>(distribution.GetFirstDegree()), 1.0, std::nullopt, true, false, true},
+                {"degree2", static_cast<double>(distribution.GetSecondDegree()), 1.0, std::nullopt, true, false, true}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(static_cast<int>(parameters[0]), static_cast<int>(parameters[1]));
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
+    {
+        requireMethod(method, "Fisher-F", {Method::MLE});
+        if (std::ranges::any_of(sample, [](Real value) { return !(value > 0); }))
+            throw fit_error(FitErrorCode::WrongSample, "Fisher-F distribution: sample values should be positive");
+        const auto fixedDegree1 = fixedPositiveInteger(fixed, "degree1", "Fisher-F");
+        const auto fixedDegree2 = fixedPositiveInteger(fixed, "degree2", "Fisher-F");
+        const int minimum1 = fixedDegree1.value_or(1);
+        const int maximum1 = fixedDegree1.value_or(80);
+        const int minimum2 = fixedDegree2.value_or(1);
+        const int maximum2 = fixedDegree2.value_or(80);
+        double bestLogLikelihood = -std::numeric_limits<double>::infinity();
+        Distribution best;
+        for (int degree1 = minimum1; degree1 <= maximum1; ++degree1) {
+            for (int degree2 = minimum2; degree2 <= maximum2; ++degree2) {
+                Distribution candidate(degree1, degree2);
+                const double logLikelihood = candidate.LogLikelihoodFunction(sample);
+                if (logLikelihood > bestLogLikelihood) {
+                    bestLogLikelihood = logLikelihood;
+                    best = std::move(candidate);
+                }
+            }
+        }
+        return best;
+    }
+
+    static bool hasClosedForm(Method) { return true; }
+    static bool requiresOptimization(Method, const FixedParameterMap &) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<InverseGammaRand<Real>>
+{
+    using Distribution = InverseGammaRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"shape", distribution.GetShape(), 0.0, std::nullopt},
+                {"rate", distribution.GetRate(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0], parameters[1]); }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Inverse-gamma", {Method::MLE});
+        if (std::ranges::any_of(sample, [](Real value) { return !(value > 0); }))
+            throw fit_error(FitErrorCode::WrongSample, "Inverse-gamma distribution: sample values should be positive");
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        if (!(variance > 0))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Inverse-gamma distribution: sample variance should be positive");
+        const double shape = 2 + mean * mean / variance;
+        return Distribution(shape, mean * (shape - 1));
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<InverseGaussianRand<Real>>
+{
+    using Distribution = InverseGaussianRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"mean", distribution.GetMean(), 0.0, std::nullopt},
+                {"shape", distribution.GetShape(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0], parameters[1]); }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Inverse-Gaussian", {Method::MLE});
+        if (std::ranges::any_of(sample, [](Real value) { return !(value > 0); }))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Inverse-Gaussian distribution: sample values should be positive");
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        if (!(variance > 0))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Inverse-Gaussian distribution: sample variance should be positive");
+        return Distribution(mean, mean * mean * mean / variance);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<NoncentralChiSquaredRand<Real>>
+{
+    using Distribution = NoncentralChiSquaredRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"degree", distribution.GetDegree(), 0.0, std::nullopt},
+                {"noncentrality", distribution.GetNoncentrality(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0], parameters[1]); }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Noncentral chi-squared", {Method::MLE});
+        if (std::ranges::any_of(sample, [](Real value) { return value < 0; }))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Noncentral chi-squared distribution: sample values should be non-negative");
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        const double noncentrality = std::max(0.1, 0.5 * variance - mean);
+        const double degree = std::max(0.1, mean - noncentrality);
+        return Distribution(degree, noncentrality);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
 };
 
 template <std::floating_point Real>
@@ -311,6 +618,93 @@ struct FitModel<GammaRand<Real>>
     }
 
     static bool hasClosedForm(Method) { return true; }
+};
+
+template <std::floating_point Real>
+struct FitModel<ChiSquaredRand<Real>>
+{
+    using Distribution = ChiSquaredRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"degree", static_cast<double>(distribution.GetDegree()), 1.0, std::nullopt, true, false, true}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(static_cast<std::size_t>(parameters[0]));
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
+    {
+        requireMethod(method, "Chi-squared", {Method::MLE});
+        if (const auto degree = fixedPositiveInteger(fixed, "degree", "chi-squared"))
+            return Distribution(static_cast<std::size_t>(*degree));
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        const double searchLimit = std::clamp(std::ceil(std::max(mean, 0.5 * variance) * 4 + 20), 40.0, 1000.0);
+        const int maximum = static_cast<int>(searchLimit);
+        double bestLogLikelihood = -std::numeric_limits<double>::infinity();
+        Distribution best;
+        for (int degree = 1; degree <= maximum; ++degree) {
+            Distribution candidate(static_cast<std::size_t>(degree));
+            const double logLikelihood = candidate.LogLikelihoodFunction(sample);
+            if (logLikelihood > bestLogLikelihood) {
+                bestLogLikelihood = logLikelihood;
+                best = std::move(candidate);
+            }
+        }
+        return best;
+    }
+
+    static bool hasClosedForm(Method) { return true; }
+    static bool requiresOptimization(Method, const FixedParameterMap &) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<ErlangRand<Real>>
+{
+    using Distribution = ErlangRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"shape", distribution.GetShape(), 1.0, std::nullopt, true, false, true},
+                {"rate", distribution.GetRate(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(static_cast<int>(parameters[0]), parameters[1]);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
+    {
+        requireMethod(method, "Erlang", {Method::MLE});
+        if (std::ranges::any_of(sample, [](Real value) { return !(value > 0); }))
+            throw fit_error(FitErrorCode::WrongSample, "Erlang distribution: sample values should be positive");
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        const auto fixedShape = fixedPositiveInteger(fixed, "shape", "Erlang");
+        const auto fixedRate = fixed.find("rate");
+        if (fixedRate != fixed.end() && !(fixedRate->second > 0))
+            throw std::invalid_argument("Fixed Erlang rate should be positive");
+        const double estimate = variance > 0 ? std::clamp(std::round(mean * mean / variance), 1.0, 245.0) : 1.0;
+        const int maximum = fixedShape ? *fixedShape : std::clamp(static_cast<int>(4 * estimate + 20), 40, 1000);
+        const int minimum = fixedShape ? *fixedShape : 1;
+        double bestLogLikelihood = -std::numeric_limits<double>::infinity();
+        Distribution best;
+        for (int shape = minimum; shape <= maximum; ++shape) {
+            const double rate = fixedRate == fixed.end() ? shape / mean : fixedRate->second;
+            Distribution candidate(shape, rate);
+            const double logLikelihood = candidate.LogLikelihoodFunction(sample);
+            if (logLikelihood > bestLogLikelihood) {
+                bestLogLikelihood = logLikelihood;
+                best = std::move(candidate);
+            }
+        }
+        return best;
+    }
+
+    static bool hasClosedForm(Method) { return true; }
+    static bool requiresOptimization(Method, const FixedParameterMap &) { return false; }
 };
 
 template <std::floating_point Real>
@@ -505,16 +899,19 @@ struct FitModel<LevyRand<Real>>
     static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
     {
         requireMethod(method, "Levy", {Method::MLE});
-        const auto location = fixed.find("location");
-        if (location == fixed.end())
-            throw fit_error(FitErrorCode::NotApplicable,
-                            "Levy distribution: fitting currently requires a fixed location");
-        Distribution distribution(location->second, 1.0);
+        const auto [minimum, maximum] = std::ranges::minmax(sample);
+        const double spread = static_cast<double>(maximum - minimum);
+        if (!(spread > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Levy distribution: sample spread should be positive");
+        const auto fixedLocation = fixed.find("location");
+        const double location =
+            fixedLocation == fixed.end() ? static_cast<double>(minimum) - 0.1 * spread : fixedLocation->second;
+        Distribution distribution(location, spread);
         distribution.FitScale(sample);
         return distribution;
     }
 
-    static bool hasClosedForm(Method) { return true; }
+    static bool hasClosedForm(Method) { return false; }
 };
 
 template <std::floating_point Real>
@@ -611,6 +1008,54 @@ struct FitModel<PoissonRand<Int>>
     static bool hasClosedForm(Method) { return true; }
 };
 
+template <>
+struct FitModel<BernoulliRand>
+{
+    using Distribution = BernoulliRand;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"probability", distribution.GetProbability(), 0.0, 1.0, true, true}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0]); }
+
+    static Distribution initial(std::span<const int> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Bernoulli", {Method::MLE, Method::MethodOfMoments});
+        if (std::ranges::any_of(sample, [](int value) { return value != 0 && value != 1; }))
+            throw fit_error(FitErrorCode::WrongSample, "Bernoulli distribution: sample values should be zero or one");
+        const double sum = std::accumulate(sample.begin(), sample.end(), 0.0);
+        return Distribution(sum / sample.size());
+    }
+
+    static bool hasClosedForm(Method) { return true; }
+};
+
+template <std::integral Int>
+struct FitModel<GeometricRand<Int>>
+{
+    using Distribution = GeometricRand<Int>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"probability", distribution.GetProbability(), 0.0, 1.0, false, true}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0]); }
+
+    static Distribution initial(std::span<const Int> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Geometric", {Method::MLE, Method::MethodOfMoments});
+        if (std::ranges::any_of(sample, [](Int value) { return value < 0; }))
+            throw fit_error(FitErrorCode::WrongSample, "Geometric distribution: sample values should be non-negative");
+        const double sum = std::accumulate(sample.begin(), sample.end(), 0.0);
+        return Distribution(1 / (1 + sum / sample.size()));
+    }
+
+    static bool hasClosedForm(Method) { return true; }
+};
+
 template <std::integral Int>
 struct FitModel<BinomialRand<Int>>
 {
@@ -618,7 +1063,8 @@ struct FitModel<BinomialRand<Int>>
 
     static std::vector<FitParameter> parameters(const Distribution &distribution)
     {
-        return {{"number", static_cast<double>(distribution.GetNumber()), 1.0, std::nullopt, true, false, true},
+        return {{"number", static_cast<double>(distribution.GetNumber()), 1.0,
+                 static_cast<double>(std::numeric_limits<int>::max()), true, true, true},
                 {"probability", distribution.GetProbability(), 0.0, 1.0, true, true}};
     }
 
@@ -630,18 +1076,17 @@ struct FitModel<BinomialRand<Int>>
     static Distribution initial(std::span<const Int> sample, Method method, const FixedParameterMap &fixed)
     {
         requireMethod(method, "Binomial", {Method::MLE});
-        const auto number = fixed.find("number");
-        if (number == fixed.end())
+        const auto number = fixedPositiveInteger(fixed, "number", "binomial");
+        if (!number)
             throw fit_error(FitErrorCode::NotApplicable,
                             "Binomial distribution: fitting currently requires a fixed number");
-        if (number->second < 1 || number->second != std::round(number->second))
-            throw std::invalid_argument("Fixed binomial number should be a positive integer");
-        Distribution distribution(static_cast<int>(number->second));
+        Distribution distribution(*number);
         distribution.FitProbability(sample);
         return distribution;
     }
 
     static bool hasClosedForm(Method) { return true; }
+    static bool requiresOptimization(Method, const FixedParameterMap &) { return false; }
 };
 
 template <std::integral Int, std::floating_point Shape>
@@ -678,10 +1123,11 @@ struct FitModel<UniformDiscreteRand<Int>>
 
     static std::vector<FitParameter> parameters(const Distribution &distribution)
     {
-        return {{"minimum", static_cast<double>(distribution.MinValue()), std::nullopt,
-                 static_cast<double>(distribution.MaxValue()), false, false, true},
+        return {{"minimum", static_cast<double>(distribution.MinValue()),
+                 static_cast<double>(std::numeric_limits<Int>::lowest()), static_cast<double>(distribution.MaxValue()),
+                 true, false, true},
                 {"maximum", static_cast<double>(distribution.MaxValue()), static_cast<double>(distribution.MinValue()),
-                 std::nullopt, false, false, true}};
+                 static_cast<double>(std::numeric_limits<Int>::max()), false, true, true}};
     }
 
     static Distribution make(std::span<const double> parameters)
@@ -708,6 +1154,10 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
 {
     if (sample.empty())
         throw fit_error(FitErrorCode::TooFewElements, "Fitting requires a non-empty sample");
+    if constexpr (std::floating_point<typename Distribution::value_type>) {
+        if (std::ranges::any_of(sample, [](auto value) { return !std::isfinite(value); }))
+            throw fit_error(FitErrorCode::WrongSample, "Fitting requires finite sample values");
+    }
     if (!(options.tolerance > 0) || options.max_iterations <= 0)
         throw std::invalid_argument("Fitting tolerance and iteration limit should be positive");
     if (options.method != Method::MLE && !options.fixed.empty())
@@ -740,8 +1190,7 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
     std::vector<double> unconstrained;
     for (std::size_t i = 0; i < parameters.size(); ++i) {
         if (!fixed[i]) {
-            if (specifications[i].integral &&
-                (!detail::FitModel<Distribution>::hasClosedForm(options.method) || !options.fixed.empty()))
+            if (specifications[i].integral && detail::requiresOptimization<Distribution>(options.method, options.fixed))
                 throw fit_error(FitErrorCode::NotApplicable,
                                 "Free integer parameters are not supported by continuous optimization");
             freeIndices.push_back(i);
@@ -752,8 +1201,7 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
     math::MinimizeResult<double> optimization;
     optimization.x = unconstrained;
     optimization.converged = true;
-    if (!freeIndices.empty() &&
-        (!detail::FitModel<Distribution>::hasClosedForm(options.method) || !options.fixed.empty())) {
+    if (!freeIndices.empty() && detail::requiresOptimization<Distribution>(options.method, options.fixed)) {
         auto objective = [&](std::span<const double> free) {
             std::vector<double> candidate = parameters;
             for (std::size_t i = 0; i < free.size(); ++i)
@@ -782,7 +1230,7 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
     result.method = options.method;
     for (const auto &parameter : specifications)
         result.parameter_names.emplace_back(parameter.name);
-    detail::addUncertainty(result, sample);
+    detail::addUncertainty(result, sample, specifications);
     return result;
 }
 

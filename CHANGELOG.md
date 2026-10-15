@@ -12,7 +12,9 @@ All notable changes to RandLib are documented here. The project follows
   estimators are exposed for normal, log-normal, exponential, gamma, beta, arcsine, beta-prime,
   Pareto, Laplace, Lévy, Rayleigh, uniform, degenerate, Poisson, binomial, negative-binomial and
   discrete-uniform distributions. The generic constrained optimizer supplies full Weibull and
-  logistic MLEs.
+  logistic MLEs, plus MLEs for Student t, Cauchy, Gumbel, Fréchet, inverse-gamma,
+  inverse-Gaussian and noncentral chi-squared laws. Bernoulli and geometric fits are closed form;
+  chi-squared, Erlang and Fisher F use bounded integer likelihood searches.
 
 ### Build and tooling
 

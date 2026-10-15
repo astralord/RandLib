@@ -137,9 +137,10 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 Follow plan 3.1–3.3. Design notes gathered so far:
 - Landed locally: `math::numericalHessian` and the first `include/randlib/fit/` vertical slice.
   `FitResult`, `FitOptions`, fixed-parameter constrained MLE, AIC/BIC and observed-information
-  covariance are covered. The free API covers 19 distribution types, including fixed structural
-  parameters for Binomial and Lévy; the generic optimizer supplies full Weibull and Logistic MLEs.
-  Continue with the remaining Tier 1 laws.
+  covariance are covered. The free API covers 31 distribution types, including fixed structural
+  parameters, generic multi-parameter MLEs and bounded searches for integer-valued parameters.
+  Stable-family fitting remains with Phase 5; continue with Bayes, model selection and
+  goodness-of-fit.
 - Fitting today: ~20 member functions per distribution (`Fit`, `FitScale`, `FitShapeBayes`, …) that
   mutate the object and throw `randlib::fit_error` (with `FitErrorCode`). Keep them as deprecated
   wrappers.

@@ -4,6 +4,7 @@
 #include <randlib/randlib.hpp>
 
 #include <cmath>
+#include <limits>
 #include <vector>
 
 using namespace randlib;
@@ -71,6 +72,8 @@ TEST_CASE("Unified fitting rejects invalid options", "[fit]")
     options.fixed = {{"variance", 1.0}};
     CHECK_THROWS_AS(fit<NormalRand<double>>(sample, options), fit_error);
     CHECK_THROWS_AS(fit<NormalRand<double>>(std::span<const double>{}), fit_error);
+    const std::vector<double> nonFinite = {1, std::numeric_limits<double>::quiet_NaN()};
+    CHECK_THROWS_AS(fit<NormalRand<double>>(nonFinite), fit_error);
 }
 
 TEST_CASE("Unified fitting exposes existing continuous estimators", "[fit]")
@@ -111,6 +114,15 @@ TEST_CASE("Unified fitting handles distributions with fixed structural parameter
     auto levy = fit<LevyRand<double>>(levySample, levyOptions);
     CHECK(levy.converged);
     CHECK(levy.distribution.GetLocation() == 0);
+
+    std::vector<double> fullLevySample;
+    const LevyRand<double> levyReference(1.0, 2.0);
+    for (int i = 0; i < 200; ++i)
+        fullLevySample.push_back(levyReference.Quantile((i + 0.5) / 200));
+    auto fullLevy = fit<LevyRand<double>>(fullLevySample);
+    REQUIRE(fullLevy.converged);
+    CHECK_THAT(fullLevy.distribution.GetLocation(), WithinAbs(1.0, 0.05));
+    CHECK_THAT(fullLevy.distribution.GetScale(), WithinRel(2.0, 0.05));
 
     FitOptions invalidBinomial;
     invalidBinomial.fixed = {{"number", 3.5}};
@@ -158,4 +170,135 @@ TEST_CASE("Generic MLE recovers Weibull and logistic parameters", "[fit]")
     REQUIRE(logistic.converged);
     CHECK_THAT(logistic.distribution.GetLocation(), WithinAbs(-1.25, 1e-8));
     CHECK_THAT(logistic.distribution.GetScale(), WithinRel(0.8, 0.01));
+}
+
+TEST_CASE("Unified fitting covers Bernoulli and geometric distributions", "[fit]")
+{
+    const std::vector<int> bernoulliSample = {0, 1, 1, 0, 1};
+    auto bernoulli = fit<BernoulliRand>(bernoulliSample);
+    CHECK(bernoulli.converged);
+    CHECK_THAT(bernoulli.distribution.GetProbability(), WithinAbs(0.6, 1e-14));
+
+    const std::vector<int> geometricSample = {0, 1, 0, 2, 3, 1, 0};
+    auto geometric = fit<GeometricRand<int>>(geometricSample);
+    CHECK(geometric.converged);
+    CHECK_THAT(geometric.distribution.GetProbability(), WithinAbs(7.0 / 14.0, 1e-14));
+}
+
+TEST_CASE("Generic MLE covers additional Tier 1 continuous distributions", "[fit]")
+{
+    auto quantileSample = []<class Distribution>(const Distribution &distribution) {
+        constexpr int sampleSize = 200;
+        std::vector<double> sample;
+        sample.reserve(sampleSize);
+        for (int i = 0; i < sampleSize; ++i)
+            sample.push_back(distribution.Quantile((i + 0.5) / sampleSize));
+        return sample;
+    };
+
+    auto cauchy = fit<CauchyRand<double>>(quantileSample(CauchyRand<double>(1.0, 2.0)));
+    REQUIRE(cauchy.converged);
+    CHECK_THAT(cauchy.distribution.GetLocation(), WithinAbs(1.0, 1e-8));
+    CHECK_THAT(cauchy.distribution.GetScale(), WithinRel(2.0, 0.02));
+
+    auto gumbel = fit<GumbelRand<double>>(quantileSample(GumbelRand<double>(-0.5, 1.5)));
+    REQUIRE(gumbel.converged);
+    CHECK_THAT(gumbel.distribution.GetLocation(), WithinAbs(-0.5, 0.02));
+    CHECK_THAT(gumbel.distribution.GetScale(), WithinRel(1.5, 0.02));
+
+    auto inverseGamma = fit<InverseGammaRand<double>>(quantileSample(InverseGammaRand<double>(4.0, 3.0)));
+    REQUIRE(inverseGamma.converged);
+    CHECK_THAT(inverseGamma.distribution.GetShape(), WithinRel(4.0, 0.03));
+    CHECK_THAT(inverseGamma.distribution.GetRate(), WithinRel(3.0, 0.03));
+
+    auto inverseGaussian = fit<InverseGaussianRand<double>>(quantileSample(InverseGaussianRand<double>(2.0, 5.0)));
+    REQUIRE(inverseGaussian.converged);
+    CHECK_THAT(inverseGaussian.distribution.GetMean(), WithinRel(2.0, 0.02));
+    CHECK_THAT(inverseGaussian.distribution.GetShape(), WithinRel(5.0, 0.03));
+}
+
+TEST_CASE("Generic MLE supports free shape and noncentrality parameters", "[fit]")
+{
+    constexpr int sampleSize = 300;
+    std::vector<double> studentSample;
+    std::vector<double> chiSquaredSample;
+    studentSample.reserve(sampleSize);
+    chiSquaredSample.reserve(sampleSize);
+    const StudentTRand<double> studentReference(7.0, 0.5, 1.2);
+    const NoncentralChiSquaredRand<double> chiSquaredReference(4.0, 2.0);
+    for (int i = 0; i < sampleSize; ++i) {
+        const double probability = (i + 0.5) / sampleSize;
+        studentSample.push_back(studentReference.Quantile(probability));
+        chiSquaredSample.push_back(chiSquaredReference.Quantile(probability));
+    }
+
+    auto student = fit<StudentTRand<double>>(studentSample);
+    REQUIRE(student.converged);
+    CHECK_THAT(student.distribution.GetDegree(), WithinRel(7.0, 0.1));
+    CHECK_THAT(student.distribution.GetLocation(), WithinAbs(0.5, 0.02));
+    CHECK_THAT(student.distribution.GetScale(), WithinRel(1.2, 0.03));
+
+    auto chiSquared = fit<NoncentralChiSquaredRand<double>>(chiSquaredSample);
+    REQUIRE(chiSquared.converged);
+    CHECK_THAT(chiSquared.distribution.GetDegree(), WithinRel(4.0, 0.05));
+    CHECK_THAT(chiSquared.distribution.GetNoncentrality(), WithinRel(2.0, 0.1));
+}
+
+TEST_CASE("Generic MLE fits Frechet location, scale and shape", "[fit]")
+{
+    constexpr int sampleSize = 300;
+    std::vector<double> sample;
+    sample.reserve(sampleSize);
+    const FrechetRand<double> reference(3.0, 2.0, -1.0);
+    for (int i = 0; i < sampleSize; ++i)
+        sample.push_back(reference.Quantile((i + 0.5) / sampleSize));
+
+    auto result = fit<FrechetRand<double>>(sample);
+    REQUIRE(result.converged);
+    CHECK_THAT(result.distribution.GetShape(), WithinRel(3.0, 0.05));
+    CHECK_THAT(result.distribution.GetScale(), WithinRel(2.0, 0.05));
+    CHECK_THAT(result.distribution.GetLocation(), WithinAbs(-1.0, 0.05));
+}
+
+TEST_CASE("Unified fitting searches integer-valued Tier 1 parameters", "[fit]")
+{
+    constexpr int sampleSize = 200;
+    std::vector<double> chiSquaredSample;
+    std::vector<double> erlangSample;
+    std::vector<double> fisherSample;
+    chiSquaredSample.reserve(sampleSize);
+    erlangSample.reserve(sampleSize);
+    fisherSample.reserve(sampleSize);
+    const ChiSquaredRand<double> chiSquaredReference(7);
+    const ErlangRand<double> erlangReference(4, 2.0);
+    const FisherFRand<double> fisherReference(5, 9);
+    for (int i = 0; i < sampleSize; ++i) {
+        const double probability = (i + 0.5) / sampleSize;
+        chiSquaredSample.push_back(chiSquaredReference.Quantile(probability));
+        erlangSample.push_back(erlangReference.Quantile(probability));
+        fisherSample.push_back(fisherReference.Quantile(probability));
+    }
+
+    auto chiSquared = fit<ChiSquaredRand<double>>(chiSquaredSample);
+    REQUIRE(chiSquared.converged);
+    CHECK(chiSquared.distribution.GetDegree() == 7);
+    CHECK(std::isnan(chiSquared.std_errors[0]));
+
+    auto erlang = fit<ErlangRand<double>>(erlangSample);
+    REQUIRE(erlang.converged);
+    CHECK(erlang.distribution.GetShape() == 4);
+    CHECK_THAT(erlang.distribution.GetRate(), WithinRel(2.0, 0.02));
+    CHECK(std::isnan(erlang.std_errors[0]));
+    CHECK(std::isfinite(erlang.std_errors[1]));
+
+    auto fisher = fit<FisherFRand<double>>(fisherSample);
+    REQUIRE(fisher.converged);
+    CHECK(fisher.distribution.GetFirstDegree() == 5);
+    CHECK(fisher.distribution.GetSecondDegree() == 9);
+
+    FitOptions options;
+    options.fixed = {{"shape", 4}};
+    auto fixedErlang = fit<ErlangRand<double>>(erlangSample, options);
+    CHECK(fixedErlang.converged);
+    CHECK(fixedErlang.distribution.GetShape() == 4);
 }

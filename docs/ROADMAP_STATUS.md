@@ -43,7 +43,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC and numerical-Hessian covariance are implemented. Existing estimators have free-API adapters and generic full MLE covers Weibull and Logistic; remaining Tier 1 coverage, Bayes, model selection and goodness-of-fit remain. |
+| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC and numerical-Hessian covariance are implemented. The free API covers 31 types, including bounded searches for integer-valued parameters; stable-family fitting, Bayes, model selection and goodness-of-fit remain. |
 | 3.2 Tail estimators and extreme-value distributions | ⏳ | |
 | 3.3 Close #11 | 🚫 | Closing the issue needs the maintainer. |
 
