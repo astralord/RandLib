@@ -8,8 +8,11 @@ All notable changes to RandLib are documented here. The project follows
 ### Fitting
 
 - Began the unified non-mutating fitting API with `FitResult`, `FitOptions`, likelihood-based
-  AIC/BIC, observed-information covariance and standard errors, and fixed-parameter MLE. Normal and
-  Poisson distributions provide the first closed-form continuous and discrete adapters.
+  AIC/BIC, observed-information covariance and standard errors, and fixed-parameter MLE. Existing
+  estimators are exposed for normal, log-normal, exponential, gamma, beta, arcsine, beta-prime,
+  Pareto, Laplace, Lévy, Rayleigh, uniform, degenerate, Poisson, binomial, negative-binomial and
+  discrete-uniform distributions. The generic constrained optimizer supplies full Weibull and
+  logistic MLEs.
 
 ### Build and tooling
 
