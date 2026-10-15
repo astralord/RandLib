@@ -57,6 +57,7 @@ coherence and sampling statistics. Every fix below has a regression test in
   `RandLib.pro` (qmake) is deprecated and will be removed in 2.0.
 - Builds without warnings on GCC 11–14, Clang 15–18, AppleClang and MSVC 2022 (#18); MSVC's
   narrowing-conversion warnings, which GCC and Clang do not emit, are disabled.
+  Duplicate explicit instantiations that MSVC 14.44 diagnoses as C4661 are removed.
   Reference tests document the double-only MSVC incomplete-beta tolerance separately.
   Ziggurat tables and a few constants no longer use `constexpr` initializers that call
   non-`constexpr` math functions. Test constants also avoid names that can trigger MSVC's
