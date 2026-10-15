@@ -70,12 +70,12 @@ long double factorial(double n)
 
 long double doubleFactorial(int n)
 {
-    long double nFact = factorial(n);
-    if (n & 1) {
-        n <<= 1;
-        return factorial(n + 1) / (n * nFact);
-    }
-    return (1 << n) * nFact;
+    if (n < 0)
+        return 0.0;
+    long double result = 1.0;
+    for (int factor = n; factor > 1; factor -= 2)
+        result *= factor;
+    return result;
 }
 
 constexpr long double LOGFACTORIAL_TABLE[] =
