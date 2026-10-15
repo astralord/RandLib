@@ -1,5 +1,8 @@
 #pragma once
 
+#include <concepts>
+#include <type_traits>
+
 #include <randlib/math/constants.hpp>
 
 namespace randlib
@@ -17,7 +20,11 @@ namespace math
  * @param n non-negative integer number
  * @return n!
  */
-long double factorial(double n);
+template <std::floating_point Real>
+Real factorial(Real n);
+
+template <std::integral Integer>
+long double factorial(Integer n);
 
 /**
  * @fn doubleFactorial
@@ -25,7 +32,8 @@ long double factorial(double n);
  * @param n non-negative integer number
  * @return n!!
  */
-long double doubleFactorial(int n);
+template <std::floating_point Real = long double>
+Real doubleFactorial(int n);
 
 /**
  * @fn lfact
@@ -34,14 +42,16 @@ long double doubleFactorial(int n);
  * @param n non-negative integer number
  * @return log(n!)
  */
-long double lfact(size_t n);
+template <std::floating_point Real = long double>
+Real lfact(size_t n);
 
 /**
  * @brief ldoublefact
  * @param n
  * @return log(n!!)
  */
-long double ldfact(size_t n);
+template <std::floating_point Real = long double>
+Real ldfact(size_t n);
 
 /**
  * @fn binom
@@ -50,14 +60,16 @@ long double ldfact(size_t n);
  * @param k non-negative integer, k < n
  * @return C(n, k)
  */
-long double binom(size_t n, size_t k);
+template <std::floating_point Real = long double>
+Real binom(size_t n, size_t k);
 
 /**
  * @fn stirlingError
  * @param n positive integer number
  * @return log(n!) - (n + 1/2) log(n) + n - log(2π)/2, the error of Stirling's formula
  */
-double stirlingError(size_t n);
+template <std::floating_point Real = double>
+Real stirlingError(size_t n);
 
 /**
  * @fn bd0
@@ -67,28 +79,32 @@ double stirlingError(size_t n);
  * @param m positive number
  * @return x log(x / m) + m - x, without cancellation for x close to m
  */
-double bd0(double x, double m);
+template <std::floating_point Real>
+Real bd0(std::type_identity_t<Real> x, Real m);
 
 /**
  * @fn digamma
  * @param x input parameter
  * @return digamma(x) = ln(Γ(x))' = d(Γ(x))/Γ(x)
  */
-double digamma(double x);
+template <std::floating_point Real>
+Real digamma(Real x);
 
 /**
  * @fn digammamLog
  * @param x input parameter
  * @return digamma(x) - log(x)
  */
-double digammamLog(double x);
+template <std::floating_point Real>
+Real digammamLog(Real x);
 
 /**
  * @fn trigamma
  * @param x input parameter
  * @return trigamma(x) = digamma'(x)
  */
-double trigamma(double x);
+template <std::floating_point Real>
+Real trigamma(Real x);
 
 /**
  * @fn lpgamma
@@ -100,7 +116,8 @@ double trigamma(double x);
  * @param lgammaA log(Γ(a))
  * @return log(P(a, x))
  */
-double lpgamma(double a, double x, double logA, double lgammaA);
+template <std::floating_point Real>
+Real lpgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
  * @fn lpgamma
@@ -111,7 +128,8 @@ double lpgamma(double a, double x, double logA, double lgammaA);
  * @param logX log(x)
  * @return log(P(a, x))
  */
-double lpgamma(double a, double x, double logX);
+template <std::floating_point Real>
+Real lpgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
  * @fn lpgamma
@@ -120,7 +138,8 @@ double lpgamma(double a, double x, double logX);
  * @param x non-negative parameter
  * @return log(P(a, x))
  */
-double lpgamma(double a, double x);
+template <std::floating_point Real>
+Real lpgamma(std::type_identity_t<Real> a, Real x);
 
 /**
  * @fn pgamma
@@ -132,7 +151,8 @@ double lpgamma(double a, double x);
  * @param lgammaA log(Γ(a))
  * @return P(a, x)
  */
-double pgamma(double a, double x, double logA, double lgammaA);
+template <std::floating_point Real>
+Real pgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
  * @fn pgamma
@@ -143,7 +163,8 @@ double pgamma(double a, double x, double logA, double lgammaA);
  * @param logX log(x)
  * @return P(a, x)
  */
-double pgamma(double a, double x, double logX);
+template <std::floating_point Real>
+Real pgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
  * @fn pgamma
@@ -152,7 +173,8 @@ double pgamma(double a, double x, double logX);
  * @param x non-negative parameter
  * @return P(a, x)
  */
-double pgamma(double a, double x);
+template <std::floating_point Real>
+Real pgamma(std::type_identity_t<Real> a, Real x);
 
 /**
  * @fn lqgamma
@@ -164,7 +186,8 @@ double pgamma(double a, double x);
  * @param lgammaA log(Γ(a))
  * @return log(Q(a, x))
  */
-double lqgamma(double a, double x, double logA, double lgammaA);
+template <std::floating_point Real>
+Real lqgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
  * @fn lqgamma
@@ -175,7 +198,8 @@ double lqgamma(double a, double x, double logA, double lgammaA);
  * @param logX log(x)
  * @return log(Q(a, x))
  */
-double lqgamma(double a, double x, double logX);
+template <std::floating_point Real>
+Real lqgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
  * @fn lqgamma
@@ -184,7 +208,8 @@ double lqgamma(double a, double x, double logX);
  * @param x non-negative parameter
  * @return log(Q(a, x))
  */
-double lqgamma(double a, double x);
+template <std::floating_point Real>
+Real lqgamma(std::type_identity_t<Real> a, Real x);
 
 /**
  * @fn lqgamma
@@ -196,7 +221,8 @@ double lqgamma(double a, double x);
  * @param lgammaA log(Γ(a))
  * @return Q(a, x)
  */
-double qgamma(double a, double x, double logA, double lgammaA);
+template <std::floating_point Real>
+Real qgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
  * @fn qgamma
@@ -207,7 +233,8 @@ double qgamma(double a, double x, double logA, double lgammaA);
  * @param logX log(x)
  * @return Q(a, x)
  */
-double qgamma(double a, double x, double logX);
+template <std::floating_point Real>
+Real qgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
  * @fn qgamma
@@ -216,7 +243,8 @@ double qgamma(double a, double x, double logX);
  * @param x non-negative parameter
  * @return Q(a, x)
  */
-double qgamma(double a, double x);
+template <std::floating_point Real>
+Real qgamma(std::type_identity_t<Real> a, Real x);
 } // namespace math
 
 } // namespace randlib
@@ -269,14 +297,15 @@ constexpr long double FACTORIAL_TABLE[] = {
  * @param n non-negative integer number
  * @return n!
  */
-inline long double factorialForSmallValue(int n)
+template <std::floating_point Real>
+inline Real factorialForSmallValue(int n)
 {
     constexpr int step = 10;
     int residue = n % step;
     if (residue <= step / 2) {
         /// go up
         int nPrev = n - residue;
-        long double fact = FACTORIAL_TABLE[nPrev / step];
+        Real fact = static_cast<Real>(FACTORIAL_TABLE[nPrev / step]);
         for (int i = 1; i <= residue; ++i)
             fact *= nPrev + i;
         return fact;
@@ -284,27 +313,35 @@ inline long double factorialForSmallValue(int n)
 
     /// go down
     int nNext = n - residue + step;
-    double denominator = 1;
+    Real denominator = 1;
     for (int i = 0; i < step - residue; ++i)
         denominator *= nNext - i;
-    return FACTORIAL_TABLE[nNext / step] / denominator;
+    return static_cast<Real>(FACTORIAL_TABLE[nNext / step]) / denominator;
 }
 
-inline long double factorial(double n)
+template <std::floating_point Real>
+inline Real factorial(Real n)
 {
     if (n < 0)
         return 0.0;
-    return (n > FACTORIAL_TABLESIZE) ? std::tgammal(n + 1) : factorialForSmallValue(n);
+    return (n > FACTORIAL_TABLESIZE) ? std::tgamma(n + 1) : factorialForSmallValue<Real>(static_cast<int>(n));
 }
 
-inline long double doubleFactorial(int n)
+template <std::integral Integer>
+inline long double factorial(Integer n)
 {
-    long double nFact = factorial(n);
+    return factorial(static_cast<long double>(n));
+}
+
+template <std::floating_point Real>
+inline Real doubleFactorial(int n)
+{
+    Real nFact = factorial(static_cast<Real>(n));
     if (n & 1) {
         n <<= 1;
-        return factorial(n + 1) / (n * nFact);
+        return factorial(static_cast<Real>(n + 1)) / (n * nFact);
     }
-    return (1 << n) * nFact;
+    return static_cast<Real>(1 << n) * nFact;
 }
 
 constexpr long double LOGFACTORIAL_TABLE[] = {0.l,
@@ -566,29 +603,33 @@ constexpr long double LOGFACTORIAL_TABLE[] = {0.l,
 
 constexpr size_t LOGFACTORIAL_TABLESIZE = 255;
 
-inline long double lfact(size_t n)
+template <std::floating_point Real>
+inline Real lfact(size_t n)
 {
-    return (n > LOGFACTORIAL_TABLESIZE) ? std::lgammal(n + 1) : LOGFACTORIAL_TABLE[n];
+    return (n > LOGFACTORIAL_TABLESIZE) ? std::lgamma(static_cast<Real>(n + 1))
+                                        : static_cast<Real>(LOGFACTORIAL_TABLE[n]);
 }
 
-inline double stirlingError(size_t n)
+template <std::floating_point Real>
+inline Real stirlingError(size_t n)
 {
     if (n >= 10)
-        return lgammaCorrection(n);
+        return lgammaCorrection(static_cast<Real>(n));
     long double x = n;
     return lfact(n) - (x + 0.5l) * std::log(x) + x - 0.5l * std::log(2 * randlib::consts::pi);
 }
 
-inline double bd0(double x, double m)
+template <std::floating_point Real>
+inline Real bd0(std::type_identity_t<Real> x, Real m)
 {
     if (std::fabs(x - m) < 0.1 * (x + m)) {
-        double v = (x - m) / (x + m);
-        double sum = (x - m) * v;
-        double term = 2 * x * v;
-        double vSq = v * v;
+        Real v = (x - m) / (x + m);
+        Real sum = (x - m) * v;
+        Real term = 2 * x * v;
+        Real vSq = v * v;
         for (int j = 1; j < 1000; ++j) {
             term *= vSq;
-            double next = sum + term / (2 * j + 1);
+            Real next = sum + term / (2 * j + 1);
             if (next == sum)
                 return sum;
             sum = next;
@@ -597,15 +638,17 @@ inline double bd0(double x, double m)
     return x * std::log(x / m) + m - x;
 }
 
-inline long double ldfact(size_t n)
+template <std::floating_point Real>
+inline Real ldfact(size_t n)
 {
     if (n & 1)
-        return lfact(n) - ldfact(n - 1);
+        return lfact<Real>(n) - ldfact<Real>(n - 1);
     size_t k = n >> 1;
-    return k * randlib::consts::ln2 + lfact(k);
+    return static_cast<Real>(k) * static_cast<Real>(randlib::consts::ln2) + lfact<Real>(k);
 }
 
-inline long double binom(size_t n, size_t k)
+template <std::floating_point Real>
+inline Real binom(size_t n, size_t k)
 {
     /// first check trivial cases
     if (k == 0 || k == n)
@@ -615,9 +658,9 @@ inline long double binom(size_t n, size_t k)
     if (k == 2 || k == n - 2)
         return 0.5 * n * (n - 1);
     /// next run general procedure
-    double lfactn = lfact(n);
-    double lfactk = lfact(k);
-    double lfactnmk = lfact(n - k);
+    Real lfactn = lfact<Real>(n);
+    Real lfactk = lfact<Real>(k);
+    Real lfactnmk = lfact<Real>(n - k);
     return std::exp(lfactn - lfactk - lfactnmk);
 }
 
@@ -626,7 +669,8 @@ inline long double binom(size_t n, size_t k)
  * @param x
  * @return digamma(x) - log(x) for x > 7
  */
-inline double digammamLogForLargeX(double x)
+template <std::floating_point Real>
+inline Real digammamLogForLargeX(Real x)
 {
     /// set up tables
     static constexpr long double taylorCoef[] = {0.00833333333333333333l, -0.00396825396825396825l,
@@ -647,12 +691,13 @@ inline double digammamLogForLargeX(double x)
     return y;
 }
 
-inline double digamma(double x)
+template <std::floating_point Real>
+inline Real digamma(Real x)
 {
     /// Negative argument
     if (x < 0.0) {
-        double y = 1.0 - x;
-        double z = randlib::consts::pi / std::tan(randlib::consts::pi * y);
+        Real y = 1.0 - x;
+        Real z = randlib::consts::pi / std::tan(randlib::consts::pi * y);
         return digamma(y) + z;
     }
     /// shift to minimum value,
@@ -665,7 +710,8 @@ inline double digamma(double x)
     return sum + digammamLogForLargeX(x) + std::log(x);
 }
 
-inline double digammamLog(double x)
+template <std::floating_point Real>
+inline Real digammamLog(Real x)
 {
     if (x < 0.0)
         throw std::invalid_argument("Argument x of (digamma - log) function should be non-negative");
@@ -674,11 +720,12 @@ inline double digammamLog(double x)
     return (x < 7.0) ? digamma(x) - std::log(x) : digammamLogForLargeX(x);
 }
 
-inline double trigamma(double x)
+template <std::floating_point Real>
+inline Real trigamma(Real x)
 {
     /// Negative argument
     if (x < 0.0) {
-        double z = randlib::consts::pi / std::sin(randlib::consts::pi * x);
+        Real z = randlib::consts::pi / std::sin(randlib::consts::pi * x);
         return z * z - trigamma(1.0 - x);
     }
     /// set up tables
@@ -715,14 +762,15 @@ inline double trigamma(double x)
  * @param t
  * @return log(1 + t) - t, accurate also for small |t|
  */
-inline double log1pmx(double t)
+template <std::floating_point Real>
+inline Real log1pmx(Real t)
 {
     if (std::fabs(t) > 0.5)
         return std::log1p(t) - t;
-    double power = t, sum = 0.0;
+    Real power = t, sum = 0.0;
     for (int k = 2; k < 1000; ++k) {
         power *= -t;
-        double term = power / k;
+        Real term = power / k;
         sum += term;
         if (std::fabs(term) <= 1e-17 * std::fabs(sum))
             break;
@@ -736,12 +784,13 @@ inline double log1pmx(double t)
  * a·log1pmx(x/a - 1) + log(a / 2π) / 2 - (Stirling remainder of log Γ(a)),
  * which keeps full relative accuracy when x is close to a large a
  */
-inline double logPrefactor(double a, double x, double logX)
+template <std::floating_point Real>
+inline Real logPrefactor(Real a, Real x, Real logX)
 {
     if (a < 10.0)
         return a * logX - x - std::lgamma(a);
-    double t = (x - a) / a;
-    double core = (std::fabs(t) <= 0.5) ? a * log1pmx(t) : a * (logX - std::log(a)) - (x - a);
+    Real t = (x - a) / a;
+    Real core = (std::fabs(t) <= 0.5) ? a * log1pmx(t) : a * (logX - std::log(a)) - (x - a);
     return core + 0.5 * std::log(a / (2 * randlib::consts::pi)) - lgammaCorrection(a);
 }
 
@@ -749,9 +798,10 @@ inline double logPrefactor(double a, double x, double logX)
  * @fn lowerSeries
  * @return Σ_{n≥0} x^n / ((a+1)(a+2)...(a+n)), so that P(a, x) = x^a e^{-x} / Γ(a+1) times it
  */
-inline double lowerSeries(double a, double x)
+template <std::floating_point Real>
+inline Real lowerSeries(Real a, Real x)
 {
-    double term = 1.0, sum = 1.0;
+    Real term = 1.0, sum = 1.0;
     for (int n = 1; n < 1000000; ++n) {
         term *= x / (a + n);
         sum += term;
@@ -766,12 +816,15 @@ inline double lowerSeries(double a, double x)
  * Modified Lentz evaluation of the continued fraction for Q(a, x), x ≥ a + 1
  * @return h such that Q(a, x) = x^a e^{-x} / Γ(a) · h
  */
-inline double upperContinuedFraction(double a, double x)
+template <std::floating_point Real>
+inline Real upperContinuedFraction(Real a, Real x)
 {
-    const double tiny = 1e-300;
-    double b = x + 1.0 - a, c = 1.0 / tiny, d = 1.0 / b, h = d;
+    constexpr Real tiny = std::same_as<Real, double>
+                              ? Real{1e-300}
+                              : std::numeric_limits<Real>::min() / std::numeric_limits<Real>::epsilon();
+    Real b = x + 1.0 - a, c = 1.0 / tiny, d = 1.0 / b, h = d;
     for (int i = 1; i < 1000000; ++i) {
-        double an = -i * (i - a);
+        Real an = -i * (i - a);
         b += 2.0;
         d = an * d + b;
         if (std::fabs(d) < tiny)
@@ -780,7 +833,7 @@ inline double upperContinuedFraction(double a, double x)
         if (std::fabs(c) < tiny)
             c = tiny;
         d = 1.0 / d;
-        double del = d * c;
+        Real del = d * c;
         h *= del;
         if (std::fabs(del - 1.0) <= 1e-16)
             break;
@@ -788,9 +841,10 @@ inline double upperContinuedFraction(double a, double x)
     return h;
 }
 
+template <std::floating_point Real>
 struct IncompleteGamma
 {
-    double p, q, logP, logQ;
+    Real p, q, logP, logQ;
 };
 
 /**
@@ -799,22 +853,24 @@ struct IncompleteGamma
  * The smaller ratio is always computed directly (series for x < a + 1, continued fraction
  * otherwise), never by subtraction, so both tails keep their relative accuracy.
  */
-inline IncompleteGamma incompleteGamma(double a, double x, double logX)
+template <std::floating_point Real>
+inline IncompleteGamma<Real> incompleteGamma(Real a, Real x, Real logX)
 {
     if (x == 0.0)
         return {0.0, 1.0, -INFINITY, 0.0};
     if (a == 0.0 || std::isinf(x))
         return {1.0, 0.0, 0.0, -INFINITY};
-    double logPre = logPrefactor(a, x, logX);
+    Real logPre = logPrefactor(a, x, logX);
     if (x < a + 1.0) {
-        double logP = logPre - std::log(a) + std::log(lowerSeries(a, x));
+        Real logP = logPre - std::log(a) + std::log(lowerSeries(a, x));
         return {std::exp(logP), -std::expm1(logP), logP, math::log1mexp(logP)};
     }
-    double logQ = logPre + std::log(upperContinuedFraction(a, x));
+    Real logQ = logPre + std::log(upperContinuedFraction(a, x));
     return {-std::expm1(logQ), std::exp(logQ), math::log1mexp(logQ), logQ};
 }
 
-inline void parametersVerification(double a, double x)
+template <std::floating_point Real>
+inline void parametersVerification(Real a, Real x)
 {
     if (!(x >= 0.0))
         throw std::invalid_argument("Argument x of gamma function should be non-negative, but it's equal to " +
@@ -824,73 +880,85 @@ inline void parametersVerification(double a, double x)
                                     std::to_string(a));
 }
 
-inline double lpgamma(double a, double x, double, double)
+template <std::floating_point Real>
+inline Real lpgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real>, std::type_identity_t<Real>)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).logP;
 }
 
-inline double lpgamma(double a, double x, double logX)
+template <std::floating_point Real>
+inline Real lpgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, logX).logP;
 }
 
-inline double lpgamma(double a, double x)
+template <std::floating_point Real>
+inline Real lpgamma(std::type_identity_t<Real> a, Real x)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).logP;
 }
 
-inline double pgamma(double a, double x, double, double)
+template <std::floating_point Real>
+inline Real pgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real>, std::type_identity_t<Real>)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).p;
 }
 
-inline double pgamma(double a, double x, double logX)
+template <std::floating_point Real>
+inline Real pgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, logX).p;
 }
 
-inline double pgamma(double a, double x)
+template <std::floating_point Real>
+inline Real pgamma(std::type_identity_t<Real> a, Real x)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).p;
 }
 
-inline double lqgamma(double a, double x, double, double)
+template <std::floating_point Real>
+inline Real lqgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real>, std::type_identity_t<Real>)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).logQ;
 }
 
-inline double lqgamma(double a, double x, double logX)
+template <std::floating_point Real>
+inline Real lqgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, logX).logQ;
 }
 
-inline double lqgamma(double a, double x)
+template <std::floating_point Real>
+inline Real lqgamma(std::type_identity_t<Real> a, Real x)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).logQ;
 }
 
-inline double qgamma(double a, double x, double, double)
+template <std::floating_point Real>
+inline Real qgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real>, std::type_identity_t<Real>)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).q;
 }
 
-inline double qgamma(double a, double x, double logX)
+template <std::floating_point Real>
+inline Real qgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, logX).q;
 }
 
-inline double qgamma(double a, double x)
+template <std::floating_point Real>
+inline Real qgamma(std::type_identity_t<Real> a, Real x)
 {
     parametersVerification(a, x);
     return incompleteGamma(a, x, std::log(x)).q;

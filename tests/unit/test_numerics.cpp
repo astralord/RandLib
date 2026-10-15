@@ -5,7 +5,9 @@
 
 #include <randlib/randlib.hpp>
 
+#include <algorithm>
 #include <cmath>
+#include <concepts>
 #include <numbers>
 #include <span>
 #include <vector>
@@ -13,6 +15,60 @@
 using namespace randlib;
 using Catch::Matchers::WithinAbs;
 using Catch::Matchers::WithinRel;
+
+TEST_CASE("Numerical functions preserve long-double arithmetic", "[numerics]")
+{
+    using Real = long double;
+    auto checkClose = [](Real actual, Real expected, Real relativeTolerance = 2e-16L) {
+        CHECK(std::fabs(actual - expected) <= relativeTolerance * std::max(Real{1}, std::fabs(expected)));
+    };
+
+    STATIC_CHECK(std::same_as<decltype(math::softplus(Real{1})), Real>);
+    STATIC_CHECK(std::same_as<decltype(math::logBeta(Real{1}, Real{1})), Real>);
+    STATIC_CHECK(std::same_as<decltype(math::pgamma(Real{1}, Real{1})), Real>);
+    STATIC_CHECK(std::same_as<decltype(math::besselI(Real{0}, Real{1})), Real>);
+    STATIC_CHECK(std::same_as<decltype(math::factorial(Real{1})), Real>);
+    STATIC_CHECK(std::same_as<decltype(math::factorial(1)), long double>);
+    STATIC_CHECK(std::same_as<decltype(math::doubleFactorial<Real>(1)), Real>);
+    STATIC_CHECK(std::same_as<decltype(math::lfact<Real>(1)), Real>);
+
+    checkClose(math::atan(Real{2}), std::atan(Real{2}));
+    checkClose(math::softplus(Real{-2}), std::log1p(std::exp(Real{-2})));
+    checkClose(math::log1mexp(Real{-2}), std::log1p(-std::exp(Real{-2})));
+    checkClose(math::logexpm1l(Real{2}), std::log(std::expm1(Real{2})));
+    checkClose(math::log2mexp(Real{-2}), std::log(Real{2} - std::exp(Real{-2})));
+
+    constexpr Real inverseArgument = 0.375L;
+    checkClose(math::erfinv(std::erf(inverseArgument)), inverseArgument, 2e-15L);
+    checkClose(math::erfcinv(std::erfc(inverseArgument)), inverseArgument, 2e-15L);
+    checkClose(math::erfcx(Real{2}), std::exp(Real{4}) * std::erfc(Real{2}), 2e-15L);
+    checkClose(math::harmonicNumber(Real{1}, 4), Real{25} / 12, 1e-14L);
+
+    checkClose(math::factorial(Real{10}), Real{3628800});
+    checkClose(math::lfact<Real>(10), std::lgamma(Real{11}));
+    checkClose(math::ldfact<Real>(9), std::log(Real{945}));
+    checkClose(math::binom<Real>(20, 6), Real{38760}, 2e-15L);
+
+    constexpr Real x = 2.25L;
+    checkClose(math::digamma(x + 1), math::digamma(x) + 1 / x);
+    checkClose(math::trigamma(x + 1), math::trigamma(x) - 1 / (x * x));
+    checkClose(math::ibeta(Real{0.25}, Real{2}, Real{3}), Real{0.26171875}, 2e-15L);
+    checkClose(math::pgamma(Real{1}, x), -std::expm1(-x), 2e-15L);
+    checkClose(math::pgamma(Real{2}, x) + math::qgamma(Real{2}, x), Real{1}, 2e-15L);
+
+    constexpr Real besselArgument = 1.25L;
+    Real expectedBesselI = std::sqrt(Real{2} / (std::numbers::pi_v<Real> * besselArgument)) * std::sinh(besselArgument);
+    checkClose(math::portable::besselI(Real{0.5}, besselArgument), expectedBesselI, 2e-15L);
+    checkClose(math::portable::riemannZeta(Real{2}), std::numbers::pi_v<Real> * std::numbers::pi_v<Real> / 6, 2e-15L);
+
+    Real w = math::W0Lambert(Real{3});
+    checkClose(w * std::exp(w), Real{3}, 2e-15L);
+    Real marcumP = math::MarcumP(Real{1}, Real{2}, Real{3});
+    Real marcumQ = math::MarcumQ(Real{1}, Real{2}, Real{3});
+    CHECK(marcumP >= 0);
+    CHECK(marcumP <= 1);
+    checkClose(marcumP + marcumQ, Real{1});
+}
 
 TEST_CASE("Adaptive quadrature on finite and infinite intervals", "[numerics]")
 {

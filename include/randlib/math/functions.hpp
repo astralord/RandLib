@@ -2,10 +2,12 @@
 
 #include <array>
 #include <cmath>
+#include <concepts>
 #include <functional>
 #include <complex>
 #include <vector>
 #include <utility>
+#include <type_traits>
 #include <algorithm>
 #include <numeric>
 
@@ -49,70 +51,80 @@ bool areClose(RealType a, RealType b, RealType eps = 1e-6)
  * @param x
  * @return sign of x
  */
-int sign(double x);
+template <std::floating_point Real>
+int sign(Real x);
 
 /**
  * @fn atan
  * @param x
  * @return safe atan(x)
  */
-double atan(double x);
+template <std::floating_point Real>
+Real atan(Real x);
 
 /**
  * @fn log1pexp
  * @param x
  * @return log(1 + exp(x))
  */
-double softplus(double x);
+template <std::floating_point Real>
+Real softplus(Real x);
 
 /**
  * @fn log1mexp
  * @param x
  * @return log(1 - exp(x))
  */
-double log1mexp(double x);
+template <std::floating_point Real>
+Real log1mexp(Real x);
 
 /**
  * @fn logexpm1
  * @param x
  * @return log(exp(x) - 1)
  */
-double logexpm1l(double x);
+template <std::floating_point Real>
+Real logexpm1l(Real x);
 
 /**
  * @fn log2mexp
  * @param x
  * @return log(2 - exp(x))
  */
-double log2mexp(double x);
+template <std::floating_point Real>
+Real log2mexp(Real x);
 
 /**
  * @fn erfinv
  * @param p
  * @return inverse error function: such x that erf(x) = p
  */
-double erfinv(double p);
+template <std::floating_point Real>
+Real erfinv(Real p);
 
 /**
  * @fn erfcinv
  * @param p
  * @return inverse complementary error function: such x that erfc(x) = p
  */
-double erfcinv(double p);
+template <std::floating_point Real>
+Real erfcinv(Real p);
 
 /**
  * @fn erfcx
  * @param x
  * @return scaled complementary error function exp(x^2) erfc(x)
  */
-double erfcx(double x);
+template <std::floating_point Real>
+Real erfcx(Real x);
 
 /**
  * @brief xexpxsqerfc
  * @param x
  * @return x * exp(x^2) * erfc(x)
  */
-double xexpxsqerfc(double x);
+template <std::floating_point Real>
+Real xexpxsqerfc(Real x);
 
 /**
  * @fn harmonicNumber
@@ -120,7 +132,8 @@ double xexpxsqerfc(double x);
  * @param number
  * @return sum_{i=1}^{number} i^{-exponent}
  */
-double harmonicNumber(double exponent, int number);
+template <std::floating_point Real>
+Real harmonicNumber(Real exponent, int number);
 
 /**
  * @fn logBesselI
@@ -129,7 +142,8 @@ double harmonicNumber(double exponent, int number);
  * @param x
  * @return log(I_ν(x))
  */
-long double logBesselI(double nu, double x);
+template <std::floating_point Real>
+Real logBesselI(std::type_identity_t<Real> nu, Real x);
 
 /**
  * @fn logBesselK
@@ -138,7 +152,8 @@ long double logBesselI(double nu, double x);
  * @param x
  * @return log(K_ν(x))
  */
-long double logBesselK(double nu, double x);
+template <std::floating_point Real>
+Real logBesselK(std::type_identity_t<Real> nu, Real x);
 
 /**
  * @fn W0Lambert
@@ -146,7 +161,8 @@ long double logBesselK(double nu, double x);
  * @param epsilon
  * @return W0 branch of Lambert W function
  */
-double W0Lambert(double x, double epsilon = 1e-11);
+template <std::floating_point Real>
+Real W0Lambert(Real x, std::type_identity_t<Real> epsilon = Real{1e-11});
 
 /**
  * @fn W1Lambert
@@ -154,7 +170,8 @@ double W0Lambert(double x, double epsilon = 1e-11);
  * @param epsilon
  * @return W-1 branch of Lambert W function
  */
-double Wm1Lambert(double x, double epsilon = 1e-11);
+template <std::floating_point Real>
+Real Wm1Lambert(Real x, std::type_identity_t<Real> epsilon = Real{1e-11});
 
 /**
  * @fn MarcumP
@@ -167,7 +184,9 @@ double Wm1Lambert(double x, double epsilon = 1e-11);
  * @param logY log(y)
  * @return 1 - Marcum Q-function
  */
-double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY);
+template <std::floating_point Real>
+Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y, std::type_identity_t<Real> sqrtX,
+             std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX, std::type_identity_t<Real> logY);
 
 /**
  * @fn MarcumP
@@ -176,7 +195,8 @@ double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double
  * @param y
  * @return 1 - Marcum Q-function
  */
-double MarcumP(double mu, double x, double y);
+template <std::floating_point Real>
+Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y);
 
 /**
  * @fn MarcumQ
@@ -189,7 +209,9 @@ double MarcumP(double mu, double x, double y);
  * @param logY log(y)
  * @return Marcum Q-function
  */
-double MarcumQ(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY);
+template <std::floating_point Real>
+Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y, std::type_identity_t<Real> sqrtX,
+             std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX, std::type_identity_t<Real> logY);
 
 /**
  * @fn MarcumQ
@@ -198,7 +220,8 @@ double MarcumQ(double mu, double x, double y, double sqrtX, double sqrtY, double
  * @param y
  * @return Marcum Q-function
  */
-double MarcumQ(double mu, double x, double y);
+template <std::floating_point Real>
+Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y);
 } // namespace math
 
 } // namespace randlib
@@ -216,12 +239,14 @@ namespace randlib
 namespace math
 {
 
-inline int sign(double x)
+template <std::floating_point Real>
+inline int sign(Real x)
 {
     return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
 
-inline double atan(double x)
+template <std::floating_point Real>
+inline Real atan(Real x)
 {
     /// For small absolute values we use standard technique
     /// Otherwise we use relation
@@ -234,49 +259,55 @@ inline double atan(double x)
     return (x < -1.0) ? -randlib::consts::half_pi - std::atan(1.0 / x) : std::atan(x);
 }
 
-inline double softplus(double x)
+template <std::floating_point Real>
+inline Real softplus(Real x)
 {
     if (x < 20.0)
-        return std::log1pl(std::exp(x));
+        return std::log1p(std::exp(x));
     return (x < 35.0) ? x + std::exp(-x) : x;
 }
 
-inline double log1mexp(double x)
+template <std::floating_point Real>
+inline Real log1mexp(Real x)
 {
-    return (x < -randlib::consts::ln2) ? std::log1pl(-std::exp(x)) : std::log(-std::expm1l(x));
+    return (x < -randlib::consts::ln2) ? std::log1p(-std::exp(x)) : std::log(-std::expm1(x));
 }
 
-inline double logexpm1l(double x)
+template <std::floating_point Real>
+inline Real logexpm1l(Real x)
 {
     if (x < 20.0)
-        return std::log(std::expm1l(x));
+        return std::log(std::expm1(x));
     return (x < 35.0) ? x - std::exp(-x) : x;
 }
 
-inline double log2mexp(double x)
+template <std::floating_point Real>
+inline Real log2mexp(Real x)
 {
-    return std::log1pl(-std::expm1l(x));
+    return std::log1p(-std::expm1(x));
 }
 
 namespace detail
 {
 
-inline double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
+template <std::floating_point Real>
+inline Real erfinvChebyshevSeries(Real x, long double t, const long double *array, int size)
 {
     /// We approximate inverse erf via Chebyshev polynomials
     long double Tn = t, Tnm1 = 1, sum = 0.0;
     for (int i = 1; i != size; ++i) {
         sum += array[i] * Tn;
         /// calculate next Chebyshev polynomial
-        double temp = Tn;
+        long double temp = Tn;
         Tn *= 2 * t;
         Tn -= Tnm1;
         Tnm1 = temp;
     }
-    return x * (array[0] + sum);
+    return static_cast<Real>(static_cast<long double>(x) * (array[0] + sum));
 }
 
-inline double erfinvAux1(double beta)
+template <std::floating_point Real>
+inline Real erfinvAux1(Real beta)
 {
     /// |1 - p| < 5e-16
     static constexpr long double D5 = -9.199992358830151031278420l, D6 = 2.794990820124599493768426l;
@@ -309,7 +340,8 @@ inline double erfinvAux1(double beta)
     return erfinvChebyshevSeries(beta, D5 / std::sqrt(beta) + D6, mu, muSize);
 }
 
-inline double erfinvAux2(double beta)
+template <std::floating_point Real>
+inline Real erfinvAux2(Real beta)
 {
     /// 5e-16 < |1 - p| < 0.025
     static constexpr long double D3 = -0.5594576313298323225436913l, D4 = 2.287915716263357638965891l;
@@ -354,7 +386,8 @@ inline double erfinvAux2(double beta)
     return erfinvChebyshevSeries(beta, D3 * beta + D4, delta, deltaSize);
 }
 
-inline double erfinvAux3(double beta)
+template <std::floating_point Real>
+inline Real erfinvAux3(Real beta)
 {
     /// 0.8 < p < 0.975
     static constexpr long double D1 = -1.548813042373261659512742l, D2 = 2.565490123147816151928163l;
@@ -389,7 +422,8 @@ inline double erfinvAux3(double beta)
     return erfinvChebyshevSeries(beta, D1 * beta + D2, lambda, lambdaSize);
 }
 
-inline double erfinvAux4(double p)
+template <std::floating_point Real>
+inline Real erfinvAux4(Real p)
 {
     /// 0 < p < 0.8
     static constexpr int xiSize = 39;
@@ -437,7 +471,8 @@ inline double erfinvAux4(double p)
 
 } // namespace detail
 
-inline double erfinv(double p)
+template <std::floating_point Real>
+inline Real erfinv(Real p)
 {
     /// Consider special cases
     if (p < 0.0)
@@ -451,13 +486,14 @@ inline double erfinv(double p)
     if (p < 0.8)
         return detail::erfinvAux4(p);
     /// Handle tails
-    double beta = std::sqrt(-std::log1pl(-p * p));
+    Real beta = std::sqrt(-std::log1p(-p * p));
     if (p < 0.9975)
         return detail::erfinvAux3(beta);
     return (1.0 - p < 5e-16) ? detail::erfinvAux1(beta) : detail::erfinvAux2(beta);
 }
 
-inline double erfcinv(double p)
+template <std::floating_point Real>
+inline Real erfcinv(Real p)
 {
     /// Consider special cases
     if (p > 1.0)
@@ -468,26 +504,27 @@ inline double erfcinv(double p)
         return 0.0;
     if (p > 0.2)
         return detail::erfinvAux4(1.0 - p);
-    double pSq = p * p, p2 = 2 * p;
-    double beta = std::sqrt(-std::log(p2 - pSq));
+    Real pSq = p * p, p2 = 2 * p;
+    Real beta = std::sqrt(-std::log(p2 - pSq));
     if (p > 0.0025)
         return detail::erfinvAux3(beta);
     return (p > 5e-16) ? detail::erfinvAux2(beta) : detail::erfinvAux1(beta);
 }
 
-inline double xexpxsqerfc(double x)
+template <std::floating_point Real>
+inline Real xexpxsqerfc(Real x)
 {
     static constexpr int MAX_X = 10;
     static constexpr int N = 10;
     if (x < MAX_X) {
-        double y = x * x;
+        Real y = x * x;
         y += std::log(std::erfc(x));
         return x * std::exp(y);
     }
-    double log2xSq = randlib::consts::ln2 + 2 * std::log(x);
-    double sum = 0.0;
+    Real log2xSq = randlib::consts::ln2 + 2 * std::log(x);
+    Real sum = 0.0;
     for (int n = 1; n != N; ++n) {
-        double add = math::ldfact(2 * n - 1);
+        Real add = math::ldfact(2 * n - 1);
         add -= n * log2xSq;
         add = std::exp(add);
         sum += (n & 1) ? -add : add;
@@ -495,31 +532,34 @@ inline double xexpxsqerfc(double x)
     return (1.0 + sum) / randlib::consts::sqrtpi;
 }
 
-inline double erfcx(double x)
+template <std::floating_point Real>
+inline Real erfcx(Real x)
 {
     if (x < 1.0)
         return std::exp(x * x) * std::erfc(x);
     return xexpxsqerfc(x) / x;
 }
 
-inline double harmonicNumber(double exponent, int number)
+template <std::floating_point Real>
+inline Real harmonicNumber(Real exponent, int number)
 {
     if (number < 1)
         return 0;
     if (exponent == 1)
-        return randlib::consts::egamma + digamma(number + 1);
+        return static_cast<Real>(randlib::consts::egamma) + digamma(static_cast<Real>(number + 1));
     if (exponent == 2)
-        return randlib::consts::pi_sq / 6.0 - trigamma(number + 1);
-    double res = 1.0;
+        return static_cast<Real>(randlib::consts::pi_sq) / 6 - trigamma(static_cast<Real>(number + 1));
+    Real res = 1.0;
     for (int i = 2; i <= number; ++i)
         res += std::pow(i, -exponent);
     return res;
 }
 
-inline long double logBesselI(double nu, double x)
+template <std::floating_point Real>
+inline Real logBesselI(std::type_identity_t<Real> nu, Real x)
 {
     if (x < 0) {
-        double roundNu = std::round(nu);
+        Real roundNu = std::round(nu);
         bool nuIsInt = detail::areClose(nu, roundNu);
         if (nuIsInt) {
             int nuInt = roundNu;
@@ -531,38 +571,39 @@ inline long double logBesselI(double nu, double x)
     if (x == 0) {
         if (nu == 0)
             return 0.0;
-        double roundNu = std::round(nu);
+        Real roundNu = std::round(nu);
         bool nuIsInt = detail::areClose(nu, roundNu);
         return (nu > 0 || nuIsInt) ? -INFINITY : INFINITY;
     }
 
     if (std::fabs(nu) == 0.5) {
         /// log(sinh(x)) or log(cosh(x))
-        long double y = x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
+        Real y = x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
         y += (nu > 0) ? math::log1mexp(-2 * x) : math::softplus(-2 * x);
         return y;
     }
 
     if (nu < 0) {
         /// I(ν, x) = I(-ν, x) - 2 / π sin(πν) K(-ν, x), and sin(πν) = -sin(π|ν|) for ν < 0
-        long double besseli = math::besselI(-nu, x);
-        long double sinPiAbsNu = std::sin(-randlib::consts::pi * nu);
-        long double y = 0;
+        Real besseli = math::besselI(-nu, x);
+        Real sinPiAbsNu = std::sin(-randlib::consts::pi * nu);
+        Real y = 0;
         if (sinPiAbsNu == 0 || detail::areClose(nu, std::round(nu)))
             y = besseli;
         else {
-            long double besselk = math::besselK(-nu, x);
+            Real besselk = math::besselK(-nu, x);
             y = besseli + randlib::consts::two_inv_pi * sinPiAbsNu * besselk;
         }
         return (y <= 0) ? -INFINITY : std::log(y);
     }
 
-    long double besseli = math::besselI(nu, x); // TODO: expand Hankel asymptotic expansions
+    Real besseli = math::besselI(nu, x); // TODO: expand Hankel asymptotic expansions
     return std::isfinite(besseli) ? std::log(besseli)
                                   : x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
 }
 
-inline long double logBesselK(double nu, double x)
+template <std::floating_point Real>
+inline Real logBesselK(std::type_identity_t<Real> nu, Real x)
 {
     if (nu < 0.0)
         return NAN; /// K(-ν, x) = -K(ν, x) < 0
@@ -570,12 +611,13 @@ inline long double logBesselK(double nu, double x)
     if (x == 0.0)
         return INFINITY;
 
-    long double besselk = 0;
+    Real besselk = 0;
     if (nu == 0.5 || (besselk = math::besselK(nu, x)) == 0)
         return 0.5 * (randlib::consts::lnpi - randlib::consts::ln2 - std::log(x)) - x;
 
     if (!std::isfinite(besselk)) // TODO: expand Hankel asymptotic expansions
-        return (nu == 0) ? std::log(-std::log(x)) : std::lgammal(nu) - randlib::consts::ln2 - nu * std::log(0.5 * x);
+        return (nu == 0) ? std::log(-std::log(x))
+                         : std::lgamma(nu) - static_cast<Real>(randlib::consts::ln2) - nu * std::log(Real{0.5} * x);
 
     return std::log(besselk);
 }
@@ -590,18 +632,19 @@ inline long double logBesselK(double nu, double x)
 namespace detail
 {
 
-inline double WLambert(double x, double w0, double epsilon)
+template <std::floating_point Real>
+inline Real WLambert(Real x, Real w0, Real epsilon)
 {
-    double w = w0;
-    double step = 0;
+    Real w = w0;
+    Real step = 0;
     do {
-        double ew = std::exp(w);
-        double wew = w * ew;
-        double numerator1 = wew - x;
-        double wp1 = w + 1;
-        double denominator1 = ew * wp1;
-        double numerator2 = (w + 2) * numerator1;
-        double denominator2 = 2 * wp1;
+        Real ew = std::exp(w);
+        Real wew = w * ew;
+        Real numerator1 = wew - x;
+        Real wp1 = w + 1;
+        Real denominator1 = ew * wp1;
+        Real numerator2 = (w + 2) * numerator1;
+        Real denominator2 = 2 * wp1;
         step = numerator2 / denominator2;
         step = numerator1 / (denominator1 - step);
         w -= step;
@@ -611,28 +654,30 @@ inline double WLambert(double x, double w0, double epsilon)
 
 } // namespace detail
 
-inline double W0Lambert(double x, double epsilon)
+template <std::floating_point Real>
+inline Real W0Lambert(Real x, std::type_identity_t<Real> epsilon)
 {
-    double w = 0;
+    Real w = 0;
     if (x < -randlib::consts::inv_e)
         throw std::invalid_argument("Argument x should be greater than -1/e, but it's equal to " + std::to_string(x));
     if (x > 10) {
-        double logX = std::log(x);
-        double loglogX = std::log(logX);
+        Real logX = std::log(x);
+        Real loglogX = std::log(logX);
         w = logX - loglogX;
     }
     return detail::WLambert(x, w, epsilon);
 }
 
-inline double Wm1Lambert(double x, double epsilon)
+template <std::floating_point Real>
+inline Real Wm1Lambert(Real x, std::type_identity_t<Real> epsilon)
 {
-    double w = -2;
+    Real w = -2;
     if (x < -randlib::consts::inv_e || x > 0)
         throw std::invalid_argument(
             "Argument x should be greater than -1/e and smaller or equal to 0, but it's equal to " + std::to_string(x));
     if (x > -0.1) {
-        double logmX = std::log(-x);
-        double logmlogmX = std::log(-logmX);
+        Real logmX = std::log(-x);
+        Real logmlogmX = std::log(-logmX);
         w = logmX - logmlogmX;
     }
     return detail::WLambert(x, w, epsilon);
@@ -650,51 +695,52 @@ namespace detail
  * @param logY log(y)
  * @return series expansion for Marcum-P function
  */
-inline double MarcumPSeries(double mu, double x, double y, double logX, double logY)
+template <std::floating_point Real>
+inline Real MarcumPSeries(Real mu, Real x, Real y, Real logX, Real logY)
 {
     /// ~log(2πε) for ε = 1e-16
-    static constexpr double ln2piEps = -35.0;
-    double lgammamu = std::lgammal(mu);
-    double C = lgammamu - ln2piEps + mu;
+    static constexpr Real ln2piEps = -35.0;
+    Real lgammamu = std::lgamma(mu);
+    Real C = lgammamu - ln2piEps + mu;
 
     /// solving equation f(n) = 0
     /// to find first negleted term
-    double root = std::max(0.5 * (mu * mu + 4 * x * y - mu), 1.0);
-    double logXY = logX + logY;
-    if (!math::findRootNewtonSecondOrder<double>(
-            [C, mu, logXY](double n) {
-                double npmu = n + mu;
-                double logn = std::log(n), lognpmu = std::log(npmu);
-                double first = logn - 2 - logXY;
+    Real root = std::max(Real{0.5} * (mu * mu + 4 * x * y - mu), Real{1});
+    Real logXY = logX + logY;
+    if (!math::findRootNewtonSecondOrder<Real>(
+            [C, mu, logXY](Real n) {
+                Real npmu = n + mu;
+                Real logn = std::log(n), lognpmu = std::log(npmu);
+                Real first = logn - 2 - logXY;
                 first *= n;
                 first += npmu * lognpmu;
                 first -= C;
-                double second = logn + lognpmu - logXY;
-                double third = 1.0 / n + 1.0 / npmu;
-                return DoubleTriplet(first, second, third);
+                Real second = logn + lognpmu - logXY;
+                Real third = 1.0 / n + 1.0 / npmu;
+                return Triplet<Real>(first, second, third);
             },
             root))
         /// unexpected return
         throw std::runtime_error("Marcum P function: failure in numerical procedure");
 
     /// series expansion
-    double sum = 0.0;
+    Real sum = 0.0;
     /// sanity check
-    int n0 = std::max(std::ceil(root), 5.0);
-    double mpn0 = mu + n0;
-    double P = pgamma(mpn0, y, logY);
-    double diffP = (mpn0 - 1) * logY - y - std::lgammal(mpn0);
+    int n0 = static_cast<int>(std::max(std::ceil(root), Real{5}));
+    Real mpn0 = mu + n0;
+    Real P = pgamma(mpn0, y, logY);
+    Real diffP = (mpn0 - 1) * logY - y - std::lgamma(mpn0);
     diffP = std::exp(diffP);
     for (int n = n0; n > 0; --n) {
-        double term = n * logX - x - lfact(n);
-        double mupnm1 = mu + n - 1;
+        Real term = n * logX - x - lfact(n);
+        Real mupnm1 = mu + n - 1;
         term = std::exp(term) * P;
         sum += term;
         if (n % 5 == 0) {
             /// every 5 iterations we recalculate P and diffP
             /// in order to achieve enough accuracy
             P = pgamma(mupnm1, y, logY);
-            diffP = (mupnm1 - 1) * logY - y - std::lgammal(mupnm1);
+            diffP = (mupnm1 - 1) * logY - y - std::lgamma(mupnm1);
             diffP = std::exp(diffP);
         } else {
             /// otherwise we use recurrent relations
@@ -703,7 +749,7 @@ inline double MarcumPSeries(double mu, double x, double y, double logX, double l
         }
     }
     /// add the last 0-term
-    double lastTerm = lpgamma(mu, y, logY) - x;
+    Real lastTerm = lpgamma(mu, y, logY) - x;
     lastTerm = std::exp(lastTerm);
     sum += lastTerm;
     return sum;
@@ -718,35 +764,36 @@ inline double MarcumPSeries(double mu, double x, double y, double logX, double l
  * @param sqrtY √y
  * @return asymptotic expansion for Marcum-P function for large x*y
  */
-inline double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double sqrtX, double sqrtY)
+template <std::floating_point Real>
+inline Real MarcumPAsymptoticForLargeXY(Real mu, Real x, Real y, Real sqrtX, Real sqrtY)
 {
-    double xi = 2 * sqrtX * sqrtY;
-    double sigma = (y + x) / xi - 1;
-    double sigmaXi = sigma * xi;
-    double rho = sqrtY / sqrtX;
-    double aux = std::erfc(sqrtX - sqrtY);
-    double Phi = (sigma == 0) ? 0.0 : sign(x - y) * std::sqrt(randlib::consts::pi / sigma) * aux;
-    double Psi0 = aux / std::sqrt(rho);
-    double logXi = randlib::consts::ln2 + 0.5 * std::log(x * y);
+    Real xi = 2 * sqrtX * sqrtY;
+    Real sigma = (y + x) / xi - 1;
+    Real sigmaXi = sigma * xi;
+    Real rho = sqrtY / sqrtX;
+    Real aux = std::erfc(sqrtX - sqrtY);
+    Real Phi = (sigma == 0) ? Real{0} : sign(x - y) * std::sqrt(static_cast<Real>(randlib::consts::pi) / sigma) * aux;
+    Real Psi0 = aux / std::sqrt(rho);
+    Real logXi = randlib::consts::ln2 + 0.5 * std::log(x * y);
     /// sanity check
-    int n0 = std::max(std::ceil(sigmaXi), 7.0);
-    double sum = 0.0;
-    double A1 = 1.0, A2 = 1.0;
+    int n0 = static_cast<int>(std::max(std::ceil(sigmaXi), Real{7}));
+    Real sum = 0.0;
+    Real A1 = 1.0, A2 = 1.0;
     for (int n = 1; n <= n0; ++n) {
         /// change φ
-        double nmHalf = n - 0.5;
+        Real nmHalf = n - 0.5;
         Phi *= -sigma;
-        double temp = -sigmaXi - nmHalf * logXi;
+        Real temp = -sigmaXi - nmHalf * logXi;
         Phi += std::exp(temp);
         Phi /= nmHalf;
         /// calculate A(μ-1) and A(μ)
-        double coef1 = (nmHalf - mu) * (nmHalf + mu);
-        double coef2 = (nmHalf - mu + 1) * (nmHalf + mu - 1);
-        double denom = -2 * n;
+        Real coef1 = (nmHalf - mu) * (nmHalf + mu);
+        Real coef2 = (nmHalf - mu + 1) * (nmHalf + mu - 1);
+        Real denom = -2 * n;
         A1 *= coef1 / denom;
         A2 *= coef2 / denom;
         /// compute term ψ and add it to the sum
-        double Psi = Phi * (A2 - A1 / rho);
+        Real Psi = Phi * (A2 - A1 / rho);
         sum += (n & 1) ? Psi : -Psi;
     }
     sum /= randlib::consts::sqrt2pi;
@@ -762,7 +809,8 @@ inline double MarcumPAsymptoticForLargeXY(double mu, double x, double y, double 
  * @param y
  * @return
  */
-inline double MarcumPForMuSmallerThanOne(double mu, double x, double y, double logX, double logY)
+template <std::floating_point Real>
+inline Real MarcumPForMuSmallerThanOne(Real mu, Real x, Real y, Real logX, Real logY)
 {
     // TODO: check Krishnamoorthy paper for alternative representation
 
@@ -770,25 +818,25 @@ inline double MarcumPForMuSmallerThanOne(double mu, double x, double y, double l
     /// however we have singularity point at 0,
     /// so we get rid of it by subtracting the function
     /// which has the same behaviour at this point
-    double aux = x + mu * randlib::consts::ln2 + std::lgammal(mu);
-    double log2x = randlib::consts::ln2 + logX;
-    double I = (randlib::consts::ln2 + logY) * mu - aux;
+    Real aux = x + mu * static_cast<Real>(randlib::consts::ln2) + std::lgamma(mu);
+    Real log2x = randlib::consts::ln2 + logX;
+    Real I = (randlib::consts::ln2 + logY) * mu - aux;
     I = std::exp(I) / mu;
 
-    double mum1 = mu - 1.0;
+    Real mum1 = mu - 1.0;
     I += math::integrate(
-        [x, log2x, mum1, aux](double t) {
+        [x, log2x, mum1, aux](Real t) {
             if (t <= 0)
-                return 0.0;
+                return Real{0};
             /// Calculate log of leveling factor
-            double log2T = std::log(2 * t);
-            double exponent = mum1 * log2T;
+            Real log2T = std::log(2 * t);
+            Real exponent = mum1 * log2T;
             exponent -= aux;
 
             /// Calculate log(2f(t))
-            double logBessel = math::logBesselI(mum1, 2 * std::sqrt(x * t));
-            double z = mum1 * (log2T - log2x);
-            double log2F = 0.5 * z - t - x + logBessel;
+            Real logBessel = math::logBesselI(mum1, 2 * std::sqrt(x * t));
+            Real z = mum1 * (log2T - log2x);
+            Real log2F = 0.5 * z - t - x + logBessel;
 
             /// Return difference f(t) - factor
             return std::exp(log2F) - 2 * std::exp(exponent);
@@ -797,41 +845,46 @@ inline double MarcumPForMuSmallerThanOne(double mu, double x, double y, double l
     return I;
 }
 
-inline double MarcumQIntegrand(double theta, double xi, double sqrt1pXiSq, double mu, double y)
+template <std::floating_point Real>
+inline Real MarcumQIntegrand(Real theta, Real xi, Real sqrt1pXiSq, Real mu, Real y)
 {
-    double sinTheta = std::sin(theta);
-    double theta_sinTheta = theta / sinTheta;
-    double rho = std::hypot(theta_sinTheta, xi);
-    double theta_sinThetapRho = theta_sinTheta + rho;
-    double r = 0.5 * theta_sinThetapRho / y;
-    double cosTheta = std::cos(theta);
-    double psi = cosTheta * rho - sqrt1pXiSq;
-    double frac = theta_sinThetapRho / (1.0 + sqrt1pXiSq);
+    Real sinTheta = std::sin(theta);
+    Real theta_sinTheta = theta / sinTheta;
+    Real rho = std::hypot(theta_sinTheta, xi);
+    Real theta_sinThetapRho = theta_sinTheta + rho;
+    Real r = 0.5 * theta_sinThetapRho / y;
+    Real cosTheta = std::cos(theta);
+    Real psi = cosTheta * rho - sqrt1pXiSq;
+    Real frac = theta_sinThetapRho / (1.0 + sqrt1pXiSq);
     psi -= std::log(frac);
-    double numerator = (sinTheta - theta * cosTheta) / (sinTheta * rho);
+    Real numerator = (sinTheta - theta * cosTheta) / (sinTheta * rho);
     numerator += cosTheta - r;
     numerator *= r;
-    double denominator = r * r - 2.0 * r * cosTheta + 1.0;
-    double f = numerator / denominator;
+    Real denominator = r * r - 2.0 * r * cosTheta + 1.0;
+    Real f = numerator / denominator;
     return std::exp(mu * psi) * f;
 }
 
-inline double MarcumQIntergralRepresentation(double mu, double x, double y, double sqrtX, double sqrtY)
+template <std::floating_point Real>
+inline Real MarcumQIntergralRepresentation(Real mu, Real x, Real y, Real sqrtX, Real sqrtY)
 {
-    double xi = 2.0 * sqrtX * sqrtY / mu;
-    double sqrt1pXiSq = std::sqrt(1.0 + xi * xi);
-    double yPrime = y / mu;
-    double s0 = 0.5 * (1.0 + sqrt1pXiSq) / yPrime;
-    double phi = x / s0 + y * s0 - std::log(s0) * mu;
-    std::function<double(double)> integrandPtr =
-        std::bind(&MarcumQIntegrand, std::placeholders::_1, xi, sqrt1pXiSq, mu, yPrime);
-    double integral = math::integrate(integrandPtr, -randlib::consts::pi, randlib::consts::pi);
+    Real xi = 2.0 * sqrtX * sqrtY / mu;
+    Real sqrt1pXiSq = std::sqrt(1.0 + xi * xi);
+    Real yPrime = y / mu;
+    Real s0 = 0.5 * (1.0 + sqrt1pXiSq) / yPrime;
+    Real phi = x / s0 + y * s0 - std::log(s0) * mu;
+    auto integrand = [=](Real theta) { return MarcumQIntegrand(theta, xi, sqrt1pXiSq, mu, yPrime); };
+    Real integral =
+        math::integrate(integrand, -static_cast<Real>(randlib::consts::pi), static_cast<Real>(randlib::consts::pi));
     return 0.5 * std::exp(-x - y + phi) / randlib::consts::pi * integral;
 }
 
 } // namespace detail
 
-inline double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
+template <std::floating_point Real>
+inline Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y,
+                    std::type_identity_t<Real> sqrtX, std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX,
+                    std::type_identity_t<Real> logY)
 {
     /* 1 - ok
      * 2 - ok
@@ -845,50 +898,55 @@ inline double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY,
     if (x < 30)
         return detail::MarcumPSeries(mu, x, y, logX, logY);
 
-    double xi = 2 * sqrtX * sqrtY;
+    Real xi = 2 * sqrtX * sqrtY;
     if (xi > 30 && mu * mu < 2 * xi)
         return detail::MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
 
-    double temp = std::sqrt(4 * x + 2 * mu);
-    double f1 = x + mu - temp, f2 = x + mu + temp;
+    Real temp = std::sqrt(4 * x + 2 * mu);
+    Real f1 = x + mu - temp, f2 = x + mu + temp;
     if (y > f1 && y < f2)
         // IF mu > 135
         return 1.0 - detail::MarcumQIntergralRepresentation(mu, x, y, sqrtX, sqrtY);
 
     // TODO: implement the rest techniques
 
-    double mum1 = mu - 1;
+    Real mum1 = mu - 1;
     return math::integrate(
-        [mum1, logX, x](double t) {
+        [mum1, logX, x](Real t) {
             if (t < 0.0)
-                return 0.0;
+                return Real{0};
             if (t == 0.0)
-                return (mum1 == 0) ? 0.5 * std::exp(-x) : 0.0;
-            double logBesseli = math::logBesselI(mum1, 2 * std::sqrt(x * t));
-            double z = 0.5 * mum1 * (std::log(t) - logX);
-            double h = t + x;
+                return (mum1 == 0) ? Real{0.5} * std::exp(-x) : Real{0};
+            Real logBesseli = math::logBesselI(mum1, 2 * std::sqrt(x * t));
+            Real z = 0.5 * mum1 * (std::log(t) - logX);
+            Real h = t + x;
             return std::exp(logBesseli + z - h);
         },
         0, y);
 }
 
-inline double MarcumP(double mu, double x, double y)
+template <std::floating_point Real>
+inline Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y)
 {
-    double sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
-    double logX = std::log(x), logY = std::log(y);
+    Real sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
+    Real logX = std::log(x), logY = std::log(y);
     return MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
 
-inline double MarcumQ(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
+template <std::floating_point Real>
+inline Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y,
+                    std::type_identity_t<Real> sqrtX, std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX,
+                    std::type_identity_t<Real> logY)
 {
     // TODO: implement and use, when mu + x > y
     return 1.0 - MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
 
-inline double MarcumQ(double mu, double x, double y)
+template <std::floating_point Real>
+inline Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y)
 {
-    double sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
-    double logX = std::log(x), logY = std::log(y);
+    Real sqrtX = std::sqrt(x), sqrtY = std::sqrt(y);
+    Real logX = std::log(x), logY = std::log(y);
     return MarcumQ(mu, x, y, sqrtX, sqrtY, logX, logY);
 }
 

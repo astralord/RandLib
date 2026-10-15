@@ -24,6 +24,14 @@ All notable changes to RandLib are documented here. The project follows
   The public `Pair` and `Triplet` aliases now live with the other core declarations, while the
   unconstrained arithmetic overloads for their underlying `std::pair` types have been removed.
 
+### Numerical kernel
+
+- Templated the elementary, gamma, beta, Bessel, zeta, Lambert W and Marcum functions on their
+  floating-point type. Existing mixed integer/`double` calls remain source-compatible, while
+  `long double` now stays in a separate typed path covered by closed-form and recurrence tests.
+- Templated factorial and combinatorial return types; calls without an explicit type retain their
+  previous `long double` result.
+
 ## [1.2.0]
 
 A stabilization release: no API is removed and the file layout is unchanged, but

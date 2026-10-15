@@ -1,5 +1,8 @@
 #pragma once
 
+#include <concepts>
+#include <type_traits>
+
 #include <randlib/math/constants.hpp>
 
 namespace randlib
@@ -17,7 +20,13 @@ namespace math
  * @param b positive parameter
  * @return log(B(a, b)) = log(Γ(a)) + log(Γ(b)) - log(Γ(a + b))
  */
-long double logBeta(long double a, long double b);
+template <std::floating_point Real>
+Real logBeta(Real a, std::type_identity_t<Real> b);
+
+template <typename Left, typename Right>
+    requires(std::is_arithmetic_v<Left> && std::is_arithmetic_v<Right> &&
+             (std::integral<Left> || std::integral<Right> || !std::same_as<Left, Right>))
+auto logBeta(Left a, Right b) -> std::common_type_t<double, Left, Right>;
 
 /**
  * @fn ibeta
@@ -30,7 +39,9 @@ long double logBeta(long double a, long double b);
  * @param log1mX log(1-x)
  * @return I(x, a, b) = B(x, a, b) / B(a, b)
  */
-double ibeta(double x, double a, double b, double logBetaFun, double logX, double log1mX);
+template <std::floating_point Real>
+Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b, std::type_identity_t<Real> logBetaFun,
+           std::type_identity_t<Real> logX, std::type_identity_t<Real> log1mX);
 
 /**
  * @fn ibeta
@@ -40,7 +51,8 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
  * @param b
  * @return I(x, a, b) = B(x, a, b) / B(a, b)
  */
-double ibeta(double x, double a, double b);
+template <std::floating_point Real>
+Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b);
 
 } // namespace math
 
@@ -59,57 +71,73 @@ namespace randlib
 namespace math
 {
 
-inline long double logBeta(long double a, long double b)
+template <std::floating_point Real>
+inline Real logBeta(Real a, std::type_identity_t<Real> b)
 {
     if (a <= 0 || b <= 0)
         throw std::invalid_argument("Parameters (a, b) of beta function should be both positive");
     /// Stirling corrections avoid both overflow of Γ and cancellation between large log Γ values
-    long double p = std::min(a, b), q = std::max(a, b);
+    using Work = std::conditional_t<(sizeof(Real) < sizeof(long double)), long double, Real>;
+    Work p = std::min(static_cast<Work>(a), static_cast<Work>(b));
+    Work q = std::max(static_cast<Work>(a), static_cast<Work>(b));
     if (p >= 10) {
-        long double corr = lgammaCorrection(p) + lgammaCorrection(q) - lgammaCorrection(p + q);
-        return -0.5l * std::log(q) + 0.5l * (randlib::consts::ln2 + randlib::consts::lnpi) + corr +
-               (p - 0.5l) * std::log(p / (p + q)) + q * std::log1p(-p / (p + q));
+        Work corr = lgammaCorrection(p) + lgammaCorrection(q) - lgammaCorrection(p + q);
+        Work result = -Work{0.5} * std::log(q) +
+                      Work{0.5} * static_cast<Work>(randlib::consts::ln2 + randlib::consts::lnpi) + corr +
+                      (p - Work{0.5}) * std::log(p / (p + q)) + q * std::log1p(-p / (p + q));
+        return static_cast<Real>(result);
     }
     if (q >= 10) {
-        long double corr = lgammaCorrection(q) - lgammaCorrection(p + q);
-        return std::lgamma(p) + corr + p - p * std::log(p + q) + (q - 0.5l) * std::log1p(-p / (p + q));
+        Work corr = lgammaCorrection(q) - lgammaCorrection(p + q);
+        Work result = std::lgamma(p) + corr + p - p * std::log(p + q) + (q - Work{0.5}) * std::log1p(-p / (p + q));
+        return static_cast<Real>(result);
     }
-    return std::log(std::tgamma(p) * (std::tgamma(q) / std::tgamma(p + q)));
+    return static_cast<Real>(std::log(std::tgamma(p) * (std::tgamma(q) / std::tgamma(p + q))));
 }
 
-inline double ibetaPowerSeries1(double x, double a, double b, double logBetaFun, double logX, double log1mX)
+template <typename Left, typename Right>
+    requires(std::is_arithmetic_v<Left> && std::is_arithmetic_v<Right> &&
+             (std::integral<Left> || std::integral<Right> || !std::same_as<Left, Right>))
+inline auto logBeta(Left a, Right b) -> std::common_type_t<double, Left, Right>
 {
-    double addon = 1.0, sum = 0.0;
+    using Real = std::common_type_t<double, Left, Right>;
+    return logBeta(static_cast<Real>(a), static_cast<Real>(b));
+}
+
+template <std::floating_point Real>
+inline Real ibetaPowerSeries1(Real x, Real a, Real b, Real logBetaFun, Real logX, Real log1mX)
+{
+    Real addon = 1.0, sum = 0.0;
     /// avoid underflow
-    double u = (x > 1e-5) ? -x / (1.0 - x) : -std::exp(logX - log1mX);
+    Real u = (x > 1e-5) ? -x / (1.0 - x) : -std::exp(logX - log1mX);
     int n = 1;
     do {
         addon *= (n - b) * u / (a + n);
         sum += addon;
         ++n;
     } while (std::fabs(addon) > math::detail::minimumTolerance * std::fabs(sum));
-    double y = a * logX;
+    Real y = a * logX;
     y += (b - 1) * log1mX;
     y -= logBetaFun;
-    y += std::log1pl(sum);
+    y += std::log1p(sum);
     return std::exp(y) / a;
 }
 
-inline double ibetacontinuedFraction1(double x, double a, double b, int number, double logBetaFun, double logX,
-                                      double log1mX)
+template <std::floating_point Real>
+inline Real ibetacontinuedFraction1(Real x, Real a, Real b, int number, Real logBetaFun, Real logX, Real log1mX)
 {
     int n = number;
     /// avoid underflow
-    double u = (x > 1e-5) ? x / (1.0 - x) : std::exp(logX - log1mX);
-    double frac = 0.0;
+    Real u = (x > 1e-5) ? x / (1.0 - x) : std::exp(logX - log1mX);
+    Real frac = 0.0;
     while (n > 1) {
-        double cn = (b - n + 1) / (a + n - 1) * u;
+        Real cn = (b - n + 1) / (a + n - 1) * u;
         frac = cn / (1 + cn - frac);
         --n;
     }
-    double c1 = b / a;
-    double F = c1 / (1 + c1 - frac);
-    double y = a * logX;
+    Real c1 = b / a;
+    Real F = c1 / (1 + c1 - frac);
+    Real y = a * logX;
     y += (b - 1) * log1mX;
     y -= logBetaFun;
     y = std::exp(y) / b;
@@ -117,35 +145,36 @@ inline double ibetacontinuedFraction1(double x, double a, double b, int number, 
     return y;
 }
 
-inline double ibetaPowerSeries2(double x, double a, double b, double logBetaFun, double logX, double log1mX)
+template <std::floating_point Real>
+inline Real ibetaPowerSeries2(Real x, Real a, Real b, Real logBetaFun, Real logX, Real log1mX)
 {
-    double addon = 1.0, sum = 0.0;
+    Real addon = 1.0, sum = 0.0;
     int n = 0;
     do {
         addon *= (n + a + b) * x / (a + n + 1);
         sum += addon;
         ++n;
     } while (std::fabs(addon) > math::detail::minimumTolerance * std::fabs(sum));
-    double y = a * logX;
+    Real y = a * logX;
     y += b * log1mX;
     y -= logBetaFun;
-    y += std::log1pl(sum);
+    y += std::log1p(sum);
     return std::exp(y) / a;
 }
 
-inline double ibetaContinuedFraction2(double x, double a, double b, int number, double logBetaFun, double logX,
-                                      double log1mX)
+template <std::floating_point Real>
+inline Real ibetaContinuedFraction2(Real x, Real a, Real b, int number, Real logBetaFun, Real logX, Real log1mX)
 {
     int n = number;
-    double frac = 0.0;
+    Real frac = 0.0;
     while (n > 1) {
-        double cn = (a + b + n - 2) / (a + n - 1) * x;
+        Real cn = (a + b + n - 2) / (a + n - 1) * x;
         frac = cn / (1 + cn - frac);
         --n;
     }
-    double c1 = (a + b - 1) / a;
-    double F = c1 / (1 + c1 - frac);
-    double y = a * logX;
+    Real c1 = (a + b - 1) / a;
+    Real F = c1 / (1 + c1 - frac);
+    Real y = a * logX;
     y += b * log1mX;
     y -= logBetaFun;
     y = std::exp(y) / (a + b - 1);
@@ -153,7 +182,10 @@ inline double ibetaContinuedFraction2(double x, double a, double b, int number, 
     return y;
 }
 
-inline double ibeta(double x, double a, double b, double logBetaFun, double logX, double log1mX)
+template <std::floating_point Real>
+inline Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b,
+                  std::type_identity_t<Real> logBetaFun, std::type_identity_t<Real> logX,
+                  std::type_identity_t<Real> log1mX)
 {
     /// Check special and incorrect values of parameters
     if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
@@ -171,37 +203,38 @@ inline double ibeta(double x, double a, double b, double logBetaFun, double logX
     if (b == 1.0)
         return std::exp(a * logX);
     if (a == 1.0)
-        return -std::expm1l(b * log1mX);
+        return -std::expm1(b * log1mX);
 
     /// If x is greater than mean of Beta distribution,
     /// convergence of complementary distribution function is faster
     if (x > a / (a + b))
-        return 1.0 - ibeta(1.0 - x, b, a);
+        return Real{1} - ibeta(Real{1} - x, b, a);
 
     /// We truncate after 0.45 instead of 0.5 here
     /// in order to avoid x being too close to 0.5
     if (x < 0.45) {
         if (b < 1)
             return ibetaPowerSeries1(x, a, b, logBetaFun, logX, log1mX);
-        double number = std::floor(b);
+        int number = static_cast<int>(std::floor(b));
         /// equivalent continued fraction #1
-        double ecd = ibetacontinuedFraction1(x, a, b, number, logBetaFun, logX, log1mX);
-        double apn = a + number, bmn = b - number;
-        double residue = (b == number) ? 0.0 : ibetaPowerSeries1(x, apn, bmn, logBeta(apn, bmn), logX, log1mX);
+        Real ecd = ibetacontinuedFraction1(x, a, b, number, logBetaFun, logX, log1mX);
+        Real apn = a + static_cast<Real>(number), bmn = b - static_cast<Real>(number);
+        Real residue = (b == number) ? 0.0 : ibetaPowerSeries1(x, apn, bmn, logBeta(apn, bmn), logX, log1mX);
         return ecd + residue;
     }
 
     if (b < 1)
         return ibetaPowerSeries2(x, a, b, logBetaFun, logX, log1mX);
-    double number = std::floor(b);
+    int number = static_cast<int>(std::floor(b));
     /// equivalent continued fraction #2
-    double ecd = ibetaContinuedFraction2(x, a, b, number, logBetaFun, logX, log1mX);
-    double apn = a + number;
-    double residue = ibetaPowerSeries2(x, apn, b, logBeta(apn, b), logX, log1mX);
+    Real ecd = ibetaContinuedFraction2(x, a, b, number, logBetaFun, logX, log1mX);
+    Real apn = a + static_cast<Real>(number);
+    Real residue = ibetaPowerSeries2(x, apn, b, logBeta(apn, b), logX, log1mX);
     return ecd + residue;
 }
 
-inline double ibeta(double x, double a, double b)
+template <std::floating_point Real>
+inline Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b)
 {
     /// Check special and incorrect values of parameters
     if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
@@ -215,11 +248,11 @@ inline double ibeta(double x, double a, double b)
     if (b == 1.0)
         return std::pow(x, a);
     if (a == 1.0) {
-        double y = b * std::log1pl(-x);
-        return -std::expm1l(y);
+        Real y = b * std::log1p(-x);
+        return -std::expm1(y);
     }
-    double logBetaFun = logBeta(a, b);
-    double logX = std::log(x), log1mX = std::log1pl(-x);
+    Real logBetaFun = logBeta(a, b);
+    Real logX = std::log(x), log1mX = std::log1p(-x);
     return ibeta(x, a, b, logBetaFun, logX, log1mX);
 }
 

@@ -85,12 +85,10 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. Push local commit a4c47f6 on `history`, then check the next CI run of `1.x`. The previous local
-   commits fixed MSVC C4661 and test portability, the gcovr negative-hit parser failure, and the
-   macOS statistical timeout. The latest commit fixes the next MSVC diagnostics: unsigned negation
-   in both uniform likelihoods (also correctness bug B36), rejection-sampler locals that MSVC could
-   not prove initialized, and an unused exception variable. Further MSVC errors may surface one
-   round at a time (flags: `/W4 /permissive- /wd4244 /wd4267 /wd4305`).
+1. Push the current `history` head. In addition to the earlier warning fixes, eafc3de renames the
+   fitting test's global sample-size constant after MSVC diagnosed it as shadowed by implementation
+   locals during template instantiation. Further MSVC errors may surface one round at a time (flags:
+   `/W4 /permissive- /wd4244 /wd4267 /wd4305`).
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
@@ -101,10 +99,11 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
   and unused-variable diagnostics, and the coverage parser error. The engine-adapter test checks
   exact engine advancement while allowing four ULPs of platform-dependent floating-point variation.
   Check these jobs after the next maintainer push.
-- **2.5 Numerical building blocks**: done except "all math functions are templates on `Real`". The new
-  modules (`math/quadrature.hpp`, `math/roots.hpp`, `math/optimize.hpp`) are templates; the special
-  functions (`math/functions.hpp`, `gamma.hpp`, `beta.hpp`, `special_functions.hpp`) are still `double`.
-  Decide with the maintainer whether to template them now or record it as a limitation.
+- **2.5 Numerical building blocks**: done locally. `math/quadrature.hpp`, `math/roots.hpp`,
+  `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
+  `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
+  sites preserve the floating type, and `tests/unit/test_numerics.cpp` independently instantiates
+  and checks the `long double` path with exact identities and closed forms.
 - **2.6 Tooling**:
   - Done locally: `.clang-format` matching the existing style, a pinned clang-format pre-commit hook,
     and one formatting pass over `include/` and `tests/`. Include sorting is deliberately disabled
@@ -130,7 +129,8 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
   - Done locally: `areClose` and the Newton tolerance are private math details; the public
     `Pair`/`Triplet` aliases moved from `math/constants.hpp` to `core/fwd.hpp`; the global pair
     arithmetic overloads were removed in favor of an explicit exponential-family inner product.
-- Then tag `v2.0.0-alpha.1` on `2.x` (Phase 2 "done when" in the plan) and update ROADMAP_STATUS.
+- After the current heads are pushed and every 2.x CI job is green, tag `v2.0.0-alpha.1` on `2.x`.
+  Phase 2 is otherwise complete.
 
 ### 3.3 Phase 3: fitting and features (v2.0-beta)
 
@@ -171,5 +171,4 @@ near α = 1 throw `not_implemented`; heavy-tailed CFs accurate to ~1e-3 and the 
 ## 4. Things that need the maintainer
 
 Plan 0.1 and 0.5 (tracking issue, milestones), closing issues (#11 and others as they are fixed),
-pushing branches and tags, release announcements, the upstream vcpkg PR, and the decision in 3.2
-about templating the special functions.
+pushing branches and tags, release announcements, and the upstream vcpkg PR.
