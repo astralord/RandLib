@@ -14,12 +14,12 @@
 namespace
 {
 
-constexpr size_t N = 20000;
+constexpr size_t SAMPLE_SIZE = 20000;
 constexpr double RECOVERY = 0.05;
 constexpr double STEP = 1e-3;
 
 template <class D, class T>
-std::vector<T> draw(D distribution, unsigned long seed, size_t n = N)
+std::vector<T> draw(D distribution, unsigned long seed, size_t n = SAMPLE_SIZE)
 {
     std::vector<T> sample(n);
     distribution.Reseed(seed);
