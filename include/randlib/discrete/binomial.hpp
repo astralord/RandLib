@@ -427,8 +427,8 @@ IntType BinomialDistribution<IntType>::variateRejection(G &g) const
     /// it can be used only when n * p is integer and p < 0.5
     bool reject = true;
     size_t iter = 0;
-    float Y, V;
-    IntType X;
+    float Y, V = 0;
+    IntType X = 0;
     do {
         float U = a4 * detail::uniform01<float>(g);
         if (U <= a1) {

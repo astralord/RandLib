@@ -274,7 +274,7 @@ double UniformRand<RealType>::LikelihoodFunction(std::span<const RealType> sampl
 {
     bool sampleIsInsideInterval =
         this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
-    return sampleIsInsideInterval ? std::pow(this->bma, -sample.size()) : 0.0;
+    return sampleIsInsideInterval ? std::pow(this->bma, -static_cast<double>(sample.size())) : 0.0;
 }
 
 template <typename RealType>

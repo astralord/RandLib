@@ -13,6 +13,8 @@ All notable changes to RandLib are documented here. The project follows
   CI job, with every diagnostic promoted to an error.
 - Added opt-in Google Benchmark sampling comparisons for normal, exponential, gamma and Poisson
   distributions against the standard library, plus stable-law sampling.
+- Engine-adapter interoperability tests now verify identical engine advancement and allow the few
+  ULPs of platform-dependent variation between direct and type-erased sampling paths.
 
 ### API cleanup
 
@@ -133,6 +135,9 @@ coherence and sampling statistics. Every fix below has a regression test in
   last bits of the platform's special functions.
 - **B35** Zeta distribution and survival functions use an Euler–Maclaurin tail for large
   arguments instead of summing billions of terms.
+- **B36** Continuous and discrete uniform likelihoods negate the sample-count exponent after
+  converting it to a signed floating-point value; negating `size_t` previously wrapped and
+  produced an enormous positive exponent.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).

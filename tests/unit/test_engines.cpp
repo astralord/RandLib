@@ -1,6 +1,7 @@
 // Bundled random engines, seeding helpers and the conversion of engine output into uniform variates.
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include <randlib/randlib.hpp>
 
@@ -12,6 +13,7 @@
 #include <vector>
 
 using namespace randlib;
+using Catch::Matchers::WithinULP;
 
 static_assert(std::uniform_random_bit_generator<SplitMix64>);
 static_assert(std::uniform_random_bit_generator<Pcg32>);
@@ -220,9 +222,14 @@ TEST_CASE("Distributions sample with any engine", "[engines]")
     X.Sample(bulk, sample);
     const ContinuousDistribution<double> &base = X;
     for (double value : sample) {
-        CHECK(X(direct) == value);
-        CHECK(base(throughBase) == value);
+        CHECK_THAT(X(direct), WithinULP(value, 4));
+        CHECK_THAT(base(throughBase), WithinULP(value, 4));
     }
+    auto directNext = direct();
+    auto bulkNext = bulk();
+    auto throughBaseNext = throughBase();
+    CHECK(directNext == bulkNext);
+    CHECK(throughBaseNext == bulkNext);
 }
 
 TEST_CASE("Default-seeded distributions differ", "[engines]")

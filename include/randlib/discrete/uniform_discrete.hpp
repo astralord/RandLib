@@ -210,7 +210,7 @@ double UniformDiscreteRand<IntType>::LikelihoodFunction(std::span<const IntType>
 {
     bool sampleIsInsideInterval =
         this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
-    return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
+    return sampleIsInsideInterval ? std::pow(n, -static_cast<double>(sample.size())) : 0.0;
 }
 
 template <typename IntType>
