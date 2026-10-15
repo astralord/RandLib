@@ -91,8 +91,7 @@ private:
     enum GENERATOR_ID {
         BERNOULLI_SUM,
         WAITING,
-        REJECTION,
-        POISSON
+        REJECTION
     };
 
     GENERATOR_ID GetIdOfUsedGenerator() const
