@@ -112,6 +112,8 @@ coherence and sampling statistics. Every fix below has a regression test in
   it is now computed as π² sinc(π − st) / (st (π + st)).
 - **B34** Discrete quantiles at a probability level that F reaches exactly no longer depend on the
   last bits of the platform's special functions.
+- **B35** Zeta distribution and survival functions use an Euler–Maclaurin tail for large
+  arguments instead of summing billions of terms.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).

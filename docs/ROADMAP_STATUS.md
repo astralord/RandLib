@@ -24,9 +24,9 @@ plan and status.
 |---|---|---|
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
-| 1.3 Compiler portability (#18) | ✅ | GCC 13/14 and Clang 18 build warning-free locally; libc++ needs no C++17 special math functions. |
-| 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 20 further bugs (B11–B30) found by the test suite and fixed; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | Runs on GitHub; the first run found an MSVC build error, a macOS accuracy difference and a 20-minute unit suite, all fixed in the following commits. |
+| 1.3 Compiler portability (#18) | 🟡 | GCC 13/14 and Clang 18 build warning-free locally; the latest MSVC C4661 fix awaits CI. |
+| 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 25 further bugs (B11–B35) found by the test suite and fixed; see CHANGELOG.md. |
+| 1.5 Continuous integration | 🟡 | The third run exposed one unused Gamma declaration on MSVC, a gcovr parser error and an unbounded Zeta CDF in the macOS statistical suite; fixes await CI. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
 | 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 

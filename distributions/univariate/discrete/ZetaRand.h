@@ -33,6 +33,7 @@ public:
 
     double logP(const IntType & k) const override;
     double F(const IntType & k) const override;
+    double S(const IntType & k) const override;
     IntType Variate() const override;
 
     long double Mean() const override;
