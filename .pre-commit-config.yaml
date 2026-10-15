@@ -3,4 +3,4 @@ repos:
     rev: v18.1.8
     hooks:
       - id: clang-format
-        files: ^(include|tests)/.*\.(h|hpp|cpp)$
+        files: ^(benchmarks|include|src|tests)/.*\.(h|hpp|cpp)$

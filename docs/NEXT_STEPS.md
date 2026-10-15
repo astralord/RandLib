@@ -109,8 +109,16 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
     because the converted headers still contain dependency-sensitive implementation include blocks.
   - Done locally: clang-tidy analyzes `src/precompiled.cpp`, whose explicit instantiations cover the
     public distribution headers, and promotes every diagnostic to an error in blocking CI.
-  - `benchmarks/` with Google Benchmark via FetchContent (option `RANDLIB_BUILD_BENCHMARKS`): normal,
-    exponential, gamma, Poisson, stable sampling against `std::*_distribution`; not gated in CI.
+  - Done locally: opt-in `benchmarks/` with pinned Google Benchmark 1.9.5. Configure with
+    `-DRANDLIB_BUILD_BENCHMARKS=ON`; it compares normal, exponential, gamma and Poisson sampling
+    against `std::*_distribution` and measures stable sampling. Benchmarks are tracked, not gated.
+
+    ```sh
+    cmake -S /root/RandLib-2.x -B /tmp/randlib-bench -DCMAKE_BUILD_TYPE=Release \
+      -DRANDLIB_BUILD_TESTS=OFF -DRANDLIB_BUILD_BENCHMARKS=ON
+    cmake --build /tmp/randlib-bench --target randlib_benchmarks
+    /tmp/randlib-bench/benchmarks/randlib_benchmarks
+    ```
 - **Clean-ups left by the automated header conversion** (worth doing with or before 2.6):
   - access-specifier toggles around each `variate(detail::EngineRef)` override
     (`protected: … public:` in the middle of public sections);

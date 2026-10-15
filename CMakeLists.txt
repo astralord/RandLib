@@ -9,6 +9,7 @@ project(RandLib
 include(GNUInstallDirs)
 
 option(RANDLIB_BUILD_TESTS "Build the RandLib test suite" ${PROJECT_IS_TOP_LEVEL})
+option(RANDLIB_BUILD_BENCHMARKS "Build the RandLib sampling benchmarks" OFF)
 option(RANDLIB_WARNINGS_AS_ERRORS "Treat compiler warnings as errors in RandLib's own targets" OFF)
 option(RANDLIB_INSTALL "Generate install and package-config rules" ${PROJECT_IS_TOP_LEVEL})
 option(RANDLIB_PRECOMPILED "Compile the double and int instantiations once into a static library" OFF)
@@ -59,6 +60,10 @@ endif()
 if(RANDLIB_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+if(RANDLIB_BUILD_BENCHMARKS)
+    add_subdirectory(benchmarks)
 endif()
 
 if(RANDLIB_INSTALL)

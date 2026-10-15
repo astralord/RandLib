@@ -11,6 +11,8 @@ All notable changes to RandLib are documented here. The project follows
   and test sources without reordering dependency-sensitive includes.
 - Clang-tidy now analyzes the explicit-instantiation translation unit and public headers as a blocking
   CI job, with every diagnostic promoted to an error.
+- Added opt-in Google Benchmark sampling comparisons for normal, exponential, gamma and Poisson
+  distributions against the standard library, plus stable-law sampling.
 
 ## [1.2.0]
 
