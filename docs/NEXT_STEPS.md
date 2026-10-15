@@ -144,8 +144,11 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   overloads take the model's fixed parameter as their third argument (variance for normal,
   variance of the logarithms for log-normal, trial count for binomial, shape/count for
   negative-binomial, shape for Weibull, scale for Pareto, and minimum for uniform). Stable-family
-  fitting remains with Phase 5; next add recovery grids, SciPy comparison data and deprecated
-  member wrappers.
+  fitting remains with Phase 5. Seeded recovery grids cover representative closed-form, generic and
+  discrete fits at two sample sizes. `tools/fitting/generate_scipy_reference.py` regenerates the
+  fixed datasets and SciPy MLE comparisons; install the pinned developer dependencies with
+  `python3 -m pip install -r tools/requirements.txt`. The remaining 3.1 work is the deprecated member
+  wrapper boundary.
 - Fitting today: ~20 member functions per distribution (`Fit`, `FitScale`, `FitShapeBayes`, …) that
   mutate the object and throw `randlib::fit_error` (with `FitErrorCode`). Keep them as deprecated
   wrappers.

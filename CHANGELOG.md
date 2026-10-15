@@ -21,6 +21,9 @@ All notable changes to RandLib are documented here. The project follows
 - Added continuous goodness-of-fit results for Kolmogorov--Smirnov, Anderson--Darling and
   Cramer--von Mises statistics with p-values, plus a discrete chi-squared test that combines sparse
   bins and accounts for fitted parameters.
+- Added seeded parameter-recovery grids over multiple sample sizes and committed fixed datasets with
+  independently generated SciPy MLE results for nine continuous distributions. Reference-tool
+  versions are pinned in `tools/requirements.txt`.
 
 ### Build and tooling
 

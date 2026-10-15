@@ -3,15 +3,57 @@
 
 #include <randlib/randlib.hpp>
 
+#include "data.h"
+
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <limits>
+#include <map>
+#include <string>
+#include <string_view>
+#include <utility>
 #include <variant>
 #include <vector>
 
 using namespace randlib;
+using namespace randlib_test;
 using Catch::Matchers::WithinAbs;
 using Catch::Matchers::WithinRel;
+
+namespace
+{
+
+struct ScipyFitCase
+{
+    std::string distribution;
+    std::vector<double> sample;
+    std::map<std::string, double, std::less<>> parameters;
+};
+
+std::map<std::string, ScipyFitCase, std::less<>> loadScipyFitCases()
+{
+    std::map<std::string, ScipyFitCase, std::less<>> cases;
+    std::ifstream samples(dataDirectory() + "/fitting/scipy_samples.csv");
+    std::string line;
+    std::getline(samples, line);
+    while (std::getline(samples, line)) {
+        auto fields = splitCsvLine(line);
+        cases[fields.at(0)].sample.push_back(parseNumber(fields.at(1)));
+    }
+
+    std::ifstream references(dataDirectory() + "/fitting/scipy_reference.csv");
+    std::getline(references, line);
+    while (std::getline(references, line)) {
+        auto fields = splitCsvLine(line);
+        auto &fitCase = cases[fields.at(0)];
+        fitCase.distribution = fields.at(1);
+        fitCase.parameters.emplace(fields.at(2), parseNumber(fields.at(3)));
+    }
+    return cases;
+}
+
+} // namespace
 
 TEST_CASE("Unified fitting reports likelihood and information criteria", "[fit]")
 {
@@ -435,4 +477,30 @@ TEST_CASE("Goodness-of-fit reports a discrete chi-squared test", "[fit][gof]")
     CHECK(result.bins == 2);
 
     CHECK_THROWS_AS(goodness_of_fit(BernoulliRand(0.5), std::vector<int>{0, 1}), std::invalid_argument);
+}
+
+TEST_CASE("Unified fitting agrees with SciPy on fixed datasets", "[fit][scipy]")
+{
+    const auto cases = loadScipyFitCases();
+    auto check = [&]<class Distribution>(std::string_view name) {
+        const auto &fitCase = cases.at(std::string(name));
+        INFO(name << " / " << fitCase.distribution);
+        auto result = fit<Distribution>(fitCase.sample);
+        REQUIRE(result.converged);
+        REQUIRE(result.parameter_names.size() == result.parameters.size());
+        for (std::size_t i = 0; i < result.parameters.size(); ++i) {
+            const double expected = fitCase.parameters.at(result.parameter_names[i]);
+            CHECK_THAT(result.parameters[i], WithinAbs(expected, 5e-5 * std::max(1.0, std::fabs(expected))));
+        }
+    };
+
+    check.template operator()<NormalRand<double>>("normal");
+    check.template operator()<LogNormalRand<double>>("log_normal");
+    check.template operator()<GammaRand<double>>("gamma");
+    check.template operator()<BetaRand<double>>("beta");
+    check.template operator()<WeibullRand<double>>("weibull");
+    check.template operator()<CauchyRand<double>>("cauchy");
+    check.template operator()<GumbelRand<double>>("gumbel");
+    check.template operator()<InverseGammaRand<double>>("inverse_gamma");
+    check.template operator()<LogisticRand<double>>("logistic");
 }

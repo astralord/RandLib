@@ -277,3 +277,40 @@ TEST_CASE("Degenerate fit", "[fitting]")
         CHECK(e.code() == FitErrorCode::WrongSample);
     }
 }
+
+TEST_CASE("Unified fits recover parameters across grids and sample sizes", "[fitting][fit-grid]")
+{
+    unsigned long seed = 100;
+    for (size_t sampleSize : {size_t{500}, size_t{5000}}) {
+        for (auto [location, variance] : {std::pair{-2.0, 0.25}, std::pair{0.0, 1.0}, std::pair{3.0, 4.0}}) {
+            INFO("Normal(" << location << ", " << variance << "), n=" << sampleSize);
+            auto sample = draw<NormalRand<double>, double>(NormalRand<double>(location, variance), seed++, sampleSize);
+            auto fitted = fit<NormalRand<double>>(sample);
+            requireClose(fitted.distribution.GetLocation(), location, 0.15);
+            requireClose(static_cast<double>(fitted.distribution.Variance()) / variance, 1, 0.15);
+        }
+
+        for (auto [shape, rate] : {std::pair{0.5, 0.75}, std::pair{2.0, 3.0}, std::pair{10.0, 0.5}}) {
+            INFO("Gamma(" << shape << ", " << rate << "), n=" << sampleSize);
+            auto sample = draw<GammaRand<double>, double>(GammaRand<double>(shape, rate), seed++, sampleSize);
+            auto fitted = fit<GammaRand<double>>(sample);
+            requireClose(fitted.distribution.GetShape() / shape, 1, 0.2);
+            requireClose(fitted.distribution.GetRate() / rate, 1, 0.2);
+        }
+
+        for (auto [scale, shape] : {std::pair{0.5, 0.7}, std::pair{2.0, 1.5}, std::pair{5.0, 3.0}}) {
+            INFO("Weibull(" << scale << ", " << shape << "), n=" << sampleSize);
+            auto sample = draw<WeibullRand<double>, double>(WeibullRand<double>(scale, shape), seed++, sampleSize);
+            auto fitted = fit<WeibullRand<double>>(sample);
+            requireClose(fitted.distribution.GetScale() / scale, 1, 0.15);
+            requireClose(fitted.distribution.GetShape() / shape, 1, 0.15);
+        }
+
+        for (double rate : {0.5, 5.0, 30.0}) {
+            INFO("Poisson(" << rate << "), n=" << sampleSize);
+            auto sample = draw<PoissonRand<int>, int>(PoissonRand<int>(rate), seed++, sampleSize);
+            auto fitted = fit<PoissonRand<int>>(sample);
+            requireClose(fitted.distribution.GetRate() / rate, 1, 0.2);
+        }
+    }
+}

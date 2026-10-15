@@ -43,7 +43,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers all 31 non-stable Tier 1 types, including bounded searches for integer-valued parameters. Remaining: stable-family fits (Phase 5), deprecated member wrappers, recovery grids and SciPy comparison data. |
+| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers all 31 non-stable Tier 1 types, including bounded searches for integer-valued parameters. Seeded recovery grids and SciPy comparison fixtures are committed. Remaining: stable-family fits (Phase 5) and deprecated member wrappers. |
 | 3.2 Tail estimators and extreme-value distributions | ⏳ | |
 | 3.3 Close #11 | 🚫 | Closing the issue needs the maintainer. |
 
