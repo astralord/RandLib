@@ -22,7 +22,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 |---|---|---|
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
-| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14, Clang 15–18 and AppleClang build in CI; the latest MSVC C4661 fix awaits CI. |
+| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14, Clang 15–18 and AppleClang build in CI; the latest MSVC C4661, empty variadic macro and secure-CRT fixes await CI. |
 | 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B35 found by the test suite; see CHANGELOG.md. |
 | 1.5 Continuous integration | 🟡 | The third run exposed one unused Gamma declaration on MSVC, a gcovr parser error and an unbounded Zeta CDF in the macOS statistical suite; fixes await CI. |
 | 1.6 Test suite (#12) | ✅ | Unit tests take 12 s, statistical tests about 6 min. |

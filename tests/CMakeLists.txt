@@ -20,6 +20,7 @@ target_compile_definitions(randlib_test_support PUBLIC RANDLIB_TEST_DATA_DIR="${
 target_link_libraries(randlib_test_support PUBLIC randlib_warnings)
 if(MSVC)
     target_compile_options(randlib_test_support PUBLIC /bigobj)
+    target_compile_definitions(randlib_test_support PUBLIC _CRT_SECURE_NO_WARNINGS)
 endif()
 
 add_executable(randlib_unit_tests
