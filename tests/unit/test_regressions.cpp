@@ -334,3 +334,13 @@ TEST_CASE("B35: zeta probabilities in the far tail terminate", "[regression]")
     CHECK_THAT(X.S(100001), WithinRel(1.122593069926359984040757874880502e-13, 1e-15));
     CHECK_THAT(X.S(1000000000), WithinRel(1.122635166277711578412826611568585e-23, 1e-15));
 }
+
+TEST_CASE("B36: uniform likelihoods use a negative sample-count exponent", "[regression]")
+{
+    /// The exact likelihood is p(x)^n; negating the unsigned sample size wrapped to a huge positive exponent
+    const std::vector<double> continuousSample = {0.25, 0.5, 1.5};
+    CHECK(UniformRand<double>(0, 2).LikelihoodFunction(continuousSample) == 0.125);
+
+    const std::vector<int> discreteSample = {0, 1, 0};
+    CHECK(UniformDiscreteRand<int>(0, 1).LikelihoodFunction(discreteSample) == 0.125);
+}

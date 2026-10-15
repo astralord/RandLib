@@ -165,7 +165,7 @@ void runReference(bool tier1Only)
             double actual;
             try {
                 actual = evaluate(r->function, r->arg);
-            } catch (const std::exception &e) {
+            } catch (const std::exception &) {
                 actual = NAN;
             }
             double err = error(actual, r->number(), kind, r->function);

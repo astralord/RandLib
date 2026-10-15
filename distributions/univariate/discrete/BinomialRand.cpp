@@ -216,8 +216,8 @@ IntType BinomialDistribution<IntType>::variateRejection() const
     /// it can be used only when n * p is integer and p < 0.5
     bool reject = true;
     size_t iter = 0;
-    float Y, V;
-    IntType X;
+    float Y, V = 0;
+    IntType X = 0;
     do {
         float U = a4 * UniformRand<float>::StandardVariate(this->localRandGenerator);
         if (U <= a1)

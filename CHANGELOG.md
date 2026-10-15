@@ -114,6 +114,9 @@ coherence and sampling statistics. Every fix below has a regression test in
   last bits of the platform's special functions.
 - **B35** Zeta distribution and survival functions use an Euler–Maclaurin tail for large
   arguments instead of summing billions of terms.
+- **B36** Continuous and discrete uniform likelihoods negate the sample-count exponent after
+  converting it to a signed floating-point value; negating `size_t` previously wrapped and
+  produced an enormous positive exponent.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).
