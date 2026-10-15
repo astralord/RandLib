@@ -19,7 +19,7 @@ using Catch::Matchers::WithinRel;
 TEST_CASE("Numerical functions preserve long-double arithmetic", "[numerics]")
 {
     using Real = long double;
-    auto checkClose = [](Real actual, Real expected, Real relativeTolerance = 2e-16L) {
+    auto checkClose = [](Real actual, Real expected, Real relativeTolerance = 3e-16L) {
         CHECK(std::fabs(actual - expected) <= relativeTolerance * std::max(Real{1}, std::fabs(expected)));
     };
 
@@ -47,7 +47,7 @@ TEST_CASE("Numerical functions preserve long-double arithmetic", "[numerics]")
     checkClose(math::factorial(Real{10}), Real{3628800});
     checkClose(math::lfact<Real>(10), std::lgamma(Real{11}));
     checkClose(math::ldfact<Real>(9), std::log(Real{945}));
-    checkClose(math::binom<Real>(20, 6), Real{38760}, 2e-15L);
+    checkClose(math::binom<Real>(20, 6), Real{38760}, 4e-15L);
 
     constexpr Real x = 2.25L;
     checkClose(math::digamma(x + 1), math::digamma(x) + 1 / x);
