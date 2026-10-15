@@ -87,12 +87,12 @@ private:
         if (alpha < 1 && beta < 1 && alpha + beta > 1)
             return ATKINSON_WHITTAKER;
 
-        if (math::areClose(alpha, beta)) {
-            if (math::areClose(alpha, 1.0))
+        if (math::detail::areClose(alpha, beta)) {
+            if (math::detail::areClose(alpha, 1.0))
                 return UNIFORM;
-            else if (math::areClose(alpha, 0.5))
+            else if (math::detail::areClose(alpha, 0.5))
                 return ARCSINE;
-            else if (math::areClose(alpha, 1.5))
+            else if (math::detail::areClose(alpha, 1.5))
                 return REJECTION_UNIFORM;
             else if (alpha > 1)
                 return (alpha < 2) ? REJECTION_UNIFORM_EXTENDED : REJECTION_NORMAL;

@@ -1,7 +1,24 @@
 #pragma once
 
+#include <tuple>
+#include <utility>
+
 namespace randlib
 {
+
+template <typename T>
+using Pair = std::pair<T, T>;
+
+template <typename T>
+using Triplet = std::tuple<T, T, T>;
+
+using IntPair = Pair<int>;
+using DoublePair = Pair<double>;
+using LongDoublePair = Pair<long double>;
+
+using IntTriplet = Triplet<int>;
+using DoubleTriplet = Triplet<double>;
+using LongDoubleTriplet = Triplet<long double>;
 
 class not_implemented;
 template <typename T>

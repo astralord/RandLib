@@ -269,7 +269,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
             addon = std::exp(addon);
             re += (n & 1) ? -addon : addon;
             ++n;
-        } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(re));
+        } while (std::fabs(addon) > math::detail::minimumTolerance * std::fabs(re));
         /// Series representation for imaginary part
         n = 0;
         do {
@@ -280,7 +280,7 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
             addon = std::exp(addon);
             im += (n & 1) ? -addon : addon;
             ++n;
-        } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(im));
+        } while (std::fabs(addon) > math::detail::minimumTolerance * std::fabs(im));
         return std::complex<double>(re, im);
     }
 

@@ -150,7 +150,7 @@ IntType GeometricRand<IntType>::Median() const
 {
     double median = -randlib::consts::ln2 / this->log1mProb;
     double flooredMedian = std::floor(median);
-    return (math::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
+    return (math::detail::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
 }
 
 template <typename IntType>

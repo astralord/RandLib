@@ -18,6 +18,9 @@ All notable changes to RandLib are documented here. The project follows
 
 - Kept the type-erased `EngineRef` sampling adapters private and removed the access-specifier churn
   left by the automated header conversion.
+- Moved implementation-only numerical helpers and tolerances into `randlib::math::detail`.
+  The public `Pair` and `Triplet` aliases now live with the other core declarations, while the
+  unconstrained arithmetic overloads for their underlying `std::pair` types have been removed.
 
 ## [1.2.0]
 

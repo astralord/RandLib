@@ -81,7 +81,7 @@ inline double CantorRand::F(const double &x) const
         return 1.0;
     double a = 0.0, b = 1.0;
     double v = 0.5, d = 0.5, delta = 1.0;
-    while (delta > MIN_POSITIVE) {
+    while (delta > math::detail::minimumTolerance) {
         delta = (b - a) / 3.0;
         if (x < a + delta) {
             b = a + delta;

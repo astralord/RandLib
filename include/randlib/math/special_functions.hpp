@@ -78,8 +78,11 @@ namespace randlib
 namespace math
 {
 
-constexpr double EPS = std::numeric_limits<double>::epsilon();
-constexpr int SERIES_MAX_ITER = 100000;
+namespace detail
+{
+
+constexpr double machineEpsilon = std::numeric_limits<double>::epsilon();
+constexpr int maxSeriesIterations = 100000;
 
 /**
  * @fn reciprocalGammaTerms
@@ -113,7 +116,7 @@ inline void reciprocalGammaTerms(double mu, double &gam1, double &gam2, double &
  */
 inline void besselIK(double nu, double x, double &ri, double &rk)
 {
-    constexpr double FPMIN = std::numeric_limits<double>::min() / EPS;
+    constexpr double FPMIN = std::numeric_limits<double>::min() / machineEpsilon;
     constexpr double XMIN = 2.0;
     const int nl = static_cast<int>(nu + 0.5);
     const double xmu = nu - nl, xmu2 = xmu * xmu;
@@ -122,13 +125,13 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
     /// CF1 for I'_ν / I_ν by the modified Lentz method
     double h = std::max(nu * xi, FPMIN);
     double b = xi2 * nu, d = 0.0, c = h;
-    for (int i = 0; i < SERIES_MAX_ITER; ++i) {
+    for (int i = 0; i < maxSeriesIterations; ++i) {
         b += xi2;
         d = 1.0 / (b + d);
         c = b + 1.0 / c;
         double del = c * d;
         h *= del;
-        if (std::fabs(del - 1.0) < EPS)
+        if (std::fabs(del - 1.0) < machineEpsilon)
             break;
     }
 
@@ -148,9 +151,9 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
     if (x < XMIN) {
         /// Temme's series for K_μ and K_{μ+1}
         double x2 = 0.5 * x, pimu = randlib::consts::pi * xmu;
-        double factor = (std::fabs(pimu) < EPS) ? 1.0 : pimu / std::sin(pimu);
+        double factor = (std::fabs(pimu) < machineEpsilon) ? 1.0 : pimu / std::sin(pimu);
         double dd = -std::log(x2), e = xmu * dd;
-        double factor2 = (std::fabs(e) < EPS) ? 1.0 : std::sinh(e) / e;
+        double factor2 = (std::fabs(e) < machineEpsilon) ? 1.0 : std::sinh(e) / e;
         double gam1, gam2, gampl, gammi;
         reciprocalGammaTerms(xmu, gam1, gam2, gampl, gammi);
         double ff = factor * (gam1 * std::cosh(e) + gam2 * factor2 * dd);
@@ -158,7 +161,7 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
         e = std::exp(e);
         double p = 0.5 * e / gampl, q = 0.5 / (e * gammi), cc = 1.0, x2Sq = x2 * x2;
         double sum1 = p;
-        for (int i = 1; i <= SERIES_MAX_ITER; ++i) {
+        for (int i = 1; i <= maxSeriesIterations; ++i) {
             ff = (i * ff + p + q) / (i * i - xmu2);
             cc *= x2Sq / i;
             p /= i - xmu;
@@ -166,7 +169,7 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
             double del = cc * ff;
             sum += del;
             sum1 += cc * (p - i * ff);
-            if (std::fabs(del) < std::fabs(sum) * EPS)
+            if (std::fabs(del) < std::fabs(sum) * machineEpsilon)
                 break;
         }
         rkmu = sum;
@@ -176,7 +179,7 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
         double bb = 2.0 * (1.0 + x), dd = 1.0 / bb, hh = dd, delh = dd;
         double q1 = 0.0, q2 = 1.0, a1 = 0.25 - xmu2, q = a1, cc = a1, a = -a1;
         double s = 1.0 + q * delh;
-        for (int i = 1; i < SERIES_MAX_ITER; ++i) {
+        for (int i = 1; i < maxSeriesIterations; ++i) {
             a -= 2 * i;
             cc = -a * cc / (i + 1.0);
             double qnew = (q1 - bb * q2) / a;
@@ -189,7 +192,7 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
             hh += delh;
             double dels = q * delh;
             s += dels;
-            if (std::fabs(dels / s) < EPS)
+            if (std::fabs(dels / s) < machineEpsilon)
                 break;
         }
         hh *= a1;
@@ -219,12 +222,14 @@ inline void checkBesselArguments(double nu, double x)
                                 std::to_string(x));
 }
 
+} // namespace detail
+
 namespace portable
 {
 
 inline long double besselI(double nu, double x)
 {
-    checkBesselArguments(nu, x);
+    detail::checkBesselArguments(nu, x);
     if (x == 0.0)
         return (nu == 0.0) ? 1.0 : 0.0;
     if (x > 700.0) {
@@ -234,28 +239,28 @@ inline long double besselI(double nu, double x)
     if (x < 5.0 || x * x < 4.0 * (nu + 1.0)) {
         /// Power series I_ν(x) = (x/2)^ν Σ (x²/4)^k / (k! Γ(ν + k + 1)); every term is positive
         double y = 0.25 * x * x, term = 1.0, sum = 1.0;
-        for (int k = 1; k < SERIES_MAX_ITER; ++k) {
+        for (int k = 1; k < detail::maxSeriesIterations; ++k) {
             term *= y / (k * (nu + k));
             sum += term;
-            if (term < EPS * sum)
+            if (term < detail::machineEpsilon * sum)
                 break;
         }
         return std::exp(nu * std::log(0.5 * x) - std::lgamma(nu + 1.0)) * sum;
     }
     double ri = 0.0, rk = 0.0;
-    besselIK(nu, x, ri, rk);
+    detail::besselIK(nu, x, ri, rk);
     return ri;
 }
 
 inline long double besselK(double nu, double x)
 {
-    checkBesselArguments(nu, x);
+    detail::checkBesselArguments(nu, x);
     if (x == 0.0)
         return std::numeric_limits<long double>::infinity();
     if (x > 745.0)
         return 0.0;
     double ri = 0.0, rk = 0.0;
-    besselIK(nu, x, ri, rk);
+    detail::besselIK(nu, x, ri, rk);
     return rk;
 }
 

@@ -220,9 +220,9 @@ template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::StandardVariate(double shape, G &g)
 {
-    if (math::areClose(shape, 1.0))
+    if (math::detail::areClose(shape, 1.0))
         return variateForAlphaEqualOne(g);
-    if (math::areClose(shape, 2.0))
+    if (math::detail::areClose(shape, 2.0))
         return variateForAlphaEqualTwo(g);
     return variateForGeneralAlpha(shape, g);
 }
@@ -230,10 +230,10 @@ RealType ParetoRand<RealType>::StandardVariate(double shape, G &g)
 template <typename RealType>
 void ParetoRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
-    if (math::areClose(alpha, 1.0)) {
+    if (math::detail::areClose(alpha, 1.0)) {
         for (RealType &var : outputData)
             var = sigma * variateForAlphaEqualOne(g);
-    } else if (math::areClose(alpha, 2.0)) {
+    } else if (math::detail::areClose(alpha, 2.0)) {
         for (RealType &var : outputData)
             var = sigma * variateForAlphaEqualTwo(g);
     } else {

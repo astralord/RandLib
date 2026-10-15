@@ -22,6 +22,9 @@ constexpr std::array<LongDoublePair, TABLE_SIZE>
 createZiggurat(const std::function<LongDoublePair(const LongDoublePair &)> &funPtr, LongDoublePair first,
                LongDoublePair second);
 
+namespace detail
+{
+
 /**
  * @fn areClose
  * @param a
@@ -38,6 +41,8 @@ bool areClose(RealType a, RealType b, RealType eps = 1e-6)
     RealType fb = std::fabs(b);
     return std::fabs(b - a) < eps * std::max(fa, fb);
 }
+
+} // namespace detail
 
 /**
  * @fn sign
@@ -253,6 +258,9 @@ inline double log2mexp(double x)
     return std::log1pl(-std::expm1l(x));
 }
 
+namespace detail
+{
+
 inline double erfinvChebyshevSeries(double x, long double t, const long double *array, int size)
 {
     /// We approximate inverse erf via Chebyshev polynomials
@@ -427,6 +435,8 @@ inline double erfinvAux4(double p)
     return erfinvChebyshevSeries(p, p * p / 0.32 - 1.0, xi, xiSize);
 }
 
+} // namespace detail
+
 inline double erfinv(double p)
 {
     /// Consider special cases
@@ -439,12 +449,12 @@ inline double erfinv(double p)
     if (p == 0.0)
         return 0.0;
     if (p < 0.8)
-        return erfinvAux4(p);
+        return detail::erfinvAux4(p);
     /// Handle tails
     double beta = std::sqrt(-std::log1pl(-p * p));
     if (p < 0.9975)
-        return erfinvAux3(beta);
-    return (1.0 - p < 5e-16) ? erfinvAux1(beta) : erfinvAux2(beta);
+        return detail::erfinvAux3(beta);
+    return (1.0 - p < 5e-16) ? detail::erfinvAux1(beta) : detail::erfinvAux2(beta);
 }
 
 inline double erfcinv(double p)
@@ -457,12 +467,12 @@ inline double erfcinv(double p)
     if (p == 1.0)
         return 0.0;
     if (p > 0.2)
-        return erfinvAux4(1.0 - p);
+        return detail::erfinvAux4(1.0 - p);
     double pSq = p * p, p2 = 2 * p;
     double beta = std::sqrt(-std::log(p2 - pSq));
     if (p > 0.0025)
-        return erfinvAux3(beta);
-    return (p > 5e-16) ? erfinvAux2(beta) : erfinvAux1(beta);
+        return detail::erfinvAux3(beta);
+    return (p > 5e-16) ? detail::erfinvAux2(beta) : detail::erfinvAux1(beta);
 }
 
 inline double xexpxsqerfc(double x)
@@ -510,7 +520,7 @@ inline long double logBesselI(double nu, double x)
 {
     if (x < 0) {
         double roundNu = std::round(nu);
-        bool nuIsInt = areClose(nu, roundNu);
+        bool nuIsInt = detail::areClose(nu, roundNu);
         if (nuIsInt) {
             int nuInt = roundNu;
             return (nuInt % 2) ? NAN : logBesselI(nu, -x);
@@ -522,7 +532,7 @@ inline long double logBesselI(double nu, double x)
         if (nu == 0)
             return 0.0;
         double roundNu = std::round(nu);
-        bool nuIsInt = areClose(nu, roundNu);
+        bool nuIsInt = detail::areClose(nu, roundNu);
         return (nu > 0 || nuIsInt) ? -INFINITY : INFINITY;
     }
 
@@ -538,7 +548,7 @@ inline long double logBesselI(double nu, double x)
         long double besseli = math::besselI(-nu, x);
         long double sinPiAbsNu = std::sin(-randlib::consts::pi * nu);
         long double y = 0;
-        if (sinPiAbsNu == 0 || math::areClose(nu, std::round(nu)))
+        if (sinPiAbsNu == 0 || detail::areClose(nu, std::round(nu)))
             y = besseli;
         else {
             long double besselk = math::besselK(-nu, x);
@@ -577,6 +587,9 @@ inline long double logBesselK(double nu, double x)
  * @param epsilon
  * @return
  */
+namespace detail
+{
+
 inline double WLambert(double x, double w0, double epsilon)
 {
     double w = w0;
@@ -596,6 +609,8 @@ inline double WLambert(double x, double w0, double epsilon)
     return w;
 }
 
+} // namespace detail
+
 inline double W0Lambert(double x, double epsilon)
 {
     double w = 0;
@@ -606,7 +621,7 @@ inline double W0Lambert(double x, double epsilon)
         double loglogX = std::log(logX);
         w = logX - loglogX;
     }
-    return WLambert(x, w, epsilon);
+    return detail::WLambert(x, w, epsilon);
 }
 
 inline double Wm1Lambert(double x, double epsilon)
@@ -620,8 +635,11 @@ inline double Wm1Lambert(double x, double epsilon)
         double logmlogmX = std::log(-logmX);
         w = logmX - logmlogmX;
     }
-    return WLambert(x, w, epsilon);
+    return detail::WLambert(x, w, epsilon);
 }
+
+namespace detail
+{
 
 /**
  * @fn MarcumPSeries
@@ -811,6 +829,8 @@ inline double MarcumQIntergralRepresentation(double mu, double x, double y, doub
     return 0.5 * std::exp(-x - y + phi) / randlib::consts::pi * integral;
 }
 
+} // namespace detail
+
 inline double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY, double logX, double logY)
 {
     /* 1 - ok
@@ -823,17 +843,17 @@ inline double MarcumP(double mu, double x, double y, double sqrtX, double sqrtY,
         return 0.0;
 
     if (x < 30)
-        return MarcumPSeries(mu, x, y, logX, logY);
+        return detail::MarcumPSeries(mu, x, y, logX, logY);
 
     double xi = 2 * sqrtX * sqrtY;
     if (xi > 30 && mu * mu < 2 * xi)
-        return MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
+        return detail::MarcumPAsymptoticForLargeXY(mu, x, y, sqrtX, sqrtY);
 
     double temp = std::sqrt(4 * x + 2 * mu);
     double f1 = x + mu - temp, f2 = x + mu + temp;
     if (y > f1 && y < f2)
         // IF mu > 135
-        return 1.0 - MarcumQIntergralRepresentation(mu, x, y, sqrtX, sqrtY);
+        return 1.0 - detail::MarcumQIntergralRepresentation(mu, x, y, sqrtX, sqrtY);
 
     // TODO: implement the rest techniques
 

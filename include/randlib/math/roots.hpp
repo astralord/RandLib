@@ -224,8 +224,8 @@ bool findRootNewtonFirstOrder(const std::function<DoublePair(RealType)> &funPtr,
                               long double funTol = 1e-10, long double stepTol = 1e-6)
 {
     /// Sanity check
-    funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
-    stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
+    funTol = funTol > math::detail::minimumTolerance ? funTol : math::detail::minimumTolerance;
+    stepTol = stepTol > math::detail::minimumTolerance ? stepTol : math::detail::minimumTolerance;
     static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
@@ -233,7 +233,7 @@ bool findRootNewtonFirstOrder(const std::function<DoublePair(RealType)> &funPtr,
     DoublePair y = funPtr(root);
     double fun = y.first;
     double grad = y.second;
-    if (std::fabs(fun) < MIN_POSITIVE)
+    if (std::fabs(fun) < math::detail::minimumTolerance)
         return true;
     do {
         double alpha = 1.0;
@@ -245,10 +245,11 @@ bool findRootNewtonFirstOrder(const std::function<DoublePair(RealType)> &funPtr,
             y = funPtr(root);
             fun = y.first;
             grad = y.second;
-            if (std::fabs(fun) < MIN_POSITIVE)
+            if (std::fabs(fun) < math::detail::minimumTolerance)
                 return true;
             alpha *= 0.5;
-        } while ((std::fabs(grad) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(fun)) && alpha > 0);
+        } while ((std::fabs(grad) <= math::detail::minimumTolerance || std::fabs(oldFun) < std::fabs(fun)) &&
+                 alpha > 0);
         /// Check convergence criteria
         double diffX = std::fabs(root - oldRoot);
         double relDiffX = std::fabs(diffX / oldRoot);
@@ -277,14 +278,14 @@ bool findRootNewtonSecondOrder(const std::function<DoubleTriplet(RealType)> &fun
                                long double funTol = 1e-10, long double stepTol = 1e-6)
 {
     /// Sanity check
-    funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
-    stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
+    funTol = funTol > math::detail::minimumTolerance ? funTol : math::detail::minimumTolerance;
+    stepTol = stepTol > math::detail::minimumTolerance ? stepTol : math::detail::minimumTolerance;
     static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
     double step = stepTol + 1;
     auto [f, fx, fxx] = funPtr(root);
-    if (std::fabs(f) < MIN_POSITIVE)
+    if (std::fabs(f) < math::detail::minimumTolerance)
         return true;
     do {
         double alpha = 1.0;
@@ -296,10 +297,10 @@ bool findRootNewtonSecondOrder(const std::function<DoubleTriplet(RealType)> &fun
         do {
             root = oldRoot - alpha * step;
             std::tie(f, fx, fxx) = funPtr(root);
-            if (std::fabs(f) < MIN_POSITIVE)
+            if (std::fabs(f) < math::detail::minimumTolerance)
                 return true;
             alpha *= 0.5;
-        } while ((std::fabs(fx) <= MIN_POSITIVE || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
+        } while ((std::fabs(fx) <= math::detail::minimumTolerance || std::fabs(oldFun) < std::fabs(f)) && alpha > 0);
         /// Check convergence criteria
         double diffX = std::fabs(root - oldRoot);
         double relDiffX = std::fabs(diffX / oldRoot);
@@ -334,8 +335,8 @@ inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair(DoublePair
                                        DoublePair &root, long double funTol, long double stepTol)
 {
     /// Sanity check
-    funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
-    stepTol = stepTol > MIN_POSITIVE ? stepTol : MIN_POSITIVE;
+    funTol = funTol > math::detail::minimumTolerance ? funTol : math::detail::minimumTolerance;
+    stepTol = stepTol > math::detail::minimumTolerance ? stepTol : math::detail::minimumTolerance;
     static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
@@ -345,7 +346,7 @@ inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair(DoublePair
     double fun1 = fun.first;
     double fun2 = fun.second;
     double error = std::max(std::fabs(fun1), std::fabs(fun2));
-    if (error < MIN_POSITIVE)
+    if (error < math::detail::minimumTolerance)
         return true;
 
     auto [grad1, grad2] = gradPtr(root);
@@ -364,12 +365,12 @@ inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair(DoublePair
             fun1 = fun.first;
             fun2 = fun.second;
             error = std::max(std::fabs(fun1), std::fabs(fun2));
-            if (error < MIN_POSITIVE)
+            if (error < math::detail::minimumTolerance)
                 return true;
             std::tie(grad1, grad2) = gradPtr(root);
             det = grad1.first * grad2.second - grad1.second * grad2.first;
             alpha *= 0.5;
-        } while ((std::fabs(det) <= MIN_POSITIVE || oldError < error) && alpha > 0);
+        } while ((std::fabs(det) <= math::detail::minimumTolerance || oldError < error) && alpha > 0);
 
         /// Check convergence criteria
         double diffX1 = std::fabs(root.first - oldRoot.first);

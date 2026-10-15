@@ -68,3 +68,19 @@ TEST_CASE("Multivariate minimization", "[numerics]")
     for (size_t i = 0; i < 5; ++i)
         CHECK_THAT(result.x[i], WithinAbs(static_cast<double>(i), 1e-6));
 }
+
+TEST_CASE("Exponential-family measures support scalar and pair parameters", "[numerics]")
+{
+    NormalRand<double> normal(1.5, 2.0);
+    CHECK_THAT(normal.LogProbabilityMeasure(0.25), WithinRel(normal.logf(0.25), 1e-15));
+
+    constexpr double otherMean = -0.5;
+    constexpr double otherVariance = 3.0;
+    const double expectedDivergence =
+        0.5 * (std::log(otherVariance / normal.Variance()) +
+               (normal.Variance() + std::pow(normal.Mean() - otherMean, 2)) / otherVariance - 1);
+    CHECK_THAT(normal.KullbackLeiblerDivergence({otherMean, otherVariance}), WithinRel(expectedDivergence, 1e-15));
+
+    PoissonRand<int> poisson(3.5);
+    CHECK_THAT(poisson.LogProbabilityMeasure(2), WithinRel(poisson.logP(2), 1e-15));
+}

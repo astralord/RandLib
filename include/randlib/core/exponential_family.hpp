@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include <randlib/math/constants.hpp>
 #include <randlib/math/functions.hpp>
 #include <randlib/core/errors.hpp>
@@ -29,6 +31,9 @@ public:
     double KullbackLeiblerDivergence(P parameters) const;
     virtual double CrossEntropyAdjusted(P parameters) const;
     virtual double EntropyAdjusted() const;
+
+private:
+    static double InnerProduct(const P &left, const P &right);
 };
 
 } // namespace randlib
@@ -56,7 +61,7 @@ double ExponentialFamily<T, P>::LogProbabilityMeasure(T x) const
 {
     P theta = this->NaturalParameters();
     P t = this->SufficientStatistic(x);
-    double y = t * theta;
+    double y = InnerProduct(t, theta);
     y -= this->LogNormalizer(theta);
     y += this->CarrierMeasure(x);
     return y;
@@ -77,7 +82,7 @@ double ExponentialFamily<T, P>::CrossEntropyAdjusted(P parameters) const
     P theta_q = this->SourceToNatural(parameters);
     double H = this->LogNormalizer(theta_q);
     P grad = this->LogNormalizerGradient(theta_p);
-    H -= theta_q * grad;
+    H -= InnerProduct(theta_q, grad);
     return H;
 }
 
@@ -86,6 +91,15 @@ double ExponentialFamily<T, P>::EntropyAdjusted() const
 {
     P sourceParameters = this->SourceParameters();
     return CrossEntropyAdjusted(sourceParameters);
+}
+
+template <typename T, typename P>
+double ExponentialFamily<T, P>::InnerProduct(const P &left, const P &right)
+{
+    if constexpr (std::is_arithmetic_v<P>)
+        return left * right;
+    else
+        return left.first * right.first + left.second * right.second;
 }
 
 } // namespace randlib

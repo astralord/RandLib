@@ -135,9 +135,9 @@ private:
     {
         if (shape < 0.34)
             return SMALL_SHAPE;
-        if (shape <= 3.0 && math::areClose(shape, std::round(shape)))
+        if (shape <= 3.0 && math::detail::areClose(shape, std::round(shape)))
             return INTEGER_SHAPE;
-        if (math::areClose(shape, 1.5))
+        if (math::detail::areClose(shape, 1.5))
             return ONE_AND_A_HALF_SHAPE;
         if (shape > 1.0 && shape < 1.2)
             return FISHMAN;

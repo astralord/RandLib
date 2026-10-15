@@ -113,7 +113,7 @@ double LogarithmicRand<IntType>::betaFun(IntType a) const
         add = std::exp(i * logProb) / (++denom);
         sum += add;
         ++i;
-    } while (add > MIN_POSITIVE * sum);
+    } while (add > math::detail::minimumTolerance * sum);
     return std::exp(a * logProb) * sum;
 }
 

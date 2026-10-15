@@ -93,7 +93,7 @@ double KolmogorovSmirnovRand<RealType>::L(RealType x)
         addon = std::exp(-temp * aux);
         sum += addon;
         ++k;
-    } while (addon > MIN_POSITIVE * sum);
+    } while (addon > math::detail::minimumTolerance * sum);
     return randlib::consts::sqrt2pi * sum / x;
 }
 
@@ -110,7 +110,7 @@ double KolmogorovSmirnovRand<RealType>::K(RealType x)
         addon = std::exp(-temp * xSq);
         sum += (k & 1) ? addon : -addon;
         ++k;
-    } while (addon > MIN_POSITIVE * sum);
+    } while (addon > math::detail::minimumTolerance * sum);
     return 2 * sum;
 }
 
@@ -131,7 +131,7 @@ double KolmogorovSmirnovRand<RealType>::f(const RealType &x) const
             addon *= std::exp(-temp * aux);
             sum += addon;
             ++k;
-        } while (addon > MIN_POSITIVE * sum);
+        } while (addon > math::detail::minimumTolerance * sum);
         return randlib::consts::sqrt2pi * sum * 0.25 / std::pow(x, 4);
     }
     /// x > 1.0
@@ -141,7 +141,7 @@ double KolmogorovSmirnovRand<RealType>::f(const RealType &x) const
         addon *= temp;
         sum += (k & 1) ? addon : -addon;
         ++k;
-    } while (addon > MIN_POSITIVE * sum);
+    } while (addon > math::detail::minimumTolerance * sum);
     return 8 * sum * x;
 }
 

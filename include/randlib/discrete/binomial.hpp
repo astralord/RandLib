@@ -109,7 +109,7 @@ private:
     {
         /// if (n is tiny and minpq is big) or (p ~= 0.5 and n is not that large),
         /// we just sum Bernoulli random variables
-        if ((n <= 3) || (n <= 13 && minpq > 0.025 * (n + 6)) || (n <= 200 && math::areClose(p, 0.5)))
+        if ((n <= 3) || (n <= 13 && minpq > 0.025 * (n + 6)) || (n <= 200 && math::detail::areClose(p, 0.5)))
             return BERNOULLI_SUM;
 
         /// for small [np] we use simple waiting algorithm
@@ -226,7 +226,7 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
     minpq = std::min(p, q);
     npFloor = std::floor(n * minpq);
     pFloor = npFloor / n;
-    pRes = math::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor;
+    pRes = math::detail::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor;
 
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == BERNOULLI_SUM)
@@ -509,7 +509,7 @@ template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, double probability, G &g)
 {
     IntType var = 0;
-    if (math::areClose(probability, 0.5)) {
+    if (math::detail::areClose(probability, 0.5)) {
         for (int i = 0; i != number; ++i)
             var += BernoulliRand::StandardVariate(g);
     } else {
@@ -575,7 +575,7 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
         std::fill(outputData.begin(), outputData.end(), 0);
         return;
     }
-    if (math::areClose(p, 1.0)) {
+    if (math::detail::areClose(p, 1.0)) {
         std::fill(outputData.begin(), outputData.end(), n);
         return;
     }

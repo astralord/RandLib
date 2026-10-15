@@ -1,11 +1,11 @@
 #pragma once
 
-#include <cmath>
 #include <climits>
-#include <string>
-#include <tuple>
+#include <cmath>
 #include <numbers>
-#include <utility>
+#include <string>
+
+#include <randlib/core/fwd.hpp>
 
 namespace randlib
 {
@@ -39,38 +39,9 @@ inline constexpr long double catalan = 0.915965594177219015054603514932384111l;
 inline constexpr long double pi_sq = 9.86960440108935861883449099987615114l;
 } // namespace consts
 
-inline constexpr long double MIN_POSITIVE = 1e-21l;
-
-template <typename T>
-using Pair = std::pair<T, T>;
-
-template <typename T>
-Pair<T> operator+(const Pair<T> &l, const Pair<T> &r)
+namespace math::detail
 {
-    return {l.first + r.first, l.second + r.second};
-}
-
-template <typename T>
-Pair<T> operator-(const Pair<T> &l, const Pair<T> &r)
-{
-    return {l.first - r.first, l.second - r.second};
-}
-
-template <typename T>
-T operator*(const Pair<T> &l, const Pair<T> &r)
-{
-    return l.first * r.first + l.second * r.second;
-}
-
-template <typename T>
-using Triplet = std::tuple<T, T, T>;
-
-using IntPair = Pair<int>;
-using DoublePair = Pair<double>;
-using LongDoublePair = Pair<long double>;
-
-using IntTriplet = Triplet<int>;
-using DoubleTriplet = Triplet<double>;
-using LongDoubleTriplet = Triplet<long double>;
+inline constexpr long double minimumTolerance = 1e-21L;
+} // namespace math::detail
 
 } // namespace randlib

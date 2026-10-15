@@ -87,7 +87,7 @@ inline double ibetaPowerSeries1(double x, double a, double b, double logBetaFun,
         addon *= (n - b) * u / (a + n);
         sum += addon;
         ++n;
-    } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
+    } while (std::fabs(addon) > math::detail::minimumTolerance * std::fabs(sum));
     double y = a * logX;
     y += (b - 1) * log1mX;
     y -= logBetaFun;
@@ -125,7 +125,7 @@ inline double ibetaPowerSeries2(double x, double a, double b, double logBetaFun,
         addon *= (n + a + b) * x / (a + n + 1);
         sum += addon;
         ++n;
-    } while (std::fabs(addon) > MIN_POSITIVE * std::fabs(sum));
+    } while (std::fabs(addon) > math::detail::minimumTolerance * std::fabs(sum));
     double y = a * logX;
     y += b * log1mX;
     y -= logBetaFun;

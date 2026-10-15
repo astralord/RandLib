@@ -295,7 +295,7 @@ long double DiscreteDistribution<IntType>::ExpectedValue(const std::function<dou
         double addon = funPtr(k);
         if (addon != 0.0) {
             double prob = this->P(k);
-            if (prob < MIN_POSITIVE)
+            if (prob < math::detail::minimumTolerance)
                 return sum;
             addon *= this->P(k);
             sum += addon;
