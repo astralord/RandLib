@@ -339,7 +339,8 @@ inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair(DoublePair
     static constexpr int MAX_ITER = 1e5;
     static constexpr double MAX_STEP = 10;
     int iter = 0;
-    double step1 = stepTol + 1, step2 = step1;
+    double step1;
+    double step2;
     DoublePair fun = funPtr(root);
     double fun1 = fun.first;
     double fun2 = fun.second;

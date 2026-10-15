@@ -37,7 +37,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 2.3 Remove hidden state | ✅ | CI job fails on static or `thread_local` variables that are not constant. |
 | 2.4 API cleanup | ✅ | Non-const `Reseed`, `std::span`, `[[nodiscard]]`, `enum class Support`, `fit_error`, `final`, named factories. |
 | 2.5 Numerical building blocks | 🟡 | `math/quadrature.hpp` (adaptive Gauss–Kronrod, infinite limits), `math/roots.hpp` (TOMS 748, Newton, Halley; used by the quantile search), `math/optimize.hpp` (Brent, Nelder–Mead, BFGS). The special functions are still `double` only. |
-| 2.6 Tooling | 🟡 | Clang 18 formatting policy and pinned pre-commit hook are in place and `include/` and `tests/` are formatted. Blocking clang-tidy and benchmarks remain. |
+| 2.6 Tooling | 🟡 | Clang 18 formatting and pre-commit are in place; clang-tidy analyzes the explicit instantiations and public headers as a blocking CI job. Benchmarks remain. |
 
 ## Phase 3: Fitting and features (v2.0-beta)
 

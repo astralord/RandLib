@@ -100,9 +100,8 @@ jobs:
           fail_ci_if_error: false
 
   clang-tidy:
-    name: clang-tidy (informational)
+    name: clang-tidy
     runs-on: ubuntu-24.04
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y clang-18 clang-tidy-18 ninja-build
@@ -111,7 +110,7 @@ jobs:
           CXX: clang++-18
         run: cmake -S . -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DRANDLIB_PRECOMPILED=ON -DRANDLIB_BUILD_TESTS=OFF
       - name: clang-tidy
-        run: run-clang-tidy-18 -p build -quiet -header-filter='include/randlib/' 'src/'
+        run: run-clang-tidy-18 -p build -quiet -warnings-as-errors='*' -header-filter='include/randlib/' 'src/'
 
   hidden-state:
     name: no static mutable state

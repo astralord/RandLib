@@ -107,7 +107,8 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
   - Done locally: `.clang-format` matching the existing style, a pinned clang-format pre-commit hook,
     and one formatting pass over `include/` and `tests/`. Include sorting is deliberately disabled
     because the converted headers still contain dependency-sensitive implementation include blocks.
-  - Make the CI clang-tidy job blocking on new warnings (currently informational, only `src/`).
+  - Done locally: clang-tidy analyzes `src/precompiled.cpp`, whose explicit instantiations cover the
+    public distribution headers, and promotes every diagnostic to an error in blocking CI.
   - `benchmarks/` with Google Benchmark via FetchContent (option `RANDLIB_BUILD_BENCHMARKS`): normal,
     exponential, gamma, Poisson, stable sampling against `std::*_distribution`; not gated in CI.
 - **Clean-ups left by the automated header conversion** (worth doing with or before 2.6):

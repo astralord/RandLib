@@ -9,6 +9,8 @@ All notable changes to RandLib are documented here. The project follows
 
 - Added a pinned Clang 18 formatting policy and pre-commit hook, and applied it to the public headers
   and test sources without reordering dependency-sensitive includes.
+- Clang-tidy now analyzes the explicit-instantiation translation unit and public headers as a blocking
+  CI job, with every diagnostic promoted to an error.
 
 ## [1.2.0]
 
