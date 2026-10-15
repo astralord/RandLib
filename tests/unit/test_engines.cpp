@@ -222,8 +222,8 @@ TEST_CASE("Distributions sample with any engine", "[engines]")
     X.Sample(bulk, sample);
     const ContinuousDistribution<double> &base = X;
     for (double value : sample) {
-        CHECK_THAT(X(direct), WithinULP(value, 4));
-        CHECK_THAT(base(throughBase), WithinULP(value, 4));
+        CHECK_THAT(X(direct), WithinULP(value, 8));
+        CHECK_THAT(base(throughBase), WithinULP(value, 8));
     }
     auto directNext = direct();
     auto bulkNext = bulk();

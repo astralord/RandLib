@@ -50,7 +50,7 @@ cmake --build /tmp/b2
 Compilers on the pod: g++-13, g++-14, clang++-18. MSVC and AppleClang are only exercised by CI.
 
 Test families (both branches): `tests/unit` (golden v1.1 comparison, mpmath reference values, coherence,
-mode/median, parameters, regressions B1–B34, reproducibility, engines, numerics on 2.x) and
+mode/median, parameters, regressions B1–B37, reproducibility, engines, numerics on 2.x) and
 `tests/statistical` (KS/χ² sampling, moments, empirical CF, fitting). Tolerances follow plan section 9.
 
 ### Golden values and known deviations
@@ -85,10 +85,10 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. Push the current `history` head. In addition to the earlier warning fixes, eafc3de renames the
-   fitting test's global sample-size constant after MSVC diagnosed it as shadowed by implementation
-   locals during template instantiation. Further MSVC errors may surface one round at a time (flags:
-   `/W4 /permissive- /wd4244 /wd4267 /wd4305`).
+1. Push the current `history` head. Commit c92f19a fixes B37 (`doubleFactorial`) and records a
+   `2e-12` tolerance for the large-binomial CDF on MSVC; CI measured `1.20259e-12` relative error
+   against the existing 40-digit reference. The earlier eafc3de warning fix built successfully on
+   MSVC before that reference assertion failed.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
@@ -97,8 +97,8 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 - **CI portability**: local commits fix the Clang/AppleClang `-Wshadow` errors in `Pcg64`, discarded
   `[[nodiscard]]` results, MSVC's variadic-macro, secure-CRT, unsigned-negation, uninitialized-local
   and unused-variable diagnostics, and the coverage parser error. The engine-adapter test checks
-  exact engine advancement while allowing four ULPs of platform-dependent floating-point variation.
-  Check these jobs after the next maintainer push.
+  exact engine advancement while allowing eight ULPs of platform-dependent floating-point
+  variation; AppleClang measured a maximum of six. Check these jobs after the next maintainer push.
 - **2.5 Numerical building blocks**: done locally. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call

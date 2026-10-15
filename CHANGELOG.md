@@ -13,8 +13,8 @@ All notable changes to RandLib are documented here. The project follows
   CI job, with every diagnostic promoted to an error.
 - Added opt-in Google Benchmark sampling comparisons for normal, exponential, gamma and Poisson
   distributions against the standard library, plus stable-law sampling.
-- Engine-adapter interoperability tests now verify identical engine advancement and allow the few
-  ULPs of platform-dependent variation between direct and type-erased sampling paths.
+- Engine-adapter interoperability tests now verify identical engine advancement and allow up to
+  eight ULPs of platform-dependent variation between direct and type-erased sampling paths.
 
 ### API cleanup
 
