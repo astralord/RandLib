@@ -327,11 +327,3 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(const std::vector<IntT
 template class DiscreteDistribution<int>;
 template class DiscreteDistribution<long int>;
 template class DiscreteDistribution<long long int>;
-
-template class ExponentialFamily<int, double>;
-template class ExponentialFamily<long int, double>;
-template class ExponentialFamily<long long int, double>;
-
-template class ExponentialFamily<int, DoublePair>;
-template class ExponentialFamily<long int, DoublePair>;
-template class ExponentialFamily<long long int, DoublePair>;
