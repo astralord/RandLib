@@ -101,8 +101,7 @@ private:
     {
         BERNOULLI_SUM,
         WAITING,
-        REJECTION,
-        POISSON
+        REJECTION
     };
 
     [[nodiscard]] GENERATOR_ID GetIdOfUsedGenerator() const

@@ -38,6 +38,8 @@ All notable changes to RandLib are documented here. The project follows
 
 ### API cleanup
 
+- Removed the unused private `POISSON` binomial generator selector. The exact Bernoulli-sum,
+  waiting-time and rejection samplers remain; no approximation is introduced.
 - Kept the type-erased `EngineRef` sampling adapters private and removed the access-specifier churn
   left by the automated header conversion.
 - Moved implementation-only numerical helpers and tolerances into `randlib::math::detail`.
@@ -171,6 +173,8 @@ coherence and sampling statistics. Every fix below has a regression test in
   produced an enormous positive exponent.
 - **B37** Double factorial now evaluates the defining product n(n − 2)…; the previous factorial
   identities shifted by the full input and returned incorrect values for every n > 1.
+- Removed the unused private `POISSON` binomial generator selector. Binomial sampling continues to
+  use its exact Bernoulli-sum, waiting-time and rejection algorithms rather than an approximation.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).

@@ -165,6 +165,8 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   stored as CSV (generate them with a script under `tools/`).
 - 3.2: Hill and Pickands estimators, generalized Pareto and generalized extreme value distributions
   (closed forms; add mpmath references in `tools/refdata/distributions.py`), censored/truncated MLE.
+- 3.3 implementation is done: the unused private binomial `POISSON` selector is removed on both
+  branches. The maintainer still needs to close #11 with the exact-sampling rationale.
 
 ### 3.4 Phase 4: documentation, packaging, release (v2.0)
 
