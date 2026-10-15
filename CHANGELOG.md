@@ -24,6 +24,13 @@ All notable changes to RandLib are documented here. The project follows
 - Added seeded parameter-recovery grids over multiple sample sizes and committed fixed datasets with
   independently generated SciPy MLE results for nine continuous distributions. Reference-tool
   versions are pinned in `tools/requirements.txt`.
+- Added generalized Pareto and generalized extreme-value distributions, with high-precision mpmath
+  reference data, generic MLEs, and stable direct survival-function implementations.
+- Added Hill and Pickands tail-index estimators, plot-ready Hill diagnostics, and
+  peaks-over-threshold generalized-Pareto fitting.
+- Added maximum-likelihood fitting for exact, left-, right- and interval-censored observations and
+  for one- or two-sided truncated samples. These adapters share the constrained optimizer,
+  information criteria and observed-information covariance used by ordinary MLE.
 
 ### Build and tooling
 

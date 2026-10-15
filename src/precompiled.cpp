@@ -15,6 +15,8 @@ template class randlib::ExponentialRand<double>;
 template class randlib::ExponentiallyModifiedGaussianRand<double>;
 template class randlib::FisherFRand<double>;
 template class randlib::FrechetRand<double>;
+template class randlib::GeneralizedExtremeValueRand<double>;
+template class randlib::GeneralizedParetoRand<double>;
 template class randlib::GammaDistribution<double>;
 template class randlib::FreeRateGammaDistribution<double>;
 template class randlib::GammaRand<double>;

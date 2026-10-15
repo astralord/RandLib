@@ -63,6 +63,10 @@ class FisherFRand;
 template <typename RealType = double>
 class FrechetRand;
 template <typename RealType = double>
+class GeneralizedExtremeValueRand;
+template <typename RealType = double>
+class GeneralizedParetoRand;
+template <typename RealType = double>
 class GammaDistribution;
 template <typename RealType = double>
 class FreeRateGammaDistribution;

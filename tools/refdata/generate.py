@@ -43,7 +43,7 @@ def fmt_value(v):
         return "nan"
     if mp.isinf(v):
         return "inf" if v > 0 else "-inf"
-    return mp.nstr(v, 25, min_fixed=-mp.inf, max_fixed=mp.inf) if v != 0 else "0"
+    return mp.nstr(v, 25, min_fixed=-100, max_fixed=100) if v != 0 else "0"
 
 
 def parse_case(case_id):
@@ -62,6 +62,14 @@ def golden_cases():
                 entry = cases.setdefault(row["case"], {"x": []})
                 if row["function"] in ("f", "P"):
                     entry["x"].append(row["arg"])
+    cases.update({
+        "GeneralizedParetoRand(0.2, 2, 1)": {"x": ["1", "1.1", "2", "5", "20"]},
+        "GeneralizedParetoRand(0, 1.5, -1)": {"x": ["-1", "-0.9", "0", "2", "10"]},
+        "GeneralizedParetoRand(-0.3, 2, 0)": {"x": ["0", "0.1", "1", "4", "6.5"]},
+        "GeneralizedExtremeValueRand(0.2, 1.5, -0.5)": {"x": ["-7", "-2", "-0.5", "2", "10"]},
+        "GeneralizedExtremeValueRand(0, 2, 1)": {"x": ["-10", "-2", "1", "5", "15"]},
+        "GeneralizedExtremeValueRand(-0.25, 1, 0)": {"x": ["-10", "-2", "0", "2", "3.9"]},
+    })
     return cases
 
 

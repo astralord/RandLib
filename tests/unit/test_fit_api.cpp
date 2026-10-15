@@ -304,6 +304,134 @@ TEST_CASE("Generic MLE fits Frechet location, scale and shape", "[fit]")
     CHECK_THAT(result.distribution.GetLocation(), WithinAbs(-1.0, 0.05));
 }
 
+TEST_CASE("Generic MLE fits generalized Pareto and extreme-value distributions", "[fit]")
+{
+    constexpr int sampleSize = 400;
+    std::vector<double> paretoSample;
+    std::vector<double> extremeValueSample;
+    paretoSample.reserve(sampleSize);
+    extremeValueSample.reserve(sampleSize);
+    const GeneralizedParetoRand<double> paretoReference(0.2, 2.0);
+    const GeneralizedExtremeValueRand<double> extremeValueReference(0.2, 1.5, -0.5);
+    for (int i = 0; i < sampleSize; ++i) {
+        const double probability = (i + 0.5) / sampleSize;
+        paretoSample.push_back(paretoReference.Quantile(probability));
+        extremeValueSample.push_back(extremeValueReference.Quantile(probability));
+    }
+
+    auto pareto = fit<GeneralizedParetoRand<double>>(paretoSample);
+    REQUIRE(pareto.converged);
+    CHECK_THAT(pareto.distribution.GetShape(), WithinAbs(0.2, 0.02));
+    CHECK_THAT(pareto.distribution.GetScale(), WithinRel(2.0, 0.02));
+    CHECK(pareto.distribution.GetLocation() == 0);
+
+    auto extremeValue = fit<GeneralizedExtremeValueRand<double>>(extremeValueSample);
+    REQUIRE(extremeValue.converged);
+    CHECK_THAT(extremeValue.distribution.GetShape(), WithinAbs(0.2, 0.02));
+    CHECK_THAT(extremeValue.distribution.GetScale(), WithinRel(1.5, 0.02));
+    CHECK_THAT(extremeValue.distribution.GetLocation(), WithinAbs(-0.5, 0.02));
+}
+
+TEST_CASE("Tail-index estimators expose order statistics for diagnostics", "[fit][tail]")
+{
+    const std::vector<double> hillSample = {1, 2, 4, 8, 16};
+    CHECK_THAT(hill_estimator(hillSample, 2), WithinAbs(1.5 * std::log(2.0), 1e-14));
+
+    const auto plot = hill_plot(hillSample, 3);
+    REQUIRE(plot.size() == 3);
+    CHECK(plot[0].order == 1);
+    CHECK(plot[0].threshold == 8);
+    CHECK_THAT(plot[0].estimate, WithinAbs(std::log(2.0), 1e-14));
+    CHECK(plot[2].order == 3);
+    CHECK(plot[2].threshold == 2);
+
+    const std::vector<double> pickandsSample = {1, 2, 3, 4, 5, 6, 7, 8};
+    CHECK_THAT(pickands_estimator(pickandsSample, 2), WithinAbs(-1.0, 1e-14));
+
+    CHECK_THROWS_AS(hill_estimator(hillSample, 0), std::invalid_argument);
+    CHECK_THROWS_AS(hill_estimator(std::vector<double>{0, 1}, 1), std::invalid_argument);
+    CHECK_THROWS_AS(pickands_estimator(pickandsSample, 3), std::invalid_argument);
+    CHECK_THROWS_AS(pickands_estimator(std::vector<double>{1, 1, 1, 1}, 1), std::invalid_argument);
+}
+
+TEST_CASE("Peaks-over-threshold fitting returns a shifted generalized Pareto law", "[fit][tail]")
+{
+    constexpr int sampleSize = 400;
+    constexpr double threshold = 5;
+    const GeneralizedParetoRand<double> reference(0.2, 2.0, threshold);
+    std::vector<double> sample = {1, 3, threshold};
+    sample.reserve(sampleSize + sample.size());
+    for (int i = 0; i < sampleSize; ++i)
+        sample.push_back(reference.Quantile((i + 0.5) / sampleSize));
+
+    const auto result = fit_peaks_over_threshold(sample, threshold);
+    REQUIRE(result.converged);
+    CHECK_THAT(result.distribution.GetShape(), WithinAbs(0.2, 0.02));
+    CHECK_THAT(result.distribution.GetScale(), WithinRel(2.0, 0.02));
+    CHECK(result.distribution.GetLocation() == threshold);
+    CHECK(result.parameter_names == std::vector<std::string>{"shape", "scale"});
+}
+
+TEST_CASE("Censored likelihood combines density and probability contributions", "[fit][censored]")
+{
+    using Observation = CensoredObservation<double>;
+    const std::vector<Observation> observations = {Observation::exact(-0.2), Observation::left(-0.5),
+                                                   Observation::right(0.5), Observation::interval(-0.1, 0.7)};
+    FitOptions options;
+    options.fixed = {{"location", 0}, {"variance", 1}};
+    const auto result = fit_censored<NormalRand<double>>(observations, options);
+    const NormalRand<double> normal;
+    const double expected = normal.logf(-0.2) + std::log(normal.F(-0.5)) + std::log(normal.S(0.5)) +
+                            std::log(normal.F(0.7) - normal.F(-0.1));
+
+    REQUIRE(result.converged);
+    CHECK_THAT(result.log_likelihood, WithinAbs(expected, 1e-13));
+    CHECK(result.distribution.GetLocation() == 0);
+    CHECK_THAT(static_cast<double>(result.distribution.Variance()), WithinAbs(1.0, 1e-14));
+}
+
+TEST_CASE("Censored and truncated normal MLE recover their source law", "[fit][censored]")
+{
+    using Observation = CensoredObservation<double>;
+    constexpr int sampleSize = 500;
+    constexpr double censoringPoint = 2;
+    constexpr double lower = -1;
+    constexpr double upper = 2.5;
+    const NormalRand<double> reference(0.5, 2.25);
+    std::vector<Observation> censored;
+    std::vector<double> truncated;
+    censored.reserve(sampleSize);
+    truncated.reserve(sampleSize);
+    const double lowerProbability = reference.F(lower);
+    const double probabilityWidth = reference.F(upper) - lowerProbability;
+    for (int i = 0; i < sampleSize; ++i) {
+        const double probability = (i + 0.5) / sampleSize;
+        const double value = reference.Quantile(probability);
+        censored.push_back(value > censoringPoint ? Observation::right(censoringPoint) : Observation::exact(value));
+        truncated.push_back(reference.Quantile(lowerProbability + probability * probabilityWidth));
+    }
+
+    const auto censoredResult = fit_censored<NormalRand<double>>(censored);
+    REQUIRE(censoredResult.converged);
+    CHECK_THAT(censoredResult.distribution.GetLocation(), WithinAbs(0.5, 0.03));
+    CHECK_THAT(static_cast<double>(censoredResult.distribution.Variance()), WithinRel(2.25, 0.04));
+
+    const auto truncatedResult = fit_truncated<NormalRand<double>>(truncated, lower, upper);
+    REQUIRE(truncatedResult.converged);
+    CHECK_THAT(truncatedResult.distribution.GetLocation(), WithinAbs(0.5, 0.03));
+    CHECK_THAT(static_cast<double>(truncatedResult.distribution.Variance()), WithinRel(2.25, 0.04));
+}
+
+TEST_CASE("Censored and truncated fitting validate observation bounds", "[fit][censored]")
+{
+    using Observation = CensoredObservation<double>;
+    CHECK_THROWS_AS(fit_censored<NormalRand<double>>(std::vector<Observation>{}), fit_error);
+    CHECK_THROWS_AS(fit_censored<NormalRand<double>>(std::vector<Observation>{Observation::interval(2, 1)}),
+                    std::invalid_argument);
+    CHECK_THROWS_AS(fit_truncated<NormalRand<double>>(std::vector<double>{0, 2}, -1, 1), fit_error);
+    CHECK_THROWS_AS(fit_truncated<NormalRand<double>>(std::vector<double>{0}, 1, 1), std::invalid_argument);
+}
+
 TEST_CASE("Unified fitting searches integer-valued Tier 1 parameters", "[fit]")
 {
     constexpr int sampleSize = 200;

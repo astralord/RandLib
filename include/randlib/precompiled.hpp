@@ -23,6 +23,8 @@ extern template class ExponentialRand<double>;
 extern template class ExponentiallyModifiedGaussianRand<double>;
 extern template class FisherFRand<double>;
 extern template class FrechetRand<double>;
+extern template class GeneralizedExtremeValueRand<double>;
+extern template class GeneralizedParetoRand<double>;
 extern template class GammaDistribution<double>;
 extern template class FreeRateGammaDistribution<double>;
 extern template class GammaRand<double>;

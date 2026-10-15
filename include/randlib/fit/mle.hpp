@@ -7,6 +7,8 @@
 #include <randlib/continuous/exponential.hpp>
 #include <randlib/continuous/fisher_f.hpp>
 #include <randlib/continuous/frechet.hpp>
+#include <randlib/continuous/generalized_extreme_value.hpp>
+#include <randlib/continuous/generalized_pareto.hpp>
 #include <randlib/continuous/gamma.hpp>
 #include <randlib/continuous/gumbel.hpp>
 #include <randlib/continuous/inverse_gamma.hpp>
@@ -212,22 +214,21 @@ inline std::vector<std::vector<double>> inverse(std::vector<std::vector<double>>
     return result;
 }
 
-template <class Distribution>
-double negativeLogLikelihood(const std::vector<double> &parameters,
-                             std::span<const typename Distribution::value_type> sample)
+template <class Distribution, class LogLikelihood>
+double negativeLogLikelihood(std::span<const double> parameters, const LogLikelihood &logLikelihood)
 {
     try {
         Distribution distribution = FitModel<Distribution>::make(parameters);
-        const double value = -distribution.LogLikelihoodFunction(sample);
+        const double value = -logLikelihood(distribution);
         return std::isfinite(value) ? value : std::numeric_limits<double>::infinity();
     } catch (const std::exception &) {
         return std::numeric_limits<double>::infinity();
     }
 }
 
-template <class Distribution>
-void addUncertainty(FitResult<Distribution> &result, std::span<const typename Distribution::value_type> sample,
-                    std::span<const FitParameter> specifications)
+template <class Distribution, class Objective>
+void addUncertainty(FitResult<Distribution> &result, std::span<const FitParameter> specifications,
+                    const Objective &naturalObjective)
 {
     const std::size_t dimension = result.parameters.size();
     result.covariance.assign(dimension, std::vector<double>(dimension));
@@ -256,7 +257,7 @@ void addUncertainty(FitResult<Distribution> &result, std::span<const typename Di
         std::vector<double> parameters = result.parameters;
         for (std::size_t i = 0; i < freeIndices.size(); ++i)
             parameters[freeIndices[i]] = free[i];
-        return negativeLogLikelihood<Distribution>(parameters, sample);
+        return naturalObjective(parameters);
     };
     auto information = math::numericalHessian(objective, freeParameters);
     auto covariance = inverse(std::move(information));
@@ -411,6 +412,70 @@ struct FitModel<FrechetRand<Real>>
         if (!(spread > 0))
             throw fit_error(FitErrorCode::WrongSample, "Frechet distribution: sample spread should be positive");
         return Distribution(1.0, spread, static_cast<double>(minimum) - 0.1 * spread);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<GeneralizedParetoRand<Real>>
+{
+    using Distribution = GeneralizedParetoRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"shape", distribution.GetShape(), -0.5, std::nullopt},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], 0);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Generalized Pareto", {Method::MLE});
+        if (std::ranges::any_of(sample, [](Real value) { return value < 0; }))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Generalized Pareto distribution: exceedances should be non-negative");
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        if (!(mean > 0) || !(variance > 0))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Generalized Pareto distribution: sample spread should be positive");
+        const double shape = std::clamp(0.5 * (1 - mean * mean / variance), -0.4, 1.0);
+        return Distribution(shape, mean * (1 - shape), 0);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<GeneralizedExtremeValueRand<Real>>
+{
+    using Distribution = GeneralizedExtremeValueRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"shape", distribution.GetShape(), std::nullopt, std::nullopt},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt},
+                {"location", distribution.GetLocation(), std::nullopt, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], parameters[2]);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Generalized extreme-value", {Method::MLE});
+        const auto [mean, variance] = sampleMeanAndVariance(sample);
+        if (!(variance > 0))
+            throw fit_error(FitErrorCode::WrongSample,
+                            "Generalized extreme-value distribution: sample spread should be positive");
+        const double scale = std::sqrt(6 * variance) / std::numbers::pi;
+        return Distribution(0, scale, mean - static_cast<double>(randlib::consts::egamma) * scale);
     }
 
     static bool hasClosedForm(Method) { return false; }
@@ -1146,16 +1211,15 @@ struct FitModel<UniformDiscreteRand<Int>>
     static bool hasClosedForm(Method) { return true; }
 };
 
-} // namespace detail
-
-template <class Distribution>
-    requires detail::FittableModel<Distribution>
-FitResult<Distribution> fit(std::span<const typename Distribution::value_type> sample, FitOptions options = {})
+template <class Distribution, class LogLikelihood>
+FitResult<Distribution> fitLikelihood(std::span<const typename Distribution::value_type> initializationSample,
+                                      FitOptions options, const LogLikelihood &logLikelihood,
+                                      bool forceOptimization = false)
 {
-    if (sample.empty())
+    if (initializationSample.empty())
         throw fit_error(FitErrorCode::TooFewElements, "Fitting requires a non-empty sample");
     if constexpr (std::floating_point<typename Distribution::value_type>) {
-        if (std::ranges::any_of(sample, [](auto value) { return !std::isfinite(value); }))
+        if (std::ranges::any_of(initializationSample, [](auto value) { return !std::isfinite(value); }))
             throw fit_error(FitErrorCode::WrongSample, "Fitting requires finite sample values");
     }
     if (!(options.tolerance > 0) || options.max_iterations <= 0)
@@ -1163,15 +1227,15 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
     if (options.method != Method::MLE && !options.fixed.empty())
         throw fit_error(FitErrorCode::NotApplicable, "Fixed parameters are currently supported only for MLE");
 
-    Distribution initial = detail::FitModel<Distribution>::initial(sample, options.method, options.fixed);
-    auto specifications = detail::FitModel<Distribution>::parameters(initial);
+    Distribution initial = FitModel<Distribution>::initial(initializationSample, options.method, options.fixed);
+    auto specifications = FitModel<Distribution>::parameters(initial);
     std::vector<double> parameters;
     parameters.reserve(specifications.size());
     std::vector<bool> fixed(specifications.size());
     for (std::size_t i = 0; i < specifications.size(); ++i) {
         auto found = options.fixed.find(specifications[i].name);
         if (found != options.fixed.end()) {
-            if (!detail::withinBounds(found->second, specifications[i]))
+            if (!withinBounds(found->second, specifications[i]))
                 throw std::invalid_argument("Fixed parameter is outside its bounds: " +
                                             std::string(specifications[i].name));
             specifications[i].value = found->second;
@@ -1182,47 +1246,52 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
     for (const auto &[name, value] : options.fixed) {
         (void)value;
         if (std::ranges::none_of(specifications,
-                                 [&name](const detail::FitParameter &parameter) { return parameter.name == name; }))
+                                 [&name](const FitParameter &parameter) { return parameter.name == name; }))
             throw std::invalid_argument("Unknown fixed parameter: " + name);
     }
 
+    const bool optimize = forceOptimization || requiresOptimization<Distribution>(options.method, options.fixed);
     std::vector<std::size_t> freeIndices;
     std::vector<double> unconstrained;
     for (std::size_t i = 0; i < parameters.size(); ++i) {
         if (!fixed[i]) {
-            if (specifications[i].integral && detail::requiresOptimization<Distribution>(options.method, options.fixed))
+            if (specifications[i].integral && optimize)
                 throw fit_error(FitErrorCode::NotApplicable,
                                 "Free integer parameters are not supported by continuous optimization");
             freeIndices.push_back(i);
-            unconstrained.push_back(detail::toUnconstrained(parameters[i], specifications[i]));
+            unconstrained.push_back(toUnconstrained(parameters[i], specifications[i]));
         }
     }
 
+    auto naturalObjective = [&](std::span<const double> candidate) {
+        return negativeLogLikelihood<Distribution>(candidate, logLikelihood);
+    };
     math::MinimizeResult<double> optimization;
     optimization.x = unconstrained;
     optimization.converged = true;
-    if (!freeIndices.empty() && detail::requiresOptimization<Distribution>(options.method, options.fixed)) {
+    if (!freeIndices.empty() && optimize) {
         auto objective = [&](std::span<const double> free) {
             std::vector<double> candidate = parameters;
             for (std::size_t i = 0; i < free.size(); ++i)
-                candidate[freeIndices[i]] = detail::fromUnconstrained(free[i], specifications[freeIndices[i]]);
-            return detail::negativeLogLikelihood<Distribution>(candidate, sample);
+                candidate[freeIndices[i]] = fromUnconstrained(free[i], specifications[freeIndices[i]]);
+            return naturalObjective(candidate);
         };
         optimization = math::bfgs(objective, unconstrained, options.tolerance, options.max_iterations);
         if (!optimization.converged)
             optimization =
                 math::nelderMead(objective, std::move(optimization.x), options.tolerance, options.max_iterations);
         for (std::size_t i = 0; i < optimization.x.size(); ++i)
-            parameters[freeIndices[i]] = detail::fromUnconstrained(optimization.x[i], specifications[freeIndices[i]]);
+            parameters[freeIndices[i]] = fromUnconstrained(optimization.x[i], specifications[freeIndices[i]]);
     }
 
-    Distribution distribution = detail::FitModel<Distribution>::make(parameters);
-    const double logLikelihood = distribution.LogLikelihoodFunction(sample);
+    Distribution distribution = FitModel<Distribution>::make(parameters);
+    const double fittedLogLikelihood = logLikelihood(distribution);
     const std::size_t fittedParameters = freeIndices.size();
     FitResult<Distribution> result(std::move(distribution));
-    result.log_likelihood = logLikelihood;
-    result.aic = 2 * fittedParameters - 2 * logLikelihood;
-    result.bic = std::log(static_cast<double>(sample.size())) * fittedParameters - 2 * logLikelihood;
+    result.log_likelihood = fittedLogLikelihood;
+    result.aic = 2 * fittedParameters - 2 * fittedLogLikelihood;
+    result.bic =
+        std::log(static_cast<double>(initializationSample.size())) * fittedParameters - 2 * fittedLogLikelihood;
     result.parameters = std::move(parameters);
     result.fixed = std::move(fixed);
     result.converged = optimization.converged;
@@ -1230,8 +1299,20 @@ FitResult<Distribution> fit(std::span<const typename Distribution::value_type> s
     result.method = options.method;
     for (const auto &parameter : specifications)
         result.parameter_names.emplace_back(parameter.name);
-    detail::addUncertainty(result, sample, specifications);
+    addUncertainty(result, specifications, naturalObjective);
     return result;
+}
+
+} // namespace detail
+
+template <class Distribution>
+    requires detail::FittableModel<Distribution>
+FitResult<Distribution> fit(std::span<const typename Distribution::value_type> sample, FitOptions options = {})
+{
+    const auto logLikelihood = [sample](const Distribution &distribution) {
+        return distribution.LogLikelihoodFunction(sample);
+    };
+    return detail::fitLikelihood<Distribution>(sample, std::move(options), logLikelihood);
 }
 
 template <class Distribution>

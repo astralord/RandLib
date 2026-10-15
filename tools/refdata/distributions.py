@@ -771,6 +771,141 @@ class Gumbel(Continuous):
                 "Median": self.mu - b * mp.log(mp.log(2)), "Mode": self.mu}
 
 
+class GeneralizedPareto(Continuous):
+    def __init__(self, shape, scale, location):
+        self.xi, self.scale, self.location = mp.mpf(shape), mp.mpf(scale), mp.mpf(location)
+        self.lower = self.location
+        if self.xi < 0:
+            self.upper = self.location - self.scale / self.xi
+
+    def logpdf(self, x):
+        if x < self.lower or x > self.upper:
+            return -INF
+        z = (x - self.location) / self.scale
+        if self.xi == 0:
+            return -mp.log(self.scale) - z
+        support = 1 + self.xi * z
+        if support == 0:
+            if self.xi < -1:
+                return INF
+            if self.xi == -1:
+                return -mp.log(self.scale)
+            return -INF
+        return -mp.log(self.scale) - (1 / self.xi + 1) * mp.log(support)
+
+    def pdf(self, x):
+        return mp.exp(self.logpdf(x))
+
+    def sf(self, x):
+        if x <= self.lower:
+            return mp.mpf(1)
+        if x >= self.upper:
+            return mp.mpf(0)
+        z = (x - self.location) / self.scale
+        return mp.exp(-z) if self.xi == 0 else (1 + self.xi * z) ** (-1 / self.xi)
+
+    def cdf(self, x):
+        return 1 - self.sf(x)
+
+    def moments(self):
+        xi, scale, location = self.xi, self.scale, self.location
+        result = {"Median": self.quantile(mp.mpf(1) / 2),
+                  "Mode": self.upper if xi < -1 else location}
+        if xi < 1:
+            result["Mean"] = location + scale / (1 - xi)
+        if xi < mp.mpf(1) / 2:
+            result["Variance"] = scale**2 / ((1 - xi) ** 2 * (1 - 2 * xi))
+        if xi < mp.mpf(1) / 3:
+            result["Skewness"] = 2 * (1 + xi) * mp.sqrt(1 - 2 * xi) / (1 - 3 * xi)
+        if xi < mp.mpf(1) / 4:
+            result["ExcessKurtosis"] = (3 * (1 - 2 * xi) * (2 * xi**2 + xi + 3)
+                                          / ((1 - 3 * xi) * (1 - 4 * xi)) - 3)
+        return result
+
+    def quantile(self, p):
+        exponential = -mp.log1p(-p)
+        return (self.location + self.scale * exponential if self.xi == 0 else
+                self.location + self.scale * mp.expm1(self.xi * exponential) / self.xi)
+
+
+class GeneralizedExtremeValue(Continuous):
+    def __init__(self, shape, scale, location):
+        self.xi, self.scale, self.location = mp.mpf(shape), mp.mpf(scale), mp.mpf(location)
+        if self.xi > 0:
+            self.lower = self.location - self.scale / self.xi
+        elif self.xi < 0:
+            self.upper = self.location - self.scale / self.xi
+
+    def _support(self, x):
+        return 1 + self.xi * (x - self.location) / self.scale
+
+    def logpdf(self, x):
+        if x < self.lower or x > self.upper:
+            return -INF
+        z = (x - self.location) / self.scale
+        if self.xi == 0:
+            return -mp.log(self.scale) - z - mp.exp(-z)
+        support = self._support(x)
+        if support == 0:
+            if self.xi < -1:
+                return INF
+            if self.xi == -1:
+                return -mp.log(self.scale)
+            return -INF
+        return (-mp.log(self.scale) - (1 / self.xi + 1) * mp.log(support)
+                - support ** (-1 / self.xi))
+
+    def pdf(self, x):
+        return mp.exp(self.logpdf(x))
+
+    def cdf(self, x):
+        if x <= self.lower:
+            return mp.mpf(0)
+        if x >= self.upper:
+            return mp.mpf(1)
+        exponent = mp.exp(-(x - self.location) / self.scale) if self.xi == 0 else self._support(x) ** (-1 / self.xi)
+        return mp.exp(-exponent)
+
+    def sf(self, x):
+        if x <= self.lower:
+            return mp.mpf(1)
+        if x >= self.upper:
+            return mp.mpf(0)
+        exponent = mp.exp(-(x - self.location) / self.scale) if self.xi == 0 else self._support(x) ** (-1 / self.xi)
+        return -mp.expm1(-exponent)
+
+    def quantile(self, p):
+        log_exponential = mp.log(-mp.log(p))
+        return (self.location - self.scale * log_exponential if self.xi == 0 else
+                self.location + self.scale * mp.expm1(-self.xi * log_exponential) / self.xi)
+
+    def moments(self):
+        xi, scale, location = self.xi, self.scale, self.location
+        result = {"Median": self.quantile(mp.mpf(1) / 2)}
+        if xi <= -1:
+            result["Mode"] = self.upper
+        elif xi == 0:
+            result["Mode"] = location
+        else:
+            result["Mode"] = location + scale * mp.expm1(-xi * mp.log1p(xi)) / xi
+        if xi == 0:
+            result.update(Gumbel(location, scale).moments())
+            return result
+        gamma = lambda k: mp.gamma(1 - k * xi)
+        if xi < 1:
+            result["Mean"] = location + scale * (gamma(1) - 1) / xi
+        if xi < mp.mpf(1) / 2:
+            variance = gamma(2) - gamma(1) ** 2
+            result["Variance"] = scale**2 * variance / xi**2
+        if xi < mp.mpf(1) / 3:
+            third = gamma(3) - 3 * gamma(1) * gamma(2) + 2 * gamma(1) ** 3
+            result["Skewness"] = mp.sign(xi) * third / variance ** mp.mpf(1.5)
+        if xi < mp.mpf(1) / 4:
+            fourth = gamma(4) - 4 * gamma(1) * gamma(3) + 6 * gamma(1) ** 2 * gamma(2) - 3 * gamma(1) ** 4
+            result["ExcessKurtosis"] = fourth / variance**2 - 3
+        return result
+
+
 class AsymmetricLaplace(Continuous):
     """f(x) = lam / (k + 1/k) * exp(-lam k (x - m)) for x >= m, exp(lam (x - m) / k) otherwise."""
 
@@ -1285,6 +1420,8 @@ def make(cls, args):
         "WeibullRand": lambda: Weibull(*a),
         "FrechetRand": lambda: Frechet(*a),
         "GumbelRand": lambda: Gumbel(*a),
+        "GeneralizedParetoRand": lambda: GeneralizedPareto(*a),
+        "GeneralizedExtremeValueRand": lambda: GeneralizedExtremeValue(*a),
         "LaplaceRand": lambda: AsymmetricLaplace(a[0], 1 / a[1], 1),
         "AsymmetricLaplaceRand": lambda: AsymmetricLaplace(a[0], 1 / a[1], a[2]),
         "LogisticRand": lambda: Logistic(*a),

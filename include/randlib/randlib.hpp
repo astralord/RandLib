@@ -17,6 +17,8 @@
 #include <randlib/continuous/exponentially_modified_gaussian.hpp>
 #include <randlib/continuous/fisher_f.hpp>
 #include <randlib/continuous/frechet.hpp>
+#include <randlib/continuous/generalized_extreme_value.hpp>
+#include <randlib/continuous/generalized_pareto.hpp>
 #include <randlib/continuous/gamma.hpp>
 #include <randlib/continuous/geometric_stable.hpp>
 #include <randlib/continuous/gumbel.hpp>
@@ -68,10 +70,12 @@
 #include <randlib/bivariate/bivariate_normal.hpp>
 #include <randlib/bivariate/trinomial.hpp>
 #include <randlib/fit/bayes.hpp>
+#include <randlib/fit/censored.hpp>
 #include <randlib/fit/gof.hpp>
 #include <randlib/fit/mle.hpp>
 #include <randlib/fit/moments.hpp>
 #include <randlib/fit/select.hpp>
+#include <randlib/fit/tail.hpp>
 
 #ifdef RANDLIB_PRECOMPILED
 #include <randlib/precompiled.hpp>

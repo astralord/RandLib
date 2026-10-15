@@ -43,8 +43,8 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers all 31 non-stable Tier 1 types, including bounded searches for integer-valued parameters. Seeded recovery grids and SciPy comparison fixtures are committed. Remaining: stable-family fits (Phase 5) and deprecated member wrappers. |
-| 3.2 Tail estimators and extreme-value distributions | ⏳ | |
+| 3.1 Fitting API | 🟡 | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers all 31 non-stable Tier 1 types plus GPD and GEV, including bounded searches for integer-valued parameters. Seeded recovery grids and SciPy comparison fixtures are committed. Remaining: stable-family fits (Phase 5) and deprecated member wrappers. |
+| 3.2 Tail estimators and extreme-value distributions | ✅ | Generalized Pareto and GEV laws have mpmath references and MLEs; Hill/Pickands diagnostics, peaks-over-threshold fitting, and censored/truncated MLE are implemented. |
 | 3.3 Close #11 | 🟡 | The unused private `POISSON` selector is removed; exact Bernoulli-sum, waiting-time and rejection sampling remain. Closing #11 with that rationale needs the maintainer. |
 
 ## Phase 4: Documentation, packaging, release (v2.0)

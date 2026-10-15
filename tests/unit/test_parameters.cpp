@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <functional>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -183,4 +184,15 @@ TEST_CASE("Named factories state which parameter they take", "[parameters]")
     CHECK_THROWS_AS(GammaRand<double>::FromShapeScale(2, 0), std::invalid_argument);
     CHECK_THROWS_AS(ExponentialRand<double>::FromScale(-1), std::invalid_argument);
     CHECK_THROWS_AS(LogNormalRand<double>::FromLogMeanLogStd(0, 0), std::invalid_argument);
+}
+
+TEST_CASE("Extreme-value distributions reject invalid parameters", "[parameters]")
+{
+    const double invalidNumber = std::numeric_limits<double>::quiet_NaN();
+    CHECK_THROWS_AS(GeneralizedParetoRand<double>(invalidNumber, 1, 0), std::invalid_argument);
+    CHECK_THROWS_AS(GeneralizedParetoRand<double>(0, 0, 0), std::invalid_argument);
+    CHECK_THROWS_AS(GeneralizedParetoRand<double>(0, 1, invalidNumber), std::invalid_argument);
+    CHECK_THROWS_AS(GeneralizedExtremeValueRand<double>(invalidNumber, 1, 0), std::invalid_argument);
+    CHECK_THROWS_AS(GeneralizedExtremeValueRand<double>(0, 0, 0), std::invalid_argument);
+    CHECK_THROWS_AS(GeneralizedExtremeValueRand<double>(0, 1, invalidNumber), std::invalid_argument);
 }

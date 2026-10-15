@@ -137,7 +137,7 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
 Follow plan 3.1–3.3. Design notes gathered so far:
 - Landed locally: `math::numericalHessian` and the first `include/randlib/fit/` vertical slice.
   `FitResult`, `FitOptions`, fixed-parameter constrained MLE, AIC/BIC and observed-information
-  covariance are covered. The free API covers 31 distribution types, including fixed structural
+  covariance are covered. The free API covers 33 distribution types, including fixed structural
   parameters, generic multi-parameter MLEs and bounded searches for integer-valued parameters.
   The free API now also has a named method-of-moments entry point, conjugate Bayesian updates,
   AIC/BIC model selection, and continuous/discrete goodness-of-fit tests. Conditional Bayesian
@@ -163,8 +163,12 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   logit for (0, 1)). Closed-form fits override it.
 - Tests: parameter recovery over a grid (seeded), comparison to SciPy `fit` results on fixed datasets
   stored as CSV (generate them with a script under `tools/`).
-- 3.2: Hill and Pickands estimators, generalized Pareto and generalized extreme value distributions
-  (closed forms; add mpmath references in `tools/refdata/distributions.py`), censored/truncated MLE.
+- 3.2 is done locally: `fit/tail.hpp` provides Hill and Pickands estimators, plot-ready Hill
+  diagnostics and peaks-over-threshold fitting. Generalized Pareto and generalized extreme-value
+  distributions have closed-form probability functions, sampling, moments, generic MLEs and
+  committed 40-digit mpmath reference data. `fit/censored.hpp` supports exact, left-, right- and
+  interval-censored observations plus one- and two-sided truncated MLE through the shared
+  constrained-likelihood pipeline.
 - 3.3 implementation is done: the unused private binomial `POISSON` selector is removed on both
   branches. The maintainer still needs to close #11 with the exact-sampling rationale.
 
