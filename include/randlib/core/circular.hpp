@@ -21,10 +21,11 @@ protected:
     double loc{};
 
     CircularDistribution(double location = 0);
+
 public:
     virtual ~CircularDistribution() {}
-protected:
 
+protected:
 public:
     [[nodiscard]] Support SupportType() const override { return Support::Finite; }
     [[nodiscard]] RealType MinValue() const override { return loc - randlib::consts::pi; }
@@ -56,13 +57,13 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 CircularDistribution<RealType>::CircularDistribution(double location)
 {
     SetLocation(location);
 }
 
-template < typename RealType >
+template <typename RealType>
 void CircularDistribution<RealType>::SetLocation(double location)
 {
     if (!std::isfinite(location))

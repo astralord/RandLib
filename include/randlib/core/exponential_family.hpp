@@ -38,19 +38,20 @@ public:
 namespace randlib
 {
 
-template< typename T, typename P >
-P ExponentialFamily<T, P>::NaturalParameters() const {
+template <typename T, typename P>
+P ExponentialFamily<T, P>::NaturalParameters() const
+{
     P sourceParameters = SourceParameters();
     return SourceToNatural(sourceParameters);
 }
 
-template< typename T, typename P >
+template <typename T, typename P>
 double ExponentialFamily<T, P>::ProbabilityMeasure(T x) const
 {
     return std::exp(LogProbabilityMeasure(x));
 }
 
-template< typename T, typename P >
+template <typename T, typename P>
 double ExponentialFamily<T, P>::LogProbabilityMeasure(T x) const
 {
     P theta = this->NaturalParameters();
@@ -61,7 +62,7 @@ double ExponentialFamily<T, P>::LogProbabilityMeasure(T x) const
     return y;
 }
 
-template< typename T, typename P >
+template <typename T, typename P>
 double ExponentialFamily<T, P>::KullbackLeiblerDivergence(P parameters) const
 {
     double KL = this->CrossEntropyAdjusted(parameters);
@@ -69,7 +70,7 @@ double ExponentialFamily<T, P>::KullbackLeiblerDivergence(P parameters) const
     return KL;
 }
 
-template< typename T, typename P >
+template <typename T, typename P>
 double ExponentialFamily<T, P>::CrossEntropyAdjusted(P parameters) const
 {
     P theta_p = this->NaturalParameters();
@@ -80,7 +81,7 @@ double ExponentialFamily<T, P>::CrossEntropyAdjusted(P parameters) const
     return H;
 }
 
-template< typename T, typename P >
+template <typename T, typename P>
 double ExponentialFamily<T, P>::EntropyAdjusted() const
 {
     P sourceParameters = this->SourceParameters();

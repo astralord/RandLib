@@ -16,7 +16,8 @@ namespace randlib
  * Notation: X ~ N(μ1, μ2, σ1, ρ, σ2)
  */
 template <typename RealType>
-class BivariateNormalRand final : public ContinuousBivariateDistribution<NormalRand<RealType>, NormalRand<RealType>, RealType>
+class BivariateNormalRand final
+    : public ContinuousBivariateDistribution<NormalRand<RealType>, NormalRand<RealType>, RealType>
 {
     double mu1 = 0; ///< first location μ1
     double mu2 = 0; ///< second location μ2
@@ -41,13 +42,14 @@ public:
 
     [[nodiscard]] double f(const Pair<RealType> &point) const override;
     [[nodiscard]] double logf(const Pair<RealType> &point) const override;
-    [[nodiscard]] double F(const Pair<RealType> & point) const override;
+    [[nodiscard]] double F(const Pair<RealType> &point) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] Pair<RealType> operator()(G &g) const;
+
 protected:
     Pair<RealType> variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     long double Correlation() const override;
 
     [[nodiscard]] Pair<RealType> Mode() const override;
@@ -58,24 +60,24 @@ public:
 namespace randlib
 {
 
-template< typename RealType >
-BivariateNormalRand<RealType>::BivariateNormalRand(double location1, double location2, double scale1, double scale2, double correlation)
+template <typename RealType>
+BivariateNormalRand<RealType>::BivariateNormalRand(double location1, double location2, double scale1, double scale2,
+                                                   double correlation)
 {
     SetLocations(location1, location2);
     SetCovariance(scale1, scale2, correlation);
 }
 
-template< typename RealType >
+template <typename RealType>
 std::string BivariateNormalRand<RealType>::Name() const
 {
-    return "Bivariate Normal( (" + this->toStringWithPrecision(GetFirstLocation()) + ", "
-                               + this->toStringWithPrecision(GetSecondLocation()) + "), ("
-                               + this->toStringWithPrecision(GetFirstScale()) + ", "
-                               + this->toStringWithPrecision(GetSecondScale()) + ", "
-                               + this->toStringWithPrecision(GetCorrelation()) + ") )";
+    return "Bivariate Normal( (" + this->toStringWithPrecision(GetFirstLocation()) + ", " +
+           this->toStringWithPrecision(GetSecondLocation()) + "), (" + this->toStringWithPrecision(GetFirstScale()) +
+           ", " + this->toStringWithPrecision(GetSecondScale()) + ", " + this->toStringWithPrecision(GetCorrelation()) +
+           ") )";
 }
 
-template< typename RealType >
+template <typename RealType>
 void BivariateNormalRand<RealType>::SetLocations(double location1, double location2)
 {
     mu1 = location1;
@@ -84,15 +86,17 @@ void BivariateNormalRand<RealType>::SetLocations(double location1, double locati
     this->Y.SetLocation(mu2);
 }
 
-template< typename RealType >
+template <typename RealType>
 void BivariateNormalRand<RealType>::SetCovariance(double scale1, double scale2, double correlation)
 {
     if (!(scale1 > 0.0 && scale2 > 0.0))
-        throw std::invalid_argument("Scales of Bivariate-Normal distribution should be positive, but they're equal to "
-                                    + std::to_string(scale1) + " and " + std::to_string(scale2) + " respectively");
+        throw std::invalid_argument(
+            "Scales of Bivariate-Normal distribution should be positive, but they're equal to " +
+            std::to_string(scale1) + " and " + std::to_string(scale2) + " respectively");
     if (!(std::fabs(correlation) <= 1.0))
-        throw std::invalid_argument("Correlation of Bivariate-Normal distribution should be in interval [-1, 1], but it's equal to "
-                                    + std::to_string(correlation));
+        throw std::invalid_argument(
+            "Correlation of Bivariate-Normal distribution should be in interval [-1, 1], but it's equal to " +
+            std::to_string(correlation));
     sigma1 = scale1;
     sigma2 = scale2;
     rho = correlation;
@@ -105,7 +109,7 @@ void BivariateNormalRand<RealType>::SetCovariance(double scale1, double scale2, 
     sqrt1mroSq = std::exp(sqrt1mroSq);
 }
 
-template< typename RealType >
+template <typename RealType>
 double BivariateNormalRand<RealType>::f(const Pair<RealType> &point) const
 {
     RealType xAdj = (point.first - mu1) / sigma1, yAdj = (point.second - mu2) / sigma2;
@@ -116,7 +120,7 @@ double BivariateNormalRand<RealType>::f(const Pair<RealType> &point) const
     return std::exp(logf(point));
 }
 
-template< typename RealType >
+template <typename RealType>
 double BivariateNormalRand<RealType>::logf(const Pair<RealType> &point) const
 {
     if (rho == 0.0) /// log(f(x, y)) = log(f(x)) + log(f(y))
@@ -130,7 +134,7 @@ double BivariateNormalRand<RealType>::logf(const Pair<RealType> &point) const
     return -(pdfCoef + 0.5 * z / (sqrt1mroSq * sqrt1mroSq));
 }
 
-template< typename RealType >
+template <typename RealType>
 double BivariateNormalRand<RealType>::F(const Pair<RealType> &point) const
 {
     if (rho == 0.0) /// F(x, y) = F(x)F(y)
@@ -147,21 +151,23 @@ double BivariateNormalRand<RealType>::F(const Pair<RealType> &point) const
     if (std::fabs(rho) < 1.0) {
         RealType lowLimit = std::asin(rho);
         RealType highLimit = math::sign(rho) * randlib::consts::half_pi;
-        p2 = math::integrate([xAdj, yAdj] (double theta) {
-            /// Integrand is exp(-(x^2 + y^2 - 2xysin(θ)) / (2cos(θ)^2))
-            RealType cosTheta = std::cos(theta);
-            RealType tanTheta = std::tan(theta);
-            RealType integrand = xAdj * tanTheta - yAdj / cosTheta;
-            integrand *= integrand;
-            integrand += xAdj * xAdj;
-            integrand = std::exp(-0.5 * integrand);
-            return integrand;
-        }, lowLimit, highLimit);
+        p2 = math::integrate(
+            [xAdj, yAdj](double theta) {
+                /// Integrand is exp(-(x^2 + y^2 - 2xysin(θ)) / (2cos(θ)^2))
+                RealType cosTheta = std::cos(theta);
+                RealType tanTheta = std::tan(theta);
+                RealType integrand = xAdj * tanTheta - yAdj / cosTheta;
+                integrand *= integrand;
+                integrand += xAdj * xAdj;
+                integrand = std::exp(-0.5 * integrand);
+                return integrand;
+            },
+            lowLimit, highLimit);
     }
     return p1 - 0.5 * p2 / randlib::consts::pi;
 }
 
-template< typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 Pair<RealType> BivariateNormalRand<RealType>::operator()(G &g) const
 {
@@ -172,13 +178,13 @@ Pair<RealType> BivariateNormalRand<RealType>::operator()(G &g) const
     return std::make_pair(x, y);
 }
 
-template< typename RealType >
+template <typename RealType>
 long double BivariateNormalRand<RealType>::Correlation() const
 {
     return rho;
 }
 
-template< typename RealType >
+template <typename RealType>
 Pair<RealType> BivariateNormalRand<RealType>::Mode() const
 {
     return std::make_pair(mu1, mu2);

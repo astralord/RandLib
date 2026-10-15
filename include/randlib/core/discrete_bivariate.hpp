@@ -14,17 +14,20 @@ namespace randlib
  * with marginal discrete distributions
  */
 template <class T1, class T2, typename IntType>
-class DiscreteBivariateDistribution : public BivariateDistribution< T1, T2, IntType >
+class DiscreteBivariateDistribution : public BivariateDistribution<T1, T2, IntType>
 {
-    static_assert(std::is_base_of_v<DiscreteDistribution<IntType>, T1>, "T1 must be a descendant of DiscreteDistribution");
-    static_assert(std::is_base_of_v<DiscreteDistribution<IntType>, T2>, "T2 must be a descendant of DiscreteDistribution");
+    static_assert(std::is_base_of_v<DiscreteDistribution<IntType>, T1>,
+                  "T1 must be a descendant of DiscreteDistribution");
+    static_assert(std::is_base_of_v<DiscreteDistribution<IntType>, T2>,
+                  "T2 must be a descendant of DiscreteDistribution");
 
 protected:
     DiscreteBivariateDistribution() {}
+
 public:
     virtual ~DiscreteBivariateDistribution() {}
-protected:
 
+protected:
 public:
     [[nodiscard]] virtual double P(const Pair<IntType> &point) const = 0;
     [[nodiscard]] virtual double logP(const Pair<IntType> &point) const = 0;

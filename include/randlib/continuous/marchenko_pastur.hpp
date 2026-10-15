@@ -39,8 +39,8 @@ public:
     [[nodiscard]] double GetRatio() const noexcept { return lambda; }
     [[nodiscard]] double GetScale() const noexcept { return sigmaSq; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
 
 private:
     /**
@@ -48,20 +48,21 @@ private:
      * @param x
      * @return S(x) for λ > 1
      */
-    double ccdfForLargeRatio(const RealType & x) const;
+    double ccdfForLargeRatio(const RealType &x) const;
     /**
      * @fn cdfForSmallRatio
      * @param x
      * @return F(x) for 0 < λ <= 1
      */
-    double cdfForSmallRatio(const RealType & x) const;
+    double cdfForSmallRatio(const RealType &x) const;
 
 public:
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
 
 private:
-    enum GENERATOR_ID {
+    enum GENERATOR_ID
+    {
         TINY_RATIO,
         SMALL_RATIO,
         LARGE_RATIO,
@@ -89,13 +90,15 @@ private:
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
 private:
     [[nodiscard]] long double Moment(int n) const;
 
@@ -119,20 +122,20 @@ private:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 MarchenkoPasturRand<RealType>::MarchenkoPasturRand(double ratio, double scale)
 {
     SetParameters(ratio, scale);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string MarchenkoPasturRand<RealType>::Name() const
 {
-    return "Marchenko-Pastur(" + this->toStringWithPrecision(GetRatio()) + ", "
-            + this->toStringWithPrecision(GetScale()) + ")";
+    return "Marchenko-Pastur(" + this->toStringWithPrecision(GetRatio()) + ", " +
+           this->toStringWithPrecision(GetScale()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void MarchenkoPasturRand<RealType>::SetParameters(double ratio, double scale)
 {
     if (!(ratio > 0.0))
@@ -154,8 +157,7 @@ void MarchenkoPasturRand<RealType>::SetParameters(double ratio, double scale)
         BetaRV.SetShapes(1.5, 1.5);
         BetaRV.SetSupport(a, b);
         M = std::min(a / lambda, a);
-    }
-    else {
+    } else {
         BetaRV.SetShapes(0.5, 1.5);
         BetaRV.SetSupport(0, b);
         M = 0.25 * b / sqrtLambda;
@@ -164,7 +166,7 @@ void MarchenkoPasturRand<RealType>::SetParameters(double ratio, double scale)
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 double MarchenkoPasturRand<RealType>::f(const RealType &x) const
 {
     if (x == 0.0)
@@ -178,7 +180,7 @@ double MarchenkoPasturRand<RealType>::f(const RealType &x) const
     return y;
 }
 
-template < typename RealType >
+template <typename RealType>
 double MarchenkoPasturRand<RealType>::logf(const RealType &x) const
 {
     if (x == 0.0)
@@ -191,7 +193,7 @@ double MarchenkoPasturRand<RealType>::logf(const RealType &x) const
     return y;
 }
 
-template < typename RealType >
+template <typename RealType>
 double MarchenkoPasturRand<RealType>::ccdfForLargeRatio(const RealType &x) const
 {
     double y1 = 1.0 - x + lambda;
@@ -201,8 +203,7 @@ double MarchenkoPasturRand<RealType>::ccdfForLargeRatio(const RealType &x) const
     if (temp != 0.0) {
         y1 /= temp;
         y1 = lambdap1 * math::atan(y1);
-    }
-    else
+    } else
         y1 = lambdap1 * math::sign(y1) * randlib::consts::half_pi;
     double y2 = x * lambdap1;
     y2 -= lambdam1 * lambdam1;
@@ -213,7 +214,7 @@ double MarchenkoPasturRand<RealType>::ccdfForLargeRatio(const RealType &x) const
     return 0.5 * y;
 }
 
-template < typename RealType >
+template <typename RealType>
 double MarchenkoPasturRand<RealType>::cdfForSmallRatio(const RealType &x) const
 {
     double y1 = 1.0 - x + lambda;
@@ -223,12 +224,10 @@ double MarchenkoPasturRand<RealType>::cdfForSmallRatio(const RealType &x) const
     if (temp != 0.0) {
         y1 /= temp;
         y1 = lambdap1 * math::atan(y1);
-    }
-    else
+    } else
         y1 = lambdap1 * math::sign(y1) * randlib::consts::half_pi;
     double y2 = 0.0;
-    if (lambdam1 != 0)
-    {
+    if (lambdam1 != 0) {
         y2 = x * lambdap1;
         y2 -= lambdam1 * lambdam1;
         y2 /= -temp * lambdam1;
@@ -239,7 +238,7 @@ double MarchenkoPasturRand<RealType>::cdfForSmallRatio(const RealType &x) const
     return 0.5 * y;
 }
 
-template < typename RealType >
+template <typename RealType>
 double MarchenkoPasturRand<RealType>::F(const RealType &x) const
 {
     double xSt = x / sigmaSq;
@@ -252,7 +251,7 @@ double MarchenkoPasturRand<RealType>::F(const RealType &x) const
     return (xSt > a) ? cdfForSmallRatio(xSt) : 0.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 double MarchenkoPasturRand<RealType>::S(const RealType &x) const
 {
     double xSt = x / sigmaSq;
@@ -265,7 +264,7 @@ double MarchenkoPasturRand<RealType>::S(const RealType &x) const
     return (xSt > a) ? 1.0 - cdfForSmallRatio(xSt) : 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType MarchenkoPasturRand<RealType>::variateForTinyRatio(G &g) const
 {
@@ -279,7 +278,7 @@ RealType MarchenkoPasturRand<RealType>::variateForTinyRatio(G &g) const
     throw std::runtime_error("Marchenko-Pastur distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType MarchenkoPasturRand<RealType>::variateForSmallRatio(G &g) const
 {
@@ -294,21 +293,21 @@ RealType MarchenkoPasturRand<RealType>::variateForSmallRatio(G &g) const
     throw std::runtime_error("Marchenko-Pastur distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType MarchenkoPasturRand<RealType>::variateForLargeRatio(G &g) const
 {
     return (detail::uniform01<RealType>(g) > 1.0 / lambda) ? 0.0 : variateForSmallRatio(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType MarchenkoPasturRand<RealType>::variateForHugeRatio(G &g) const
 {
     return (detail::uniform01<RealType>(g) > 1.0 / lambda) ? 0.0 : variateForTinyRatio(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType MarchenkoPasturRand<RealType>::operator()(G &g) const
 {
@@ -326,24 +325,24 @@ RealType MarchenkoPasturRand<RealType>::operator()(G &g) const
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 void MarchenkoPasturRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     switch (getIdOfUsedGenerator()) {
     case TINY_RATIO:
-        for (RealType & var : outputData)
+        for (RealType &var : outputData)
             var = sigmaSq * variateForTinyRatio(g);
         break;
     case SMALL_RATIO:
-        for (RealType & var : outputData)
+        for (RealType &var : outputData)
             var = sigmaSq * variateForSmallRatio(g);
         break;
     case LARGE_RATIO:
-        for (RealType & var : outputData)
+        for (RealType &var : outputData)
             var = sigmaSq * variateForLargeRatio(g);
         break;
     case HUGE_RATIO:
-        for (RealType & var : outputData)
+        for (RealType &var : outputData)
             var = sigmaSq * variateForHugeRatio(g);
         break;
     default:
@@ -351,9 +350,7 @@ void MarchenkoPasturRand<RealType>::sample(detail::EngineRef g, std::span<RealTy
     }
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double MarchenkoPasturRand<RealType>::Moment(int n) const
 {
     if (!(n >= 0))
@@ -381,23 +378,23 @@ long double MarchenkoPasturRand<RealType>::Moment(int n) const
             sum += term;
         }
         return sum;
-        }
+    }
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MarchenkoPasturRand<RealType>::Mean() const
 {
     return sigmaSq;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MarchenkoPasturRand<RealType>::Variance() const
 {
     return sigmaSq * sigmaSq * lambda;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType MarchenkoPasturRand<RealType>::Mode() const
 {
     if (lambda > 1)
@@ -408,7 +405,7 @@ RealType MarchenkoPasturRand<RealType>::Mode() const
     return sigmaSq * mode;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MarchenkoPasturRand<RealType>::Skewness() const
 {
     long double mu = Mean();
@@ -420,7 +417,7 @@ long double MarchenkoPasturRand<RealType>::Skewness() const
     return skewness;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MarchenkoPasturRand<RealType>::ExcessKurtosis() const
 {
     long double mu = Mean();
@@ -435,7 +432,7 @@ long double MarchenkoPasturRand<RealType>::ExcessKurtosis() const
     return kurtosis - 3.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType MarchenkoPasturRand<RealType>::quantileImpl(double p) const
 {
     if (p <= 1.0 - 1.0 / lambda)
@@ -446,7 +443,7 @@ RealType MarchenkoPasturRand<RealType>::quantileImpl(double p) const
     return ContinuousDistribution<RealType>::quantileImpl(p, initValue);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType MarchenkoPasturRand<RealType>::quantileImpl1m(double p) const
 {
     if (p >= 1.0 / lambda)
@@ -457,7 +454,7 @@ RealType MarchenkoPasturRand<RealType>::quantileImpl1m(double p) const
     return ContinuousDistribution<RealType>::quantileImpl1m(p, initValue);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> MarchenkoPasturRand<RealType>::CFImpl(double t) const
 {
     if (lambda < 1)
@@ -465,25 +462,13 @@ std::complex<double> MarchenkoPasturRand<RealType>::CFImpl(double t) const
     /// otherwise we have singularity at point 0
     if (lambda == 1) {
         /// we split integrand for real part on (cos(tx)-1)f(x) and f(x)
-        double re = this->ExpectedValue([t] (double x)
-        {
-            return std::cos(t * x) - 1.0;
-        }, 0, 4 * sigmaSq);
-        double im = this->ExpectedValue([t] (double x)
-        {
-            return std::sin(t * x);
-        }, 0, 4 * sigmaSq);
+        double re = this->ExpectedValue([t](double x) { return std::cos(t * x) - 1.0; }, 0, 4 * sigmaSq);
+        double im = this->ExpectedValue([t](double x) { return std::sin(t * x); }, 0, 4 * sigmaSq);
         return std::complex<double>(1.0 + re, im);
     }
     /// for λ > 1 we split integral on 2 parts: at point 0 and the rest
-    double re = this->ExpectedValue([t] (double x)
-    {
-        return std::cos(t * x);
-    }, sigmaSq * a, sigmaSq * b);
-    double im = this->ExpectedValue([t] (double x)
-    {
-        return std::sin(t * x);
-    }, sigmaSq * a, sigmaSq * b);
+    double re = this->ExpectedValue([t](double x) { return std::cos(t * x); }, sigmaSq * a, sigmaSq * b);
+    double im = this->ExpectedValue([t](double x) { return std::sin(t * x); }, sigmaSq * a, sigmaSq * b);
     return std::complex<double>(1.0 - 1.0 / lambda + re, im);
 }
 

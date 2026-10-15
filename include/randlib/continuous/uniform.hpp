@@ -38,16 +38,17 @@ public:
     [[nodiscard]] RealType MinValue() const override { return this->a; }
     [[nodiscard]] RealType MaxValue() const override { return this->b; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     /**
      * @fn StandardVariate
      * @param g
@@ -85,8 +86,10 @@ private:
 
     std::complex<double> CFImpl(double t) const override;
 
-    static constexpr char TOO_LARGE_A[] = "Minimum element of the sample is smaller than lower boundary returned by method: ";
-    static constexpr char TOO_SMALL_B[] = "Maximum element of the sample is greater than upper boundary returned by method: ";
+    static constexpr char TOO_LARGE_A[] =
+        "Minimum element of the sample is smaller than lower boundary returned by method: ";
+    static constexpr char TOO_SMALL_B[] =
+        "Maximum element of the sample is greater than upper boundary returned by method: ";
 
 public:
     [[nodiscard]] long double Entropy() const;
@@ -124,7 +127,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    ParetoRand<RealType> FitMaximumBayes(std::span<const RealType> sample, const ParetoRand<RealType> &priorDistribution, bool MAP = false);
+    ParetoRand<RealType> FitMaximumBayes(std::span<const RealType> sample,
+                                         const ParetoRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 } // namespace randlib
@@ -134,125 +138,124 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
-UniformRand<RealType>::UniformRand(double minValue, double maxValue) :
-    BetaDistribution<RealType>(1, 1, minValue, maxValue)
+template <typename RealType>
+UniformRand<RealType>::UniformRand(double minValue, double maxValue)
+    : BetaDistribution<RealType>(1, 1, minValue, maxValue)
 {
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string UniformRand<RealType>::Name() const
 {
     return "Uniform(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
 }
 
-template < typename RealType >
-double UniformRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double UniformRand<RealType>::f(const RealType &x) const
 {
     return (x < this->a || x > this->b) ? 0.0 : this->bmaInv;
 }
 
-template < typename RealType >
-double UniformRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double UniformRand<RealType>::logf(const RealType &x) const
 {
     return (x < this->a || x > this->b) ? -INFINITY : -this->logbma;
 }
 
-template < typename RealType >
-double UniformRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double UniformRand<RealType>::F(const RealType &x) const
 {
     if (x < this->a)
         return 0.0;
     return (x > this->b) ? 1.0 : this->bmaInv * (x - this->a);
 }
 
-template < typename RealType >
-double UniformRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double UniformRand<RealType>::S(const RealType &x) const
 {
     if (x < this->a)
         return 1.0;
     return (x > this->b) ? 0.0 : this->bmaInv * (this->b - x);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::operator()(G &g) const
 {
     return this->a + StandardVariate(g) * this->bma;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::StandardVariate(G &g)
 {
     return detail::uniform01<RealType>(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::StandardVariateClosed(G &g)
 {
     return detail::uniform01Closed<RealType>(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType UniformRand<RealType>::StandardVariateHalfClosed(G &g)
 {
     return detail::uniform01HalfClosed<RealType>(g);
 }
 
-
-template < typename RealType >
+template <typename RealType>
 long double UniformRand<RealType>::Mean() const
 {
     return 0.5 * (this->b + this->a);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double UniformRand<RealType>::Variance() const
 {
     return this->bma * this->bma / 12;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType UniformRand<RealType>::Median() const
 {
     return 0.5 * (this->b + this->a);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType UniformRand<RealType>::Mode() const
 {
     /// this can be any value in [a, b]
     return 0.5 * (this->b + this->a);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double UniformRand<RealType>::Skewness() const
 {
     return 0.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double UniformRand<RealType>::ExcessKurtosis() const
 {
     return -1.2;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType UniformRand<RealType>::quantileImpl(double p) const
 {
     return this->a + this->bma * p;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType UniformRand<RealType>::quantileImpl1m(double p) const
 {
     return this->b - this->bma * p;
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> UniformRand<RealType>::CFImpl(double t) const
 {
     double cosX = std::cos(t * this->b), sinX = std::sin(t * this->b);
@@ -262,37 +265,40 @@ std::complex<double> UniformRand<RealType>::CFImpl(double t) const
     return numerator / denominator;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double UniformRand<RealType>::Entropy() const
 {
     return (this->b == this->a) ? -INFINITY : std::log(this->bma);
 }
 
-template < typename RealType >
+template <typename RealType>
 double UniformRand<RealType>::LikelihoodFunction(std::span<const RealType> sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
+    bool sampleIsInsideInterval =
+        this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
     return sampleIsInsideInterval ? std::pow(this->bma, -sample.size()) : 0.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 double UniformRand<RealType>::LogLikelihoodFunction(std::span<const RealType> sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
+    bool sampleIsInsideInterval =
+        this->allElementsAreNotSmallerThan(this->a, sample) && this->allElementsAreNotGreaterThan(this->b, sample);
     int sample_size = sample.size();
     return sampleIsInsideInterval ? -sample_size * this->logbma : -INFINITY;
 }
 
-template < typename RealType >
+template <typename RealType>
 constexpr char UniformRand<RealType>::TOO_LARGE_A[];
-template < typename RealType >
+template <typename RealType>
 constexpr char UniformRand<RealType>::TOO_SMALL_B[];
 
-template < typename RealType >
+template <typename RealType>
 void UniformRand<RealType>::FitMinimum(std::span<const RealType> sample, bool unbiased)
 {
     if (!this->allElementsAreNotGreaterThan(this->b, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
     RealType minVar = *std::min_element(sample.begin(), sample.end());
 
     if (unbiased == true) {
@@ -302,17 +308,17 @@ void UniformRand<RealType>::FitMinimum(std::span<const RealType> sample, bool un
         if (!this->allElementsAreNotSmallerThan(minVarAdj, sample))
             throw this->fitError(FitErrorCode::WrongReturn, TOO_LARGE_A + this->toStringWithPrecision(minVarAdj));
         SetSupport(minVarAdj, this->b);
-    }
-    else {
+    } else {
         SetSupport(minVar, this->b);
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 void UniformRand<RealType>::FitMaximum(std::span<const RealType> sample, bool unbiased)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
     RealType maxVar = *std::max_element(sample.begin(), sample.end());
 
     if (unbiased == true) {
@@ -322,13 +328,12 @@ void UniformRand<RealType>::FitMaximum(std::span<const RealType> sample, bool un
         if (!this->allElementsAreNotGreaterThan(maxVarAdj, sample))
             throw this->fitError(FitErrorCode::WrongReturn, TOO_SMALL_B + this->toStringWithPrecision(maxVarAdj));
         SetSupport(this->a, maxVarAdj);
-    }
-    else {
+    } else {
         SetSupport(this->a, maxVar);
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 void UniformRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased)
 {
     double minVar = *std::min_element(sample.begin(), sample.end());
@@ -344,17 +349,18 @@ void UniformRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased)
         if (!this->allElementsAreNotGreaterThan(maxVarAdj, sample))
             throw this->fitError(FitErrorCode::WrongReturn, TOO_SMALL_B + this->toStringWithPrecision(maxVarAdj));
         SetSupport(minVarAdj, maxVarAdj);
-    }
-    else {
+    } else {
         SetSupport(minVar, maxVar);
     }
 }
 
-template < typename RealType >
-ParetoRand<RealType> UniformRand<RealType>::FitMaximumBayes(std::span<const RealType> sample, const ParetoRand<RealType> &priorDistribution, bool MAP)
+template <typename RealType>
+ParetoRand<RealType> UniformRand<RealType>::FitMaximumBayes(std::span<const RealType> sample,
+                                                            const ParetoRand<RealType> &priorDistribution, bool MAP)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
     double maxVar = *std::max_element(sample.begin(), sample.end());
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;

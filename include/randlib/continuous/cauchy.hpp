@@ -32,15 +32,16 @@ public:
     [[nodiscard]] RealType MaxValue() const override { return INFINITY; }
 
 public:
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
 
@@ -61,44 +62,44 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
-CauchyRand<RealType>::CauchyRand(double location, double scale)
-    : StableDistribution<RealType>(1, 0, scale, location)
+template <typename RealType>
+CauchyRand<RealType>::CauchyRand(double location, double scale) : StableDistribution<RealType>(1, 0, scale, location)
 {
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string CauchyRand<RealType>::Name() const
 {
-    return "Cauchy(" + this->toStringWithPrecision(this->GetLocation()) + ", " + this->toStringWithPrecision(this->GetScale()) + ")";
+    return "Cauchy(" + this->toStringWithPrecision(this->GetLocation()) + ", " +
+           this->toStringWithPrecision(this->GetScale()) + ")";
 }
 
-template < typename RealType >
-double CauchyRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double CauchyRand<RealType>::f(const RealType &x) const
 {
     return this->pdfCauchy(x);
 }
 
-template < typename RealType >
-double CauchyRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double CauchyRand<RealType>::F(const RealType &x) const
 {
     return this->cdfCauchy(x);
 }
 
-template < typename RealType >
-double CauchyRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double CauchyRand<RealType>::S(const RealType &x) const
 {
     return this->cdfCauchyCompl(x);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType CauchyRand<RealType>::operator()(G &g) const
 {
     return this->mu + this->gamma * StandardVariate(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType CauchyRand<RealType>::StandardVariate(G &g)
 {
@@ -110,25 +111,25 @@ RealType CauchyRand<RealType>::StandardVariate(G &g)
     return x / y;
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> CauchyRand<RealType>::CFImpl(double t) const
 {
     return this->cfCauchy(t);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType CauchyRand<RealType>::quantileImpl(double p) const
 {
     return this->quantileCauchy(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType CauchyRand<RealType>::quantileImpl1m(double p) const
 {
     return this->quantileCauchy1m(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double CauchyRand<RealType>::Entropy() const
 {
     return 2 * randlib::consts::ln2 + this->logGamma + randlib::consts::lnpi;

@@ -47,22 +47,17 @@ std::vector<std::string> splitCsvLine(const std::string &line)
             if (c == '"' && i + 1 < line.size() && line[i + 1] == '"') {
                 field += '"';
                 ++i;
-            }
-            else if (c == '"') {
+            } else if (c == '"') {
                 quoted = false;
-            }
-            else {
+            } else {
                 field += c;
             }
-        }
-        else if (c == '"') {
+        } else if (c == '"') {
             quoted = true;
-        }
-        else if (c == ',') {
+        } else if (c == ',') {
             fields.push_back(field);
             field.clear();
-        }
-        else if (c != '\r') {
+        } else if (c != '\r') {
             field += c;
         }
     }
@@ -92,7 +87,8 @@ std::vector<Record> loadRecords(const std::string &subdirectory)
                 throw std::runtime_error(path.string() + ": missing column " + name);
             return static_cast<size_t>(it - header.begin());
         };
-        size_t caseCol = column("case"), functionCol = column("function"), argCol = column("arg"), valueCol = column("value");
+        size_t caseCol = column("case"), functionCol = column("function"), argCol = column("arg"),
+               valueCol = column("value");
         auto statusIt = std::find(header.begin(), header.end(), "status");
         while (std::getline(in, line)) {
             if (line.empty())
@@ -110,4 +106,4 @@ std::vector<Record> loadRecords(const std::string &subdirectory)
     return records;
 }
 
-}
+} // namespace randlib_test

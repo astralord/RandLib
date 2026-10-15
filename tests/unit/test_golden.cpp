@@ -25,8 +25,8 @@ struct Deviation
 
     bool matches(const Record &r) const
     {
-        return (caseId == "*" || caseId == r.caseId) && (function == "*" || function == r.function)
-               && (arg == "*" || arg == r.arg);
+        return (caseId == "*" || caseId == r.caseId) && (function == "*" || function == r.function) &&
+               (arg == "*" || arg == r.arg);
     }
 };
 
@@ -80,7 +80,8 @@ std::string describe(const Record &r)
 
 /// Returns an empty string when the record is reproduced, otherwise a failure message.
 /// The actual outcome is stored in `actualText` for the optional mismatch report.
-std::string check(const Record &r, const Evaluator &evaluate, const std::vector<Deviation> &deviations, std::string &actualText)
+std::string check(const Record &r, const Evaluator &evaluate, const std::vector<Deviation> &deviations,
+                  std::string &actualText)
 {
     std::string expected = r.status == "ok" ? r.value : r.status;
     for (const Deviation &d : deviations) {
@@ -124,12 +125,12 @@ std::string check(const Record &r, const Evaluator &evaluate, const std::vector<
         return {};
     std::ostringstream message;
     message.precision(17);
-    message << describe(r) << ": expected " << expected << ", got " << actual
-            << " (relative error " << relativeError(actual, wanted.number()) << ")";
+    message << describe(r) << ": expected " << expected << ", got " << actual << " (relative error "
+            << relativeError(actual, wanted.number()) << ")";
     return message.str();
 }
 
-}
+} // namespace
 
 TEST_CASE("Golden v1 values are reproduced", "[golden]")
 {
@@ -179,7 +180,8 @@ TEST_CASE("Golden v1 values are reproduced", "[golden]")
             std::string failure = check(*r, evaluate, deviations, actualText);
             if (!failure.empty()) {
                 failures[i].push_back(failure);
-                reportRows[i].push_back("\"" + r->caseId + "\"," + r->function + "," + r->arg + "," + r->value + "," + r->status + "," + actualText);
+                reportRows[i].push_back("\"" + r->caseId + "\"," + r->function + "," + r->arg + "," + r->value + "," +
+                                        r->status + "," + actualText);
             }
         }
     });

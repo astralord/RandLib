@@ -189,27 +189,27 @@ std::vector<Case> buildCases()
     std::vector<Case> cases;
 
 #define RL_PLAIN(X) X
-#define RL_CONT(T, ...)                                                                                      \
-    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Continuous,          \
-                     [] { return continuousEvaluator(std::make_shared<const T>(__VA_ARGS__)); },             \
-                     [] { return std::unique_ptr<ContinuousDistribution<double>>(new T(__VA_ARGS__)); },     \
-                     nullptr, nullptr});
-#define RL_DISC(T, ...)                                                                                      \
-    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Discrete,            \
-                     [] { return discreteEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr,      \
+#define RL_CONT(T, ...)                                                                                                \
+    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Continuous,                    \
+                     [] { return continuousEvaluator(std::make_shared<const T>(__VA_ARGS__)); },                       \
+                     [] { return std::unique_ptr<ContinuousDistribution<double>>(new T(__VA_ARGS__)); }, nullptr,      \
+                     nullptr});
+#define RL_DISC(T, ...)                                                                                                \
+    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Discrete,                      \
+                     [] { return discreteEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr,                \
                      [] { return std::unique_ptr<DiscreteDistribution<int>>(new T(__VA_ARGS__)); }, nullptr});
-#define RL_SING(T, ...)                                                                                      \
-    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Singular,            \
-                     [] { return singularEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr,      \
-                     nullptr, [] { return std::unique_ptr<UnivariateDistribution<double>>(new T(__VA_ARGS__)); }});
-#define RL_BIVC(T, ...)                                                                                      \
-    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::BivariateContinuous, \
-                     [] { return bivariateContinuousEvaluator(std::make_shared<const T>(__VA_ARGS__)); },    \
-                     nullptr, nullptr, nullptr});
-#define RL_BIVD(T, ...)                                                                                      \
-    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::BivariateDiscrete,   \
-                     [] { return bivariateDiscreteEvaluator(std::make_shared<const T>(__VA_ARGS__)); },      \
-                     nullptr, nullptr, nullptr});
+#define RL_SING(T, ...)                                                                                                \
+    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Singular,                      \
+                     [] { return singularEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr, nullptr,       \
+                     [] { return std::unique_ptr<UnivariateDistribution<double>>(new T(__VA_ARGS__)); }});
+#define RL_BIVC(T, ...)                                                                                                \
+    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::BivariateContinuous,           \
+                     [] { return bivariateContinuousEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr,     \
+                     nullptr, nullptr});
+#define RL_BIVD(T, ...)                                                                                                \
+    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::BivariateDiscrete,             \
+                     [] { return bivariateDiscreteEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr,       \
+                     nullptr, nullptr});
 
 #include "cases.inc"
 
@@ -222,7 +222,7 @@ std::vector<Case> buildCases()
     return cases;
 }
 
-}
+} // namespace
 
 const std::vector<Case> &allCases()
 {
@@ -249,4 +249,4 @@ std::vector<const Case *> casesOfKind(Kind kind)
     return result;
 }
 
-}
+} // namespace randlib_test

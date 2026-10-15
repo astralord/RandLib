@@ -67,12 +67,10 @@ std::vector<Engine> make_streams(std::uint64_t seed, std::size_t count)
             streams.push_back(engine);
             engine.jump();
         }
-    }
-    else if constexpr (std::constructible_from<Engine, std::uint64_t, std::uint64_t>) {
+    } else if constexpr (std::constructible_from<Engine, std::uint64_t, std::uint64_t>) {
         for (std::size_t i = 0; i < count; ++i)
             streams.emplace_back(seed, static_cast<std::uint64_t>(i));
-    }
-    else {
+    } else {
         SplitMix64 seeds(seed);
         for (std::size_t i = 0; i < count; ++i)
             streams.emplace_back(static_cast<typename Engine::result_type>(seeds()));

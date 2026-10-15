@@ -13,16 +13,17 @@ namespace randlib
  * Abstract class for all bivariate probability distributions
  */
 template <class T1, class T2, typename T>
-class BivariateDistribution : public ProbabilityDistribution< Pair<T> >
+class BivariateDistribution : public ProbabilityDistribution<Pair<T>>
 {
 protected:
     T1 X{}; ///< 1st marginal distributions
     T2 Y{}; ///< 2nd marginal distributions
     BivariateDistribution() {}
+
 public:
     virtual ~BivariateDistribution() {}
-protected:
 
+protected:
 public:
     [[nodiscard]] Pair<T> MinValue() const override { return Pair<T>(X.MinValue(), Y.MinValue()); }
     [[nodiscard]] Pair<T> MaxValue() const override { return Pair<T>(X.MaxValue(), Y.MaxValue()); }
@@ -45,15 +46,13 @@ public:
 namespace randlib
 {
 
-
-
-template < class T1, class T2, typename T >
+template <class T1, class T2, typename T>
 LongDoublePair BivariateDistribution<T1, T2, T>::Mean() const
 {
     return std::make_pair(X.Mean(), Y.Mean());
 }
 
-template < class T1, class T2, typename T >
+template <class T1, class T2, typename T>
 LongDoubleTriplet BivariateDistribution<T1, T2, T>::Covariance() const
 {
     double var1 = X.Variance();
@@ -62,7 +61,7 @@ LongDoubleTriplet BivariateDistribution<T1, T2, T>::Covariance() const
     return std::make_tuple(var1, corr, var2);
 }
 
-template < class T1, class T2, typename T >
+template <class T1, class T2, typename T>
 std::pair<T1, T2> BivariateDistribution<T1, T2, T>::GetMarginalDistributions() const
 {
     return std::make_pair(X, Y);

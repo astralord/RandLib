@@ -35,15 +35,16 @@ public:
     [[nodiscard]] inline IntType GetTotalSuccessesNum() { return M; }
     [[nodiscard]] inline IntType GetLimitSuccessesNum() { return m; }
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
 };
@@ -55,29 +56,32 @@ public:
 namespace randlib
 {
 
-template < typename IntType >
-NegativeHyperGeometricRand<IntType>::NegativeHyperGeometricRand(IntType totalSize, IntType totalSuccessesNum, IntType limitSuccessesNum)
+template <typename IntType>
+NegativeHyperGeometricRand<IntType>::NegativeHyperGeometricRand(IntType totalSize, IntType totalSuccessesNum,
+                                                                IntType limitSuccessesNum)
 {
     SetParameters(totalSize, totalSuccessesNum, limitSuccessesNum);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string NegativeHyperGeometricRand<IntType>::Name() const
 {
-    return "Negative hypergeometric(" + this->toStringWithPrecision(N) + ", "
-                                      + this->toStringWithPrecision(M) + ", "
-                                      + this->toStringWithPrecision(m) + ")";
+    return "Negative hypergeometric(" + this->toStringWithPrecision(N) + ", " + this->toStringWithPrecision(M) + ", " +
+           this->toStringWithPrecision(m) + ")";
 }
 
-template < typename IntType >
-void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType totalSuccessesNum, IntType limitSuccessesNum)
+template <typename IntType>
+void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType totalSuccessesNum,
+                                                        IntType limitSuccessesNum)
 {
     if (!(totalSize > 0 && totalSuccessesNum > 0 && limitSuccessesNum > 0))
         throw std::invalid_argument("Negative-HyperGeometric distribution: all parameters should be positive");
     if (!(totalSuccessesNum <= totalSize))
-        throw std::invalid_argument("Negative-HyperGeometric distribution: total size shouldn't be smaller than total successes number");
+        throw std::invalid_argument(
+            "Negative-HyperGeometric distribution: total size shouldn't be smaller than total successes number");
     if (!(limitSuccessesNum <= totalSuccessesNum))
-        throw std::invalid_argument("Negative-HyperGeometric distribution: total successes number shouldn't be smaller than limit successes number");
+        throw std::invalid_argument("Negative-HyperGeometric distribution: total successes number shouldn't be smaller "
+                                    "than limit successes number");
 
     N = totalSize;
     M = totalSuccessesNum;
@@ -91,14 +95,14 @@ void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntTy
     pmfCoef -= math::lfact(N);
 }
 
-template < typename IntType >
-double NegativeHyperGeometricRand<IntType>::P(const IntType & k) const
+template <typename IntType>
+double NegativeHyperGeometricRand<IntType>::P(const IntType &k) const
 {
     return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
 }
 
-template < typename IntType >
-double NegativeHyperGeometricRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double NegativeHyperGeometricRand<IntType>::logP(const IntType &k) const
 {
     if (k < MinValue() || k > MaxValue())
         return -INFINITY;
@@ -109,7 +113,7 @@ double NegativeHyperGeometricRand<IntType>::logP(const IntType & k) const
     return p + pmfCoef;
 }
 
-template < typename IntType >
+template <typename IntType>
 double NegativeHyperGeometricRand<IntType>::F(const IntType &k) const
 {
     // relation with hypergeometric distribution can be used here instead
@@ -132,7 +136,7 @@ double NegativeHyperGeometricRand<IntType>::F(const IntType &k) const
     return sum;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType NegativeHyperGeometricRand<IntType>::operator()(G &g) const
 {
@@ -149,7 +153,7 @@ IntType NegativeHyperGeometricRand<IntType>::operator()(G &g) const
     return num - successesNum;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double NegativeHyperGeometricRand<IntType>::Mean() const
 {
     double mean = m;
@@ -158,7 +162,7 @@ long double NegativeHyperGeometricRand<IntType>::Mean() const
     return mean;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double NegativeHyperGeometricRand<IntType>::Variance() const
 {
     double Mp1 = M + 1;

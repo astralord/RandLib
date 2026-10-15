@@ -154,7 +154,7 @@ double adaptive(const std::function<double(double)> &f, double a, double b, doub
     return estimate;
 }
 
-}
+} // namespace
 
 double chiSquaredSurvival(double x, double k)
 {
@@ -206,4 +206,4 @@ void parallelFor(size_t count, const std::function<void(size_t)> &body)
         t.join();
 }
 
-}
+} // namespace randlib_test

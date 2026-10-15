@@ -59,7 +59,7 @@ void requireClose(double estimate, double truth, double tolerance = RECOVERY)
     CHECK(std::fabs(estimate - truth) <= tolerance * std::max(std::fabs(truth), 1.0));
 }
 
-}
+} // namespace
 
 TEST_CASE("Normal maximum-likelihood fit", "[fitting]")
 {
@@ -68,8 +68,9 @@ TEST_CASE("Normal maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.GetLocation(), 1.5);
     requireClose(static_cast<double>(fitted.Variance()), 4);
-    requireLocalMaximum([&](const std::vector<double> &p) { return NormalRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {fitted.GetLocation(), static_cast<double>(fitted.Variance())}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return NormalRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+        {fitted.GetLocation(), static_cast<double>(fitted.Variance())}, {true, true});
 }
 
 TEST_CASE("Log-normal maximum-likelihood fit", "[fitting]")
@@ -79,8 +80,9 @@ TEST_CASE("Log-normal maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.GetLocation(), 0.5);
     requireClose(fitted.GetScale() * fitted.GetScale(), 0.25);
-    requireLocalMaximum([&](const std::vector<double> &p) { return LogNormalRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {fitted.GetLocation(), fitted.GetScale() * fitted.GetScale()}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return LogNormalRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+        {fitted.GetLocation(), fitted.GetScale() * fitted.GetScale()}, {true, true});
 }
 
 TEST_CASE("Exponential maximum-likelihood fit", "[fitting]")
@@ -89,8 +91,9 @@ TEST_CASE("Exponential maximum-likelihood fit", "[fitting]")
     ExponentialRand<double> fitted;
     fitted.FitRate(sample);
     requireClose(fitted.GetRate() / 2.5, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return ExponentialRand<double>(p[0]).LogLikelihoodFunction(sample); },
-                        {fitted.GetRate()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return ExponentialRand<double>(p[0]).LogLikelihoodFunction(sample); },
+        {fitted.GetRate()}, {true});
 }
 
 TEST_CASE("Gamma maximum-likelihood fit", "[fitting]")
@@ -102,8 +105,9 @@ TEST_CASE("Gamma maximum-likelihood fit", "[fitting]")
         fitted.Fit(sample);
         requireClose(fitted.GetShape() / shape, 1);
         requireClose(fitted.GetRate() / rate, 1);
-        requireLocalMaximum([&](const std::vector<double> &p) { return GammaRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                            {fitted.GetShape(), fitted.GetRate()}, {true, true});
+        requireLocalMaximum(
+            [&](const std::vector<double> &p) { return GammaRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+            {fitted.GetShape(), fitted.GetRate()}, {true, true});
     }
 }
 
@@ -116,8 +120,9 @@ TEST_CASE("Beta maximum-likelihood fit", "[fitting]")
         fitted.FitShapes(sample);
         requireClose(fitted.GetAlpha() / a, 1);
         requireClose(fitted.GetBeta() / b, 1);
-        requireLocalMaximum([&](const std::vector<double> &p) { return BetaRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                            {fitted.GetAlpha(), fitted.GetBeta()}, {true, true});
+        requireLocalMaximum(
+            [&](const std::vector<double> &p) { return BetaRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+            {fitted.GetAlpha(), fitted.GetBeta()}, {true, true});
     }
 }
 
@@ -128,8 +133,9 @@ TEST_CASE("Beta-prime maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.GetAlpha() / 2, 1);
     requireClose(fitted.GetBeta() / 3, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return BetaPrimeRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {fitted.GetAlpha(), fitted.GetBeta()}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return BetaPrimeRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+        {fitted.GetAlpha(), fitted.GetBeta()}, {true, true});
 }
 
 TEST_CASE("Pareto maximum-likelihood fit", "[fitting]")
@@ -139,8 +145,9 @@ TEST_CASE("Pareto maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.GetShape() / 3, 1);
     requireClose(fitted.GetScale() / 2, 1, 1e-3);
-    requireLocalMaximum([&](const std::vector<double> &p) { return ParetoRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {fitted.GetShape(), fitted.GetScale()}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return ParetoRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+        {fitted.GetShape(), fitted.GetScale()}, {true, true});
 }
 
 TEST_CASE("Weibull maximum-likelihood fit of the scale", "[fitting]")
@@ -149,8 +156,9 @@ TEST_CASE("Weibull maximum-likelihood fit of the scale", "[fitting]")
     WeibullRand<double> fitted(1, 1.5);
     fitted.FitScale(sample);
     requireClose(fitted.GetScale() / 2, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return WeibullRand<double>(p[0], 1.5).LogLikelihoodFunction(sample); },
-                        {fitted.GetScale()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return WeibullRand<double>(p[0], 1.5).LogLikelihoodFunction(sample); },
+        {fitted.GetScale()}, {true});
 }
 
 TEST_CASE("Laplace maximum-likelihood fit", "[fitting]")
@@ -160,8 +168,9 @@ TEST_CASE("Laplace maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.GetShift(), 2);
     requireClose(fitted.GetScale() / 0.5, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return LaplaceRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {fitted.GetShift(), fitted.GetScale()}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return LaplaceRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+        {fitted.GetShift(), fitted.GetScale()}, {true, true});
 }
 
 TEST_CASE("Logistic maximum-likelihood fit of the location", "[fitting]")
@@ -170,8 +179,9 @@ TEST_CASE("Logistic maximum-likelihood fit of the location", "[fitting]")
     LogisticRand<double> fitted(0, 0.4);
     fitted.FitLocation(sample);
     requireClose(fitted.GetLocation(), 3);
-    requireLocalMaximum([&](const std::vector<double> &p) { return LogisticRand<double>(p[0], 0.4).LogLikelihoodFunction(sample); },
-                        {fitted.GetLocation()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return LogisticRand<double>(p[0], 0.4).LogLikelihoodFunction(sample); },
+        {fitted.GetLocation()}, {true});
 }
 
 TEST_CASE("Levy maximum-likelihood fit of the scale", "[fitting]")
@@ -180,8 +190,9 @@ TEST_CASE("Levy maximum-likelihood fit of the scale", "[fitting]")
     LevyRand<double> fitted(0, 1);
     fitted.FitScale(sample);
     requireClose(fitted.GetScale() / 3, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return LevyRand<double>(0, p[0]).LogLikelihoodFunction(sample); },
-                        {fitted.GetScale()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return LevyRand<double>(0, p[0]).LogLikelihoodFunction(sample); },
+        {fitted.GetScale()}, {true});
 }
 
 TEST_CASE("Rayleigh maximum-likelihood fit", "[fitting]")
@@ -190,8 +201,9 @@ TEST_CASE("Rayleigh maximum-likelihood fit", "[fitting]")
     RayleighRand<double> fitted;
     fitted.Fit(sample);
     requireClose(fitted.GetScale() / 0.4, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return RayleighRand<double>(p[0]).LogLikelihoodFunction(sample); },
-                        {fitted.GetScale()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return RayleighRand<double>(p[0]).LogLikelihoodFunction(sample); },
+        {fitted.GetScale()}, {true});
 }
 
 TEST_CASE("Uniform maximum-likelihood fit", "[fitting]")
@@ -201,8 +213,9 @@ TEST_CASE("Uniform maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.MinValue(), -2, 1e-3);
     requireClose(fitted.MaxValue(), 5, 1e-3);
-    requireLocalMaximum([&](const std::vector<double> &p) { return UniformRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {fitted.MinValue(), fitted.MaxValue()}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return UniformRand<double>(p[0], p[1]).LogLikelihoodFunction(sample); },
+        {fitted.MinValue(), fitted.MaxValue()}, {true, true});
 }
 
 TEST_CASE("Poisson maximum-likelihood fit", "[fitting]")
@@ -211,8 +224,9 @@ TEST_CASE("Poisson maximum-likelihood fit", "[fitting]")
     PoissonRand<int> fitted;
     fitted.Fit(sample);
     requireClose(fitted.GetRate() / 3.5, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return PoissonRand<int>(p[0]).LogLikelihoodFunction(sample); },
-                        {fitted.GetRate()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return PoissonRand<int>(p[0]).LogLikelihoodFunction(sample); },
+        {fitted.GetRate()}, {true});
 }
 
 TEST_CASE("Binomial maximum-likelihood fit of the probability", "[fitting]")
@@ -221,8 +235,9 @@ TEST_CASE("Binomial maximum-likelihood fit of the probability", "[fitting]")
     BinomialRand<int> fitted(10, 0.5);
     fitted.FitProbability(sample);
     requireClose(fitted.GetProbability() / 0.3, 1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return BinomialRand<int>(10, p[0]).LogLikelihoodFunction(sample); },
-                        {fitted.GetProbability()}, {true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) { return BinomialRand<int>(10, p[0]).LogLikelihoodFunction(sample); },
+        {fitted.GetProbability()}, {true});
 }
 
 TEST_CASE("Negative binomial maximum-likelihood fit", "[fitting]")
@@ -232,8 +247,11 @@ TEST_CASE("Negative binomial maximum-likelihood fit", "[fitting]")
     fitted.Fit(sample);
     requireClose(fitted.GetNumber() / 2.5, 1, 0.1);
     requireClose(fitted.GetProbability() / 0.4, 1, 0.1);
-    requireLocalMaximum([&](const std::vector<double> &p) { return NegativeBinomialRand<int>(p[0], p[1]).LogLikelihoodFunction(sample); },
-                        {static_cast<double>(fitted.GetNumber()), fitted.GetProbability()}, {true, true});
+    requireLocalMaximum(
+        [&](const std::vector<double> &p) {
+            return NegativeBinomialRand<int>(p[0], p[1]).LogLikelihoodFunction(sample);
+        },
+        {static_cast<double>(fitted.GetNumber()), fitted.GetProbability()}, {true, true});
 }
 
 TEST_CASE("Uniform discrete maximum-likelihood fit", "[fitting]")

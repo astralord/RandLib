@@ -3,6 +3,13 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.0.0-alpha.1] - Unreleased
+
+### Build and tooling
+
+- Added a pinned Clang 18 formatting policy and pre-commit hook, and applied it to the public headers
+  and test sources without reordering dependency-sensitive includes.
+
 ## [1.2.0]
 
 A stabilization release: no API is removed and the file layout is unchanged, but

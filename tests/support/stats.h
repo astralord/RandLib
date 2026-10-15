@@ -33,6 +33,6 @@ double relativeError(double actual, double expected);
 /// Catch2 assertions are not thread-safe: collect results and assert afterwards.
 void parallelFor(size_t count, const std::function<void(size_t)> &body);
 
-}
+} // namespace randlib_test
 
 #endif // RANDLIB_TESTS_STATS_H

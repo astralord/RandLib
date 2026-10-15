@@ -28,15 +28,16 @@ public:
     [[nodiscard]] int MinValue() const override { return -1; }
     [[nodiscard]] int MaxValue() const override { return 1; }
 
-    [[nodiscard]] double P(const int & k) const override;
-    [[nodiscard]] double logP(const int & k) const override;
-    [[nodiscard]] double F(const int & k) const override;
+    [[nodiscard]] double P(const int &k) const override;
+    [[nodiscard]] double logP(const int &k) const override;
+    [[nodiscard]] double F(const int &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] int operator()(G &g) const;
+
 protected:
     int variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] int Median() const override;
@@ -69,17 +70,17 @@ inline std::string RademacherRand::Name() const
     return "Rademacher";
 }
 
-inline double RademacherRand::P(const int & k) const
+inline double RademacherRand::P(const int &k) const
 {
     return (k == 1 || k == -1) ? 0.5 : 0.0;
 }
 
-inline double RademacherRand::logP(const int & k) const
+inline double RademacherRand::logP(const int &k) const
 {
     return (k == 1 || k == -1) ? -randlib::consts::ln2 : -INFINITY;
 }
 
-inline double RademacherRand::F(const int & k) const
+inline double RademacherRand::F(const int &k) const
 {
     if (k < -1)
         return 0;

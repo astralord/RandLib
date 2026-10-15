@@ -25,8 +25,11 @@ public:
     constexpr explicit Xoshiro256pp(std::uint64_t value = default_seed) noexcept { seed(value); }
 
     template <class SeedSeq>
-        requires (!std::convertible_to<SeedSeq &, std::uint64_t>)
-    explicit Xoshiro256pp(SeedSeq &sequence) { seed(sequence); }
+        requires(!std::convertible_to<SeedSeq &, std::uint64_t>)
+    explicit Xoshiro256pp(SeedSeq &sequence)
+    {
+        seed(sequence);
+    }
 
     static constexpr result_type min() noexcept { return 0; }
     static constexpr result_type max() noexcept { return ~result_type{0}; }
@@ -40,7 +43,7 @@ public:
     }
 
     template <class SeedSeq>
-        requires (!std::convertible_to<SeedSeq &, std::uint64_t>)
+        requires(!std::convertible_to<SeedSeq &, std::uint64_t>)
     void seed(SeedSeq &sequence)
     {
         std::array<std::uint32_t, 8> words{};

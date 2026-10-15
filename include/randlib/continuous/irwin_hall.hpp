@@ -37,15 +37,16 @@ public:
     void SetNumber(int number);
     [[nodiscard]] inline int GetNumber() const noexcept { return n; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -62,19 +63,19 @@ private:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 IrwinHallRand<RealType>::IrwinHallRand(size_t number)
 {
     SetNumber(number);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string IrwinHallRand<RealType>::Name() const
 {
     return "Irwin-Hall(" + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void IrwinHallRand<RealType>::SetNumber(int number)
 {
     if (!(number > 0))
@@ -82,8 +83,8 @@ void IrwinHallRand<RealType>::SetNumber(int number)
     n = number;
 }
 
-template < typename RealType >
-double IrwinHallRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double IrwinHallRand<RealType>::f(const RealType &x) const
 {
     if (x < 0 || x > n)
         return 0.0;
@@ -106,14 +107,14 @@ double IrwinHallRand<RealType>::f(const RealType & x) const
     return n * sum;
 }
 
-template < typename RealType >
-double IrwinHallRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double IrwinHallRand<RealType>::logf(const RealType &x) const
 {
     return std::log(f(x));
 }
 
-template < typename RealType >
-double IrwinHallRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double IrwinHallRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0)
         return 0.0;
@@ -142,7 +143,7 @@ double IrwinHallRand<RealType>::F(const RealType & x) const
     return sum;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType IrwinHallRand<RealType>::operator()(G &g) const
 {
@@ -152,45 +153,43 @@ RealType IrwinHallRand<RealType>::operator()(G &g) const
     return sum;
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double IrwinHallRand<RealType>::Mean() const
 {
     return 0.5 * n;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double IrwinHallRand<RealType>::Variance() const
 {
     return n / 12.0l;
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> IrwinHallRand<RealType>::CFImpl(double t) const
 {
     return std::pow(U.CF(t), n);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType IrwinHallRand<RealType>::Median() const
 {
     return 0.5 * n;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType IrwinHallRand<RealType>::Mode() const
 {
     return 0.5 * n;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double IrwinHallRand<RealType>::Skewness() const
 {
     return 0.0l;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double IrwinHallRand<RealType>::ExcessKurtosis() const
 {
     return -1.2 / n;

@@ -20,8 +20,7 @@ namespace randlib
  * Notation: X ~ Po(λ)
  */
 template <typename IntType>
-class PoissonRand final : public DiscreteDistribution<IntType>,
-                                         public ExponentialFamily<IntType, double>
+class PoissonRand final : public DiscreteDistribution<IntType>, public ExponentialFamily<IntType, double>
 {
     double lambda = 1; ///< rate λ
     double logLambda = 0; ///< ln(λ)
@@ -59,8 +58,8 @@ public:
     double EntropyAdjusted() const override;
 
     [[nodiscard]] double logP(const IntType &k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
-    [[nodiscard]] double S(const IntType & k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
 
 private:
     double acceptanceFunction(IntType X) const;
@@ -73,15 +72,18 @@ private:
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(double rate, G &g);
-    protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-public:
 
+protected:
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Median() const override;
@@ -114,7 +116,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior Gamma distribution
      */
-    GammaRand<> FitBayes(std::span<const IntType> sample, const GammaDistribution<> & priorDistribution, bool MAP = false);
+    GammaRand<> FitBayes(std::span<const IntType> sample, const GammaDistribution<> &priorDistribution,
+                         bool MAP = false);
 };
 
 } // namespace randlib
@@ -126,19 +129,19 @@ public:
 namespace randlib
 {
 
-template < typename IntType >
+template <typename IntType>
 PoissonRand<IntType>::PoissonRand(double rate)
 {
     SetRate(rate);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string PoissonRand<IntType>::Name() const
 {
     return "Poisson(" + this->toStringWithPrecision(GetRate()) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void PoissonRand<IntType>::SetGeneratorConstants()
 {
     delta = std::round(std::sqrt(2 * mu * std::log(randlib::consts::inv_pi * 128 * mu)));
@@ -163,11 +166,12 @@ void PoissonRand<IntType>::SetGeneratorConstants()
     lfactMu = math::lfact(mu);
 }
 
-template < typename IntType >
+template <typename IntType>
 void PoissonRand<IntType>::SetRate(double rate)
 {
     if (!(rate > 0.0))
-        throw std::invalid_argument("Poisson distribution: rate should be positive, but it's equal to " + std::to_string(rate));
+        throw std::invalid_argument("Poisson distribution: rate should be positive, but it's equal to " +
+                                    std::to_string(rate));
     lambda = rate;
 
     logLambda = std::log(lambda);
@@ -179,62 +183,62 @@ void PoissonRand<IntType>::SetRate(double rate)
         SetGeneratorConstants();
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::SufficientStatistic(IntType x) const
 {
     return x;
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::SourceParameters() const
 {
     return lambda;
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::SourceToNatural(double sourceParameters) const
 {
     return std::log(sourceParameters);
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::NaturalParameters() const
 {
     return logLambda;
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::LogNormalizer(double theta) const
 {
     return std::exp(theta);
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::LogNormalizerGradient(double theta) const
 {
     return std::exp(theta);
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::CarrierMeasure(IntType x) const
 {
     return -math::lfact(x);
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::CrossEntropyAdjusted(double parameters) const
 {
     return parameters - lambda * std::log(parameters);
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::EntropyAdjusted() const
 {
     return lambda - lambda * logLambda;
 }
 
-template < typename IntType >
-double PoissonRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double PoissonRand<IntType>::logP(const IntType &k) const
 {
     if (k < 0)
         return -INFINITY;
@@ -244,19 +248,19 @@ double PoissonRand<IntType>::logP(const IntType & k) const
     return -math::stirlingError(k) - math::bd0(k, lambda) - 0.5 * std::log(2 * randlib::consts::pi * k);
 }
 
-template < typename IntType >
-double PoissonRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double PoissonRand<IntType>::F(const IntType &k) const
 {
     return (k >= 0.0) ? math::qgamma(k + 1, lambda, logLambda) : 0.0;
 }
 
-template < typename IntType >
-double PoissonRand<IntType>::S(const IntType & k) const
+template <typename IntType>
+double PoissonRand<IntType>::S(const IntType &k) const
 {
     return (k >= 0.0) ? math::pgamma(k + 1, lambda, logLambda) : 1.0;
 }
 
-template < typename IntType >
+template <typename IntType>
 double PoissonRand<IntType>::acceptanceFunction(IntType X) const
 {
     if (X == 0)
@@ -267,7 +271,7 @@ double PoissonRand<IntType>::acceptanceFunction(IntType X) const
     return q;
 }
 
-template < typename IntType >
+template <typename IntType>
 bool PoissonRand<IntType>::generateByInversion() const
 {
     /// the inversion generator is much faster than rejection,
@@ -275,7 +279,7 @@ bool PoissonRand<IntType>::generateByInversion() const
     return lambda < 10;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType PoissonRand<IntType>::variateRejection(G &g) const
 {
@@ -291,29 +295,23 @@ IntType PoissonRand<IntType>::variateRejection(G &g) const
             X = std::floor(Y);
             if (X < -mu) {
                 reject = true;
-            }
-            else {
+            } else {
                 W = -0.5 * (N * N - 1.0);
             }
-        }
-        else if (U <= c2) {
+        } else if (U <= c2) {
             float N = detail::standardNormal<float>(g);
             float Y = 1.0 + std::fabs(N) * sqrtMupHalfDelta;
             X = std::ceil(Y);
             if (X > delta) {
                 reject = true;
-            }
-            else {
+            } else {
                 W = Y * (2.0 - Y) / (2.0 * mu + delta);
             }
-        }
-        else if (U <= c3) {
+        } else if (U <= c3) {
             return mu;
-        }
-        else if (U <= c4) {
+        } else if (U <= c4) {
             X = 1;
-        }
-        else {
+        } else {
             float V = detail::standardExponential<float>(g);
             float Y = delta + V * zeta;
             X = std::ceil(Y);
@@ -328,23 +326,20 @@ IntType PoissonRand<IntType>::variateRejection(G &g) const
     throw std::runtime_error("Poisson distribution: sampling failed");
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType PoissonRand<IntType>::variateInversion(G &g) const
 {
     double U = detail::uniform01<double>(g);
     IntType k = mu;
     double s = Fmu, p = Pmu;
-    if (s < U)
-    {
+    if (s < U) {
         do {
             ++k;
             p *= lambda / k;
             s += p;
         } while (s < U && p > 0);
-    }
-    else
-    {
+    } else {
         s -= p;
         while (k > 0 && s > U) {
             p /= lambda / k;
@@ -355,14 +350,14 @@ IntType PoissonRand<IntType>::variateInversion(G &g) const
     return k;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType PoissonRand<IntType>::operator()(G &g) const
 {
     return generateByInversion() ? variateInversion(g) : variateRejection(g);
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType PoissonRand<IntType>::Variate(double rate, G &g)
 {
@@ -383,46 +378,45 @@ IntType PoissonRand<IntType>::Variate(double rate, G &g)
     return k;
 }
 
-template < typename IntType >
+template <typename IntType>
 void PoissonRand<IntType>::sample(detail::EngineRef g, std::span<IntType> outputData) const
 {
     if (generateByInversion()) {
-        for (IntType & var : outputData)
+        for (IntType &var : outputData)
             var = variateInversion(g);
-    }
-    else {
-        for (IntType & var : outputData)
+    } else {
+        for (IntType &var : outputData)
             var = variateRejection(g);
     }
 }
 
-template < typename IntType >
+template <typename IntType>
 long double PoissonRand<IntType>::Mean() const
 {
     return lambda;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double PoissonRand<IntType>::Variance() const
 {
     return lambda;
 }
 
-template < typename IntType >
+template <typename IntType>
 std::complex<double> PoissonRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(std::cos(t) - 1.0, std::sin(t));
     return std::exp(lambda * y);
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType PoissonRand<IntType>::Median() const
 {
     /// this value is approximate
     return std::max(std::floor(lambda + 1.0 / 3 - 0.02 / lambda), 0.0);
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType PoissonRand<IntType>::Mode() const
 {
     if (math::areClose(mu, lambda)) {
@@ -431,19 +425,19 @@ IntType PoissonRand<IntType>::Mode() const
     return mu;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double PoissonRand<IntType>::Skewness() const
 {
     return 1.0 / std::sqrt(lambda);
 }
 
-template < typename IntType >
+template <typename IntType>
 long double PoissonRand<IntType>::ExcessKurtosis() const
 {
     return 1.0 / lambda;
 }
 
-template < typename IntType >
+template <typename IntType>
 void PoissonRand<IntType>::Fit(std::span<const IntType> sample)
 {
     if (!this->allElementsAreNonNegative(sample))
@@ -451,13 +445,15 @@ void PoissonRand<IntType>::Fit(std::span<const IntType> sample)
     SetRate(this->GetSampleMean(sample));
 }
 
-template < typename IntType >
-void PoissonRand<IntType>::Fit(std::span<const IntType> sample, DoublePair &confidenceInterval, double significanceLevel)
+template <typename IntType>
+void PoissonRand<IntType>::Fit(std::span<const IntType> sample, DoublePair &confidenceInterval,
+                               double significanceLevel)
 {
     size_t n = sample.size();
 
     if (significanceLevel <= 0 || significanceLevel > 1)
-        throw this->fitError(FitErrorCode::WrongLevel, "Alpha is equal to " + this->toStringWithPrecision(significanceLevel));
+        throw this->fitError(FitErrorCode::WrongLevel,
+                             "Alpha is equal to " + this->toStringWithPrecision(significanceLevel));
 
     Fit(sample);
 
@@ -468,8 +464,9 @@ void PoissonRand<IntType>::Fit(std::span<const IntType> sample, DoublePair &conf
     confidenceInterval.second = ErlangRV.Quantile1m(halfAlpha);
 }
 
-template < typename IntType >
-GammaRand<> PoissonRand<IntType>::FitBayes(std::span<const IntType> sample, const GammaDistribution<> &priorDistribution, bool MAP)
+template <typename IntType>
+GammaRand<> PoissonRand<IntType>::FitBayes(std::span<const IntType> sample,
+                                           const GammaDistribution<> &priorDistribution, bool MAP)
 {
     if (!this->allElementsAreNonNegative(sample))
         throw this->fitError(FitErrorCode::WrongSample, this->NON_NEGATIVITY_VIOLATION);

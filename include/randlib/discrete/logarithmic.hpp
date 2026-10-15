@@ -32,8 +32,9 @@ public:
     void SetProbability(double probability);
     [[nodiscard]] inline double GetProbability() const noexcept { return p; }
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+
 private:
     /**
      * @fn betaFun
@@ -42,15 +43,17 @@ private:
      * using series expansion (converges for x < 1)
      */
     double betaFun(IntType a) const;
+
 public:
-    [[nodiscard]] double F(const IntType & k) const override;
-    [[nodiscard]] double S(const IntType & k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;
@@ -66,19 +69,19 @@ private:
 namespace randlib
 {
 
-template < typename IntType >
+template <typename IntType>
 LogarithmicRand<IntType>::LogarithmicRand(double probability)
 {
     SetProbability(probability);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string LogarithmicRand<IntType>::Name() const
 {
     return "Logarithmic(" + this->toStringWithPrecision(GetProbability()) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void LogarithmicRand<IntType>::SetProbability(double probability)
 {
     if (!(probability > 0.0 && probability < 1.0))
@@ -88,19 +91,19 @@ void LogarithmicRand<IntType>::SetProbability(double probability)
     log1mProb = std::log1pl(-p);
 }
 
-template < typename IntType >
-double LogarithmicRand<IntType>::P(const IntType & k) const
+template <typename IntType>
+double LogarithmicRand<IntType>::P(const IntType &k) const
 {
     return (k < 1) ? 0.0 : -std::pow(p, k) / (k * log1mProb);
 }
 
-template < typename IntType >
-double LogarithmicRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double LogarithmicRand<IntType>::logP(const IntType &k) const
 {
     return (k < 1) ? -INFINITY : k * logProb - std::log(-k * log1mProb);
 }
 
-template < typename IntType >
+template <typename IntType>
 double LogarithmicRand<IntType>::betaFun(IntType a) const
 {
     /// Σ_{j≥0} p^j / (a + j), the first three terms written out
@@ -116,19 +119,19 @@ double LogarithmicRand<IntType>::betaFun(IntType a) const
     return std::exp(a * logProb) * sum;
 }
 
-template < typename IntType >
-double LogarithmicRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double LogarithmicRand<IntType>::F(const IntType &k) const
 {
     return (k < 1) ? 0.0 : 1 + betaFun(k + 1) / log1mProb;
 }
 
-template < typename IntType >
-double LogarithmicRand<IntType>::S(const IntType & k) const
+template <typename IntType>
+double LogarithmicRand<IntType>::S(const IntType &k) const
 {
     return (k < 1) ? 1.0 : -betaFun(k + 1) / log1mProb;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType LogarithmicRand<IntType>::operator()(G &g) const
 {
@@ -146,13 +149,13 @@ IntType LogarithmicRand<IntType>::operator()(G &g) const
     return std::floor(1.0 + std::log(V) / std::log(y));
 }
 
-template < typename IntType >
+template <typename IntType>
 long double LogarithmicRand<IntType>::Mean() const
 {
     return -p / (1.0 - p) / log1mProb;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double LogarithmicRand<IntType>::Variance() const
 {
     long double var = p / log1mProb + 1;
@@ -162,7 +165,7 @@ long double LogarithmicRand<IntType>::Variance() const
     return -var / (q * q);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::complex<double> LogarithmicRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(std::cos(t), std::sin(t));
@@ -170,7 +173,7 @@ std::complex<double> LogarithmicRand<IntType>::CFImpl(double t) const
     return y / log1mProb;
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType LogarithmicRand<IntType>::Mode() const
 {
     return 1.0;

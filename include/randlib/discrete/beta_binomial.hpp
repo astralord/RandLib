@@ -39,9 +39,9 @@ public:
     [[nodiscard]] inline double GetAlpha() const { return B.GetAlpha(); }
     [[nodiscard]] inline double GetBeta() const { return B.GetBeta(); }
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
 
 private:
     template <std::uniform_random_bit_generator G>
@@ -52,13 +52,15 @@ private:
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;
@@ -74,21 +76,20 @@ public:
 namespace randlib
 {
 
-template< typename IntType >
+template <typename IntType>
 BetaBinomialRand<IntType>::BetaBinomialRand(IntType number, double shape1, double shape2)
 {
     SetParameters(number, shape1, shape2);
 }
 
-template< typename IntType >
+template <typename IntType>
 std::string BetaBinomialRand<IntType>::Name() const
 {
-    return "Beta-Binomial(" + this->toStringWithPrecision(GetNumber()) + ", "
-                            + this->toStringWithPrecision(GetAlpha()) + ", "
-                            + this->toStringWithPrecision(GetBeta()) + ")";
+    return "Beta-Binomial(" + this->toStringWithPrecision(GetNumber()) + ", " +
+           this->toStringWithPrecision(GetAlpha()) + ", " + this->toStringWithPrecision(GetBeta()) + ")";
 }
 
-template< typename IntType >
+template <typename IntType>
 void BetaBinomialRand<IntType>::SetParameters(IntType number, double shape1, double shape2)
 {
     if (!(shape1 > 0.0 && shape2 > 0.0))
@@ -102,13 +103,13 @@ void BetaBinomialRand<IntType>::SetParameters(IntType number, double shape1, dou
     pmfCoef -= B.GetLogBetaFunction();
 }
 
-template< typename IntType >
+template <typename IntType>
 double BetaBinomialRand<IntType>::P(const IntType &k) const
 {
     return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
-template< typename IntType >
+template <typename IntType>
 double BetaBinomialRand<IntType>::logP(const IntType &k) const
 {
     if (k < 0 || k > n)
@@ -120,8 +121,8 @@ double BetaBinomialRand<IntType>::logP(const IntType &k) const
     return pmfCoef + y;
 }
 
-template< typename IntType >
-double BetaBinomialRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double BetaBinomialRand<IntType>::F(const IntType &k) const
 {
     if (k < 0)
         return 0.0;
@@ -135,14 +136,14 @@ double BetaBinomialRand<IntType>::F(const IntType & k) const
     return sum;
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BetaBinomialRand<IntType>::VariateUniform(G &g) const
 {
     return UniformDiscreteRand<IntType>::StandardVariate(0, n, g);
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BetaBinomialRand<IntType>::VariateBeta(G &g) const
 {
@@ -150,29 +151,26 @@ IntType BetaBinomialRand<IntType>::VariateBeta(G &g) const
     return BinomialDistribution<IntType>::Variate(n, p, g);
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BetaBinomialRand<IntType>::operator()(G &g) const
 {
     return (B.GetAlpha() == 1 && B.GetBeta() == 1) ? VariateUniform(g) : VariateBeta(g);
 }
 
-template< typename IntType >
+template <typename IntType>
 void BetaBinomialRand<IntType>::sample(detail::EngineRef g, std::span<IntType> outputData) const
 {
     if (B.GetAlpha() == 1 && B.GetBeta() == 1) {
-        for (IntType & var : outputData)
+        for (IntType &var : outputData)
             var = VariateUniform(g);
-    }
-    else {
-        for (IntType & var : outputData)
+    } else {
+        for (IntType &var : outputData)
             var = VariateBeta(g);
     }
 }
 
-
-
-template< typename IntType >
+template <typename IntType>
 long double BetaBinomialRand<IntType>::Mean() const
 {
     double alpha = B.GetAlpha();
@@ -180,7 +178,7 @@ long double BetaBinomialRand<IntType>::Mean() const
     return n * alpha / (alpha + beta);
 }
 
-template< typename IntType >
+template <typename IntType>
 long double BetaBinomialRand<IntType>::Variance() const
 {
     double alpha = B.GetAlpha();
@@ -192,7 +190,7 @@ long double BetaBinomialRand<IntType>::Variance() const
     return numerator / denominator;
 }
 
-template< typename IntType >
+template <typename IntType>
 IntType BetaBinomialRand<IntType>::Mode() const
 {
     IntType mode = (IntType)(n * B.Mode());
@@ -204,7 +202,7 @@ IntType BetaBinomialRand<IntType>::Mode() const
     return mode;
 }
 
-template< typename IntType >
+template <typename IntType>
 long double BetaBinomialRand<IntType>::Skewness() const
 {
     long double alpha = B.GetAlpha();
@@ -217,7 +215,7 @@ long double BetaBinomialRand<IntType>::Skewness() const
     return res;
 }
 
-template< typename IntType >
+template <typename IntType>
 long double BetaBinomialRand<IntType>::ExcessKurtosis() const
 {
     long double alpha = B.GetAlpha();

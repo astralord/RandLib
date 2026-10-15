@@ -36,13 +36,14 @@ public:
 
     [[nodiscard]] double P(const Pair<IntType> &point) const override;
     [[nodiscard]] double logP(const Pair<IntType> &point) const override;
-    [[nodiscard]] double F(const Pair<IntType> & point) const override;
+    [[nodiscard]] double F(const Pair<IntType> &point) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] Pair<IntType> operator()(G &g) const;
+
 protected:
     Pair<IntType> variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     long double Correlation() const override;
 
     [[nodiscard]] Pair<IntType> Mode() const override;
@@ -53,29 +54,30 @@ public:
 namespace randlib
 {
 
-template< typename IntType >
+template <typename IntType>
 TrinomialRand<IntType>::TrinomialRand(int number, double probability1, double probability2)
 {
     SetParameters(number, probability1, probability2);
 }
 
-template< typename IntType >
+template <typename IntType>
 std::string TrinomialRand<IntType>::Name() const
 {
-    return "Trinomial(" + this->toStringWithPrecision(GetNumber()) + ", "
-                        + this->toStringWithPrecision(GetFirstProbability()) + ", "
-                        + this->toStringWithPrecision(GetSecondProbability()) + ")";
+    return "Trinomial(" + this->toStringWithPrecision(GetNumber()) + ", " +
+           this->toStringWithPrecision(GetFirstProbability()) + ", " +
+           this->toStringWithPrecision(GetSecondProbability()) + ")";
 }
 
-template< typename IntType >
+template <typename IntType>
 void TrinomialRand<IntType>::SetParameters(int number, double probability1, double probability2)
 {
     if (!(probability1 >= 0.0 && probability2 >= 0.0 && probability1 + probability2 <= 1.0))
-        throw std::invalid_argument("Probabilities of Trinomial distribution should be positive and their sum should be not greater than 1, but they're equal to "
-                                    + std::to_string(probability1) + " and " + std::to_string(probability2));
+        throw std::invalid_argument("Probabilities of Trinomial distribution should be positive and their sum should "
+                                    "be not greater than 1, but they're equal to " +
+                                    std::to_string(probability1) + " and " + std::to_string(probability2));
     if (!(number > 0))
-        throw std::invalid_argument("Number of Trinomial distribution should be positive, but it's equal to "
-                                    + std::to_string(number));
+        throw std::invalid_argument("Number of Trinomial distribution should be positive, but it's equal to " +
+                                    std::to_string(number));
 
     double p1 = probability1, p2 = probability2;
     n = number;
@@ -87,14 +89,14 @@ void TrinomialRand<IntType>::SetParameters(int number, double probability1, doub
     p2_1mp1 = p2 / (1.0 - p1);
 }
 
-template< typename IntType >
+template <typename IntType>
 double TrinomialRand<IntType>::P(const Pair<IntType> &point) const
 {
     IntType x = point.first, y = point.second;
     return (x < 0 || x > n || y < 0 || y > n) ? 0.0 : std::exp(logP(point));
 }
 
-template< typename IntType >
+template <typename IntType>
 double TrinomialRand<IntType>::logP(const Pair<IntType> &point) const
 {
     IntType x = point.first, y = point.second;
@@ -111,7 +113,7 @@ double TrinomialRand<IntType>::logP(const Pair<IntType> &point) const
     return res;
 }
 
-template< typename IntType >
+template <typename IntType>
 double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
 {
     int x = point.first, y = point.second;
@@ -143,7 +145,7 @@ double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
     return sum;
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 Pair<IntType> TrinomialRand<IntType>::operator()(G &g) const
 {
@@ -157,7 +159,7 @@ Pair<IntType> TrinomialRand<IntType>::operator()(G &g) const
     return IntPair(x, y);
 }
 
-template< typename IntType >
+template <typename IntType>
 long double TrinomialRand<IntType>::Correlation() const
 {
     long double logp1 = this->X.GetLogProbability(), logp2 = this->Y.GetLogProbability();
@@ -165,7 +167,7 @@ long double TrinomialRand<IntType>::Correlation() const
     return -std::exp(logp1 + logp2 - log1mp1 - log1mp2);
 }
 
-template< typename IntType >
+template <typename IntType>
 Pair<IntType> TrinomialRand<IntType>::Mode() const
 {
     IntType modeX = this->X.Mode(), modeY = this->Y.Mode();

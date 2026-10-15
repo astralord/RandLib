@@ -42,10 +42,10 @@ public:
     [[nodiscard]] inline double GetLogShape() const noexcept { return logAlpha; }
     [[nodiscard]] inline double GetLogScale() const noexcept { return logSigma; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
 
 private:
     template <std::uniform_random_bit_generator G>
@@ -58,15 +58,18 @@ private:
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(double shape, G &g);
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -116,7 +119,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution of α
      */
-    GammaRand<RealType> FitShapeBayes(std::span<const RealType> sample, const GammaDistribution<RealType> &priorDistribution, bool MAP = false);
+    GammaRand<RealType> FitShapeBayes(std::span<const RealType> sample,
+                                      const GammaDistribution<RealType> &priorDistribution, bool MAP = false);
 };
 
 } // namespace randlib
@@ -127,20 +131,20 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 ParetoRand<RealType>::ParetoRand(double shape, double scale)
 {
     SetShape(shape);
     SetScale(scale);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string ParetoRand<RealType>::Name() const
 {
     return "Pareto(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void ParetoRand<RealType>::SetShape(double shape)
 {
     if (!(shape > 0.0))
@@ -149,7 +153,7 @@ void ParetoRand<RealType>::SetShape(double shape)
     logAlpha = std::log(alpha);
 }
 
-template < typename RealType >
+template <typename RealType>
 void ParetoRand<RealType>::SetScale(double scale)
 {
     if (!(scale > 0.0))
@@ -158,14 +162,14 @@ void ParetoRand<RealType>::SetScale(double scale)
     logSigma = std::log(sigma);
 }
 
-template < typename RealType >
+template <typename RealType>
 double ParetoRand<RealType>::f(const RealType &x) const
 {
     return (x < sigma) ? 0.0 : std::exp(logf(x));
 }
 
-template < typename RealType >
-double ParetoRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double ParetoRand<RealType>::logf(const RealType &x) const
 {
     if (x < sigma)
         return -INFINITY;
@@ -177,47 +181,47 @@ double ParetoRand<RealType>::logf(const RealType & x) const
     return y;
 }
 
-template < typename RealType >
-double ParetoRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double ParetoRand<RealType>::F(const RealType &x) const
 {
     return (x > sigma) ? -std::expm1l(alpha * std::log(sigma / x)) : 0.0;
 }
 
-template < typename RealType >
-double ParetoRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double ParetoRand<RealType>::S(const RealType &x) const
 {
     return (x > sigma) ? std::pow(sigma / x, alpha) : 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::variateForAlphaEqualOne(G &g)
 {
     return 1.0 / detail::uniform01<RealType>(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::variateForAlphaEqualTwo(G &g)
 {
     return 1.0 / std::sqrt(detail::uniform01<RealType>(g));
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::variateForGeneralAlpha(double shape, G &g)
 {
     return std::exp(detail::standardExponential<RealType>(g) / shape);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::operator()(G &g) const
 {
     return sigma * StandardVariate(alpha, g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType ParetoRand<RealType>::StandardVariate(double shape, G &g)
 {
@@ -228,34 +232,31 @@ RealType ParetoRand<RealType>::StandardVariate(double shape, G &g)
     return variateForGeneralAlpha(shape, g);
 }
 
-template < typename RealType >
+template <typename RealType>
 void ParetoRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     if (math::areClose(alpha, 1.0)) {
         for (RealType &var : outputData)
             var = sigma * variateForAlphaEqualOne(g);
-    }
-    else if (math::areClose(alpha, 2.0)) {
+    } else if (math::areClose(alpha, 2.0)) {
         for (RealType &var : outputData)
             var = sigma * variateForAlphaEqualTwo(g);
-    }
-    else {
+    } else {
         for (RealType &var : outputData)
             var = sigma * variateForGeneralAlpha(alpha, g);
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ParetoRand<RealType>::Mean() const
 {
     return (alpha > 1) ? alpha * sigma / (alpha - 1) : INFINITY;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ParetoRand<RealType>::Variance() const
 {
-    if (alpha > 2)
-    {
+    if (alpha > 2) {
         long double var = sigma / (alpha - 1);
         var *= var;
         return alpha * var / (alpha - 2);
@@ -263,19 +264,19 @@ long double ParetoRand<RealType>::Variance() const
     return (alpha > 1) ? INFINITY : NAN;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType ParetoRand<RealType>::Median() const
 {
     return std::exp(logSigma + randlib::consts::ln2 / alpha);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType ParetoRand<RealType>::Mode() const
 {
     return sigma;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ParetoRand<RealType>::Skewness() const
 {
     if (alpha <= 3)
@@ -286,7 +287,7 @@ long double ParetoRand<RealType>::Skewness() const
     return skewness + skewness;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ParetoRand<RealType>::ExcessKurtosis() const
 {
     if (alpha <= 4)
@@ -300,41 +301,43 @@ long double ParetoRand<RealType>::ExcessKurtosis() const
     return 6.0 * numerator / denominator;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType ParetoRand<RealType>::quantileImpl(double p) const
 {
     double y = logSigma - std::log1pl(-p) / alpha;
     return std::exp(y);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType ParetoRand<RealType>::quantileImpl1m(double p) const
 {
     double y = logSigma - std::log(p) / alpha;
     return std::exp(y);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ParetoRand<RealType>::Entropy() const
 {
     return logSigma - logAlpha + 1.0 / alpha + 1;
 }
 
-template < typename RealType >
+template <typename RealType>
 void ParetoRand<RealType>::FitShape(std::span<const RealType> sample, bool unbiased)
 {
     if (!this->allElementsAreNotSmallerThan(sigma, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(sigma));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(sigma));
     double invShape = this->GetSampleLogMean(sample) - logSigma;
     if (invShape == 0.0)
-        throw this->fitError(FitErrorCode::WrongSample, "Possibly all the elements of the sample coincide with the lower boundary σ.");
+        throw this->fitError(FitErrorCode::WrongSample,
+                             "Possibly all the elements of the sample coincide with the lower boundary σ.");
     double shape = 1.0 / invShape;
     if (unbiased)
         shape *= (1.0 - 1.0 / sample.size());
     SetShape(shape);
 }
 
-template < typename RealType >
+template <typename RealType>
 void ParetoRand<RealType>::FitScale(std::span<const RealType> sample, bool unbiased)
 {
     RealType minVar = *std::min_element(sample.begin(), sample.end());
@@ -344,7 +347,7 @@ void ParetoRand<RealType>::FitScale(std::span<const RealType> sample, bool unbia
     SetScale(scale);
 }
 
-template < typename RealType >
+template <typename RealType>
 void ParetoRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased)
 {
     RealType minVar = *std::min_element(sample.begin(), sample.end());
@@ -367,11 +370,13 @@ void ParetoRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased)
     SetShape(shape);
 }
 
-template < typename RealType >
-GammaRand<RealType> ParetoRand<RealType>::FitShapeBayes(std::span<const RealType> sample, const GammaDistribution<RealType> &priorDistribution, bool MAP)
+template <typename RealType>
+GammaRand<RealType> ParetoRand<RealType>::FitShapeBayes(std::span<const RealType> sample,
+                                                        const GammaDistribution<RealType> &priorDistribution, bool MAP)
 {
     if (!this->allElementsAreNotSmallerThan(sigma, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(sigma));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(sigma));
     int n = sample.size();
     double newShape = priorDistribution.GetShape() + n;
     double newRate = priorDistribution.GetRate() + n * (this->GetSampleLogMean(sample) - logSigma);

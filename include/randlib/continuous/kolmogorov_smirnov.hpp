@@ -27,13 +27,14 @@ public:
 private:
     static double L(RealType x);
     static double K(RealType x);
+
 public:
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
-    double logF(const RealType & x) const;
-    double logS(const RealType & x) const;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
+    double logF(const RealType &x) const;
+    double logS(const RealType &x) const;
 
 private:
     template <std::uniform_random_bit_generator G>
@@ -42,13 +43,15 @@ private:
     RealType variateForTheLeftMostInterval(G &g) const;
     template <std::uniform_random_bit_generator G>
     RealType variateForTheRightMostInterval(G &g) const;
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Mode() const override;
@@ -67,18 +70,18 @@ private:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 KolmogorovSmirnovRand<RealType>::KolmogorovSmirnovRand()
 {
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string KolmogorovSmirnovRand<RealType>::Name() const
 {
     return "Kolmogorov-Smirnov";
 }
 
-template < typename RealType >
+template <typename RealType>
 double KolmogorovSmirnovRand<RealType>::L(RealType x)
 {
     if (x <= 0.0)
@@ -96,7 +99,7 @@ double KolmogorovSmirnovRand<RealType>::L(RealType x)
     return randlib::consts::sqrt2pi * sum / x;
 }
 
-template < typename RealType >
+template <typename RealType>
 double KolmogorovSmirnovRand<RealType>::K(RealType x)
 {
     if (x <= 0.0)
@@ -113,8 +116,8 @@ double KolmogorovSmirnovRand<RealType>::K(RealType x)
     return 2 * sum;
 }
 
-template < typename RealType >
-double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double KolmogorovSmirnovRand<RealType>::f(const RealType &x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -144,37 +147,37 @@ double KolmogorovSmirnovRand<RealType>::f(const RealType & x) const
     return 8 * sum * x;
 }
 
-template < typename RealType >
-double KolmogorovSmirnovRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double KolmogorovSmirnovRand<RealType>::logf(const RealType &x) const
 {
     return std::log(f(x));
 }
 
-template < typename RealType >
-double KolmogorovSmirnovRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double KolmogorovSmirnovRand<RealType>::F(const RealType &x) const
 {
     return (x > 1.0) ? 1.0 - K(x) : L(x);
 }
 
-template < typename RealType >
-double KolmogorovSmirnovRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double KolmogorovSmirnovRand<RealType>::S(const RealType &x) const
 {
     return (x > 1.0) ? K(x) : 1.0 - L(x);
 }
 
-template < typename RealType >
-double KolmogorovSmirnovRand<RealType>::logF(const RealType & x) const
+template <typename RealType>
+double KolmogorovSmirnovRand<RealType>::logF(const RealType &x) const
 {
     return (x > 1.0) ? std::log1pl(-K(x)) : std::log(L(x));
 }
 
-template < typename RealType >
-double KolmogorovSmirnovRand<RealType>::logS(const RealType & x) const
+template <typename RealType>
+double KolmogorovSmirnovRand<RealType>::logS(const RealType &x) const
 {
     return (x > 1.0) ? std::log(K(x)) : std::log1pl(-L(x));
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType KolmogorovSmirnovRand<RealType>::truncatedGammaVariate(G &g) const
 {
@@ -195,7 +198,7 @@ RealType KolmogorovSmirnovRand<RealType>::truncatedGammaVariate(G &g) const
     throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType KolmogorovSmirnovRand<RealType>::variateForTheLeftMostInterval(G &g) const
 {
@@ -221,7 +224,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheLeftMostInterval(G &g) co
     throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType KolmogorovSmirnovRand<RealType>::variateForTheRightMostInterval(G &g) const
 {
@@ -248,7 +251,7 @@ RealType KolmogorovSmirnovRand<RealType>::variateForTheRightMostInterval(G &g) c
     throw std::runtime_error("Kolmogorov-Smirnov distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType KolmogorovSmirnovRand<RealType>::operator()(G &g) const
 {
@@ -258,39 +261,39 @@ RealType KolmogorovSmirnovRand<RealType>::operator()(G &g) const
     return isLeft ? variateForTheLeftMostInterval(g) : variateForTheRightMostInterval(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double KolmogorovSmirnovRand<RealType>::Mean() const
 {
     return randlib::consts::sqrtpi * randlib::consts::inv_sqrt2 * randlib::consts::ln2;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double KolmogorovSmirnovRand<RealType>::Variance() const
 {
     long double mean = Mean();
     return randlib::consts::pi_sq / 12 - mean * mean;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType KolmogorovSmirnovRand<RealType>::Mode() const
 {
     return 0.735467812776958l;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType KolmogorovSmirnovRand<RealType>::Median() const
 {
     return 0.82757355518990761l;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType KolmogorovSmirnovRand<RealType>::quantileImpl(double p) const
 {
     RealType guess = std::sqrt(-0.5 * (std::log1pl(-p) - randlib::consts::ln2));
     return ContinuousDistribution<RealType>::quantileImpl(p, guess);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType KolmogorovSmirnovRand<RealType>::quantileImpl1m(double p) const
 {
     RealType guess = std::sqrt(-0.5 * std::log(0.5 * p));

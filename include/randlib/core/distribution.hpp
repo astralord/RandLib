@@ -29,7 +29,6 @@ class ProbabilityDistribution
     mutable std::optional<DefaultEngine> ownEngine{};
 
 protected:
-
     /**
      * @brief MAX_ITER_REJECTION
      * upper boundary for maximum amount of iterations in rejection methods
@@ -101,7 +100,7 @@ public:
      * @param x
      * @return P(X ≤ x)
      */
-    [[nodiscard]] virtual double F(const T & x) const = 0;
+    [[nodiscard]] virtual double F(const T &x) const = 0;
 
     /**
      * @fn CumulativeDistributionFunction
@@ -115,7 +114,7 @@ public:
      * @param x
      * @return P(X > x)
      */
-    [[nodiscard]] virtual double S(const T & x) const;
+    [[nodiscard]] virtual double S(const T &x) const;
 
     /**
      * @fn SurvivalFunction
@@ -132,7 +131,10 @@ public:
      * @return random variable
      */
     template <std::uniform_random_bit_generator G>
-    [[nodiscard]] T operator()(G &g) const { return variate(g); }
+    [[nodiscard]] T operator()(G &g) const
+    {
+        return variate(g);
+    }
 
     /**
      * @fn Variate
@@ -156,7 +158,10 @@ public:
      * @param outputData
      */
     template <std::uniform_random_bit_generator G>
-    void Sample(G &g, std::span<T> outputData) const { sample(g, outputData); }
+    void Sample(G &g, std::span<T> outputData) const
+    {
+        sample(g, outputData);
+    }
 
     /**
      * @fn Reseed
@@ -188,7 +193,7 @@ protected:
 namespace randlib
 {
 
-template < typename T >
+template <typename T>
 std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_value, const int n) const
 {
     std::ostringstream out;
@@ -196,7 +201,7 @@ std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_val
     return out.str();
 }
 
-template < typename T >
+template <typename T>
 void ProbabilityDistribution<T>::CumulativeDistributionFunction(std::span<const T> x, std::span<double> y) const
 {
     size_t size = x.size();
@@ -206,13 +211,13 @@ void ProbabilityDistribution<T>::CumulativeDistributionFunction(std::span<const 
         y[i] = this->F(x[i]);
 }
 
-template < typename T >
+template <typename T>
 double ProbabilityDistribution<T>::S(const T &x) const
 {
     return 1.0 - this->F(x);
 }
 
-template < typename T >
+template <typename T>
 void ProbabilityDistribution<T>::SurvivalFunction(std::span<const T> x, std::span<double> y) const
 {
     size_t size = x.size();
@@ -222,16 +227,16 @@ void ProbabilityDistribution<T>::SurvivalFunction(std::span<const T> x, std::spa
         y[i] = this->S(x[i]);
 }
 
-template < typename T >
+template <typename T>
 constexpr char ProbabilityDistribution<T>::POSITIVITY_VIOLATION[];
-template < typename T >
+template <typename T>
 constexpr char ProbabilityDistribution<T>::NON_NEGATIVITY_VIOLATION[];
-template < typename T >
+template <typename T>
 constexpr char ProbabilityDistribution<T>::UPPER_LIMIT_VIOLATION[];
-template < typename T >
+template <typename T>
 constexpr char ProbabilityDistribution<T>::LOWER_LIMIT_VIOLATION[];
 
-template < typename T >
+template <typename T>
 fit_error ProbabilityDistribution<T>::fitError(FitErrorCode code, const std::string &explanation) const
 {
     std::string reason;

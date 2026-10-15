@@ -119,7 +119,8 @@ TEST_CASE("B14: normal raw moments", "[regression]")
     NormalRand<double> X(2, 0.09);
     double mu = 2, var = 0.09;
     CHECK_THAT(static_cast<double>(X.ThirdMoment()), WithinRel(mu * mu * mu + 3 * mu * var, 1e-14));
-    CHECK_THAT(static_cast<double>(X.FourthMoment()), WithinRel(std::pow(mu, 4) + 6 * mu * mu * var + 3 * var * var, 1e-14));
+    CHECK_THAT(static_cast<double>(X.FourthMoment()),
+               WithinRel(std::pow(mu, 4) + 6 * mu * mu * var + 3 * var * var, 1e-14));
 }
 
 TEST_CASE("B15: classes that could not be used", "[regression]")
@@ -140,7 +141,8 @@ TEST_CASE("B16: wrapped exponential circular moments and characteristic function
 {
     double lambda = 0.7;
     WrappedExponentialRand<double> X(lambda);
-    CHECK_THAT(static_cast<double>(X.CircularVariance()), WithinRel(1 - lambda / std::sqrt(1 + lambda * lambda), 1e-14));
+    CHECK_THAT(static_cast<double>(X.CircularVariance()),
+               WithinRel(1 - lambda / std::sqrt(1 + lambda * lambda), 1e-14));
     std::complex<double> expected = lambda / std::complex<double>(lambda, -1.0);
     CHECK_THAT(std::abs(X.CF(1.0) - expected), WithinAbs(0, 1e-14));
     CHECK_THROWS_AS(X.SetRate(-1), std::invalid_argument);
@@ -174,8 +176,10 @@ TEST_CASE("B20: modified Bessel function of negative and half-integer order", "[
 {
     /// I_{1/2}(x) = sqrt(2 / (pi x)) sinh x and I_{-1/2}(x) = sqrt(2 / (pi x)) cosh x
     double x = 2.0;
-    CHECK_THAT(static_cast<double>(math::logBesselI(0.5, x)), WithinRel(std::log(std::sinh(x) * std::sqrt(2 / (PI * x))), 1e-14));
-    CHECK_THAT(static_cast<double>(math::logBesselI(-0.5, x)), WithinRel(std::log(std::cosh(x) * std::sqrt(2 / (PI * x))), 1e-14));
+    CHECK_THAT(static_cast<double>(math::logBesselI(0.5, x)),
+               WithinRel(std::log(std::sinh(x) * std::sqrt(2 / (PI * x))), 1e-14));
+    CHECK_THAT(static_cast<double>(math::logBesselI(-0.5, x)),
+               WithinRel(std::log(std::cosh(x) * std::sqrt(2 / (PI * x))), 1e-14));
 }
 
 TEST_CASE("B21: stable characteristic function and location for exponent 1", "[regression]")
@@ -283,7 +287,8 @@ TEST_CASE("B29: geometric stable distribution function for exponent 1", "[regres
     std::vector<double> sample(20000);
     X.Sample(sample);
     double x = 1.0;
-    double empirical = static_cast<double>(std::count_if(sample.begin(), sample.end(), [x](double v) { return v <= x; })) / 20000.0;
+    double empirical =
+        static_cast<double>(std::count_if(sample.begin(), sample.end(), [x](double v) { return v <= x; })) / 20000.0;
     CHECK(std::fabs(empirical - X.F(x)) < 0.02);
 }
 
@@ -313,7 +318,7 @@ TEST_CASE("B32: Poisson and binomial probabilities do not depend on the accuracy
 TEST_CASE("Cantor quantiles are exact", "[regression]")
 {
     /// the inverse of the Cantor function maps the binary digits of p to ternary digits 0 and 2
-    auto exact = [] (double p) {
+    auto exact = [](double p) {
         double x = 0, power = 1;
         for (int k = 0; k < 60; ++k) {
             p *= 2;

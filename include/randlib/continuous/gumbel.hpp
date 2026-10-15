@@ -36,14 +36,16 @@ public:
     [[nodiscard]] inline double GetLocation() const noexcept { return mu; }
     [[nodiscard]] inline double GetScale() const noexcept { return beta; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
@@ -70,20 +72,21 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 GumbelRand<RealType>::GumbelRand(double location, double scale)
 {
     SetLocation(location);
     SetScale(scale);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string GumbelRand<RealType>::Name() const
 {
-    return "Gumbel(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Gumbel(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) +
+           ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void GumbelRand<RealType>::SetLocation(double location)
 {
     if (!std::isfinite(location))
@@ -91,7 +94,7 @@ void GumbelRand<RealType>::SetLocation(double location)
     mu = location;
 }
 
-template < typename RealType >
+template <typename RealType>
 void GumbelRand<RealType>::SetScale(double scale)
 {
     if (!(scale > 0.0))
@@ -100,29 +103,29 @@ void GumbelRand<RealType>::SetScale(double scale)
     logBeta = std::log(beta);
 }
 
-template < typename RealType >
-double GumbelRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double GumbelRand<RealType>::f(const RealType &x) const
 {
     return std::exp(logf(x));
 }
 
-template < typename RealType >
-double GumbelRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double GumbelRand<RealType>::logf(const RealType &x) const
 {
     double z = (mu - x) / beta;
     double y = std::exp(z);
     return z - y - logBeta;
 }
 
-template < typename RealType >
-double GumbelRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double GumbelRand<RealType>::F(const RealType &x) const
 {
     double y = (mu - x) / beta;
     y = std::exp(y);
     return std::exp(-y);
 }
 
-template < typename RealType >
+template <typename RealType>
 double GumbelRand<RealType>::S(const RealType &x) const
 {
     double y = (mu - x) / beta;
@@ -130,14 +133,14 @@ double GumbelRand<RealType>::S(const RealType &x) const
     return -std::expm1l(-y);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType GumbelRand<RealType>::operator()(G &g) const
 {
     return mu + beta * GumbelRand<RealType>::StandardVariate(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType GumbelRand<RealType>::StandardVariate(G &g)
 {
@@ -145,58 +148,59 @@ RealType GumbelRand<RealType>::StandardVariate(G &g)
     return -std::log(w);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double GumbelRand<RealType>::Mean() const
 {
     return mu + beta * randlib::consts::egamma;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double GumbelRand<RealType>::Variance() const
 {
     double v = randlib::consts::pi * beta;
     return v * v / 6;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType GumbelRand<RealType>::quantileImpl(double p) const
 {
     return mu - beta * std::log(-std::log(p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType GumbelRand<RealType>::quantileImpl1m(double p) const
 {
     return mu - beta * std::log(-std::log1pl(-p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType GumbelRand<RealType>::Median() const
 {
     static const double M_LN_LN2 = std::log(randlib::consts::ln2);
     return mu - beta * M_LN_LN2;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType GumbelRand<RealType>::Mode() const
 {
     return mu;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double GumbelRand<RealType>::Skewness() const
 {
-    static constexpr long double skew = 12 * randlib::consts::sqrt2 * randlib::consts::sqrt3 * randlib::consts::apery / (randlib::consts::pi_sq * randlib::consts::pi);
+    static constexpr long double skew = 12 * randlib::consts::sqrt2 * randlib::consts::sqrt3 * randlib::consts::apery /
+                                        (randlib::consts::pi_sq * randlib::consts::pi);
     return skew;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double GumbelRand<RealType>::ExcessKurtosis() const
 {
     return 2.4l;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double GumbelRand<RealType>::Entropy() const
 {
     return logBeta + randlib::consts::egamma + 1.0;

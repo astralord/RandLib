@@ -31,7 +31,10 @@ public:
     InverseGammaRand(double shape = 1, double rate = 1);
 
     /// @return Inv-Γ(α, β) with shape α and rate (scale of the reciprocal's inverse) β
-    [[nodiscard]] static InverseGammaRand FromShapeRate(double shape, double rate) { return InverseGammaRand(shape, rate); }
+    [[nodiscard]] static InverseGammaRand FromShapeRate(double shape, double rate)
+    {
+        return InverseGammaRand(shape, rate);
+    }
 
     [[nodiscard]] std::string Name() const override;
     [[nodiscard]] Support SupportType() const override { return Support::RightSemiFinite; }
@@ -44,18 +47,20 @@ public:
     [[nodiscard]] inline double GetLogShape() const { return X.GetLogShape(); }
     [[nodiscard]] inline double GetLogRate() const { return X.GetLogRate(); }
 
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -76,19 +81,20 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 InverseGammaRand<RealType>::InverseGammaRand(double shape, double rate)
 {
     SetParameters(shape, rate);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string InverseGammaRand<RealType>::Name() const
 {
-    return "Inverse-Gamma(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetRate()) + ")";
+    return "Inverse-Gamma(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(GetRate()) +
+           ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void InverseGammaRand<RealType>::SetParameters(double shape, double rate)
 {
     if (!(shape > 0.0))
@@ -101,8 +107,8 @@ void InverseGammaRand<RealType>::SetParameters(double shape, double rate)
     pdfCoef = alpha * X.GetLogRate() - X.GetLogGammaShape();
 }
 
-template < typename RealType >
-double InverseGammaRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double InverseGammaRand<RealType>::logf(const RealType &x) const
 {
     if (x <= 0.0)
         return -INFINITY;
@@ -113,26 +119,26 @@ double InverseGammaRand<RealType>::logf(const RealType & x) const
     return y - 2 * logX;
 }
 
-template < typename RealType >
-double InverseGammaRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double InverseGammaRand<RealType>::F(const RealType &x) const
 {
     return (x > 0.0) ? X.S(1.0 / x) : 0.0;
 }
 
-template < typename RealType >
-double InverseGammaRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double InverseGammaRand<RealType>::S(const RealType &x) const
 {
     return (x > 0.0) ? X.F(1.0 / x) : 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType InverseGammaRand<RealType>::operator()(G &g) const
 {
     return 1.0 / X(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 void InverseGammaRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     X.Sample(g, outputData);
@@ -140,15 +146,13 @@ void InverseGammaRand<RealType>::sample(detail::EngineRef g, std::span<RealType>
         var = 1.0 / var;
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double InverseGammaRand<RealType>::Mean() const
 {
     return (alpha > 1) ? beta / (alpha - 1) : INFINITY;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGammaRand<RealType>::Variance() const
 {
     if (alpha <= 2)
@@ -158,37 +162,37 @@ long double InverseGammaRand<RealType>::Variance() const
     return var / (alpha - 2);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType InverseGammaRand<RealType>::Median() const
 {
     return 1.0 / X.Median();
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType InverseGammaRand<RealType>::Mode() const
 {
     return beta / (alpha + 1);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType InverseGammaRand<RealType>::quantileImpl(double p) const
 {
     return 1.0 / X.Quantile1m(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType InverseGammaRand<RealType>::quantileImpl1m(double p) const
 {
     return 1.0 / X.Quantile(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGammaRand<RealType>::Skewness() const
 {
     return (alpha > 3) ? 4 * std::sqrt(alpha - 2) / (alpha - 3) : INFINITY;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGammaRand<RealType>::ExcessKurtosis() const
 {
     if (alpha <= 4)

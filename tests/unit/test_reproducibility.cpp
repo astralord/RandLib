@@ -57,7 +57,7 @@ void checkReproducible(const Case &c, Make make)
     CHECK(first == third);
 }
 
-}
+} // namespace
 
 TEST_CASE("Same seed reproduces the same continuous sequence", "[reproducibility]")
 {

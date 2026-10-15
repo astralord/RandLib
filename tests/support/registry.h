@@ -13,7 +13,14 @@ namespace randlib_test
 
 using namespace randlib;
 
-enum class Kind { Continuous, Discrete, Singular, BivariateContinuous, BivariateDiscrete };
+enum class Kind
+{
+    Continuous,
+    Discrete,
+    Singular,
+    BivariateContinuous,
+    BivariateDiscrete
+};
 
 /// Evaluates one recorded quantity, such as ("F", "0.5") or ("Mean", ""), the same way
 /// tools/golden/dump_v1.cpp recorded it. Exceptions from the library propagate.
@@ -34,6 +41,6 @@ const std::vector<Case> &allCases();
 const Case *findCase(const std::string &id);
 std::vector<const Case *> casesOfKind(Kind kind);
 
-}
+} // namespace randlib_test
 
 #endif // RANDLIB_TESTS_REGISTRY_H

@@ -23,8 +23,9 @@ class YuleRand final : public DiscreteDistribution<IntType>
 {
     double rho = 0; ///< shape ρ
     double lgamma1pRo = 0; /// log(Γ(1 + ρ))
-    
+
     ParetoRand<double> X;
+
 public:
     explicit YuleRand(double shape);
     [[nodiscard]] std::string Name() const override;
@@ -35,13 +36,15 @@ public:
     void SetShape(double shape);
     [[nodiscard]] inline double GetShape() const noexcept { return rho; }
 
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
-    [[nodiscard]] double S(const IntType & k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(double shape, G &g);
@@ -61,20 +64,19 @@ public:
 namespace randlib
 {
 
-template < typename IntType >
-YuleRand<IntType>::YuleRand(double shape) :
-X(shape, 1.0)
+template <typename IntType>
+YuleRand<IntType>::YuleRand(double shape) : X(shape, 1.0)
 {
     SetShape(shape);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string YuleRand<IntType>::Name() const
 {
     return "Yule(" + this->toStringWithPrecision(GetShape()) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void YuleRand<IntType>::SetShape(double shape)
 {
     if (!(shape > 0.0))
@@ -84,8 +86,8 @@ void YuleRand<IntType>::SetShape(double shape)
     X.SetShape(rho);
 }
 
-template < typename IntType >
-double YuleRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double YuleRand<IntType>::logP(const IntType &k) const
 {
     if (k < 1)
         return -INFINITY;
@@ -96,8 +98,8 @@ double YuleRand<IntType>::logP(const IntType & k) const
     return y;
 }
 
-template < typename IntType >
-double YuleRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double YuleRand<IntType>::F(const IntType &k) const
 {
     if (k < 1)
         return 0.0;
@@ -108,8 +110,8 @@ double YuleRand<IntType>::F(const IntType & k) const
     return -std::expm1(y + logk);
 }
 
-template < typename IntType >
-double YuleRand<IntType>::S(const IntType & k) const
+template <typename IntType>
+double YuleRand<IntType>::S(const IntType &k) const
 {
     if (k < 1)
         return 1.0;
@@ -120,7 +122,7 @@ double YuleRand<IntType>::S(const IntType & k) const
     return k * y;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType YuleRand<IntType>::operator()(G &g) const
 {
@@ -128,7 +130,7 @@ IntType YuleRand<IntType>::operator()(G &g) const
     return GeometricRand<IntType>::Variate(prob, g) + 1;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType YuleRand<IntType>::Variate(double shape, G &g)
 {
@@ -138,15 +140,13 @@ IntType YuleRand<IntType>::Variate(double shape, G &g)
     return GeometricRand<IntType>::Variate(prob, g) + 1;
 }
 
-
-
-template < typename IntType >
+template <typename IntType>
 long double YuleRand<IntType>::Mean() const
 {
     return (rho <= 1) ? INFINITY : rho / (rho - 1);
 }
 
-template < typename IntType >
+template <typename IntType>
 long double YuleRand<IntType>::Variance() const
 {
     if (rho <= 2)
@@ -155,13 +155,13 @@ long double YuleRand<IntType>::Variance() const
     return aux * aux / (rho - 2);
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType YuleRand<IntType>::Mode() const
 {
     return 1;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double YuleRand<IntType>::Skewness() const
 {
     if (rho <= 3)
@@ -172,7 +172,7 @@ long double YuleRand<IntType>::Skewness() const
     return skewness / (rho * (rho - 3));
 }
 
-template < typename IntType >
+template <typename IntType>
 long double YuleRand<IntType>::ExcessKurtosis() const
 {
     if (rho <= 4)

@@ -23,7 +23,7 @@ namespace randlib::math
  * @param fc f(c)
  * @return minimum of interpolated parabola
  */
-template<typename RealType>
+template <typename RealType>
 double parabolicMinimum(RealType a, RealType b, RealType c, double fa, double fb, double fc)
 {
     RealType bma = b - a, cmb = c - b;
@@ -44,8 +44,9 @@ double parabolicMinimum(RealType a, RealType b, RealType c, double fa, double fb
  * @param epsilon tolerance
  * @return true if success
  */
-template<typename RealType>
-bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealType> & abc, double &fx, RealType &root, double epsilon)
+template <typename RealType>
+bool findMin(const std::function<double(RealType)> &funPtr, const Triplet<RealType> &abc, double &fx, RealType &root,
+             double epsilon)
 {
     static constexpr double K = 0.5 * (3 - randlib::consts::sqrt5);
     auto [a, x, c] = abc;
@@ -56,8 +57,7 @@ bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealT
         double g = e;
         e = d;
         bool acceptParabolicU = false;
-        if (x != w && x != v && w != v &&
-            fx != fw && fx != fv && fw != fv) {
+        if (x != w && x != v && w != v && fx != fw && fx != fv && fw != fv) {
             if (v < w) {
                 if (x < v)
                     u = parabolicMinimum<RealType>(x, v, w, fx, fv, fw);
@@ -65,8 +65,7 @@ bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealT
                     u = parabolicMinimum<RealType>(v, x, w, fv, fx, fw);
                 else
                     u = parabolicMinimum<RealType>(v, w, x, fv, fw, fx);
-            }
-            else {
+            } else {
                 if (x < w)
                     u = parabolicMinimum<RealType>(x, w, v, fx, fv, fw);
                 else if (x < v)
@@ -86,8 +85,7 @@ bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealT
             if (x < 0.5 * (c + a)) {
                 d = c - x;
                 u = x + K * d; /// golden ratio [x, c]
-            }
-            else {
+            } else {
                 d = x - a;
                 u = x - K * d; /// golden ratio [a, x]
             }
@@ -103,19 +101,23 @@ bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealT
                 a = x;
             else
                 c = x;
-            v = w; w = x; x = u;
-            fv = fw; fw = fx; fx = fu;
-        }
-        else {
+            v = w;
+            w = x;
+            x = u;
+            fv = fw;
+            fw = fx;
+            fx = fu;
+        } else {
             if (u >= x)
                 c = u;
             else
                 a = u;
             if (fu <= fw || w == x) {
-                v = w; w = u;
-                fv = fw; fw = fu;
-            }
-            else if (fu <= fv || v == x || v == w) {
+                v = w;
+                w = u;
+                fv = fw;
+                fw = fu;
+            } else if (fu <= fv || v == x || v == w) {
                 v = u;
                 fv = fu;
             }
@@ -134,8 +136,9 @@ bool findMin(const std::function<double (RealType)> &funPtr, const Triplet<RealT
  * @param epsilon tolerance
  * @return true if success
  */
-template<typename RealType>
-bool findMin(const std::function<double (RealType)> &funPtr, RealType closePoint, RealType &root, long double epsilon = 1e-8)
+template <typename RealType>
+bool findMin(const std::function<double(RealType)> &funPtr, RealType closePoint, RealType &root,
+             long double epsilon = 1e-8)
 {
     Triplet<RealType> abc;
     static constexpr double K = 0.5 * (randlib::consts::sqrt5 + 1);
@@ -164,31 +167,35 @@ bool findMin(const std::function<double (RealType)> &funPtr, RealType closePoint
                 }
                 u = c + K * cmb;
                 fu = funPtr(u);
-            }
-            else if (u > c && u < uLim) {
+            } else if (u > c && u < uLim) {
                 fu = funPtr(u);
                 if (fu < fc) {
-                    b = c; c = u; u = c + K * cmb;
+                    b = c;
+                    c = u;
+                    u = c + K * cmb;
                     fb = fc, fc = fu, fu = funPtr(u);
                 }
-            }
-            else if (u > uLim) {
+            } else if (u > uLim) {
                 u = uLim;
                 fu = funPtr(u);
-            }
-            else {
+            } else {
                 u = c + K * cmb;
                 fu = funPtr(u);
             }
-            a = b; b = c; c = u;
-            fa = fb; fb = fc; fc = fu;
+            a = b;
+            b = c;
+            c = u;
+            fa = fb;
+            fb = fc;
+            fc = fu;
         }
         abc = std::make_tuple(a, b, c);
         return findMin(funPtr, abc, fb, root, epsilon);
-    }
-    else {
-        c = b; fc = fb;
-        b = a; fb = fa;
+    } else {
+        c = b;
+        fc = fb;
+        b = a;
+        fb = fa;
         a = b - K * (c - b);
         fa = funPtr(a);
         /// go to the left
@@ -209,24 +216,27 @@ bool findMin(const std::function<double (RealType)> &funPtr, RealType closePoint
                 }
                 u = a - K * bma;
                 fu = funPtr(u);
-            }
-            else if (u < a && u > uLim) {
+            } else if (u < a && u > uLim) {
                 fu = funPtr(u);
                 if (fu < fa) {
-                    b = a; a = u; u = a - K * bma;
+                    b = a;
+                    a = u;
+                    u = a - K * bma;
                     fb = fa, fa = fu, fu = funPtr(u);
                 }
-            }
-            else if (u < uLim) {
+            } else if (u < uLim) {
                 u = uLim;
                 fu = funPtr(u);
-            }
-            else {
+            } else {
                 u = a - K * bma;
                 fu = funPtr(u);
             }
-            c = b; b = a; a = u;
-            fc = fb; fb = fa; fa = fu;
+            c = b;
+            b = a;
+            a = u;
+            fc = fb;
+            fb = fa;
+            fa = fu;
         }
         abc = std::make_tuple(a, b, c);
         return findMin(funPtr, abc, fb, root, epsilon);
@@ -272,7 +282,7 @@ MinimizeResult<Real> nelderMead(const F &f, std::vector<Real> start, Real tolera
         values[i] = f(std::span<const Real>(simplex[i]));
 
     std::vector<std::size_t> order(n + 1);
-    auto point = [n] (const std::vector<Real> &from, const std::vector<Real> &to, Real t) {
+    auto point = [n](const std::vector<Real> &from, const std::vector<Real> &to, Real t) {
         std::vector<Real> x(n);
         for (std::size_t j = 0; j < n; ++j)
             x[j] = from[j] + t * (to[j] - from[j]);
@@ -281,7 +291,8 @@ MinimizeResult<Real> nelderMead(const F &f, std::vector<Real> start, Real tolera
     MinimizeResult<Real> result;
     for (result.iterations = 0; result.iterations < maxIterations; ++result.iterations) {
         std::iota(order.begin(), order.end(), 0);
-        std::sort(order.begin(), order.end(), [&values] (std::size_t i, std::size_t j) { return values[i] < values[j]; });
+        std::sort(order.begin(), order.end(),
+                  [&values](std::size_t i, std::size_t j) { return values[i] < values[j]; });
         const std::size_t best = order.front(), worst = order.back(), secondWorst = order[n > 0 ? n - 1 : 0];
 
         Real valueSpread = 0, pointSpread = 0, scale = 0;
@@ -292,7 +303,8 @@ MinimizeResult<Real> nelderMead(const F &f, std::vector<Real> start, Real tolera
                 scale = std::max(scale, std::fabs(simplex[best][j]));
             }
         }
-        if (valueSpread <= tolerance * (std::fabs(values[best]) + tolerance) && pointSpread <= tolerance * (scale + 1)) {
+        if (valueSpread <= tolerance * (std::fabs(values[best]) + tolerance) &&
+            pointSpread <= tolerance * (scale + 1)) {
             result.converged = true;
             break;
         }
@@ -312,8 +324,7 @@ MinimizeResult<Real> nelderMead(const F &f, std::vector<Real> start, Real tolera
             if (expandedValue < reflectedValue) {
                 simplex[worst] = expanded;
                 values[worst] = expandedValue;
-            }
-            else {
+            } else {
                 simplex[worst] = reflected;
                 values[worst] = reflectedValue;
             }
@@ -325,8 +336,8 @@ MinimizeResult<Real> nelderMead(const F &f, std::vector<Real> start, Real tolera
             continue;
         }
         const bool outside = reflectedValue < values[worst];
-        std::vector<Real> contracted = outside ? point(centroid, reflected, contraction)
-                                               : point(centroid, simplex[worst], contraction);
+        std::vector<Real> contracted =
+            outside ? point(centroid, reflected, contraction) : point(centroid, simplex[worst], contraction);
         Real contractedValue = f(std::span<const Real>(contracted));
         if (contractedValue < (outside ? reflectedValue : values[worst])) {
             simplex[worst] = contracted;
@@ -389,7 +400,7 @@ MinimizeResult<Real> bfgs(const F &f, std::vector<Real> start, Real tolerance = 
             m[i][i] = 1;
         return m;
     };
-    auto dot = [] (const std::vector<Real> &u, const std::vector<Real> &v) {
+    auto dot = [](const std::vector<Real> &u, const std::vector<Real> &v) {
         return std::inner_product(u.begin(), u.end(), v.begin(), Real(0));
     };
     std::vector<std::vector<Real>> H = identity();

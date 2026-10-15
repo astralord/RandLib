@@ -43,19 +43,21 @@ public:
     [[nodiscard]] inline int GetFirstDegree() const noexcept { return d1; }
     [[nodiscard]] inline int GetSecondDegree() const noexcept { return d2; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -74,19 +76,20 @@ private:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 FisherFRand<RealType>::FisherFRand(int degree1, int degree2)
 {
     SetDegrees(degree1, degree2);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string FisherFRand<RealType>::Name() const
 {
-    return "Fisher-F(" + this->toStringWithPrecision(GetFirstDegree()) + ", " + this->toStringWithPrecision(GetSecondDegree()) + ")";
+    return "Fisher-F(" + this->toStringWithPrecision(GetFirstDegree()) + ", " +
+           this->toStringWithPrecision(GetSecondDegree()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void FisherFRand<RealType>::SetDegrees(int degree1, int degree2)
 {
     if (!(degree1 > 0 && degree2 > 0))
@@ -106,8 +109,8 @@ void FisherFRand<RealType>::SetDegrees(int degree1, int degree2)
     pdfCoef -= B.GetLogBetaFunction();
 }
 
-template < typename RealType >
-double FisherFRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double FisherFRand<RealType>::f(const RealType &x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -119,8 +122,8 @@ double FisherFRand<RealType>::f(const RealType & x) const
     return std::exp(logf(x));
 }
 
-template < typename RealType >
-double FisherFRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double FisherFRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -134,26 +137,26 @@ double FisherFRand<RealType>::logf(const RealType & x) const
     return pdfCoef + y;
 }
 
-template < typename RealType >
-double FisherFRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double FisherFRand<RealType>::F(const RealType &x) const
 {
     return B.F(d1_d2 * x);
 }
 
-template < typename RealType >
-double FisherFRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double FisherFRand<RealType>::S(const RealType &x) const
 {
     return B.S(d1_d2 * x);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType FisherFRand<RealType>::operator()(G &g) const
 {
     return d2_d1 * B(g);
 }
 
-template < typename RealType >
+template <typename RealType>
 void FisherFRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     B.Sample(g, outputData);
@@ -161,15 +164,13 @@ void FisherFRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outp
         var = d2_d1 * var;
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double FisherFRand<RealType>::Mean() const
 {
     return (d2 > 2) ? 1 + 2.0 / (d2 - 2) : INFINITY;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double FisherFRand<RealType>::Variance() const
 {
     if (d2 <= 4)
@@ -183,13 +184,13 @@ long double FisherFRand<RealType>::Variance() const
     return variance;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType FisherFRand<RealType>::Median() const
 {
     return d2_d1 * B.Median();
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType FisherFRand<RealType>::Mode() const
 {
     if (d1 <= 2)
@@ -197,7 +198,7 @@ RealType FisherFRand<RealType>::Mode() const
     return d2_d1 * (d1 - 2) / (d2 + 2);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double FisherFRand<RealType>::Skewness() const
 {
     if (d2 <= 6)
@@ -211,7 +212,7 @@ long double FisherFRand<RealType>::Skewness() const
     return skewness;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double FisherFRand<RealType>::ExcessKurtosis() const
 {
     if (d2 <= 8)
@@ -227,19 +228,19 @@ long double FisherFRand<RealType>::ExcessKurtosis() const
     return 12.0 * kurtosis;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType FisherFRand<RealType>::quantileImpl(double p) const
 {
-return d2_d1 * B.Quantile(p);
+    return d2_d1 * B.Quantile(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType FisherFRand<RealType>::quantileImpl1m(double p) const
 {
-return d2_d1 * B.Quantile1m(p);
+    return d2_d1 * B.Quantile1m(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> FisherFRand<RealType>::CFImpl(double t) const
 {
     return B.CF(d2_d1 * t);

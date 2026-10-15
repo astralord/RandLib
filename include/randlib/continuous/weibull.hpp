@@ -36,16 +36,17 @@ public:
     [[nodiscard]] inline double GetScale() const noexcept { return lambda; }
     [[nodiscard]] inline double GetShape() const noexcept { return k; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -86,7 +87,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand<RealType> FitScaleBayes(std::span<const RealType> sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
+    InverseGammaRand<RealType> FitScaleBayes(std::span<const RealType> sample,
+                                             const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 } // namespace randlib
@@ -97,19 +99,19 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 WeibullRand<RealType>::WeibullRand(double scale, double shape)
 {
     SetParameters(scale, shape);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string WeibullRand<RealType>::Name() const
 {
     return "Weibull(" + this->toStringWithPrecision(GetScale()) + ", " + this->toStringWithPrecision(GetShape()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void WeibullRand<RealType>::SetParameters(double scale, double shape)
 {
     if (!(scale > 0.0))
@@ -122,8 +124,8 @@ void WeibullRand<RealType>::SetParameters(double scale, double shape)
     logk_lambda = std::log(k / lambda);
 }
 
-template < typename RealType >
-double WeibullRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double WeibullRand<RealType>::f(const RealType &x) const
 {
     if (x < 0)
         return 0;
@@ -135,8 +137,8 @@ double WeibullRand<RealType>::f(const RealType & x) const
     return std::exp(this->logf(x));
 }
 
-template < typename RealType >
-double WeibullRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double WeibullRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0)
         return -INFINITY;
@@ -150,32 +152,32 @@ double WeibullRand<RealType>::logf(const RealType & x) const
     return logk_lambda + (k - 1) * std::log(xAdj) - xAdjPow;
 }
 
-template < typename RealType >
-double WeibullRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double WeibullRand<RealType>::F(const RealType &x) const
 {
     return (x > 0.0) ? -std::expm1l(-std::pow(x / lambda, k)) : 0.0;
 }
 
-template < typename RealType >
-double WeibullRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double WeibullRand<RealType>::S(const RealType &x) const
 {
     return (x > 0.0) ? std::exp(-std::pow(x / lambda, k)) : 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType WeibullRand<RealType>::operator()(G &g) const
 {
     return lambda * std::pow(detail::standardExponential<RealType>(g), kInv);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double WeibullRand<RealType>::Mean() const
 {
     return lambda * std::tgammal(1 + kInv);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double WeibullRand<RealType>::Variance() const
 {
     double res = std::tgammal(1 + kInv);
@@ -184,13 +186,13 @@ long double WeibullRand<RealType>::Variance() const
     return lambda * lambda * res;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType WeibullRand<RealType>::Median() const
 {
     return lambda * std::pow(randlib::consts::ln2, kInv);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType WeibullRand<RealType>::Mode() const
 {
     if (k <= 1)
@@ -200,7 +202,7 @@ RealType WeibullRand<RealType>::Mode() const
     return lambda * y;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double WeibullRand<RealType>::Skewness() const
 {
     long double mu = Mean();
@@ -214,7 +216,7 @@ long double WeibullRand<RealType>::Skewness() const
     return numerator / denominator;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double WeibullRand<RealType>::ExcessKurtosis() const
 {
     long double mu = Mean();
@@ -232,7 +234,7 @@ long double WeibullRand<RealType>::ExcessKurtosis() const
     return kurtosis - 3;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType WeibullRand<RealType>::quantileImpl(double p) const
 {
     double x = -std::log1pl(-p);
@@ -240,7 +242,7 @@ RealType WeibullRand<RealType>::quantileImpl(double p) const
     return lambda * x;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType WeibullRand<RealType>::quantileImpl1m(double p) const
 {
     double x = -std::log(p);
@@ -248,7 +250,7 @@ RealType WeibullRand<RealType>::quantileImpl1m(double p) const
     return lambda * x;
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
 {
     double lambdaT = lambda * t;
@@ -285,51 +287,43 @@ std::complex<double> WeibullRand<RealType>::CFImpl(double t) const
     }
 
     /// For real part with k < 1 we split the integral on two intervals
-    double re1 = math::integrate([this, t] (double x)
-    {
-        if (x <= 0.0 || x > 1.0)
-            return 0.0;
-        double xAdj = x / lambda;
-        double xAdjPow = std::pow(xAdj, k - 1);
-        double y = k / lambda * xAdjPow * std::expm1l(-xAdj * xAdjPow);
-        return std::cos(t * x) * y;
-    },
-    0.0, 1.0);
+    double re1 = math::integrate(
+        [this, t](double x) {
+            if (x <= 0.0 || x > 1.0)
+                return 0.0;
+            double xAdj = x / lambda;
+            double xAdjPow = std::pow(xAdj, k - 1);
+            double y = k / lambda * xAdjPow * std::expm1l(-xAdj * xAdjPow);
+            return std::cos(t * x) * y;
+        },
+        0.0, 1.0);
 
-    double re2 = this->ExpectedValue([t] (double x)
-    {
-        return std::cos(t * x);
-    },
-    1.0, INFINITY);
+    double re2 = this->ExpectedValue([t](double x) { return std::cos(t * x); }, 1.0, INFINITY);
 
-    double re3 = t * math::integrate([this, t] (double x)
-    {
-        if (x <= 0.0)
-            return 0.0;
-        return std::sin(t * x) * std::pow(x, k);
-    },
-    0.0, 1.0);
+    double re3 = t * math::integrate(
+                         [this, t](double x) {
+                             if (x <= 0.0)
+                                 return 0.0;
+                             return std::sin(t * x) * std::pow(x, k);
+                         },
+                         0.0, 1.0);
     re3 += std::cos(t);
     re3 /= std::pow(lambda, k);
 
     double re = re1 + re2 + re3;
 
-    double im = this->ExpectedValue([t] (double x)
-    {
-        return std::sin(t * x);
-    },
-    0.0, INFINITY);
+    double im = this->ExpectedValue([t](double x) { return std::sin(t * x); }, 0.0, INFINITY);
 
     return std::complex<double>(re, im);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double WeibullRand<RealType>::Entropy() const
 {
     return randlib::consts::egamma * (1.0 - kInv) + std::log(lambda * kInv) + 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 double WeibullRand<RealType>::getNorm(std::span<const RealType> sample) const
 {
     long double sum = 0;
@@ -341,7 +335,7 @@ double WeibullRand<RealType>::getNorm(std::span<const RealType> sample) const
     return maxVar * std::pow(avg, kInv);
 }
 
-template < typename RealType >
+template <typename RealType>
 void WeibullRand<RealType>::FitScale(std::span<const RealType> sample)
 {
     if (!this->allElementsArePositive(sample))
@@ -350,8 +344,10 @@ void WeibullRand<RealType>::FitScale(std::span<const RealType> sample)
     SetParameters(knorm, k);
 }
 
-template < typename RealType >
-InverseGammaRand<RealType> WeibullRand<RealType>::FitScaleBayes(std::span<const RealType> sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP)
+template <typename RealType>
+InverseGammaRand<RealType> WeibullRand<RealType>::FitScaleBayes(std::span<const RealType> sample,
+                                                                const InverseGammaRand<RealType> &priorDistribution,
+                                                                bool MAP)
 {
     if (!this->allElementsArePositive(sample))
         throw this->fitError(FitErrorCode::WrongSample, this->POSITIVITY_VIOLATION);

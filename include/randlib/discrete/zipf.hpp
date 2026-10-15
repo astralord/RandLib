@@ -37,15 +37,16 @@ public:
     [[nodiscard]] inline double GetExponent() const noexcept { return s; }
     [[nodiscard]] inline IntType GetNumber() const noexcept { return n; }
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;
@@ -63,28 +64,27 @@ private:
 namespace randlib
 {
 
-template < typename IntType >
+template <typename IntType>
 ZipfRand<IntType>::ZipfRand(double exponent, IntType number)
 {
     SetParameters(exponent, number);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string ZipfRand<IntType>::Name() const
 {
-    return "Zipf(" + this->toStringWithPrecision(GetExponent()) + ", "
-                   + this->toStringWithPrecision(GetNumber()) + ")";
+    return "Zipf(" + this->toStringWithPrecision(GetExponent()) + ", " + this->toStringWithPrecision(GetNumber()) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void ZipfRand<IntType>::SetParameters(double exponent, IntType number)
 {
     if (!(exponent > 1.0))
-        throw std::invalid_argument("Zipf distribution: exponent should be greater than 1, but it's equal to "
-                                    + std::to_string(exponent));
+        throw std::invalid_argument("Zipf distribution: exponent should be greater than 1, but it's equal to " +
+                                    std::to_string(exponent));
     if (!(number > 0))
-        throw std::invalid_argument("Zipf distribution: number should be positive, but it's equal to "
-                                    + std::to_string(number));
+        throw std::invalid_argument("Zipf distribution: number should be positive, but it's equal to " +
+                                    std::to_string(number));
     s = exponent;
     n = number;
 
@@ -103,20 +103,20 @@ void ZipfRand<IntType>::SetParameters(double exponent, IntType number)
         table[i] *= invHarmonicNumber;
 }
 
-template < typename IntType >
+template <typename IntType>
 double ZipfRand<IntType>::P(const IntType &k) const
 {
     return (k < 1 || k > n) ? 0.0 : std::pow(k, -s) * invHarmonicNumber;
 }
 
-template < typename IntType >
-double ZipfRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double ZipfRand<IntType>::logP(const IntType &k) const
 {
     return (k < 1 || k > n) ? -INFINITY : -s * std::log(k) + std::log(invHarmonicNumber); // can be hashed
 }
 
-template < typename IntType >
-double ZipfRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double ZipfRand<IntType>::F(const IntType &k) const
 {
     if (k < 1.0)
         return 0.0;
@@ -125,7 +125,7 @@ double ZipfRand<IntType>::F(const IntType & k) const
     return math::harmonicNumber(s, k) * invHarmonicNumber;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType ZipfRand<IntType>::operator()(G &g) const
 {
@@ -139,21 +139,20 @@ IntType ZipfRand<IntType>::operator()(G &g) const
             ++k;
             sum += std::pow(k, -s) * invHarmonicNumber;
         } while (sum < U);
-    }
-    else {
+    } else {
         while (k <= hashedVarNum && table[k - 1] < U)
             ++k;
     }
     return k;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZipfRand<IntType>::Mean() const
 {
     return math::harmonicNumber(s - 1, n) * invHarmonicNumber;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZipfRand<IntType>::Variance() const
 {
     double numerator = math::harmonicNumber(s - 1, n);
@@ -162,25 +161,24 @@ long double ZipfRand<IntType>::Variance() const
     return numerator * invHarmonicNumber * invHarmonicNumber;
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType ZipfRand<IntType>::Mode() const
 {
     return 1;
 }
 
-template < typename IntType >
+template <typename IntType>
 std::complex<double> ZipfRand<IntType>::CFImpl(double t) const
 {
     std::complex<double> sum(0.0, 0.0);
-    for (int i = 1; i <= n; ++i)
-    {
+    for (int i = 1; i <= n; ++i) {
         std::complex<double> addon(-s * std::log(i), i * t);
         sum += std::exp(addon);
     }
     return invHarmonicNumber * sum;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZipfRand<IntType>::Skewness() const
 {
     long double harmonic0 = 1.0 / invHarmonicNumber;
@@ -198,7 +196,7 @@ long double ZipfRand<IntType>::Skewness() const
     return numerator / denominator;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZipfRand<IntType>::ExcessKurtosis() const
 {
     long double harmonic0 = 1.0 / invHarmonicNumber;

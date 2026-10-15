@@ -42,7 +42,7 @@ double ibeta(double x, double a, double b, double logBetaFun, double logX, doubl
  */
 double ibeta(double x, double a, double b);
 
-}
+} // namespace math
 
 } // namespace randlib
 
@@ -56,7 +56,8 @@ double ibeta(double x, double a, double b);
 namespace randlib
 {
 
-namespace math {
+namespace math
+{
 
 inline long double logBeta(long double a, long double b)
 {
@@ -66,8 +67,8 @@ inline long double logBeta(long double a, long double b)
     long double p = std::min(a, b), q = std::max(a, b);
     if (p >= 10) {
         long double corr = lgammaCorrection(p) + lgammaCorrection(q) - lgammaCorrection(p + q);
-        return -0.5l * std::log(q) + 0.5l * (randlib::consts::ln2 + randlib::consts::lnpi) + corr
-               + (p - 0.5l) * std::log(p / (p + q)) + q * std::log1p(-p / (p + q));
+        return -0.5l * std::log(q) + 0.5l * (randlib::consts::ln2 + randlib::consts::lnpi) + corr +
+               (p - 0.5l) * std::log(p / (p + q)) + q * std::log1p(-p / (p + q));
     }
     if (q >= 10) {
         long double corr = lgammaCorrection(q) - lgammaCorrection(p + q);
@@ -94,7 +95,8 @@ inline double ibetaPowerSeries1(double x, double a, double b, double logBetaFun,
     return std::exp(y) / a;
 }
 
-inline double ibetacontinuedFraction1(double x, double a, double b, int number, double logBetaFun, double logX, double log1mX)
+inline double ibetacontinuedFraction1(double x, double a, double b, int number, double logBetaFun, double logX,
+                                      double log1mX)
 {
     int n = number;
     /// avoid underflow
@@ -131,7 +133,8 @@ inline double ibetaPowerSeries2(double x, double a, double b, double logBetaFun,
     return std::exp(y) / a;
 }
 
-inline double ibetaContinuedFraction2(double x, double a, double b, int number, double logBetaFun, double logX, double log1mX)
+inline double ibetaContinuedFraction2(double x, double a, double b, int number, double logBetaFun, double logX,
+                                      double log1mX)
 {
     int n = number;
     double frac = 0.0;
@@ -154,11 +157,13 @@ inline double ibeta(double x, double a, double b, double logBetaFun, double logX
 {
     /// Check special and incorrect values of parameters
     if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
-        throw std::invalid_argument("Parameters (a, b) of incomplete beta function should be both positive, but they're equal to "
-                                    + std::to_string(a) + " and " + std::to_string(b) + " respectively");
+        throw std::invalid_argument(
+            "Parameters (a, b) of incomplete beta function should be both positive, but they're equal to " +
+            std::to_string(a) + " and " + std::to_string(b) + " respectively");
     if (x < 0.0 || x > 1.0)
-        throw std::invalid_argument("Argument x of incomplete beta function should be in interval [0, 1], but it's equal to "
-                                    + std::to_string(x));
+        throw std::invalid_argument(
+            "Argument x of incomplete beta function should be in interval [0, 1], but it's equal to " +
+            std::to_string(x));
     if (x == 0.0)
         return 0.0;
     if (x == 1.0)
@@ -218,6 +223,6 @@ inline double ibeta(double x, double a, double b)
     return ibeta(x, a, b, logBetaFun, logX, log1mX);
 }
 
-}
+} // namespace math
 
 } // namespace randlib

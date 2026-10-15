@@ -55,9 +55,9 @@ namespace portable
 long double besselI(double nu, double x);
 long double besselK(double nu, double x);
 long double riemannZeta(double s);
-}
+} // namespace portable
 
-}
+} // namespace math
 
 } // namespace randlib
 
@@ -94,12 +94,11 @@ inline void reciprocalGammaTerms(double mu, double &gam1, double &gam2, double &
     gam2 = 0.5 * (gammi + gampl);
     if (std::fabs(mu) < 0.01) {
         /// Odd part of the Taylor series 1/Γ(1+z) = Σ a_{k+1} z^k
-        static constexpr double a2 = 0.5772156649015328606, a4 = -0.0420026350340952355,
-                                a6 = -0.0421977345555443367, a8 = 0.0072189432466630995;
+        static constexpr double a2 = 0.5772156649015328606, a4 = -0.0420026350340952355, a6 = -0.0421977345555443367,
+                                a8 = 0.0072189432466630995;
         double muSq = mu * mu;
         gam1 = -(a2 + muSq * (a4 + muSq * (a6 + muSq * a8)));
-    }
-    else {
+    } else {
         gam1 = (gammi - gampl) / (2 * mu);
     }
 }
@@ -172,8 +171,7 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
         }
         rkmu = sum;
         rk1 = sum1 * xi2;
-    }
-    else {
+    } else {
         /// Steed's CF2 for K_μ and K_{μ+1}
         double bb = 2.0 * (1.0 + x), dd = 1.0 / bb, hh = dd, delh = dd;
         double q1 = 0.0, q2 = 1.0, a1 = 0.25 - xmu2, q = a1, cc = a1, a = -a1;
@@ -214,9 +212,11 @@ inline void besselIK(double nu, double x, double &ri, double &rk)
 inline void checkBesselArguments(double nu, double x)
 {
     if (nu < 0.0)
-        throw std::domain_error("Bessel function: order should be non-negative, but it's equal to " + std::to_string(nu));
+        throw std::domain_error("Bessel function: order should be non-negative, but it's equal to " +
+                                std::to_string(nu));
     if (x < 0.0)
-        throw std::domain_error("Bessel function: argument should be non-negative, but it's equal to " + std::to_string(x));
+        throw std::domain_error("Bessel function: argument should be non-negative, but it's equal to " +
+                                std::to_string(x));
 }
 
 namespace portable
@@ -262,17 +262,23 @@ inline long double besselK(double nu, double x)
 inline long double riemannZeta(double s)
 {
     if (!(s > 1.0))
-        throw std::domain_error("Riemann zeta function: argument should be greater than 1, but it's equal to " + std::to_string(s));
+        throw std::domain_error("Riemann zeta function: argument should be greater than 1, but it's equal to " +
+                                std::to_string(s));
     if (s > 60.0)
         return 1.0L + std::pow(2.0L, -s) + std::pow(3.0L, -s);
 
     /// Euler-Maclaurin summation with N terms and Bernoulli corrections up to B_20
     static constexpr int N = 20;
-    static constexpr long double B2jOverFact[] = {
-        1.0L / 12, -1.0L / 720, 1.0L / 30240, -1.0L / 1209600, 1.0L / 47900160,
-        -691.0L / 1307674368000.0L, 1.0L / 74724249600.0L, -3617.0L / 10670622842880000.0L,
-        43867.0L / 5109094217170944000.0L, -174611.0L / 802857662698291200000.0L
-    };
+    static constexpr long double B2jOverFact[] = {1.0L / 12,
+                                                  -1.0L / 720,
+                                                  1.0L / 30240,
+                                                  -1.0L / 1209600,
+                                                  1.0L / 47900160,
+                                                  -691.0L / 1307674368000.0L,
+                                                  1.0L / 74724249600.0L,
+                                                  -3617.0L / 10670622842880000.0L,
+                                                  43867.0L / 5109094217170944000.0L,
+                                                  -174611.0L / 802857662698291200000.0L};
     long double sum = 0.0L;
     for (int k = 1; k < N; ++k)
         sum += std::pow(static_cast<long double>(k), -static_cast<long double>(s));
@@ -287,7 +293,7 @@ inline long double riemannZeta(double s)
     return sum;
 }
 
-}
+} // namespace portable
 
 inline long double besselI(double nu, double x)
 {
@@ -319,8 +325,10 @@ inline long double riemannZeta(double s)
 inline double lgammaCorrection(double x)
 {
     if (x < 10.0)
-        throw std::domain_error("Stirling correction: argument should be at least 10, but it's equal to " + std::to_string(x));
-    static constexpr double c[] = {1.0 / 12, -1.0 / 360, 1.0 / 1260, -1.0 / 1680, 1.0 / 1188, -691.0 / 360360, 1.0 / 156};
+        throw std::domain_error("Stirling correction: argument should be at least 10, but it's equal to " +
+                                std::to_string(x));
+    static constexpr double c[] = {1.0 / 12,   -1.0 / 360,      1.0 / 1260, -1.0 / 1680,
+                                   1.0 / 1188, -691.0 / 360360, 1.0 / 156};
     double xInv = 1.0 / x, xInvSq = xInv * xInv;
     double sum = c[6];
     for (int i = 5; i >= 0; --i)
@@ -328,6 +336,6 @@ inline double lgammaCorrection(double x)
     return sum * xInv;
 }
 
-}
+} // namespace math
 
 } // namespace randlib

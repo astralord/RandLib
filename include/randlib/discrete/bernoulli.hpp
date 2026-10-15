@@ -30,28 +30,30 @@ public:
 public:
     void SetProbability(double probability);
 
-    [[nodiscard]] double P(const int & k) const override;
-    [[nodiscard]] double logP(const int & k) const override;
-    [[nodiscard]] double F(const int & k) const override;
-    [[nodiscard]] double S(const int & k) const override;
+    [[nodiscard]] double P(const int &k) const override;
+    [[nodiscard]] double logP(const int &k) const override;
+    [[nodiscard]] double F(const int &k) const override;
+    [[nodiscard]] double S(const int &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] int operator()(G &g) const;
+
 protected:
     int variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static int Variate(double probability, G &g);
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static int StandardVariate(G &g);
-    protected:
-    void sample(detail::EngineRef g, std::span<int> outputData) const override;
-public:
 
+protected:
+    void sample(detail::EngineRef g, std::span<int> outputData) const override;
+
+public:
     [[nodiscard]] inline double Entropy();
 };
 
 } // namespace randlib
-
 
 namespace randlib
 {
@@ -72,22 +74,22 @@ inline void BernoulliRand::SetProbability(double probability)
     SetParameters(1, probability);
 }
 
-inline double BernoulliRand::P(const int & k) const
+inline double BernoulliRand::P(const int &k) const
 {
     return (k == 0) ? q : ((k == 1) ? p : 0);
 }
 
-inline double BernoulliRand::logP(const int & k) const
+inline double BernoulliRand::logP(const int &k) const
 {
     return (k == 0) ? log1mProb : ((k == 1) ? logProb : -INFINITY);
 }
 
-inline double BernoulliRand::F(const int & k) const
+inline double BernoulliRand::F(const int &k) const
 {
     return (k < 0) ? 0.0 : ((k < 1) ? q : 1);
 }
 
-inline double BernoulliRand::S(const int & k) const
+inline double BernoulliRand::S(const int &k) const
 {
     return (k < 0) ? 1.0 : ((k < 1) ? p : 0.0);
 }
@@ -115,11 +117,10 @@ int BernoulliRand::StandardVariate(G &g)
 inline void BernoulliRand::sample(detail::EngineRef g, std::span<int> outputData) const
 {
     if (p == 0.5) {
-        for (int & var : outputData)
+        for (int &var : outputData)
             var = StandardVariate(g);
-    }
-    else {
-        for (int & var : outputData)
+    } else {
+        for (int &var : outputData)
             var = (*this)(g);
     }
 }

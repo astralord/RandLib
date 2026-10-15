@@ -49,7 +49,10 @@ public:
      * @param logVariance σ^2, variance of log(X)
      * @return LogNormal(μ, σ^2)
      */
-    [[nodiscard]] static LogNormalRand FromLogMeanLogVariance(double logMean, double logVariance) { return LogNormalRand(logMean, logVariance); }
+    [[nodiscard]] static LogNormalRand FromLogMeanLogVariance(double logMean, double logVariance)
+    {
+        return LogNormalRand(logMean, logVariance);
+    }
 
     [[nodiscard]] std::string Name() const override;
     [[nodiscard]] Support SupportType() const override { return Support::RightSemiFinite; }
@@ -61,16 +64,17 @@ public:
     [[nodiscard]] inline double GetLocation() const { return X.Mean(); }
     [[nodiscard]] inline double GetScale() const { return X.GetScale(); }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
 
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
-protected:
 
+protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
@@ -114,7 +118,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalRand<RealType> FitLocationBayes(std::span<const RealType> sample, const NormalRand<RealType> &priorDistribution, bool MAP = false);
+    NormalRand<RealType> FitLocationBayes(std::span<const RealType> sample,
+                                          const NormalRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitScaleBayes
@@ -124,7 +129,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand<RealType> FitScaleBayes(std::span<const RealType> sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
+    InverseGammaRand<RealType> FitScaleBayes(std::span<const RealType> sample,
+                                             const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitBayes
@@ -134,7 +140,9 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalInverseGammaRand<RealType> FitBayes(std::span<const RealType> sample, const NormalInverseGammaRand<RealType> &priorDistribution, bool MAP = false);
+    NormalInverseGammaRand<RealType> FitBayes(std::span<const RealType> sample,
+                                              const NormalInverseGammaRand<RealType> &priorDistribution,
+                                              bool MAP = false);
 };
 
 } // namespace randlib
@@ -142,7 +150,7 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 LogNormalRand<RealType>::LogNormalRand(double location, double squaredScale)
 {
     if (!(squaredScale > 0.0))
@@ -151,13 +159,14 @@ LogNormalRand<RealType>::LogNormalRand(double location, double squaredScale)
     SetScale(std::sqrt(squaredScale));
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string LogNormalRand<RealType>::Name() const
 {
-    return "Log-Normal(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) + ")";
+    return "Log-Normal(" + this->toStringWithPrecision(GetLocation()) + ", " + this->toStringWithPrecision(GetScale()) +
+           ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void LogNormalRand<RealType>::SetLocation(double location)
 {
     if (!std::isfinite(location))
@@ -166,7 +175,7 @@ void LogNormalRand<RealType>::SetLocation(double location)
     expMu = std::exp(X.GetLocation());
 }
 
-template < typename RealType >
+template <typename RealType>
 void LogNormalRand<RealType>::SetScale(double scale)
 {
     if (!(scale > 0.0))
@@ -175,14 +184,14 @@ void LogNormalRand<RealType>::SetScale(double scale)
     expHalfSigmaSq = std::exp(0.5 * X.Variance());
 }
 
-template < typename RealType >
-double LogNormalRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double LogNormalRand<RealType>::f(const RealType &x) const
 {
     return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
-template < typename RealType >
-double LogNormalRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double LogNormalRand<RealType>::logf(const RealType &x) const
 {
     if (x <= 0.0)
         return -INFINITY;
@@ -191,79 +200,77 @@ double LogNormalRand<RealType>::logf(const RealType & x) const
     return y - logX;
 }
 
-template < typename RealType >
-double LogNormalRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double LogNormalRand<RealType>::F(const RealType &x) const
 {
     return (x > 0.0) ? X.F(std::log(x)) : 0.0;
 }
 
-template < typename RealType >
-double LogNormalRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double LogNormalRand<RealType>::S(const RealType &x) const
 {
     return (x > 0.0) ? X.S(std::log(x)) : 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType LogNormalRand<RealType>::operator()(G &g) const
 {
     return std::exp(X(g));
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType LogNormalRand<RealType>::StandardVariate(G &g)
 {
     return std::exp(detail::standardNormal<RealType>(g));
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double LogNormalRand<RealType>::Mean() const
 {
     return expMu * expHalfSigmaSq;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double LogNormalRand<RealType>::Variance() const
 {
     double y = expMu * expHalfSigmaSq;
     return y * y * std::expm1l(X.Variance());
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType LogNormalRand<RealType>::quantileImpl(double p) const
 {
     return std::exp(X.Quantile(p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType LogNormalRand<RealType>::quantileImpl1m(double p) const
 {
     return std::exp(X.Quantile1m(p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType LogNormalRand<RealType>::Median() const
 {
     return expMu;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType LogNormalRand<RealType>::Mode() const
 {
     return expMu / (expHalfSigmaSq * expHalfSigmaSq);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double LogNormalRand<RealType>::Skewness() const
 {
     double y = std::expm1l(X.Variance());
     return (expHalfSigmaSq * expHalfSigmaSq + 2) * std::sqrt(y);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double LogNormalRand<RealType>::ExcessKurtosis() const
 {
     double temp = expHalfSigmaSq * expHalfSigmaSq;
@@ -273,7 +280,7 @@ long double LogNormalRand<RealType>::ExcessKurtosis() const
     return a + 2 * b + 3 * c - 6;
 }
 
-template < typename RealType >
+template <typename RealType>
 void LogNormalRand<RealType>::FitLocation(std::span<const RealType> sample)
 {
     /// Sanity check
@@ -282,7 +289,7 @@ void LogNormalRand<RealType>::FitLocation(std::span<const RealType> sample)
     this->SetLocation(this->GetSampleLogMean(sample));
 }
 
-template < typename RealType >
+template <typename RealType>
 void LogNormalRand<RealType>::FitScale(std::span<const RealType> sample)
 {
     /// Sanity check
@@ -292,7 +299,7 @@ void LogNormalRand<RealType>::FitScale(std::span<const RealType> sample)
     this->SetScale(std::sqrt(this->GetSampleLogVariance(sample, mu)));
 }
 
-template < typename RealType >
+template <typename RealType>
 void LogNormalRand<RealType>::Fit(std::span<const RealType> sample)
 {
     /// Sanity check
@@ -314,8 +321,9 @@ void LogNormalRand<RealType>::Fit(std::span<const RealType> sample)
     SetScale(std::sqrt(logSqDev));
 }
 
-template < typename RealType >
-NormalRand<RealType> LogNormalRand<RealType>::FitLocationBayes(std::span<const RealType> sample, const NormalRand<RealType> &priorDistribution, bool MAP)
+template <typename RealType>
+NormalRand<RealType> LogNormalRand<RealType>::FitLocationBayes(std::span<const RealType> sample,
+                                                               const NormalRand<RealType> &priorDistribution, bool MAP)
 {
     /// Sanity check
     if (!this->allElementsArePositive(sample))
@@ -331,8 +339,10 @@ NormalRand<RealType> LogNormalRand<RealType>::FitLocationBayes(std::span<const R
     return posteriorDistribution;
 }
 
-template < typename RealType >
-InverseGammaRand<RealType> LogNormalRand<RealType>::FitScaleBayes(std::span<const RealType> sample, const InverseGammaRand<RealType> &priorDistribution, bool MAP)
+template <typename RealType>
+InverseGammaRand<RealType> LogNormalRand<RealType>::FitScaleBayes(std::span<const RealType> sample,
+                                                                  const InverseGammaRand<RealType> &priorDistribution,
+                                                                  bool MAP)
 {
     /// Sanity check
     if (!this->allElementsArePositive(sample))
@@ -348,8 +358,10 @@ InverseGammaRand<RealType> LogNormalRand<RealType>::FitScaleBayes(std::span<cons
     return posteriorDistribution;
 }
 
-template < typename RealType >
-NormalInverseGammaRand<RealType> LogNormalRand<RealType>::FitBayes(std::span<const RealType> sample, const NormalInverseGammaRand<RealType> &priorDistribution, bool MAP)
+template <typename RealType>
+NormalInverseGammaRand<RealType>
+LogNormalRand<RealType>::FitBayes(std::span<const RealType> sample,
+                                  const NormalInverseGammaRand<RealType> &priorDistribution, bool MAP)
 {
     /// Sanity check
     if (!this->allElementsArePositive(sample))
@@ -368,7 +380,8 @@ NormalInverseGammaRand<RealType> LogNormalRand<RealType>::FitBayes(std::span<con
     double aux = mu0 - average;
     double newBeta = beta + 0.5 * n * (variance + lambda / newLambda * aux * aux);
     NormalInverseGammaRand<RealType> posteriorDistribution(newMu0, newLambda, newAlpha, newBeta);
-    DoublePair newParams = MAP ? static_cast<DoublePair>(posteriorDistribution.Mode()) : static_cast<DoublePair>(posteriorDistribution.Mean());
+    DoublePair newParams = MAP ? static_cast<DoublePair>(posteriorDistribution.Mode())
+                               : static_cast<DoublePair>(posteriorDistribution.Mean());
     SetLocation(newParams.first);
     SetScale(std::sqrt(newParams.second));
     return posteriorDistribution;

@@ -104,9 +104,9 @@ cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the C
   functions (`math/functions.hpp`, `gamma.hpp`, `beta.hpp`, `special_functions.hpp`) are still `double`.
   Decide with the maintainer whether to template them now or record it as a limitation.
 - **2.6 Tooling**:
-  - `.clang-format` matching the existing style (4-space indent, braces on new lines for functions and
-    classes, same line for control statements, `///` doc comments), then reformat `include/` and
-    `tests/` in one commit; add `.pre-commit-config.yaml` with clang-format.
+  - Done locally: `.clang-format` matching the existing style, a pinned clang-format pre-commit hook,
+    and one formatting pass over `include/` and `tests/`. Include sorting is deliberately disabled
+    because the converted headers still contain dependency-sensitive implementation include blocks.
   - Make the CI clang-tidy job blocking on new warnings (currently informational, only `src/`).
   - `benchmarks/` with Google Benchmark via FetchContent (option `RANDLIB_BUILD_BENCHMARKS`): normal,
     exponential, gamma, Poisson, stable sampling against `std::*_distribution`; not gated in CI.

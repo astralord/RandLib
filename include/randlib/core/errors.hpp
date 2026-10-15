@@ -18,7 +18,8 @@ public:
 };
 
 /// Reason why a distribution could not be fitted to a sample
-enum class FitErrorCode {
+enum class FitErrorCode
+{
     WrongSample, ///< the sample could not have been drawn from this distribution
     NotApplicable, ///< the method cannot be applied to this distribution or sample
     WrongReturn, ///< the method returned invalid parameters

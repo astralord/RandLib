@@ -25,8 +25,11 @@ public:
     }
 
     template <class SeedSeq>
-        requires (!std::convertible_to<SeedSeq &, std::uint64_t>)
-    explicit Pcg32(SeedSeq &sequence) { seed(sequence); }
+        requires(!std::convertible_to<SeedSeq &, std::uint64_t>)
+    explicit Pcg32(SeedSeq &sequence)
+    {
+        seed(sequence);
+    }
 
     static constexpr result_type min() noexcept { return 0; }
     static constexpr result_type max() noexcept { return ~result_type{0}; }
@@ -41,12 +44,13 @@ public:
     }
 
     template <class SeedSeq>
-        requires (!std::convertible_to<SeedSeq &, std::uint64_t>)
+        requires(!std::convertible_to<SeedSeq &, std::uint64_t>)
     void seed(SeedSeq &sequence)
     {
         std::uint32_t words[4] = {};
         sequence.generate(words, words + 4);
-        seed((static_cast<std::uint64_t>(words[0]) << 32) | words[1], (static_cast<std::uint64_t>(words[2]) << 32) | words[3]);
+        seed((static_cast<std::uint64_t>(words[0]) << 32) | words[1],
+             (static_cast<std::uint64_t>(words[2]) << 32) | words[3]);
     }
 
     constexpr result_type operator()() noexcept
@@ -91,8 +95,11 @@ public:
     }
 
     template <class SeedSeq>
-        requires (!std::convertible_to<SeedSeq &, std::uint64_t>)
-    explicit Pcg64(SeedSeq &sequence) { seed(sequence); }
+        requires(!std::convertible_to<SeedSeq &, std::uint64_t>)
+    explicit Pcg64(SeedSeq &sequence)
+    {
+        seed(sequence);
+    }
 
     static constexpr result_type min() noexcept { return 0; }
     static constexpr result_type max() noexcept { return ~result_type{0}; }
@@ -104,7 +111,7 @@ public:
     }
 
     template <class SeedSeq>
-        requires (!std::convertible_to<SeedSeq &, std::uint64_t>)
+        requires(!std::convertible_to<SeedSeq &, std::uint64_t>)
     void seed(SeedSeq &sequence)
     {
         std::uint32_t w[8] = {};

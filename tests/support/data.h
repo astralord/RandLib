@@ -13,7 +13,7 @@ struct Record
     std::string caseId;
     std::string function;
     std::string arg;
-    std::string value;  ///< textual value as stored
+    std::string value; ///< textual value as stored
     std::string status; ///< "ok", "throw:<type>" or "timeout" (golden only; "ok" for reference)
 
     double number() const;
@@ -32,6 +32,6 @@ std::vector<Record> loadRecords(const std::string &subdirectory);
 /// Splits one CSV line, honouring double-quoted fields.
 std::vector<std::string> splitCsvLine(const std::string &line);
 
-}
+} // namespace randlib_test
 
 #endif // RANDLIB_TESTS_DATA_H

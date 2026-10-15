@@ -22,7 +22,7 @@ class ZetaRand final : public DiscreteDistribution<IntType>
     double s = 2; ///< exponent
     double sm1 = 1; ///< s - 1
     double zetaS = randlib::consts::pi_sq / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
-    double logZetaS = 2 * randlib::consts::lnpi - randlib::consts::ln2 - randlib::consts::ln3;///< ln(ζ(s))
+    double logZetaS = 2 * randlib::consts::lnpi - randlib::consts::ln2 - randlib::consts::ln3; ///< ln(ζ(s))
     double b = 0.5; ///< 1 - 2^(1-s)
 
 public:
@@ -36,15 +36,16 @@ public:
     void SetExponent(double exponent);
     [[nodiscard]] inline double GetExponent() const noexcept { return s; }
 
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
-    [[nodiscard]] double S(const IntType & k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;
@@ -71,11 +72,16 @@ namespace detail
 
 inline long double zetaTail(double exponent, long double firstTerm)
 {
-    static constexpr long double B2jOverFact[] = {
-        1.0L / 12, -1.0L / 720, 1.0L / 30240, -1.0L / 1209600, 1.0L / 47900160,
-        -691.0L / 1307674368000.0L, 1.0L / 74724249600.0L, -3617.0L / 10670622842880000.0L,
-        43867.0L / 5109094217170944000.0L, -174611.0L / 802857662698291200000.0L
-    };
+    static constexpr long double B2jOverFact[] = {1.0L / 12,
+                                                  -1.0L / 720,
+                                                  1.0L / 30240,
+                                                  -1.0L / 1209600,
+                                                  1.0L / 47900160,
+                                                  -691.0L / 1307674368000.0L,
+                                                  1.0L / 74724249600.0L,
+                                                  -3617.0L / 10670622842880000.0L,
+                                                  43867.0L / 5109094217170944000.0L,
+                                                  -174611.0L / 802857662698291200000.0L};
     long double nPow = std::pow(firstTerm, -static_cast<long double>(exponent));
     long double sum = firstTerm * nPow / (exponent - 1.0L) + 0.5L * nPow;
     long double rising = exponent, term = nPow / firstTerm;
@@ -89,23 +95,24 @@ inline long double zetaTail(double exponent, long double firstTerm)
 
 } // namespace detail
 
-template < typename IntType >
+template <typename IntType>
 ZetaRand<IntType>::ZetaRand(double exponent)
 {
     SetExponent(exponent);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string ZetaRand<IntType>::Name() const
 {
     return "Zeta(" + this->toStringWithPrecision(GetExponent()) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void ZetaRand<IntType>::SetExponent(double exponent)
 {
     if (!(exponent > 1.0))
-        throw std::invalid_argument("Zeta distribution: exponent should be greater than 1, but it's equal to " + std::to_string(exponent));
+        throw std::invalid_argument("Zeta distribution: exponent should be greater than 1, but it's equal to " +
+                                    std::to_string(exponent));
     s = exponent;
     sm1 = s - 1.0;
     zetaS = math::riemannZeta(s);
@@ -113,22 +120,22 @@ void ZetaRand<IntType>::SetExponent(double exponent)
     b = -std::expm1l(-sm1 * randlib::consts::ln2);
 }
 
-template < typename IntType >
-double ZetaRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double ZetaRand<IntType>::logP(const IntType &k) const
 {
     return (k < 1) ? -INFINITY : -logZetaS - s * std::log(k);
 }
 
-template < typename IntType >
-double ZetaRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double ZetaRand<IntType>::F(const IntType &k) const
 {
     if (k < 1)
         return 0.0;
     return (k <= 100000) ? math::harmonicNumber(s, k) / zetaS : 1.0 - S(k);
 }
 
-template < typename IntType >
-double ZetaRand<IntType>::S(const IntType & k) const
+template <typename IntType>
+double ZetaRand<IntType>::S(const IntType &k) const
 {
     if (k < 1)
         return 1.0;
@@ -137,7 +144,7 @@ double ZetaRand<IntType>::S(const IntType & k) const
     return static_cast<double>(detail::zetaTail(s, static_cast<long double>(k) + 1.0L) / zetaS);
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType ZetaRand<IntType>::operator()(G &g) const
 {
@@ -152,8 +159,7 @@ IntType ZetaRand<IntType>::operator()(G &g) const
             /// there was a typo in the book - '<=' instead of '>'
             if (V * X * (T - 1) <= b * T)
                 return X;
-        }
-        else {
+        } else {
             long double logT = sm1 * std::log1pl(1.0 / X);
             long double TM1 = std::expm1l(logT);
             if (V * X * TM1 <= b * std::exp(logT))
@@ -164,13 +170,13 @@ IntType ZetaRand<IntType>::operator()(G &g) const
     throw std::runtime_error("Zeta distribution: sampling failed");
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZetaRand<IntType>::Mean() const
 {
     return (s > 2) ? math::riemannZeta(sm1) / zetaS : INFINITY;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZetaRand<IntType>::Variance() const
 {
     if (s <= 3)
@@ -180,13 +186,13 @@ long double ZetaRand<IntType>::Variance() const
     return z - y * y;
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType ZetaRand<IntType>::Mode() const
 {
     return 1;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZetaRand<IntType>::Skewness() const
 {
     if (s <= 4)
@@ -204,7 +210,7 @@ long double ZetaRand<IntType>::Skewness() const
     return std::exp(logskew);
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZetaRand<IntType>::ExcessKurtosis() const
 {
     if (s <= 5)
@@ -220,7 +226,7 @@ long double ZetaRand<IntType>::ExcessKurtosis() const
     return numerator / denominator - 3.0;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double ZetaRand<IntType>::Moment(int n) const
 {
     return (s > n + 1) ? math::riemannZeta(s - n) / zetaS : INFINITY;

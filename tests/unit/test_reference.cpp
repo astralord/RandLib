@@ -21,13 +21,18 @@ using namespace randlib_test;
 namespace
 {
 
-const std::set<std::string> TIER1 = {
-    "NormalRand", "LogNormalRand", "ExponentialRand", "GammaRand", "ChiSquaredRand", "ErlangRand", "BetaRand",
-    "BetaPrimeRand", "StudentTRand", "CauchyRand", "LevyRand", "StableRand", "HoltsmarkRand", "LandauRand",
-    "GeometricStableRand", "ParetoRand", "WeibullRand", "FrechetRand", "GumbelRand", "LaplaceRand",
-    "AsymmetricLaplaceRand", "LogisticRand", "InverseGammaRand", "InverseGaussianRand", "UniformRand", "FisherFRand",
-    "NoncentralChiSquaredRand", "PoissonRand", "BinomialRand", "NegativeBinomialRand", "PascalRand", "GeometricRand",
-    "BernoulliRand", "UniformDiscreteRand"};
+const std::set<std::string> TIER1 = {"NormalRand",         "LogNormalRand",    "ExponentialRand",
+                                     "GammaRand",          "ChiSquaredRand",   "ErlangRand",
+                                     "BetaRand",           "BetaPrimeRand",    "StudentTRand",
+                                     "CauchyRand",         "LevyRand",         "StableRand",
+                                     "HoltsmarkRand",      "LandauRand",       "GeometricStableRand",
+                                     "ParetoRand",         "WeibullRand",      "FrechetRand",
+                                     "GumbelRand",         "LaplaceRand",      "AsymmetricLaplaceRand",
+                                     "LogisticRand",       "InverseGammaRand", "InverseGaussianRand",
+                                     "UniformRand",        "FisherFRand",      "NoncentralChiSquaredRand",
+                                     "PoissonRand",        "BinomialRand",     "NegativeBinomialRand",
+                                     "PascalRand",         "GeometricRand",    "BernoulliRand",
+                                     "UniformDiscreteRand"};
 
 const std::set<std::string> STABLE = {"StableRand", "HoltsmarkRand", "LandauRand"};
 
@@ -39,9 +44,10 @@ struct Override
 
     bool matches(const std::string &caseId, const std::string &fn, const std::string &rgn) const
     {
-        bool caseMatches = casePattern == "*" ||
-                           (casePattern.back() == '*' ? caseId.rfind(casePattern.substr(0, casePattern.size() - 1), 0) == 0
-                                                      : caseId == casePattern);
+        bool caseMatches =
+            casePattern == "*" ||
+            (casePattern.back() == '*' ? caseId.rfind(casePattern.substr(0, casePattern.size() - 1), 0) == 0
+                                       : caseId == casePattern);
         return caseMatches && (function == "*" || function == fn) && (region == "*" || region == rgn);
     }
 };
@@ -71,7 +77,8 @@ struct Group
 };
 
 /// Tolerance from section 9 of the plan; "relative" or "absolute" in kind.
-double defaultTolerance(bool tier1, bool stable, const std::string &function, const std::string &region, std::string &kind)
+double defaultTolerance(bool tier1, bool stable, const std::string &function, const std::string &region,
+                        std::string &kind)
 {
     kind = "relative";
     if (function == "Mean" || function == "Variance")
@@ -108,8 +115,8 @@ double error(double actual, double expected, const std::string &kind, const std:
     if (std::fabs(expected) < DBL_MIN && std::fabs(actual) < DBL_MIN)
         return 0.0;
     /// Quantiles near 0 (the median of a symmetric law) are compared on an absolute scale
-    if ((function == "Quantile" || function == "Quantile1m" || function == "Median" || function == "Mode")
-        && std::fabs(actual - expected) <= 1e-14)
+    if ((function == "Quantile" || function == "Quantile1m" || function == "Median" || function == "Mode") &&
+        std::fabs(actual - expected) <= 1e-14)
         return 0.0;
     return relativeError(actual, expected);
 }
@@ -151,8 +158,8 @@ void runReference(bool tier1Only)
         for (const Record *r : byCase[id]) {
             std::string region = "-";
             auto tail = tails[id].find(r->arg);
-            if (!r->arg.empty() && tail != tails[id].end() && r->function != "Quantile" && r->function != "Quantile1m"
-                && r->function.rfind("CF", 0) != 0)
+            if (!r->arg.empty() && tail != tails[id].end() && r->function != "Quantile" &&
+                r->function != "Quantile1m" && r->function.rfind("CF", 0) != 0)
                 region = std::min(tail->second.first, tail->second.second) > 1e-6 ? "bulk" : "tail";
             std::string kind;
             double tolerance = defaultTolerance(tier1, stable, r->function, region, kind);
@@ -191,15 +198,15 @@ void runReference(bool tier1Only)
             bool ok = g.worst <= g.tolerance;
             if (!ok) {
                 std::ostringstream message;
-                message << caseIds[i] << " " << name << ": worst " << g.kind << " error " << g.worst
-                        << " exceeds " << g.tolerance << " at " << g.where;
+                message << caseIds[i] << " " << name << ": worst " << g.kind << " error " << g.worst << " exceeds "
+                        << g.tolerance << " at " << g.where;
                 FAIL_CHECK(message.str());
             }
         }
     }
 }
 
-}
+} // namespace
 
 TEST_CASE("Tier 1 distributions match high-precision reference values", "[reference]")
 {

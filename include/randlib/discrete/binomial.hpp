@@ -23,8 +23,7 @@ namespace randlib
  * X ~ Multin(n, 1 - p, p)
  */
 template <typename IntType>
-class BinomialDistribution : public DiscreteDistribution<IntType>,
-                                                  public ExponentialFamily<IntType, double>
+class BinomialDistribution : public DiscreteDistribution<IntType>, public ExponentialFamily<IntType, double>
 {
 protected:
     double p = 0.5; ///< probability of success
@@ -89,13 +88,14 @@ private:
     double logProbFloor(int k) const;
 
 public:
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
-    [[nodiscard]] double S(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
 
 private:
-    enum GENERATOR_ID {
+    enum GENERATOR_ID
+    {
         BERNOULLI_SUM,
         WAITING,
         REJECTION,
@@ -110,8 +110,7 @@ private:
             return BERNOULLI_SUM;
 
         /// for small [np] we use simple waiting algorithm
-        if ((npFloor <= 12) ||
-            (pRes > 0 && npFloor <= 16))
+        if ((npFloor <= 12) || (pRes > 0 && npFloor <= 16))
             return WAITING;
 
         /// otherwise
@@ -130,15 +129,18 @@ private:
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(IntType number, double probability, G &g);
-    protected:
-    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-public:
 
+protected:
+    void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Median() const override;
@@ -181,7 +183,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    BetaRand<> FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> & priorDistribution, bool MAP = false);
+    BetaRand<> FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution,
+                                   bool MAP = false);
 
     /**
      * @fn FitProbabilityMinimax
@@ -216,13 +219,13 @@ public:
 namespace randlib
 {
 
-template< typename IntType >
+template <typename IntType>
 BinomialDistribution<IntType>::BinomialDistribution(IntType number, double probability)
 {
     SetParameters(number, probability);
 }
 
-template< typename IntType >
+template <typename IntType>
 void BinomialDistribution<IntType>::SetGeneratorConstants()
 {
     minpq = std::min(p, q);
@@ -288,7 +291,7 @@ void BinomialDistribution<IntType>::SetGeneratorConstants()
     logPnpInv = logProbFloor(npFloor);
 }
 
-template< typename IntType >
+template <typename IntType>
 void BinomialDistribution<IntType>::SetParameters(IntType number, double probability)
 {
     if (!(probability >= 0.0 && probability <= 1.0))
@@ -305,31 +308,31 @@ void BinomialDistribution<IntType>::SetParameters(IntType number, double probabi
     SetGeneratorConstants();
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::SufficientStatistic(IntType x) const
 {
     return x;
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::SourceParameters() const
 {
     return this->p;
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::SourceToNatural(double sourceParameters) const
 {
     return std::log(sourceParameters) - std::log1p(-sourceParameters);
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::NaturalParameters() const
 {
     return this->logProb - this->log1mProb;
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::LogNormalizer(double theta) const
 {
     double F = n * math::softplus(theta);
@@ -337,14 +340,14 @@ double BinomialDistribution<IntType>::LogNormalizer(double theta) const
     return F;
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::LogNormalizerGradient(double theta) const
 {
     double expTheta = std::exp(theta);
     return this->n * expTheta / (1.0 + expTheta);
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::CarrierMeasure(IntType x) const
 {
     double k = -math::lfact(x);
@@ -352,7 +355,7 @@ double BinomialDistribution<IntType>::CarrierMeasure(IntType x) const
     return k;
 }
 
-template < typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::EntropyAdjusted() const
 {
     double H = this->p * this->logProb;
@@ -362,7 +365,7 @@ double BinomialDistribution<IntType>::EntropyAdjusted() const
     return -H;
 }
 
-template< typename IntType >
+template <typename IntType>
 double BinomialDistribution<IntType>::logProbFloor(int k) const
 {
     double y = lfactn;
@@ -373,14 +376,14 @@ double BinomialDistribution<IntType>::logProbFloor(int k) const
     return y;
 }
 
-template< typename IntType >
-double BinomialDistribution<IntType>::P(const IntType & k) const
+template <typename IntType>
+double BinomialDistribution<IntType>::P(const IntType &k) const
 {
     return (k < 0 || k > n) ? 0.0 : std::exp(logP(k));
 }
 
-template< typename IntType >
-double BinomialDistribution<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double BinomialDistribution<IntType>::logP(const IntType &k) const
 {
     if (k < 0 || k > n)
         return -INFINITY;
@@ -394,8 +397,8 @@ double BinomialDistribution<IntType>::logP(const IntType & k) const
     return y - 0.5 * std::log(2 * randlib::consts::pi * k * (1.0 - static_cast<double>(k) / n));
 }
 
-template< typename IntType >
-double BinomialDistribution<IntType>::F(const IntType & k) const
+template <typename IntType>
+double BinomialDistribution<IntType>::F(const IntType &k) const
 {
     if (k < 0)
         return 0.0;
@@ -408,8 +411,8 @@ double BinomialDistribution<IntType>::F(const IntType & k) const
     return math::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 
-template< typename IntType >
-double BinomialDistribution<IntType>::S(const IntType & k) const
+template <typename IntType>
+double BinomialDistribution<IntType>::S(const IntType &k) const
 {
     if (k < 0)
         return 1.0;
@@ -420,7 +423,7 @@ double BinomialDistribution<IntType>::S(const IntType & k) const
     return math::ibeta(p, kp1, nmk, logBetaFun, logProb, log1mProb);
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::variateRejection(G &g) const
 {
@@ -433,41 +436,32 @@ IntType BinomialDistribution<IntType>::variateRejection(G &g) const
     IntType X;
     do {
         float U = a4 * detail::uniform01<float>(g);
-        if (U <= a1)
-        {
+        if (U <= a1) {
             float N = detail::standardNormal<float>(g);
             Y = sigma1 * std::fabs(N);
             reject = (Y >= delta1);
-            if (!reject)
-            {
+            if (!reject) {
                 float W = detail::standardExponential<float>(g);
                 X = std::floor(Y);
                 V = -W - 0.5 * N * N + c;
             }
-        }
-        else if (U <= a2)
-        {
+        } else if (U <= a2) {
             float N = detail::standardNormal<float>(g);
             Y = sigma2 * std::fabs(N);
             reject = (Y >= delta2);
-            if (!reject)
-            {
+            if (!reject) {
                 float W = detail::standardExponential<float>(g);
                 X = std::floor(-Y);
                 V = -W - 0.5 * N * N;
             }
-        }
-        else if (U <= a3)
-        {
+        } else if (U <= a3) {
             float W1 = detail::standardExponential<float>(g);
             float W2 = detail::standardExponential<float>(g);
             Y = delta1 + W1 / coefa3;
             X = std::floor(Y);
             V = -W2 - coefa3 * Y + delta1 / nqFloor;
             reject = false;
-        }
-        else
-        {
+        } else {
             float W1 = detail::standardExponential<float>(g);
             float W2 = detail::standardExponential<float>(g);
             Y = delta2 + W1 / coefa4;
@@ -485,7 +479,7 @@ IntType BinomialDistribution<IntType>::variateRejection(G &g) const
     throw std::runtime_error("Binomial distribution: sampling failed");
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::variateWaiting(IntType number, G &g) const
 {
@@ -499,7 +493,7 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number, G &g) cons
     return X;
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double probability, G &g)
 {
@@ -515,7 +509,7 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double pro
     return X;
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, double probability, G &g)
 {
@@ -523,27 +517,24 @@ IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, doubl
     if (math::areClose(probability, 0.5)) {
         for (int i = 0; i != number; ++i)
             var += BernoulliRand::StandardVariate(g);
-    }
-    else {
+    } else {
         for (int i = 0; i != number; ++i)
             var += BernoulliRand::Variate(probability, g);
     }
     return var;
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::operator()(G &g) const
 {
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     switch (genId) {
-    case WAITING:
-    {
+    case WAITING: {
         IntType var = variateWaiting(n, g);
         return (p <= 0.5) ? var : n - var;
     }
-    case REJECTION:
-    {
+    case REJECTION: {
         /// if X ~ Bin(n, p') and Y ~ Bin(n - X, (p - p') / (1 - p'))
         /// then Z = X + Y ~ Bin(n, p)
         IntType Z = variateRejection(g);
@@ -558,17 +549,18 @@ IntType BinomialDistribution<IntType>::operator()(G &g) const
     }
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::Variate(IntType number, double probability, G &g)
 {
     /// sanity check
     if (!(number >= 0))
-        throw std::invalid_argument("Binomial distribution: number should be positive, but it's equal to "
-                                    + std::to_string(number));
+        throw std::invalid_argument("Binomial distribution: number should be positive, but it's equal to " +
+                                    std::to_string(number));
     if (!(probability >= 0.0 && probability <= 1.0))
-        throw std::invalid_argument("Binomial distribution: probability parameter should in interval [0, 1], but it's equal to "
-                                    + std::to_string(probability));
+        throw std::invalid_argument(
+            "Binomial distribution: probability parameter should in interval [0, 1], but it's equal to " +
+            std::to_string(probability));
     if (probability == 0.0)
         return 0;
     if (probability == 1.0)
@@ -581,7 +573,7 @@ IntType BinomialDistribution<IntType>::Variate(IntType number, double probabilit
     return number - variateWaiting(number, 1.0 - probability, g);
 }
 
-template< typename IntType >
+template <typename IntType>
 void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntType> outputData) const
 {
     if (p == 0.0) {
@@ -595,20 +587,17 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
 
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     switch (genId) {
-    case WAITING:
-    {
+    case WAITING: {
         if (p <= 0.5) {
             for (IntType &var : outputData)
-               var = variateWaiting(n, g);
-        }
-        else {
+                var = variateWaiting(n, g);
+        } else {
             for (IntType &var : outputData)
-               var = n - variateWaiting(n, g);
+                var = n - variateWaiting(n, g);
         }
         return;
     }
-    case REJECTION:
-    {
+    case REJECTION: {
         for (IntType &var : outputData)
             var = variateRejection(g);
         if (pRes > 0) {
@@ -617,35 +606,32 @@ void BinomialDistribution<IntType>::sample(detail::EngineRef g, std::span<IntTyp
         }
         if (p > 0.5) {
             for (IntType &var : outputData)
-               var = n - var;
+                var = n - var;
         }
         return;
     }
     case BERNOULLI_SUM:
-    default:
-    {
+    default: {
         for (IntType &var : outputData)
-           var = variateBernoulliSum(n, p, g);
+            var = variateBernoulliSum(n, p, g);
         return;
     }
     }
 }
 
-
-
-template< typename IntType >
+template <typename IntType>
 long double BinomialDistribution<IntType>::Mean() const
 {
     return np;
 }
 
-template< typename IntType >
+template <typename IntType>
 long double BinomialDistribution<IntType>::Variance() const
 {
     return np * q;
 }
 
-template< typename IntType >
+template <typename IntType>
 IntType BinomialDistribution<IntType>::Median() const
 {
     /// The median is floor(np) or ceil(np)
@@ -653,19 +639,19 @@ IntType BinomialDistribution<IntType>::Median() const
     return (this->F(lower) >= 0.5) ? lower : lower + 1;
 }
 
-template< typename IntType >
+template <typename IntType>
 IntType BinomialDistribution<IntType>::Mode() const
 {
     return std::floor(np + p);
 }
 
-template< typename IntType >
+template <typename IntType>
 long double BinomialDistribution<IntType>::Skewness() const
 {
     return (q - p) / std::sqrt(np * q);
 }
 
-template< typename IntType >
+template <typename IntType>
 long double BinomialDistribution<IntType>::ExcessKurtosis() const
 {
     long double y = 1.0 / (p * q);
@@ -673,14 +659,14 @@ long double BinomialDistribution<IntType>::ExcessKurtosis() const
     return y / n;
 }
 
-template< typename IntType >
+template <typename IntType>
 std::complex<double> BinomialDistribution<IntType>::CFImpl(double t) const
 {
     std::complex<double> y(q + p * std::cos(t), p * std::sin(t));
     return std::pow(y, n);
 }
 
-template< typename IntType >
+template <typename IntType>
 void BinomialDistribution<IntType>::FitProbability(std::span<const IntType> sample)
 {
     if (!this->allElementsAreNonNegative(sample))
@@ -690,8 +676,9 @@ void BinomialDistribution<IntType>::FitProbability(std::span<const IntType> samp
     SetParameters(n, this->GetSampleMean(sample) / n);
 }
 
-template< typename IntType >
-BetaRand<> BinomialDistribution<IntType>::FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution, bool MAP)
+template <typename IntType>
+BetaRand<> BinomialDistribution<IntType>::FitProbabilityBayes(std::span<const IntType> sample,
+                                                              const BetaDistribution<> &priorDistribution, bool MAP)
 {
     if (!this->allElementsAreNonNegative(sample))
         throw this->fitError(FitErrorCode::WrongSample, this->NON_NEGATIVITY_VIOLATION);
@@ -706,17 +693,18 @@ BetaRand<> BinomialDistribution<IntType>::FitProbabilityBayes(std::span<const In
     return posteriorDistribution;
 }
 
-template< typename IntType >
+template <typename IntType>
 BetaRand<> BinomialDistribution<IntType>::FitProbabilityMinimax(std::span<const IntType> sample)
 {
     double shape = 0.5 * std::sqrt(n);
     BetaRand B(shape, shape);
     return FitProbabilityBayes(sample, B);
 }
-template< typename IntType >
+template <typename IntType>
 std::string BinomialRand<IntType>::Name() const
 {
-    return "Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " + this->toStringWithPrecision(this->GetProbability()) + ")";
+    return "Binomial(" + this->toStringWithPrecision(this->GetNumber()) + ", " +
+           this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
 } // namespace randlib

@@ -26,7 +26,7 @@ class NakagamiDistribution : public ContinuousDistribution<RealType>
 {
     double mu = 0.5; ///< shape μ
     double omega = 1; ///< spread ω
-    GammaRand<RealType> Y {};
+    GammaRand<RealType> Y{};
     double lgammaShapeRatio = 0; ///< log(Γ(μ + 0.5) / Γ(μ))
 
 protected:
@@ -67,19 +67,21 @@ public:
      */
     [[nodiscard]] inline double GetLogGammaShapeRatio() const noexcept { return lgammaShapeRatio; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -175,15 +177,16 @@ public:
      */
     [[nodiscard]] double GetScale() const noexcept { return sigma; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Mode() const override;
@@ -222,15 +225,16 @@ public:
      */
     [[nodiscard]] double GetScale() const noexcept { return sigma; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -260,13 +264,13 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 NakagamiDistribution<RealType>::NakagamiDistribution(double shape, double spread)
 {
     SetParameters(shape, spread);
 }
 
-template < typename RealType >
+template <typename RealType>
 void NakagamiDistribution<RealType>::SetParameters(double shape, double spread)
 {
     if (!(shape > 0.0))
@@ -279,8 +283,8 @@ void NakagamiDistribution<RealType>::SetParameters(double shape, double spread)
     lgammaShapeRatio = std::lgammal(mu + 0.5) - Y.GetLogGammaShape();
 }
 
-template < typename RealType >
-double NakagamiDistribution<RealType>::f(const RealType & x) const
+template <typename RealType>
+double NakagamiDistribution<RealType>::f(const RealType &x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -292,8 +296,8 @@ double NakagamiDistribution<RealType>::f(const RealType & x) const
     return 2 * x * Y.f(x * x);
 }
 
-template < typename RealType >
-double NakagamiDistribution<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double NakagamiDistribution<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
         return -INFINITY;
@@ -305,36 +309,34 @@ double NakagamiDistribution<RealType>::logf(const RealType & x) const
     return randlib::consts::ln2 + std::log(x) + Y.logf(x * x);
 }
 
-template < typename RealType >
-double NakagamiDistribution<RealType>::F(const RealType & x) const
+template <typename RealType>
+double NakagamiDistribution<RealType>::F(const RealType &x) const
 {
     return (x > 0.0) ? Y.F(x * x) : 0.0;
 }
 
-template < typename RealType >
-double NakagamiDistribution<RealType>::S(const RealType & x) const
+template <typename RealType>
+double NakagamiDistribution<RealType>::S(const RealType &x) const
 {
     return (x > 0.0) ? Y.S(x * x) : 1.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType NakagamiDistribution<RealType>::operator()(G &g) const
 {
     return std::sqrt(Y(g));
 }
 
-template < typename RealType >
+template <typename RealType>
 void NakagamiDistribution<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     Y.Sample(g, outputData);
-    for (RealType & var : outputData)
+    for (RealType &var : outputData)
         var = std::sqrt(var);
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double NakagamiDistribution<RealType>::Mean() const
 {
     long double y = lgammaShapeRatio;
@@ -342,7 +344,7 @@ long double NakagamiDistribution<RealType>::Mean() const
     return std::exp(y);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double NakagamiDistribution<RealType>::Variance() const
 {
     long double y = lgammaShapeRatio;
@@ -350,13 +352,13 @@ long double NakagamiDistribution<RealType>::Variance() const
     return omega * (1 - y / mu);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType NakagamiDistribution<RealType>::Median() const
 {
     return std::sqrt(Y.Quantile(0.5));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType NakagamiDistribution<RealType>::Mode() const
 {
     long double mode = 1.0 - 0.5 / mu;
@@ -365,7 +367,7 @@ RealType NakagamiDistribution<RealType>::Mode() const
     return std::sqrt(omega * mode);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double NakagamiDistribution<RealType>::Skewness() const
 {
     long double thirdMoment = lgammaShapeRatio;
@@ -376,7 +378,7 @@ long double NakagamiDistribution<RealType>::Skewness() const
     return (thirdMoment - mean * (3 * variance + mean * mean)) / std::pow(variance, 1.5);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double NakagamiDistribution<RealType>::FourthMoment() const
 {
     long double fourthMoment = omega / mu;
@@ -385,7 +387,7 @@ long double NakagamiDistribution<RealType>::FourthMoment() const
     return fourthMoment;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double NakagamiDistribution<RealType>::ExcessKurtosis() const
 {
     long double mean = Mean();
@@ -399,58 +401,58 @@ long double NakagamiDistribution<RealType>::ExcessKurtosis() const
     return numerator / denominator - 3.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType NakagamiDistribution<RealType>::quantileImpl(double p) const
 {
     return std::sqrt(Y.Quantile(p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType NakagamiDistribution<RealType>::quantileImpl1m(double p) const
 {
     return std::sqrt(Y.Quantile1m(p));
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> NakagamiDistribution<RealType>::CFImpl(double t) const
 {
     if (mu >= 0.5)
         return ContinuousDistribution<RealType>::CFImpl(t);
 
-    double re = this->ExpectedValue([t] (double x)
-    {
-        if (x == 0.0)
-            return 0.0;
-        return std::cos(t * x) - 1.0;
-    }, 0, INFINITY) + 1.0;
+    double re = this->ExpectedValue(
+                    [t](double x) {
+                        if (x == 0.0)
+                            return 0.0;
+                        return std::cos(t * x) - 1.0;
+                    },
+                    0, INFINITY) +
+                1.0;
 
-    double im = this->ExpectedValue([t] (double x)
-    {
-        return std::sin(t * x);
-    }, 0, INFINITY);
+    double im = this->ExpectedValue([t](double x) { return std::sin(t * x); }, 0, INFINITY);
 
     return std::complex<double>(re, im);
 }
 /// NAKAGAMI
-template < typename RealType >
+template <typename RealType>
 std::string NakagamiRand<RealType>::Name() const
 {
-    return "Nakagami(" + this->toStringWithPrecision(this->GetShape()) + ", " + this->toStringWithPrecision(this->GetSpread()) + ")";
+    return "Nakagami(" + this->toStringWithPrecision(this->GetShape()) + ", " +
+           this->toStringWithPrecision(this->GetSpread()) + ")";
 }
 /// CHI
-template < typename RealType >
+template <typename RealType>
 ChiRand<RealType>::ChiRand(int degree)
 {
     SetDegree(degree);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string ChiRand<RealType>::Name() const
 {
-    return "Chi(" + this->toStringWithPrecision(GetDegree()) +  ")";
+    return "Chi(" + this->toStringWithPrecision(GetDegree()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void ChiRand<RealType>::SetDegree(int degree)
 {
     if (!(degree >= 1))
@@ -458,7 +460,7 @@ void ChiRand<RealType>::SetDegree(int degree)
     NakagamiDistribution<RealType>::SetParameters(0.5 * degree, degree);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ChiRand<RealType>::Skewness() const
 {
     long double mean = this->Mean();
@@ -468,7 +470,7 @@ long double ChiRand<RealType>::Skewness() const
     return skew;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double ChiRand<RealType>::ExcessKurtosis() const
 {
     long double mean = this->Mean();
@@ -481,19 +483,19 @@ long double ChiRand<RealType>::ExcessKurtosis() const
     return 2 * kurt;
 }
 /// MAXWELL-BOLTZMANN
-template < typename RealType >
+template <typename RealType>
 MaxwellBoltzmannRand<RealType>::MaxwellBoltzmannRand(double scale)
 {
     SetScale(scale);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string MaxwellBoltzmannRand<RealType>::Name() const
 {
     return "Maxwell-Boltzmann(" + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void MaxwellBoltzmannRand<RealType>::SetScale(double scale)
 {
     if (!(scale > 0.0))
@@ -502,7 +504,7 @@ void MaxwellBoltzmannRand<RealType>::SetScale(double scale)
     NakagamiDistribution<RealType>::SetParameters(1.5, 3 * sigma * sigma);
 }
 
-template < typename RealType >
+template <typename RealType>
 double MaxwellBoltzmannRand<RealType>::f(const RealType &x) const
 {
     if (x <= 0)
@@ -513,8 +515,8 @@ double MaxwellBoltzmannRand<RealType>::f(const RealType &x) const
     return randlib::consts::sqrt2 * randlib::consts::inv_sqrtpi * xAdjSq * y / sigma;
 }
 
-template < typename RealType >
-double MaxwellBoltzmannRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double MaxwellBoltzmannRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -524,7 +526,7 @@ double MaxwellBoltzmannRand<RealType>::F(const RealType & x) const
     return std::erf(xAdj) - y;
 }
 
-template < typename RealType >
+template <typename RealType>
 double MaxwellBoltzmannRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
@@ -535,7 +537,7 @@ double MaxwellBoltzmannRand<RealType>::S(const RealType &x) const
     return std::erfc(xAdj) + y;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType MaxwellBoltzmannRand<RealType>::operator()(G &g) const
 {
@@ -544,26 +546,25 @@ RealType MaxwellBoltzmannRand<RealType>::operator()(G &g) const
     return sigma * std::sqrt(2 * W + N * N);
 }
 
-
-template < typename RealType >
+template <typename RealType>
 long double MaxwellBoltzmannRand<RealType>::Mean() const
 {
     return 2 * randlib::consts::inv_sqrtpi * randlib::consts::sqrt2 * sigma;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MaxwellBoltzmannRand<RealType>::Variance() const
 {
     return (3 - 8.0 * randlib::consts::inv_pi) * sigma * sigma;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType MaxwellBoltzmannRand<RealType>::Mode() const
 {
     return randlib::consts::sqrt2 * sigma;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MaxwellBoltzmannRand<RealType>::Skewness() const
 {
     long double skewness = 3 * randlib::consts::pi - 8;
@@ -572,7 +573,7 @@ long double MaxwellBoltzmannRand<RealType>::Skewness() const
     return (16 - 5 * randlib::consts::pi) * skewness;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double MaxwellBoltzmannRand<RealType>::ExcessKurtosis() const
 {
     long double numerator = 40 - 3 * randlib::consts::pi;
@@ -583,19 +584,19 @@ long double MaxwellBoltzmannRand<RealType>::ExcessKurtosis() const
     return 4 * numerator / denominator;
 }
 /// RAYLEIGH
-template < typename RealType >
+template <typename RealType>
 RayleighRand<RealType>::RayleighRand(double scale)
 {
     SetScale(scale);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string RayleighRand<RealType>::Name() const
 {
     return "Rayleigh(" + this->toStringWithPrecision(GetScale()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void RayleighRand<RealType>::SetScale(double scale)
 {
     if (!(scale > 0.0))
@@ -604,8 +605,8 @@ void RayleighRand<RealType>::SetScale(double scale)
     NakagamiDistribution<RealType>::SetParameters(1, 2 * sigma * sigma);
 }
 
-template < typename RealType >
-double RayleighRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double RayleighRand<RealType>::f(const RealType &x) const
 {
     if (x <= 0)
         return 0.0;
@@ -613,8 +614,8 @@ double RayleighRand<RealType>::f(const RealType & x) const
     return y * std::exp(-0.5 * x * y);
 }
 
-template < typename RealType >
-double RayleighRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double RayleighRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0)
         return 0.0;
@@ -622,8 +623,8 @@ double RayleighRand<RealType>::F(const RealType & x) const
     return -std::expm1l(-0.5 * xAdj * xAdj);
 }
 
-template < typename RealType >
-double RayleighRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double RayleighRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0)
         return 1.0;
@@ -631,7 +632,7 @@ double RayleighRand<RealType>::S(const RealType & x) const
     return std::exp(-0.5 * xAdj * xAdj);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType RayleighRand<RealType>::operator()(G &g) const
 {
@@ -639,60 +640,61 @@ RealType RayleighRand<RealType>::operator()(G &g) const
     return sigma * std::sqrt(2 * W);
 }
 
-
-template < typename RealType >
+template <typename RealType>
 long double RayleighRand<RealType>::Mean() const
 {
     return sigma * randlib::consts::sqrtpi * randlib::consts::inv_sqrt2;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double RayleighRand<RealType>::Variance() const
 {
     return (2.0 - randlib::consts::half_pi) * sigma * sigma;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType RayleighRand<RealType>::quantileImpl(double p) const
 {
     return sigma * std::sqrt(-2 * std::log1pl(-p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType RayleighRand<RealType>::quantileImpl1m(double p) const
 {
     return sigma * std::sqrt(-2 * std::log(p));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType RayleighRand<RealType>::Median() const
 {
     static const double medianCoef = std::sqrt(randlib::consts::ln2 + randlib::consts::ln2);
     return sigma * medianCoef;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType RayleighRand<RealType>::Mode() const
 {
     return sigma;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double RayleighRand<RealType>::Skewness() const
 {
-    static const long double skewness = 2 * randlib::consts::sqrtpi * (randlib::consts::pi - 3) / std::pow(4.0 - randlib::consts::pi, 1.5);
+    static const long double skewness =
+        2 * randlib::consts::sqrtpi * (randlib::consts::pi - 3) / std::pow(4.0 - randlib::consts::pi, 1.5);
     return skewness;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double RayleighRand<RealType>::ExcessKurtosis() const
 {
     static constexpr long double temp = 4 - randlib::consts::pi;
-    static constexpr long double kurtosis = -(6 * randlib::consts::pi * randlib::consts::pi - 24 * randlib::consts::pi + 16) / (temp * temp);
+    static constexpr long double kurtosis =
+        -(6 * randlib::consts::pi * randlib::consts::pi - 24 * randlib::consts::pi + 16) / (temp * temp);
     return kurtosis;
 }
 
-template < typename RealType >
+template <typename RealType>
 void RayleighRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased)
 {
     /// Sanity check
@@ -711,8 +713,7 @@ void RayleighRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased
         coef -= 1.0 / (192 * std::pow(n, 3));
         coef += 0.125 / n;
         SetScale(std::exp(std::log1pl(coef) + 0.5 * sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
-    }
-    else if (n > 15) {
+    } else if (n > 15) {
         double coef = math::lfact(n);
         coef += math::lfact(n - 1);
         coef += 2 * n * randlib::consts::ln2;
@@ -721,9 +722,7 @@ void RayleighRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased
         coef -= 0.5 * randlib::consts::lnpi;
         coef += 0.5 * std::log(sigmaBiasedSq);
         SetScale(std::exp(coef));
-    }
-    else
-    {
+    } else {
         double scale = math::lfact(n - 1);
         scale += math::lfact(n);
         scale += 0.5 * std::log(n / randlib::consts::pi * sigmaBiasedSq);

@@ -35,15 +35,16 @@ public:
     void SetValue(double value);
     [[nodiscard]] inline double GetValue() const noexcept { return a; }
 
-    [[nodiscard]] double f(const double & x) const override;
-    [[nodiscard]] double logf(const double & x) const override;
-    [[nodiscard]] double F(const double & x) const override;
+    [[nodiscard]] double f(const double &x) const override;
+    [[nodiscard]] double logf(const double &x) const override;
+    [[nodiscard]] double F(const double &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] double operator()(G &g) const;
+
 protected:
     double variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] double Median() const override;
@@ -89,17 +90,17 @@ inline void DegenerateRand::SetValue(double value)
     a = value;
 }
 
-inline double DegenerateRand::f(const double & x) const
+inline double DegenerateRand::f(const double &x) const
 {
     return (x == a) ? INFINITY : 0.0;
 }
 
-inline double DegenerateRand::logf(const double & x) const
+inline double DegenerateRand::logf(const double &x) const
 {
     return (x == a) ? INFINITY : -INFINITY;
 }
 
-inline double DegenerateRand::F(const double & x) const
+inline double DegenerateRand::F(const double &x) const
 {
     return (x < a) ? 0.0 : 1.0;
 }

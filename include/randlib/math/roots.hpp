@@ -23,7 +23,8 @@ template <std::floating_point Real>
 bool bracketResolved(Real a, Real b)
 {
     const Real scale = std::min(std::fabs(a), std::fabs(b));
-    return b - a <= 4 * std::numeric_limits<Real>::epsilon() * scale || b - a <= 4 * std::numeric_limits<Real>::denorm_min();
+    return b - a <= 4 * std::numeric_limits<Real>::epsilon() * scale ||
+           b - a <= 4 * std::numeric_limits<Real>::denorm_min();
 }
 
 template <std::floating_point Real>
@@ -78,7 +79,7 @@ Real inverseCubicStep(Real a, Real b, Real d, Real e, Real fa, Real fb, Real fd,
     return c;
 }
 
-}
+} // namespace detail
 
 /**
  * @fn toms748
@@ -111,7 +112,7 @@ std::pair<Real, Real> toms748(const F &f, Real a, Real b, Real fa, Real fb, int 
     Real d = 0, fd = 0, e = 0, fe = 0;
     int count = maxIterations;
     /// replaces [a, b] by the sub-bracket around c and keeps the dropped end in (d, fd)
-    auto bracket = [&f, &a, &b, &fa, &fb, &d, &fd] (Real c) {
+    auto bracket = [&f, &a, &b, &fa, &fb, &d, &fd](Real c) {
         const Real tolerance = 2 * std::numeric_limits<Real>::epsilon();
         if (b - a < 2 * tolerance * std::fabs(a))
             c = a + (b - a) / 2;
@@ -132,8 +133,7 @@ std::pair<Real, Real> toms748(const F &f, Real a, Real b, Real fa, Real fb, int 
             fd = fb;
             b = c;
             fb = fc;
-        }
-        else {
+        } else {
             d = a;
             fd = fa;
             a = c;
@@ -152,9 +152,9 @@ std::pair<Real, Real> toms748(const F &f, Real a, Real b, Real fa, Real fb, int 
     }
     const Real minDifference = 32 * std::numeric_limits<Real>::min();
     auto distinct = [&] {
-        return std::fabs(fa - fb) >= minDifference && std::fabs(fa - fd) >= minDifference
-               && std::fabs(fa - fe) >= minDifference && std::fabs(fb - fd) >= minDifference
-               && std::fabs(fb - fe) >= minDifference && std::fabs(fd - fe) >= minDifference;
+        return std::fabs(fa - fb) >= minDifference && std::fabs(fa - fd) >= minDifference &&
+               std::fabs(fa - fe) >= minDifference && std::fabs(fb - fd) >= minDifference &&
+               std::fabs(fb - fe) >= minDifference && std::fabs(fd - fe) >= minDifference;
     };
     while (!done()) {
         const Real a0 = a, b0 = b;
@@ -219,8 +219,8 @@ Real findRoot(const F &f, std::type_identity_t<Real> a, std::type_identity_t<Rea
  * @param stepTol step tolerance
  * @return true if success, false otherwise
  */
-template<typename RealType>
-bool findRootNewtonFirstOrder(const std::function<DoublePair (RealType)> &funPtr, RealType & root,
+template <typename RealType>
+bool findRootNewtonFirstOrder(const std::function<DoublePair(RealType)> &funPtr, RealType &root,
                               long double funTol = 1e-10, long double stepTol = 1e-6)
 {
     /// Sanity check
@@ -272,8 +272,8 @@ bool findRootNewtonFirstOrder(const std::function<DoublePair (RealType)> &funPtr
  * @param stepTol step tolerance
  * @return true if success, false otherwise
  */
-template<typename RealType>
-bool findRootNewtonSecondOrder(const std::function<DoubleTriplet (RealType)> &funPtr, RealType & root,
+template <typename RealType>
+bool findRootNewtonSecondOrder(const std::function<DoubleTriplet(RealType)> &funPtr, RealType &root,
                                long double funTol = 1e-10, long double stepTol = 1e-6)
 {
     /// Sanity check
@@ -325,13 +325,13 @@ bool findRootNewtonSecondOrder(const std::function<DoubleTriplet (RealType)> &fu
  * @param stepTol step tolerance
  * @return true if success, false otherwise
  */
-bool findRootNewtonFirstOrder2d(const std::function<DoublePair (DoublePair)> &funPtr,
-                                const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
-                                DoublePair & root, long double funTol = 1e-10, long double stepTol = 1e-6);
+bool findRootNewtonFirstOrder2d(const std::function<DoublePair(DoublePair)> &funPtr,
+                                const std::function<std::tuple<DoublePair, DoublePair>(DoublePair)> &gradPtr,
+                                DoublePair &root, long double funTol = 1e-10, long double stepTol = 1e-6);
 
-inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair (DoublePair)> &funPtr,
-                                const std::function<std::tuple<DoublePair, DoublePair> (DoublePair)> &gradPtr,
-                                DoublePair &root, long double funTol, long double stepTol)
+inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair(DoublePair)> &funPtr,
+                                       const std::function<std::tuple<DoublePair, DoublePair>(DoublePair)> &gradPtr,
+                                       DoublePair &root, long double funTol, long double stepTol)
 {
     /// Sanity check
     funTol = funTol > MIN_POSITIVE ? funTol : MIN_POSITIVE;
@@ -377,9 +377,8 @@ inline bool findRootNewtonFirstOrder2d(const std::function<DoublePair (DoublePai
         double relDiffX1 = std::fabs(diffX1 / oldRoot.first);
         double relDiffX2 = std::fabs(diffX2 / oldRoot.second);
         double relDiffX = std::max(relDiffX1, relDiffX2);
-        if (std::min(diffX, relDiffX) < stepTol)
-        {
-            double diffY1 = fun1- oldFun.first;
+        if (std::min(diffX, relDiffX) < stepTol) {
+            double diffY1 = fun1 - oldFun.first;
             double diffY2 = fun2 - oldFun.second;
             double relDiffY1 = std::fabs(diffY1 / oldFun.first);
             double relDiffY2 = std::fabs(diffY2 / oldFun.second);

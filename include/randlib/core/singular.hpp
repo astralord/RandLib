@@ -18,14 +18,16 @@ class SingularDistribution : public UnivariateDistribution<double>
 {
 protected:
     SingularDistribution();
+
 public:
     virtual ~SingularDistribution() {}
-protected:
 
+protected:
 private:
-    [[nodiscard]] double Hazard(const double&) const override;
+    [[nodiscard]] double Hazard(const double &) const override;
     [[nodiscard]] double Mode() const override;
-    long double ExpectedValue(const std::function<double (double)> &funPtr, double minPoint, double maxPoint) const override;
+    long double ExpectedValue(const std::function<double(double)> &funPtr, double minPoint,
+                              double maxPoint) const override;
     [[nodiscard]] double LikelihoodFunction(std::span<const double> sample) const override;
     [[nodiscard]] double LogLikelihoodFunction(std::span<const double> sample) const override;
 };
@@ -37,7 +39,6 @@ namespace randlib
 
 inline SingularDistribution::SingularDistribution()
 {
-
 }
 
 inline double SingularDistribution::Hazard(const double &) const
@@ -45,7 +46,7 @@ inline double SingularDistribution::Hazard(const double &) const
     return NAN;
 }
 
-inline long double SingularDistribution::ExpectedValue(const std::function<double (double)> &, double, double ) const
+inline long double SingularDistribution::ExpectedValue(const std::function<double(double)> &, double, double) const
 {
     return NAN;
 }

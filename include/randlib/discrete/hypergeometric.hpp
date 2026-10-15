@@ -35,15 +35,16 @@ public:
     [[nodiscard]] inline IntType GetDrawsNum() { return n; }
     [[nodiscard]] inline IntType GetSuccessesNum() { return K; }
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;
@@ -59,21 +60,20 @@ public:
 namespace randlib
 {
 
-template < typename IntType >
+template <typename IntType>
 HyperGeometricRand<IntType>::HyperGeometricRand(IntType totalSize, IntType drawsNum, IntType successesNum)
 {
     SetParameters(totalSize, drawsNum, successesNum);
 }
 
-template < typename IntType >
+template <typename IntType>
 std::string HyperGeometricRand<IntType>::Name() const
 {
-    return "Hypergeometric(" + this->toStringWithPrecision(N) + ", "
-                             + this->toStringWithPrecision(n) + ", "
-                             + this->toStringWithPrecision(K) + ")";
+    return "Hypergeometric(" + this->toStringWithPrecision(N) + ", " + this->toStringWithPrecision(n) + ", " +
+           this->toStringWithPrecision(K) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void HyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType drawsNum, IntType successesNum)
 {
     if (!(totalSize > 0 && drawsNum > 0 && successesNum > 0))
@@ -95,14 +95,14 @@ void HyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType draws
     pmfCoef -= math::lfact(N);
 }
 
-template < typename IntType >
-double HyperGeometricRand<IntType>::P(const IntType & k) const
+template <typename IntType>
+double HyperGeometricRand<IntType>::P(const IntType &k) const
 {
     return (k < MinValue() || k > MaxValue()) ? 0.0 : std::exp(logP(k));
 }
 
-template < typename IntType >
-double HyperGeometricRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double HyperGeometricRand<IntType>::logP(const IntType &k) const
 {
     if (k < MinValue() || k > MaxValue())
         return -INFINITY;
@@ -113,8 +113,8 @@ double HyperGeometricRand<IntType>::logP(const IntType & k) const
     return pmfCoef - y;
 }
 
-template < typename IntType >
-double HyperGeometricRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double HyperGeometricRand<IntType>::F(const IntType &k) const
 {
     if (k < MinValue())
         return 0.0;
@@ -135,14 +135,13 @@ double HyperGeometricRand<IntType>::F(const IntType & k) const
     return sum;
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType HyperGeometricRand<IntType>::operator()(G &g) const
 {
     double p = p0;
     IntType sum = 0;
-    for (int i = 1; i <= n; ++i)
-    {
+    for (int i = 1; i <= n; ++i) {
         if (BernoulliRand::Variate(p, g) && ++sum >= K)
             return sum;
         p = K - sum;
@@ -151,33 +150,33 @@ IntType HyperGeometricRand<IntType>::operator()(G &g) const
     return sum;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double HyperGeometricRand<IntType>::Mean() const
 {
     return static_cast<double>(n * K) / N;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double HyperGeometricRand<IntType>::Variance() const
 {
     long double numerator = n;
     numerator *= K;
     numerator *= N - K;
-    numerator *= N  - n;
+    numerator *= N - n;
     long double denominator = N;
     denominator *= N;
     denominator *= N - 1;
     return numerator / denominator;
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType HyperGeometricRand<IntType>::Mode() const
 {
     double mode = (n + 1) * (K + 1);
     return std::floor(mode / (N + 2));
 }
 
-template < typename IntType >
+template <typename IntType>
 long double HyperGeometricRand<IntType>::Skewness() const
 {
     long double skewness = N - 1;
@@ -191,7 +190,7 @@ long double HyperGeometricRand<IntType>::Skewness() const
     return skewness / (N - 2);
 }
 
-template < typename IntType >
+template <typename IntType>
 long double HyperGeometricRand<IntType>::ExcessKurtosis() const
 {
     long double numerator = N;

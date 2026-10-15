@@ -51,7 +51,7 @@ void checkSeeding()
     CHECK(reseeded == Engine(7));
 }
 
-}
+} // namespace
 
 TEST_CASE("Engines are seeded from all bits of the seed", "[engines]")
 {
@@ -102,7 +102,8 @@ TEST_CASE("Legacy engines reproduce the raw output of RandLib 1.2", "[engines]")
     for (std::uint32_t value : {0x41e0ca2au, 0xe36ed7bu, 0xa3e4ae72u, 0xe5fb9220u})
         CHECK(jkiss() == value);
     legacy::JLKiss64Engine jlkiss(7);
-    for (std::uint64_t value : {0x3522a7f986f0823fULL, 0x1d3111d61d5c3260ULL, 0x5ef9e390aef7967eULL, 0x208fc63648fab68cULL})
+    for (std::uint64_t value :
+         {0x3522a7f986f0823fULL, 0x1d3111d61d5c3260ULL, 0x5ef9e390aef7967eULL, 0x208fc63648fab68cULL})
         CHECK(jlkiss() == value);
 }
 

@@ -56,14 +56,17 @@ std::string checkMoments(const UnivariateDistribution<T> &d, const std::vector<T
 
     double meanError = std::fabs(static_cast<double>(sampleMean) - mean) / std::sqrt(variance / n);
     if (meanError > MAX_STANDARD_ERRORS)
-        out << "sample mean " << static_cast<double>(sampleMean) << " is " << meanError << " standard errors from Mean() = " << mean << "; ";
+        out << "sample mean " << static_cast<double>(sampleMean) << " is " << meanError
+            << " standard errors from Mean() = " << mean << "; ";
 
     double kurtosis = static_cast<double>(d.ExcessKurtosis());
     if (std::isfinite(kurtosis)) {
         /// Var(s²) = σ⁴ (κ / n + 2 / (n - 1)) exactly, κ being the excess kurtosis
-        double varianceError = std::fabs(sampleVariance - variance) / (variance * std::sqrt(kurtosis / n + 2 / (n - 1)));
+        double varianceError =
+            std::fabs(sampleVariance - variance) / (variance * std::sqrt(kurtosis / n + 2 / (n - 1)));
         if (varianceError > MAX_STANDARD_ERRORS)
-            out << "sample variance " << sampleVariance << " is " << varianceError << " standard errors from Variance() = " << variance << "; ";
+            out << "sample variance " << sampleVariance << " is " << varianceError
+                << " standard errors from Variance() = " << variance << "; ";
     }
     return out.str();
 }
@@ -89,7 +92,8 @@ std::string checkCharacteristicFunction(const UnivariateDistribution<T> &d, std:
         std::complex<double> phi = d.CF(t);
         double distance = std::abs(empirical - phi) * std::sqrt(n);
         if (distance > MAX_STANDARD_ERRORS)
-            out << "empirical characteristic function at t = " << t << " is " << empirical << ", CF(t) = " << phi << "; ";
+            out << "empirical characteristic function at t = " << t << " is " << empirical << ", CF(t) = " << phi
+                << "; ";
     }
     return out.str();
 }
@@ -107,14 +111,15 @@ std::vector<std::string> runContinuous(const std::vector<const Case *> &cases, M
             d->Sample(probe);
             bool hasCdf = true;
             try {
-                d->F(probe.front());
+                static_cast<void>(d->F(probe.front()));
             } catch (const randlib::not_implemented &) {
                 hasCdf = false;
             }
             size_t n = hasCdf ? affordableSampleSize([&d](double x) { return d->F(x); }, probe) : SAMPLE_SIZE;
             std::vector<double> sample(n);
             d->Sample(sample);
-            if (std::any_of(sample.begin(), sample.end(), [&d](double x) { return x < d->MinValue() || x > d->MaxValue() || std::isnan(x); }))
+            if (std::any_of(sample.begin(), sample.end(),
+                            [&d](double x) { return x < d->MinValue() || x > d->MaxValue() || std::isnan(x); }))
                 out << "sample outside the support; ";
             std::string moments = checkMoments(*d, sample);
             std::sort(sample.begin(), sample.end());
@@ -145,7 +150,7 @@ void report(const std::vector<const Case *> &cases, const std::vector<std::strin
     CHECK(total == 0);
 }
 
-}
+} // namespace
 
 TEST_CASE("Continuous samples follow their distribution", "[statistical]")
 {
@@ -170,7 +175,8 @@ TEST_CASE("Discrete samples follow their distribution", "[statistical]")
             d->Reseed(BASE_SEED + i);
             std::vector<int> sample(SAMPLE_SIZE);
             d->Sample(sample);
-            if (std::any_of(sample.begin(), sample.end(), [&d](int k) { return k < d->MinValue() || k > d->MaxValue(); }))
+            if (std::any_of(sample.begin(), sample.end(),
+                            [&d](int k) { return k < d->MinValue() || k > d->MaxValue(); }))
                 out << "sample outside the support; ";
             out << checkMoments(*d, sample);
 

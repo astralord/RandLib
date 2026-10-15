@@ -33,16 +33,17 @@ public:
     [[nodiscard]] inline double GetMean() const noexcept { return mu; }
     [[nodiscard]] inline double GetShape() const noexcept { return lambda; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Mode() const override;
@@ -61,19 +62,20 @@ private:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 InverseGaussianRand<RealType>::InverseGaussianRand(double mean, double shape)
 {
     SetParameters(mean, shape);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string InverseGaussianRand<RealType>::Name() const
 {
-    return "Inverse-Gaussian(" + this->toStringWithPrecision(GetMean()) + ", " + this->toStringWithPrecision(GetShape()) + ")";
+    return "Inverse-Gaussian(" + this->toStringWithPrecision(GetMean()) + ", " +
+           this->toStringWithPrecision(GetShape()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void InverseGaussianRand<RealType>::SetParameters(double mean, double shape)
 {
     if (!(mean > 0.0))
@@ -87,14 +89,14 @@ void InverseGaussianRand<RealType>::SetParameters(double mean, double shape)
     cdfCoef = std::exp(2 * lambda / mu);
 }
 
-template < typename RealType >
-double InverseGaussianRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double InverseGaussianRand<RealType>::f(const RealType &x) const
 {
     return (x > 0.0) ? std::exp(logf(x)) : 0.0;
 }
 
-template < typename RealType >
-double InverseGaussianRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double InverseGaussianRand<RealType>::logf(const RealType &x) const
 {
     if (x <= 0.0)
         return -INFINITY;
@@ -106,8 +108,8 @@ double InverseGaussianRand<RealType>::logf(const RealType & x) const
     return y + z;
 }
 
-template < typename RealType >
-double InverseGaussianRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double InverseGaussianRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -123,8 +125,8 @@ double InverseGaussianRand<RealType>::F(const RealType & x) const
     return 1.0 - S(x);
 }
 
-template < typename RealType >
-double InverseGaussianRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double InverseGaussianRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
         return 1.0;
@@ -138,7 +140,7 @@ double InverseGaussianRand<RealType>::S(const RealType & x) const
     return 1.0 - F(x);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType InverseGaussianRand<RealType>::operator()(G &g) const
 {
@@ -156,19 +158,19 @@ RealType InverseGaussianRand<RealType>::operator()(G &g) const
     return mu * y;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGaussianRand<RealType>::Mean() const
 {
     return mu;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGaussianRand<RealType>::Variance() const
 {
     return mu * mu * mu / lambda;
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> InverseGaussianRand<RealType>::CFImpl(double t) const
 {
     double im = mu * mu;
@@ -179,7 +181,7 @@ std::complex<double> InverseGaussianRand<RealType>::CFImpl(double t) const
     return std::exp(y);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType InverseGaussianRand<RealType>::Mode() const
 {
     RealType aux = 1.5 * mu / lambda;
@@ -189,13 +191,13 @@ RealType InverseGaussianRand<RealType>::Mode() const
     return mu * mode;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGaussianRand<RealType>::Skewness() const
 {
     return 3 * std::sqrt(mu / lambda);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double InverseGaussianRand<RealType>::ExcessKurtosis() const
 {
     return 15 * mu / lambda;

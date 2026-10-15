@@ -36,16 +36,17 @@ public:
 
     void SetParameters(double lowerLimit, double mode, double upperLimit);
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
 public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
@@ -65,22 +66,20 @@ private:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 TriangularRand<RealType>::TriangularRand(double lowerLimit, double mode, double upperLimit)
 {
     SetParameters(lowerLimit, mode, upperLimit);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string TriangularRand<RealType>::Name() const
 {
-    return "Triangular("
-            + this->toStringWithPrecision(MinValue()) + ", "
-            + this->toStringWithPrecision(Mode()) + ", "
-            + this->toStringWithPrecision(MaxValue()) + ")";
+    return "Triangular(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(Mode()) + ", " +
+           this->toStringWithPrecision(MaxValue()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void TriangularRand<RealType>::SetParameters(double lowerLimit, double mode, double upperLimit)
 {
     if (!(lowerLimit < upperLimit))
@@ -93,7 +92,7 @@ void TriangularRand<RealType>::SetParameters(double lowerLimit, double mode, dou
     SetConstantsForGenerator();
 }
 
-template < typename RealType >
+template <typename RealType>
 void TriangularRand<RealType>::SetConstantsForGenerator()
 {
     constForGenerator = (c - a) / (b - a);
@@ -101,8 +100,8 @@ void TriangularRand<RealType>::SetConstantsForGenerator()
     coefGenerator2 = (b - a) * (b - c);
 }
 
-template < typename RealType >
-double TriangularRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double TriangularRand<RealType>::f(const RealType &x) const
 {
     if (x < a || x > b)
         return 0;
@@ -115,14 +114,14 @@ double TriangularRand<RealType>::f(const RealType & x) const
     return 0;
 }
 
-template < typename RealType >
-double TriangularRand<RealType>::logf(const RealType & x) const
+template <typename RealType>
+double TriangularRand<RealType>::logf(const RealType &x) const
 {
     return std::log(f(x));
 }
 
-template < typename RealType >
-double TriangularRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double TriangularRand<RealType>::F(const RealType &x) const
 {
     if (x <= a)
         return 0.0;
@@ -133,8 +132,8 @@ double TriangularRand<RealType>::F(const RealType & x) const
     return 1.0;
 }
 
-template < typename RealType >
-double TriangularRand<RealType>::S(const RealType & x) const
+template <typename RealType>
+double TriangularRand<RealType>::S(const RealType &x) const
 {
     if (x <= a)
         return 1.0;
@@ -145,7 +144,7 @@ double TriangularRand<RealType>::S(const RealType & x) const
     return 0.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType TriangularRand<RealType>::operator()(G &g) const
 {
@@ -155,19 +154,19 @@ RealType TriangularRand<RealType>::operator()(G &g) const
     return b - std::sqrt((1 - U) * coefGenerator2);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double TriangularRand<RealType>::Mean() const
 {
     return (a + b + c) / 3.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double TriangularRand<RealType>::Variance() const
 {
     return (a * (a - b) + b * (b - c) + c * (c - a)) / 18.0;
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> TriangularRand<RealType>::CFImpl(double t) const
 {
     if (c == a || c == b) {
@@ -193,7 +192,7 @@ std::complex<double> TriangularRand<RealType>::CFImpl(double t) const
     return frac + frac;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType TriangularRand<RealType>::Median() const
 {
     if (c + c > a + b)
@@ -201,13 +200,13 @@ RealType TriangularRand<RealType>::Median() const
     return b - std::sqrt(0.5 * coefGenerator2);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType TriangularRand<RealType>::Mode() const
 {
     return c;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double TriangularRand<RealType>::Skewness() const
 {
     double numerator = randlib::consts::sqrt2;
@@ -221,7 +220,7 @@ long double TriangularRand<RealType>::Skewness() const
     return 0.2 * numerator / denominator;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double TriangularRand<RealType>::ExcessKurtosis() const
 {
     return -0.6;

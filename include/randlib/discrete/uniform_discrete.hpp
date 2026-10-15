@@ -36,15 +36,16 @@ public:
 
     void SetBoundaries(IntType minValue, IntType maxValue);
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
 
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
-protected:
 
+protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType StandardVariate(IntType minValue, IntType maxValue, G &g);
@@ -74,27 +75,28 @@ public:
 
 } // namespace randlib
 
-
 namespace randlib
 {
 
-template< typename IntType >
+template <typename IntType>
 UniformDiscreteRand<IntType>::UniformDiscreteRand(IntType minValue, IntType maxValue)
 {
     SetBoundaries(minValue, maxValue);
 }
 
-template< typename IntType >
+template <typename IntType>
 std::string UniformDiscreteRand<IntType>::Name() const
 {
-    return "Uniform Discrete(" + this->toStringWithPrecision(MinValue()) + ", " + this->toStringWithPrecision(MaxValue()) + ")";
+    return "Uniform Discrete(" + this->toStringWithPrecision(MinValue()) + ", " +
+           this->toStringWithPrecision(MaxValue()) + ")";
 }
 
-template< typename IntType >
+template <typename IntType>
 void UniformDiscreteRand<IntType>::SetBoundaries(IntType minValue, IntType maxValue)
 {
     if (!(minValue <= maxValue))
-        throw std::invalid_argument("Uniform discrete distribution: minimum value shouldn't be greater than maximum value");
+        throw std::invalid_argument(
+            "Uniform discrete distribution: minimum value shouldn't be greater than maximum value");
 
     a = minValue;
     b = maxValue;
@@ -104,20 +106,20 @@ void UniformDiscreteRand<IntType>::SetBoundaries(IntType minValue, IntType maxVa
     logN = std::log(n);
 }
 
-template< typename IntType >
-double UniformDiscreteRand<IntType>::P(const IntType & k) const
+template <typename IntType>
+double UniformDiscreteRand<IntType>::P(const IntType &k) const
 {
     return (k < a || k > b) ? 0.0 : nInv;
 }
 
-template< typename IntType >
-double UniformDiscreteRand<IntType>::logP(const IntType & k) const
+template <typename IntType>
+double UniformDiscreteRand<IntType>::logP(const IntType &k) const
 {
     return (k < a || k > b) ? -INFINITY : -logN;
 }
 
-template< typename IntType >
-double UniformDiscreteRand<IntType>::F(const IntType & k) const
+template <typename IntType>
+double UniformDiscreteRand<IntType>::F(const IntType &k) const
 {
     if (k < a)
         return 0.0;
@@ -126,14 +128,14 @@ double UniformDiscreteRand<IntType>::F(const IntType & k) const
     return (k - a + 1) * nInv;
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType UniformDiscreteRand<IntType>::operator()(G &g) const
 {
     return a + static_cast<IntType>(detail::uniformBelow(g, n));
 }
 
-template< typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType UniformDiscreteRand<IntType>::StandardVariate(IntType minValue, IntType maxValue, G &g)
 {
@@ -143,13 +145,13 @@ IntType UniformDiscreteRand<IntType>::StandardVariate(IntType minValue, IntType 
     return minValue + static_cast<IntType>(detail::uniformBelow(g, n));
 }
 
-template< typename IntType >
+template <typename IntType>
 long double UniformDiscreteRand<IntType>::Mean() const
 {
     return 0.5 * (b + a);
 }
 
-template< typename IntType >
+template <typename IntType>
 long double UniformDiscreteRand<IntType>::Variance() const
 {
     double nm1 = n - 1;
@@ -157,26 +159,26 @@ long double UniformDiscreteRand<IntType>::Variance() const
     return nm1 * np1 / 12;
 }
 
-template< typename IntType >
+template <typename IntType>
 IntType UniformDiscreteRand<IntType>::Median() const
 {
     return (b + a) >> 1;
 }
 
-template< typename IntType >
+template <typename IntType>
 IntType UniformDiscreteRand<IntType>::Mode() const
 {
     /// this can be any value in [a, b]
     return 0.5 * (a + b);
 }
 
-template< typename IntType >
+template <typename IntType>
 long double UniformDiscreteRand<IntType>::Skewness() const
 {
     return 0.0;
 }
 
-template< typename IntType >
+template <typename IntType>
 long double UniformDiscreteRand<IntType>::ExcessKurtosis() const
 {
     double kurt = n;
@@ -187,7 +189,7 @@ long double UniformDiscreteRand<IntType>::ExcessKurtosis() const
     return -1.2 * kurt;
 }
 
-template< typename IntType >
+template <typename IntType>
 std::complex<double> UniformDiscreteRand<IntType>::CFImpl(double t) const
 {
     double at = a * t;
@@ -199,28 +201,30 @@ std::complex<double> UniformDiscreteRand<IntType>::CFImpl(double t) const
     return nInv * numerator / denominator;
 }
 
-template< typename IntType >
+template <typename IntType>
 long double UniformDiscreteRand<IntType>::Entropy() const
 {
     return logN;
 }
 
-template< typename IntType >
+template <typename IntType>
 double UniformDiscreteRand<IntType>::LikelihoodFunction(std::span<const IntType> sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
+    bool sampleIsInsideInterval =
+        this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
     return sampleIsInsideInterval ? std::pow(n, -sample.size()) : 0.0;
 }
 
-template< typename IntType >
+template <typename IntType>
 double UniformDiscreteRand<IntType>::LogLikelihoodFunction(std::span<const IntType> sample) const
 {
-    bool sampleIsInsideInterval = this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
+    bool sampleIsInsideInterval =
+        this->allElementsAreNotSmallerThan(a, sample) && this->allElementsAreNotGreaterThan(b, sample);
     int sample_size = sample.size();
     return sampleIsInsideInterval ? -sample_size * logN : -INFINITY;
 }
 
-template< typename IntType >
+template <typename IntType>
 void UniformDiscreteRand<IntType>::Fit(std::span<const IntType> sample)
 {
     IntType minVar = *std::min_element(sample.begin(), sample.end());

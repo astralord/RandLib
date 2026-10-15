@@ -15,7 +15,8 @@ namespace randlib::detail
 template <std::uniform_random_bit_generator G>
 constexpr int engineBits() noexcept
 {
-    static_assert(sizeof(typename G::result_type) <= sizeof(std::uint64_t), "engines wider than 64 bits are not supported");
+    static_assert(sizeof(typename G::result_type) <= sizeof(std::uint64_t),
+                  "engines wider than 64 bits are not supported");
     constexpr std::uint64_t range = static_cast<std::uint64_t>(G::max() - G::min());
     if constexpr (range == std::numeric_limits<std::uint64_t>::max())
         return 64;
@@ -38,8 +39,7 @@ std::uint64_t randomBits(G &g, int count)
     if constexpr (width == 64) {
         std::uint64_t v = static_cast<std::uint64_t>(g() - G::min());
         return count == 64 ? v : v >> (64 - count);
-    }
-    else {
+    } else {
         std::uint64_t bits = 0;
         int filled = 0;
         while (filled < count) {
@@ -68,8 +68,7 @@ Real uniform01(G &g)
     if constexpr (b <= 64) {
         Real k = static_cast<Real>(randomBits(g, b));
         return std::ldexp(k + static_cast<Real>(0.5), -b);
-    }
-    else {
+    } else {
         Real high = static_cast<Real>(randomBits(g, 64));
         Real low = static_cast<Real>(randomBits(g, b - 64));
         return std::ldexp(std::ldexp(high, b - 64) + low + static_cast<Real>(0.5), -b);
@@ -121,9 +120,8 @@ public:
     using result_type = std::uint64_t;
 
     template <std::uniform_random_bit_generator G>
-        requires (!std::same_as<std::remove_cv_t<G>, EngineRef>)
-    EngineRef(G &engine) noexcept
-        : target(&engine), next([](void *e) { return randomBits(*static_cast<G *>(e), 64); })
+        requires(!std::same_as<std::remove_cv_t<G>, EngineRef>)
+    EngineRef(G &engine) noexcept : target(&engine), next([](void *e) { return randomBits(*static_cast<G *>(e), 64); })
     {
     }
 

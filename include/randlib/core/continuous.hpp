@@ -23,24 +23,25 @@ class ContinuousDistribution : virtual public UnivariateDistribution<RealType>
 
 protected:
     ContinuousDistribution() {}
+
 public:
     virtual ~ContinuousDistribution() {}
-protected:
 
+protected:
 public:
     /**
      * @fn f
      * @param x
      * @return probability density function
      */
-    [[nodiscard]] virtual double f(const RealType & x) const { return std::exp(this->logf(x)); }
+    [[nodiscard]] virtual double f(const RealType &x) const { return std::exp(this->logf(x)); }
 
     /**
      * @fn logf
      * @param x
      * @return logarithm of probability density function
      */
-    [[nodiscard]] virtual double logf(const RealType & x) const = 0;
+    [[nodiscard]] virtual double logf(const RealType &x) const = 0;
 
     /**
      * @fn ProbabilityDensityFunction
@@ -65,7 +66,8 @@ protected:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p, RealType initValue) const override;
     RealType quantileImpl1m(double p) const override;
-    long double ExpectedValue(const std::function<double (RealType)> &funPtr, RealType minPoint, RealType maxPoint) const override;
+    long double ExpectedValue(const std::function<double(RealType)> &funPtr, RealType minPoint,
+                              RealType maxPoint) const override;
 
 protected:
     /**
@@ -104,46 +106,49 @@ public:
 namespace randlib
 {
 
-template< typename RealType >
-void ContinuousDistribution<RealType>::ProbabilityDensityFunction(std::span<const RealType> x, std::span<double> y) const
+template <typename RealType>
+void ContinuousDistribution<RealType>::ProbabilityDensityFunction(std::span<const RealType> x,
+                                                                  std::span<double> y) const
 {
     for (size_t i = 0; i != x.size(); ++i)
         y[i] = this->f(x[i]);
 }
 
-template< typename RealType >
-void ContinuousDistribution<RealType>::LogProbabilityDensityFunction(std::span<const RealType> x, std::span<double> y) const
+template <typename RealType>
+void ContinuousDistribution<RealType>::LogProbabilityDensityFunction(std::span<const RealType> x,
+                                                                     std::span<double> y) const
 {
     for (size_t i = 0; i != x.size(); ++i)
         y[i] = this->logf(x[i]);
 }
 
-template< typename RealType >
+template <typename RealType>
 RealType ContinuousDistribution<RealType>::quantileImpl(double p, RealType initValue) const
 {
     return searchQuantile(p, false, initValue);
 }
 
-template< typename RealType >
+template <typename RealType>
 RealType ContinuousDistribution<RealType>::quantileImpl(double p) const
 {
     return searchQuantile(p, false, std::numeric_limits<RealType>::quiet_NaN());
 }
 
-template< typename RealType >
+template <typename RealType>
 RealType ContinuousDistribution<RealType>::quantileImpl1m(double p, RealType initValue) const
 {
     return searchQuantile(p, true, initValue);
 }
 
-template< typename RealType >
+template <typename RealType>
 RealType ContinuousDistribution<RealType>::quantileImpl1m(double p) const
 {
     return searchQuantile(p, true, std::numeric_limits<RealType>::quiet_NaN());
 }
 
-template< typename RealType >
-RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTail, RealType guess, double relativeStep) const
+template <typename RealType>
+RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTail, RealType guess,
+                                                          double relativeStep) const
 {
     /// Solve in the tail with the smaller probability: 1 - p is exact for p ≥ 1/2, and
     /// F (or S) cannot resolve a probability close to 1 as well as the other tail resolves 1 - p
@@ -154,7 +159,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
     /// g increases through zero at the quantile; for small p it is compared on a log scale
     const bool logScale = p < 1e-3;
     const double logP = std::log(p);
-    auto g = [this, p, upperTail, logScale, logP] (RealType x) {
+    auto g = [this, p, upperTail, logScale, logP](RealType x) {
         double v = upperTail ? this->S(x) : this->F(x);
         if (!logScale)
             return upperTail ? p - v : v - p;
@@ -197,8 +202,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
                 ga = gb;
                 step += step;
             }
-        }
-        else {
+        } else {
             b = origin;
             gb = gOrigin;
             for (;;) {
@@ -223,7 +227,7 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
     /// Bisection point: geometric in the distance to a finite support end while the
     /// bracket spans orders of magnitude, arithmetic otherwise
     const RealType anchor = loFinite ? lo : (hiFinite ? hi : 0);
-    auto split = [anchor, loFinite, hiFinite] (RealType left, RealType right) {
+    auto split = [anchor, loFinite, hiFinite](RealType left, RealType right) {
         const RealType direction = (loFinite || (!hiFinite && left >= 0)) ? 1 : -1;
         RealType tl = direction * (left - anchor), tr = direction * (right - anchor);
         RealType tNear = std::min(tl, tr), tFar = std::max(tl, tr), t;
@@ -240,7 +244,8 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
     /// geometrically; then TOMS 748 refines it to full precision
     for (int iter = 0; iter < 2000; ++iter) {
         RealType tl = std::fabs(a - anchor), tr = std::fabs(b - anchor);
-        bool spansMagnitudes = std::min(tl, tr) == 0 ? std::max(tl, tr) > 1e-280 : std::max(tl, tr) > 4 * std::min(tl, tr);
+        bool spansMagnitudes =
+            std::min(tl, tr) == 0 ? std::max(tl, tr) > 1e-280 : std::max(tl, tr) > 4 * std::min(tl, tr);
         if (std::isfinite(ga) && std::isfinite(gb) && !(spansMagnitudes && (loFinite || hiFinite)))
             break;
         RealType middle = split(a, b);
@@ -252,33 +257,30 @@ RealType ContinuousDistribution<RealType>::searchQuantile(double p, bool upperTa
         if (gm < 0) {
             a = middle;
             ga = gm;
-        }
-        else {
+        } else {
             b = middle;
             gb = gm;
         }
     }
-    auto [left, right] = math::toms748<RealType>([&g] (RealType x) { return static_cast<RealType>(g(x)); }, a, b,
-                                                  static_cast<RealType>(ga), static_cast<RealType>(gb));
+    auto [left, right] = math::toms748<RealType>([&g](RealType x) { return static_cast<RealType>(g(x)); }, a, b,
+                                                 static_cast<RealType>(ga), static_cast<RealType>(gb));
     return left + (right - left) / 2;
 }
 
-template< typename RealType >
+template <typename RealType>
 RealType ContinuousDistribution<RealType>::Mode() const
 {
     RealType guess = this->Mean(); /// good starting point
     if (!std::isfinite(guess))
         guess = this->Median(); /// this shouldn't be nan or inf
     RealType root = 0;
-    math::findMin<RealType>([this] (const RealType &x)
-    {
-        return -this->logf(x);
-    }, guess, root);
+    math::findMin<RealType>([this](const RealType &x) { return -this->logf(x); }, guess, root);
     return root;
 }
 
-template< typename RealType >
-long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<double (RealType)> &funPtr, RealType minPoint, RealType maxPoint) const
+template <typename RealType>
+long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<double(RealType)> &funPtr,
+                                                            RealType minPoint, RealType maxPoint) const
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
@@ -295,66 +297,67 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
 
     /// Integrate on finite interval [a, b]
     if (isLeftBoundFinite && isRightBoundFinite) {
-        return math::integrate([this, funPtr] (double x)
-        {
-            double y = funPtr(x);
-            return (y == 0.0) ? 0.0 : y * f(x);
-        },
-        lowerBoundary, upperBoundary);
+        return math::integrate(
+            [this, funPtr](double x) {
+                double y = funPtr(x);
+                return (y == 0.0) ? 0.0 : y * f(x);
+            },
+            lowerBoundary, upperBoundary);
     }
 
     /// Integrate on semifinite interval [a, inf)
     if (isLeftBoundFinite) {
-        return math::integrate([this, funPtr, lowerBoundary] (double x)
-        {
-            if (x >= 1.0)
+        return math::integrate(
+            [this, funPtr, lowerBoundary](double x) {
+                if (x >= 1.0)
+                    return 0.0;
+                double denom = 1.0 - x;
+                double t = lowerBoundary + x / denom;
+                double y = funPtr(t);
+                if (y == 0.0)
+                    return 0.0;
+                y *= this->f(t);
+                denom *= denom;
+                return y / denom;
+            },
+            0.0, 1.0);
+    }
+
+    /// Integrate on semifinite intervale (-inf, b]
+    if (isRightBoundFinite) {
+        return math::integrate(
+            [this, funPtr, upperBoundary](double x) {
+                if (x <= 0.0)
+                    return 0.0;
+                double t = upperBoundary - (1.0 - x) / x;
+                double y = funPtr(t);
+                if (y == 0.0)
+                    return 0.0;
+                y *= this->f(t);
+                return y / (x * x);
+            },
+            0.0, 1.0);
+    }
+
+    /// Infinite case
+    return math::integrate(
+        [this, funPtr](double x) {
+            if (std::fabs(x) >= 1.0)
                 return 0.0;
-            double denom = 1.0 - x;
-            double t = lowerBoundary + x / denom;
+            double x2 = x * x;
+            double denom = 1.0 - x2;
+            double t = x / denom;
             double y = funPtr(t);
             if (y == 0.0)
                 return 0.0;
             y *= this->f(t);
             denom *= denom;
-            return y / denom;
+            return y * (1.0 + x2) / denom;
         },
-        0.0, 1.0);
-    }
-
-    /// Integrate on semifinite intervale (-inf, b]
-    if (isRightBoundFinite) {
-        return math::integrate([this, funPtr, upperBoundary] (double x)
-        {
-            if (x <= 0.0)
-                return 0.0;
-            double t = upperBoundary - (1.0 - x) / x;
-            double y = funPtr(t);
-            if (y == 0.0)
-                return 0.0;
-            y *= this->f(t);
-            return y / (x * x);
-        },
-        0.0, 1.0);
-    }
-
-    /// Infinite case
-    return math::integrate([this, funPtr] (double x)
-    {
-        if (std::fabs(x) >= 1.0)
-            return 0.0;
-        double x2 = x * x;
-        double denom = 1.0 - x2;
-        double t = x / denom;
-        double y = funPtr(t);
-        if (y == 0.0)
-            return 0.0;
-        y *= this->f(t);
-        denom *= denom;
-        return y * (1.0 + x2) / denom;
-    }, -1.0, 1.0);
+        -1.0, 1.0);
 }
 
-template< typename RealType >
+template <typename RealType>
 double ContinuousDistribution<RealType>::Hazard(const RealType &x) const
 {
     if (x < this->MinValue())
@@ -364,23 +367,24 @@ double ContinuousDistribution<RealType>::Hazard(const RealType &x) const
     return this->f(x) / this->S(x);
 }
 
-template< typename RealType >
+template <typename RealType>
 double ContinuousDistribution<RealType>::LikelihoodFunction(std::span<const RealType> sample) const
 {
     return std::exp(LogLikelihoodFunction(sample));
 }
 
-template< typename RealType >
+template <typename RealType>
 double ContinuousDistribution<RealType>::LogLikelihoodFunction(std::span<const RealType> sample) const
 {
     long double res = 0.0;
-    for (const RealType & var : sample)
+    for (const RealType &var : sample)
         res += this->logf(var);
     return res;
 }
 
-template< typename RealType >
-bool ContinuousDistribution<RealType>::KolmogorovSmirnovTest(std::span<const RealType> orderStatistic, double alpha) const
+template <typename RealType>
+bool ContinuousDistribution<RealType>::KolmogorovSmirnovTest(std::span<const RealType> orderStatistic,
+                                                             double alpha) const
 {
     KolmogorovSmirnovRand KSRand;
     double K = KSRand.Quantile1m(alpha);

@@ -35,13 +35,14 @@ public:
     [[nodiscard]] double MinValue() const override { return 0; }
     [[nodiscard]] double MaxValue() const override { return 1; }
 
-    [[nodiscard]] double F(const double & x) const override;
+    [[nodiscard]] double F(const double &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] double operator()(G &g) const;
+
 protected:
     double variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
 
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] double Median() const override;
@@ -74,7 +75,7 @@ inline std::string CantorRand::Name() const
     return "Cantor";
 }
 
-inline double CantorRand::F(const double & x) const
+inline double CantorRand::F(const double &x) const
 {
     if (x <= 0.0)
         return 0.0;
@@ -82,22 +83,17 @@ inline double CantorRand::F(const double & x) const
         return 1.0;
     double a = 0.0, b = 1.0;
     double v = 0.5, d = 0.5, delta = 1.0;
-    while (delta > MIN_POSITIVE)
-    {
+    while (delta > MIN_POSITIVE) {
         delta = (b - a) / 3.0;
-        if (x < a + delta)
-        {
+        if (x < a + delta) {
             b = a + delta;
             d *= 0.5;
             v -= d;
-        }
-        else if (x > b - delta)
-        {
+        } else if (x > b - delta) {
             a = b - delta;
             d *= 0.5;
             v += d;
-        }
-        else
+        } else
             return v;
     }
     return v;
@@ -125,10 +121,7 @@ inline long double CantorRand::Variance() const
 
 inline double CantorRand::quantileImpl(double p, double) const
 {
-    return math::findRoot([this, p] (double x)
-    {
-        return F(x) - p;
-    }, 0.0, 1.0);
+    return math::findRoot([this, p](double x) { return F(x) - p; }, 0.0, 1.0);
 }
 
 inline double CantorRand::quantileImpl(double p) const
@@ -138,10 +131,7 @@ inline double CantorRand::quantileImpl(double p) const
 
 inline double CantorRand::quantileImpl1m(double p, double) const
 {
-    return math::findRoot([this, p] (double x)
-    {
-        return S(x) - p;
-    }, 0.0, 1.0);
+    return math::findRoot([this, p](double x) { return S(x) - p; }, 0.0, 1.0);
 }
 
 inline double CantorRand::quantileImpl1m(double p) const

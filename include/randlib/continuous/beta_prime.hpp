@@ -43,23 +43,26 @@ public:
     [[nodiscard]] RealType MinValue() const override { return 0; }
     [[nodiscard]] RealType MaxValue() const override { return INFINITY; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
 
 private:
-    RealType fromBetaVariate(const RealType & betaVar) const;
+    RealType fromBetaVariate(const RealType &betaVar) const;
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] RealType Median() const override;
@@ -72,6 +75,7 @@ private:
     RealType quantileImpl1m(double p) const override;
 
     std::complex<double> CFImpl(double t) const override;
+
 public:
     /**
      * @fn GetBetaFunction
@@ -112,19 +116,20 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 BetaPrimeRand<RealType>::BetaPrimeRand(double shape1, double shape2)
 {
     SetShapes(shape1, shape2);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string BetaPrimeRand<RealType>::Name() const
 {
-    return "Beta Prime(" + this->toStringWithPrecision(GetAlpha()) + ", " + this->toStringWithPrecision(GetBeta()) + ")";
+    return "Beta Prime(" + this->toStringWithPrecision(GetAlpha()) + ", " + this->toStringWithPrecision(GetBeta()) +
+           ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaPrimeRand<RealType>::SetShapes(double shape1, double shape2)
 {
     if (!(shape1 > 0 && shape2 > 0))
@@ -134,8 +139,8 @@ void BetaPrimeRand<RealType>::SetShapes(double shape1, double shape2)
     beta = B.GetBeta();
 }
 
-template < typename RealType >
-double BetaPrimeRand<RealType>::f(const RealType & x) const
+template <typename RealType>
+double BetaPrimeRand<RealType>::f(const RealType &x) const
 {
     if (x < 0.0)
         return 0.0;
@@ -147,7 +152,7 @@ double BetaPrimeRand<RealType>::f(const RealType & x) const
     return std::exp(logf(x));
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaPrimeRand<RealType>::logf(const RealType &x) const
 {
     if (x < 0.0)
@@ -162,13 +167,13 @@ double BetaPrimeRand<RealType>::logf(const RealType &x) const
     return y - GetLogBetaFunction();
 }
 
-template < typename RealType >
-double BetaPrimeRand<RealType>::F(const RealType & x) const
+template <typename RealType>
+double BetaPrimeRand<RealType>::F(const RealType &x) const
 {
     return (x > 0) ? B.F(x / (1.0 + x)) : 0;
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaPrimeRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0)
@@ -178,8 +183,8 @@ double BetaPrimeRand<RealType>::S(const RealType &x) const
     return math::ibeta(y, beta, alpha, GetLogBetaFunction(), -std::log1pl(x), std::log(x) - std::log1pl(x));
 }
 
-template < typename RealType >
-RealType BetaPrimeRand<RealType>::fromBetaVariate(const RealType & betaVar) const
+template <typename RealType>
+RealType BetaPrimeRand<RealType>::fromBetaVariate(const RealType &betaVar) const
 {
     if (betaVar > 1e-5)
         return betaVar / (1.0 - betaVar);
@@ -187,7 +192,7 @@ RealType BetaPrimeRand<RealType>::fromBetaVariate(const RealType & betaVar) cons
     return std::exp(logVar - log1mVar);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaPrimeRand<RealType>::operator()(G &g) const
 {
@@ -195,7 +200,7 @@ RealType BetaPrimeRand<RealType>::operator()(G &g) const
     return fromBetaVariate(x);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaPrimeRand<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     B.Sample(g, outputData);
@@ -203,15 +208,13 @@ void BetaPrimeRand<RealType>::sample(detail::EngineRef g, std::span<RealType> ou
         var = fromBetaVariate(var);
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double BetaPrimeRand<RealType>::Mean() const
 {
     return (beta > 1) ? alpha / (beta - 1) : INFINITY;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaPrimeRand<RealType>::Variance() const
 {
     if (beta <= 2)
@@ -222,19 +225,19 @@ long double BetaPrimeRand<RealType>::Variance() const
     return numerator / denominator;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaPrimeRand<RealType>::Median() const
 {
     return (alpha == beta) ? 1.0 : quantileImpl(0.5);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaPrimeRand<RealType>::Mode() const
 {
     return (alpha < 1) ? 0 : (alpha - 1) / (beta + 1);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaPrimeRand<RealType>::Skewness() const
 {
     if (beta <= 3)
@@ -247,7 +250,7 @@ long double BetaPrimeRand<RealType>::Skewness() const
     return aux * skewness / (beta - 3);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaPrimeRand<RealType>::ExcessKurtosis() const
 {
     if (beta <= 4)
@@ -259,7 +262,7 @@ long double BetaPrimeRand<RealType>::ExcessKurtosis() const
     return 6 * numerator / denominator;
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaPrimeRand<RealType>::quantileImpl(double p) const
 {
     /// y / (1 - y) for the beta quantile y is only a guess: it loses accuracy as y → 1
@@ -267,35 +270,34 @@ RealType BetaPrimeRand<RealType>::quantileImpl(double p) const
     return ContinuousDistribution<RealType>::quantileImpl(p, y / (1.0 - y));
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaPrimeRand<RealType>::quantileImpl1m(double p) const
 {
     double y = B.Quantile1m(p);
     return ContinuousDistribution<RealType>::quantileImpl1m(p, y / (1.0 - y));
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> BetaPrimeRand<RealType>::CFImpl(double t) const
 {
     /// if no singularity - simple numeric integration
     if (alpha >= 1)
         return UnivariateDistribution<RealType>::CFImpl(t);
 
-    double re = this->ExpectedValue([t] (double x)
-    {
-        if (x == 0.0)
-            return 0.0;
-        return std::cos(t * x) - 1.0;
-    }, 0.0, INFINITY) + 1.0;
+    double re = this->ExpectedValue(
+                    [t](double x) {
+                        if (x == 0.0)
+                            return 0.0;
+                        return std::cos(t * x) - 1.0;
+                    },
+                    0.0, INFINITY) +
+                1.0;
 
-    double im = this->ExpectedValue([t] (double x)
-    {
-        return std::sin(t * x);
-    }, 0.0, INFINITY);
+    double im = this->ExpectedValue([t](double x) { return std::sin(t * x); }, 0.0, INFINITY);
     return std::complex<double>(re, im);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaPrimeRand<RealType>::FitAlpha(std::span<const RealType> sample)
 {
     if (!this->allElementsArePositive(sample))
@@ -304,7 +306,7 @@ void BetaPrimeRand<RealType>::FitAlpha(std::span<const RealType> sample)
     long double mean = 0.5;
     if (beta != 1.0) {
         mean = 0.0;
-        for (const RealType & var : sample)
+        for (const RealType &var : sample)
             mean += var / (1.0 + var);
         mean /= sample.size();
     }
@@ -312,7 +314,7 @@ void BetaPrimeRand<RealType>::FitAlpha(std::span<const RealType> sample)
     SetShapes(B.GetAlpha(), beta);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaPrimeRand<RealType>::FitBeta(std::span<const RealType> sample)
 {
     if (!this->allElementsArePositive(sample))
@@ -321,7 +323,7 @@ void BetaPrimeRand<RealType>::FitBeta(std::span<const RealType> sample)
     long double mean = 0.5;
     if (alpha != 1.0) {
         mean = 0.0;
-        for (const RealType & var : sample)
+        for (const RealType &var : sample)
             mean += var / (1.0 + var);
         mean /= sample.size();
     }
@@ -329,7 +331,7 @@ void BetaPrimeRand<RealType>::FitBeta(std::span<const RealType> sample)
     SetShapes(alpha, B.GetBeta());
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaPrimeRand<RealType>::Fit(std::span<const RealType> sample)
 {
     if (!this->allElementsArePositive(sample))

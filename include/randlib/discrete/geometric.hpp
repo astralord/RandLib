@@ -29,23 +29,24 @@ public:
 public:
     void SetProbability(double probability);
 
-    [[nodiscard]] double P(const IntType & k) const override;
-    [[nodiscard]] double logP(const IntType & k) const override;
-    [[nodiscard]] double F(const IntType & k) const override;
-    [[nodiscard]] double S(const IntType & k) const override;
+    [[nodiscard]] double P(const IntType &k) const override;
+    [[nodiscard]] double logP(const IntType &k) const override;
+    [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
+
 protected:
     IntType variate(detail::EngineRef g) const override { return (*this)(g); }
+
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static IntType Variate(double probability, G &g);
 
-    protected:
-
+protected:
     void sample(detail::EngineRef g, std::span<IntType> outputData) const override;
-public:
 
+public:
     [[nodiscard]] IntType Median() const override;
 
     [[nodiscard]] long double Entropy() const;
@@ -59,13 +60,13 @@ public:
 namespace randlib
 {
 
-template < typename IntType >
+template <typename IntType>
 std::string GeometricRand<IntType>::Name() const
 {
     return "Geometric(" + this->toStringWithPrecision(this->GetProbability()) + ")";
 }
 
-template < typename IntType >
+template <typename IntType>
 void GeometricRand<IntType>::SetProbability(double probability)
 {
     if (!(probability >= 0.0 && probability <= 1.0))
@@ -73,31 +74,31 @@ void GeometricRand<IntType>::SetProbability(double probability)
     this->SetParameters(1, probability);
 }
 
-template < typename IntType >
+template <typename IntType>
 double GeometricRand<IntType>::P(const IntType &k) const
 {
     return (k < 0) ? 0 : this->p * std::exp(k * this->log1mProb);
 }
 
-template < typename IntType >
+template <typename IntType>
 double GeometricRand<IntType>::logP(const IntType &k) const
 {
     return (k < 0) ? -INFINITY : this->logProb + k * this->log1mProb;
 }
 
-template < typename IntType >
+template <typename IntType>
 double GeometricRand<IntType>::F(const IntType &k) const
 {
     return (k < 0) ? 0 : -std::expm1l((k + 1) * this->log1mProb);
 }
 
-template < typename IntType >
+template <typename IntType>
 double GeometricRand<IntType>::S(const IntType &k) const
 {
     return (k < 0) ? 1 : std::exp((k + 1) * this->log1mProb);
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType GeometricRand<IntType>::operator()(G &g) const
 {
@@ -110,13 +111,14 @@ IntType GeometricRand<IntType>::operator()(G &g) const
     throw std::runtime_error("Geometric distribution: sampling failed");
 }
 
-template < typename IntType >
+template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType GeometricRand<IntType>::Variate(double probability, G &g)
 {
     if (!(probability <= 1.0 && probability >= 0.0))
-        throw std::invalid_argument("Geometric distribution: probability parameter should be in interval [0, 1], but it's equal to "
-                                    + std::to_string(probability));
+        throw std::invalid_argument(
+            "Geometric distribution: probability parameter should be in interval [0, 1], but it's equal to " +
+            std::to_string(probability));
 
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
@@ -136,21 +138,20 @@ IntType GeometricRand<IntType>::Variate(double probability, G &g)
     return x;
 }
 
-template < typename IntType >
+template <typename IntType>
 void GeometricRand<IntType>::sample(detail::EngineRef g, std::span<IntType> outputData) const
 {
     typename PascalRand<IntType>::GENERATOR_ID genId = this->GetIdOfUsedGenerator();
     if (genId == this->EXPONENTIAL) {
         for (IntType &var : outputData)
             var = this->variateGeometricThroughExponential(g);
-    }
-    else if (genId == this->TABLE) {
+    } else if (genId == this->TABLE) {
         for (IntType &var : outputData)
             var = this->variateGeometricByTable(g);
     }
 }
 
-template < typename IntType >
+template <typename IntType>
 IntType GeometricRand<IntType>::Median() const
 {
     double median = -randlib::consts::ln2 / this->log1mProb;
@@ -158,7 +159,7 @@ IntType GeometricRand<IntType>::Median() const
     return (math::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
 }
 
-template < typename IntType >
+template <typename IntType>
 long double GeometricRand<IntType>::Entropy() const
 {
     double a = -this->q * this->log1mProb;

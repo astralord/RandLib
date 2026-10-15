@@ -72,7 +72,7 @@ void report(const std::vector<std::string> &ids, const std::vector<std::vector<s
     CHECK(total == 0);
 }
 
-}
+} // namespace
 
 TEST_CASE("Continuous distributions are internally coherent", "[coherence]")
 {
@@ -94,10 +94,12 @@ TEST_CASE("Continuous distributions are internally coherent", "[coherence]")
         }
         std::vector<double> xs = grid[cases[i]->id];
         if (SLOW_TAILS.count(cases[i]->id)) {
-            xs.erase(std::remove_if(xs.begin(), xs.end(), [&d](double x) {
-                double F = d->F(x);
-                return F < 1e-2 || F > 1 - 1e-2;
-            }), xs.end());
+            xs.erase(std::remove_if(xs.begin(), xs.end(),
+                                    [&d](double x) {
+                                        double F = d->F(x);
+                                        return F < 1e-2 || F > 1 - 1e-2;
+                                    }),
+                     xs.end());
         }
         if (xs.empty())
             return;
@@ -141,9 +143,15 @@ TEST_CASE("Continuous distributions are internally coherent", "[coherence]")
                 /// beyond what doubles can resolve, or an atom may sit) and point masses
                 bool touchesBoundary = previousX <= d->MinValue() || x >= d->MaxValue();
                 bool pointMass = d->Variance() == 0;
-                if (!expensive && !touchesBoundary && !pointMass && j > 0 && std::isfinite(previousX) && F - previousF > 1e-10) {
+                if (!expensive && !touchesBoundary && !pointMass && j > 0 && std::isfinite(previousX) &&
+                    F - previousF > 1e-10) {
                     /// An integrable singularity at a support boundary has measure zero
-                    double integral = integrate([&d](double t) { double v = d->f(t); return std::isfinite(v) ? v : 0.0; }, previousX, x, 1e-10);
+                    double integral = integrate(
+                        [&d](double t) {
+                            double v = d->f(t);
+                            return std::isfinite(v) ? v : 0.0;
+                        },
+                        previousX, x, 1e-10);
                     if (!(std::fabs(integral - (F - previousF)) <= 1e-8 + 1e-8 * (F - previousF)))
                         out.push_back(at("integral of f != F(b) - F(a)", x, integral, F - previousF));
                 }

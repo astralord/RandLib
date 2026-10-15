@@ -46,23 +46,26 @@ private:
     double betaFun = 1; ///< B(α, β)
 
     /// coefficients for generators
-    struct genCoef_t {
+    struct genCoef_t
+    {
         double s, t, u;
     } genCoef = {0, 0, 0};
 
 protected:
     BetaDistribution(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1);
+
 public:
     virtual ~BetaDistribution() {}
-protected:
 
+protected:
 public:
     [[nodiscard]] Support SupportType() const override { return Support::Finite; }
     [[nodiscard]] RealType MinValue() const override { return a; }
     [[nodiscard]] RealType MaxValue() const override { return b; }
 
 private:
-    enum GENERATOR_ID {
+    enum GENERATOR_ID
+    {
         UNIFORM, ///< standard uniform variate
         ARCSINE, ///< arcsine method
         CHENG, ///< Cheng's method
@@ -78,7 +81,8 @@ private:
      * @fn getIdOfUsedGenerator
      * @return id of used variate generator according to the shapes
      */
-    GENERATOR_ID getIdOfUsedGenerator() const {
+    GENERATOR_ID getIdOfUsedGenerator() const
+    {
         if (alpha < 1 && beta < 1 && alpha + beta > 1)
             return ATKINSON_WHITTAKER;
 
@@ -138,10 +142,10 @@ public:
      */
     [[nodiscard]] inline double GetLogBetaFunction() const noexcept { return logBetaFun; }
 
-    [[nodiscard]] double f(const RealType & x) const override;
-    [[nodiscard]] double logf(const RealType & x) const override;
-    [[nodiscard]] double F(const RealType & x) const override;
-    [[nodiscard]] double S(const RealType & x) const override;
+    [[nodiscard]] double f(const RealType &x) const override;
+    [[nodiscard]] double logf(const RealType &x) const override;
+    [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
 
 private:
     /**
@@ -211,13 +215,15 @@ private:
 public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
+
 protected:
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
-public:
-    protected:
-    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
-public:
 
+public:
+protected:
+    void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
+
+public:
     [[nodiscard]] long double Mean() const override;
     /**
      * @fn GeometricMean
@@ -246,8 +252,10 @@ protected:
 
     std::complex<double> CFImpl(double t) const override;
 
-    static constexpr char ALPHA_ZERO[] = "Possibly one or more elements of the sample coincide with the lower boundary a.";
-    static constexpr char BETA_ZERO[] = "Possibly one or more elements of the sample coincide with the upper boundary b.";
+    static constexpr char ALPHA_ZERO[] =
+        "Possibly one or more elements of the sample coincide with the lower boundary a.";
+    static constexpr char BETA_ZERO[] =
+        "Possibly one or more elements of the sample coincide with the upper boundary b.";
 };
 
 /**
@@ -255,11 +263,13 @@ protected:
  * Beta distribution
  */
 template <typename RealType>
-class BetaRand final : public BetaDistribution<RealType>,
-                                      public ExponentialFamily<RealType, DoublePair>
+class BetaRand final : public BetaDistribution<RealType>, public ExponentialFamily<RealType, DoublePair>
 {
 public:
-    BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1) : BetaDistribution<RealType>(shape1, shape2, minValue, maxValue) {}
+    BetaRand(double shape1 = 1, double shape2 = 1, double minValue = 0, double maxValue = 1)
+        : BetaDistribution<RealType>(shape1, shape2, minValue, maxValue)
+    {
+    }
     [[nodiscard]] std::string Name() const override;
 
     using BetaDistribution<RealType>::SetShapes;
@@ -355,7 +365,10 @@ template <typename RealType>
 class ArcsineRand final : public BetaDistribution<RealType>
 {
 public:
-    ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1) : BetaDistribution<RealType>(1.0 - shape, shape, minValue, maxValue) {}
+    ArcsineRand(double shape = 0.5, double minValue = 0, double maxValue = 1)
+        : BetaDistribution<RealType>(1.0 - shape, shape, minValue, maxValue)
+    {
+    }
     [[nodiscard]] std::string Name() const override;
 
     using BetaDistribution<RealType>::SetSupport;
@@ -393,6 +406,7 @@ template <typename RealType>
 class BaldingNicholsRand final : public BetaDistribution<RealType>
 {
     double fixationIndex = 0.5, p = 0.5;
+
 public:
     BaldingNicholsRand(double fixatingIndex, double frequency);
     [[nodiscard]] std::string Name() const override;
@@ -413,14 +427,14 @@ public:
 namespace randlib
 {
 
-template < typename RealType >
+template <typename RealType>
 BetaDistribution<RealType>::BetaDistribution(double shape1, double shape2, double minValue, double maxValue)
 {
     SetShapes(shape1, shape2);
     SetSupport(minValue, maxValue);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaDistribution<RealType>::setCoefficientsForGenerator()
 {
     GENERATOR_ID id = getIdOfUsedGenerator();
@@ -428,15 +442,13 @@ void BetaDistribution<RealType>::setCoefficientsForGenerator()
         double alpham1 = alpha - 1;
         genCoef.s = alpham1 * std::log1pl(0.5 / alpham1) - 0.5;
         genCoef.t = 1.0 / std::sqrt(8 * alpha - 4);
-    }
-    else if (id == CHENG) {
+    } else if (id == CHENG) {
         genCoef.s = alpha + beta;
         genCoef.t = std::min(alpha, beta);
         if (genCoef.t > 1)
             genCoef.t = std::sqrt((2 * alpha * beta - genCoef.s) / (genCoef.s - 2));
         genCoef.u = alpha + genCoef.t;
-    }
-    else if (id == ATKINSON_WHITTAKER) {
+    } else if (id == ATKINSON_WHITTAKER) {
         genCoef.t = std::sqrt(alpha * (1 - alpha));
         genCoef.t /= (genCoef.t + std::sqrt(beta * (1 - beta)));
         genCoef.s = beta * genCoef.t;
@@ -444,7 +456,7 @@ void BetaDistribution<RealType>::setCoefficientsForGenerator()
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaDistribution<RealType>::SetShapes(double shape1, double shape2)
 {
     if (!(shape1 > 0 && shape2 > 0))
@@ -458,7 +470,7 @@ void BetaDistribution<RealType>::SetShapes(double shape1, double shape2)
     setCoefficientsForGenerator();
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaDistribution<RealType>::SetSupport(double minValue, double maxValue)
 {
     if (!(minValue < maxValue))
@@ -471,7 +483,7 @@ void BetaDistribution<RealType>::SetSupport(double minValue, double maxValue)
     logbma = std::log(bma);
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaDistribution<RealType>::f(const RealType &x) const
 {
     if (x < a || x > b)
@@ -489,7 +501,7 @@ double BetaDistribution<RealType>::f(const RealType &x) const
     return std::exp(logf(x));
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaDistribution<RealType>::logf(const RealType &x) const
 {
     /// Standardize
@@ -511,7 +523,7 @@ double BetaDistribution<RealType>::logf(const RealType &x) const
     return y - logBetaFun - logbma;
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaDistribution<RealType>::F(const RealType &x) const
 {
     if (x <= a)
@@ -526,7 +538,7 @@ double BetaDistribution<RealType>::F(const RealType &x) const
     return math::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1pl(-xSt));
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaDistribution<RealType>::S(const RealType &x) const
 {
     if (x <= a)
@@ -541,7 +553,7 @@ double BetaDistribution<RealType>::S(const RealType &x) const
     return math::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1pl(-xSt), std::log(xSt));
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateArcsine(G &g) const
 {
@@ -550,7 +562,7 @@ RealType BetaDistribution<RealType>::variateArcsine(G &g) const
     return X * X;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateRejectionUniform(G &g) const
 {
@@ -564,7 +576,7 @@ RealType BetaDistribution<RealType>::variateRejectionUniform(G &g) const
     throw std::runtime_error("Beta distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateRejectionUniformExtended(G &g) const
 {
@@ -580,7 +592,7 @@ RealType BetaDistribution<RealType>::variateRejectionUniformExtended(G &g) const
     throw std::runtime_error("Beta distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateRejectionNormal(G &g) const
 {
@@ -608,7 +620,7 @@ RealType BetaDistribution<RealType>::variateRejectionNormal(G &g) const
     throw std::runtime_error("Beta distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateJohnk(G &g) const
 {
@@ -620,10 +632,11 @@ RealType BetaDistribution<RealType>::variateJohnk(G &g) const
         X = std::exp(-W);
         Z = X + std::exp(-V);
     } while (Z > 1);
-    return (Z > 0) ? (X / Z) : (W < V);;
+    return (Z > 0) ? (X / Z) : (W < V);
+    ;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateCheng(G &g) const
 {
@@ -642,7 +655,7 @@ RealType BetaDistribution<RealType>::variateCheng(G &g) const
     return Y * R;
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateAtkinsonWhittaker(G &g) const
 {
@@ -654,8 +667,7 @@ RealType BetaDistribution<RealType>::variateAtkinsonWhittaker(G &g) const
             RealType X = genCoef.t * std::pow(U / genCoef.s, 1.0 / alpha);
             if (W >= (1.0 - beta) * std::log((1.0 - X) / (1.0 - genCoef.t)))
                 return X;
-        }
-        else {
+        } else {
             RealType X = 1.0 - (1.0 - genCoef.t) * std::pow((1.0 - U) / (1.0 - genCoef.s), 1.0 / beta);
             if (W >= (1.0 - alpha) * std::log(X / genCoef.t))
                 return X;
@@ -664,7 +676,7 @@ RealType BetaDistribution<RealType>::variateAtkinsonWhittaker(G &g) const
     throw std::runtime_error("Beta distribution: sampling failed");
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::variateGammaRatio(G &g) const
 {
@@ -673,7 +685,7 @@ RealType BetaDistribution<RealType>::variateGammaRatio(G &g) const
     return Y / (Y + Z);
 }
 
-template < typename RealType >
+template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType BetaDistribution<RealType>::operator()(G &g) const
 {
@@ -714,7 +726,7 @@ RealType BetaDistribution<RealType>::operator()(G &g) const
     return a + bma * var;
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaDistribution<RealType>::sample(detail::EngineRef g, std::span<RealType> outputData) const
 {
     GENERATOR_ID id = getIdOfUsedGenerator();
@@ -723,50 +735,41 @@ void BetaDistribution<RealType>::sample(detail::EngineRef g, std::span<RealType>
     case UNIFORM: {
         for (RealType &var : outputData)
             var = detail::uniform01<RealType>(g);
-        }
-        break;
+    } break;
     case ARCSINE: {
         for (RealType &var : outputData)
             var = variateArcsine(g);
-        }
-        break;
+    } break;
     case CHENG: {
         for (RealType &var : outputData)
             var = variateCheng(g);
-        }
-        break;
+    } break;
     case REJECTION_UNIFORM: {
         for (RealType &var : outputData)
             var = variateRejectionUniform(g);
-        }
-        break;
+    } break;
     case REJECTION_UNIFORM_EXTENDED: {
         for (RealType &var : outputData)
             var = variateRejectionUniformExtended(g);
-        }
-        break;
+    } break;
     case REJECTION_NORMAL: {
         for (RealType &var : outputData)
             var = variateRejectionNormal(g);
-        }
-        break;
+    } break;
     case JOHNK: {
         for (RealType &var : outputData)
             var = variateJohnk(g);
-        }
-        break;
+    } break;
     case ATKINSON_WHITTAKER: {
         for (RealType &var : outputData)
             var = variateAtkinsonWhittaker(g);
-        }
-        break;
+    } break;
     case GAMMA_RATIO:
     default: {
         GammaRV1.Sample(g, outputData);
         for (RealType &var : outputData)
             var /= (var + GammaRV2(g));
-        }
-        break;
+    } break;
     }
 
     /// Shift and scale
@@ -774,22 +777,20 @@ void BetaDistribution<RealType>::sample(detail::EngineRef g, std::span<RealType>
         var = a + bma * var;
 }
 
-
-
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::Mean() const
 {
     double mean = alpha / (alpha + beta);
     return a + bma * mean;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::GeometricMean() const
 {
     return math::digamma(alpha) - math::digamma(alpha + beta);
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::Variance() const
 {
     double var = alpha + beta;
@@ -798,13 +799,13 @@ long double BetaDistribution<RealType>::Variance() const
     return bma * bma * var;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::GeometricVariance() const
 {
     return math::trigamma(alpha) - math::trigamma(alpha + beta);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaDistribution<RealType>::Median() const
 {
     if (alpha == beta)
@@ -823,7 +824,7 @@ RealType BetaDistribution<RealType>::Median() const
     return ContinuousDistribution<RealType>::quantileImpl(0.5);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaDistribution<RealType>::Mode() const
 {
     double mode;
@@ -834,7 +835,7 @@ RealType BetaDistribution<RealType>::Mode() const
     return a + bma * mode;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::Skewness() const
 {
     long double skewness = (alpha + beta + 1) / (alpha * beta);
@@ -844,7 +845,7 @@ long double BetaDistribution<RealType>::Skewness() const
     return 2 * skewness;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::ExcessKurtosis() const
 {
     long double sum = alpha + beta;
@@ -857,7 +858,7 @@ long double BetaDistribution<RealType>::ExcessKurtosis() const
     return 6 * kurtosis;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaDistribution<RealType>::MeanAbsoluteDeviation() const
 {
     double y = randlib::consts::ln2;
@@ -869,11 +870,10 @@ long double BetaDistribution<RealType>::MeanAbsoluteDeviation() const
     return std::exp(y);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaDistribution<RealType>::quantileImpl(double p) const
 {
-    if (alpha == beta)
-    {
+    if (alpha == beta) {
         if (alpha == 0.5) {
             double x = std::sin(0.5 * randlib::consts::pi * p);
             return a + bma * x * x;
@@ -888,11 +888,10 @@ RealType BetaDistribution<RealType>::quantileImpl(double p) const
     return ContinuousDistribution<RealType>::quantileImpl(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 RealType BetaDistribution<RealType>::quantileImpl1m(double p) const
 {
-    if (alpha == beta)
-    {
+    if (alpha == beta) {
         if (alpha == 0.5) {
             double x = std::cos(0.5 * randlib::consts::pi * p);
             return a + bma * x * x;
@@ -907,7 +906,7 @@ RealType BetaDistribution<RealType>::quantileImpl1m(double p) const
     return ContinuousDistribution<RealType>::quantileImpl1m(p);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::complex<double> BetaDistribution<RealType>::CFImpl(double t) const
 {
     /// if we don't have singularity points, we can use direct integration
@@ -918,29 +917,33 @@ std::complex<double> BetaDistribution<RealType>::CFImpl(double t) const
     double sinZ = std::sin(z);
     double cosZm1 = std::cos(z) - 1.0;
 
-    double re = math::integrate([this, z, cosZm1](double x) {
-        if (x >= 1)
-            return 0.0;
-        if (x <= 0)
-            return -cosZm1;
-        double y = std::cos(z * x) - 1;
-        y *= std::pow(x, alpha - 1);
-        y -= cosZm1;
-        return std::pow(1.0 - x, beta - 1) * y;
-    }, 0, 1);
+    double re = math::integrate(
+        [this, z, cosZm1](double x) {
+            if (x >= 1)
+                return 0.0;
+            if (x <= 0)
+                return -cosZm1;
+            double y = std::cos(z * x) - 1;
+            y *= std::pow(x, alpha - 1);
+            y -= cosZm1;
+            return std::pow(1.0 - x, beta - 1) * y;
+        },
+        0, 1);
     re += betaFun;
     re += cosZm1 / beta;
 
-    double im = math::integrate([this, z, sinZ](double x) {
-        if (x >= 1)
-            return 0.0;
-        if (x <= 0)
-            return -sinZ;
-        double y = std::sin(z * x);
-        y *= std::pow(x, alpha - 1);
-        y -= sinZ;
-        return std::pow(1.0 - x, beta - 1) * y;
-    }, 0, 1);
+    double im = math::integrate(
+        [this, z, sinZ](double x) {
+            if (x >= 1)
+                return 0.0;
+            if (x <= 0)
+                return -sinZ;
+            double y = std::sin(z * x);
+            y *= std::pow(x, alpha - 1);
+            y -= sinZ;
+            return std::pow(1.0 - x, beta - 1) * y;
+        },
+        0, 1);
     im += sinZ / beta;
 
     std::complex<double> y(re, im);
@@ -948,47 +951,46 @@ std::complex<double> BetaDistribution<RealType>::CFImpl(double t) const
     return y * std::complex<double>(cosTA, sinTA) / betaFun;
 }
 
-template < typename RealType >
+template <typename RealType>
 constexpr char BetaDistribution<RealType>::ALPHA_ZERO[];
-template < typename RealType >
+template <typename RealType>
 constexpr char BetaDistribution<RealType>::BETA_ZERO[];
 // BETARAND
 
-template < typename RealType >
+template <typename RealType>
 std::string BetaRand<RealType>::Name() const
 {
-    return "Beta(" + this->toStringWithPrecision(this->GetAlpha()) + ", "
-                   + this->toStringWithPrecision(this->GetBeta()) + ", "
-                   + this->toStringWithPrecision(this->MinValue()) + ", "
-            + this->toStringWithPrecision(this->MaxValue()) + ")";
+    return "Beta(" + this->toStringWithPrecision(this->GetAlpha()) + ", " +
+           this->toStringWithPrecision(this->GetBeta()) + ", " + this->toStringWithPrecision(this->MinValue()) + ", " +
+           this->toStringWithPrecision(this->MaxValue()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 DoublePair BetaRand<RealType>::SufficientStatistic(RealType x) const
 {
     double y = (x - this->a) * this->bmaInv;
     return {std::log(y), std::log1pl(-y)};
 }
 
-template < typename RealType >
+template <typename RealType>
 DoublePair BetaRand<RealType>::SourceParameters() const
 {
     return {this->alpha, this->beta};
 }
 
-template < typename RealType >
+template <typename RealType>
 DoublePair BetaRand<RealType>::SourceToNatural(DoublePair sourceParameters) const
 {
     return {sourceParameters.first - 1, sourceParameters.second - 1};
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaRand<RealType>::LogNormalizer(DoublePair theta) const
 {
     return this->logbma + math::logBeta(theta.first + 1, theta.second + 1);
 }
 
-template < typename RealType >
+template <typename RealType>
 DoublePair BetaRand<RealType>::LogNormalizerGradient(DoublePair theta) const
 {
     double psi1 = math::digamma(theta.first + 1);
@@ -997,13 +999,13 @@ DoublePair BetaRand<RealType>::LogNormalizerGradient(DoublePair theta) const
     return {psi1 - psisum, psi2 - psisum};
 }
 
-template < typename RealType >
+template <typename RealType>
 double BetaRand<RealType>::CarrierMeasure(RealType) const
 {
     return 0;
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaRand<RealType>::GetSampleLogMeanNorm(std::span<const RealType> sample) const
 {
     long double lnG = 0;
@@ -1014,7 +1016,7 @@ long double BetaRand<RealType>::GetSampleLogMeanNorm(std::span<const RealType> s
     return lnG / sample.size();
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaRand<RealType>::GetSampleLog1pMeanNorm(std::span<const RealType> sample) const
 {
     long double lnG1p = 0;
@@ -1025,7 +1027,7 @@ long double BetaRand<RealType>::GetSampleLog1pMeanNorm(std::span<const RealType>
     return lnG1p / sample.size();
 }
 
-template < typename RealType >
+template <typename RealType>
 long double BetaRand<RealType>::GetSampleLog1mMeanNorm(std::span<const RealType> sample) const
 {
     long double lnG1m = 0;
@@ -1036,39 +1038,42 @@ long double BetaRand<RealType>::GetSampleLog1mMeanNorm(std::span<const RealType>
     return lnG1m / sample.size();
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaRand<RealType>::FitAlpha(long double lnG, long double meanNorm)
 {
     if (meanNorm <= 0 || meanNorm >= 1)
-        throw this->fitError(FitErrorCode::NotApplicable, "Normalized mean of the sample should be in interval of (0, 1)");
+        throw this->fitError(FitErrorCode::NotApplicable,
+                             "Normalized mean of the sample should be in interval of (0, 1)");
     if (this->beta == 1.0) {
         /// for β = 1 we have explicit expression for estimator
         SetShapes(-1.0 / lnG, this->beta);
-    }
-    else {
+    } else {
         /// get initial value for shape by method of moments
         RealType shape = meanNorm;
         shape /= 1.0 - meanNorm;
         shape *= this->beta;
         /// run root-finding procedure
-        if (!math::findRootNewtonFirstOrder<RealType>([this, lnG] (double x)
-        {
-            double first = math::digamma(x) - math::digamma(x + this->beta) - lnG;
-            double second = math::trigamma(x);
-            return DoublePair(first, second);
-        }, shape))
+        if (!math::findRootNewtonFirstOrder<RealType>(
+                [this, lnG](double x) {
+                    double first = math::digamma(x) - math::digamma(x + this->beta) - lnG;
+                    double second = math::trigamma(x);
+                    return DoublePair(first, second);
+                },
+                shape))
             throw this->fitError(FitErrorCode::Undefined, "Error in root-finding procedure.");
         SetShapes(shape, this->beta);
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaRand<RealType>::FitAlpha(std::span<const RealType> sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
     if (!this->allElementsAreNotGreaterThan(this->b, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
 
     long double lnG = this->GetSampleLogMeanNorm(sample);
     if (!std::isfinite(lnG))
@@ -1079,37 +1084,40 @@ void BetaRand<RealType>::FitAlpha(std::span<const RealType> sample)
     FitAlpha(lnG, mean);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaRand<RealType>::FitBeta(long double lnG1m, long double meanNorm)
 {
     if (meanNorm <= 0 || meanNorm >= 1)
-        throw this->fitError(FitErrorCode::NotApplicable, "Normalized mean of the sample should be in interval of (0, 1)");
+        throw this->fitError(FitErrorCode::NotApplicable,
+                             "Normalized mean of the sample should be in interval of (0, 1)");
     if (this->alpha == 1.0) {
         /// for α = 1 we have explicit expression for estimator
         SetShapes(this->alpha, -1.0 / lnG1m);
-    }
-    else {
+    } else {
         /// get initial value for shape by method of moments
         RealType shape = this->alpha / meanNorm - this->alpha;
         /// run root-finding procedure
-        if (!math::findRootNewtonFirstOrder<RealType>([this, lnG1m] (double x)
-        {
-            double first = math::digamma(x) - math::digamma(x + this->alpha) - lnG1m;
-            double second = math::trigamma(x);
-            return DoublePair(first, second);
-        }, shape))
+        if (!math::findRootNewtonFirstOrder<RealType>(
+                [this, lnG1m](double x) {
+                    double first = math::digamma(x) - math::digamma(x + this->alpha) - lnG1m;
+                    double second = math::trigamma(x);
+                    return DoublePair(first, second);
+                },
+                shape))
             throw this->fitError(FitErrorCode::Undefined, "Error in root-finding procedure.");
         this->SetShapes(this->alpha, shape);
     }
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaRand<RealType>::FitBeta(std::span<const RealType> sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
     if (!this->allElementsAreNotGreaterThan(this->b, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
 
     long double lnG1m = this->GetSampleLog1mMeanNorm(sample);
     if (!std::isfinite(lnG1m))
@@ -1120,7 +1128,7 @@ void BetaRand<RealType>::FitBeta(std::span<const RealType> sample)
     FitBeta(lnG1m, mean);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaRand<RealType>::FitShapes(long double lnG, long double lnG1m, long double mean, long double variance)
 {
     /// get initial values for shapes by method of moments
@@ -1135,36 +1143,37 @@ void BetaRand<RealType>::FitShapes(long double lnG, long double lnG1m, long doub
     DoublePair shapes = std::make_pair(shape1, shape2);
 
     /// run root-finding procedure
-    if (!math::findRootNewtonFirstOrder2d([lnG, lnG1m] (DoublePair x)
-    {
-        double digammaAlphapBeta = math::digamma(x.first + x.second);
-        double digammaAlpha = math::digamma(x.first);
-        double digammaBeta = math::digamma(x.second);
-        double first = lnG + digammaAlphapBeta - digammaAlpha;
-        double second = lnG1m + digammaAlphapBeta - digammaBeta;
-        return DoublePair(first, second);
-    },
-    [] (DoublePair x)
-    {
-        double trigammaAlphapBeta = math::trigamma(x.first + x.second);
-        double trigammaAlpha = math::trigamma(x.first);
-        double trigammaBeta = math::trigamma(x.second);
-        DoublePair first = std::make_pair(trigammaAlphapBeta - trigammaAlpha, trigammaAlphapBeta);
-        DoublePair second = std::make_pair(trigammaAlphapBeta, trigammaAlphapBeta - trigammaBeta);
-        return std::make_tuple(first, second);
-    },
-    shapes))
+    if (!math::findRootNewtonFirstOrder2d(
+            [lnG, lnG1m](DoublePair x) {
+                double digammaAlphapBeta = math::digamma(x.first + x.second);
+                double digammaAlpha = math::digamma(x.first);
+                double digammaBeta = math::digamma(x.second);
+                double first = lnG + digammaAlphapBeta - digammaAlpha;
+                double second = lnG1m + digammaAlphapBeta - digammaBeta;
+                return DoublePair(first, second);
+            },
+            [](DoublePair x) {
+                double trigammaAlphapBeta = math::trigamma(x.first + x.second);
+                double trigammaAlpha = math::trigamma(x.first);
+                double trigammaBeta = math::trigamma(x.second);
+                DoublePair first = std::make_pair(trigammaAlphapBeta - trigammaAlpha, trigammaAlphapBeta);
+                DoublePair second = std::make_pair(trigammaAlphapBeta, trigammaAlphapBeta - trigammaBeta);
+                return std::make_tuple(first, second);
+            },
+            shapes))
         throw this->fitError(FitErrorCode::Undefined, "Error in root-finding procedure.");
     SetShapes(shapes.first, shapes.second);
 }
 
-template < typename RealType >
+template <typename RealType>
 void BetaRand<RealType>::FitShapes(std::span<const RealType> sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
     if (!this->allElementsAreNotGreaterThan(this->b, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
 
     long double lnG = this->GetSampleLogMeanNorm(sample);
     if (!std::isfinite(lnG))
@@ -1179,21 +1188,20 @@ void BetaRand<RealType>::FitShapes(std::span<const RealType> sample)
 }
 // ARCSINERAND
 
-template < typename RealType >
+template <typename RealType>
 std::string ArcsineRand<RealType>::Name() const
 {
-    return "Arcsine(" + this->toStringWithPrecision(GetShape()) + ", "
-                      + this->toStringWithPrecision(this->MinValue()) + ", "
-                      + this->toStringWithPrecision(this->MaxValue()) + ")";
+    return "Arcsine(" + this->toStringWithPrecision(GetShape()) + ", " + this->toStringWithPrecision(this->MinValue()) +
+           ", " + this->toStringWithPrecision(this->MaxValue()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void ArcsineRand<RealType>::SetShape(double shape)
 {
     BetaDistribution<RealType>::SetShapes(1.0 - shape, shape);
 }
 
-template < typename RealType >
+template <typename RealType>
 void ArcsineRand<RealType>::FitShape(long double lnG, long double lnG1m)
 {
     double shape = randlib::consts::pi / (lnG1m - lnG);
@@ -1203,13 +1211,15 @@ void ArcsineRand<RealType>::FitShape(long double lnG, long double lnG1m)
     SetShape(shape > 0 ? shape : shape + 1);
 }
 
-template < typename RealType >
+template <typename RealType>
 void ArcsineRand<RealType>::FitShape(std::span<const RealType> sample)
 {
     if (!this->allElementsAreNotSmallerThan(this->a, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->LOWER_LIMIT_VIOLATION + this->toStringWithPrecision(this->a));
     if (!this->allElementsAreNotGreaterThan(this->b, sample))
-        throw this->fitError(FitErrorCode::WrongSample, this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
+        throw this->fitError(FitErrorCode::WrongSample,
+                             this->UPPER_LIMIT_VIOLATION + this->toStringWithPrecision(this->b));
 
     int n = sample.size();
     long double lnG = 0, lnG1m = 0;
@@ -1228,19 +1238,20 @@ void ArcsineRand<RealType>::FitShape(std::span<const RealType> sample)
 }
 // BALDINGNICHOLSRAND
 
-template < typename RealType >
+template <typename RealType>
 BaldingNicholsRand<RealType>::BaldingNicholsRand(double fixatingIndex, double frequency)
 {
     SetFixatingIndexAndFrequency(fixatingIndex, frequency);
 }
 
-template < typename RealType >
+template <typename RealType>
 std::string BaldingNicholsRand<RealType>::Name() const
 {
-    return "Balding-Nichols(" + this->toStringWithPrecision(GetFixatingIndex()) + ", " + this->toStringWithPrecision(GetFrequency()) + ")";
+    return "Balding-Nichols(" + this->toStringWithPrecision(GetFixatingIndex()) + ", " +
+           this->toStringWithPrecision(GetFrequency()) + ")";
 }
 
-template < typename RealType >
+template <typename RealType>
 void BaldingNicholsRand<RealType>::SetFixatingIndexAndFrequency(double fixatingIndex, double frequency)
 {
     if (!(fixatingIndex > 0 && fixatingIndex < 1))
