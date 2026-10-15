@@ -336,12 +336,12 @@ inline long double factorial(Integer n)
 template <std::floating_point Real>
 inline Real doubleFactorial(int n)
 {
-    Real nFact = factorial(static_cast<Real>(n));
-    if (n & 1) {
-        n <<= 1;
-        return factorial(static_cast<Real>(n + 1)) / (n * nFact);
-    }
-    return static_cast<Real>(1 << n) * nFact;
+    if (n < 0)
+        return 0.0;
+    Real result = 1.0;
+    for (int factor = n; factor > 1; factor -= 2)
+        result *= factor;
+    return result;
 }
 
 constexpr long double LOGFACTORIAL_TABLE[] = {0.l,

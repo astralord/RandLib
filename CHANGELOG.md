@@ -51,6 +51,7 @@ coherence and sampling statistics. Every fix below has a regression test in
   `RandLib.pro` (qmake) is deprecated and will be removed in 2.0.
 - Builds without warnings on GCC 11–14, Clang 15–18, AppleClang and MSVC 2022 (#18); MSVC's
   narrowing-conversion warnings, which GCC and Clang do not emit, are disabled.
+  Reference tests document the double-only MSVC incomplete-beta tolerance separately.
   Ziggurat tables and a few constants no longer use `constexpr` initializers that call
   non-`constexpr` math functions. Test constants also avoid names that can trigger MSVC's
   template-instantiation shadow warnings.
@@ -147,6 +148,8 @@ coherence and sampling statistics. Every fix below has a regression test in
 - **B36** Continuous and discrete uniform likelihoods negate the sample-count exponent after
   converting it to a signed floating-point value; negating `size_t` previously wrapped and
   produced an enormous positive exponent.
+- **B37** Double factorial now evaluates the defining product n(n − 2)…; the previous factorial
+  identities shifted by the full input and returned incorrect values for every n > 1.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.
 - Numerical integration uses adaptive Gauss–Kronrod (21-point) quadrature with a global error
   estimate instead of adaptive Simpson (#10).

@@ -367,3 +367,12 @@ TEST_CASE("B36: uniform likelihoods use a negative sample-count exponent", "[reg
     const std::vector<int> discreteSample = {0, 1, 0};
     CHECK(UniformDiscreteRand<int>(0, 1).LikelihoodFunction(discreteSample) == 0.125);
 }
+
+TEST_CASE("B37: double factorial uses every second factor", "[regression]")
+{
+    CHECK(math::doubleFactorial(-1) == 0.0);
+    CHECK(math::doubleFactorial(0) == 1.0);
+    CHECK(math::doubleFactorial(1) == 1.0);
+    CHECK(math::doubleFactorial(8) == 384.0);
+    CHECK(math::doubleFactorial(9) == 945.0);
+}

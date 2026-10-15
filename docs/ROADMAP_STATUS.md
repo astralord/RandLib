@@ -22,10 +22,10 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 |---|---|---|
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
-| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14 and Clang 15–18 build in CI; the latest MSVC warning fixes await CI. |
-| 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B36 found by the test suite; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | The latest runs exposed additional MSVC warning-as-error diagnostics; fixes await CI. |
-| 1.6 Test suite (#12) | ✅ | Unit tests take 12 s, statistical tests about 6 min. |
+| 1.3 Compiler portability (#18) | 🟡 | GCC 11–14, Clang 15–18, AppleClang and MSVC build warning-free; the latest cross-platform test tolerance fixes await CI. |
+| 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B37 found by the test suite; see CHANGELOG.md. |
+| 1.5 Continuous integration | 🟡 | Build, sanitizer, coverage and static-analysis jobs pass; AppleClang and MSVC test tolerance fixes await CI. |
+| 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
 | 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 
 ## Phase 2: Modern architecture (v2.0-alpha, branch `2.x`)
