@@ -263,7 +263,9 @@ template <std::uniform_random_bit_generator G>
 IntType NegativeBinomialDistribution<IntType, T>::variateGeometricThroughExponential(G &g) const
 {
     float X = -detail::standardExponential<float>(g) / log1mProb;
-    return std::floor(X);
+    if (!std::isfinite(X) || X >= static_cast<long double>(std::numeric_limits<IntType>::max()))
+        return std::numeric_limits<IntType>::max();
+    return static_cast<IntType>(X);
 }
 
 template <typename IntType, typename T>

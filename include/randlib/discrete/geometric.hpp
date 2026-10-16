@@ -118,7 +118,9 @@ IntType GeometricRand<IntType>::Variate(double probability, G &g)
     if (probability < 0.05) {
         double rate = -std::log1pl(-probability);
         float X = detail::standardExponential<float>(g) / rate;
-        return std::floor(X);
+        if (!std::isfinite(X) || X >= static_cast<long double>(std::numeric_limits<IntType>::max()))
+            return std::numeric_limits<IntType>::max();
+        return static_cast<IntType>(X);
     }
 
     double U = detail::uniform01<double>(g);

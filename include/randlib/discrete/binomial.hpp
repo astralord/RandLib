@@ -474,28 +474,28 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number, G &g) cons
 {
     /// waiting algorithm, using
     /// sum of geometrically distributed variables
-    IntType X = -1, sum = 0;
-    do {
-        sum += geometric(g) + 1;
+    IntType X = 0, sum = 0;
+    while (true) {
+        IntType wait = geometric(g);
+        if (wait >= number - sum)
+            return X;
+        sum += wait + 1;
         ++X;
-    } while (sum <= number);
-    return X;
+    }
 }
 
 template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double probability, G &g)
 {
-    IntType X = -1;
-    double sum = 0;
-    do {
-        IntType add = GeometricRand<IntType>::Variate(probability, g) + 1;
-        if (add < 0) /// we catched overflow
-            return X + 1;
-        sum += add;
+    IntType X = 0, sum = 0;
+    while (true) {
+        IntType wait = GeometricRand<IntType>::Variate(probability, g);
+        if (wait >= number - sum)
+            return X;
+        sum += wait + 1;
         ++X;
-    } while (sum <= number);
-    return X;
+    }
 }
 
 template <typename IntType>

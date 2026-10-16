@@ -49,7 +49,7 @@ cmake --build /tmp/b2
 Compilers on the pod: g++-13, g++-14, clang++-18. MSVC and AppleClang are only exercised by CI.
 
 Test families (both branches): `tests/unit` (golden v1.1 comparison, mpmath reference values, coherence,
-mode/median, parameters, regressions B1–B37, reproducibility, engines, numerics on 2.x) and
+mode/median, parameters, regressions B1–B38, reproducibility, engines, numerics on 2.x) and
 `tests/statistical` (KS/χ² sampling, moments, empirical CF, fitting). Tolerances follow plan section 9.
 
 ### Golden values and known deviations
@@ -81,12 +81,13 @@ gate.
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. The pushed `history` head is f5d16f1. CI run 38918400237 passed every job except AppleClang: its
-   continuous statistical aggregate completed, but the following aggregate discrete check ran
-   until GitHub's six-hour job limit. Local commit 92bf8f7 registers every discrete distribution as
-   a separate 60-second-bounded CTest case while preserving its seed and checks. GCC 13/14 and Clang
-   18 warning-clean builds pass locally, including all 105 tests and all 32 isolated discrete cases.
-   Push both branches and require the replacement AppleClang job to pass before tagging.
+1. The pushed `history` head is 92bf8f7. CI run 38966648994 isolated AppleClang's only failure to
+   `BetaBinomialRand<>(20, 0.5, 0.5)`, which hit its 60-second bound. Clang 18 UBSan reproduced an
+   out-of-range floating-to-integer conversion in the geometric waiting-time sampler. Local commit
+   4e8b90e records B38, saturates unrepresentable waits and makes binomial waiting arithmetic
+   overflow-safe. GCC 14 and Clang 18 warning-clean builds pass locally; Clang UBSan passes the exact
+   beta-binomial case and all 105 bounded tests. Push both branches and require the replacement
+   AppleClang job to pass before tagging.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
@@ -104,8 +105,9 @@ gate.
   Native and binary64-long-double probes now agree with the committed 40-digit mpmath reference.
   Warning-clean Release builds and the complete 168-test matrix pass under GCC 13 and Clang 18;
   GCC 14 passes the unit/example and isolated-discrete suites. The expanded v2 continuous sampling
-  grid keeps a one-hour bound, while every discrete case remains bounded at 60 seconds. Push the
-  local commits and require AppleClang and MSVC to pass before tagging.
+  grid keeps a one-hour bound, while every discrete case remains bounded at 60 seconds. The B38
+  sampler fix from 1.x is ported into the header-only implementations and uses a standard engine in
+  its v2 regression. Push the local commits and require AppleClang and MSVC to pass before tagging.
 - **2.5 Numerical building blocks**: done. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
