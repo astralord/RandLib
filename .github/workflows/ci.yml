@@ -124,3 +124,15 @@ jobs:
             echo "::error::static mutable state found (plan task 2.3)"
             exit 1
           fi
+
+  single-header:
+    name: single-header
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y g++-13
+      - name: Generate and compile
+        run: |
+          python3 tools/amalgamate.py --output build/amalgamated/randlib_single.hpp
+          g++-13 -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Werror -Ibuild/amalgamated tests/single_header_smoke.cpp -o build/single_header_smoke
+          build/single_header_smoke

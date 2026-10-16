@@ -1,0 +1,18 @@
+{
+  "name": "randlib",
+  "version": "2.0.0",
+  "description": "Header-only C++ probability distributions, fitting, and heavy-tail tools",
+  "homepage": "https://github.com/astralord/RandLib",
+  "license": "MIT",
+  "supports": "!uwp & !xbox",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

@@ -50,7 +50,6 @@ public:
 
 private:
     /**
-     * @fn h
      * @param t
      * @return leveled pdf for F and CF calculations
      */

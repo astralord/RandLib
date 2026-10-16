@@ -82,7 +82,6 @@ Real inverseCubicStep(Real a, Real b, Real d, Real e, Real fa, Real fb, Real fd,
 } // namespace detail
 
 /**
- * @fn toms748
  * Bracketing root finder of Alefeld, Potra and Shi (ACM TOMS algorithm 748): inverse cubic and
  * Newton-quadratic interpolation steps, a double-length secant step and bisection whenever the
  * bracket does not shrink by half; it converges like Brent's method at worst and faster on smooth
@@ -196,10 +195,10 @@ std::pair<Real, Real> toms748(const F &f, Real a, Real b, Real fa, Real fb, int 
 }
 
 /**
- * @fn findRoot
  * @param f continuous function with f(a) and f(b) of opposite signs
  * @param a lower end of the bracket
  * @param b upper end of the bracket
+ * @param maxIterations maximum number of refinement steps
  * @return root of f in [a, b], to full precision (TOMS 748)
  */
 template <std::floating_point Real = double, class F>
@@ -210,7 +209,6 @@ Real findRoot(const F &f, std::type_identity_t<Real> a, std::type_identity_t<Rea
 }
 
 /**
- * @fn findRootNewtonFirstOrder
  * Newton's root-finding procedure,
  * using first derivative
  * @param funPtr mapping x |-> (f(x), f'(x))
@@ -264,7 +262,6 @@ bool findRootNewtonFirstOrder(const std::function<DoublePair(RealType)> &funPtr,
 }
 
 /**
- * @fn findRootNewtonSecondOrder
  * Newton's root-finding procedure,
  * using first and second derivatives
  * @param funPtr mapping x |-> (f(x), f'(x), f''(x))
@@ -315,7 +312,6 @@ bool findRootNewtonSecondOrder(const std::function<DoubleTriplet(RealType)> &fun
 }
 
 /**
- * @fn findRootNewtonFirstOrder2d
  * Newton's root-finding procedure
  * for 2 functions of 2 parameters,
  * using Jacobian matrix

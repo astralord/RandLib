@@ -20,7 +20,6 @@ namespace randlib
 using DefaultEngine = Xoshiro256pp;
 
 /**
- * @fn random_seed
  * @return non-deterministic 64-bit seed: std::random_device mixed with a high-resolution clock and
  * the thread id through SplitMix64
  */
@@ -38,7 +37,6 @@ inline std::uint64_t random_seed()
 }
 
 /**
- * @fn seed_from
  * @param sequence seed sequence that fills the whole state of the engine
  * @return engine seeded from the sequence
  */
@@ -49,7 +47,6 @@ Engine seed_from(std::seed_seq &sequence)
 }
 
 /**
- * @fn make_streams
  * Engines for parallel simulations, one per thread: consecutive jump() calls for engines that
  * have them (non-overlapping by construction), distinct PCG streams for Pcg32 and Pcg64, and
  * seeds derived with SplitMix64 for any other engine.

@@ -3,6 +3,32 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - Unreleased
+
+### Documentation
+
+- Rewrote the README around distribution fitting and heavy-tail work, with a quick start and an
+  explicit comparison with the standard library, Boost.Math and StatsLib.
+- Added guides for fitting, parallel stream ownership, stable-law parameterization and limitations,
+  the numerical evidence policy, packaging, and every v1-to-v2 breaking change.
+- Added a strict Doxygen build with the pinned Doxygen Awesome theme and a GitHub Pages deployment
+  workflow. Redundant conversion-era `@fn` directives and incomplete public parameter comments were
+  cleaned up so documentation warnings fail the build.
+- Retired the generated legacy PDF. Its LaTeX source and figures remain under `docs/legacy/` as a
+  clearly marked 1.x mathematical reference.
+
+### Examples and packaging
+
+- Added warning-clean, CI-compiled examples for standard-engine sampling, parallel streams, fitted
+  model selection, and conjugate Bayesian updates. The stable-fitting example follows the Phase 5
+  stable estimator.
+- Added a locally validated vcpkg overlay port and Conan 2 header-only recipe with a compiled
+  `test_package` consumer.
+- Added deterministic single-header generation and a CI smoke test. Tagged v2 releases extract their
+  matching changelog section and attach `randlib_single.hpp` with its SHA-256 checksum.
+- Removed a Bernoulli/binomial include cycle exposed by standalone public-header consumption without
+  changing the exact sampling algorithm or engine advancement.
+
 ## [2.0.0-alpha.1] - Unreleased
 
 ### Fitting

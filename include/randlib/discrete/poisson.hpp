@@ -93,7 +93,6 @@ private:
 
 public:
     /**
-     * @fn Fit
      * fit rate λ via maximum-likelihood method
      * @param sample
      */
@@ -107,7 +106,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const IntType> sample, DoublePair &confidenceInterval,
                                            double significanceLevel);
     /**
-     * @fn FitBayes
      * fit rate λ via Bayes estimation
      * @param sample
      * @param priorDistribution

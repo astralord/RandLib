@@ -21,7 +21,6 @@ struct Segment
 };
 
 /**
- * @fn gaussKronrod21
  * 21-point Gauss-Kronrod rule with its embedded 10-point Gauss rule (QUADPACK qk21)
  * @param f integrand
  * @param a lower boundary
@@ -110,7 +109,6 @@ Real integrateFinite(const F &f, Real a, Real b, Real tolerance, int maxSubdivis
 } // namespace detail
 
 /**
- * @fn integrate
  * Global adaptive Gauss-Kronrod quadrature (QUADPACK QAG). Infinite limits are mapped onto (0, 1]
  * by x = a + (1 - t) / t, as in QUADPACK QAGI; the rule never evaluates the endpoints.
  * @param f integrand

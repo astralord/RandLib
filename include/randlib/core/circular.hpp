@@ -40,13 +40,11 @@ public:
     [[nodiscard]] long double ExcessKurtosis() const override { return NAN; }
 
     /**
-     * @fn CircularMean
      * @return Circular mean of random variable
      */
     [[nodiscard]] virtual long double CircularMean() const = 0;
 
     /**
-     * @fn CircularVariance
      * @return Circular variance of random variable
      */
     [[nodiscard]] virtual long double CircularVariance() const = 0;

@@ -25,7 +25,6 @@ constexpr int engineBits() noexcept
 }
 
 /**
- * @fn randomBits
  * @param g any uniform random bit generator, including those whose range is not a power of two
  * @param count number of bits, from 1 to 64
  * @return count independent uniform random bits, taken from the high end of the engine outputs
@@ -57,7 +56,6 @@ std::uint64_t randomBits(G &g, int count)
 }
 
 /**
- * @fn uniform01
  * @return (k + 1/2) / 2^b for b = digits - 1 random bits k: uniform on (0, 1) with the full
  * resolution of Real, never 0 and never 1
  */
@@ -94,7 +92,7 @@ Real uniform01HalfClosed(G &g)
 }
 
 /**
- * @fn uniformBelow
+ * @param g uniform random bit generator
  * @param n positive number of outcomes
  * @return uniform integer in [0, n), without modulo bias: 64-bit values below 2^64 mod n are rejected
  */

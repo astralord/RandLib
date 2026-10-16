@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags: ["v2.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build release artifacts
+        run: |
+          python3 tools/amalgamate.py --output randlib_single.hpp
+          g++ -std=c++20 -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Werror -I. tests/single_header_smoke.cpp -o single_header_smoke
+          ./single_header_smoke
+          sha256sum randlib_single.hpp > randlib_single.hpp.sha256
+          python3 tools/release_notes.py "${GITHUB_REF_NAME}" > release-notes.md
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${GITHUB_REF_NAME}"
+          randlib_single.hpp randlib_single.hpp.sha256
+          --verify-tag
+          --title "RandLib ${GITHUB_REF_NAME#v}"
+          --notes-file release-notes.md

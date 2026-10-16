@@ -23,7 +23,6 @@ namespace math
 {
 
 /**
- * @fn besselI
  * @param nu order, ν ≥ 0
  * @param x argument, x ≥ 0
  * @return modified Bessel function of the first kind I_ν(x)
@@ -32,7 +31,6 @@ template <std::floating_point Real>
 Real besselI(std::type_identity_t<Real> nu, Real x);
 
 /**
- * @fn besselK
  * @param nu order, ν ≥ 0
  * @param x argument, x > 0
  * @return modified Bessel function of the second kind K_ν(x)
@@ -41,7 +39,6 @@ template <std::floating_point Real>
 Real besselK(std::type_identity_t<Real> nu, Real x);
 
 /**
- * @fn riemannZeta
  * @param s argument, s > 1
  * @return Riemann zeta function ζ(s)
  */
@@ -49,7 +46,6 @@ template <std::floating_point Real>
 Real riemannZeta(Real s);
 
 /**
- * @fn lgammaCorrection
  * @param x argument, x ≥ 10
  * @return log Γ(x) - ((x - 1/2) log x - x + log √(2π)), the remainder of Stirling's formula
  */
@@ -95,7 +91,6 @@ inline constexpr Real machineEpsilon = std::numeric_limits<Real>::epsilon();
 constexpr int maxSeriesIterations = 100000;
 
 /**
- * @fn reciprocalGammaTerms
  * Values needed by Temme's series for |μ| ≤ 1/2:
  * gam1 = (1/Γ(1-μ) - 1/Γ(1+μ)) / (2μ), gam2 = (1/Γ(1-μ) + 1/Γ(1+μ)) / 2,
  * gampl = 1/Γ(1+μ), gammi = 1/Γ(1-μ).
@@ -118,7 +113,6 @@ inline void reciprocalGammaTerms(Real mu, Real &gam1, Real &gam2, Real &gampl, R
 }
 
 /**
- * @fn besselIK
  * Temme's method with Steed's continued fraction (Numerical Recipes, "bessik")
  * @param nu order ν ≥ 0
  * @param x argument x > 0

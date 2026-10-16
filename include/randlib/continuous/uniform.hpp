@@ -48,7 +48,6 @@ public:
     [[nodiscard]] RealType operator()(G &g) const;
 
     /**
-     * @fn StandardVariate
      * @param g
      * @return a random number on interval (0,1) if no preprocessors are specified
      */
@@ -56,7 +55,6 @@ public:
     [[nodiscard]] static RealType StandardVariate(G &g);
 
     /**
-     * @fn StandardVariateClosed
      * @param g
      * @return a random number on interval [0,1]
      */
@@ -64,7 +62,6 @@ public:
     [[nodiscard]] static RealType StandardVariateClosed(G &g);
 
     /**
-     * @fn StandardVariateHalfClosed
      * @param g
      * @return a random number on interval [0,1)
      */
@@ -96,29 +93,28 @@ public:
     [[nodiscard]] double LogLikelihoodFunction(std::span<const RealType> sample) const override;
 
     /**
-     * @fn FitMinimum
      * fit minimum with maximum-likelihood estimator if unbiased == false,
      * fit minimum using UMVU estimator otherwise
      * @param sample
+     * @param unbiased use the UMVU estimator instead of maximum likelihood
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitMinimum(std::span<const RealType> sample, bool unbiased = false);
     /**
-     * @fn FitMaximum
      * fit maximum with maximum-likelihood estimator if unbiased == false,
      * fit maximum using UMVU estimator otherwise
      * @param sample
+     * @param unbiased use the UMVU estimator instead of maximum likelihood
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitMaximum(std::span<const RealType> sample, bool unbiased = false);
     /**
-     * @fn Fit
      * fit support with maximum-likelihood estimator if unbiased == false,
      * fit support using UMVU estimator otherwise
      * @param sample
+     * @param unbiased use the UMVU estimator instead of maximum likelihood
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 
     /**
-     * @fn FitMaximumBayes
      * fit maximum parameter, using Bayesian estimation
      * @param sample
      * @param priorDistribution

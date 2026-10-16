@@ -81,7 +81,6 @@ private:
     };
 
     /**
-     * @fn getIdOfUsedGenerator
      * @return id of used variate generator according to the shapes
      */
     GENERATOR_ID getIdOfUsedGenerator() const
@@ -105,19 +104,16 @@ private:
     }
 
     /**
-     * @fn setCoefficientsForGenerator
      */
     void setCoefficientsForGenerator();
 
 protected:
     /**
-     * @fn SetShapes
      * @param shape1 α
      * @param shape2 β
      */
     void SetShapes(double shape1, double shape2);
     /**
-     * @fn SetSupport
      * @param minValue a
      * @param maxValue b
      */
@@ -125,22 +121,18 @@ protected:
 
 public:
     /**
-     * @fn GetAlpha
      * @return first shape α
      */
     [[nodiscard]] inline double GetAlpha() const noexcept { return alpha; }
     /**
-     * @fn GetBeta
      * @return second shape β
      */
     [[nodiscard]] inline double GetBeta() const noexcept { return beta; }
     /**
-     * @fn GetBetaFunction
      * @return B(α, β)
      */
     [[nodiscard]] inline double GetBetaFunction() const noexcept { return betaFun; }
     /**
-     * @fn GetLogBetaFunction
      * @return log(B(α, β))
      */
     [[nodiscard]] inline double GetLogBetaFunction() const noexcept { return logBetaFun; }
@@ -152,7 +144,6 @@ public:
 
 private:
     /**
-     * @fn variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
      * @return beta variate for α = β = 1.5
      */
@@ -160,7 +151,6 @@ private:
     RealType variateRejectionUniform(G &g) const;
 
     /**
-     * @fn variateRejectionUniform
      * Symmetric beta generator via rejection from the uniform density
      * @return beta variate for 1 < α = β < 2 and α != 1.5
      */
@@ -168,7 +158,6 @@ private:
     RealType variateRejectionUniformExtended(G &g) const;
 
     /**
-     * @fn variateArcsine
      * Arcsine beta generator
      * @return beta variate for α = β = 0.5
      */
@@ -176,7 +165,6 @@ private:
     RealType variateArcsine(G &g) const;
 
     /**
-     * @fn variateRejectionNormal
      * Symmetric beta generator via rejection from the normal density
      * @return beta variate for equal shape parameters > 2
      */
@@ -184,7 +172,6 @@ private:
     RealType variateRejectionNormal(G &g) const;
 
     /**
-     * @fn variateJohnk
      * Johnk's beta generator
      * @return beta variate for small shape parameters < 1
      */
@@ -192,7 +179,6 @@ private:
     RealType variateJohnk(G &g) const;
 
     /**
-     * @fn variateCheng
      * Cheng's beta generator
      * @return beta variate for max(α, β) > 1 and min(α, β) > 0.5
      */
@@ -200,7 +186,6 @@ private:
     RealType variateCheng(G &g) const;
 
     /**
-     * @fn variateAtkinsonWhittaker
      * Atkinson-Whittaker beta generator
      * @return beta variate for max(α, β) < 1 and α + β > 1
      */
@@ -208,7 +193,6 @@ private:
     RealType variateAtkinsonWhittaker(G &g) const;
 
     /**
-     * @fn variateGammaRatio
      * Gamma ratio beta generator
      * @return beta variate for the rest variations of shapes
      */
@@ -221,13 +205,11 @@ public:
 
     [[nodiscard]] long double Mean() const override;
     /**
-     * @fn GeometricMean
      * @return E[ln(X)]
      */
     long double GeometricMean() const;
     [[nodiscard]] long double Variance() const override;
     /**
-     * @fn GeometricVariance
      * @return Var(ln(X))
      */
     long double GeometricVariance() const;
@@ -297,7 +279,6 @@ public:
     [[nodiscard]] long double GetSampleLog1mMeanNorm(std::span<const RealType> sample) const;
 
     /**
-     * @fn FitAlpha
      * set α, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
      * @param lnG normalized sample average of ln(X)
@@ -306,14 +287,12 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void FitAlpha(long double lnG, long double meanNorm);
 
     /**
-     * @fn FitAlpha
      * set α, estimated via maximum likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitAlpha(std::span<const RealType> sample);
 
     /**
-     * @fn FitBeta
      * set β, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
      * @param lnG1m normalized sample average of ln(1-X)
@@ -322,14 +301,12 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void FitBeta(long double lnG1m, long double meanNorm);
 
     /**
-     * @fn FitBeta
      * set β, estimated via maximum likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitBeta(std::span<const RealType> sample);
 
     /**
-     * @fn FitShapes
      * set α and β, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
      * @param lnG sample average of ln(X)
@@ -341,7 +318,6 @@ public:
                                                  long double variance);
 
     /**
-     * @fn FitShapes
      * set α and β, estimated via maximum likelihood
      * @param sample
      */
@@ -373,7 +349,6 @@ public:
     [[nodiscard]] inline double GetShape() const noexcept { return this->beta; }
 
     /**
-     * @fn FitShape
      * set α and β, estimated via maximum likelihood,
      * using sufficient statistics instead of the whole sample
      * @param lnG average of all ln(X)
@@ -382,7 +357,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void FitShape(long double lnG, long double lnG1m);
 
     /**
-     * @fn FitShape
      * set α, estimated via maximum likelihood
      * @param sample
      */

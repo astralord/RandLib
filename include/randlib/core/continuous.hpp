@@ -30,21 +30,18 @@ public:
 protected:
 public:
     /**
-     * @fn f
      * @param x
      * @return probability density function
      */
     [[nodiscard]] virtual double f(const RealType &x) const { return std::exp(this->logf(x)); }
 
     /**
-     * @fn logf
      * @param x
      * @return logarithm of probability density function
      */
     [[nodiscard]] virtual double logf(const RealType &x) const = 0;
 
     /**
-     * @fn ProbabilityDensityFunction
      * fill vector y with f(x)
      * @param x
      * @param y
@@ -52,7 +49,6 @@ public:
     void ProbabilityDensityFunction(std::span<const RealType> x, std::span<double> y) const;
 
     /**
-     * @fn LogProbabilityDensityFunction
      * fill vector y with logf(x)
      * @param x
      * @param y
@@ -70,7 +66,6 @@ protected:
                               RealType maxPoint) const override;
 
     /**
-     * @fn searchQuantile
      * Deterministic root search for the quantile: brackets the root, starting from the
      * guess when it is finite, then refines it with the Illinois variant of regula falsi
      * (on a logarithmic scale for small p), falling back to bisection whenever the bracket
@@ -89,7 +84,6 @@ public:
     [[nodiscard]] double LogLikelihoodFunction(std::span<const RealType> sample) const override;
 
     /**
-     * @fn KolmogorovSmirnovTest
      * @param orderStatistic sample sorted in ascending order
      * @param alpha level of test
      * @return true if sample is from this distribution according to asymptotic KS-test, false otherwise

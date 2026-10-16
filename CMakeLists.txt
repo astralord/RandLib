@@ -9,7 +9,9 @@ project(RandLib
 include(GNUInstallDirs)
 
 option(RANDLIB_BUILD_TESTS "Build the RandLib test suite" ${PROJECT_IS_TOP_LEVEL})
+option(RANDLIB_BUILD_EXAMPLES "Build the RandLib examples" ${PROJECT_IS_TOP_LEVEL})
 option(RANDLIB_BUILD_BENCHMARKS "Build the RandLib sampling benchmarks" OFF)
+option(RANDLIB_BUILD_DOCS "Build the Doxygen API reference" OFF)
 option(RANDLIB_WARNINGS_AS_ERRORS "Treat compiler warnings as errors in RandLib's own targets" OFF)
 option(RANDLIB_INSTALL "Generate install and package-config rules" ${PROJECT_IS_TOP_LEVEL})
 option(RANDLIB_PRECOMPILED "Compile the double and int instantiations once into a static library" OFF)
@@ -62,8 +64,28 @@ if(RANDLIB_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
+if(RANDLIB_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
 if(RANDLIB_BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
+endif()
+
+if(RANDLIB_BUILD_DOCS)
+    find_package(Doxygen REQUIRED)
+    include(FetchContent)
+    FetchContent_Declare(doxygen_awesome
+        URL https://github.com/jothepro/doxygen-awesome-css/archive/d52eafe3e9303399fda15661f3d7bb8fe3d7eabc.tar.gz
+        URL_HASH SHA256=6d58bfc1546cab9ce606494a3df857271b9cc712db9b9b77a9abf0567d61c17d
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(doxygen_awesome)
+    FetchContent_GetProperties(doxygen_awesome SOURCE_DIR RANDLIB_DOXYGEN_AWESOME_DIR)
+    configure_file(docs/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(randlib_docs ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMENT "Generating RandLib API documentation"
+        VERBATIM)
 endif()
 
 if(RANDLIB_INSTALL)

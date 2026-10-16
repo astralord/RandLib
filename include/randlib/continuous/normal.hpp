@@ -37,7 +37,6 @@ public:
     NormalRand(double location = 0, double variance = 1);
 
     /**
-     * @fn FromMeanStd
      * @param mean μ
      * @param standardDeviation σ
      * @return N(μ, σ^2)
@@ -50,7 +49,6 @@ public:
     }
 
     /**
-     * @fn FromMeanVariance
      * @param mean μ
      * @param variance σ^2
      * @return N(μ, σ^2)
@@ -64,12 +62,10 @@ public:
     void SetScale(double scale);
     void SetVariance(double variance);
     /**
-     * @fn GetScale
      * @return σ
      */
     [[nodiscard]] inline double GetScale() const noexcept { return sigma; }
     /**
-     * @fn GetLogScale
      * @return log(σ)
      */
     [[nodiscard]] inline double GetLogScale() const
@@ -77,7 +73,6 @@ public:
         return StableDistribution<RealType>::GetLogScale() - 0.5 * randlib::consts::ln2;
     }
     /**
-     * @fn GetPrecision
      * @return 1/σ^2
      */
     [[nodiscard]] inline double GetPrecision() const { return 1.0 / this->Variance(); }
@@ -111,14 +106,12 @@ public:
     [[nodiscard]] long double FourthMoment() const override { return Moment(4); }
 
     /**
-     * @fn FitLocation
      * set location, returned by maximium-likelihood estimator
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitLocation(std::span<const RealType> sample);
 
     /**
-     * @fn FitLocation
      * set location, returned by maximium-likelihood estimator
      * and return confidenceInterval for given significance level
      * @param sample
@@ -129,14 +122,12 @@ public:
                                                    double significanceLevel);
 
     /**
-     * @fn FitVariance
      * set variance, returned by maximium-likelihood estimator
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitVariance(std::span<const RealType> sample);
 
     /**
-     * @fn FitVariance
      * @param sample
      * @param confidenceInterval
      * @param significanceLevel
@@ -146,7 +137,6 @@ public:
                                                    double significanceLevel, bool unbiased = false);
 
     /**
-     * @fn FitScale
      * set scale, returned via maximum-likelihood estimation or unbiased estimator
      * (which might be different from the unbiased estimator of variance)
      * @param sample
@@ -155,7 +145,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample, bool unbiased = false);
 
     /**
-     * @fn Fit
      * set parameters, returned by maximium-likelihood estimator if unbiased = false,
      * otherwise set parameters via UMVU estimator
      * @param sample
@@ -164,7 +153,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 
     /**
-     * @fn Fit
      * set parameters, returned by maximium-likelihood estimator if unbiased = false,
      * otherwise set parameters via UMVU estimator, and return confidence intervals for given significance level
      * @param sample
@@ -178,7 +166,6 @@ public:
                                            bool unbiased = false);
 
     /**
-     * @fn FitLocationBayes
      * set location, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
@@ -189,7 +176,6 @@ public:
     FitLocationBayes(std::span<const RealType> sample, const NormalRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
-     * @fn FitVarianceBayes
      * set variance, returned by bayesian estimation
      * @param sample
      * @param priorDistribution
@@ -201,7 +187,6 @@ public:
                      bool MAP = false);
 
     /**
-     * @fn FitBayes
      * set parameters, returned by bayesian estimation
      * @param sample
      * @param priorDistribution

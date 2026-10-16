@@ -14,7 +14,6 @@ namespace math
 {
 
 /**
- * @fn factorial
  * Calculate n! using table values for small n <= 255
  * and built-in gamma function for large n > 255
  * @param n non-negative integer number
@@ -27,7 +26,6 @@ template <std::integral Integer>
 long double factorial(Integer n);
 
 /**
- * @fn doubleFactorial
  * Calculate n!!
  * @param n non-negative integer number
  * @return n!!
@@ -36,7 +34,6 @@ template <std::floating_point Real = long double>
 Real doubleFactorial(int n);
 
 /**
- * @fn lfact
  * Calculate log(n!) using table values for small n <= 255
  * and built-in lgamma function for large n > 255
  * @param n non-negative integer number
@@ -54,7 +51,6 @@ template <std::floating_point Real = long double>
 Real ldfact(size_t n);
 
 /**
- * @fn binom
  * Calculate binomial coefficient
  * @param n non-negative integer
  * @param k non-negative integer, k < n
@@ -64,7 +60,6 @@ template <std::floating_point Real = long double>
 Real binom(size_t n, size_t k);
 
 /**
- * @fn stirlingError
  * @param n positive integer number
  * @return log(n!) - (n + 1/2) log(n) + n - log(2π)/2, the error of Stirling's formula
  */
@@ -72,7 +67,6 @@ template <std::floating_point Real = double>
 Real stirlingError(size_t n);
 
 /**
- * @fn bd0
  * Deviance term of the saddle-point expansions of Poisson and binomial probabilities
  * (C. Loader, "Fast and accurate computation of binomial probabilities", 2000)
  * @param x non-negative number
@@ -83,7 +77,6 @@ template <std::floating_point Real>
 Real bd0(std::type_identity_t<Real> x, Real m);
 
 /**
- * @fn digamma
  * @param x input parameter
  * @return digamma(x) = ln(Γ(x))' = d(Γ(x))/Γ(x)
  */
@@ -91,7 +84,6 @@ template <std::floating_point Real>
 Real digamma(Real x);
 
 /**
- * @fn digammamLog
  * @param x input parameter
  * @return digamma(x) - log(x)
  */
@@ -99,7 +91,6 @@ template <std::floating_point Real>
 Real digammamLog(Real x);
 
 /**
- * @fn trigamma
  * @param x input parameter
  * @return trigamma(x) = digamma'(x)
  */
@@ -107,7 +98,6 @@ template <std::floating_point Real>
 Real trigamma(Real x);
 
 /**
- * @fn lpgamma
  * Calculate logarithm of lower incomplete gamma function,
  * accelerated by using precalculated value of log(a) and log(Γ(a))
  * @param a non-negative parameter
@@ -120,7 +110,6 @@ template <std::floating_point Real>
 Real lpgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
- * @fn lpgamma
  * Calculate logarithm of lower incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a non-negative parameter
@@ -132,7 +121,6 @@ template <std::floating_point Real>
 Real lpgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
- * @fn lpgamma
  * Calculate logarithm of lower incomplete gamma function
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -142,7 +130,6 @@ template <std::floating_point Real>
 Real lpgamma(std::type_identity_t<Real> a, Real x);
 
 /**
- * @fn pgamma
  * Calculate lower regularized incomplete gamma function,
  * accelerated by using precalculated value of log(a) and log(Γ(a))
  * @param a non-negative parameter
@@ -155,7 +142,6 @@ template <std::floating_point Real>
 Real pgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
- * @fn pgamma
  * Calculate lower regularized incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a non-negative parameter
@@ -167,7 +153,6 @@ template <std::floating_point Real>
 Real pgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
- * @fn pgamma
  * Calculate lower regularized incomplete gamma function
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -177,7 +162,6 @@ template <std::floating_point Real>
 Real pgamma(std::type_identity_t<Real> a, Real x);
 
 /**
- * @fn lqgamma
  * Calculate logarithm of upper incomplete gamma function,
  * accelerated by using precalculated values of log(a) and log(Γ(a))
  * @param a non-negative parameter
@@ -190,7 +174,6 @@ template <std::floating_point Real>
 Real lqgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
- * @fn lqgamma
  * Calculate logarithm of upper incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a non-negative parameter
@@ -202,7 +185,6 @@ template <std::floating_point Real>
 Real lqgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
- * @fn lqgamma
  * Calculate logarithm of upper incomplete gamma function
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -212,7 +194,6 @@ template <std::floating_point Real>
 Real lqgamma(std::type_identity_t<Real> a, Real x);
 
 /**
- * @fn lqgamma
  * Calculate upper regularized incomplete gamma function,
  * accelerated by using precalculated values of log(a) and log(Γ(a))
  * @param a non-negative parameter
@@ -225,7 +206,6 @@ template <std::floating_point Real>
 Real qgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logA, std::type_identity_t<Real> lgammaA);
 
 /**
- * @fn qgamma
  * Calculate upper regularized incomplete gamma function,
  * accelerated by using precalculated value of log(x)
  * @param a non-negative parameter
@@ -237,7 +217,6 @@ template <std::floating_point Real>
 Real qgamma(std::type_identity_t<Real> a, Real x, std::type_identity_t<Real> logX);
 
 /**
- * @fn qgamma
  * Calculate upper regularized incomplete gamma function
  * @param a non-negative parameter
  * @param x non-negative parameter
@@ -263,12 +242,10 @@ namespace math
 {
 
 /**
- * @fn FACTORIAL_TABLESIZE maximum value for input parameter to use table method
  */
 constexpr int FACTORIAL_TABLESIZE = 175;
 
 /**
- * @fn FACTORIAL_TABLE (n * 10)! for n from 0 to 17
  */
 constexpr long double FACTORIAL_TABLE[] = {
     1.l,
@@ -292,7 +269,6 @@ constexpr long double FACTORIAL_TABLE[] = {
 };
 
 /**
- * @fn factorialForSmallValue
  * Get n! using product method with table
  * @param n non-negative integer number
  * @return n!
@@ -665,7 +641,6 @@ inline Real binom(size_t n, size_t k)
 }
 
 /**
- * @fn digammamLogForLargeX
  * @param x
  * @return digamma(x) - log(x) for x > 7
  */
@@ -758,7 +733,6 @@ inline Real trigamma(Real x)
 }
 
 /**
- * @fn log1pmx
  * @param t
  * @return log(1 + t) - t, accurate also for small |t|
  */
@@ -779,7 +753,6 @@ inline Real log1pmx(Real t)
 }
 
 /**
- * @fn logPrefactor
  * @return log(x^a e^{-x} / Γ(a)); for a ≥ 10 it is formed as
  * a·log1pmx(x/a - 1) + log(a / 2π) / 2 - (Stirling remainder of log Γ(a)),
  * which keeps full relative accuracy when x is close to a large a
@@ -795,7 +768,6 @@ inline Real logPrefactor(Real a, Real x, Real logX)
 }
 
 /**
- * @fn lowerSeries
  * @return Σ_{n≥0} x^n / ((a+1)(a+2)...(a+n)), so that P(a, x) = x^a e^{-x} / Γ(a+1) times it
  */
 template <std::floating_point Real>
@@ -812,7 +784,6 @@ inline Real lowerSeries(Real a, Real x)
 }
 
 /**
- * @fn upperContinuedFraction
  * Modified Lentz evaluation of the continued fraction for Q(a, x), x ≥ a + 1
  * @return h such that Q(a, x) = x^a e^{-x} / Γ(a) · h
  */
@@ -848,7 +819,6 @@ struct IncompleteGamma
 };
 
 /**
- * @fn incompleteGamma
  * Regularized incomplete gamma ratios P(a, x) and Q(a, x) = 1 - P(a, x) and their logarithms.
  * The smaller ratio is always computed directly (series for x < a + 1, continued fraction
  * otherwise), never by subtraction, so both tails keep their relative accuracy.

@@ -72,7 +72,6 @@ protected:
     };
 
     /**
-     * @fn GetIdOfUsedGenerator
      * If r is small, we use two different generators for two different cases:
      * If p < 0.08 then the tail is too heavy (probability to be in main body is smaller than 0.75),
      * then we return highest integer, smaller than variate from exponential distribution.
@@ -114,7 +113,6 @@ private:
 
 public:
     /**
-     * @fn FitProbabilityBayes
      * @param sample
      * @param priorDistribution
      * @param MAP if true, use MAP estimator
@@ -143,7 +141,6 @@ public:
     static constexpr char TOO_SMALL_VARIANCE[] = "Sample variance should be greater than sample mean";
 
     /**
-     * @fn Fit
      * set number and probability, estimated via maximum-likelihood method
      * @param sample
      */

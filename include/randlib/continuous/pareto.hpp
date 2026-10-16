@@ -80,7 +80,6 @@ public:
     [[nodiscard]] long double Entropy() const;
 
     /**
-     * @fn FitShape
      * Fit α to maximum-likelihood estimator
      * or to UMVU if unbiased == true
      * @param sample
@@ -89,7 +88,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void FitShape(std::span<const RealType> sample, bool unbiased = false);
 
     /**
-     * @fn FitScale
      * Fit σ to maximum-likelihood estimator
      * or to UMVU if unbiased == true
      * @param sample
@@ -98,7 +96,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample, bool unbiased = false);
 
     /**
-     * @fn Fit
      * Fit parameters to maximum-likelihood estimators
      * or to UMVU if unbiased == true
      * @param sample
@@ -107,7 +104,6 @@ public:
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 
     /**
-     * @fn FitShapeBayes
      * Fit α, using bayesian inference
      * @param sample
      * @param priorDistribution

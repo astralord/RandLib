@@ -1,0 +1,46 @@
+PROJECT_NAME           = RandLib
+PROJECT_NUMBER         = @PROJECT_VERSION@
+PROJECT_BRIEF          = "Probability distributions, fitting, and heavy-tail tools for C++20"
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/CHANGELOG.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/accuracy-policy.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/fitting.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/legacy/README.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/migration-v2.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/packaging.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/parallel-sampling.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/stable-distributions.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/include/randlib
+FILE_PATTERNS          = *.hpp *.md
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md
+MARKDOWN_SUPPORT       = YES
+AUTOLINK_SUPPORT       = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_AS_ERROR          = FAIL_ON_WARNINGS
+FULL_PATH_NAMES        = NO
+STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_COLORSTYLE        = LIGHT
+GENERATE_TREEVIEW      = YES
+FULL_SIDEBAR           = NO
+DISABLE_INDEX          = NO
+HTML_EXTRA_STYLESHEET  = @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome.css \
+                         @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome-sidebar-only.css
+GENERATE_LATEX         = NO
+DOT_GRAPH_MAX_NODES    = 100
+QUIET                  = YES
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+MACRO_EXPANSION        = YES
+PREDEFINED             = RANDLIB_DEPRECATED_FIT_MEMBER= \
+                         RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN= \
+                         RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END=

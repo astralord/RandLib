@@ -85,20 +85,17 @@ private:
     double pdfByCauchy(double x) const;
 
     /**
-     * @fn conditionalShift
      * @param w value of the exponential mixing variable
      * @return location of the conditional stable law of Y given W = w
      */
     double conditionalShift(double w) const;
     /**
-     * @fn lowerLogMixingVariable
      * @param x0 argument minus shift
      * @return log of the smallest mixing variable w that matters for the density and the
      * distribution function at x0
      */
     double lowerLogMixingVariable(double x0) const;
     /**
-     * @fn mixtureIntegral
      * @param g function of the mixing variable w
      * @param logWMin log of the smallest w that matters
      * @return E[g(W)] for W ~ Exp(1)
@@ -134,20 +131,17 @@ public:
 
 protected:
     /**
-     * @fn quantileLaplace
      * @param p input parameter in the interval (0, 1)
      * @return quantile for (Asymmetric) Laplace distribution
      */
     RealType quantileLaplace(double p) const;
     /**
-     * @fn quantileLaplace1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for (Asymmetric) Laplace distribution
      */
     RealType quantileLaplace1m(double p) const;
 
     /**
-     * @fn searchTailQuantile
      * Quantile search that starts far tails from their power-law asymptote
      */
     RealType searchTailQuantile(double p, bool upperTail) const;

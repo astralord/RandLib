@@ -13,12 +13,15 @@ namespace randlib
 {
 
 /**
- * @fn stableTailQuantile
  * Quantile of the power-law tails of a stable law with α < 2:
  * P(X > x) ~ C (1 + β) γ^α x^(-α) and P(X < -x) ~ C (1 - β) γ^α x^(-α) as x → ∞, with
  * C = Γ(α) sin(πα/2) / π (1/π for α = 1). Geometric stable laws have the same tails.
  * @param p probability of the tail, small
  * @param upperTail true for P(X > x) = p, false for P(X < x) = p
+ * @param alpha characteristic exponent
+ * @param beta skewness
+ * @param gamma scale
+ * @param mu location
  * @return asymptotic quantile, or NaN if that tail is not a power law
  */
 inline double stableTailQuantile(double p, bool upperTail, double alpha, double beta, double gamma, double mu)
@@ -97,7 +100,6 @@ public:
 private:
     void parametersVerification(double exponent, double skewness, double scale);
     /**
-     * @fn checkDensitySupport
      * Throws randlib::not_implemented for parameters where the density, the distribution
      * function and everything derived from them are not yet implemented (exponent close
      * to 1 with non-zero skewness); sampling and the characteristic function still work
@@ -117,64 +119,53 @@ public:
     void SetScale(double scale);
 
     /**
-     * @fn GetExponent
      * @return characteristic exponent α
      */
     [[nodiscard]] inline double GetExponent() const noexcept { return alpha; }
     /**
-     * @fn GetSkewness
      * @return skewness parameter β
      */
     [[nodiscard]] inline double GetSkewness() const noexcept { return beta; }
     /**
-     * @fn GetScale
      * @return scale parameter γ
      */
     [[nodiscard]] inline double GetScale() const noexcept { return gamma; }
     /**
-     * @fn GetLocation
      * @return location parameter μ
      */
     [[nodiscard]] inline double GetLocation() const noexcept { return mu; }
     /**
-     * @fn GetLogScale
      * @return logarithm of the scale parameter γ
      */
     [[nodiscard]] inline double GetLogScale() const noexcept { return logGamma; }
 
 protected:
     /**
-     * @fn pdfNormal
      * @param x
      * @return probability density function of normal distribution
      */
     double pdfNormal(RealType x) const;
     /**
-     * @fn logpdfNormal
      * @param x
      * @return logarithm of probability density function of normal distribution
      */
     double logpdfNormal(RealType x) const;
     /**
-     * @fn pdfCauchy
      * @param x
      * @return probability density function of Cauchy distribution
      */
     double pdfCauchy(RealType x) const;
     /**
-     * @fn logpdfCauchy
      * @param x
      * @return logarithm of probability density function of Cauchy distribution
      */
     double logpdfCauchy(RealType x) const;
     /**
-     * @fn pdfLevy
      * @param x
      * @return probability density function of Levy distribution
      */
     double pdfLevy(RealType x) const;
     /**
-     * @fn logpdfLevy
      * @param x
      * @return logarithm of probability density function of Levy distribution
      */
@@ -182,59 +173,50 @@ protected:
 
 private:
     /**
-     * @fn fastpdfExponentiation
      * @param u
      * @return exp(u - exp(u)), accelerated by truncation of input u
      */
     static double fastpdfExponentiation(double u);
 
     /**
-     * @fn pdfShortTailExpansionForUnityExponent
      * @param logX
      * @return leading term of pdf short tail series expansion for large x, |β| = 1 and α = 1
      */
     double pdfShortTailExpansionForUnityExponent(double x) const;
 
     /**
-     * @fn limitCaseForIntegrandAuxForUnityExponent
      * @param theta
      * @param xAdj
      * @return large values in the case of closeness to extreme points
      */
     double limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const;
     /**
-     * @fn integrandAuxForUnityExponent
      * @param theta
      * @param xAdj
      * @return supplementary value for the integrand used in pdf calculations for α = 1
      */
     double integrandAuxForUnityExponent(double theta, double xAdj) const;
     /**
-     * @fn integrandForUnityExponent
      * @param theta
      * @param xAdj
      * @return the value of the integrand used for calculations of pdf for α = 1
      */
     double integrandForUnityExponent(double theta, double xAdj) const;
     /**
-     * @fn pdfForUnityExponent
      * @param x
      * @return value of probability density function for α = 1
      */
     double pdfForUnityExponent(double x) const;
     /**
-     * @fn rootOfMonotone
      * @return the point in (a, b) where u, monotone on that interval, changes sign
      */
     static double rootOfMonotone(const std::function<double(double)> &u, double a, double b);
     /**
-     * @fn integrateAroundRoot
      * @return integral of the integrand over [a, b], with breakpoints around the root of u
      */
     static double integrateAroundRoot(const std::function<double(double)> &integrand,
                                       const std::function<double(double)> &u, double a, double b, double root);
     /**
-     * @fn peakForUnityExponent
      * @param xAdj
      * @return the root of the integrand exponent u(θ) for α = 1
      */
@@ -243,24 +225,20 @@ private:
     DoublePair seriesZeroParams{};
 
     /**
-     * @fn pdfShortTailExpansionForGeneralExponent
      * @param logX
      * @return leading term of pdf short tail series expansion for |β| = 1 and [(large x and α > 1) or (small x and α < 1)]
      */
     double pdfShortTailExpansionForGeneralExponent(double logX) const;
     /**
-     * @fn cdfShortTailExpansion
      * @param logX
      * @return leading term of the mass between a totally skewed law with α < 1 and its support boundary
      */
     double cdfShortTailExpansion(double logX) const;
     /**
-     * @fn pdfAtZero
      * @return probability density function for x = 0
      */
     double pdfAtZero() const;
     /**
-     * @fn pdfSeriesExpansionAtZero
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @param k number of elements in series
@@ -268,27 +246,23 @@ private:
      */
     double pdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
     /**
-     * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @return series expansion of probability density function for large x
      */
     double pdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     /**
-     * @fn pdfTaylorExpansionTailNearCauchy
      * @param x
      * @return the Taylor approximated difference ~ f(x, α) - f(x, 1)
      */
     double pdfTaylorExpansionTailNearCauchy(double x) const;
     /**
-     * @fn limitCaseForIntegrandAuxForGeneralExponent
      * @param theta
      * @param xiAdj
      * @return large values in the case of closeness to extreme points
      */
     double limitCaseForIntegrandAuxForGeneralExponent(double theta, double xiAdj) const;
     /**
-     * @fn integrandAuxForGeneralExponent
      * @param theta
      * @param xAdj
      * @param xiAdj
@@ -296,7 +270,6 @@ private:
      */
     double integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const;
     /**
-     * @fn integrandFoGeneralExponent
      * @param theta
      * @param xAdj
      * @param xiAdj
@@ -304,7 +277,6 @@ private:
      */
     double integrandFoGeneralExponent(double theta, double xAdj, double xiAdj) const;
     /**
-     * @fn pdfForGeneralExponent
      * @param x
      * @return value of probability density function for α ≠ 1
      */
@@ -316,37 +288,31 @@ public:
 
 protected:
     /**
-     * @fn cdfNormal
      * @param x
      * @return cumulative distribution function of normal distribution
      */
     double cdfNormal(RealType x) const;
     /**
-     * @fn cdfNormalCompl
      * @param x
      * @return complementary cumulative distribution function of normal distribution
      */
     double cdfNormalCompl(RealType x) const;
     /**
-     * @fn cdfCauchy
      * @param x
      * @return cumulative distribution function of Cauchy distribution
      */
     double cdfCauchy(RealType x) const;
     /**
-     * @fn cdfCauchyCompl
      * @param x
      * @return complementary cumulative distribution function of Cauchy distribution
      */
     double cdfCauchyCompl(RealType x) const;
     /**
-     * @fn cdfLevy
      * @param x
      * @return cumulative distribution function of Levy distribution
      */
     double cdfLevy(RealType x) const;
     /**
-     * @fn cdfLevyCompl
      * @param x
      * @return complementary cumulative distribution function of Levy distribution
      */
@@ -354,32 +320,27 @@ protected:
 
 private:
     /**
-     * @fn fastcdfExponentiation
      * @param u
      * @return exp(-exp(u)), accelerated by truncation of input u
      */
     static double fastcdfExponentiation(double u);
     /**
-     * @fn fastccdfExponentiation
      * @param u
      * @return 1 - exp(-exp(u)), computed without cancellation
      */
     static double fastccdfExponentiation(double u);
     /**
-     * @fn cdfAtZero
      * @param xiAdj adjusted ξ
      * @return cumulative distribution function for x = 0
      */
     double cdfAtZero(double xiAdj) const;
     /**
-     * @fn cdfForUnityExponent
      * @param x
      * @param complement return the survival function instead
      * @return cumulative distribution function (or its complement) for α = 1, β ≠ 0
      */
     double cdfForUnityExponent(double x, bool complement) const;
     /**
-     * @fn cdfSeriesExpansionAtZero
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @param k number of elements in series
@@ -387,27 +348,23 @@ private:
      */
     double cdfSeriesExpansionAtZero(double logX, double xiAdj, int k) const;
     /**
-     * @fn pdfSeriesExpansionAtInf
      * @param logX log(x)
      * @param xiAdj adjusted ξ
      * @return series expansion of cumulative distribution function for large x
      */
     double cdfSeriesExpansionAtInf(double logX, double xiAdj) const;
     /**
-     * @fn cdfIntegralRepresentation
      * @param absXSt absolute value of standardised x
      * @param xiAdj adjusted ξ
      * @return integral representation of cumulative distribution function for general case of α ≠ 1
      */
     double cdfIntegralRepresentation(double logX, double xiAdj, bool complement) const;
     /**
-     * @fn cdfForGeneralExponent
      * @param x
      * @return cumulative distribution function for general case of α ≠ 1
      */
     double cdfForGeneralExponent(double x) const;
     /**
-     * @fn ccdfForGeneralExponent
      * @param x
      * @return survival function for general case of α ≠ 1, computed directly in the upper tail
      */
@@ -419,19 +376,16 @@ public:
 
 private:
     /**
-     * @fn variateForUnityExponent
      * @return variate, generated by algorithm for α = 1, β ≠ 0
      */
     template <std::uniform_random_bit_generator G>
     double variateForUnityExponent(G &g) const;
     /**
-     * @fn variateForGeneralExponent
      * @return variate, generated by algorithm for general case of α ≠ 1
      */
     template <std::uniform_random_bit_generator G>
     double variateForGeneralExponent(G &g) const;
     /**
-     * @fn variateForExponentEqualOneHalf
      * @return variate, generated by algorithm for special case of α = 0.5
      */
     template <std::uniform_random_bit_generator G>
@@ -450,37 +404,31 @@ public:
 
 protected:
     /**
-     * @fn quantileNormal
      * @param p input parameter in the interval (0, 1)
      * @return quantile for Gaussian distribution
      */
     RealType quantileNormal(double p) const;
     /**
-     * @fn quantileNormal1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for Gaussian distribution
      */
     RealType quantileNormal1m(double p) const;
     /**
-     * @fn quantileCauchy
      * @param p input parameter in the interval (0, 1)
      * @return quantile for Cauchy distribution
      */
     RealType quantileCauchy(double p) const;
     /**
-     * @fn quantileCauchy1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for Cauchy distribution
      */
     RealType quantileCauchy1m(double p) const;
     /**
-     * @fn quantileLevy
      * @param p input parameter in the interval (0, 1)
      * @return quantile for Levy distribution
      */
     RealType quantileLevy(double p) const;
     /**
-     * @fn quantileLevy1m
      * @param p input parameter in the interval (0, 1)
      * @return quantile of 1-p for Levy distribution
      */
@@ -488,7 +436,6 @@ protected:
 
 private:
     /**
-     * @fn searchTailQuantile
      * Quantile search that starts far tails from their power-law asymptote
      * @param p probability
      * @param upperTail search for S(x) = p instead of F(x) = p
@@ -499,19 +446,16 @@ private:
 
 protected:
     /**
-     * @fn cfNormal
      * @param t positive parameter
      * @return characteristic function for Gaussian distribution
      */
     std::complex<double> cfNormal(double t) const;
     /**
-     * @fn cfCauchy
      * @param t positive parameter
      * @return characteristic function for Cauchy distribution
      */
     std::complex<double> cfCauchy(double t) const;
     /**
-     * @fn cfLevy
      * @param t positive parameter
      * @return characteristic function for Levy distribution
      */

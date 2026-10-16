@@ -86,7 +86,6 @@ public:
 
 private:
     /**
-     * @fn logProbFloor
      * @param k
      * @return logarithm of probability to get k if p = pFloor
      */
@@ -145,17 +144,14 @@ public:
     [[nodiscard]] long double ExcessKurtosis() const override;
 
     /**
-     * @fn GetLogFactorialN
      * @return log(n!)
      */
     [[nodiscard]] inline double GetLogFactorialN() const noexcept { return lfactn; }
     /**
-     * @fn GetLogProbability
      * @return log(p)
      */
     [[nodiscard]] inline double GetLogProbability() const noexcept { return logProb; }
     /**
-     * @fn GetLog1mProbability
      * @return log(1-p)
      */
     [[nodiscard]] inline double GetLog1mProbability() const noexcept { return log1mProb; }
@@ -165,14 +161,12 @@ private:
 
 public:
     /**
-     * @fn FitProbability
      * Fit probability p with maximum-likelihood estimation
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitProbability(std::span<const IntType> sample);
 
     /**
-     * @fn FitProbabilityBayes
      * Fit probability p with prior assumption p ~ Beta(α, β)
      * @param sample
      * @param priorDistribution
@@ -183,7 +177,6 @@ public:
     FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution, bool MAP = false);
 
     /**
-     * @fn FitProbabilityMinimax
      * Fit probability p with minimax estimator
      * @param sample
      * @return posterior distribution
@@ -512,10 +505,10 @@ IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, doubl
     IntType var = 0;
     if (math::detail::areClose(probability, 0.5)) {
         for (int i = 0; i != number; ++i)
-            var += BernoulliRand::StandardVariate(g);
+            var += static_cast<IntType>(detail::randomBits(g, 1));
     } else {
         for (int i = 0; i != number; ++i)
-            var += BernoulliRand::Variate(probability, g);
+            var += static_cast<IntType>(detail::uniform01<double>(g) < probability);
     }
     return var;
 }

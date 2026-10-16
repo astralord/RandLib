@@ -60,7 +60,6 @@ public:
     [[nodiscard]] long double Entropy() const;
 
     /**
-     * @fn Fit
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const double> sample);

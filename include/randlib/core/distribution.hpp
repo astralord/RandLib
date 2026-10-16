@@ -42,7 +42,6 @@ protected:
     ProbabilityDistribution() = default;
 
     /**
-     * @fn engine
      * @return the engine of this object, seeded with random_seed() on first use unless Reseed was called
      */
     DefaultEngine &engine() const
@@ -53,7 +52,6 @@ protected:
     }
 
     /**
-     * @fn variate
      * Every concrete distribution implements this by calling its templated operator()
      * @param g engine
      * @return random variable
@@ -61,7 +59,6 @@ protected:
     virtual T variate(detail::EngineRef g) const = 0;
 
     /**
-     * @fn sample
      * Fills the output with variate(g); distributions with a faster bulk algorithm override it
      * @param g engine
      * @param outputData
@@ -78,53 +75,45 @@ public:
     virtual ~ProbabilityDistribution() = default;
 
     /**
-     * @fn Name
      * @return title of distribution, for instance "Normal(0, 1)"
      */
     [[nodiscard]] virtual std::string Name() const = 0;
 
     /**
-     * @fn MinValue
      * @return minimum possible value that can be achieved by random variable
      */
     [[nodiscard]] virtual T MinValue() const = 0;
 
     /**
-     * @fn MaxValue
      * @return maximum possible value that can be achieved by random variable
      */
     [[nodiscard]] virtual T MaxValue() const = 0;
 
     /**
-     * @fn F
      * @param x
      * @return P(X ≤ x)
      */
     [[nodiscard]] virtual double F(const T &x) const = 0;
 
     /**
-     * @fn CumulativeDistributionFunction
      * @param x input vector
      * @param y output vector: y = P(X ≤ x)
      */
     void CumulativeDistributionFunction(std::span<const T> x, std::span<double> y) const;
 
     /**
-     * @fn S
      * @param x
      * @return P(X > x)
      */
     [[nodiscard]] virtual double S(const T &x) const;
 
     /**
-     * @fn SurvivalFunction
      * @param x input vector
      * @param y output vector: y = P(X > x)
      */
     void SurvivalFunction(std::span<const T> x, std::span<double> y) const;
 
     /**
-     * @fn operator()
      * Draws a variate with the given engine through the virtual interface. Concrete distribution
      * classes hide it with a fully templated version, which is faster.
      * @param g any uniform random bit generator, such as std::mt19937 or DefaultEngine
@@ -137,7 +126,6 @@ public:
     }
 
     /**
-     * @fn Variate
      * Uses the engine of this object, so it is not thread-safe for one object; use operator()
      * with one engine per thread instead
      * @return random variable
@@ -145,14 +133,12 @@ public:
     [[nodiscard]] T Variate() const { return variate(engine()); }
 
     /**
-     * @fn Sample
      * Fills the output with variates drawn with the engine of this object
      * @param outputData
      */
     void Sample(std::span<T> outputData) const { sample(engine(), outputData); }
 
     /**
-     * @fn Sample
      * Fills the output with variates drawn with the given engine
      * @param g any uniform random bit generator
      * @param outputData
@@ -164,7 +150,6 @@ public:
     }
 
     /**
-     * @fn Reseed
      * @param seed seed of the engine of this object
      */
     void Reseed(std::uint64_t seed) { ownEngine.emplace(seed); }
@@ -176,7 +161,6 @@ protected:
     static constexpr char LOWER_LIMIT_VIOLATION[] = "No element should be smaller than ";
 
     /**
-     * @fn fitError
      * @param code reason of the failure
      * @param explanation details
      * @return fit_error whose message names this distribution, the reason and the details

@@ -33,7 +33,6 @@ public:
     LogNormalRand(double location = 0, double squaredScale = 1);
 
     /**
-     * @fn FromLogMeanLogStd
      * @param logMean μ, mean of log(X)
      * @param logStandardDeviation σ, standard deviation of log(X)
      * @return LogNormal(μ, σ^2)
@@ -46,7 +45,6 @@ public:
     }
 
     /**
-     * @fn FromLogMeanLogVariance
      * @param logMean μ, mean of log(X)
      * @param logVariance σ^2, variance of log(X)
      * @return LogNormal(μ, σ^2)
@@ -90,26 +88,22 @@ private:
 
 public:
     /**
-     * @fn FitLocation
      * Fit location via maximum-likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitLocation(std::span<const RealType> sample);
     /**
-     * @fn FitScale
      * Fit scale via maximum-likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample);
     /**
-     * @fn Fit
      * Fit parameters via maximum-likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample);
 
     /**
-     * @fn FitLocationBayes
      * Set location, using bayesian inference
      * @param sample
      * @param priorDistribution
@@ -120,7 +114,6 @@ public:
     FitLocationBayes(std::span<const RealType> sample, const NormalRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
-     * @fn FitScaleBayes
      * Set scale, using bayesian inference
      * @param sample
      * @param priorDistribution
@@ -132,7 +125,6 @@ public:
                   bool MAP = false);
 
     /**
-     * @fn FitBayes
      * Set parameters, using bayesian inference
      * @param sample
      * @param priorDistribution

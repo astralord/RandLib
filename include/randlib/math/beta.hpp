@@ -14,7 +14,6 @@ namespace math
 {
 
 /**
- * @fn logBeta
  * Calculate logarithm of beta function
  * @param a positive parameter
  * @param b positive parameter
@@ -29,7 +28,6 @@ template <typename Left, typename Right>
 auto logBeta(Left a, Right b) -> std::common_type_t<double, Left, Right>;
 
 /**
- * @fn ibeta
  * Fast calculation of regularized beta function, using precalculated values
  * @param x
  * @param a
@@ -44,7 +42,6 @@ Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b, s
            std::type_identity_t<Real> logX, std::type_identity_t<Real> log1mX);
 
 /**
- * @fn ibeta
  * Calculate regularized beta function
  * @param x
  * @param a

@@ -75,33 +75,28 @@ private:
 
 public:
     /**
-     * @fn GetBetaFunction
      * @return B(α, β)
      */
     [[nodiscard]] inline double GetBetaFunction() const { return B.GetBetaFunction(); }
 
     /**
-     * @fn GetLogBetaFunction
      * @return log(B(α, β))
      */
     [[nodiscard]] inline double GetLogBetaFunction() const { return B.GetLogBetaFunction(); }
 
     /**
-     * @fn FitAlpha
      * fit α by maximum-likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitAlpha(std::span<const RealType> sample);
 
     /**
-     * @fn FitBeta
      * fit β by maximum-likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitBeta(std::span<const RealType> sample);
 
     /**
-     * @fn Fit
      * fit shapes by maximum-likelihood
      * @param sample
      */

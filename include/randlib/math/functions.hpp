@@ -28,7 +28,6 @@ namespace detail
 {
 
 /**
- * @fn areClose
  * @param a
  * @param b
  * @param eps
@@ -47,7 +46,6 @@ bool areClose(RealType a, RealType b, RealType eps = 1e-6)
 } // namespace detail
 
 /**
- * @fn sign
  * @param x
  * @return sign of x
  */
@@ -55,7 +53,6 @@ template <std::floating_point Real>
 int sign(Real x);
 
 /**
- * @fn atan
  * @param x
  * @return safe atan(x)
  */
@@ -63,7 +60,6 @@ template <std::floating_point Real>
 Real atan(Real x);
 
 /**
- * @fn log1pexp
  * @param x
  * @return log(1 + exp(x))
  */
@@ -71,7 +67,6 @@ template <std::floating_point Real>
 Real softplus(Real x);
 
 /**
- * @fn log1mexp
  * @param x
  * @return log(1 - exp(x))
  */
@@ -79,7 +74,6 @@ template <std::floating_point Real>
 Real log1mexp(Real x);
 
 /**
- * @fn logexpm1
  * @param x
  * @return log(exp(x) - 1)
  */
@@ -87,7 +81,6 @@ template <std::floating_point Real>
 Real logexpm1l(Real x);
 
 /**
- * @fn log2mexp
  * @param x
  * @return log(2 - exp(x))
  */
@@ -95,7 +88,6 @@ template <std::floating_point Real>
 Real log2mexp(Real x);
 
 /**
- * @fn erfinv
  * @param p
  * @return inverse error function: such x that erf(x) = p
  */
@@ -103,7 +95,6 @@ template <std::floating_point Real>
 Real erfinv(Real p);
 
 /**
- * @fn erfcinv
  * @param p
  * @return inverse complementary error function: such x that erfc(x) = p
  */
@@ -111,7 +102,6 @@ template <std::floating_point Real>
 Real erfcinv(Real p);
 
 /**
- * @fn erfcx
  * @param x
  * @return scaled complementary error function exp(x^2) erfc(x)
  */
@@ -127,7 +117,6 @@ template <std::floating_point Real>
 Real xexpxsqerfc(Real x);
 
 /**
- * @fn harmonicNumber
  * @param exponent
  * @param number
  * @return sum_{i=1}^{number} i^{-exponent}
@@ -136,7 +125,6 @@ template <std::floating_point Real>
 Real harmonicNumber(Real exponent, int number);
 
 /**
- * @fn logBesselI
  * Calculates logarithm of modified Bessel function of the 1st kind
  * @param nu
  * @param x
@@ -146,7 +134,6 @@ template <std::floating_point Real>
 Real logBesselI(std::type_identity_t<Real> nu, Real x);
 
 /**
- * @fn logBesselK
  * Calculates logarithm of modified Bessel function of the 2nd kind
  * @param nu
  * @param x
@@ -156,7 +143,6 @@ template <std::floating_point Real>
 Real logBesselK(std::type_identity_t<Real> nu, Real x);
 
 /**
- * @fn W0Lambert
  * @param x
  * @param epsilon
  * @return W0 branch of Lambert W function
@@ -165,7 +151,6 @@ template <std::floating_point Real>
 Real W0Lambert(Real x, std::type_identity_t<Real> epsilon = Real{1e-11});
 
 /**
- * @fn W1Lambert
  * @param x
  * @param epsilon
  * @return W-1 branch of Lambert W function
@@ -174,7 +159,6 @@ template <std::floating_point Real>
 Real Wm1Lambert(Real x, std::type_identity_t<Real> epsilon = Real{1e-11});
 
 /**
- * @fn MarcumP
  * @param mu
  * @param x
  * @param y
@@ -189,7 +173,6 @@ Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y
              std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX, std::type_identity_t<Real> logY);
 
 /**
- * @fn MarcumP
  * @param mu
  * @param x
  * @param y
@@ -199,7 +182,6 @@ template <std::floating_point Real>
 Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y);
 
 /**
- * @fn MarcumQ
  * @param mu
  * @param x
  * @param y
@@ -214,7 +196,6 @@ Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<Real> y
              std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX, std::type_identity_t<Real> logY);
 
 /**
- * @fn MarcumQ
  * @param mu
  * @param x
  * @param y
@@ -623,7 +604,6 @@ inline Real logBesselK(std::type_identity_t<Real> nu, Real x)
 }
 
 /**
- * @fn WLambert
  * @param x
  * @param w0
  * @param epsilon
@@ -687,7 +667,6 @@ namespace detail
 {
 
 /**
- * @fn MarcumPSeries
  * @param mu
  * @param x
  * @param y
@@ -756,7 +735,6 @@ inline Real MarcumPSeries(Real mu, Real x, Real y, Real logX, Real logY)
 }
 
 /**
- * @fn MarcumPAsymptoticForLargeXY
  * @param mu
  * @param x
  * @param y
@@ -803,10 +781,11 @@ inline Real MarcumPAsymptoticForLargeXY(Real mu, Real x, Real y, Real sqrtX, Rea
 }
 
 /**
- * @fn MarcumPForMuSmallerThanOne
  * @param mu
  * @param x
  * @param y
+ * @param logX precomputed log(x)
+ * @param logY precomputed log(y)
  * @return
  */
 template <std::floating_point Real>

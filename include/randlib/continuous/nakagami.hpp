@@ -42,7 +42,6 @@ public:
 
 protected:
     /**
-     * @fn SetParameters
      * @param shape μ
      * @param spread ω
      */
@@ -50,22 +49,18 @@ protected:
 
 public:
     /**
-     * @fn GetShape
      * @return shape μ
      */
     [[nodiscard]] inline double GetShape() const noexcept { return mu; }
     /**
-     * @fn GetSpread
      * @return spread w
      */
     [[nodiscard]] inline double GetSpread() const noexcept { return omega; }
     /**
-     * @fn GetLogGammaFunction
      * @return log(Γ(μ))
      */
     [[nodiscard]] inline double GetLogGammaFunction() const { return Y.GetLogGammaShape(); }
     /**
-     * @fn GetLogGammaShapeRatio
      * @return log(Γ(μ + 0.5) / Γ(μ))
      */
     [[nodiscard]] inline double GetLogGammaShapeRatio() const noexcept { return lgammaShapeRatio; }
@@ -125,13 +120,11 @@ public:
     [[nodiscard]] std::string Name() const override;
 
     /**
-     * @fn SetDegree
      * set degree k
      * @param degree
      */
     void SetDegree(int degree);
     /**
-     * @fn GetDegree
      * @return degree k
      */
     [[nodiscard]] inline int GetDegree() const { return 2 * NakagamiDistribution<RealType>::GetShape(); }
@@ -161,13 +154,11 @@ public:
     [[nodiscard]] std::string Name() const override;
 
     /**
-     * @fn SetScale
      * set scale σ
      * @param scale
      */
     void SetScale(double scale);
     /**
-     * @fn GetScale
      * @return scale σ
      */
     [[nodiscard]] double GetScale() const noexcept { return sigma; }
@@ -206,13 +197,11 @@ public:
     [[nodiscard]] std::string Name() const override;
 
     /**
-     * @fn SetScale
      * set scale σ
      * @param scale
      */
     void SetScale(double scale);
     /**
-     * @fn GetScale
      * @return scale σ
      */
     [[nodiscard]] double GetScale() const noexcept { return sigma; }
@@ -236,10 +225,10 @@ private:
 
 public:
     /**
-     * @fn Fit
      * fit scale via maximum-likelihood method if unbiased = false,
      * otherwise set scale, returned by uniformly minimum variance unbiased estimator
      * @param sample
+     * @param unbiased use the unbiased estimator instead of maximum likelihood
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 };

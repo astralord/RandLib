@@ -47,13 +47,11 @@ public:
 
 private:
     /**
-     * @fn ccdfForLargeRatio
      * @param x
      * @return S(x) for λ > 1
      */
     double ccdfForLargeRatio(const RealType &x) const;
     /**
-     * @fn cdfForSmallRatio
      * @param x
      * @return F(x) for 0 < λ <= 1
      */

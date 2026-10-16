@@ -31,21 +31,18 @@ public:
 protected:
 public:
     /**
-     * @fn P
      * @param k
      * @return probability to get k
      */
     [[nodiscard]] virtual double P(const IntType &k) const { return std::exp(this->logP(k)); }
 
     /**
-     * @fn logP
      * @param x
      * @return logarithm of probability to get x
      */
     [[nodiscard]] virtual double logP(const IntType &x) const = 0;
 
     /**
-     * @fn ProbabilityMassFunction
      * fill vector y with P(x)
      * @param x
      * @param y
@@ -53,7 +50,6 @@ public:
     void ProbabilityMassFunction(std::span<const IntType> x, std::span<double> y) const;
 
     /**
-     * @fn LogProbabilityMassFunction
      * fill vector y with logP(x)
      * @param x
      * @param y
@@ -73,7 +69,6 @@ protected:
 
 private:
     /**
-     * @fn searchQuantile
      * Deterministic exponential and binary search over the support
      * @param p probability in (0, 1)
      * @param upperTail search for the smallest k with S(k) ≤ p instead of F(k) ≥ p
@@ -83,28 +78,24 @@ private:
 
 public:
     /**
-     * @fn Hazard
      * @param x
      * @return hazard function
      */
     [[nodiscard]] double Hazard(const IntType &x) const override;
 
     /**
-     * @fn LikelihoodFunction
      * @param sample
      * @return likelihood function of the distribution for given sample
      */
     [[nodiscard]] double LikelihoodFunction(std::span<const IntType> sample) const override;
 
     /**
-     * @fn LogLikelihoodFunction
      * @param sample
      * @return log-likelihood function of the distribution for given sample
      */
     [[nodiscard]] double LogLikelihoodFunction(std::span<const IntType> sample) const override;
 
     /**
-     * @fn PearsonChiSquaredTest
      * @param orderStatistic sample sorted in ascending order
      * @param alpha significance level of the test
      * @param lowerBoundary setting of the left most interval (-infinity, lowerBoundary]
@@ -122,7 +113,6 @@ public:
                                int upperBoundary, size_t numberOfEstimatedParameters = 0) const;
 
     /**
-     * @fn PearsonChiSquaredTest
      * @param orderStatistic sample sorted in ascending order
      * @param alpha significance level of the test
      * @param numberOfEstimatedParameters zero by default

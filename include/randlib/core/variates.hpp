@@ -16,7 +16,6 @@ namespace randlib::detail
 inline constexpr std::size_t MAX_ITER_REJECTION = 1000;
 
 /**
- * @fn standardExponential
  * Ziggurat algorithm of Marsaglia and Tsang with 256 layers
  * @return Exp(1) variate
  */
@@ -39,7 +38,6 @@ Real standardExponential(G &g)
 }
 
 /**
- * @fn standardNormal
  * Ziggurat algorithm of Marsaglia and Tsang with 256 layers and an explicit sign bit
  * @return N(0, 1) variate
  */

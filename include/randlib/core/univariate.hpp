@@ -35,38 +35,32 @@ public:
 protected:
 public:
     /**
-     * @fn SupportType
      * @return type of support
      */
     [[nodiscard]] virtual Support SupportType() const = 0;
 
     /**
-     * @fn isLeftBounded
      * @return true if distribution is bounded from the left
      */
     [[nodiscard]] bool isLeftBounded() const;
 
     /**
-     * @fn isRightBounded
      * @return true if distribution is bounded from the right
      */
     [[nodiscard]] bool isRightBounded() const;
 
     /**
-     * @fn Mean
      * @return Mathematical expectation
      */
     [[nodiscard]] virtual long double Mean() const = 0;
 
     /**
-     * @fn Variance
      * @return Variance of random variable
      */
     [[nodiscard]] virtual long double Variance() const = 0;
 
 private:
     /**
-     * @fn quantileImpl
      * @param p
      * @param initValue initial value of x
      * @return such x that F(x) = p
@@ -75,7 +69,6 @@ private:
     virtual T quantileImpl(double p) const = 0;
 
     /**
-     * @fn quantileImpl1m
      * @param p
      * @param initValue initial value of x
      * @return such x that F(x) = 1 - p
@@ -85,14 +78,12 @@ private:
 
 protected:
     /**
-     * @fn CFimpl
      * @param t
      * @return characteristic function implementation (inverse Fourier transform of pdf)
      */
     virtual std::complex<double> CFImpl(double t) const;
 
     /**
-     * @fn ExpectedValue
      * @param funPtr pointer on function g(x) with finite support which expected value should be returned
      * @param minPoint min{x | g(x) ≠ 0}
      * @param maxPoint max{x | g(x) ≠ 0}
@@ -102,71 +93,61 @@ protected:
 
 public:
     /**
-     * @fn Quantile
      * @param p
      * @return quantileImpl(p) if p is in (0, 1)
      */
     [[nodiscard]] T Quantile(double p) const;
 
     /**
-     * @fn Quantile1m
      * @param p
      * @return quantileImpl1m(p) if p is in (0, 1)
      */
     [[nodiscard]] T Quantile1m(double p) const;
 
     /**
-     * @fn QuantileFunction
      * @param p
      * @param y
-     * @return fills vector y with Quantile(p)
+     * Fills vector y with Quantile(p)
      */
     void QuantileFunction(std::span<const double> p, std::span<T> y);
 
     /**
-     * @fn QuantileFunction1m
      * @param p
      * @param y
-     * @return fills vector y with Quantile1m(p)
+     * Fills vector y with Quantile1m(p)
      */
     void QuantileFunction1m(std::span<const double> p, std::span<T> y);
 
     /**
-     * @fn CF
      * @param t
      * @return CFImpl for t != 0 and 1 otherwise
      */
     [[nodiscard]] std::complex<double> CF(double t) const;
 
     /**
-     * @fn CharacteristicFunction
-     * @param x input vector
-     * @param y output vector: y = CF(x)
+     * @param t input vector
+     * @param y output vector: y = CF(t)
      */
     void CharacteristicFunction(std::span<const double> t, std::span<std::complex<double>> y) const;
 
     /**
-     * @fn Hazard
      * @param x input parameter
      * @return hazard function
      */
     [[nodiscard]] virtual double Hazard(const T &x) const = 0;
 
     /**
-     * @fn HazardFunction
      * @param x input vector
      * @param y output vector: y = Hazard(x)
      */
     void HazardFunction(std::span<const T> x, std::span<double> y) const;
 
     /**
-     * @fn Median
      * @return such x that F(x) = 0.5
      */
     [[nodiscard]] virtual T Median() const;
 
     /**
-     * @fn Mode
      * Mode is the value, which has the largest probability to happen,
      * or, in the case of continuous distribution, has the largest value
      * of density function.
@@ -175,52 +156,44 @@ public:
     [[nodiscard]] virtual T Mode() const = 0;
 
     /**
-     * @fn Skewness
      * @return E[((X - μ) / σ) ^ 3]
      * where μ is central moment and σ is standard deviation
      */
     [[nodiscard]] virtual long double Skewness() const;
 
     /**
-     * @fn Kurtosis
      * @return unbiased kurtosis = μ_4 / σ ^ 4
      */
     virtual long double Kurtosis() const;
 
     /**
-     * @fn ExcessKurtosis
      * @return E[((X - μ) / σ) ^ 4]  - 3
      * (fourth moment around the mean divided by the square of the variance of the probability distribution minus 3)
      */
     [[nodiscard]] virtual long double ExcessKurtosis() const;
 
     /**
-     * @fn SecondMoment
      * @return E[X^2]
      */
     [[nodiscard]] virtual long double SecondMoment() const;
 
     /**
-     * @fn ThirdMoment
      * @return E[X^3]
      */
     [[nodiscard]] virtual long double ThirdMoment() const;
 
     /**
-     * @fn FourthMoment
      * @return E[X^4]
      */
     [[nodiscard]] virtual long double FourthMoment() const;
 
     /**
-     * @fn LikelihoodFunction
      * @param sample
      * @return likelihood function for given sample
      */
     [[nodiscard]] virtual double LikelihoodFunction(std::span<const T> sample) const = 0;
 
     /**
-     * @fn LogLikelihoodFunction
      * @param sample
      * @return logarithm of likelihood function for given sample
      */
@@ -228,7 +201,6 @@ public:
 
 protected:
     /**
-     * @fn allElementsAreNotGreaterThan
      * @param value
      * @param sample
      * @return true if all elements in sample are not greater than given value
@@ -236,7 +208,6 @@ protected:
     static bool allElementsAreNotGreaterThan(T value, std::span<const T> sample);
 
     /**
-     * @fn allElementsAreNotSmallerThan
      * @param value
      * @param sample
      * @return true if all elements in sample are not smaller than given value
@@ -244,14 +215,12 @@ protected:
     static bool allElementsAreNotSmallerThan(T value, std::span<const T> sample);
 
     /**
-     * @fn allElementsAreNonNegative
      * @param sample
      * @return true if all elements in sample are non-negative
      */
     static bool allElementsAreNonNegative(std::span<const T> sample);
 
     /**
-     * @fn allElementsArePositive
      * @param sample
      * @return true if all elements in sample are positive
      */
@@ -259,28 +228,24 @@ protected:
 
 public:
     /**
-     * @fn GetSampleSum
      * @param sample
      * @return sum of all elements in a sample
      */
     [[nodiscard]] static long double GetSampleSum(std::span<const T> sample);
 
     /**
-     * @fn GetSampleMean
      * @param sample
      * @return arithmetic average
      */
     [[nodiscard]] static long double GetSampleMean(std::span<const T> sample);
 
     /**
-     * @fn GetSampleLogMean
      * @param sample
      * @return arithmetic log-average
      */
     [[nodiscard]] static long double GetSampleLogMean(std::span<const T> sample);
 
     /**
-     * @fn GetSampleVariance
      * @param sample
      * @param mean known mean value
      * @return sample second central moment
@@ -288,7 +253,6 @@ public:
     [[nodiscard]] static long double GetSampleVariance(std::span<const T> sample, double mean);
 
     /**
-     * @fn GetSampleLogVariance
      * @param sample
      * @param logMean known log-mean value
      * @return sample log-variance
@@ -296,21 +260,18 @@ public:
     [[nodiscard]] static long double GetSampleLogVariance(std::span<const T> sample, double logMean);
 
     /**
-     * @fn GetSampleMeanAndVariance
      * @param sample
      * @return sample mean and variance
      */
     [[nodiscard]] static LongDoublePair GetSampleMeanAndVariance(std::span<const T> sample);
 
     /**
-     * @fn GetSampleLogMeanAndVariance
      * @param sample
      * @return sample log-mean and log-variance
      */
     [[nodiscard]] static LongDoublePair GetSampleLogMeanAndVariance(std::span<const T> sample);
 
     /**
-     * @fn GetSampleStatistics
      * @param sample
      * @return sample mean, variance, skewness and excess kurtosis
      */

@@ -1,109 +1,103 @@
 # RandLib
 
 [![CI](https://github.com/astralord/RandLib/actions/workflows/ci.yml/badge.svg?branch=2.x)](https://github.com/astralord/RandLib/actions/workflows/ci.yml)
+[![Documentation](https://github.com/astralord/RandLib/actions/workflows/docs.yml/badge.svg?branch=2.x)](https://astralord.github.io/RandLib/)
 [![codecov](https://codecov.io/gh/astralord/RandLib/branch/2.x/graph/badge.svg)](https://codecov.io/gh/astralord/RandLib)
-[![CodeFactor](https://www.codefactor.io/repository/github/astralord/randlib/badge/master)](https://www.codefactor.io/repository/github/astralord/randlib/overview/master)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C.svg)](https://en.cppreference.com/w/cpp/20)
 
-With RandLib one can easily work with probability distributions. One of the major advantages of this library (apart from being free and open-source) is that it doesn't require any additional packages. All you need is a C++20 compiler.
+Fit probability distributions and handle heavy tails in modern C++. RandLib is a dependency-free,
+header-only C++20 library for sampling, probability functions, moments, parameter estimation, model
+selection, goodness-of-fit testing, extreme-value analysis, and stable laws.
 
-This is the 2.x development branch: a header-only library in namespace `randlib` whose samplers
-accept any standard random engine. The stable 1.x series lives on the `1.x` branch. See
-[CHANGELOG.md](CHANGELOG.md) and the [modernization plan](docs/MODERNIZATION_PLAN.md).
+The `2.x` branch is the next major version. The source-compatible C++17 maintenance release remains
+on `1.x`; see the [v1 to v2 migration guide](docs/migration-v2.md).
 
-## Building
+## Quick start
 
-RandLib is header-only: add `include/` to the include path, or use CMake 3.21 or newer:
+```cpp
+#include <randlib/randlib.hpp>
+
+#include <iostream>
+#include <random>
+#include <vector>
+
+int main()
+{
+    std::mt19937_64 engine(42);
+    const randlib::GammaRand<double> model(2.5, 0.5);
+    std::vector<double> sample(1'000);
+    model.Sample(engine, sample);
+
+    const auto fitted = randlib::fit<randlib::GammaRand<double>>(sample);
+    std::cout << fitted.distribution.Name() << " AIC=" << fitted.aic << '\n';
+}
+```
+
+Every sampler accepts any standard uniform random bit generator. Fitting returns a new distribution;
+it never mutates the model used to create the data.
+
+## When to use RandLib
+
+| Library | Sampling | PDF/CDF/quantiles | Fitting and diagnostics | Heavy-tail focus | Prefer it when… |
+|---|---:|---:|---:|---:|---|
+| C++ `<random>` | Yes | No | No | No | You only need the standard set of portable samplers. |
+| Boost.Math | Separate Boost.Random library | Excellent, including multiprecision and configurable policies | No general fitting API | Some heavy-tailed laws | Accuracy, multiprecision, or mature special functions matter most. |
+| StatsLib | Yes | Yes, with optional matrix APIs | No general fitting API | Limited | You prefer an R-like functional API or Eigen/Armadillo/Blaze integration. |
+| RandLib | Yes | Yes | MLE, moments, conjugate Bayes, model selection, goodness-of-fit, censoring and truncation | Stable, Pareto, GPD/GEV and tail estimators | One object-oriented library should cover simulation through fitted heavy-tail models. |
+
+These projects are complementary. See the standard [`<random>` inventory](https://en.cppreference.com/w/cpp/numeric/random),
+[Boost.Math distribution reference](https://www.boost.org/doc/libs/latest/libs/math/doc/html/math_toolkit/dist_ref/dists.html),
+and [StatsLib feature list](https://github.com/kthohr/stats) for their current scope.
+
+## Use it
+
+Add `include/` to your compiler's include path, use the generated single header, or install with
+CMake 3.21 or newer:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-ctest --test-dir build --label-regex unit      # fast unit tests
-ctest --test-dir build --label-regex statistical
-cmake --install build --prefix /usr/local
+cmake --install build --prefix /your/prefix
 ```
-
-and consume it with
 
 ```cmake
 find_package(RandLib 2 REQUIRED)
-target_link_libraries(my_target PRIVATE RandLib::RandLib)
+target_link_libraries(your_target PRIVATE RandLib::RandLib)
 ```
 
-Options: `RANDLIB_BUILD_TESTS`, `RANDLIB_WARNINGS_AS_ERRORS`, `RANDLIB_PRECOMPILED` (compiles the
-`double` and `int` instantiations once, for faster builds of code that includes everything) and
-`RANDLIB_PORTABLE_SPECIAL_FUNCTIONS`. The presets in `CMakePresets.json` cover development,
-release and sanitizer builds (`cmake --preset dev`).
+The project also supplies a vcpkg overlay port and a Conan 2 recipe. Build controls include:
 
-## Examples
+- `RANDLIB_BUILD_TESTS`, `RANDLIB_BUILD_EXAMPLES`, `RANDLIB_BUILD_BENCHMARKS`, and
+  `RANDLIB_BUILD_DOCS`;
+- `RANDLIB_WARNINGS_AS_ERRORS` for project-owned targets;
+- `RANDLIB_PRECOMPILED` to compile common explicit instantiations once; and
+- `RANDLIB_PORTABLE_SPECIAL_FUNCTIONS` to force RandLib's Bessel, beta, and zeta implementations.
 
-What can be done via RandLib? Here are some useful examples:
+## Learn more
 
-* Fast sampling with any standard engine. For instance, generate a million variates from the
-  standard normal distribution:
-```c++
-#include <randlib/randlib.hpp>
-using namespace randlib;
+- [API reference](https://astralord.github.io/RandLib/)
+- [Fitting distributions](docs/fitting.md)
+- [Parallel sampling and streams](docs/parallel-sampling.md)
+- [Stable distributions](docs/stable-distributions.md)
+- [Accuracy and reference-data policy](docs/accuracy-policy.md)
+- [v1 to v2 migration](docs/migration-v2.md)
+- [Packaging and the single header](docs/packaging.md)
+- [Compiled examples](examples/)
+- [Legacy mathematical notes](docs/legacy/README.md)
 
-NormalRand X(0, 1);
-std::mt19937_64 engine(42);
-std::vector<double> data(1e6);
-X.Sample(engine, data);   // or x = X(engine) for one variate
+The [changelog](CHANGELOG.md) records behavior changes and known limitations. Numerical claims are
+backed by committed high-precision reference data; documented exceptions are tracked in
+`tests/data/reference_tolerances.csv`.
 
-auto streams = make_streams(42, 8); // independent DefaultEngine (xoshiro256++) streams, one per thread
-```
-![alt tag](images/standardNormal.png)
+## Development
 
-* Calculate moments and other properties:
-```c++
-LogNormalRand X(1, 1);
-std::cout << " Mean = " << X.Mean()
-          << " and Variance = " << X.Variance()
-          << "\n Median = " << X.Median()
-          << " and Mode = " << X.Mode()
-          << "\n Skewness = " << X.Skewness()
-          << " and Excess kurtosis = " << X.ExcessKurtosis();
-```
-![alt tag](images/lognormal11.png)
-```
-Mean = 4.48169 and Variance = 34.5126
-Median = 2.71828 and Mode = 1
-Skewness = 6.18488 and Excess Kurtosis = 110.936
-```
-* Fitting parameters using different estimators:
-```c++
-using std::cout;
-
-NormalRand X(0, 1);
-std::vector<double> data(10);
-X.Sample(data);
-cout << "True distribution: " << X.Name() << "\n";
-cout << "Sample: ";
-for (double var : data)
-    cout << var << "  ";
-cout << "\n";
-
-/// Bayesian estimation
-NormalInverseGammaRand prior(0, 1, 1, 1);
-NormalInverseGammaRand posterior = X.FitBayes(data, prior);
-cout << "Bayesian estimator: " << X.Name() << "\n";
-cout << "(Posterior distribution: " << posterior.Name() << ")\n";
-
-/// Uniformly minimum variance unbiased estimator
-X.Fit(data, true);
-cout << "UMVU estimator: " << X.Name() << "\n";
-
-/// Maximum-likelihood estimator
-X.Fit(data);
-cout << "Maximum-likelihood estimator: " << X.Name() << "\n";
-```
-![alt tag](images/normalFit.png)
-```
-True distribution: Normal(0, 1)
-Sample: -0.328154  0.709122  -0.607214  1.11472  -1.23726  -0.123584  0.59374  -1.20573  -0.397376  -1.63173
-Bayesian estimator: Normal(-0.283042, 0.951348)
-(Posterior distribution: Normal-Inverse-Gamma(-0.283042, 11, 6, 4.75674))
-UMVU estimator: Normal(-0.311347, 0.82504)
-Maximum-likelihood estimator: Normal(-0.311347, 0.742536)
+```sh
+cmake --preset dev
+cmake --build --preset dev --parallel
+ctest --preset dev-unit
+ctest --preset dev-statistical
 ```
 
-For documentation look up [here](documentation/document.pdf)
+Supported CI compilers include GCC 11–14, Clang 15–18, AppleClang, and MSVC 2022. The library is MIT
+licensed.

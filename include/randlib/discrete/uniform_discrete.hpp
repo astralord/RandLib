@@ -64,7 +64,6 @@ public:
     [[nodiscard]] double LogLikelihoodFunction(std::span<const IntType> sample) const override;
 
     /**
-     * @fn Fit
      * fit bounds via maximum-likelihood method
      * @param sample
      */

@@ -51,10 +51,10 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | ⏳ | |
-| 4.2 Migration guide | ⏳ | |
-| 4.3 Packaging | ⏳ | |
-| 4.4 Release v2.0.0 | 🚫 | Release candidates, announcements and the upstream vcpkg PR need the maintainer. |
+| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and four CI-compiled examples are done. The stable-fitting example lands with the Phase 5 estimator. |
+| 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
+| 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
+| 4.4 Release v2.0.0 | 🚫 | Release automation is ready. Release candidates, the two-week soak, announcements and the upstream vcpkg PR need the maintainer. |
 
 ## Phase 5: Hard numerics (v2.1)
 

@@ -65,7 +65,6 @@ public:
     [[nodiscard]] long double Entropy() const;
 
     /**
-     * @fn FitLocation
      * fit location parameter via maximum-likelihood
      * @param sample
      */

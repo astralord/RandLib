@@ -1,0 +1,51 @@
+name: Documentation
+
+on:
+  push:
+    branches: [2.x]
+  pull_request:
+    branches: [2.x]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y doxygen graphviz ninja-build
+      - name: Build documentation
+        run: |
+          cmake -S . -B build-docs -G Ninja -DRANDLIB_BUILD_DOCS=ON -DRANDLIB_BUILD_TESTS=OFF -DRANDLIB_BUILD_EXAMPLES=OFF
+          cmake --build build-docs --target randlib_docs
+      - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          path: build-docs/docs/html
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

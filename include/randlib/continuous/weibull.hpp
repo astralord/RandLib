@@ -71,14 +71,12 @@ private:
 
 public:
     /**
-     * @fn FitScale
      * Fit λ by maximum-likelihood
      * @param sample
      */
     RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample);
 
     /**
-     * @fn FitScaleBayes
      * Fit λ, using bayesian inference
      * @param sample
      * @param priorDistribution

@@ -176,12 +176,25 @@ Follow plan 3.1–3.3. Design notes gathered so far:
 
 ### 3.4 Phase 4: documentation, packaging, release (v2.0)
 
-Plan 4.1–4.4: README rewrite (the current one is a minimal 2.x update), Doxygen + GitHub Pages
-workflow, guides, `examples/` compiled in CI, migration guide v1 → v2 (record every breaking change:
-namespace and include paths, `Reseed` non-const, `std::span`, engines and `operator()(G&)`,
-`fit_error`, `Support` enum, `final` classes, removed `RANDLIB_GENERATOR`, Bernoulli/uniform-discrete
-sampling changes, reproducibility break), a `[2.0.0]` section in CHANGELOG.md, vcpkg overlay port,
-Conan recipe, single-header amalgamation script, release workflow.
+Landed locally: the README rewrite and comparison table; strict Doxygen Awesome generation and Pages
+deployment; fitting, streams, stable-law, accuracy, packaging and migration guides; and the archived
+legacy LaTeX source with its generated PDF removed. Four warning-clean examples (standard engine,
+parallel streams, model selection and Bayesian update) build and run through CTest. The stable-fitting
+example is intentionally coupled to the Phase 5 estimator rather than documenting an API that does
+not exist yet.
+
+Packaging is also landed and locally validated. `packaging/vcpkg/randlib` installs the current checkout
+as an overlay and its installed `RandLib::RandLib` target built the consumer example with vcpkg
+2026-09-26. `conan create . --build=missing` passed with Conan 2.33.0, packaging all 95 headers and
+running `test_package`. `tools/amalgamate.py` produces a deterministic `randlib_single.hpp`; the
+941,344-byte result compiled and ran with g++-13, g++-14 and clang++-18 under warnings-as-errors.
+The release workflow compiles that artifact, extracts the exact tag's changelog section, and attaches
+the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
+final release archive and checksum.
+
+Remaining Phase 4 actions need the maintainer: enable GitHub Pages for Actions if it is not already
+enabled, push and observe CI, run the release-candidate soak, submit the upstream vcpkg PR, and make
+the release announcements. The final stable-fitting example will land as part of Phase 5.1.
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 

@@ -51,7 +51,6 @@ private:
 
 public:
     /**
-     * @fn FitScale
      * Fit scale using maximum-likelihoood estimator
      * @param sample
      */

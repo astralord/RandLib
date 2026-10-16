@@ -16,8 +16,9 @@ namespace randlib::math
 {
 
 /**
- * @fn parabolicMinimum
- * @param a < b < c
+ * @param a point to the left of b
+ * @param b middle point
+ * @param c point to the right of b
  * @param fa f(a)
  * @param fb f(b)
  * @param fc f(c)
@@ -35,7 +36,6 @@ double parabolicMinimum(RealType a, RealType b, RealType c, double fa, double fb
 }
 
 /**
- * @fn findMin
  * Combined Brent's method
  * @param funPtr
  * @param abc lower boundary / middle / upper boundary
@@ -128,7 +128,6 @@ bool findMin(const std::function<double(RealType)> &funPtr, const Triplet<RealTy
 }
 
 /**
- * @fn findMin
  * Combined Brent's method
  * @param funPtr
  * @param closePoint point that is nearby minimum
@@ -257,7 +256,6 @@ struct MinimizeResult
 };
 
 /**
- * @fn nelderMead
  * Downhill simplex method of Nelder and Mead with the dimension-dependent coefficients of Gao and Han
  * (2012). The initial simplex steps 5% along each coordinate (0.00025 for zero coordinates), as in
  * MATLAB's fminsearch.
@@ -358,7 +356,6 @@ MinimizeResult<Real> nelderMead(const F &f, std::vector<Real> start, Real tolera
 }
 
 /**
- * @fn numericalGradient
  * @param f function of a std::span<const Real>
  * @param x point
  * @return central-difference gradient with steps proportional to the cube root of the machine epsilon
@@ -381,7 +378,6 @@ std::vector<Real> numericalGradient(const F &f, const std::vector<Real> &x)
 }
 
 /**
- * @fn numericalHessian
  * @param f function of a std::span<const Real>
  * @param x point
  * @return symmetric central-difference Hessian with steps proportional to the fourth root of the machine epsilon
@@ -425,7 +421,6 @@ std::vector<std::vector<Real>> numericalHessian(const F &f, const std::vector<Re
 }
 
 /**
- * @fn bfgs
  * Quasi-Newton minimization of Broyden, Fletcher, Goldfarb and Shanno with central-difference
  * gradients and a backtracking line search under the Armijo condition
  * @param f smooth function of a std::span<const Real>
