@@ -10,7 +10,7 @@ int main()
     auto streams = randlib::make_streams(42, 4);
     const randlib::ExponentialRand<double> exponential(2.0);
     std::vector<double> means(streams.size());
-    std::vector<std::jthread> workers;
+    std::vector<std::thread> workers;
     workers.reserve(streams.size());
 
     for (std::size_t i = 0; i < streams.size(); ++i) {
@@ -21,7 +21,8 @@ int main()
             means[i] = sum / 10'000;
         });
     }
-    workers.clear();
+    for (auto &worker : workers)
+        worker.join();
 
     for (std::size_t i = 0; i < means.size(); ++i)
         std::cout << "stream " << i << " mean: " << means[i] << '\n';

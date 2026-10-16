@@ -433,16 +433,17 @@ template <std::floating_point Real = double, class F>
 MinimizeResult<Real> bfgs(const F &f, std::vector<Real> start, Real tolerance = 1e-8, int maxIterations = 1000)
 {
     const std::size_t n = start.size();
-    auto identity = [n] {
-        std::vector<std::vector<Real>> m(n, std::vector<Real>(n, 0));
+    auto setIdentity = [n](std::vector<std::vector<Real>> &matrix) {
+        for (auto &row : matrix)
+            std::fill(row.begin(), row.end(), Real{0});
         for (std::size_t i = 0; i < n; ++i)
-            m[i][i] = 1;
-        return m;
+            matrix[i][i] = 1;
     };
     auto dot = [](const std::vector<Real> &u, const std::vector<Real> &v) {
         return std::inner_product(u.begin(), u.end(), v.begin(), Real(0));
     };
-    std::vector<std::vector<Real>> H = identity();
+    std::vector<std::vector<Real>> H(n, std::vector<Real>(n));
+    setIdentity(H);
     std::vector<Real> x = std::move(start);
     Real value = f(std::span<const Real>(x));
     std::vector<Real> gradient = numericalGradient<Real>(f, x);
@@ -461,7 +462,7 @@ MinimizeResult<Real> bfgs(const F &f, std::vector<Real> start, Real tolerance = 
                 direction[i] -= H[i][j] * gradient[j];
         Real slope = dot(gradient, direction);
         if (!(slope < 0)) {
-            H = identity();
+            setIdentity(H);
             for (std::size_t i = 0; i < n; ++i)
                 direction[i] = -gradient[i];
             slope = -dot(gradient, gradient);

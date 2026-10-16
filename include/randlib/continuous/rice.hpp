@@ -17,7 +17,7 @@ namespace randlib
  * If Y and Z are independent standard normal variables, then
  * X = hypot(ν + σY, σZ).
  */
-template <typename RealType = double>
+template <typename RealType>
 class RiceRand final : public ContinuousDistribution<RealType>
 {
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }

@@ -130,6 +130,8 @@ class LogNormalRand;
 template <typename RealType = double>
 class LogisticRand;
 template <typename RealType = double>
+class LogStableRand;
+template <typename RealType = double>
 class MarchenkoPasturRand;
 template <typename RealType = double>
 class NakagamiDistribution;
@@ -144,6 +146,8 @@ class RayleighRand;
 template <typename RealType = double>
 class NoncentralChiSquaredRand;
 template <typename RealType = double>
+class NoncentralTRand;
+template <typename RealType = double>
 class NormalRand;
 template <typename RealType = double>
 class ParetoRand;
@@ -155,6 +159,8 @@ template <typename RealType = double>
 class RaisedCosineRand;
 template <typename RealType = double>
 class RaabGreenRand;
+template <typename RealType = double>
+class RiceRand;
 template <typename RealType = double>
 class SechRand;
 template <typename RealType = double>

@@ -98,6 +98,8 @@ TEST_CASE("Noncentral t series, recurrence density and moments match high-precis
     CHECK_THAT(distribution.Variance(), WithinRel(1.5453997929771642, 1e-13));
     CHECK_THAT(distribution.Skewness(), WithinRel(0.43566262458486494, 1e-12));
     CHECK_THAT(distribution.ExcessKurtosis(), WithinRel(0.5001967695937044, 1e-11));
+    CHECK(distribution.Quantile(distribution.F(0)) == 0);
+    CHECK(distribution.Quantile1m(distribution.S(0)) == 0);
     const auto characteristicFunction = distribution.CF(0.5);
     CHECK_THAT(characteristicFunction.real(), WithinAbs(-0.68531584006586704, 2e-12));
     CHECK_THAT(characteristicFunction.imag(), WithinAbs(0.46250925896885466, 2e-12));

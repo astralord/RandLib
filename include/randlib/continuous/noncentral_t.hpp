@@ -6,8 +6,10 @@
 #include <randlib/continuous/nakagami.hpp>
 #include <randlib/continuous/student_t.hpp>
 #include <randlib/core/continuous.hpp>
+#include <randlib/math/beta.hpp>
 #include <randlib/math/constants.hpp>
 #include <randlib/math/functions.hpp>
+#include <randlib/math/gamma.hpp>
 #include <randlib/math/quadrature.hpp>
 
 namespace randlib
@@ -21,7 +23,7 @@ namespace randlib
  * If Z is standard normal and V is chi-squared with ν degrees of freedom,
  * X = (Z + δ) / sqrt(V / ν).
  */
-template <typename RealType = double>
+template <typename RealType>
 class NoncentralTRand final : public ContinuousDistribution<RealType>
 {
     RealType variate(detail::EngineRef g) const override { return (*this)(g); }
@@ -42,7 +44,7 @@ class NoncentralTRand final : public ContinuousDistribution<RealType>
     long double asymptoticLogTail(long double x, long double noncentrality, bool density) const;
     long double positiveTail(long double x, long double noncentrality, bool upper, bool allowIntegral) const;
     long double probability(long double x, bool upper, bool allowIntegral = true) const;
-    long double rawMoment(int order) const;
+    long double inverseDenominatorMoment(int order) const;
 
 public:
     explicit NoncentralTRand(double degree = 1, double noncentrality = 0);
@@ -243,19 +245,31 @@ long double NoncentralTRand<RealType>::positiveTail(long double x, long double n
     const int center = seriesCenter;
     long double a1 = center + 0.5L;
     long double a2 = center + 1.0L;
-    const long double logBeta1 = std::lgamma(a1) + std::lgamma(b) - std::lgamma(a1 + b);
-    const long double logBeta2 = std::lgamma(a2) + std::lgamma(b) - std::lgamma(a2 + b);
+    const long double logBeta1 = math::logBeta(a1, b);
+    const long double logBeta2 = math::logBeta(a2, b);
     long double beta1 =
         upper ? math::ibeta(oneMinusY, b, a1, logBeta1, log1mY, logY) : math::ibeta(y, a1, b, logBeta1, logY, log1mY);
     long double beta2 =
         upper ? math::ibeta(oneMinusY, b, a2, logBeta2, log1mY, logY) : math::ibeta(y, a2, b, logBeta2, logY, log1mY);
     long double increment1 = std::exp(a1 * logY + b * log1mY - std::log(a1) - logBeta1);
     long double increment2 = std::exp(a2 * logY + b * log1mY - std::log(a2) - logBeta2);
-    long double poisson = std::exp(-lambda + center * std::log(lambda) - std::lgamma(center + 1.0L));
-    long double odd =
-        noncentrality / std::sqrt(2.0L) * std::exp(-lambda + center * std::log(lambda) - std::lgamma(center + 1.5L));
+    const auto centerValue = static_cast<long double>(center);
+    const long double logPoisson = (center == 0) ? -lambda
+                                                 : -math::stirlingError<long double>(static_cast<std::size_t>(center)) -
+                                                       math::bd0<long double>(centerValue, lambda) -
+                                                       0.5L * std::log(2 * randlib::consts::pi * centerValue);
+    long double poisson = std::exp(logPoisson);
+    const long double gammaRatio = std::exp(math::logBeta(centerValue + 1, 0.5L) - 0.5L * randlib::consts::lnpi);
+    long double odd = std::copysign(std::sqrt(lambda) * gammaRatio * poisson, noncentrality);
     long double sum = poisson * beta1 + odd * beta2;
+    long double compensation = 0;
     long double absoluteSum = std::fabs(poisson * beta1) + std::fabs(odd * beta2);
+    const auto addTerm = [&](long double term) {
+        const long double corrected = term - compensation;
+        const long double next = sum + corrected;
+        compensation = (next - sum) - corrected;
+        sum = next;
+    };
 
     long double lowerPoisson = poisson;
     long double lowerOdd = odd;
@@ -277,7 +291,7 @@ long double NoncentralTRand<RealType>::positiveTail(long double x, long double n
         lowerPoisson *= j / lambda;
         lowerOdd *= (j + 0.5L) / lambda;
         const long double term = lowerPoisson * lowerBeta1 + lowerOdd * lowerBeta2;
-        sum += term;
+        addTerm(term);
         absoluteSum += std::fabs(lowerPoisson * lowerBeta1) + std::fabs(lowerOdd * lowerBeta2);
     }
 
@@ -293,7 +307,7 @@ long double NoncentralTRand<RealType>::positiveTail(long double x, long double n
         a2 += 1;
         const long double term = poisson * beta1 + odd * beta2;
         const long double bound = std::fabs(poisson * beta1) + std::fabs(odd * beta2);
-        sum += term;
+        addTerm(term);
         absoluteSum += bound;
         decreasing = (bound <= 8 * std::numeric_limits<long double>::epsilon() * absoluteSum) ? decreasing + 1 : 0;
         if (decreasing >= 4)
@@ -417,27 +431,22 @@ void NoncentralTRand<RealType>::sample(detail::EngineRef g, std::span<RealType> 
 }
 
 template <typename RealType>
-long double NoncentralTRand<RealType>::rawMoment(int order) const
+long double NoncentralTRand<RealType>::inverseDenominatorMoment(int order) const
 {
-    long double normalMoment;
-    if (order == 1)
-        normalMoment = delta;
-    else if (order == 2)
-        normalMoment = 1 + static_cast<long double>(delta) * delta;
-    else if (order == 3)
-        normalMoment = delta * (3 + static_cast<long double>(delta) * delta);
-    else
-        normalMoment = 3 + static_cast<long double>(delta) * delta * (6 + static_cast<long double>(delta) * delta);
     const long double halfOrder = 0.5L * order;
-    const long double halfDegree = 0.5L * nu;
-    return normalMoment *
-           std::exp(halfOrder * std::log(halfDegree) + std::lgamma(halfDegree - halfOrder) - std::lgamma(halfDegree));
+    const long double halfDegree = halfNu;
+    if (order == 2)
+        return halfDegree / (halfDegree - 1);
+    if (order == 4)
+        return halfDegree * halfDegree / ((halfDegree - 1) * (halfDegree - 2));
+    const long double logRatio = math::logBeta(halfDegree - halfOrder, halfOrder) - std::lgamma(halfOrder);
+    return std::exp(halfOrder * std::log(halfDegree) + logRatio);
 }
 
 template <typename RealType>
 long double NoncentralTRand<RealType>::Mean() const
 {
-    return (nu > 1) ? rawMoment(1) : NAN;
+    return (nu > 1) ? delta * inverseDenominatorMoment(1) : NAN;
 }
 
 template <typename RealType>
@@ -445,8 +454,10 @@ long double NoncentralTRand<RealType>::Variance() const
 {
     if (nu <= 2)
         return (nu > 1) ? INFINITY : NAN;
-    const long double mean = Mean();
-    return rawMoment(2) - mean * mean;
+    const long double first = inverseDenominatorMoment(1);
+    const long double second = inverseDenominatorMoment(2);
+    const long double dispersion = std::fma(-first, first, second);
+    return std::fma(static_cast<long double>(delta) * delta, dispersion, second);
 }
 
 template <typename RealType>
@@ -454,11 +465,16 @@ long double NoncentralTRand<RealType>::Skewness() const
 {
     if (nu <= 3)
         return NAN;
-    const long double mean = Mean();
-    const long double second = rawMoment(2);
-    const long double variance = second - mean * mean;
-    const long double third = rawMoment(3) - 3 * mean * second + 2 * mean * mean * mean;
-    return third / std::pow(variance, 1.5L);
+    const long double first = inverseDenominatorMoment(1);
+    const long double second = inverseDenominatorMoment(2);
+    const long double third = inverseDenominatorMoment(3);
+    const long double dispersion = std::fma(-first, first, second);
+    const long double thirdDifference = std::fma(-first, second, third);
+    const long double thirdCoefficient = std::fma(-2 * first, dispersion, thirdDifference);
+    const long double squaredDelta = static_cast<long double>(delta) * delta;
+    const long double variance = std::fma(squaredDelta, dispersion, second);
+    const long double centralThird = delta * std::fma(squaredDelta, thirdCoefficient, 3 * thirdDifference);
+    return centralThird / std::pow(variance, 1.5L);
 }
 
 template <typename RealType>
@@ -466,13 +482,21 @@ long double NoncentralTRand<RealType>::ExcessKurtosis() const
 {
     if (nu <= 4)
         return (nu > 2) ? INFINITY : NAN;
-    const long double mean = Mean();
-    const long double second = rawMoment(2);
-    const long double third = rawMoment(3);
-    const long double variance = second - mean * mean;
-    const long double fourth =
-        rawMoment(4) - 4 * mean * third + 6 * mean * mean * second - 3 * mean * mean * mean * mean;
-    return fourth / (variance * variance) - 3;
+    const long double first = inverseDenominatorMoment(1);
+    const long double second = inverseDenominatorMoment(2);
+    const long double third = inverseDenominatorMoment(3);
+    const long double fourth = inverseDenominatorMoment(4);
+    const long double dispersion = std::fma(-first, first, second);
+    const long double thirdDifference = std::fma(-first, second, third);
+    const long double fourthDifference = std::fma(-first, third, fourth);
+    const long double squaredCoefficient = std::fma(-first, thirdDifference, fourthDifference);
+    const long double fourthCoefficient =
+        std::fma(-3 * first, std::fma(-first, dispersion, thirdDifference), fourthDifference);
+    const long double squaredDelta = static_cast<long double>(delta) * delta;
+    const long double variance = std::fma(squaredDelta, dispersion, second);
+    const long double centralFourth = std::fma(squaredDelta * squaredDelta, fourthCoefficient,
+                                               std::fma(6 * squaredDelta, squaredCoefficient, 3 * fourth));
+    return centralFourth / (variance * variance) - 3;
 }
 
 template <typename RealType>
@@ -480,6 +504,8 @@ RealType NoncentralTRand<RealType>::quantileImpl(double p) const
 {
     if (delta == 0)
         return central.Quantile(p);
+    if (p == static_cast<double>(probability(0, false)))
+        return 0;
     const long double mean = Mean();
     const RealType guess = std::isfinite(mean) ? static_cast<RealType>(mean) : static_cast<RealType>(delta);
     return ContinuousDistribution<RealType>::quantileImpl(p, guess);
@@ -490,6 +516,8 @@ RealType NoncentralTRand<RealType>::quantileImpl1m(double p) const
 {
     if (delta == 0)
         return central.Quantile1m(p);
+    if (p == static_cast<double>(probability(0, true)))
+        return 0;
     const long double mean = Mean();
     const RealType guess = std::isfinite(mean) ? static_cast<RealType>(mean) : static_cast<RealType>(delta);
     return ContinuousDistribution<RealType>::quantileImpl1m(p, guess);
