@@ -145,6 +145,75 @@ void report(const std::vector<const Case *> &cases, const std::vector<std::strin
     CHECK(total == 0);
 }
 
+std::string caseId(std::string type, const std::string &args)
+{
+    const std::string plain = "RL_PLAIN(";
+    if (type.rfind(plain, 0) == 0)
+        type = type.substr(plain.size(), type.size() - plain.size() - 1);
+    auto lt = type.find('<');
+    if (lt != std::string::npos)
+        type.resize(lt);
+    return type + "(" + args + ")";
+}
+
+void checkDiscreteCase(const std::string &type, const std::string &args)
+{
+    const std::string id = caseId(type, args);
+    const auto cases = casesOfKind(Kind::Discrete);
+    const auto selected = std::find_if(cases.begin(), cases.end(), [&id](const Case *c) { return c->id == id; });
+    REQUIRE(selected != cases.end());
+    const size_t index = static_cast<size_t>(std::distance(cases.begin(), selected));
+    std::ostringstream out;
+    try {
+        auto d = (*selected)->makeDiscrete();
+        d->Reseed(BASE_SEED + index);
+        std::vector<int> sample(SAMPLE_SIZE);
+        d->Sample(sample);
+        if (std::any_of(sample.begin(), sample.end(),
+                        [&d](int k) { return k < d->MinValue() || k > d->MaxValue(); }))
+            out << "sample outside the support; ";
+        out << checkMoments(*d, sample);
+
+        std::map<int, size_t> counts;
+        for (int k : sample)
+            ++counts[k];
+        const double n = static_cast<double>(sample.size());
+        std::vector<std::pair<double, double>> bins;
+        double observed = 0, expected = n * d->F(counts.begin()->first - 1);
+        for (auto it = counts.begin(); it != counts.end(); ++it) {
+            observed += static_cast<double>(it->second);
+            expected += n * d->P(it->first);
+            auto next = std::next(it);
+            int gapEnd = (next == counts.end()) ? it->first : next->first - 1;
+            if (gapEnd > it->first)
+                expected += n * (d->F(gapEnd) - d->F(it->first));
+            if (next == counts.end())
+                expected += n * d->S(it->first);
+            if (expected >= 5) {
+                bins.push_back({observed, expected});
+                observed = expected = 0;
+            }
+        }
+        if (!bins.empty()) {
+            bins.back().first += observed;
+            bins.back().second += expected;
+        }
+        if (bins.size() > 1) {
+            double chiSq = 0;
+            for (auto [o, e] : bins)
+                chiSq += (o - e) * (o - e) / e;
+            double p = chiSquaredSurvival(chiSq, static_cast<double>(bins.size() - 1));
+            if (p < MIN_P_VALUE)
+                out << "chi-squared p-value " << p << " (statistic " << chiSq << ", " << bins.size()
+                    << " bins); ";
+        }
+    } catch (const std::exception &e) {
+        out << "exception: " << e.what();
+    }
+    INFO(id);
+    CHECK(out.str().empty());
+}
+
 }
 
 TEST_CASE("Continuous samples follow their distribution", "[statistical]")
@@ -159,59 +228,20 @@ TEST_CASE("Singular samples follow their distribution", "[statistical]")
     report(cases, runContinuous(cases, [](const Case &c) { return c.makeSingular(); }));
 }
 
-TEST_CASE("Discrete samples follow their distribution", "[statistical]")
-{
-    auto cases = casesOfKind(Kind::Discrete);
-    std::vector<std::string> failures(cases.size());
-    parallelFor(cases.size(), [&](size_t i) {
-        std::ostringstream out;
-        try {
-            auto d = cases[i]->makeDiscrete();
-            d->Reseed(BASE_SEED + i);
-            std::vector<int> sample(SAMPLE_SIZE);
-            d->Sample(sample);
-            if (std::any_of(sample.begin(), sample.end(), [&d](int k) { return k < d->MinValue() || k > d->MaxValue(); }))
-                out << "sample outside the support; ";
-            out << checkMoments(*d, sample);
+#define RL_CONT(T, ...)
+#define RL_SING(T, ...)
+#define RL_BIVC(T, ...)
+#define RL_BIVD(T, ...)
+#define RL_DISC(T, ...)                                                                                      \
+    TEST_CASE("Discrete samples follow " #T "(" #__VA_ARGS__ ")", "[statistical][discrete]")              \
+    {                                                                                                       \
+        checkDiscreteCase(#T, #__VA_ARGS__);                                                                \
+    }
 
-            std::map<int, size_t> counts;
-            for (int k : sample)
-                ++counts[k];
-            /// Pool neighbouring values until every bin expects at least 5 draws; the
-            /// outermost bins also take the tail mass beyond the observed range.
-            const double n = static_cast<double>(sample.size());
-            std::vector<std::pair<double, double>> bins; // observed, expected
-            double observed = 0, expected = n * d->F(counts.begin()->first - 1);
-            for (auto it = counts.begin(); it != counts.end(); ++it) {
-                observed += static_cast<double>(it->second);
-                expected += n * d->P(it->first);
-                auto next = std::next(it);
-                int gapEnd = (next == counts.end()) ? it->first : next->first - 1;
-                if (gapEnd > it->first)
-                    expected += n * (d->F(gapEnd) - d->F(it->first));
-                if (next == counts.end())
-                    expected += n * d->S(it->first);
-                if (expected >= 5) {
-                    bins.push_back({observed, expected});
-                    observed = expected = 0;
-                }
-            }
-            if (!bins.empty()) {
-                bins.back().first += observed;
-                bins.back().second += expected;
-            }
-            if (bins.size() > 1) {
-                double chiSq = 0;
-                for (auto [o, e] : bins)
-                    chiSq += (o - e) * (o - e) / e;
-                double p = chiSquaredSurvival(chiSq, static_cast<double>(bins.size() - 1));
-                if (p < MIN_P_VALUE)
-                    out << "chi-squared p-value " << p << " (statistic " << chiSq << ", " << bins.size() << " bins); ";
-            }
-        } catch (const std::exception &e) {
-            out << "exception: " << e.what();
-        }
-        failures[i] = out.str();
-    });
-    report(cases, failures);
-}
+#include "../support/cases.inc"
+
+#undef RL_CONT
+#undef RL_DISC
+#undef RL_SING
+#undef RL_BIVC
+#undef RL_BIVD
