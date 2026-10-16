@@ -111,6 +111,20 @@ TEST_CASE("Tanh-sinh quadrature resolves endpoint singularities", "[numerics]")
     CHECK_THROWS_AS(math::integrateTanhSinh([](double x) { return x; }, 0, INFINITY), std::invalid_argument);
 }
 
+TEST_CASE("Oscillatory quadrature accelerates semi-infinite Fourier integrals", "[numerics]")
+{
+    for (double frequency : {0.1, 1.0, 5.0}) {
+        const auto actual = math::integrateOscillatory([](double x) { return std::exp(-x); }, frequency);
+        const std::complex<double> expected = 1.0 / std::complex<double>(1.0, -frequency);
+        CHECK_THAT(std::abs(actual - expected), WithinAbs(0.0, 1e-10));
+    }
+
+    const auto pareto = math::integrateOscillatory([](double x) { return 0.5 * std::pow(x, -1.5); }, 0.1, 1.0);
+    CHECK_THAT(pareto.real(), WithinAbs(0.605333341794216409742774, 1e-8));
+    CHECK_THAT(pareto.imag(), WithinAbs(0.2963660538362012702997561, 1e-8));
+    CHECK_THROWS_AS(math::integrateOscillatory([](double x) { return x; }, 0.0), std::invalid_argument);
+}
+
 TEST_CASE("TOMS 748 finds bracketed roots to full precision", "[numerics]")
 {
     double root = math::findRoot([](double x) { return std::cos(x) - x; }, 0, 1);

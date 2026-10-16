@@ -85,6 +85,7 @@ public:
 private:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p) const override;
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     /**
@@ -240,6 +241,14 @@ template <typename RealType>
 RealType LogNormalRand<RealType>::quantileImpl1m(double p) const
 {
     return std::exp(X.Quantile1m(p));
+}
+
+template <typename RealType>
+std::complex<double> LogNormalRand<RealType>::CFImpl(double t) const
+{
+    if (X.Variance() < 4)
+        return UnivariateDistribution<RealType>::CFImpl(t);
+    return this->integrateCharacteristicFunction(t);
 }
 
 template <typename RealType>

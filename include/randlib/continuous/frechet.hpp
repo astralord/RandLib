@@ -55,6 +55,7 @@ public:
 private:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p) const override;
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     [[nodiscard]] long double Entropy() const;
@@ -174,6 +175,12 @@ RealType FrechetRand<RealType>::quantileImpl1m(double p) const
     RealType y = -std::log1pl(-p);
     y = s / std::pow(y, alphaInv);
     return y + m;
+}
+
+template <typename RealType>
+std::complex<double> FrechetRand<RealType>::CFImpl(double t) const
+{
+    return this->integrateCharacteristicFunction(t);
 }
 
 template <typename RealType>

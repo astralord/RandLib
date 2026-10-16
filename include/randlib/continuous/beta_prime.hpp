@@ -272,21 +272,7 @@ RealType BetaPrimeRand<RealType>::quantileImpl1m(double p) const
 template <typename RealType>
 std::complex<double> BetaPrimeRand<RealType>::CFImpl(double t) const
 {
-    /// if no singularity - simple numeric integration
-    if (alpha >= 1)
-        return UnivariateDistribution<RealType>::CFImpl(t);
-
-    double re = this->ExpectedValue(
-                    [t](double x) {
-                        if (x == 0.0)
-                            return 0.0;
-                        return std::cos(t * x) - 1.0;
-                    },
-                    0.0, INFINITY) +
-                1.0;
-
-    double im = this->ExpectedValue([t](double x) { return std::sin(t * x); }, 0.0, INFINITY);
-    return std::complex<double>(re, im);
+    return this->integrateCharacteristicFunction(t);
 }
 
 template <typename RealType>

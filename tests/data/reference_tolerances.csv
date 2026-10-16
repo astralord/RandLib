@@ -1,18 +1,4 @@
 case,function,region,tolerance,issue
-# Characteristic functions of heavy-tailed laws are computed by non-oscillatory quadrature over an infinite range
-ParetoRand*,CF_re,*,5e-3,https://github.com/astralord/RandLib/issues/10
-ParetoRand*,CF_im,*,5e-3,https://github.com/astralord/RandLib/issues/10
-FrechetRand*,CF_re,*,5e-3,https://github.com/astralord/RandLib/issues/10
-FrechetRand*,CF_im,*,5e-3,https://github.com/astralord/RandLib/issues/10
-InverseGammaRand*,CF_re,*,5e-3,https://github.com/astralord/RandLib/issues/10
-InverseGammaRand*,CF_im,*,5e-3,https://github.com/astralord/RandLib/issues/10
-FisherFRand*,CF_re,*,5e-3,https://github.com/astralord/RandLib/issues/10
-FisherFRand*,CF_im,*,5e-3,https://github.com/astralord/RandLib/issues/10
-BetaPrimeRand*,CF_re,*,5e-3,https://github.com/astralord/RandLib/issues/10
-BetaPrimeRand*,CF_im,*,5e-3,https://github.com/astralord/RandLib/issues/10
-# Log-normal characteristic function for large variance
-"LogNormalRand(1.5, 4)",CF_re,*,1e-4,https://github.com/astralord/RandLib/issues/6
-"LogNormalRand(1.5, 4)",CF_im,*,1e-4,https://github.com/astralord/RandLib/issues/6
 # Noncentral chi-squared survival function is 1 - Marcum P; the upper tail is not computed directly
 NoncentralChiSquaredRand*,S,tail,inf,https://github.com/astralord/RandLib/issues/4
 NoncentralChiSquaredRand*,S,bulk,1e-11,https://github.com/astralord/RandLib/issues/4

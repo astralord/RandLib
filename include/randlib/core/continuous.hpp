@@ -6,6 +6,7 @@
 
 #include <randlib/math/constants.hpp>
 #include <randlib/math/functions.hpp>
+#include <randlib/math/quadrature.hpp>
 #include <randlib/core/errors.hpp>
 #include <randlib/core/univariate.hpp>
 
@@ -58,6 +59,7 @@ public:
     [[nodiscard]] RealType Mode() const override;
 
 protected:
+    std::complex<double> integrateCharacteristicFunction(double t) const;
     RealType quantileImpl(double p, RealType initValue) const override;
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p, RealType initValue) const override;
@@ -98,6 +100,13 @@ public:
 
 namespace randlib
 {
+
+template <typename RealType>
+std::complex<double> ContinuousDistribution<RealType>::integrateCharacteristicFunction(double t) const
+{
+    const RealType lower = this->MinValue();
+    return math::integrateOscillatory([this](double x) { return this->f(x); }, t, static_cast<double>(lower));
+}
 
 template <typename RealType>
 void ContinuousDistribution<RealType>::ProbabilityDensityFunction(std::span<const RealType> x,

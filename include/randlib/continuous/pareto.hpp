@@ -75,6 +75,7 @@ public:
 private:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p) const override;
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     [[nodiscard]] long double Entropy() const;
@@ -305,6 +306,12 @@ RealType ParetoRand<RealType>::quantileImpl1m(double p) const
 {
     double y = logSigma - std::log(p) / alpha;
     return std::exp(y);
+}
+
+template <typename RealType>
+std::complex<double> ParetoRand<RealType>::CFImpl(double t) const
+{
+    return this->integrateCharacteristicFunction(t);
 }
 
 template <typename RealType>

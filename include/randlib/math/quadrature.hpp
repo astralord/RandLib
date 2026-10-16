@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <concepts>
+#include <complex>
 #include <limits>
 #include <numbers>
 #include <stdexcept>
@@ -15,6 +16,42 @@ namespace randlib::math
 
 namespace detail
 {
+
+template <std::floating_point Real>
+std::pair<std::complex<Real>, Real> accelerateOscillatorySums(const std::vector<std::complex<Real>> &partialSums)
+{
+    std::vector<std::complex<Real>> older(partialSums.size() + 1);
+    std::vector<std::complex<Real>> previous = partialSums;
+    std::complex<Real> best = partialSums.back();
+    std::complex<Real> lastEstimate = best;
+    Real bestDifference = std::numeric_limits<Real>::infinity();
+    const int maxOrder = std::min<int>(20, static_cast<int>(partialSums.size()) - 1);
+    for (int order = 1; order <= maxOrder; ++order) {
+        std::vector<std::complex<Real>> current(previous.size() - 1);
+        for (std::size_t i = 0; i < current.size(); ++i) {
+            const std::complex<Real> difference = previous[i + 1] - previous[i];
+            const Real scale = std::max({Real{1}, std::abs(previous[i]), std::abs(previous[i + 1])});
+            if (std::abs(difference) <= 20 * std::numeric_limits<Real>::epsilon() * scale)
+                current[i] = std::complex<Real>(std::numeric_limits<Real>::infinity(), 0);
+            else
+                current[i] = older[i + 1] + Real{1} / difference;
+        }
+        if (order % 2 == 0) {
+            const std::complex<Real> estimate = current.back();
+            if (std::isfinite(estimate.real()) && std::isfinite(estimate.imag())) {
+                const Real difference = std::abs(estimate - lastEstimate);
+                if (difference < bestDifference) {
+                    best = estimate;
+                    bestDifference = difference;
+                }
+                lastEstimate = estimate;
+            }
+        }
+        older = std::move(previous);
+        previous = std::move(current);
+    }
+    return {best, bestDifference};
+}
 
 template <std::floating_point Real>
 struct Segment
@@ -238,6 +275,55 @@ Real integrateTanhSinh(const F &f, std::type_identity_t<Real> a, std::type_ident
         previous = estimate;
     }
     return previous;
+}
+
+/**
+ * QAWF-style Fourier integral on a semi-infinite interval. The interval is divided into
+ * half-periods and the resulting alternating sequence is accelerated with Wynn's epsilon
+ * algorithm.
+ * @param amplitude non-oscillatory real amplitude
+ * @param frequency positive angular frequency
+ * @param lower finite lower limit
+ * @param tolerance absolute convergence tolerance
+ * @param maxCycles maximum number of half-periods
+ * @return integral of amplitude(x) exp(i frequency x) from lower to infinity
+ */
+template <std::floating_point Real = double, class F>
+std::complex<Real> integrateOscillatory(const F &amplitude, std::type_identity_t<Real> frequency,
+                                        std::type_identity_t<Real> lower = 0,
+                                        std::type_identity_t<Real> tolerance = 1e-10, int maxCycles = 512)
+{
+    if (!(frequency > 0) || !std::isfinite(frequency) || !std::isfinite(lower) || !(tolerance > 0) || maxCycles < 4)
+        throw std::invalid_argument("oscillatory quadrature requires finite limits, positive frequency and tolerance");
+
+    const Real halfPeriod = std::numbers::pi_v<Real> / frequency;
+    std::vector<std::complex<Real>> partialSums;
+    partialSums.reserve(maxCycles);
+    std::complex<Real> sum = 0;
+    int negligibleCycles = 0;
+    for (int cycle = 0; cycle < maxCycles; ++cycle) {
+        const Real a = lower + static_cast<Real>(cycle) * halfPeriod;
+        const Real b = a + halfPeriod;
+        const Real cosine = integrate<Real>(
+            [&amplitude, frequency](Real x) { return static_cast<Real>(amplitude(x)) * std::cos(frequency * x); }, a, b,
+            tolerance * 0.1, 128);
+        const Real sine = integrate<Real>(
+            [&amplitude, frequency](Real x) { return static_cast<Real>(amplitude(x)) * std::sin(frequency * x); }, a, b,
+            tolerance * 0.1, 128);
+        const std::complex<Real> contribution(cosine, sine);
+        sum += contribution;
+        partialSums.push_back(sum);
+
+        negligibleCycles = (std::abs(contribution) <= tolerance) ? negligibleCycles + 1 : 0;
+        if (negligibleCycles >= 3)
+            return sum;
+        if (partialSums.size() >= 12 && partialSums.size() % 4 == 0) {
+            const auto [estimate, error] = detail::accelerateOscillatorySums(partialSums);
+            if (error <= tolerance * std::max(Real{1}, std::abs(estimate)))
+                return estimate;
+        }
+    }
+    return detail::accelerateOscillatorySums(partialSums).first;
 }
 
 } // namespace randlib::math

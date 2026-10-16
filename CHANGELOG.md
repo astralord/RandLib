@@ -25,6 +25,10 @@ All notable changes to RandLib are documented here. The project follows
 - Added type-generic tanh-sinh quadrature for finite intervals with integrable endpoint
   singularities. Endpoint-aware callables receive the accurately computed distance to the nearer
   boundary, avoiding cancellation when the abscissa itself rounds to that boundary.
+- Added QAWF-style semi-infinite Fourier quadrature with half-period subdivision and Wynn epsilon
+  acceleration. Heavy-tailed Pareto, Frechet, inverse-gamma, Fisher F and beta-prime characteristic
+  functions, plus the large-variance log-normal case, now meet the standard `1e-8` absolute target;
+  all twelve former tolerance overrides were removed.
 
 ## [2.0.0] - Unreleased
 

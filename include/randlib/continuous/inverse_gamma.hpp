@@ -66,6 +66,7 @@ public:
 private:
     RealType quantileImpl(double p) const override;
     RealType quantileImpl1m(double p) const override;
+    std::complex<double> CFImpl(double t) const override;
 
 public:
     [[nodiscard]] double GetLogGammaShape() const { return X.GetLogGammaShape(); }
@@ -179,6 +180,12 @@ template <typename RealType>
 RealType InverseGammaRand<RealType>::quantileImpl1m(double p) const
 {
     return 1.0 / X.Quantile(p);
+}
+
+template <typename RealType>
+std::complex<double> InverseGammaRand<RealType>::CFImpl(double t) const
+{
+    return this->integrateCharacteristicFunction(t);
 }
 
 template <typename RealType>
