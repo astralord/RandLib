@@ -274,7 +274,10 @@ IntType NegativeBinomialDistribution<IntType, T>::variateByTable(G &g) const
 {
     IntType var = 0;
     for (int i = 0; i < r; ++i) {
-        var += variateGeometricByTable(g);
+        IntType add = variateGeometricByTable(g);
+        if (add > std::numeric_limits<IntType>::max() - var)
+            return std::numeric_limits<IntType>::max();
+        var += add;
     }
     return var;
 }
@@ -285,7 +288,10 @@ IntType NegativeBinomialDistribution<IntType, T>::variateThroughExponential(G &g
 {
     IntType var = 0;
     for (int i = 0; i < r; ++i) {
-        var += variateGeometricThroughExponential(g);
+        IntType add = variateGeometricThroughExponential(g);
+        if (add > std::numeric_limits<IntType>::max() - var)
+            return std::numeric_limits<IntType>::max();
+        var += add;
     }
     return var;
 }

@@ -397,5 +397,9 @@ TEST_CASE("B38: geometric waiting times do not overflow signed integers", "[regr
     CHECK(geometric(generator) == std::numeric_limits<int>::max());
 
     generator.seed(20231010);
+    PascalRand<int> negativeBinomial(2, probability);
+    CHECK(negativeBinomial(generator) == std::numeric_limits<int>::max());
+
+    generator.seed(20231010);
     CHECK(BinomialRand<int>::Variate(20, probability, generator) == 0);
 }

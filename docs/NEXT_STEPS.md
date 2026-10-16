@@ -83,11 +83,11 @@ gate.
 
 1. The pushed `history` head is 92bf8f7. CI run 38966648994 isolated AppleClang's only failure to
    `BetaBinomialRand<>(20, 0.5, 0.5)`, which hit its 60-second bound. Clang 18 UBSan reproduced an
-   out-of-range floating-to-integer conversion in the geometric waiting-time sampler. Local commit
-   4e8b90e records B38, saturates unrepresentable waits and makes binomial waiting arithmetic
-   overflow-safe. GCC 14 and Clang 18 warning-clean builds pass locally; Clang UBSan passes the exact
-   beta-binomial case and all 105 bounded tests. Push both branches and require the replacement
-   AppleClang job to pass before tagging.
+   out-of-range floating-to-integer conversion in the geometric waiting-time sampler. Local commits
+   4e8b90e and f25fd1a record B38, saturate unrepresentable geometric and negative-binomial results,
+   and make binomial waiting arithmetic overflow-safe. GCC 14 and Clang 18 warning-clean builds pass
+   locally; Clang UBSan passes the exact beta-binomial case and all 105 bounded tests. Push both
+   branches and require the replacement AppleClang job to pass before tagging.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
@@ -106,8 +106,9 @@ gate.
   Warning-clean Release builds and the complete 168-test matrix pass under GCC 13 and Clang 18;
   GCC 14 passes the unit/example and isolated-discrete suites. The expanded v2 continuous sampling
   grid keeps a one-hour bound, while every discrete case remains bounded at 60 seconds. The B38
-  sampler fix from 1.x is ported into the header-only implementations and uses a standard engine in
-  its v2 regression. Push the local commits and require AppleClang and MSVC to pass before tagging.
+  sampler fix from 1.x, including checked negative-binomial accumulation, is ported into the
+  header-only implementations and uses a standard engine in its v2 regression. Push the local
+  commits and require AppleClang and MSVC to pass before tagging.
 - **2.5 Numerical building blocks**: done. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
