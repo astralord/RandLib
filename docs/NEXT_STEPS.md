@@ -83,11 +83,11 @@ mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. The current `history` head is pushed. Commit c92f19a fixes B37 (`doubleFactorial`) and records a
-   `2e-12` tolerance for the large-binomial CDF on MSVC; CI measured `1.20259e-12` relative error
-   against the existing 40-digit reference. The earlier eafc3de warning fix built successfully on
-   MSVC before that reference assertion failed. The 2026-10-16 run is green except for an AppleClang
-   job that remains in progress; cancel and rerun it if GitHub Actions does not finish it.
+1. The pushed `history` head is 35abf03. Commit 8e1b175 fixes MSVC 14.44's duplicate explicit
+   instantiations, and the current run's MSVC job passes. Commit c92f19a fixes B37 (`doubleFactorial`)
+   and records a `2e-12` tolerance for the large-binomial CDF on MSVC; CI measured `1.20259e-12`
+   relative error against the existing 40-digit reference. The 2026-10-16 run is green except for an
+   AppleClang statistical job stuck in progress since 08:09 UTC; cancel and rerun the workflow.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
