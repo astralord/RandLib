@@ -24,7 +24,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 11–14, Clang 15–18, AppleClang and MSVC 14.44 build warning-free in the current CI run. |
 | 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B37 found by the test suite; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | The replacement run at f5d16f1 has no failures so far; completed MSVC, sanitizer, coverage and static-analysis jobs pass, while the remaining compiler statistical jobs are still running. |
+| 1.5 Continuous integration | 🟡 | GCC, Clang, MSVC, sanitizer, coverage and static-analysis jobs pass. AppleClang exposed a nonterminating aggregate discrete-sampling check; every discrete distribution is now an independently discovered, 60-second-bounded test, awaiting the final rerun. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
 | 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 

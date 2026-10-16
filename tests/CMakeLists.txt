@@ -42,4 +42,9 @@ add_executable(randlib_statistical_tests
     statistical/test_fitting.cpp
     statistical/test_sampling.cpp)
 target_link_libraries(randlib_statistical_tests PRIVATE randlib_test_support Catch2::Catch2WithMain)
-catch_discover_tests(randlib_statistical_tests PROPERTIES LABELS statistical)
+catch_discover_tests(randlib_statistical_tests
+    TEST_SPEC "~[discrete]"
+    PROPERTIES LABELS statistical TIMEOUT 1200)
+catch_discover_tests(randlib_statistical_tests
+    TEST_SPEC "[discrete]"
+    PROPERTIES LABELS statistical TIMEOUT 60)
