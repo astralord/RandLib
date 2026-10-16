@@ -14,6 +14,19 @@
 namespace randlib
 {
 
+namespace detail
+{
+
+inline double stableTanHalfPi(double alpha)
+{
+    const double reduced = std::remainder(0.5 * alpha, 1.0);
+    if (std::fabs(reduced) == 0.25)
+        return std::copysign(1.0, reduced);
+    return std::tan(randlib::consts::pi * reduced);
+}
+
+} // namespace detail
+
 /**
  * Quantile of the power-law tails of a stable law with α < 2:
  * P(X > x) ~ C (1 + β) γ^α x^(-α) and P(X < -x) ~ C (1 - β) γ^α x^(-α) as x → ∞, with
@@ -642,7 +655,7 @@ void StableDistribution<RealType>::setParametersForGeneralExponent()
 {
     distributionType = GENERAL;
     if (beta != 0.0) {
-        zeta = -beta * std::tan(randlib::consts::half_pi * alpha);
+        zeta = -beta * detail::stableTanHalfPi(alpha);
         omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
         xi = alphaInv * math::atan(-zeta);
     } else {
@@ -669,7 +682,7 @@ double StableDistribution<RealType>::s0LocationShift(double exponent, double ske
         return 0.0;
     if (exponent == 1.0)
         return randlib::consts::two_inv_pi * skewness * scale * std::log(scale);
-    return skewness * scale * std::tan(randlib::consts::half_pi * exponent);
+    return skewness * scale * detail::stableTanHalfPi(exponent);
 }
 
 template <typename RealType>

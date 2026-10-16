@@ -1479,10 +1479,14 @@ FitResult<Distribution> fitLikelihood(std::span<const typename Distribution::val
                 candidate[freeIndices[i]] = fromUnconstrained(free[i], specifications[freeIndices[i]]);
             return naturalObjective(candidate);
         };
-        optimization = math::bfgs(objective, unconstrained, options.tolerance, options.max_iterations);
-        if (!optimization.converged)
-            optimization =
-                math::nelderMead(objective, std::move(optimization.x), options.tolerance, options.max_iterations);
+        if (forceOptimization)
+            optimization = math::nelderMead(objective, unconstrained, options.tolerance, options.max_iterations);
+        else {
+            optimization = math::bfgs(objective, unconstrained, options.tolerance, options.max_iterations);
+            if (!optimization.converged)
+                optimization =
+                    math::nelderMead(objective, std::move(optimization.x), options.tolerance, options.max_iterations);
+        }
         for (std::size_t i = 0; i < optimization.x.size(); ++i)
             parameters[freeIndices[i]] = fromUnconstrained(optimization.x[i], specifications[freeIndices[i]]);
     }

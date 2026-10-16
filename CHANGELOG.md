@@ -36,6 +36,8 @@ All notable changes to RandLib are documented here. The project follows
 - Made its centered series and moments cancellation-resistant on platforms where `long double` is
   binary64, using Loader's Poisson saddle-point form, stable log-beta ratios, compensated summation
   and grouped central-moment identities. Exact probability levels at zero now invert to zero.
+- Evaluated its moderate-argument density directly from the hypergeometric representation, avoiding
+  cancellation between two probabilities on binary64-only platforms.
 
 ### Numerical kernel
 
@@ -56,6 +58,8 @@ All notable changes to RandLib are documented here. The project follows
 
 - Avoided a GCC 12 false positive in BFGS identity-matrix construction and replaced `std::jthread`
   in the parallel-stream example for Apple libc++ versions that do not provide it.
+- Reduced the stable-law tangent argument before evaluation and made quarter-turn values exact,
+  keeping totally skewed short-tail quantiles portable when `long double` is binary64.
 
 ## [2.0.0] - Unreleased
 
@@ -83,7 +87,7 @@ All notable changes to RandLib are documented here. The project follows
 - Removed a Bernoulli/binomial include cycle exposed by standalone public-header consumption without
   changing the exact sampling algorithm or engine advancement.
 
-## [2.0.0-alpha.1] - Unreleased
+## [2.0.0-beta.1] - Unreleased
 
 ### Fitting
 
@@ -111,6 +115,28 @@ All notable changes to RandLib are documented here. The project follows
 - Added maximum-likelihood fitting for exact, left-, right- and interval-censored observations and
   for one- or two-sided truncated samples. These adapters share the constrained optimizer,
   information criteria and observed-information covariance used by ordinary MLE.
+- Censored and truncated likelihood fits use a simplex search from the original initializer,
+  avoiding gradient-based false convergence on flat transformed-likelihood regions.
+
+### API compatibility
+
+- Marked the legacy mutating member `Fit*` methods deprecated in favor of `fit`, `fit_moments` and
+  `fit_bayes`. They remain source-compatible until v3; projects temporarily unable to migrate can
+  define `RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS` before including RandLib.
+- Removed the unused private `POISSON` binomial generator selector. The exact Bernoulli-sum,
+  waiting-time and rejection samplers remain; no approximation is introduced.
+
+## [2.0.0-alpha.1] - Unreleased
+
+### Architecture
+
+- Converted RandLib to a header-only C++20 library under `include/randlib/` and moved the public API
+  into namespace `randlib`.
+- Made every sampler accept any standard uniform random bit generator. Added PCG64, Xoshiro256++,
+  SplitMix64 and deterministic stream construction while retaining the corrected legacy engines.
+- Removed hidden mutable sampling state. Bulk sampling uses `std::span`, support categories are a
+  scoped enum, parameter factories are named, and distribution classes expose const-correct,
+  `[[nodiscard]]` APIs.
 
 ### Build and tooling
 
@@ -125,11 +151,6 @@ All notable changes to RandLib are documented here. The project follows
 
 ### API cleanup
 
-- Marked the legacy mutating member `Fit*` methods deprecated in favor of `fit`, `fit_moments` and
-  `fit_bayes`. They remain source-compatible until v3; projects temporarily unable to migrate can
-  define `RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS` before including RandLib.
-- Removed the unused private `POISSON` binomial generator selector. The exact Bernoulli-sum,
-  waiting-time and rejection samplers remain; no approximation is introduced.
 - Kept the type-erased `EngineRef` sampling adapters private and removed the access-specifier churn
   left by the automated header conversion.
 - Moved implementation-only numerical helpers and tolerances into `randlib::math::detail`.

@@ -87,13 +87,14 @@ TEST_CASE("Adaptive quadrature on finite and infinite intervals", "[numerics]")
                WithinRel(9.0, 1e-15));
 }
 
-TEST_CASE("Noncentral t series, recurrence density and moments match high-precision values", "[numerics][noncentral-t]")
+TEST_CASE("Noncentral t series, densities and moments match high-precision values", "[numerics][noncentral-t]")
 {
     const NoncentralTRand<double> distribution(30, 5);
     CHECK_THAT(distribution.F(-10), WithinRel(1.4196688792261714e-25, 1e-12));
     CHECK_THAT(distribution.f(-10), WithinRel(3.8127458982120124e-25, 1e-12));
     CHECK_THAT(distribution.F(-3), WithinRel(3.2626878724789141e-14, 1e-12));
     CHECK_THAT(distribution.f(-3), WithinRel(1.6499531574158244e-13, 1e-12));
+    CHECK_THAT(distribution.f(1), WithinRel(0.0001552857352701685070297871, 1e-12));
     CHECK_THAT(distribution.Mean(), WithinRel(5.1294973500495874, 1e-14));
     CHECK_THAT(distribution.Variance(), WithinRel(1.5453997929771642, 1e-13));
     CHECK_THAT(distribution.Skewness(), WithinRel(0.43566262458486494, 1e-12));

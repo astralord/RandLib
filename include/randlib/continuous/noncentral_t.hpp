@@ -365,25 +365,24 @@ double NoncentralTRand<RealType>::f(const RealType &x) const
             std::exp(asymptoticLogTail(std::fabs(static_cast<long double>(x)), reflectedNoncentrality, true)));
     }
     const long double square = static_cast<long double>(x) * x;
-    if (static_cast<long double>(x) * delta < 0) {
-        const long double halfDegree = 0.5L * nu;
-        const long double z = halfDeltaSquared * square / (square + nu);
-        const long double a = 0.5L * (nu + 1);
-        const long double summit = 0.5L * (std::sqrt(z * (4 * a + z)) + z);
-        if (summit < 40) {
-            const long double first = kummerM(a, 0.5L, z);
-            long double second = kummerM(halfDegree + 1, 1.5L, z);
-            second *= std::exp(std::lgamma(halfDegree + 1) - std::lgamma(a));
-            second *= std::sqrt(2.0L) * delta * static_cast<long double>(x) / std::sqrt(square + nu);
-            const long double series = first + second;
-            if (series > 4 * std::sqrt(std::numeric_limits<long double>::epsilon()) * first) {
-                const long double logCoefficient = -halfDeltaSquared - a * std::log1p(square / nu) + std::lgamma(a) -
-                                                   std::lgamma(halfDegree) - 0.5L * std::log(nu * randlib::consts::pi);
-                return static_cast<double>(std::exp(logCoefficient) * series);
-            }
+    const long double halfDegree = 0.5L * nu;
+    const long double z = halfDeltaSquared * square / (square + nu);
+    const long double a = 0.5L * (nu + 1);
+    const long double summit = 0.5L * (std::sqrt(z * (4 * a + z)) + z);
+    if (summit < 40) {
+        const long double first = kummerM(a, 0.5L, z);
+        long double second = kummerM(halfDegree + 1, 1.5L, z);
+        second *= std::exp(std::lgamma(halfDegree + 1) - std::lgamma(a));
+        second *= std::sqrt(2.0L) * delta * static_cast<long double>(x) / std::sqrt(square + nu);
+        const long double series = first + second;
+        if (series > 4 * std::sqrt(std::numeric_limits<long double>::epsilon()) * first) {
+            const long double logCoefficient = -halfDeltaSquared - a * std::log1p(square / nu) + std::lgamma(a) -
+                                               std::lgamma(halfDegree) - 0.5L * std::log(nu * randlib::consts::pi);
+            return static_cast<double>(std::exp(logCoefficient) * series);
         }
-        return static_cast<double>(integralDensity(x));
     }
+    if (static_cast<long double>(x) * delta < 0)
+        return static_cast<double>(integralDensity(x));
     const long double scaledX = static_cast<long double>(x) * std::sqrt(1 + 2 / nu);
     const NoncentralTRand<RealType> shifted(nu + 2, delta);
     const long double first = (x > 0) ? probability(x, true, false) : shifted.probability(scaledX, false, false);

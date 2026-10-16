@@ -72,46 +72,46 @@ in its reason (mpmath value, exact formula, regression test).
 
 `tools/refdata/generate.py` (mpmath, 40 digits, runs for hours) writes `tests/data/reference/*.csv`
 and caches per case in `/root/RandLib/build/refdata-cache`. The run started on 2026-10-10 is no
-longer running; it did not finish the skewed stable laws with α = 1
-(`StableRand(1, 0.5, 1, 0)`, `StableRand(1, 0.5, 2, 1)`, `StableRand(0.995, 0.5, 1, 0)`,
-`StableRand(1, 0.005, 1, 0)`, `GeometricStableRand(1, 0.5, 1, 0)`). This is Phase 5 work: add a cheaper
-mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
-`python3 tools/refdata/generate.py --cached-only --cache /root/RandLib/build/refdata-cache` from the
-1.x worktree, remove the matching reviewed rules for those cases and regenerate the known deviations.
+longer running. Exhaustive skewed α=1 stable and geometric-stable generation was time-boxed; focused
+40-digit former-gap and geometric-tail references were committed instead. The cache can be reused if
+the exhaustive grid is revisited, but no reference job is currently running and this is not a release
+gate.
 
 ## 3. Immediate next actions
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. The pushed `history` head is 35abf03. Commit 8e1b175 fixes MSVC 14.44's duplicate explicit
-   instantiations, and the current run's MSVC job passes. Commit c92f19a fixes B37 (`doubleFactorial`)
-   and records a `2e-12` tolerance for the large-binomial CDF on MSVC; CI measured `1.20259e-12`
-   relative error against the existing 40-digit reference. The 2026-10-16 run is green except for an
-   AppleClang statistical job stuck in progress since 08:09 UTC; cancel and rerun the workflow.
+1. The pushed `history` head is f5d16f1. CI run 38918400237 replaced the previously stuck run; MSVC,
+   sanitizer, coverage, static-analysis and completed compiler jobs pass, while the remaining
+   statistical matrix jobs are still running. Do not tag until that run finishes without failures.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
 ### 3.2 Phase 2 remainder (branch `2.x`)
 
-- **CI portability**: local commits fix the Clang/AppleClang `-Wshadow` errors in `Pcg64`, discarded
+- **CI portability**: pushed commits fix the Clang/AppleClang `-Wshadow` errors in `Pcg64`, discarded
   `[[nodiscard]]` results, MSVC's variadic-macro, secure-CRT, unsigned-negation, uninitialized-local
   and unused-variable diagnostics, the coverage parser error, Apple libc++'s missing `std::jthread`,
   and a GCC 12 nested-vector false positive. The engine-adapter test checks exact engine advancement
   while allowing eight ULPs of platform-dependent floating-point variation; AppleClang measured a
-  maximum of six. The Phase 5 follow-up also makes noncentral-t series and moments accurate when
-  MSVC treats `long double` as binary64. Check these jobs after the next maintainer push.
-- **2.5 Numerical building blocks**: done locally. `math/quadrature.hpp`, `math/roots.hpp`,
+  maximum of six. CI run 38918400236 at pushed head f37fe7b found three remaining defects: the
+  noncentral-t recurrence density lost 1.9e-12 relatively on MSVC, the stable skew-angle endpoint
+  perturbed a `1e-10` log-stable quantile on binary64-only platforms, and AppleClang's BFGS fit
+  converged to a flat truncated-normal likelihood region. The local head fixes these with the direct
+  hypergeometric density, an exact reduced quarter-turn tangent, and a simplex likelihood fit from
+  the initializer. Push it and require AppleClang and MSVC to pass before tagging.
+- **2.5 Numerical building blocks**: done. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
   sites preserve the floating type, and `tests/unit/test_numerics.cpp` independently instantiates
   and checks the `long double` path with exact identities and closed forms.
 - **2.6 Tooling**:
-  - Done locally: `.clang-format` matching the existing style, a pinned clang-format pre-commit hook,
+  - Done: `.clang-format` matching the existing style, a pinned clang-format pre-commit hook,
     and one formatting pass over `include/` and `tests/`. Include sorting is deliberately disabled
     because the converted headers still contain dependency-sensitive implementation include blocks.
-  - Done locally: clang-tidy analyzes `src/precompiled.cpp`, whose explicit instantiations cover the
+  - Done: clang-tidy analyzes `src/precompiled.cpp`, whose explicit instantiations cover the
     public distribution headers, and promotes every diagnostic to an error in blocking CI.
-  - Done locally: opt-in `benchmarks/` with pinned Google Benchmark 1.9.5. Configure with
+  - Done: opt-in `benchmarks/` with pinned Google Benchmark 1.9.5. Configure with
     `-DRANDLIB_BUILD_BENCHMARKS=ON`; it compares normal, exponential, gamma and Poisson sampling
     against `std::*_distribution` and measures stable sampling. Benchmarks are tracked, not gated.
 
@@ -122,21 +122,23 @@ mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
     /tmp/randlib-bench/benchmarks/randlib_benchmarks
     ```
 - **Clean-ups left by the automated header conversion** (worth doing with or before 2.6):
-  - Done locally: `variate(detail::EngineRef)` and bulk `sample` overrides are private adapters at
+  - Done: `variate(detail::EngineRef)` and bulk `sample` overrides are private adapters at
     the start of each class; the redundant access-specifier toggles are removed.
-  - Done locally: implementation helpers moved from the public `randlib::math` namespace into
+  - Done: implementation helpers moved from the public `randlib::math` namespace into
     `randlib::math::detail`, including the special-function iteration constants, `erfinvAux*`,
     Lambert W, Marcum P/Q and portable Bessel helpers.
-  - Done locally: `areClose` and the Newton tolerance are private math details; the public
+  - Done: `areClose` and the Newton tolerance are private math details; the public
     `Pair`/`Triplet` aliases moved from `math/constants.hpp` to `core/fwd.hpp`; the global pair
     arithmetic overloads were removed in favor of an explicit exponential-family inner product.
-- After the current heads are pushed and every 2.x CI job is green, tag `v2.0.0-alpha.1` on `2.x`.
-  Phase 2 is otherwise complete.
+- After the local portability fix is pushed and every 2.x CI job is green, tag
+  `v2.0.0-alpha.1` on `2.x`. Phase 2 is otherwise complete. Because Phases 3–5 landed while the
+  cross-platform gate was being repaired, this is a delayed prerelease checkpoint rather than the
+  historical end of the Phase 2 commits.
 
 ### 3.3 Phase 3: fitting and features (v2.0-beta)
 
 Follow plan 3.1–3.3. Design notes gathered so far:
-- Landed locally: `math::numericalHessian` and the first `include/randlib/fit/` vertical slice.
+- Landed: `math::numericalHessian` and the first `include/randlib/fit/` vertical slice.
   `FitResult`, `FitOptions`, fixed-parameter constrained MLE, AIC/BIC and observed-information
   covariance are covered. The free API covers 36 distribution types, including fixed structural
   parameters, generic multi-parameter MLEs and bounded searches for integer-valued parameters.
@@ -164,7 +166,7 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   logit for (0, 1)). Closed-form fits override it.
 - Tests: parameter recovery over a grid (seeded), comparison to SciPy `fit` results on fixed datasets
   stored as CSV (generated by `tools/fitting/generate_scipy_reference.py`).
-- 3.2 is done locally: `fit/tail.hpp` provides Hill and Pickands estimators, plot-ready Hill
+- 3.2 is done: `fit/tail.hpp` provides Hill and Pickands estimators, plot-ready Hill
   diagnostics and peaks-over-threshold fitting. Generalized Pareto and generalized extreme-value
   distributions have closed-form probability functions, sampling, moments, generic MLEs and
   committed 40-digit mpmath reference data. `fit/censored.hpp` supports exact, left-, right- and
@@ -172,12 +174,13 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   constrained-likelihood pipeline.
 - 3.3 implementation is done: the unused private binomial `POISSON` selector is removed on both
   branches. The maintainer still needs to close #11 with the exact-sampling rationale.
-- After these commits are pushed and every 2.x CI job is green, tag the resulting Phase 3 head
-  `v2.0.0-beta.1`. Do not tag the current unpushed local head.
+- The beta changelog section is now separate from the alpha notes. Once the delayed alpha checkpoint
+  is tagged on an all-green head, tag that same tested head `v2.0.0-beta.1`; all Phase 3 engineering
+  already precedes it.
 
 ### 3.4 Phase 4: documentation, packaging, release (v2.0)
 
-Landed locally: the README rewrite and comparison table; strict Doxygen Awesome generation and Pages
+Landed: the README rewrite and comparison table; strict Doxygen Awesome generation and Pages
 deployment; fitting, streams, stable-law, accuracy, packaging and migration guides; and the archived
 legacy LaTeX source with its generated PDF removed. Five warning-clean examples (standard engine,
 parallel streams, model selection, stable fitting and Bayesian update) build and run through CTest.
@@ -191,16 +194,17 @@ The release workflow compiles that artifact, extracts the exact tag's changelog 
 the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
 final release archive and checksum.
 
-Remaining Phase 4 actions need the maintainer: allow the `github-pages` environment to deploy from
-`2.x`, push and observe CI, run the release-candidate soak, submit the upstream vcpkg PR, and make the
-release announcements.
+The documentation build in run 38918400230 passed. Deployment failed with GitHub's explicit
+`Invalid deployment branch` response because the `github-pages` environment currently permits only
+`master`; the maintainer must allow `2.x`. The remaining Phase 4 actions are the release-candidate
+soak, upstream vcpkg PR and release announcements.
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 
 The Phase 5 engineering work is complete. The remaining actions are the maintainer-owned issue
 closures, CI observation and releases listed below.
 
-Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
+Landed for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
 default. The skewed near-α=1 density/CDF gap is implemented and checked against 40-digit mpmath
 values; TOMS 748 quantiles, McCulloch quantile fitting and constrained MLE are covered by seeded
 recovery tests. Eighth-order alpha-one tail expansions make the complete geometric-stable coherence
@@ -221,12 +225,15 @@ sampling, generic quantiles, exact moments, a conditional-normal characteristic 
 constrained MLE. Saddle-split integration and a small-denominator expansion cover large
 noncentrality and extreme representable tails. A committed 243-value mpmath table covers three Tier
 1 cases; focused regressions use direct 60-digit integrals and an exact normal-moment tail series.
+The moderate-argument hypergeometric density avoids probability subtraction when `long double` is
+binary64.
 Phase 5.5 is complete. `LogStableRand` is the exponential transform of `StableRand`, preserving the
 selected S0/S1 convention. It provides transformed density/tails, sampling, quantiles, median,
 Jacobian-correct modes, stable-family quantile/MLE fitting and exact Laplace-exponent moments where
 they exist (`beta=-1`, plus the Gaussian case). Other non-Gaussian skewnesses report divergent
 moments, and the deliberately unsupported nonzero characteristic function throws
-`not_implemented`. Four Tier 1 cases have a committed 198-value 40-digit mpmath table.
+`not_implemented`. Four Tier 1 cases have a committed 198-value 40-digit mpmath table. Exact
+quarter-turn tangent reduction keeps the totally skewed short-tail quantiles portable.
 
 ## 4. Things that need the maintainer
 

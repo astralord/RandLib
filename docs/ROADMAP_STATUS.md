@@ -24,7 +24,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 11–14, Clang 15–18, AppleClang and MSVC 14.44 build warning-free in the current CI run. |
 | 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B37 found by the test suite; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | GCC, Clang, MSVC, sanitizer, coverage and static-analysis jobs pass; the final AppleClang statistical result is stuck in progress and awaits a rerun. |
+| 1.5 Continuous integration | 🟡 | The replacement run at f5d16f1 has no failures so far; completed MSVC, sanitizer, coverage and static-analysis jobs pass, while the remaining compiler statistical jobs are still running. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
 | 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 
@@ -51,7 +51,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. GitHub Pages deployment from `2.x` needs the maintainer to update the environment's allowed branches. |
+| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. The documentation build passes; Pages rejected `2.x` because the environment permits only `master`, so its allowed branches need a maintainer update. |
 | 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
 | 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
 | 4.4 Release v2.0.0 | 🚫 | Release automation is ready. Release candidates, the two-week soak, announcements and the upstream vcpkg PR need the maintainer. |
@@ -63,5 +63,5 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 5.1 Stable distributions (#1) | ✅ | Nolan S0/S1, the skewed near-α=1 probability kernel, TOMS 748 quantiles, McCulloch fitting and constrained MLE are implemented. Eighth-order alpha-one tail expansions remove the geometric-stable bottleneck. The 917-line stable grid and focused former-gap/geometric-tail cases use 40-digit mpmath evidence; exhaustive geometric α=1 generation was time-boxed. |
 | 5.2 Heavy-tailed characteristic functions (#6, #10) | ✅ | Type-generic tanh-sinh and QAWF-style oscillatory quadrature are implemented. Positive semi-infinite CFs use half-period integration with Wynn epsilon acceleration; Pareto, Frechet, inverse-gamma, Fisher F, beta-prime and large-variance log-normal references pass the standard `1e-8` absolute target with no overrides. |
 | 5.3 Marcum Q (#4) | ✅ | A saddle-centered Poisson mixture evaluates Marcum Q directly without tail cancellation. Noncentral χ² meets the Tier 1 bulk/tail targets with no overrides; the new Tier 2 Rice law has direct probability functions, sampling, moments and 40-digit mpmath references. |
-| 5.4 Noncentral t (#7) | ✅ | The v2 port provides direct CDF/survival series, recurrence and integral densities, large-noncentrality/extreme-tail paths, sampling, quantiles, exact moments, a conditional-normal CF and constrained MLE. Three Tier 1 cases have a 243-value mpmath reference table, supplemented by focused 60-digit integral and exact-series regressions. |
-| 5.5 Log-stable (#5) | ✅ | `LogStableRand` provides the exponential stable transform, direct tails, sampling, quantiles, median, Jacobian-correct modes, exact finite moments, S0/S1 handling and log-transformed stable fitting. Four Tier 1 cases have a 198-value 40-digit mpmath table. Nonzero CFs deliberately throw `not_implemented` as planned. |
+| 5.4 Noncentral t (#7) | ✅ | The v2 port provides direct CDF/survival series, hypergeometric, recurrence and integral densities, large-noncentrality/extreme-tail paths, sampling, quantiles, exact moments, a conditional-normal CF and constrained MLE. Three Tier 1 cases have a 243-value mpmath reference table, supplemented by focused 60-digit integral and exact-series regressions. |
+| 5.5 Log-stable (#5) | ✅ | `LogStableRand` provides the exponential stable transform, direct tails, sampling, quantiles, median, Jacobian-correct modes, exact finite moments, S0/S1 handling and log-transformed stable fitting. Exact quarter-turn tangent reduction makes the short tail portable. Four Tier 1 cases have a 198-value 40-digit mpmath table. Nonzero CFs deliberately throw `not_implemented` as planned. |
