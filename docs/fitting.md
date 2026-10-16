@@ -35,6 +35,25 @@ positive and bounded parameters transformed to an unconstrained scale. The repor
 the inverse observed information from a numerical Hessian. A fixed or non-identifiable parameter can
 have a `NaN` standard error; always check `converged` before using an optimized result.
 
+### Stable laws
+
+Stable fitting returns an S0-parameterized `StableRand`, so the estimated location remains
+continuous at `alpha=1`. The fast entry point is McCulloch's quantile estimator:
+
+```cpp
+using Stable = randlib::StableRand<double>;
+auto estimate = randlib::fit<Stable>(observations, randlib::Method::Quantile);
+```
+
+It uses the 5th, 25th, 50th, 75th, and 95th sample percentiles and the published McCulloch lookup
+tables for exponent and skewness; S0 scale and location are then matched to theoretical quartiles.
+The tables cover exponents down to 0.5. For smaller exponents, use the result as the starting point
+for MLE rather than as a final estimate.
+
+`Method::MLE` starts from the same robust estimate and jointly optimizes exponent, skewness, scale,
+and location. Stable likelihoods are materially more expensive than ordinary light-tailed models.
+Fix known parameters through `FitOptions::fixed`, and use the quantile fit when latency matters.
+
 ## Other estimators
 
 `fit_moments<Distribution>(sample)` selects the named method-of-moments entry point. Conjugate

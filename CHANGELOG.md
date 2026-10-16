@@ -11,6 +11,11 @@ All notable changes to RandLib are documented here. The project follows
   location accessors, setters, names, support endpoints, probability functions, characteristic
   functions and sampling consistently use the selected convention, including the special
   logarithmic location conversion at alpha = 1.
+- Implemented stable densities, distribution functions and quantiles throughout the former skewed
+  near-alpha-one gap. A cancellation-free S0 characteristic function and alpha-one sampling limit
+  keep adjacent representable exponents continuous; 40-digit mpmath values cover both sides.
+- Added McCulloch quantile fitting as a fast robust estimator and initializer for constrained stable
+  maximum likelihood. Fits are reported in the continuous S0 parameterization.
 
 ### Numerical kernel
 

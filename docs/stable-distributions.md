@@ -32,21 +32,19 @@ mu1 = mu0 - (2 / pi) * beta * gamma * log(gamma)    (alpha == 1)
 `SetParameterization()` changes only the convention used to report the location; it does not change
 the law. `SetScale()` preserves the location in the currently selected convention.
 
-## Accuracy in v2.0
+## Accuracy
 
 | Operation/region | Current behavior |
 |---|---|
 | Sampling and characteristic function | Available over the complete valid parameter range. |
-| PDF/CDF away from skewed `alpha` near 1 | Compared with 40-digit mpmath references; target is `1e-9` absolute error. |
-| PDF/CDF when `|alpha-1| < 0.01` and `beta != 0` | Throws `randlib::not_implemented`; sampling remains available. |
+| PDF/CDF | Compared with 40-digit mpmath references, including the former skewed near-`alpha=1` gap; target is `1e-9` absolute error. |
 | Direct survival probabilities | Used instead of `1-F` to avoid cancellation in supported tails. |
 | Far-tail quantiles | Seeded from the stable power-law asymptote before root finding. |
-| Fitting | Scheduled with S0 support and the near-`alpha=1` numerical work. |
+| Fitting | McCulloch quantile fitting and constrained MLE return S0 parameters. |
 
 The executable tolerance registry in `tests/data/reference_tolerances.csv` is authoritative. Stable
 reference generation is deliberately expensive; see [the accuracy policy](accuracy-policy.md) before
 changing a result or tolerance.
 
-Geometric stable laws use an exponential mixture of stable laws. Skewed `alpha=1` density and CDF
-evaluation can be very slow in the far tails because the mixture probes the stable law at enormous
-arguments. This is a documented numerical limitation, not a sampling limitation.
+Geometric stable laws use an exponential mixture of stable laws. The remaining skewed `alpha=1`
+far-tail performance work is tracked separately from the completed stable-law probability kernel.

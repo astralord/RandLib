@@ -22,6 +22,7 @@
 #include <randlib/continuous/normal.hpp>
 #include <randlib/continuous/pareto.hpp>
 #include <randlib/continuous/student_t.hpp>
+#include <randlib/continuous/stable.hpp>
 #include <randlib/continuous/uniform.hpp>
 #include <randlib/continuous/weibull.hpp>
 #include <randlib/discrete/bernoulli.hpp>
@@ -34,6 +35,7 @@
 #include <randlib/math/optimize.hpp>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <concepts>
 #include <initializer_list>
@@ -174,6 +176,27 @@ double sampleQuantile(std::span<const T> sample, double probability)
     const std::size_t upper = std::min(lower + 1, sorted.size() - 1);
     const double fraction = index - lower;
     return static_cast<double>(sorted[lower]) * (1 - fraction) + static_cast<double>(sorted[upper]) * fraction;
+}
+
+template <std::size_t Rows, std::size_t Columns>
+double bilinearInterpolation(const std::array<double, Rows> &rowGrid, const std::array<double, Columns> &columnGrid,
+                             const std::array<std::array<double, Columns>, Rows> &values, double row, double column)
+{
+    const auto bracket = [](const auto &grid, double value) {
+        const auto upper = std::ranges::upper_bound(grid, value);
+        if (upper == grid.begin())
+            return std::pair<std::size_t, double>{0, 0};
+        if (upper == grid.end())
+            return std::pair<std::size_t, double>{grid.size() - 2, 1};
+        const std::size_t lowerIndex = static_cast<std::size_t>(upper - grid.begin() - 1);
+        const double fraction = (value - grid[lowerIndex]) / (grid[lowerIndex + 1] - grid[lowerIndex]);
+        return std::pair<std::size_t, double>{lowerIndex, fraction};
+    };
+    const auto [i, rowFraction] = bracket(rowGrid, row);
+    const auto [j, columnFraction] = bracket(columnGrid, column);
+    const double lower = values[i][j] * (1 - columnFraction) + values[i][j + 1] * columnFraction;
+    const double upper = values[i + 1][j] * (1 - columnFraction) + values[i + 1][j + 1] * columnFraction;
+    return lower * (1 - rowFraction) + upper * rowFraction;
 }
 
 inline std::optional<int> fixedPositiveInteger(const FixedParameterMap &fixed, std::string_view name,
@@ -370,6 +393,107 @@ struct FitModel<CauchyRand<Real>>
     }
 
     static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<StableRand<Real>>
+{
+    using Distribution = StableRand<Real>;
+    using Parameterization = typename Distribution::Parameterization;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"exponent", distribution.GetExponent(), 0.1, 2.0, true, true},
+                {"skewness", distribution.GetSkewness(), -1.0, 1.0, true, true},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt},
+                {"location", distribution.GetLocation(), std::nullopt, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], parameters[2], parameters[3], Parameterization::S0);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
+    {
+        requireMethod(method, "Stable", {Method::MLE, Method::Quantile});
+        const double p05 = sampleQuantile(sample, 0.05);
+        const double p25 = sampleQuantile(sample, 0.25);
+        const double p50 = sampleQuantile(sample, 0.50);
+        const double p75 = sampleQuantile(sample, 0.75);
+        const double p95 = sampleQuantile(sample, 0.95);
+        const double interquartileRange = p75 - p25;
+        const double outerRange = p95 - p05;
+        if (!(interquartileRange > 0) || !(outerRange > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Stable distribution: sample spread should be positive");
+
+        static constexpr std::array nuAlphaGrid = {2.439, 2.5, 2.6, 2.7, 2.8,  3.0,  3.2, 3.5,
+                                                   4.0,   5.0, 6.0, 8.0, 10.0, 15.0, 25.0};
+        static constexpr std::array nuBetaGrid = {0.0, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0};
+        static constexpr std::array alphaTable = {
+            std::array{2.000, 2.000, 2.000, 2.000, 2.000, 2.000, 2.000},
+            std::array{1.916, 1.924, 1.924, 1.924, 1.924, 1.924, 1.924},
+            std::array{1.808, 1.813, 1.829, 1.829, 1.829, 1.829, 1.829},
+            std::array{1.729, 1.730, 1.737, 1.745, 1.745, 1.745, 1.745},
+            std::array{1.664, 1.663, 1.663, 1.668, 1.676, 1.676, 1.676},
+            std::array{1.563, 1.560, 1.553, 1.548, 1.547, 1.547, 1.547},
+            std::array{1.484, 1.480, 1.471, 1.460, 1.448, 1.438, 1.438},
+            std::array{1.391, 1.386, 1.378, 1.364, 1.337, 1.318, 1.318},
+            std::array{1.279, 1.273, 1.266, 1.250, 1.210, 1.184, 1.150},
+            std::array{1.128, 1.121, 1.114, 1.101, 1.067, 1.027, 0.973},
+            std::array{1.029, 1.021, 1.014, 1.004, 0.974, 0.935, 0.874},
+            std::array{0.896, 0.892, 0.884, 0.883, 0.855, 0.823, 0.769},
+            std::array{0.818, 0.812, 0.806, 0.801, 0.780, 0.756, 0.691},
+            std::array{0.698, 0.695, 0.692, 0.689, 0.676, 0.656, 0.597},
+            std::array{0.593, 0.590, 0.588, 0.586, 0.579, 0.563, 0.513},
+        };
+        static constexpr std::array betaTable = {
+            std::array{0.000, 2.160, 1.000, 1.000, 1.000, 1.000, 1.000},
+            std::array{0.000, 1.592, 3.390, 1.000, 1.000, 1.000, 1.000},
+            std::array{0.000, 0.759, 1.800, 1.000, 1.000, 1.000, 1.000},
+            std::array{0.000, 0.482, 1.048, 1.694, 1.000, 1.000, 1.000},
+            std::array{0.000, 0.360, 0.760, 1.232, 2.229, 1.000, 1.000},
+            std::array{0.000, 0.253, 0.518, 0.823, 1.575, 1.000, 1.000},
+            std::array{0.000, 0.203, 0.410, 0.632, 1.244, 1.906, 1.000},
+            std::array{0.000, 0.165, 0.332, 0.499, 0.943, 1.560, 1.000},
+            std::array{0.000, 0.136, 0.271, 0.404, 0.689, 1.230, 2.195},
+            std::array{0.000, 0.109, 0.216, 0.323, 0.539, 0.827, 1.917},
+            std::array{0.000, 0.096, 0.190, 0.284, 0.472, 0.693, 1.759},
+            std::array{0.000, 0.082, 0.163, 0.243, 0.412, 0.601, 1.596},
+            std::array{0.000, 0.074, 0.147, 0.220, 0.377, 0.546, 1.482},
+            std::array{0.000, 0.064, 0.128, 0.191, 0.330, 0.478, 1.362},
+            std::array{0.000, 0.056, 0.112, 0.167, 0.285, 0.428, 1.274},
+        };
+
+        const double nuAlpha = outerRange / interquartileRange;
+        const double nuBeta = (p95 + p05 - 2 * p50) / outerRange;
+        double exponent = 2.0;
+        double skewness = 0.0;
+        if (nuAlpha >= nuAlphaGrid.front()) {
+            exponent = bilinearInterpolation(nuAlphaGrid, nuBetaGrid, alphaTable, nuAlpha, std::fabs(nuBeta));
+            const double magnitude =
+                bilinearInterpolation(nuAlphaGrid, nuBetaGrid, betaTable, nuAlpha, std::fabs(nuBeta));
+            skewness = std::copysign(std::clamp(magnitude, 0.0, 1.0), nuBeta);
+        }
+        exponent = std::clamp(exponent, 0.1, 2.0);
+
+        const Distribution standard(exponent, skewness, 1, 0, Parameterization::S0);
+        const double theoretical25 = standard.Quantile(0.25);
+        const double theoretical50 = standard.Quantile(0.50);
+        const double theoretical75 = standard.Quantile(0.75);
+        const double scale = interquartileRange / (theoretical75 - theoretical25);
+        const double location = p50 - scale * theoretical50;
+        if (!(scale > 0) || !std::isfinite(location))
+            throw fit_error(FitErrorCode::WrongReturn, "Stable distribution: quantile fit did not converge");
+
+        if (method == Method::MLE) {
+            exponent = std::clamp(exponent, 0.100001, 1.999999);
+            skewness = std::clamp(skewness, -0.999999, 0.999999);
+        }
+        return Distribution(exponent, skewness, scale, location, Parameterization::S0);
+    }
+
+    static bool hasClosedForm(Method method) { return method == Method::Quantile; }
 };
 
 template <std::floating_point Real>

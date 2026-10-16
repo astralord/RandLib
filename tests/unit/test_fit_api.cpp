@@ -554,6 +554,49 @@ TEST_CASE("Method-of-moments fitting has a named entry point", "[fit]")
     CHECK_THAT(static_cast<double>(result.distribution.Variance()), WithinAbs(1.25, 1e-14));
 }
 
+TEST_CASE("Stable fitting uses a McCulloch quantile estimate in S0", "[fit][stable]")
+{
+    using Stable = StableRand<double>;
+    const Stable reference(1.4, 0.4, 2.0, -1.0, Stable::Parameterization::S0);
+    Pcg64 engine(2027);
+    std::vector<double> sample(5000);
+    reference.Sample(engine, sample);
+
+    auto result = fit<Stable>(sample, Method::Quantile);
+    CHECK(result.converged);
+    CHECK(result.method == Method::Quantile);
+    CHECK(result.distribution.GetParameterization() == Stable::Parameterization::S0);
+    CHECK(result.parameter_names == std::vector<std::string>{"exponent", "skewness", "scale", "location"});
+    CHECK_THAT(result.distribution.GetExponent(), WithinAbs(1.4, 0.08));
+    CHECK_THAT(result.distribution.GetSkewness(), WithinAbs(0.4, 0.15));
+    CHECK_THAT(result.distribution.GetScale(), WithinAbs(2.0, 0.15));
+    CHECK_THAT(result.distribution.GetLocation(), WithinAbs(-1.0, 0.2));
+
+    const std::array gaussianSample{-2.0, -1.0, 0.0, 1.0, 2.0};
+    const auto gaussian = fit<Stable>(gaussianSample, Method::Quantile);
+    CHECK(gaussian.distribution.GetExponent() == 2.0);
+    CHECK(gaussian.distribution.GetSkewness() == 0.0);
+}
+
+TEST_CASE("Stable MLE refines the McCulloch estimate", "[fit][stable]")
+{
+    using Stable = StableRand<double>;
+    const Stable reference(1.5, 0.3, 1.2, 0.5, Stable::Parameterization::S0);
+    Pcg64 engine(2028);
+    std::vector<double> sample(120);
+    reference.Sample(engine, sample);
+
+    FitOptions options;
+    options.fixed = {{"exponent", 1.5}, {"skewness", 0.3}};
+    options.max_iterations = 500;
+    auto result = fit<Stable>(sample, options);
+    CHECK(result.converged);
+    CHECK(result.method == Method::MLE);
+    CHECK(result.fixed == std::vector<bool>{true, true, false, false});
+    CHECK_THAT(result.distribution.GetScale(), WithinAbs(1.2, 0.25));
+    CHECK_THAT(result.distribution.GetLocation(), WithinAbs(0.5, 0.25));
+}
+
 TEST_CASE("Model selection chooses the smallest information criterion", "[fit]")
 {
     constexpr int sampleSize = 400;

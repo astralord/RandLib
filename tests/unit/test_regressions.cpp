@@ -62,9 +62,9 @@ TEST_CASE("B7: stable laws with exponent close to 1 can be constructed and sampl
     smallSkew.Sample(sample);
     CHECK(std::all_of(sample.begin(), sample.end(), [](double x) { return std::isfinite(x); }));
     CHECK(std::abs(nearOne.CF(1.0)) <= 1.0);
-    CHECK_THROWS_AS(nearOne.f(0.0), randlib::not_implemented);
-    CHECK_THROWS_AS(nearOne.F(0.0), randlib::not_implemented);
-    CHECK_THROWS_AS(smallSkew.Quantile(0.3), randlib::not_implemented);
+    CHECK(std::isfinite(nearOne.f(0.0)));
+    CHECK(nearOne.F(0.0) > 0.0);
+    CHECK(std::isfinite(smallSkew.Quantile(0.3)));
 }
 
 TEST_CASE("B8: totally skewed stable distribution function has no floor", "[regression]")

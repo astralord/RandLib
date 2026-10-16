@@ -4,6 +4,7 @@ set(RANDLIB_EXAMPLES
     sampling_std_engine
     parallel_streams
     fit_model_selection
+    fit_stable
     bayesian_update)
 
 foreach(example IN LISTS RANDLIB_EXAMPLES)

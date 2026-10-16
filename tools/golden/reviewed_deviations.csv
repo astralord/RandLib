@@ -1,7 +1,7 @@
 case,function,arg,expected,reason
 # Golden-value changes without reference values, reviewed by hand. tools/golden/classify_deviations.py
 # merges these rules with the reference-verified ones into tests/data/golden_v1/known_deviations.csv.
-"StableRand(0.995, 0.5, 1, 0)",__ctor__,,no-throw,"B7: stable laws with exponent close to 1 and non-zero skewness can be constructed and sampled; f and F throw randlib::not_implemented"
+"StableRand(0.995, 0.5, 1, 0)",__ctor__,,no-throw,"B7: v1.2 unblocked construction and sampling; v2.1 implements f and F with 40-digit mpmath regression values"
 "StableRand(1, 0.005, 1, 0)",__ctor__,,no-throw,"B7: as above"
 "TriangularRand(0, 0, 1)",__ctor__,,no-throw,"B19: the mode may equal a limit"
 "IrwinHallRand(3)",Quantile,*,skip,"B11: quantiles are solved to full precision (v1.1 Newton stopped at a 1e-6 step); checked by the coherence test Quantile(F(x)) = x"

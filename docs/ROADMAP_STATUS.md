@@ -60,7 +60,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 5.1 Stable distributions (#1) | 🟡 | Nolan S0 and S1 are both public, with tested location conversion, equivalent sampling and probability functions. Open: the region near α = 1, stable fitting, and the slow far tails of the α = 1 geometric stable density. |
+| 5.1 Stable distributions (#1) | 🟡 | Nolan S0/S1, the skewed near-α=1 probability kernel, TOMS 748 quantiles, McCulloch fitting and constrained MLE are implemented with 40-digit mpmath regressions. Open: the slow far tails of the α = 1 geometric stable density and the final full-range accuracy sweep. |
 | 5.2 Heavy-tailed characteristic functions (#6, #10) | 🟡 | Type-generic tanh-sinh quadrature with cancellation-free endpoint distances is implemented and tested. Open: oscillatory quadrature and replacing the heavy-tail CF paths (currently about 1e-3, or 6e-5 for log-normal at σ² = 4). |
 | 5.3 Marcum Q (#4) | 🟡 | v1.2 fixed the noncentral χ² density; the upper tail is still 1 − Marcum P. |
 | 5.4 Noncentral t (#7) | ⏳ | |

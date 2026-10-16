@@ -198,14 +198,14 @@ the release announcements. The final stable-fitting example will land as part of
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 
 See plan Phase 5. Known concrete problems: geometric stable with α = 1 and β ≠ 0 takes ~1 min per
-density value in the far tails (the coherence test checks only 0.01 < F < 0.99 for it); stable laws
-near α = 1 throw `not_implemented`; heavy-tailed CFs accurate to ~1e-3 and the log-normal CF to 6e-5
+density value in the far tails (the coherence test checks only 0.01 < F < 0.99 for it); heavy-tailed
+CFs are accurate to ~1e-3 and the log-normal CF to 6e-5
 (overrides in `tests/data/reference_tolerances.csv`); noncentral χ² upper tail via 1 − Marcum P.
 
 Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
-default. The constructor, getters and setters preserve the selected location convention; tests prove
-S0/S1 equivalence for the pdf, CDF, survival function, characteristic function and seeded sampler,
-including the α = 1 logarithmic conversion. The near-α=1 numerical kernel and stable fitting remain.
+default. The skewed near-α=1 density/CDF gap is implemented and checked against 40-digit mpmath
+values; TOMS 748 quantiles, McCulloch quantile fitting and constrained MLE are covered by seeded
+recovery tests. The slow α=1 geometric-stable far tails and the final full-range sweep remain.
 The first 5.2 primitive is also landed: `math::integrateTanhSinh` handles finite-interval endpoint
 singularities, including an endpoint-distance callable form that avoids cancellation. Oscillatory
 quadrature and the heavy-tail characteristic-function migrations remain.
