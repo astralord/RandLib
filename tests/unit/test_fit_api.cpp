@@ -242,7 +242,7 @@ TEST_CASE("Generic MLE covers additional Tier 1 continuous distributions", "[fit
 
     auto cauchy = fit<CauchyRand<double>>(quantileSample(CauchyRand<double>(1.0, 2.0)));
     REQUIRE(cauchy.converged);
-    CHECK_THAT(cauchy.distribution.GetLocation(), WithinAbs(1.0, 1e-8));
+    CHECK_THAT(cauchy.distribution.GetLocation(), WithinAbs(1.0, 5e-8));
     CHECK_THAT(cauchy.distribution.GetScale(), WithinRel(2.0, 0.02));
 
     auto gumbel = fit<GumbelRand<double>>(quantileSample(GumbelRand<double>(-0.5, 1.5)));

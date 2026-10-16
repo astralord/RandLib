@@ -104,7 +104,7 @@ protected:
     double cdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use cdf tail approximation
 
     StableDistribution(double exponent, double skewness, double scale = 1, double location = 0,
-                       Parameterization parameterization = Parameterization::S1);
+                       Parameterization selectedParameterization = Parameterization::S1);
 
 public:
     virtual ~StableDistribution() {}
@@ -503,8 +503,8 @@ public:
     using Parameterization = typename StableDistribution<RealType>::Parameterization;
 
     StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0,
-               Parameterization parameterization = Parameterization::S1)
-        : StableDistribution<RealType>(exponent, skewness, scale, location, parameterization)
+               Parameterization selectedParameterization = Parameterization::S1)
+        : StableDistribution<RealType>(exponent, skewness, scale, location, selectedParameterization)
     {
     }
     [[nodiscard]] std::string Name() const override;
@@ -809,7 +809,7 @@ std::complex<double> StableDistribution<RealType>::unityTailIntegral(int power, 
             harmonic += std::pow(static_cast<double>(term), -order);
         const double factorial = std::tgamma(static_cast<double>(order));
         const double sign = (order % 2 == 0) ? 1.0 : -1.0;
-        derivatives[order] = sign * factorial * (std::riemann_zeta(static_cast<double>(order)) - harmonic);
+        derivatives[order] = sign * factorial * (math::riemannZeta(static_cast<double>(order)) - harmonic);
     }
 
     std::array<std::complex<double>, 9> bell{};

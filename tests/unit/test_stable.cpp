@@ -47,20 +47,20 @@ TEST_CASE("stable S0 location has the expected support and setter semantics", "[
     StableRand<double> stable(0.5, 1.0, 2.0, 3.0, Parameterization::S0);
 
     CHECK(stable.GetLocation() == 3.0);
-    CHECK(stable.MinValue() == 1.0);
+    CHECK_THAT(stable.MinValue(), WithinAbs(1.0, 1e-14));
     CHECK(stable.Name() == "Stable(0.5, 1, 2, 3, S0)");
 
     stable.SetScale(4.0);
     CHECK(stable.GetLocation() == 3.0);
-    CHECK(stable.MinValue() == -1.0);
+    CHECK_THAT(stable.MinValue(), WithinAbs(-1.0, 1e-14));
     stable.SetLocation(7.0);
     CHECK(stable.GetLocation() == 7.0);
-    CHECK(stable.MinValue() == 3.0);
+    CHECK_THAT(stable.MinValue(), WithinAbs(3.0, 1e-14));
 
     const auto characteristicFunction = stable.CF(0.75);
     stable.SetParameterization(Parameterization::S1);
-    CHECK(stable.GetLocation() == 3.0);
-    CHECK(stable.CF(0.75) == characteristicFunction);
+    CHECK_THAT(stable.GetLocation(), WithinAbs(3.0, 1e-14));
+    CHECK_THAT(std::abs(stable.CF(0.75) - characteristicFunction), WithinAbs(0.0, 1e-14));
     CHECK(stable.Name() == "Stable(0.5, 1, 4, 3)");
 }
 

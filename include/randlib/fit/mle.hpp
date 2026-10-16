@@ -1380,8 +1380,9 @@ FitResult<Distribution> fitLikelihood(std::span<const typename Distribution::val
     }
     for (const auto &[name, value] : options.fixed) {
         (void)value;
+        const std::string &fixedName = name;
         if (std::ranges::none_of(specifications,
-                                 [&name](const FitParameter &parameter) { return parameter.name == name; }))
+                                 [&fixedName](const FitParameter &parameter) { return parameter.name == fixedName; }))
             throw std::invalid_argument("Unknown fixed parameter: " + name);
     }
 
