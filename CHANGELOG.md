@@ -29,6 +29,11 @@ All notable changes to RandLib are documented here. The project follows
   acceleration. Heavy-tailed Pareto, Frechet, inverse-gamma, Fisher F and beta-prime characteristic
   functions, plus the large-variance log-normal case, now meet the standard `1e-8` absolute target;
   all twelve former tolerance overrides were removed.
+- Added direct Marcum-Q evaluation through a saddle-centered Poisson mixture. Noncentral chi-squared
+  survival probabilities now retain relative accuracy through representable tails instead of
+  subtracting the CDF from one; all three former tolerance overrides were removed.
+- Added the Tier 2 Rice distribution with direct density, CDF and survival functions, transformed-
+  normal sampling, closed-form mean and variance, and 40-digit mpmath reference data.
 
 ## [2.0.0] - Unreleased
 

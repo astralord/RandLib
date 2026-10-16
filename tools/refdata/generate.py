@@ -69,6 +69,9 @@ def golden_cases():
         "GeneralizedExtremeValueRand(0.2, 1.5, -0.5)": {"x": ["-7", "-2", "-0.5", "2", "10"]},
         "GeneralizedExtremeValueRand(0, 2, 1)": {"x": ["-10", "-2", "1", "5", "15"]},
         "GeneralizedExtremeValueRand(-0.25, 1, 0)": {"x": ["-10", "-2", "0", "2", "3.9"]},
+        "RiceRand(0, 1)": {"x": ["0", "0.1", "0.5", "1", "2", "5"]},
+        "RiceRand(2, 0.5)": {"x": ["0", "0.5", "1", "2", "3", "5"]},
+        "RiceRand(5, 2)": {"x": ["0", "1", "3", "5", "8", "15"]},
     })
     return cases
 

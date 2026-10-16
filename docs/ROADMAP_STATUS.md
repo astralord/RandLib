@@ -62,6 +62,6 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 |---|---|---|
 | 5.1 Stable distributions (#1) | ✅ | Nolan S0/S1, the skewed near-α=1 probability kernel, TOMS 748 quantiles, McCulloch fitting and constrained MLE are implemented. Eighth-order alpha-one tail expansions remove the geometric-stable bottleneck. The 917-line stable grid and focused former-gap/geometric-tail cases use 40-digit mpmath evidence; exhaustive geometric α=1 generation was time-boxed. |
 | 5.2 Heavy-tailed characteristic functions (#6, #10) | ✅ | Type-generic tanh-sinh and QAWF-style oscillatory quadrature are implemented. Positive semi-infinite CFs use half-period integration with Wynn epsilon acceleration; Pareto, Frechet, inverse-gamma, Fisher F, beta-prime and large-variance log-normal references pass the standard `1e-8` absolute target with no overrides. |
-| 5.3 Marcum Q (#4) | 🟡 | v1.2 fixed the noncentral χ² density; the upper tail is still 1 − Marcum P. |
+| 5.3 Marcum Q (#4) | ✅ | A saddle-centered Poisson mixture evaluates Marcum Q directly without tail cancellation. Noncentral χ² meets the Tier 1 bulk/tail targets with no overrides; the new Tier 2 Rice law has direct probability functions, sampling, moments and 40-digit mpmath references. |
 | 5.4 Noncentral t (#7) | ⏳ | |
 | 5.5 Log-stable (#5) | ⏳ | |

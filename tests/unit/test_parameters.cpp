@@ -196,3 +196,20 @@ TEST_CASE("Extreme-value distributions reject invalid parameters", "[parameters]
     CHECK_THROWS_AS(GeneralizedExtremeValueRand<double>(0, 0, 0), std::invalid_argument);
     CHECK_THROWS_AS(GeneralizedExtremeValueRand<double>(0, 1, invalidNumber), std::invalid_argument);
 }
+
+TEST_CASE("Rice distribution rejects invalid parameters", "[parameters]")
+{
+    const double invalidNumber = std::numeric_limits<double>::quiet_NaN();
+    CHECK_THROWS_AS(RiceRand<double>(-1, 1), std::invalid_argument);
+    CHECK_THROWS_AS(RiceRand<double>(0, 0), std::invalid_argument);
+    CHECK_THROWS_AS(RiceRand<double>(INFINITY, 1), std::invalid_argument);
+    CHECK_THROWS_AS(RiceRand<double>(0, INFINITY), std::invalid_argument);
+    CHECK_THROWS_AS(RiceRand<double>(invalidNumber, 1), std::invalid_argument);
+    CHECK_THROWS_AS(RiceRand<double>(0, invalidNumber), std::invalid_argument);
+
+    const RiceRand<double> rice(2, 0.5);
+    CHECK(rice.f(INFINITY) == 0);
+    CHECK(rice.logf(INFINITY) == -INFINITY);
+    CHECK(rice.F(INFINITY) == 1);
+    CHECK(rice.S(INFINITY) == 0);
+}

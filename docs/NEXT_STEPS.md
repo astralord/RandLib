@@ -197,7 +197,7 @@ the release announcements. The final stable-fitting example will land as part of
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 
-See plan Phase 5. The next concrete problem is the noncentral χ² upper tail via 1 − Marcum P.
+See plan Phase 5. The next concrete problem is porting and validating the noncentral t distribution.
 
 Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
 default. The skewed near-α=1 density/CDF gap is implemented and checked against 40-digit mpmath
@@ -209,6 +209,11 @@ Phase 5.2 is complete. `math::integrateTanhSinh` handles finite-interval endpoin
 `math::integrateOscillatory` combines half-period integration with Wynn epsilon acceleration. The
 heavy-tailed and log-normal CF reference grids pass the standard `1e-8` absolute target; their
 twelve tolerance overrides were removed.
+Phase 5.3 is complete. Marcum Q is evaluated directly as a Poisson mixture centered at the combined
+Poisson/incomplete-gamma saddle point, so representable noncentral χ² survival probabilities remain
+accurate down to `1e-300`. Its three tolerance overrides were removed. `RiceRand` uses the same
+kernel and has direct probability functions, transformed-normal sampling, closed-form mean/variance,
+and a committed 237-value mpmath reference table.
 
 ## 4. Things that need the maintainer
 

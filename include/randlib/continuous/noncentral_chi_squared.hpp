@@ -147,6 +147,8 @@ double NoncentralChiSquaredRand<RealType>::F(const RealType &x) const
 {
     if (x <= 0.0)
         return 0.0;
+    if (std::isinf(x))
+        return 1.0;
     double halfX = 0.5 * x;
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
@@ -159,6 +161,8 @@ double NoncentralChiSquaredRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0.0)
         return 1.0;
+    if (std::isinf(x))
+        return 0.0;
     double halfX = 0.5 * x;
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);

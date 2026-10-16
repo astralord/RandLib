@@ -12,6 +12,7 @@
 #include <chrono>
 #include <cmath>
 #include <map>
+#include <set>
 #include <sstream>
 
 using namespace randlib_test;
@@ -22,8 +23,15 @@ namespace
 std::map<std::string, std::vector<double>> gridByCase()
 {
     std::map<std::string, std::vector<double>> grid;
+    std::set<std::string> goldenCases;
     for (const Record &r : loadRecords("golden_v1")) {
-        if (r.function == "F" && r.status == "ok")
+        if (r.function == "F" && r.status == "ok") {
+            grid[r.caseId].push_back(parseNumber(r.arg));
+            goldenCases.insert(r.caseId);
+        }
+    }
+    for (const Record &r : loadRecords("reference")) {
+        if (r.function == "F" && !goldenCases.contains(r.caseId))
             grid[r.caseId].push_back(parseNumber(r.arg));
     }
     for (auto &entry : grid) {
@@ -109,8 +117,8 @@ TEST_CASE("Continuous distributions are internally coherent", "[coherence]")
                 double f = d->f(x), logf = d->logf(x), F = d->F(x), S = d->S(x);
                 if (f > 1e-300 && std::isfinite(f) && !relativelyClose(f, std::exp(logf), 1e-12))
                     out.push_back(at("f != exp(logf)", x, f, std::exp(logf)));
-                if (f == 0.0 && logf != -INFINITY)
-                    out.push_back(at("f == 0 but logf is finite", x));
+                if (f == 0.0 && std::exp(logf) != 0.0)
+                    out.push_back(at("f underflows before exp(logf)", x));
                 if (!(std::fabs(F + S - 1.0) <= 1e-12))
                     out.push_back(at("F + S != 1", x, F + S, 1.0));
                 if (F < previousF - 1e-15)

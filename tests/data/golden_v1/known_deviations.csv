@@ -552,6 +552,7 @@ LogarithmicRand(0.9),S,9,skip,v1.1 value off by 3.7e-02 relative to the mpmath r
 "NoncentralChiSquaredRand(2, 20)",Quantile,0.69999999999999996,skip,v1.1 value off by 1.8e-04 relative to the mpmath reference; now 1.6e-15
 "NoncentralChiSquaredRand(2, 20)",Quantile,0.94999999999999996,skip,v1.1 value off by 6.2e-05 relative to the mpmath reference; now 5.0e-15
 "NoncentralChiSquaredRand(2, 20)",Quantile,0.999,skip,v1.1 value off by 4.9e-07 relative to the mpmath reference; now 1.4e-13
+"NoncentralChiSquaredRand(2, 20)",Quantile1m,1e-10,skip,v1.1 value off by 5.7e-07 relative to the mpmath reference; now 4.8e-16
 "NoncentralChiSquaredRand(2, 20)",Quantile1m,0.001,skip,v1.1 value off by 4.9e-07 relative to the mpmath reference; now 1.4e-13
 "NoncentralChiSquaredRand(2, 20)",Quantile1m,0.050000000000000003,skip,v1.1 value off by 6.2e-05 relative to the mpmath reference; now 5.9e-15
 "NoncentralChiSquaredRand(2, 20)",Quantile1m,0.29999999999999999,skip,v1.1 value off by 1.8e-04 relative to the mpmath reference; now 1.5e-15

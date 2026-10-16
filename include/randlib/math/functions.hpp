@@ -734,6 +734,50 @@ inline Real MarcumPSeries(Real mu, Real x, Real y, Real logX, Real logY)
     return sum;
 }
 
+template <std::floating_point Real>
+inline Real MarcumQSeries(Real mu, Real x, Real y, Real logX, Real logY)
+{
+    if (x <= 0)
+        return qgamma(mu, y, logY);
+    const Real saddle = Real{0.5} * (std::sqrt(mu * mu + 4 * x * y) - mu);
+    const int center = static_cast<int>(std::floor(std::max(x, saddle)));
+    Real shape = mu + center;
+    Real weight = std::exp(-x + center * logX - std::lgamma(center + 1.0));
+    Real q = qgamma(shape, y, logY);
+    Real delta = std::exp(shape * logY - y - std::lgamma(shape + 1));
+    Real sum = weight * q;
+
+    Real lowerWeight = weight;
+    Real previousTerm = sum;
+    int decreasing = 0;
+    for (int n = center; n > 0; --n) {
+        lowerWeight *= n / x;
+        const Real lowerQ = qgamma(mu + n - 1, y, logY);
+        const Real term = lowerWeight * lowerQ;
+        sum += term;
+        decreasing = (term <= previousTerm) ? decreasing + 1 : 0;
+        if (decreasing >= 8 && term <= 4 * std::numeric_limits<Real>::epsilon() * sum)
+            break;
+        previousTerm = term;
+    }
+
+    decreasing = 0;
+    previousTerm = weight * q;
+    for (int n = center + 1; n < 1000000; ++n) {
+        weight *= x / n;
+        q += delta;
+        shape += 1;
+        delta *= y / shape;
+        const Real term = weight * std::min(Real{1}, q);
+        sum += term;
+        decreasing = (term <= previousTerm) ? decreasing + 1 : 0;
+        if (decreasing >= 8 && term <= 4 * std::numeric_limits<Real>::epsilon() * sum)
+            break;
+        previousTerm = term;
+    }
+    return std::clamp(sum, Real{0}, Real{1});
+}
+
 /**
  * @param mu
  * @param x
@@ -873,6 +917,10 @@ inline Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<
      * */
     if (x < 0.0 || y <= 0.0)
         return 0.0;
+    if (std::isinf(y))
+        return 1.0;
+    if (std::isinf(x))
+        return 0.0;
 
     if (x < 30)
         return detail::MarcumPSeries(mu, x, y, logX, logY);
@@ -917,8 +965,16 @@ inline Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<
                     std::type_identity_t<Real> sqrtX, std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX,
                     std::type_identity_t<Real> logY)
 {
-    // TODO: implement and use, when mu + x > y
-    return 1.0 - MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
+    if (x < 0 || y <= 0)
+        return 1;
+    if (std::isinf(y))
+        return 0;
+    if (std::isinf(x))
+        return 1;
+    const Real saddle = Real{0.5} * (std::hypot(mu, 2 * sqrtX * sqrtY) - mu);
+    if (!std::isfinite(saddle) || std::max(x, saddle) >= std::numeric_limits<int>::max() - 1)
+        return 1 - MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
+    return detail::MarcumQSeries(mu, x, y, logX, logY);
 }
 
 template <std::floating_point Real>

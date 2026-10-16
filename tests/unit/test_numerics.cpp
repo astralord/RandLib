@@ -68,6 +68,9 @@ TEST_CASE("Numerical functions preserve long-double arithmetic", "[numerics]")
     CHECK(marcumP >= 0);
     CHECK(marcumP <= 1);
     checkClose(marcumP + marcumQ, Real{1});
+
+    constexpr Real tailArgument = 751.09573767168045L;
+    CHECK_THAT(static_cast<double>(math::MarcumQ(Real{0.25}, Real{1.5}, tailArgument)), WithinRel(1e-300, 1e-12));
 }
 
 TEST_CASE("Adaptive quadrature on finite and infinite intervals", "[numerics]")

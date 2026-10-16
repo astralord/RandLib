@@ -1226,6 +1226,40 @@ class NoncentralChiSquared(Continuous):
                 "ExcessKurtosis": 12 * (k + 4 * lam) / (k + 2 * lam) ** 2}
 
 
+class Rice(Continuous):
+    lower = 0
+
+    def __init__(self, nu, sigma):
+        self.nu, self.sigma = mp.mpf(nu), mp.mpf(sigma)
+        self.noncentral_chi_squared = NoncentralChiSquared(2, (self.nu / self.sigma) ** 2)
+
+    def pdf(self, x):
+        if x <= 0:
+            return mp.mpf(0)
+        s2 = self.sigma**2
+        return x / s2 * mp.exp(-(x**2 + self.nu**2) / (2 * s2)) * mp.besseli(0, x * self.nu / s2)
+
+    def cdf(self, x):
+        if x <= 0:
+            return mp.mpf(0)
+        if self.nu == 0:
+            return -mp.expm1(-x**2 / (2 * self.sigma**2))
+        return self.noncentral_chi_squared.cdf((x / self.sigma) ** 2)
+
+    def sf(self, x):
+        if x <= 0:
+            return mp.mpf(1)
+        if self.nu == 0:
+            return mp.exp(-x**2 / (2 * self.sigma**2))
+        return self.noncentral_chi_squared.sf((x / self.sigma) ** 2)
+
+    def moments(self):
+        k = self.nu**2 / (2 * self.sigma**2)
+        h = k / 2
+        mean = self.sigma * mp.sqrt(mp.pi / 2) * mp.exp(-h) * ((1 + k) * mp.besseli(0, h) + k * mp.besseli(1, h))
+        return {"Mean": mean, "Variance": 2 * self.sigma**2 + self.nu**2 - mean**2}
+
+
 class Poisson(Discrete):
     def __init__(self, lam):
         self.lam = mp.mpf(lam)
@@ -1532,6 +1566,7 @@ def make(cls, args):
         "UniformRand": lambda: Uniform(*a),
         "FisherFRand": lambda: FisherF(*a),
         "NoncentralChiSquaredRand": lambda: NoncentralChiSquared(*a),
+        "RiceRand": lambda: Rice(*a),
         "PoissonRand": lambda: Poisson(*a),
         "BinomialRand": lambda: Binomial(*a),
         "BernoulliRand": lambda: Bernoulli(*a),

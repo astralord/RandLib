@@ -37,6 +37,7 @@
 #include <randlib/continuous/pareto.hpp>
 #include <randlib/continuous/planck.hpp>
 #include <randlib/continuous/raised_cosine.hpp>
+#include <randlib/continuous/rice.hpp>
 #include <randlib/continuous/sech.hpp>
 #include <randlib/continuous/stable.hpp>
 #include <randlib/continuous/student_t.hpp>

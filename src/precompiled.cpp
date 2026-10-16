@@ -50,6 +50,7 @@ template class randlib::PlanckRand<double>;
 template class randlib::RaisedCosineDistribution<double>;
 template class randlib::RaisedCosineRand<double>;
 template class randlib::RaabGreenRand<double>;
+template class randlib::RiceRand<double>;
 template class randlib::SechRand<double>;
 template class randlib::StableDistribution<double>;
 template class randlib::StableRand<double>;

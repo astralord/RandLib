@@ -58,6 +58,7 @@ extern template class PlanckRand<double>;
 extern template class RaisedCosineDistribution<double>;
 extern template class RaisedCosineRand<double>;
 extern template class RaabGreenRand<double>;
+extern template class RiceRand<double>;
 extern template class SechRand<double>;
 extern template class StableDistribution<double>;
 extern template class StableRand<double>;
