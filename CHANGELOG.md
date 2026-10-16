@@ -58,8 +58,9 @@ All notable changes to RandLib are documented here. The project follows
 
 - Avoided a GCC 12 false positive in BFGS identity-matrix construction and replaced `std::jthread`
   in the parallel-stream example for Apple libc++ versions that do not provide it.
-- Reduced the stable-law tangent argument before evaluation and made quarter-turn values exact,
-  keeping totally skewed short-tail quantiles portable when `long double` is binary64.
+- Reduced the stable-law tangent argument, made quarter-turn tangent and inverse-tangent values
+  exact, and evaluated the finite totally skewed integration-endpoint limit analytically. Short-tail
+  quantiles now agree on platforms where `long double` is binary64.
 
 ## [2.0.0] - Unreleased
 

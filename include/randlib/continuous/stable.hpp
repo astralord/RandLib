@@ -25,6 +25,13 @@ inline double stableTanHalfPi(double alpha)
     return std::tan(randlib::consts::pi * reduced);
 }
 
+inline double stableAtan(double value)
+{
+    if (std::fabs(value) == 1.0)
+        return std::copysign(static_cast<double>(0.5L * randlib::consts::half_pi), value);
+    return math::atan(value);
+}
+
 } // namespace detail
 
 /**
@@ -656,8 +663,10 @@ void StableDistribution<RealType>::setParametersForGeneralExponent()
     distributionType = GENERAL;
     if (beta != 0.0) {
         zeta = -beta * detail::stableTanHalfPi(alpha);
-        omega = 0.5 * alphaInv * std::log1pl(zeta * zeta);
-        xi = alphaInv * math::atan(-zeta);
+        const double zetaSquared = zeta * zeta;
+        omega = (zetaSquared == 1.0) ? 0.5 * alphaInv * static_cast<double>(randlib::consts::ln2)
+                                     : 0.5 * alphaInv * std::log1pl(zetaSquared);
+        xi = alphaInv * detail::stableAtan(-zeta);
     } else {
         zeta = omega = xi = 0.0;
     }
@@ -1145,7 +1154,11 @@ double StableDistribution<RealType>::limitCaseForIntegrandAuxForGeneralExponent(
 template <typename RealType>
 double StableDistribution<RealType>::integrandAuxForGeneralExponent(double theta, double xAdj, double xiAdj) const
 {
-    if (std::fabs(theta) >= randlib::consts::half_pi || theta <= -xiAdj)
+    const double halfPi = static_cast<double>(randlib::consts::half_pi);
+    /// For |β| = 1 on the α > 1 short side, α(π/2 + ξ) = π and the endpoint singularity is removable.
+    if (theta >= halfPi && alpha > 1.0 && std::fabs(beta) == 1.0 && xiAdj > 0.0)
+        return xAdj + std::log(alpha - 1.0) - alpha_alpham1 * std::log(alpha);
+    if (std::fabs(theta) >= halfPi || theta <= -xiAdj)
         return limitCaseForIntegrandAuxForGeneralExponent(theta, xiAdj);
     double thetaAdj = alpha * (theta + xiAdj);
     double sinThetaAdj = std::sin(thetaAdj);
@@ -1534,7 +1547,8 @@ double StableDistribution<RealType>::cdfIntegralRepresentation(double logX, doub
         return complement ? fastccdfExponentiation(u(theta)) : fastcdfExponentiation(u(theta));
     };
     double theta0 = rootOfMonotone(u, -xiAdj, randlib::consts::half_pi);
-    return randlib::consts::inv_pi * integrateAroundRoot(integrand, u, -xiAdj, randlib::consts::half_pi, theta0);
+    return static_cast<double>(randlib::consts::inv_pi) *
+           integrateAroundRoot(integrand, u, -xiAdj, randlib::consts::half_pi, theta0);
 }
 
 template <typename RealType>

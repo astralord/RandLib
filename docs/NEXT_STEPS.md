@@ -81,9 +81,12 @@ gate.
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. The pushed `history` head is f5d16f1. CI run 38918400237 replaced the previously stuck run; MSVC,
-   sanitizer, coverage, static-analysis and completed compiler jobs pass, while the remaining
-   statistical matrix jobs are still running. Do not tag until that run finishes without failures.
+1. The pushed `history` head is f5d16f1. CI run 38918400237 passed every job except AppleClang: its
+   continuous statistical aggregate completed, but the following aggregate discrete check ran
+   until GitHub's six-hour job limit. Local commit 92bf8f7 registers every discrete distribution as
+   a separate 60-second-bounded CTest case while preserving its seed and checks. GCC 13/14 and Clang
+   18 warning-clean builds pass locally, including all 105 tests and all 32 isolated discrete cases.
+   Push both branches and require the replacement AppleClang job to pass before tagging.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
@@ -94,12 +97,15 @@ gate.
   and unused-variable diagnostics, the coverage parser error, Apple libc++'s missing `std::jthread`,
   and a GCC 12 nested-vector false positive. The engine-adapter test checks exact engine advancement
   while allowing eight ULPs of platform-dependent floating-point variation; AppleClang measured a
-  maximum of six. CI run 38918400236 at pushed head f37fe7b found three remaining defects: the
-  noncentral-t recurrence density lost 1.9e-12 relatively on MSVC, the stable skew-angle endpoint
-  perturbed a `1e-10` log-stable quantile on binary64-only platforms, and AppleClang's BFGS fit
-  converged to a flat truncated-normal likelihood region. The local head fixes these with the direct
-  hypergeometric density, an exact reduced quarter-turn tangent, and a simplex likelihood fit from
-  the initializer. Push it and require AppleClang and MSVC to pass before tagging.
+  maximum of six. CI run 38957273851 at pushed head 2d038bd passes every job except AppleClang and
+  MSVC unit tests, which agree on one log-stable `1e-10` short-tail quantile. The local head reproduces
+  their exact result with GCC's binary64-long-double mode and fixes it with exact quarter-turn
+  precomputations plus the analytic finite limit of the totally skewed stable integrand at π/2.
+  Native and binary64-long-double probes now agree with the committed 40-digit mpmath reference.
+  Warning-clean Release builds and the complete 168-test matrix pass under GCC 13 and Clang 18;
+  GCC 14 passes the unit/example and isolated-discrete suites. The expanded v2 continuous sampling
+  grid keeps a one-hour bound, while every discrete case remains bounded at 60 seconds. Push the
+  local commits and require AppleClang and MSVC to pass before tagging.
 - **2.5 Numerical building blocks**: done. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
@@ -233,7 +239,8 @@ Jacobian-correct modes, stable-family quantile/MLE fitting and exact Laplace-exp
 they exist (`beta=-1`, plus the Gaussian case). Other non-Gaussian skewnesses report divergent
 moments, and the deliberately unsupported nonzero characteristic function throws
 `not_implemented`. Four Tier 1 cases have a committed 198-value 40-digit mpmath table. Exact
-quarter-turn tangent reduction keeps the totally skewed short-tail quantiles portable.
+quarter-turn angle reduction and an analytic finite integration-endpoint limit keep the totally
+skewed short-tail quantiles portable on binary64-only platforms.
 
 ## 4. Things that need the maintainer
 

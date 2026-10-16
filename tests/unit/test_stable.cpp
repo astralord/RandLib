@@ -150,7 +150,7 @@ TEST_CASE("log-stable mode accounts for the exponential Jacobian", "[stable][log
     CHECK_THROWS_AS(gaussian.CF(1), randlib::not_implemented);
 }
 
-TEST_CASE("log-stable short-tail quantiles use an exact skew angle", "[stable][log-stable]")
+TEST_CASE("log-stable short-tail quantiles preserve the finite skew-angle endpoint", "[stable][log-stable]")
 {
     const LogStableRand<double> distribution(1.5, -1, 0.5, 0.25);
     CHECK_THAT(distribution.Quantile1m(1e-10), WithinRel(33.17281190476198487520755, 1e-10));
