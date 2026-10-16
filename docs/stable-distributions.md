@@ -46,5 +46,5 @@ The executable tolerance registry in `tests/data/reference_tolerances.csv` is au
 reference generation is deliberately expensive; see [the accuracy policy](accuracy-policy.md) before
 changing a result or tolerance.
 
-Geometric stable laws use an exponential mixture of stable laws. The remaining skewed `alpha=1`
-far-tail performance work is tracked separately from the completed stable-law probability kernel.
+Geometric stable laws use an exponential mixture of stable laws. Alpha-one tail expansions keep
+that mixture practical even when it probes stable probabilities at enormous arguments.

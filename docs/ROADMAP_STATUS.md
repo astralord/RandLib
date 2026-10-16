@@ -13,7 +13,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 0.1 Coordinate upstream | 🚫 | Tracking issue on `astralord/RandLib` is for the maintainer. Branch model agreed: `1.x` for 1.2, `2.x` for v2, `master` untouched. |
 | 0.2 Tag the baseline | ✅ | `v1.1.0-baseline` at 6536dad. |
 | 0.3 Golden outputs | ✅ | `tools/golden/` records 14.6k values for 160 cases from the baseline library. |
-| 0.4 Reference data | 🟡 | `tools/refdata/` (mpmath, 40 digits). The skewed stable and geometric stable laws with α = 1 are still being computed (Phase 5). |
+| 0.4 Reference data | 🟡 | `tools/refdata/` uses mpmath at 40 digits. Stable α=1 and focused geometric-stable far-tail evidence are committed; exhaustive geometric α=1 generation was time-boxed because the nested integral remains exceptionally expensive. |
 | 0.5 Project tracking | 🚫 | Milestones and issues need repository access; this file tracks progress meanwhile. |
 
 ## Phase 1: Stabilize (v1.2, branch `1.x`)
@@ -60,7 +60,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 5.1 Stable distributions (#1) | 🟡 | Nolan S0/S1, the skewed near-α=1 probability kernel, TOMS 748 quantiles, McCulloch fitting and constrained MLE are implemented with 40-digit mpmath regressions. Open: the slow far tails of the α = 1 geometric stable density and the final full-range accuracy sweep. |
+| 5.1 Stable distributions (#1) | ✅ | Nolan S0/S1, the skewed near-α=1 probability kernel, TOMS 748 quantiles, McCulloch fitting and constrained MLE are implemented. Eighth-order alpha-one tail expansions remove the geometric-stable bottleneck. The 917-line stable grid and focused former-gap/geometric-tail cases use 40-digit mpmath evidence; exhaustive geometric α=1 generation was time-boxed. |
 | 5.2 Heavy-tailed characteristic functions (#6, #10) | 🟡 | Type-generic tanh-sinh quadrature with cancellation-free endpoint distances is implemented and tested. Open: oscillatory quadrature and replacing the heavy-tail CF paths (currently about 1e-3, or 6e-5 for log-normal at σ² = 4). |
 | 5.3 Marcum Q (#4) | 🟡 | v1.2 fixed the noncentral χ² density; the upper tail is still 1 − Marcum P. |
 | 5.4 Noncentral t (#7) | ⏳ | |

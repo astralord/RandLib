@@ -290,6 +290,12 @@ TEST_CASE("B29: geometric stable distribution function for exponent 1", "[regres
     double empirical =
         static_cast<double>(std::count_if(sample.begin(), sample.end(), [x](double v) { return v <= x; })) / 20000.0;
     CHECK(std::fabs(empirical - X.F(x)) < 0.02);
+
+    // Direct characteristic-function asymptotics evaluated with mpmath at 40 decimal digits.
+    CHECK_THAT(X.f(-119), WithinAbs(0.00001079183336235705390278076, 1e-9));
+    CHECK_THAT(X.F(-119), WithinAbs(0.0013070736358547730840764597, 1e-9));
+    CHECK_THAT(X.f(570.9), WithinAbs(0.000001482821763075677554750345, 1e-9));
+    CHECK_THAT(X.F(570.9), WithinAbs(0.9991581026900738992757455, 1e-9));
 }
 
 TEST_CASE("B30: Marchenko-Pastur distribution function next to the lower edge", "[regression]")

@@ -16,6 +16,9 @@ All notable changes to RandLib are documented here. The project follows
   keep adjacent representable exponents continuous; 40-digit mpmath values cover both sides.
 - Added McCulloch quantile fitting as a fast robust estimator and initializer for constrained stable
   maximum likelihood. Fits are reported in the continuous S0 parameterization.
+- Added alpha-one density and probability tail expansions through eighth order. Geometric-stable
+  mixture evaluation now covers its full historical tail grid in seconds instead of minutes, with
+  focused 40-digit mpmath references on both sides.
 
 ### Numerical kernel
 

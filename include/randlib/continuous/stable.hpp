@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <vector>
 
@@ -198,6 +199,8 @@ private:
      * @return leading term of pdf short tail series expansion for large x, |β| = 1 and α = 1
      */
     double pdfShortTailExpansionForUnityExponent(double x) const;
+    std::complex<double> unityTailIntegral(int power, int logarithmPower, double distance) const;
+    double unityTailExpansion(double distance, bool integrated) const;
 
     /**
      * @param theta
@@ -786,6 +789,65 @@ double StableDistribution<RealType>::pdfShortTailExpansionForUnityExponent(doubl
 }
 
 template <typename RealType>
+std::complex<double> StableDistribution<RealType>::unityTailIntegral(int power, int logarithmPower,
+                                                                     double distance) const
+{
+    const double absoluteDistance = std::fabs(distance);
+    const double direction = std::copysign(1.0, distance);
+    const double halfPi = static_cast<double>(randlib::consts::half_pi);
+    const std::complex<double> imaginary(0, 1);
+    const std::complex<double> integral = std::tgamma(power + 1.0) * std::pow(absoluteDistance, -power - 1.0) *
+                                          std::exp(imaginary * direction * halfPi * (power + 1.0));
+    if (logarithmPower == 0)
+        return integral;
+
+    std::array<std::complex<double>, 9> derivatives{};
+    derivatives[1] = math::digamma(power + 1.0) - std::log(absoluteDistance) + imaginary * direction * halfPi;
+    for (int order = 2; order <= logarithmPower; ++order) {
+        double harmonic = 0;
+        for (int term = 1; term <= power; ++term)
+            harmonic += std::pow(static_cast<double>(term), -order);
+        const double factorial = std::tgamma(static_cast<double>(order));
+        const double sign = (order % 2 == 0) ? 1.0 : -1.0;
+        derivatives[order] = sign * factorial * (std::riemann_zeta(static_cast<double>(order)) - harmonic);
+    }
+
+    std::array<std::complex<double>, 9> bell{};
+    bell[0] = 1;
+    for (int order = 1; order <= logarithmPower; ++order) {
+        double combination = 1;
+        for (int part = 1; part <= order; ++part) {
+            bell[order] += combination * bell[order - part] * derivatives[part];
+            combination *= static_cast<double>(order - part) / part;
+        }
+    }
+    return integral * bell[logarithmPower];
+}
+
+template <typename RealType>
+double StableDistribution<RealType>::unityTailExpansion(double distance, bool integrated) const
+{
+    static constexpr int ORDER = 8;
+    const std::complex<double> imaginary(0, 1);
+    const double logarithmicCoefficient = randlib::consts::two_inv_pi * beta * gamma;
+    std::complex<double> sum = 0;
+    for (int totalOrder = 1; totalOrder <= ORDER; ++totalOrder) {
+        for (int logarithmPower = 0; logarithmPower <= totalOrder; ++logarithmPower) {
+            const int exponentialPower = totalOrder - logarithmPower;
+            const std::complex<double> coefficient =
+                std::pow(-gamma, exponentialPower) / std::tgamma(exponentialPower + 1.0) *
+                std::pow(imaginary * logarithmicCoefficient, logarithmPower) / std::tgamma(logarithmPower + 1.0);
+            const int power = totalOrder - (integrated ? 1 : 0);
+            sum += coefficient * unityTailIntegral(power, logarithmPower, distance);
+        }
+    }
+    const double inversePi = static_cast<double>(randlib::consts::inv_pi);
+    if (!integrated)
+        return std::max(0.0, sum.real() * inversePi);
+    return std::clamp(-std::copysign(1.0, distance) * sum.imag() * inversePi, 0.0, 1.0);
+}
+
+template <typename RealType>
 double StableDistribution<RealType>::limitCaseForIntegrandAuxForUnityExponent(double theta, double xAdj) const
 {
     if (theta > 0.0) {
@@ -873,6 +935,8 @@ double StableDistribution<RealType>::peakForUnityExponent(double xAdj) const
 template <typename RealType>
 double StableDistribution<RealType>::pdfForUnityExponent(double x) const
 {
+    if (std::fabs(x - mu) >= 100 * gamma)
+        return unityTailExpansion(x - mu, false);
     double xSt = (x - mu) / gamma;
     double xAdj = -randlib::consts::half_pi * xSt / beta - logGammaPi_2;
     /// The integrand g exp(-g) with g = exp(u) peaks where u = 0, which approaches ±π/2 in the
@@ -1169,6 +1233,8 @@ template <typename RealType>
 double StableDistribution<RealType>::pdfS0UnityLimit(double x) const
 {
     const double unityMu = locationParameter - randlib::consts::two_inv_pi * beta * gamma * logGamma;
+    if (std::fabs(x - unityMu) >= 100 * gamma)
+        return unityTailExpansion(x - unityMu, false);
     const double standardizedX = (x - unityMu) / gamma;
     const double unityLogGammaPi2 = randlib::consts::lnpi - randlib::consts::ln2 - logGamma;
     const double xAdjusted = -randlib::consts::half_pi * standardizedX / beta - unityLogGammaPi2;
@@ -1184,6 +1250,10 @@ template <typename RealType>
 double StableDistribution<RealType>::cdfS0UnityLimit(double x, bool complement) const
 {
     const double unityMu = locationParameter - randlib::consts::two_inv_pi * beta * gamma * logGamma;
+    if (std::fabs(x - unityMu) >= 100 * gamma) {
+        const double tail = unityTailExpansion(x - unityMu, true);
+        return complement == (x < unityMu) ? 1.0 - tail : tail;
+    }
     const double standardizedX = (x - unityMu) / gamma;
     const double unityLogGammaPi2 = randlib::consts::lnpi - randlib::consts::ln2 - logGamma;
     const double xAdjusted = -randlib::consts::half_pi * standardizedX / beta - unityLogGammaPi2;
@@ -1373,6 +1443,10 @@ double StableDistribution<RealType>::cdfForUnityExponent(double x, bool compleme
     /// y = (1/π) ∫ exp(-exp(u(θ))) dθ is F for β > 0 and S for β < 0; the complementary
     /// integrand 1 - exp(-exp(u)) gives the other one without cancellation. The integrand
     /// switches between 0 and 1 around the root θ0 of u, so integrate on both sides of it.
+    if (std::fabs(x - mu) >= 100 * gamma) {
+        const double tail = unityTailExpansion(x - mu, true);
+        return complement == (x < mu) ? 1.0 - tail : tail;
+    }
     double xSt = (x - mu) / gamma;
     double xAdj = -randlib::consts::half_pi * xSt / beta - logGammaPi_2;
     bool useComplement = complement == (beta > 0);

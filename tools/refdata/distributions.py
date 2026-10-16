@@ -5,6 +5,8 @@ Every class follows RandLib's constructor parameterization, so that
 Formulas come from the textbook definitions, not from RandLib's code.
 """
 
+import math
+
 import mpmath as mp
 
 INF = mp.inf
@@ -510,6 +512,48 @@ class Stable(Continuous):
         scale = 1 / z
         return mp.quad(integrand, [0, scale / 10, scale, 10 * scale, 100 * scale, mp.inf]) / mp.pi
 
+    def _asymptotic_unity(self, z, beta, integrate):
+        """Asymptotic alpha=1 tail from the small-t characteristic-function expansion."""
+        total = mp.mpf(0)
+        previous = mp.inf
+        coefficient = 2 * beta / mp.pi
+
+        def logarithmic_integral(power, log_power):
+            integral = mp.gamma(power + 1) * z ** (-power - 1) * mp.expj(mp.pi * (power + 1) / 2)
+            if log_power == 0:
+                return integral
+            derivatives = [mp.mpc(0)] * (log_power + 1)
+            derivatives[1] = mp.digamma(power + 1) - mp.log(z) + 0.5j * mp.pi
+            for derivative_order in range(2, log_power + 1):
+                harmonic = mp.fsum(mp.mpf(term) ** (-derivative_order) for term in range(1, power + 1))
+                derivatives[derivative_order] = ((-1) ** derivative_order * mp.factorial(derivative_order - 1) *
+                                                 (mp.zeta(derivative_order) - harmonic))
+            bell = [mp.mpc(0)] * (log_power + 1)
+            bell[0] = 1
+            for derivative_order in range(1, log_power + 1):
+                for part in range(1, derivative_order + 1):
+                    bell[derivative_order] += (math.comb(derivative_order - 1, part - 1) *
+                                               bell[derivative_order - part] * derivatives[part])
+            return integral * bell[log_power]
+
+        for order in range(1, 30):
+            group = mp.mpc(0)
+            power = order - int(integrate)
+            for log_power in range(order + 1):
+                exponential_power = order - log_power
+                term_coefficient = ((-1) ** exponential_power / mp.factorial(exponential_power) *
+                                    (1j * coefficient) ** log_power / mp.factorial(log_power))
+                group += term_coefficient * logarithmic_integral(power, log_power)
+            contribution = -mp.im(group) / mp.pi if integrate else mp.re(group) / mp.pi
+            size = abs(contribution)
+            if size >= previous:
+                return total if previous < abs(total) * mp.mpf(10) ** (-mp.mp.dps - 2) else None
+            total += contribution
+            if size < abs(total) * mp.mpf(10) ** (-mp.mp.dps - 2):
+                return total
+            previous = size
+        return None
+
     def _tail(self, z, beta, integrate):
         """Density (or survival function when integrate) at z > 0 of the standardized law with
         skewness beta, by a method suited to the tails; None where none applies."""
@@ -519,6 +563,10 @@ class Stable(Continuous):
             return self._series(z, beta, integrate)
         if self.a > 1 and z > 5:
             return self._asymptotic(z, beta, integrate)
+        if self.a == 1 and z > 20:
+            value = self._asymptotic_unity(z, beta, integrate)
+            if value is not None:
+                return value
         if self.a == 1 and beta >= 0 and z > 5:
             return self._rotated_unity(z, beta, integrate)
         return None
@@ -1383,16 +1431,70 @@ class GeometricStable(Continuous):
         return Stable(self.a, self.b, self.g * w ** (1 / self.a), self.mu * w)
 
     def _mix(self, value):
+        cutoff = (mp.mp.dps + 15) * mp.log(10)
         return mp.quad(lambda w: mp.exp(-w) * value(self._conditional(w)) if w > 0 else mp.mpf(0),
-                       [0, mp.mpf(1) / 100, mp.mpf(1) / 10, 1, 4, 16, mp.inf])
+                       [0, mp.mpf(1) / 100, mp.mpf(1) / 10, 1, 4, 16, cutoff])
+
+    def _asymptotic(self, x, integrate):
+        """Tail expansion obtained directly from the geometric-stable characteristic function."""
+        distance = abs(x)
+        direction = mp.sign(x)
+        drift = self.g + 1j * self.mu
+        logarithmic_coefficient = -2j * self.b * self.g / mp.pi
+
+        def logarithmic_integral(power, log_power):
+            integral = (mp.gamma(power + 1) * distance ** (-power - 1) *
+                        mp.expj(direction * mp.pi * (power + 1) / 2))
+            if log_power == 0:
+                return integral
+            derivatives = [mp.mpc(0)] * (log_power + 1)
+            derivatives[1] = mp.digamma(power + 1) - mp.log(distance) + 0.5j * direction * mp.pi
+            for derivative_order in range(2, log_power + 1):
+                harmonic = mp.fsum(mp.mpf(term) ** (-derivative_order) for term in range(1, power + 1))
+                derivatives[derivative_order] = ((-1) ** derivative_order * mp.factorial(derivative_order - 1) *
+                                                 (mp.zeta(derivative_order) - harmonic))
+            bell = [mp.mpc(0)] * (log_power + 1)
+            bell[0] = 1
+            for derivative_order in range(1, log_power + 1):
+                for part in range(1, derivative_order + 1):
+                    bell[derivative_order] += (math.comb(derivative_order - 1, part - 1) *
+                                               bell[derivative_order - part] * derivatives[part])
+            return integral * bell[log_power]
+
+        total = mp.mpc(0)
+        previous = mp.inf
+        for order in range(1, 30):
+            group = mp.mpc(0)
+            power = order - int(integrate)
+            for log_power in range(order + 1):
+                coefficient = ((-1) ** order * math.comb(order, log_power) *
+                               drift ** (order - log_power) * logarithmic_coefficient ** log_power)
+                group += coefficient * logarithmic_integral(power, log_power)
+            contribution = -direction * mp.im(group) / mp.pi if integrate else mp.re(group) / mp.pi
+            size = abs(contribution)
+            if size >= previous:
+                return (-direction * mp.im(total) / mp.pi if integrate else mp.re(total) / mp.pi)
+            total += group
+            if size < abs(total) * mp.mpf(10) ** (-mp.mp.dps - 2):
+                break
+            previous = size
+        return -direction * mp.im(total) / mp.pi if integrate else mp.re(total) / mp.pi
 
     def pdf(self, x):
+        if self.a == 1 and abs(x) > 100:
+            return self._asymptotic(mp.mpf(x), False)
         return self._mix(lambda d: d.pdf(x))
 
     def cdf(self, x):
+        if self.a == 1 and abs(x) > 100:
+            tail = self._asymptotic(mp.mpf(x), True)
+            return 1 - tail if x > 0 else tail
         return self._mix(lambda d: d.cdf(x))
 
     def sf(self, x):
+        if self.a == 1 and abs(x) > 100:
+            tail = self._asymptotic(mp.mpf(x), True)
+            return tail if x > 0 else 1 - tail
         return self._mix(lambda d: d.sf(x))
 
 
