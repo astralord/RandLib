@@ -55,7 +55,7 @@ public:
      * Fit scale using maximum-likelihoood estimator
      * @param sample
      */
-    void FitScale(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample);
 };
 
 } // namespace randlib

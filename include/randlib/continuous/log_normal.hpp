@@ -94,19 +94,19 @@ public:
      * Fit location via maximum-likelihood
      * @param sample
      */
-    void FitLocation(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitLocation(std::span<const RealType> sample);
     /**
      * @fn FitScale
      * Fit scale via maximum-likelihood
      * @param sample
      */
-    void FitScale(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample);
     /**
      * @fn Fit
      * Fit parameters via maximum-likelihood
      * @param sample
      */
-    void Fit(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample);
 
     /**
      * @fn FitLocationBayes
@@ -116,8 +116,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalRand<RealType> FitLocationBayes(std::span<const RealType> sample,
-                                          const NormalRand<RealType> &priorDistribution, bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER NormalRand<RealType>
+    FitLocationBayes(std::span<const RealType> sample, const NormalRand<RealType> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitScaleBayes
@@ -127,8 +127,9 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand<RealType> FitScaleBayes(std::span<const RealType> sample,
-                                             const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER InverseGammaRand<RealType>
+    FitScaleBayes(std::span<const RealType> sample, const InverseGammaRand<RealType> &priorDistribution,
+                  bool MAP = false);
 
     /**
      * @fn FitBayes
@@ -138,9 +139,9 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    NormalInverseGammaRand<RealType> FitBayes(std::span<const RealType> sample,
-                                              const NormalInverseGammaRand<RealType> &priorDistribution,
-                                              bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER NormalInverseGammaRand<RealType>
+    FitBayes(std::span<const RealType> sample, const NormalInverseGammaRand<RealType> &priorDistribution,
+             bool MAP = false);
 };
 
 } // namespace randlib

@@ -9,6 +9,8 @@
 #include <randlib/core/exponential_family.hpp>
 #include <randlib/discrete/geometric.hpp>
 
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN
+
 namespace randlib
 {
 
@@ -167,7 +169,7 @@ public:
      * Fit probability p with maximum-likelihood estimation
      * @param sample
      */
-    void FitProbability(std::span<const IntType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitProbability(std::span<const IntType> sample);
 
     /**
      * @fn FitProbabilityBayes
@@ -177,8 +179,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    BetaRand<> FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution,
-                                   bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER BetaRand<>
+    FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution, bool MAP = false);
 
     /**
      * @fn FitProbabilityMinimax
@@ -186,7 +188,7 @@ public:
      * @param sample
      * @return posterior distribution
      */
-    BetaRand<> FitProbabilityMinimax(std::span<const IntType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER BetaRand<> FitProbabilityMinimax(std::span<const IntType> sample);
 };
 
 /**
@@ -702,3 +704,5 @@ std::string BinomialRand<IntType>::Name() const
 }
 
 } // namespace randlib
+
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END

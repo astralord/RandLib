@@ -120,8 +120,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    BetaRand<> FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution,
-                                   bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER BetaRand<>
+    FitProbabilityBayes(std::span<const IntType> sample, const BetaDistribution<> &priorDistribution, bool MAP = false);
 };
 
 /**
@@ -147,7 +147,7 @@ public:
      * set number and probability, estimated via maximum-likelihood method
      * @param sample
      */
-    void Fit(std::span<const IntType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const IntType> sample);
 };
 
 template <typename IntType = int>

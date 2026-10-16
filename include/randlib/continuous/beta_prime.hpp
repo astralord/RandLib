@@ -8,6 +8,8 @@
 #include <randlib/continuous/beta.hpp>
 #include <randlib/core/continuous.hpp>
 
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN
+
 namespace randlib
 {
 
@@ -89,21 +91,21 @@ public:
      * fit α by maximum-likelihood
      * @param sample
      */
-    void FitAlpha(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitAlpha(std::span<const RealType> sample);
 
     /**
      * @fn FitBeta
      * fit β by maximum-likelihood
      * @param sample
      */
-    void FitBeta(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitBeta(std::span<const RealType> sample);
 
     /**
      * @fn Fit
      * fit shapes by maximum-likelihood
      * @param sample
      */
-    void Fit(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample);
 };
 
 } // namespace randlib
@@ -346,3 +348,5 @@ void BetaPrimeRand<RealType>::Fit(std::span<const RealType> sample)
 }
 
 } // namespace randlib
+
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END

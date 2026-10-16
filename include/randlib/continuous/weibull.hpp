@@ -75,7 +75,7 @@ public:
      * Fit λ by maximum-likelihood
      * @param sample
      */
-    void FitScale(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample);
 
     /**
      * @fn FitScaleBayes
@@ -85,8 +85,9 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    InverseGammaRand<RealType> FitScaleBayes(std::span<const RealType> sample,
-                                             const InverseGammaRand<RealType> &priorDistribution, bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER InverseGammaRand<RealType>
+    FitScaleBayes(std::span<const RealType> sample, const InverseGammaRand<RealType> &priorDistribution,
+                  bool MAP = false);
 };
 
 } // namespace randlib

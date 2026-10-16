@@ -295,7 +295,7 @@ public:
      * otherwise set rate, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
-    void FitRate(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitRate(std::span<const RealType> sample, bool unbiased = false);
 
     /**
      * @fn FitRateBayes
@@ -304,8 +304,9 @@ public:
      * @param priorDistribution
      * @return posterior distribution
      */
-    GammaRand<RealType> FitRateBayes(std::span<const RealType> sample,
-                                     const GammaDistribution<RealType> &priorDistribution, bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER GammaRand<RealType> FitRateBayes(std::span<const RealType> sample,
+                                                                   const GammaDistribution<RealType> &priorDistribution,
+                                                                   bool MAP = false);
 };
 
 /**
@@ -348,14 +349,14 @@ public:
      * set shape, estimated via maximum-likelihood method
      * @param sample
      */
-    void FitShape(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShape(std::span<const RealType> sample);
 
     /**
      * @fn Fit
      * set shape and rate, estimated via maximum-likelihood method
      * @param sample
      */
-    void Fit(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample);
 
     DoublePair SufficientStatistic(RealType x) const override;
     DoublePair SourceParameters() const override;

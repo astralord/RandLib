@@ -86,7 +86,7 @@ public:
      * @param sample
      * @param unbiased
      */
-    void FitShape(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShape(std::span<const RealType> sample, bool unbiased = false);
 
     /**
      * @fn FitScale
@@ -95,7 +95,7 @@ public:
      * @param sample
      * @param unbiased
      */
-    void FitScale(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample, bool unbiased = false);
 
     /**
      * @fn Fit
@@ -104,7 +104,7 @@ public:
      * @param sample
      * @param unbiased
      */
-    void Fit(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 
     /**
      * @fn FitShapeBayes
@@ -114,8 +114,9 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution of α
      */
-    GammaRand<RealType> FitShapeBayes(std::span<const RealType> sample,
-                                      const GammaDistribution<RealType> &priorDistribution, bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER GammaRand<RealType>
+    FitShapeBayes(std::span<const RealType> sample, const GammaDistribution<RealType> &priorDistribution,
+                  bool MAP = false);
 };
 
 } // namespace randlib

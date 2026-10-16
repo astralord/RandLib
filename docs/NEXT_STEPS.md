@@ -147,11 +147,11 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   fitting remains with Phase 5. Seeded recovery grids cover representative closed-form, generic and
   discrete fits at two sample sizes. `tools/fitting/generate_scipy_reference.py` regenerates the
   fixed datasets and SciPy MLE comparisons; install the pinned developer dependencies with
-  `python3 -m pip install -r tools/requirements.txt`. The remaining 3.1 work is the deprecated member
-  wrapper boundary.
-- Fitting today: ~20 member functions per distribution (`Fit`, `FitScale`, `FitShapeBayes`, …) that
-  mutate the object and throw `randlib::fit_error` (with `FitErrorCode`). Keep them as deprecated
-  wrappers.
+  `python3 -m pip install -r tools/requirements.txt`. The legacy mutating member functions (`Fit`,
+  `FitScale`, `FitShapeBayes`, and related overloads) now emit compiler deprecation diagnostics that
+  point to the non-mutating free API. They remain source-compatible until v3; the temporary
+  `RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS` opt-out exists for compatibility test suites. Stable-law
+  fitting remains explicitly assigned to Phase 5.
 - New free API in `include/randlib/fit/` (`result.hpp`, `mle.hpp`, `moments.hpp`, `bayes.hpp`,
   `gof.hpp`, `select.hpp`): `fit<D>(data, Method)`, `FitResult<D>` with log-likelihood, AIC/BIC,
   standard errors and covariance from a numerical Hessian (add `math::numericalHessian` next to
@@ -171,6 +171,8 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   constrained-likelihood pipeline.
 - 3.3 implementation is done: the unused private binomial `POISSON` selector is removed on both
   branches. The maintainer still needs to close #11 with the exact-sampling rationale.
+- After these commits are pushed and every 2.x CI job is green, tag the resulting Phase 3 head
+  `v2.0.0-beta.1`. Do not tag the current unpushed local head.
 
 ### 3.4 Phase 4: documentation, packaging, release (v2.0)
 

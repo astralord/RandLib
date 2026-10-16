@@ -5,7 +5,9 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#define RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS
 #include <randlib/randlib.hpp>
+#undef RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS
 
 #include <cmath>
 #include <functional>

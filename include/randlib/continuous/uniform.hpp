@@ -101,21 +101,21 @@ public:
      * fit minimum using UMVU estimator otherwise
      * @param sample
      */
-    void FitMinimum(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitMinimum(std::span<const RealType> sample, bool unbiased = false);
     /**
      * @fn FitMaximum
      * fit maximum with maximum-likelihood estimator if unbiased == false,
      * fit maximum using UMVU estimator otherwise
      * @param sample
      */
-    void FitMaximum(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitMaximum(std::span<const RealType> sample, bool unbiased = false);
     /**
      * @fn Fit
      * fit support with maximum-likelihood estimator if unbiased == false,
      * fit support using UMVU estimator otherwise
      * @param sample
      */
-    void Fit(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 
     /**
      * @fn FitMaximumBayes
@@ -125,8 +125,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior distribution
      */
-    ParetoRand<RealType> FitMaximumBayes(std::span<const RealType> sample,
-                                         const ParetoRand<RealType> &priorDistribution, bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER ParetoRand<RealType>
+    FitMaximumBayes(std::span<const RealType> sample, const ParetoRand<RealType> &priorDistribution, bool MAP = false);
 };
 
 } // namespace randlib

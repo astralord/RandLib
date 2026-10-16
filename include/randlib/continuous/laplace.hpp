@@ -8,6 +8,8 @@
 #include <randlib/core/exponential_family.hpp>
 #include <randlib/continuous/geometric_stable.hpp>
 
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN
+
 namespace randlib
 {
 
@@ -49,7 +51,7 @@ private:
 public:
     [[nodiscard]] long double Entropy() const;
 
-    void FitScale(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitScale(std::span<const RealType> sample);
 };
 
 /**
@@ -95,10 +97,10 @@ public:
     using GeneralGeometricStableDistribution<RealType>::SetShift;
     [[nodiscard]] inline double GetShift() const noexcept { return this->m; }
 
-    void FitShift(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShift(std::span<const RealType> sample);
 
 protected:
-    void FitShiftAndScale(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShiftAndScale(std::span<const RealType> sample);
 };
 
 /**
@@ -130,7 +132,7 @@ private:
     DoublePair getOneSidedSums(std::span<const RealType> sample);
 
 public:
-    void FitAsymmetry(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitAsymmetry(std::span<const RealType> sample);
 };
 
 /**
@@ -153,7 +155,7 @@ public:
     [[nodiscard]] std::string Name() const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] static RealType StandardVariate(G &g);
-    void Fit(std::span<const RealType> sample) { this->FitShiftAndScale(sample); }
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample) { this->FitShiftAndScale(sample); }
 };
 
 } // namespace randlib
@@ -444,3 +446,5 @@ RealType LaplaceRand<RealType>::StandardVariate(G &g)
 }
 
 } // namespace randlib
+
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END

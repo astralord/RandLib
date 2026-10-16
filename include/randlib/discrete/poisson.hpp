@@ -8,6 +8,8 @@
 #include <randlib/core/discrete.hpp>
 #include <randlib/core/exponential_family.hpp>
 
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN
+
 namespace randlib
 {
 
@@ -95,14 +97,15 @@ public:
      * fit rate λ via maximum-likelihood method
      * @param sample
      */
-    void Fit(std::span<const IntType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const IntType> sample);
     /**
      * @brief Fit
      * @param sample
      * @param confidenceInterval
      * @param significanceLevel
      */
-    void Fit(std::span<const IntType> sample, DoublePair &confidenceInterval, double significanceLevel);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const IntType> sample, DoublePair &confidenceInterval,
+                                           double significanceLevel);
     /**
      * @fn FitBayes
      * fit rate λ via Bayes estimation
@@ -111,8 +114,8 @@ public:
      * @param MAP if true, use MAP estimator
      * @return posterior Gamma distribution
      */
-    GammaRand<> FitBayes(std::span<const IntType> sample, const GammaDistribution<> &priorDistribution,
-                         bool MAP = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER GammaRand<> FitBayes(std::span<const IntType> sample,
+                                                       const GammaDistribution<> &priorDistribution, bool MAP = false);
 };
 
 } // namespace randlib
@@ -473,3 +476,5 @@ GammaRand<> PoissonRand<IntType>::FitBayes(std::span<const IntType> sample,
 }
 
 } // namespace randlib
+
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END

@@ -241,7 +241,7 @@ public:
      * otherwise set scale, returned by uniformly minimum variance unbiased estimator
      * @param sample
      */
-    void Fit(std::span<const RealType> sample, bool unbiased = false);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const RealType> sample, bool unbiased = false);
 };
 
 } // namespace randlib

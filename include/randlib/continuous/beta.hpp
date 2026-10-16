@@ -8,6 +8,8 @@
 #include <randlib/core/continuous.hpp>
 #include <randlib/core/exponential_family.hpp>
 
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN
+
 namespace randlib
 {
 
@@ -301,14 +303,14 @@ public:
      * @param lnG normalized sample average of ln(X)
      * @param meanNorm normalized sample average
      */
-    void FitAlpha(long double lnG, long double meanNorm);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitAlpha(long double lnG, long double meanNorm);
 
     /**
      * @fn FitAlpha
      * set α, estimated via maximum likelihood
      * @param sample
      */
-    void FitAlpha(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitAlpha(std::span<const RealType> sample);
 
     /**
      * @fn FitBeta
@@ -317,14 +319,14 @@ public:
      * @param lnG1m normalized sample average of ln(1-X)
      * @param meanNorm normalized sample average
      */
-    void FitBeta(long double lnG1m, long double meanNorm);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitBeta(long double lnG1m, long double meanNorm);
 
     /**
      * @fn FitBeta
      * set β, estimated via maximum likelihood
      * @param sample
      */
-    void FitBeta(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitBeta(std::span<const RealType> sample);
 
     /**
      * @fn FitShapes
@@ -335,14 +337,15 @@ public:
      * @param mean sample average
      * @param variance sample variance
      */
-    void FitShapes(long double lnG, long double lnG1m, long double mean, long double variance);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShapes(long double lnG, long double lnG1m, long double mean,
+                                                 long double variance);
 
     /**
      * @fn FitShapes
      * set α and β, estimated via maximum likelihood
      * @param sample
      */
-    void FitShapes(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShapes(std::span<const RealType> sample);
 };
 
 /**
@@ -376,14 +379,14 @@ public:
      * @param lnG average of all ln(X)
      * @param lnG1m average of all ln(1-X)
      */
-    void FitShape(long double lnG, long double lnG1m);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShape(long double lnG, long double lnG1m);
 
     /**
      * @fn FitShape
      * set α, estimated via maximum likelihood
      * @param sample
      */
-    void FitShape(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitShape(std::span<const RealType> sample);
 };
 
 /**
@@ -1259,3 +1262,5 @@ void BaldingNicholsRand<RealType>::SetFixatingIndexAndFrequency(double fixatingI
 }
 
 } // namespace randlib
+
+RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END

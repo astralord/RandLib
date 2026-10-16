@@ -63,7 +63,7 @@ public:
      * @fn Fit
      * @param sample
      */
-    void Fit(std::span<const double> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const double> sample);
 };
 
 } // namespace randlib

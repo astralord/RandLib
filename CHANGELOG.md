@@ -45,6 +45,9 @@ All notable changes to RandLib are documented here. The project follows
 
 ### API cleanup
 
+- Marked the legacy mutating member `Fit*` methods deprecated in favor of `fit`, `fit_moments` and
+  `fit_bayes`. They remain source-compatible until v3; projects temporarily unable to migrate can
+  define `RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS` before including RandLib.
 - Removed the unused private `POISSON` binomial generator selector. The exact Bernoulli-sum,
   waiting-time and rejection samplers remain; no approximation is introduced.
 - Kept the type-erased `EngineRef` sampling adapters private and removed the access-specifier churn

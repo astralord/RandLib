@@ -69,7 +69,7 @@ public:
      * fit location parameter via maximum-likelihood
      * @param sample
      */
-    void FitLocation(std::span<const RealType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void FitLocation(std::span<const RealType> sample);
 };
 
 } // namespace randlib

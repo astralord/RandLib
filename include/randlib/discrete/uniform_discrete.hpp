@@ -68,7 +68,7 @@ public:
      * fit bounds via maximum-likelihood method
      * @param sample
      */
-    void Fit(std::span<const IntType> sample);
+    RANDLIB_DEPRECATED_FIT_MEMBER void Fit(std::span<const IntType> sample);
 };
 
 } // namespace randlib

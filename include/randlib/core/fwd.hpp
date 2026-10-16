@@ -3,6 +3,29 @@
 #include <tuple>
 #include <utility>
 
+#if defined(RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS)
+#define RANDLIB_DEPRECATED_FIT_MEMBER
+#else
+#define RANDLIB_DEPRECATED_FIT_MEMBER                                                                                  \
+    [[deprecated("Use the non-mutating randlib::fit, randlib::fit_moments, or randlib::fit_bayes API")]]
+#endif
+
+#if defined(__clang__)
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN                                                                       \
+    _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END _Pragma("clang diagnostic pop")
+#elif defined(__GNUC__)
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN                                                                       \
+    _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END _Pragma("GCC diagnostic pop")
+#elif defined(_MSC_VER)
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN __pragma(warning(push)) __pragma(warning(disable : 4996))
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END __pragma(warning(pop))
+#else
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_BEGIN
+#define RANDLIB_DETAIL_SUPPRESS_DEPRECATED_END
+#endif
+
 namespace randlib
 {
 
