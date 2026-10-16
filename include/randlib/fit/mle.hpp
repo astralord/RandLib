@@ -17,6 +17,7 @@
 #include <randlib/continuous/levy.hpp>
 #include <randlib/continuous/log_normal.hpp>
 #include <randlib/continuous/logistic.hpp>
+#include <randlib/continuous/log_stable.hpp>
 #include <randlib/continuous/nakagami.hpp>
 #include <randlib/continuous/noncentral_chi_squared.hpp>
 #include <randlib/continuous/noncentral_t.hpp>
@@ -524,6 +525,42 @@ struct FitModel<StableRand<Real>>
     }
 
     static bool hasClosedForm(Method method) { return method == Method::Quantile; }
+};
+
+template <std::floating_point Real>
+struct FitModel<LogStableRand<Real>>
+{
+    using Distribution = LogStableRand<Real>;
+    using Stable = StableRand<Real>;
+    using Parameterization = typename Distribution::Parameterization;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"exponent", distribution.GetExponent(), 0.1, 2.0, true, true},
+                {"skewness", distribution.GetSkewness(), -1.0, 1.0, true, true},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt},
+                {"location", distribution.GetLocation(), std::nullopt, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], parameters[2], parameters[3], Parameterization::S0);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
+    {
+        if (std::ranges::any_of(sample, [](Real value) { return !(value > 0); }))
+            throw fit_error(FitErrorCode::WrongSample, "Log-stable distribution: sample values should be positive");
+        std::vector<Real> logSample;
+        logSample.reserve(sample.size());
+        for (Real value : sample)
+            logSample.push_back(std::log(value));
+        const Stable estimate = FitModel<Stable>::initial(logSample, method, fixed);
+        return Distribution(estimate.GetExponent(), estimate.GetSkewness(), estimate.GetScale(), estimate.GetLocation(),
+                            Parameterization::S0);
+    }
+
+    static bool hasClosedForm(Method method) { return FitModel<Stable>::hasClosedForm(method); }
 };
 
 template <std::floating_point Real>

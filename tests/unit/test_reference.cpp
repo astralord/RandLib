@@ -36,6 +36,7 @@ const std::set<std::string> TIER1 = {"NormalRand",
                                      "StableRand",
                                      "HoltsmarkRand",
                                      "LandauRand",
+                                     "LogStableRand",
                                      "GeometricStableRand",
                                      "ParetoRand",
                                      "WeibullRand",
@@ -59,7 +60,7 @@ const std::set<std::string> TIER1 = {"NormalRand",
                                      "BernoulliRand",
                                      "UniformDiscreteRand"};
 
-const std::set<std::string> STABLE = {"StableRand", "HoltsmarkRand", "LandauRand"};
+const std::set<std::string> STABLE = {"StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand"};
 
 struct Override
 {

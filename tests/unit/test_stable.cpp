@@ -1,6 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include <randlib/continuous/log_stable.hpp>
 #include <randlib/continuous/stable.hpp>
 
 #include <array>
@@ -9,6 +10,7 @@
 
 using Catch::Matchers::WithinAbs;
 using Catch::Matchers::WithinRel;
+using randlib::LogStableRand;
 using randlib::Pcg64;
 using randlib::StableRand;
 
@@ -62,6 +64,90 @@ TEST_CASE("stable S0 location has the expected support and setter semantics", "[
     CHECK_THAT(stable.GetLocation(), WithinAbs(3.0, 1e-14));
     CHECK_THAT(std::abs(stable.CF(0.75) - characteristicFunction), WithinAbs(0.0, 1e-14));
     CHECK(stable.Name() == "Stable(0.5, 1, 4, 3)");
+}
+
+TEST_CASE("log-stable probability and sampling are exponential stable transforms", "[stable][log-stable]")
+{
+    using LogStable = LogStableRand<double>;
+    const LogStable distribution(1.5, -1, 0.5, 0.25);
+    const StableRand<double> stable(1.5, -1, 0.5, 0.25);
+    for (double x : {0.1, 0.5, 1.0, 2.0, 10.0}) {
+        CHECK_THAT(distribution.f(x), WithinRel(stable.f(std::log(x)) / x, 2e-14));
+        CHECK_THAT(distribution.logf(x), WithinAbs(stable.logf(std::log(x)) - std::log(x), 2e-14));
+        CHECK_THAT(distribution.F(x), WithinAbs(stable.F(std::log(x)), 2e-14));
+        CHECK_THAT(distribution.S(x), WithinAbs(stable.S(std::log(x)), 2e-14));
+    }
+    for (double probability : {0.01, 0.3, 0.7, 0.99}) {
+        CHECK_THAT(distribution.Quantile(probability), WithinRel(std::exp(stable.Quantile(probability)), 2e-14));
+        CHECK_THAT(distribution.Quantile1m(probability), WithinRel(std::exp(stable.Quantile1m(probability)), 2e-14));
+    }
+
+    Pcg64 first(42), second(42);
+    for (int i = 0; i < 32; ++i)
+        CHECK(distribution(first) == std::exp(stable(second)));
+
+    LogStable s0 = distribution;
+    s0.SetParameterization(LogStable::Parameterization::S0);
+    CHECK(s0.GetParameterization() == LogStable::Parameterization::S0);
+    CHECK_THAT(s0.F(1), WithinAbs(distribution.F(1), 0));
+    CHECK_THAT(s0.Mean(), WithinAbs(distribution.Mean(), 0));
+}
+
+TEST_CASE("log-stable moments follow the spectrally negative Laplace exponent", "[stable][log-stable]")
+{
+    struct Reference
+    {
+        LogStableRand<double> distribution;
+        double mean;
+        double variance;
+        double skewness;
+        double excess;
+    };
+    const std::array references{
+        Reference{LogStableRand<double>(0.5, -1, 1, 0), 0.24311673443421421, 0.076229536674656454, 0.77779277586209408,
+                  -0.82146413679350378},
+        Reference{LogStableRand<double>(1, -1, 0.5, 0.25), 1.2840254166877415, 0.9145164660676866, 0.46240949219948345,
+                  -0.56276865611099966},
+        Reference{LogStableRand<double>(1.5, -1, 0.5, 0.25), 2.1170000166126747, 2.2999143208767069, 1.2481512140756379,
+                  2.5991895948497396},
+        Reference{LogStableRand<double>(2, 0, 0.5, 0), 1.2840254166877415, 1.0695605577589171, 2.9387981481747263,
+                  18.507279724983916},
+    };
+    for (const auto &[distribution, mean, variance, skewness, excess] : references) {
+        CHECK_THAT(distribution.Mean(), WithinRel(mean, 2e-14));
+        CHECK_THAT(distribution.Variance(), WithinRel(variance, 2e-14));
+        CHECK_THAT(distribution.Skewness(), WithinRel(skewness, 2e-13));
+        CHECK_THAT(distribution.ExcessKurtosis(), WithinRel(excess, 2e-13));
+    }
+
+    const LogStableRand<double> withoutMoments(1.5, 0, 1, 0);
+    CHECK(std::isinf(withoutMoments.Mean()));
+    CHECK(std::isinf(withoutMoments.Variance()));
+    CHECK(std::isnan(withoutMoments.Skewness()));
+    CHECK(std::isnan(withoutMoments.ExcessKurtosis()));
+
+    const LogStableRand<double> concentratedGaussian(2, 0, 1e-10, 0);
+    CHECK_THAT(concentratedGaussian.Skewness(), WithinRel(3 * std::sqrt(2.0) * 1e-10, 2e-14));
+    CHECK_THAT(concentratedGaussian.ExcessKurtosis(), WithinRel(32e-20, 2e-14));
+}
+
+TEST_CASE("log-stable mode accounts for the exponential Jacobian", "[stable][log-stable]")
+{
+    const LogStableRand<double> gaussian(2, 0, 0.5, 0);
+    CHECK_THAT(gaussian.Median(), WithinAbs(1, 1e-14));
+    CHECK_THAT(gaussian.Mode(), WithinRel(std::exp(-0.5), 1e-14));
+
+    const LogStableRand<double> heavyLeftTail(1.5, -1, 0.5, 0.25);
+    CHECK(heavyLeftTail.Mode() == 0);
+    CHECK(std::isinf(heavyLeftTail.f(0)));
+
+    const LogStableRand<double> levy(0.5, 1, 1, 0);
+    const double logMode = 0.25 * (std::sqrt(17.0) - 3);
+    CHECK_THAT(levy.Mode(), WithinRel(std::exp(logMode), 2e-8));
+    CHECK(levy.MinValue() == 1);
+
+    CHECK(gaussian.CF(0) == std::complex<double>(1, 0));
+    CHECK_THROWS_AS(gaussian.CF(1), randlib::not_implemented);
 }
 
 TEST_CASE("stable probability functions cover the former alpha-one gap", "[stable]")

@@ -26,8 +26,7 @@ Written so that work can resume with no other context. Read together with
   git push origin v1.2.0            # only once 1.x CI is green, see 3.1
   ```
 
-  Only add commits on top of what is pushed; never amend or rebase pushed commits. Commit messages end
-  with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+  Only add commits on top of what is pushed; never amend or rebase pushed commits.
 - 1.x fixes are made on `history` first and then merged into `2.x` (`git merge --no-ff history` in
   `/root/RandLib-2.x`). Conflicts are expected on files that 2.x deleted (`distributions/`, `math/`):
   `git rm` them, and port the change into the matching header under `include/randlib/` by hand (git's
@@ -43,7 +42,7 @@ Written so that work can resume with no other context. Read together with
 cmake -S /root/RandLib-2.x -B /tmp/b2 -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-14 -DRANDLIB_WARNINGS_AS_ERRORS=ON
 cmake --build /tmp/b2
 /tmp/b2/tests/randlib_unit_tests          # ~10 s
-/tmp/b2/tests/randlib_statistical_tests   # ~6 min
+/tmp/b2/tests/randlib_statistical_tests   # ~25 min on the current pod
 # 1.x: the same with -S /root/RandLib-1.x
 ```
 
@@ -84,10 +83,11 @@ mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
 
 ### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
 
-1. Push the current `history` head. Commit c92f19a fixes B37 (`doubleFactorial`) and records a
+1. The current `history` head is pushed. Commit c92f19a fixes B37 (`doubleFactorial`) and records a
    `2e-12` tolerance for the large-binomial CDF on MSVC; CI measured `1.20259e-12` relative error
    against the existing 40-digit reference. The earlier eafc3de warning fix built successfully on
-   MSVC before that reference assertion failed.
+   MSVC before that reference assertion failed. The 2026-10-16 run is green except for an AppleClang
+   job that remains in progress; cancel and rerun it if GitHub Actions does not finish it.
 2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
    maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
 
@@ -95,9 +95,11 @@ mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
 
 - **CI portability**: local commits fix the Clang/AppleClang `-Wshadow` errors in `Pcg64`, discarded
   `[[nodiscard]]` results, MSVC's variadic-macro, secure-CRT, unsigned-negation, uninitialized-local
-  and unused-variable diagnostics, and the coverage parser error. The engine-adapter test checks
-  exact engine advancement while allowing eight ULPs of platform-dependent floating-point
-  variation; AppleClang measured a maximum of six. Check these jobs after the next maintainer push.
+  and unused-variable diagnostics, the coverage parser error, Apple libc++'s missing `std::jthread`,
+  and a GCC 12 nested-vector false positive. The engine-adapter test checks exact engine advancement
+  while allowing eight ULPs of platform-dependent floating-point variation; AppleClang measured a
+  maximum of six. The Phase 5 follow-up also makes noncentral-t series and moments accurate when
+  MSVC treats `long double` as binary64. Check these jobs after the next maintainer push.
 - **2.5 Numerical building blocks**: done locally. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
@@ -136,14 +138,14 @@ mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
 Follow plan 3.1–3.3. Design notes gathered so far:
 - Landed locally: `math::numericalHessian` and the first `include/randlib/fit/` vertical slice.
   `FitResult`, `FitOptions`, fixed-parameter constrained MLE, AIC/BIC and observed-information
-  covariance are covered. The free API covers 33 distribution types, including fixed structural
+  covariance are covered. The free API covers 36 distribution types, including fixed structural
   parameters, generic multi-parameter MLEs and bounded searches for integer-valued parameters.
   The free API now also has a named method-of-moments entry point, conjugate Bayesian updates,
   AIC/BIC model selection, and continuous/discrete goodness-of-fit tests. Conditional Bayesian
   overloads take the model's fixed parameter as their third argument (variance for normal,
   variance of the logarithms for log-normal, trial count for binomial, shape/count for
   negative-binomial, shape for Weibull, scale for Pareto, and minimum for uniform). Stable-family
-  fitting remains with Phase 5. Seeded recovery grids cover representative closed-form, generic and
+  fitting landed in Phase 5. Seeded recovery grids cover representative closed-form, generic and
   discrete fits at two sample sizes. `tools/fitting/generate_scipy_reference.py` regenerates the
   fixed datasets and SciPy MLE comparisons; install the pinned developer dependencies with
   `python3 -m pip install -r tools/requirements.txt`. The legacy mutating member functions (`Fit`,
@@ -161,7 +163,7 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   `math::nelderMead` / `math::bfgs` on an unconstrained transform (log for positive parameters,
   logit for (0, 1)). Closed-form fits override it.
 - Tests: parameter recovery over a grid (seeded), comparison to SciPy `fit` results on fixed datasets
-  stored as CSV (generate them with a script under `tools/`).
+  stored as CSV (generated by `tools/fitting/generate_scipy_reference.py`).
 - 3.2 is done locally: `fit/tail.hpp` provides Hill and Pickands estimators, plot-ready Hill
   diagnostics and peaks-over-threshold fitting. Generalized Pareto and generalized extreme-value
   distributions have closed-form probability functions, sampling, moments, generic MLEs and
@@ -177,10 +179,8 @@ Follow plan 3.1–3.3. Design notes gathered so far:
 
 Landed locally: the README rewrite and comparison table; strict Doxygen Awesome generation and Pages
 deployment; fitting, streams, stable-law, accuracy, packaging and migration guides; and the archived
-legacy LaTeX source with its generated PDF removed. Four warning-clean examples (standard engine,
-parallel streams, model selection and Bayesian update) build and run through CTest. The stable-fitting
-example is intentionally coupled to the Phase 5 estimator rather than documenting an API that does
-not exist yet.
+legacy LaTeX source with its generated PDF removed. Five warning-clean examples (standard engine,
+parallel streams, model selection, stable fitting and Bayesian update) build and run through CTest.
 
 Packaging is also landed and locally validated. `packaging/vcpkg/randlib` installs the current checkout
 as an overlay and its installed `RandLib::RandLib` target built the consumer example with vcpkg
@@ -191,13 +191,14 @@ The release workflow compiles that artifact, extracts the exact tag's changelog 
 the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
 final release archive and checksum.
 
-Remaining Phase 4 actions need the maintainer: enable GitHub Pages for Actions if it is not already
-enabled, push and observe CI, run the release-candidate soak, submit the upstream vcpkg PR, and make
-the release announcements. The final stable-fitting example will land as part of Phase 5.1.
+Remaining Phase 4 actions need the maintainer: allow the `github-pages` environment to deploy from
+`2.x`, push and observe CI, run the release-candidate soak, submit the upstream vcpkg PR, and make the
+release announcements.
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 
-See plan Phase 5. The next concrete problem is the log-stable distribution.
+The Phase 5 engineering work is complete. The remaining actions are the maintainer-owned issue
+closures, CI observation and releases listed below.
 
 Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
 default. The skewed near-α=1 density/CDF gap is implemented and checked against 40-digit mpmath
@@ -220,6 +221,12 @@ sampling, generic quantiles, exact moments, a conditional-normal characteristic 
 constrained MLE. Saddle-split integration and a small-denominator expansion cover large
 noncentrality and extreme representable tails. A committed 243-value mpmath table covers three Tier
 1 cases; focused regressions use direct 60-digit integrals and an exact normal-moment tail series.
+Phase 5.5 is complete. `LogStableRand` is the exponential transform of `StableRand`, preserving the
+selected S0/S1 convention. It provides transformed density/tails, sampling, quantiles, median,
+Jacobian-correct modes, stable-family quantile/MLE fitting and exact Laplace-exponent moments where
+they exist (`beta=-1`, plus the Gaussian case). Other non-Gaussian skewnesses report divergent
+moments, and the deliberately unsupported nonzero characteristic function throws
+`not_implemented`. Four Tier 1 cases have a committed 198-value 40-digit mpmath table.
 
 ## 4. Things that need the maintainer
 

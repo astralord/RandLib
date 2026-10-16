@@ -35,6 +35,7 @@ struct Case
     std::function<std::unique_ptr<ContinuousDistribution<double>>()> makeContinuous;
     std::function<std::unique_ptr<DiscreteDistribution<int>>()> makeDiscrete;
     std::function<std::unique_ptr<UnivariateDistribution<double>>()> makeSingular;
+    bool testSampling = true;
 };
 
 const std::vector<Case> &allCases();

@@ -45,6 +45,7 @@ extern template class LaplaceRand<double>;
 extern template class LevyRand<double>;
 extern template class LogNormalRand<double>;
 extern template class LogisticRand<double>;
+extern template class LogStableRand<double>;
 extern template class MarchenkoPasturRand<double>;
 extern template class NakagamiDistribution<double>;
 extern template class NakagamiRand<double>;

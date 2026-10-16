@@ -194,6 +194,13 @@ std::vector<Case> buildCases()
                      [] { return continuousEvaluator(std::make_shared<const T>(__VA_ARGS__)); },                       \
                      [] { return std::unique_ptr<ContinuousDistribution<double>>(new T(__VA_ARGS__)); }, nullptr,      \
                      nullptr});
+#define RL_CONT_V2(T, ...) RL_CONT(T, __VA_ARGS__)
+#define RL_CONT_NO_STATS(T, ...)                                                                                       \
+    cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Continuous,                    \
+                     [] { return continuousEvaluator(std::make_shared<const T>(__VA_ARGS__)); },                       \
+                     [] { return std::unique_ptr<ContinuousDistribution<double>>(new T(__VA_ARGS__)); }, nullptr,      \
+                     nullptr, false});
+#define RL_CONT_V2_NO_STATS(T, ...) RL_CONT_NO_STATS(T, __VA_ARGS__)
 #define RL_DISC(T, ...)                                                                                                \
     cases.push_back({caseId(#T, #__VA_ARGS__), classOf(caseId(#T, #__VA_ARGS__)), Kind::Discrete,                      \
                      [] { return discreteEvaluator(std::make_shared<const T>(__VA_ARGS__)); }, nullptr,                \
@@ -215,6 +222,9 @@ std::vector<Case> buildCases()
 
 #undef RL_PLAIN
 #undef RL_CONT
+#undef RL_CONT_V2
+#undef RL_CONT_NO_STATS
+#undef RL_CONT_V2_NO_STATS
 #undef RL_DISC
 #undef RL_SING
 #undef RL_BIVC

@@ -83,13 +83,20 @@ std::string checkCharacteristicFunction(const UnivariateDistribution<T> &d, std:
         return {};
     for (double scaledT : {0.3, 1.0, 3.0}) {
         double t = scaledT / spread;
+        std::complex<double> phi;
+        try {
+            phi = d.CF(t);
+        } catch (const randlib::not_implemented &) {
+            if (d.Name().starts_with("Log-Stable("))
+                return {};
+            return "characteristic function unexpectedly throws not_implemented; ";
+        }
         long double re = 0, im = 0;
         for (double x : sorted) {
             re += std::cos(t * x);
             im += std::sin(t * x);
         }
         std::complex<double> empirical(static_cast<double>(re / n), static_cast<double>(im / n));
-        std::complex<double> phi = d.CF(t);
         double distance = std::abs(empirical - phi) * std::sqrt(n);
         if (distance > MAX_STANDARD_ERRORS)
             out << "empirical characteristic function at t = " << t << " is " << empirical << ", CF(t) = " << phi
@@ -155,6 +162,7 @@ void report(const std::vector<const Case *> &cases, const std::vector<std::strin
 TEST_CASE("Continuous samples follow their distribution", "[statistical]")
 {
     auto cases = casesOfKind(Kind::Continuous);
+    std::erase_if(cases, [](const Case *testCase) { return !testCase->testSampling; });
     report(cases, runContinuous(cases, [](const Case &c) { return c.makeContinuous(); }));
 }
 

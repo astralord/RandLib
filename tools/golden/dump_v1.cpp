@@ -276,6 +276,9 @@ struct Case
             dumper(o, *d); \
     }});
 #define RL_CONT(T, ...) RL_ADD(dumpContinuous, T, __VA_ARGS__)
+#define RL_CONT_V2(T, ...)
+#define RL_CONT_NO_STATS(T, ...) RL_CONT(T, __VA_ARGS__)
+#define RL_CONT_V2_NO_STATS(T, ...)
 #define RL_DISC(T, ...) RL_ADD(dumpDiscrete, T, __VA_ARGS__)
 #define RL_SING(T, ...) RL_ADD(dumpSingular, T, __VA_ARGS__)
 #define RL_BIVC(T, ...) RL_ADD(dumpBivariateContinuous, T, __VA_ARGS__)

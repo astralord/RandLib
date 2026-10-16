@@ -616,6 +616,24 @@ TEST_CASE("Stable MLE refines the McCulloch estimate", "[fit][stable]")
     CHECK_THAT(result.distribution.GetLocation(), WithinAbs(0.5, 0.25));
 }
 
+TEST_CASE("Log-stable fitting applies the stable estimator to logarithms", "[fit][stable][log-stable]")
+{
+    using Distribution = LogStableRand<double>;
+    const Distribution reference(1.4, -0.4, 0.75, 0.25, Distribution::Parameterization::S0);
+    Pcg64 engine(2029);
+    std::vector<double> sample(5000);
+    reference.Sample(engine, sample);
+
+    auto result = fit<Distribution>(sample, Method::Quantile);
+    CHECK(result.converged);
+    CHECK(result.distribution.GetParameterization() == Distribution::Parameterization::S0);
+    CHECK_THAT(result.distribution.GetExponent(), WithinAbs(1.4, 0.08));
+    CHECK_THAT(result.distribution.GetSkewness(), WithinAbs(-0.4, 0.15));
+    CHECK_THAT(result.distribution.GetScale(), WithinAbs(0.75, 0.08));
+    CHECK_THAT(result.distribution.GetLocation(), WithinAbs(0.25, 0.1));
+    CHECK_THROWS_AS(fit<Distribution>(std::array{0.0, 1.0}, Method::Quantile), fit_error);
+}
+
 TEST_CASE("Model selection chooses the smallest information criterion", "[fit]")
 {
     constexpr int sampleSize = 400;

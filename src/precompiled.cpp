@@ -37,6 +37,7 @@ template class randlib::LaplaceRand<double>;
 template class randlib::LevyRand<double>;
 template class randlib::LogNormalRand<double>;
 template class randlib::LogisticRand<double>;
+template class randlib::LogStableRand<double>;
 template class randlib::MarchenkoPasturRand<double>;
 template class randlib::NakagamiDistribution<double>;
 template class randlib::NakagamiRand<double>;

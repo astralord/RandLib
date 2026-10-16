@@ -48,3 +48,38 @@ changing a result or tolerance.
 
 Geometric stable laws use an exponential mixture of stable laws. Alpha-one tail expansions keep
 that mixture practical even when it probes stable probabilities at enormous arguments.
+
+## Log-stable distributions
+
+`LogStableRand<Real>` models `Y = exp(X)` for a stable `X` and accepts the same five constructor
+arguments, including the S0/S1 selection. Density, probability, sampling, quantiles and the median
+are evaluated through that monotone transform. The mode is not generally `exp(X.Mode())`: the
+Jacobian contributes a factor `1 / Y`. For `alpha < 2` and `beta < 1`, the polynomial left tail
+makes the transformed density diverge at zero, so the mode is zero. Totally right-skewed cases use
+a log-domain numerical maximum, and the Gaussian case has its closed form.
+
+```cpp
+using LogStable = randlib::LogStableRand<double>;
+LogStable loss(1.5, -1.0, 0.5, 0.25, LogStable::Parameterization::S0);
+double draw = loss(engine);
+double upper_tail = loss.S(10.0);
+auto estimate = randlib::fit<LogStable>(sample, randlib::Method::Quantile);
+```
+
+Positive moments of a non-Gaussian log-stable law exist only for `beta = -1`. Writing `mu1` for the
+S1 location, their logarithms are
+
+```text
+log E[Y^r] = r mu1 - (gamma r)^alpha / cos(pi alpha / 2)  (alpha != 1)
+log E[Y^r] = r mu1 + (2 gamma / pi) r log(r)              (alpha == 1)
+```
+
+The Gaussian `alpha = 2` case has moments for every beta because beta does not change that law. For
+other non-Gaussian skewnesses, `Mean()` and `Variance()` return infinity and standardized higher
+moments return NaN. `CF(0)` is one as for every distribution; `CF(t)` for nonzero `t` throws
+`randlib::not_implemented` because no production-quality log-stable characteristic-function
+algorithm is included in v2.1.
+
+As with any exponential transform, finite-precision sampling can underflow to zero or overflow to
+infinity when the stable draw lies outside the logarithmic range of `Real`. This is observable for
+very heavy tails and is not a point mass in the mathematical distribution.

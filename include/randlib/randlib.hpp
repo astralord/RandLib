@@ -30,6 +30,7 @@
 #include <randlib/continuous/levy.hpp>
 #include <randlib/continuous/logistic.hpp>
 #include <randlib/continuous/log_normal.hpp>
+#include <randlib/continuous/log_stable.hpp>
 #include <randlib/continuous/marchenko_pastur.hpp>
 #include <randlib/continuous/nakagami.hpp>
 #include <randlib/continuous/noncentral_chi_squared.hpp>

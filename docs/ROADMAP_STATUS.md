@@ -43,7 +43,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 3.1 Fitting API | ✅ | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers all 31 non-stable Tier 1 types plus GPD and GEV, including bounded searches for integer-valued parameters. Seeded recovery grids and SciPy comparison fixtures are committed, and legacy mutating `Fit*` members are deprecated until v3. Stable-family fits remain assigned to Phase 5. |
+| 3.1 Fitting API | ✅ | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers 36 distribution types, including bounded searches for integer-valued parameters and the stable family. Seeded recovery grids and SciPy comparison fixtures are committed, and legacy mutating `Fit*` members are deprecated until v3. |
 | 3.2 Tail estimators and extreme-value distributions | ✅ | Generalized Pareto and GEV laws have mpmath references and MLEs; Hill/Pickands diagnostics, peaks-over-threshold fitting, and censored/truncated MLE are implemented. |
 | 3.3 Close #11 | 🟡 | The unused private `POISSON` selector is removed; exact Bernoulli-sum, waiting-time and rejection sampling remain. Closing #11 with that rationale needs the maintainer. |
 
@@ -51,7 +51,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and four CI-compiled examples are done. The stable-fitting example lands with the Phase 5 estimator. |
+| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. GitHub Pages deployment from `2.x` needs the maintainer to update the environment's allowed branches. |
 | 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
 | 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
 | 4.4 Release v2.0.0 | 🚫 | Release automation is ready. Release candidates, the two-week soak, announcements and the upstream vcpkg PR need the maintainer. |
@@ -64,4 +64,4 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 5.2 Heavy-tailed characteristic functions (#6, #10) | ✅ | Type-generic tanh-sinh and QAWF-style oscillatory quadrature are implemented. Positive semi-infinite CFs use half-period integration with Wynn epsilon acceleration; Pareto, Frechet, inverse-gamma, Fisher F, beta-prime and large-variance log-normal references pass the standard `1e-8` absolute target with no overrides. |
 | 5.3 Marcum Q (#4) | ✅ | A saddle-centered Poisson mixture evaluates Marcum Q directly without tail cancellation. Noncentral χ² meets the Tier 1 bulk/tail targets with no overrides; the new Tier 2 Rice law has direct probability functions, sampling, moments and 40-digit mpmath references. |
 | 5.4 Noncentral t (#7) | ✅ | The v2 port provides direct CDF/survival series, recurrence and integral densities, large-noncentrality/extreme-tail paths, sampling, quantiles, exact moments, a conditional-normal CF and constrained MLE. Three Tier 1 cases have a 243-value mpmath reference table, supplemented by focused 60-digit integral and exact-series regressions. |
-| 5.5 Log-stable (#5) | ⏳ | |
+| 5.5 Log-stable (#5) | ✅ | `LogStableRand` provides the exponential stable transform, direct tails, sampling, quantiles, median, Jacobian-correct modes, exact finite moments, S0/S1 handling and log-transformed stable fitting. Four Tier 1 cases have a 198-value 40-digit mpmath table. Nonzero CFs deliberately throw `not_implemented` as planned. |

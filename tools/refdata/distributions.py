@@ -744,6 +744,53 @@ class Stable(Continuous):
         return mp.gamma(1 + 1 / self.a) * c ** (-1 / self.a) * mp.cos(d / self.a) / mp.pi
 
 
+class LogStable(Continuous):
+    def __init__(self, alpha, beta, gamma=1, mu=0):
+        self.a, self.b = mp.mpf(alpha), mp.mpf(beta)
+        self.g, self.mu = mp.mpf(gamma), mp.mpf(mu)
+        self.stable = Stable(alpha, beta, gamma, mu)
+        self.lower = mp.exp(self.stable.lower) if mp.isfinite(self.stable.lower) else mp.mpf(0)
+        self.upper = mp.exp(self.stable.upper) if mp.isfinite(self.stable.upper) else INF
+
+    def logpdf(self, x):
+        if x < 0:
+            return -INF
+        if x == 0:
+            return INF if self.a < 2 and self.b < 1 else -INF
+        return self.stable.logpdf(mp.log(x)) - mp.log(x)
+
+    def pdf(self, x):
+        value = self.logpdf(x)
+        return mp.exp(value) if value != -INF else mp.mpf(0)
+
+    def cdf(self, x):
+        return self.stable.cdf(mp.log(x)) if x > 0 else mp.mpf(0)
+
+    def sf(self, x):
+        return self.stable.sf(mp.log(x)) if x > 0 else mp.mpf(1)
+
+    def moments(self):
+        if self.a != 2 and self.b != -1:
+            return {}
+
+        def log_raw(order):
+            if self.a == 1:
+                return order * self.mu + 2 / mp.pi * self.g * order * mp.log(order)
+            return order * self.mu - (self.g * order) ** self.a / mp.cos(mp.pi * self.a / 2)
+
+        raw = [mp.exp(log_raw(order)) for order in range(1, 5)]
+        mean = raw[0]
+        variance = raw[1] - mean * mean
+        third = raw[2] - 3 * mean * raw[1] + 2 * mean**3
+        fourth = raw[3] - 4 * mean * raw[2] + 6 * mean * mean * raw[1] - 3 * mean**4
+        result = standardized_moments(mean, variance, third, fourth)
+        if self.a == 2:
+            result.update({"Median": mp.exp(self.mu), "Mode": mp.exp(self.mu - 2 * self.g * self.g)})
+        elif self.b < 1:
+            result["Mode"] = mp.mpf(0)
+        return result
+
+
 class Pareto(Continuous):
     def __init__(self, shape, scale):
         self.a, self.s = mp.mpf(shape), mp.mpf(scale)
@@ -1657,6 +1704,7 @@ def make(cls, args):
         "CauchyRand": lambda: Cauchy(*a),
         "LevyRand": lambda: Levy(*a),
         "StableRand": lambda: Stable(*a),
+        "LogStableRand": lambda: LogStable(*a),
         "HoltsmarkRand": lambda: Stable(mp.mpf(3) / 2, 0, *a),
         "LandauRand": lambda: Stable(1, 1, *a),
         "ParetoRand": lambda: Pareto(*a),

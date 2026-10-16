@@ -19,6 +19,11 @@ All notable changes to RandLib are documented here. The project follows
 - Added alpha-one density and probability tail expansions through eighth order. Geometric-stable
   mixture evaluation now covers its full historical tail grid in seconds instead of minutes, with
   focused 40-digit mpmath references on both sides.
+- Added the log-stable distribution as the exponential transform of a stable law, with transformed
+  density, direct tails, sampling, quantiles, median, correct boundary/interior modes, S0/S1
+  parameterization and stable-family fitting. Exact Laplace-exponent moments cover totally
+  left-skewed laws and the Gaussian case; other non-Gaussian skewnesses report divergent moments.
+  Its characteristic function deliberately throws `not_implemented` away from zero.
 
 ### Distributions
 
@@ -28,6 +33,9 @@ All notable changes to RandLib are documented here. The project follows
   likelihood fitting. Saddle-split integration and a small-denominator expansion retain accuracy
   for large noncentrality and representable extreme tails; a 243-value 40-digit mpmath table and
   focused exact-series regressions provide evidence.
+- Made its centered series and moments cancellation-resistant on platforms where `long double` is
+  binary64, using Loader's Poisson saddle-point form, stable log-beta ratios, compensated summation
+  and grouped central-moment identities. Exact probability levels at zero now invert to zero.
 
 ### Numerical kernel
 
@@ -43,6 +51,11 @@ All notable changes to RandLib are documented here. The project follows
   subtracting the CDF from one; all three former tolerance overrides were removed.
 - Added the Tier 2 Rice distribution with direct density, CDF and survival functions, transformed-
   normal sampling, closed-form mean and variance, and 40-digit mpmath reference data.
+
+### Build and tooling
+
+- Avoided a GCC 12 false positive in BFGS identity-matrix construction and replaced `std::jthread`
+  in the parallel-stream example for Apple libc++ versions that do not provide it.
 
 ## [2.0.0] - Unreleased
 

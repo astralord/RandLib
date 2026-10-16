@@ -224,3 +224,13 @@ TEST_CASE("Noncentral t distribution rejects invalid parameters", "[parameters]"
     CHECK_THROWS_AS(NoncentralTRand<double>(1, INFINITY), std::invalid_argument);
     CHECK_THROWS_AS(NoncentralTRand<double>(1, invalidNumber), std::invalid_argument);
 }
+
+TEST_CASE("Log-stable distribution rejects invalid parameters", "[parameters]")
+{
+    const double invalidNumber = std::numeric_limits<double>::quiet_NaN();
+    CHECK_THROWS_AS(LogStableRand<double>(0, 0, 1, 0), std::invalid_argument);
+    CHECK_THROWS_AS(LogStableRand<double>(2.1, 0, 1, 0), std::invalid_argument);
+    CHECK_THROWS_AS(LogStableRand<double>(1, -1.1, 1, 0), std::invalid_argument);
+    CHECK_THROWS_AS(LogStableRand<double>(1, 0, 0, 0), std::invalid_argument);
+    CHECK_THROWS_AS(LogStableRand<double>(1, 0, 1, invalidNumber), std::invalid_argument);
+}

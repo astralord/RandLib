@@ -75,6 +75,10 @@ def golden_cases():
         "NoncentralTRand(1, 1)": {"x": ["-10", "-3", "-1", "0", "1", "3", "10"]},
         "NoncentralTRand(5, -2)": {"x": ["-10", "-3", "-1", "0", "1", "3", "10"]},
         "NoncentralTRand(30, 5)": {"x": ["-10", "-3", "-1", "0", "1", "3", "10"]},
+        "LogStableRand(2, 0, 0.5, 0)": {"x": ["0", "0.1", "0.5", "1", "2", "10"]},
+        "LogStableRand(0.5, -1, 1, 0)": {"x": ["0", "0.001", "0.1", "0.5", "0.9", "1"]},
+        "LogStableRand(1, -1, 0.5, 0.25)": {"x": ["0", "0.01", "0.1", "0.5", "1", "2", "10"]},
+        "LogStableRand(1.5, -1, 0.5, 0.25)": {"x": ["0", "0.01", "0.1", "0.5", "1", "2", "10"]},
     })
     return cases
 
@@ -200,7 +204,7 @@ def compute_case(item):
         mp.mp.dps = 20
         x_args = sorted(x_args, key=float)[1::3]
     points = {float(x) for x in x_args}
-    is_stable = cls in ("StableRand", "HoltsmarkRand", "LandauRand")
+    is_stable = cls in ("StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand")
     if not dist.discrete and not is_stable and not light:
         for level in TAIL_LEVELS:
             for upper in (False, True):
@@ -323,7 +327,8 @@ def _cache_path(cache, case_id):
 
 
 def _cost(case_id):
-    return 10 if case_id.startswith(("StableRand", "HoltsmarkRand", "LandauRand", "GeometricStableRand")) else 1
+    return 10 if case_id.startswith(
+        ("StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand", "GeometricStableRand")) else 1
 
 
 def _arg_key(arg):
