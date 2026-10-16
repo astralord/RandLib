@@ -87,6 +87,48 @@ TEST_CASE("Adaptive quadrature on finite and infinite intervals", "[numerics]")
                WithinRel(9.0, 1e-15));
 }
 
+TEST_CASE("Noncentral t series, recurrence density and moments match high-precision values", "[numerics][noncentral-t]")
+{
+    const NoncentralTRand<double> distribution(30, 5);
+    CHECK_THAT(distribution.F(-10), WithinRel(1.4196688792261714e-25, 1e-12));
+    CHECK_THAT(distribution.f(-10), WithinRel(3.8127458982120124e-25, 1e-12));
+    CHECK_THAT(distribution.F(-3), WithinRel(3.2626878724789141e-14, 1e-12));
+    CHECK_THAT(distribution.f(-3), WithinRel(1.6499531574158244e-13, 1e-12));
+    CHECK_THAT(distribution.Mean(), WithinRel(5.1294973500495874, 1e-14));
+    CHECK_THAT(distribution.Variance(), WithinRel(1.5453997929771642, 1e-13));
+    CHECK_THAT(distribution.Skewness(), WithinRel(0.43566262458486494, 1e-12));
+    CHECK_THAT(distribution.ExcessKurtosis(), WithinRel(0.5001967695937044, 1e-11));
+    const auto characteristicFunction = distribution.CF(0.5);
+    CHECK_THAT(characteristicFunction.real(), WithinAbs(-0.68531584006586704, 2e-12));
+    CHECK_THAT(characteristicFunction.imag(), WithinAbs(0.46250925896885466, 2e-12));
+    const auto lowDegreeCf = NoncentralTRand<double>(1, 1).CF(0.5);
+    CHECK_THAT(lowDegreeCf.real(), WithinAbs(0.47201952890831652, 2e-12));
+    CHECK_THAT(lowDegreeCf.imag(), WithinAbs(0.31943044765159106, 2e-12));
+    const auto negativeCf = NoncentralTRand<double>(5, -2).CF(0.5);
+    CHECK_THAT(negativeCf.real(), WithinAbs(0.35042418454890825, 2e-12));
+    CHECK_THAT(negativeCf.imag(), WithinAbs(-0.68761133161353897, 2e-12));
+
+    const NoncentralTRand<double> reflected(30, -5);
+    CHECK_THAT(distribution.F(-3), WithinRel(reflected.S(3), 1e-14));
+    CHECK_THAT(distribution.f(-3), WithinRel(reflected.f(3), 1e-14));
+
+    const NoncentralTRand<double> central(5, 0);
+    const StudentTRand<double> student(5);
+    for (double x : {-10.0, -1.0, 0.0, 2.0, 20.0}) {
+        CHECK_THAT(central.f(x), WithinRel(student.f(x), 1e-14));
+        CHECK_THAT(central.F(x), WithinAbs(student.F(x), 1e-14));
+        CHECK_THAT(central.S(x), WithinAbs(student.S(x), 1e-14));
+    }
+
+    const NoncentralTRand<double> largeNoncentrality(30, 100);
+    CHECK_THAT(largeNoncentrality.F(101), WithinRel(0.49626388164838351, 1e-13));
+    CHECK_THAT(largeNoncentrality.S(101), WithinRel(0.50373611835161649, 1e-13));
+    CHECK_THAT(largeNoncentrality.f(50), WithinRel(2.7944329641841315e-12, 1e-12));
+    CHECK_THAT(largeNoncentrality.f(101), WithinRel(0.030247658482470235, 1e-12));
+    CHECK_THAT(largeNoncentrality.S(2000), WithinRel(3.1437473004343311e-34, 1e-11));
+    CHECK_THAT(largeNoncentrality.f(2000), WithinRel(4.7045030926584685e-36, 1e-11));
+}
+
 TEST_CASE("Tanh-sinh quadrature resolves endpoint singularities", "[numerics]")
 {
     const auto betaHalf = [](double x, double endpointDistance) {

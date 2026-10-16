@@ -44,6 +44,7 @@ template class randlib::ChiRand<double>;
 template class randlib::MaxwellBoltzmannRand<double>;
 template class randlib::RayleighRand<double>;
 template class randlib::NoncentralChiSquaredRand<double>;
+template class randlib::NoncentralTRand<double>;
 template class randlib::NormalRand<double>;
 template class randlib::ParetoRand<double>;
 template class randlib::PlanckRand<double>;

@@ -303,6 +303,112 @@ class StudentT(Continuous):
         return m
 
 
+class NoncentralT(Continuous):
+    def __init__(self, nu, delta):
+        self.nu, self.delta = mp.mpf(nu), mp.mpf(delta)
+        self.central = StudentT(nu)
+
+    def _integral(self, x, upper, delta=None):
+        delta = self.delta if delta is None else delta
+        b = self.nu / 2
+        coefficient = 2 * b**b / mp.gamma(b)
+        mode = mp.sqrt(max(2 * b - 1, 0) / (2 * b))
+        points = [mp.mpf(0), mp.mpf("0.25"), mp.mpf("0.5"), mp.mpf(1), mp.mpf(2), mp.mpf(4), INF]
+        if mode > 0:
+            points.extend([mode / 4, mode / 2, mode, 2 * mode, 4 * mode])
+        points = sorted(set(points))
+
+        def integrand(w):
+            argument = delta - x * w if upper else x * w - delta
+            probability = mp.mpf(0) if argument < -100 else (mp.mpf(1) if argument > 100 else mp.ncdf(argument))
+            return probability * coefficient * w ** (2 * b - 1) * mp.exp(-b * w * w)
+
+        return mp.quad(integrand, points)
+
+    def _positive_tail(self, x, delta, upper, retry=True):
+        if x == 0:
+            return mp.ncdf(delta) if upper else mp.ncdf(-delta)
+        if delta == 0:
+            return self.central.sf(x) if upper else self.central.cdf(x)
+        lam = delta * delta / 2
+        y = x * x / (self.nu + x * x)
+        one_minus_y = self.nu / (self.nu + x * x)
+        p = mp.exp(-lam)
+        q = delta * mp.exp(-lam) / (mp.sqrt(2) * mp.gamma(mp.mpf("1.5")))
+        total = mp.mpf(0)
+        absolute = mp.mpf(0)
+        decreasing = 0
+        for j in range(1000000):
+            if upper:
+                beta1 = mp.betainc(self.nu / 2, j + mp.mpf("0.5"), 0, one_minus_y, regularized=True)
+                beta2 = mp.betainc(self.nu / 2, j + 1, 0, one_minus_y, regularized=True)
+            else:
+                beta1 = 1 - mp.betainc(self.nu / 2, j + mp.mpf("0.5"), 0, one_minus_y, regularized=True)
+                beta2 = 1 - mp.betainc(self.nu / 2, j + 1, 0, one_minus_y, regularized=True)
+            term = p * beta1 + q * beta2
+            bound = abs(p * beta1) + abs(q * beta2)
+            total += term
+            absolute += bound
+            decreasing = decreasing + 1 if j > lam and bound <= mp.eps * absolute else 0
+            if decreasing >= 4:
+                break
+            p *= lam / (j + 1)
+            q *= lam / (j + mp.mpf("1.5"))
+        result = total / 2
+        if not upper:
+            result += mp.ncdf(-delta)
+        integral_crossover = max(mp.mpf(50), 10 * abs(delta) + 10)
+        lost = result <= 0 or result <= 100 * mp.eps * absolute
+        if upper and delta < 0 and x >= integral_crossover and lost and retry:
+            with mp.workdps(mp.mp.dps + 80):
+                return +self._positive_tail(x, delta, upper, False)
+        if upper and delta < 0 and x < integral_crossover and (lost or result < mp.mpf("1e-8")):
+            result = self._integral(x, True, delta)
+        return result
+
+    def cdf(self, x):
+        return self._positive_tail(x, self.delta, False) if x >= 0 else self._positive_tail(-x, -self.delta, True)
+
+    def sf(self, x):
+        return self._positive_tail(x, self.delta, True) if x >= 0 else self._positive_tail(-x, -self.delta, False)
+
+    def pdf(self, x):
+        nu, delta = self.nu, self.delta
+        z = delta * delta * x * x / (2 * (x * x + nu))
+        a = (nu + 1) / 2
+        first = mp.hyp1f1(a, mp.mpf("0.5"), z)
+        second = mp.hyp1f1(nu / 2 + 1, mp.mpf("1.5"), z)
+        second *= mp.gamma(nu / 2 + 1) / mp.gamma(a) * mp.sqrt(2) * delta * x / mp.sqrt(x * x + nu)
+        coefficient = mp.exp(-delta * delta / 2) * (1 + x * x / nu) ** (-a)
+        coefficient *= mp.gamma(a) / (mp.gamma(nu / 2) * mp.sqrt(nu * mp.pi))
+        return coefficient * (first + second)
+
+    def moments(self):
+        nu, delta = self.nu, self.delta
+
+        def raw(order, normal):
+            half = mp.mpf(order) / 2
+            return normal * (nu / 2) ** half * mp.gamma((nu - order) / 2) / mp.gamma(nu / 2)
+
+        moments = {}
+        if nu > 1:
+            mean = raw(1, delta)
+            moments["Mean"] = mean
+        if nu > 2:
+            second = raw(2, 1 + delta * delta)
+            variance = second - mean * mean
+            moments["Variance"] = variance
+        if nu > 3:
+            third = raw(3, delta**3 + 3 * delta)
+            third_central = third - 3 * mean * second + 2 * mean**3
+            moments["Skewness"] = third_central / variance ** mp.mpf("1.5")
+        if nu > 4:
+            fourth = raw(4, delta**4 + 6 * delta * delta + 3)
+            fourth_central = fourth - 4 * mean * third + 6 * mean * mean * second - 3 * mean**4
+            moments["ExcessKurtosis"] = fourth_central / variance**2 - 3
+        return moments
+
+
 class Cauchy(Continuous):
     def __init__(self, mu, gamma):
         self.mu, self.gamma = mp.mpf(mu), mp.mpf(gamma)
@@ -1547,6 +1653,7 @@ def make(cls, args):
         "BaldingNicholsRand": lambda: Beta(a[1] * (1 - a[0]) / a[0], (1 - a[1]) * (1 - a[0]) / a[0]),
         "BetaPrimeRand": lambda: BetaPrime(*a),
         "StudentTRand": lambda: StudentT(*a),
+        "NoncentralTRand": lambda: NoncentralT(*a),
         "CauchyRand": lambda: Cauchy(*a),
         "LevyRand": lambda: Levy(*a),
         "StableRand": lambda: Stable(*a),

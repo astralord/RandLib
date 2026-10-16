@@ -197,7 +197,7 @@ the release announcements. The final stable-fitting example will land as part of
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 
-See plan Phase 5. The next concrete problem is porting and validating the noncentral t distribution.
+See plan Phase 5. The next concrete problem is the log-stable distribution.
 
 Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
 default. The skewed near-α=1 density/CDF gap is implemented and checked against 40-digit mpmath
@@ -214,6 +214,12 @@ Poisson/incomplete-gamma saddle point, so representable noncentral χ² survival
 accurate down to `1e-300`. Its three tolerance overrides were removed. `RiceRand` uses the same
 kernel and has direct probability functions, transformed-normal sampling, closed-form mean/variance,
 and a committed 237-value mpmath reference table.
+Phase 5.4 is complete. `NoncentralTRand` uses centered Benton–Krishnamoorthy series for direct lower
+and upper probabilities, recurrence and conditional-normal integral densities, transformed-normal
+sampling, generic quantiles, exact moments, a conditional-normal characteristic function and
+constrained MLE. Saddle-split integration and a small-denominator expansion cover large
+noncentrality and extreme representable tails. A committed 243-value mpmath table covers three Tier
+1 cases; focused regressions use direct 60-digit integrals and an exact normal-moment tail series.
 
 ## 4. Things that need the maintainer
 

@@ -288,6 +288,25 @@ TEST_CASE("Generic MLE supports free shape and noncentrality parameters", "[fit]
     CHECK_THAT(chiSquared.distribution.GetNoncentrality(), WithinRel(2.0, 0.1));
 }
 
+TEST_CASE("Generic MLE fits noncentral t noncentrality", "[fit][noncentral-t]")
+{
+    constexpr int sampleSize = 120;
+    const NoncentralTRand<double> reference(8, 1.5);
+    std::vector<double> sample;
+    sample.reserve(sampleSize);
+    for (int i = 0; i < sampleSize; ++i)
+        sample.push_back(reference.Quantile((i + 0.5) / sampleSize));
+
+    FitOptions options;
+    options.fixed = {{"degree", 8}};
+    auto result = fit<NoncentralTRand<double>>(sample, options);
+    REQUIRE(result.converged);
+    CHECK(result.distribution.GetDegree() == 8);
+    CHECK_THAT(result.distribution.GetNoncentrality(), WithinAbs(1.5, 0.02));
+    CHECK(result.parameter_names == std::vector<std::string>{"degree", "noncentrality"});
+    CHECK(result.fixed == std::vector<bool>{true, false});
+}
+
 TEST_CASE("Generic MLE fits Frechet location, scale and shape", "[fit]")
 {
     constexpr int sampleSize = 300;

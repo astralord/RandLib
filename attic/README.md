@@ -3,4 +3,4 @@
 Code kept for reference that is not part of the build.
 
 - `NoncentralTRand.{h,cpp}` predates the templated distribution API and does not
-  compile. It is ported to the current design in the noncentral t work (plan task 3.4).
+  compile. It has been ported to the current design under `include/randlib/` (plan task 5.4).

@@ -19,6 +19,7 @@
 #include <randlib/continuous/logistic.hpp>
 #include <randlib/continuous/nakagami.hpp>
 #include <randlib/continuous/noncentral_chi_squared.hpp>
+#include <randlib/continuous/noncentral_t.hpp>
 #include <randlib/continuous/normal.hpp>
 #include <randlib/continuous/pareto.hpp>
 #include <randlib/continuous/student_t.hpp>
@@ -365,6 +366,35 @@ struct FitModel<StudentTRand<Real>>
         if (!(scale > 0))
             throw fit_error(FitErrorCode::WrongSample, "Student-t distribution: sample spread should be positive");
         return Distribution(5.0, location, scale);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
+};
+
+template <std::floating_point Real>
+struct FitModel<NoncentralTRand<Real>>
+{
+    using Distribution = NoncentralTRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"degree", distribution.GetDegree(), 0.0, std::nullopt},
+                {"noncentrality", distribution.GetNoncentrality(), std::nullopt, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters) { return Distribution(parameters[0], parameters[1]); }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
+    {
+        requireMethod(method, "Noncentral-t", {Method::MLE});
+        const auto fixedDegree = fixed.find("degree");
+        const double degree = fixedDegree == fixed.end() ? 10.0 : fixedDegree->second;
+        const double median = sampleQuantile(sample, 0.5);
+        if (degree <= 1)
+            return Distribution(degree, median);
+        const long double coefficient =
+            std::exp(0.5L * std::log(0.5L * degree) + std::lgamma(0.5L * (degree - 1)) - std::lgamma(0.5L * degree));
+        return Distribution(degree, static_cast<double>(median / coefficient));
     }
 
     static bool hasClosedForm(Method) { return false; }

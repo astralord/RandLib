@@ -213,3 +213,14 @@ TEST_CASE("Rice distribution rejects invalid parameters", "[parameters]")
     CHECK(rice.F(INFINITY) == 1);
     CHECK(rice.S(INFINITY) == 0);
 }
+
+TEST_CASE("Noncentral t distribution rejects invalid parameters", "[parameters]")
+{
+    const double invalidNumber = std::numeric_limits<double>::quiet_NaN();
+    CHECK_THROWS_AS(NoncentralTRand<double>(0, 0), std::invalid_argument);
+    CHECK_THROWS_AS(NoncentralTRand<double>(-1, 0), std::invalid_argument);
+    CHECK_THROWS_AS(NoncentralTRand<double>(INFINITY, 0), std::invalid_argument);
+    CHECK_THROWS_AS(NoncentralTRand<double>(invalidNumber, 0), std::invalid_argument);
+    CHECK_THROWS_AS(NoncentralTRand<double>(1, INFINITY), std::invalid_argument);
+    CHECK_THROWS_AS(NoncentralTRand<double>(1, invalidNumber), std::invalid_argument);
+}

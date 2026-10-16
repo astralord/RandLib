@@ -33,6 +33,7 @@
 #include <randlib/continuous/marchenko_pastur.hpp>
 #include <randlib/continuous/nakagami.hpp>
 #include <randlib/continuous/noncentral_chi_squared.hpp>
+#include <randlib/continuous/noncentral_t.hpp>
 #include <randlib/continuous/normal.hpp>
 #include <randlib/continuous/pareto.hpp>
 #include <randlib/continuous/planck.hpp>

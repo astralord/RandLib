@@ -52,6 +52,7 @@ extern template class ChiRand<double>;
 extern template class MaxwellBoltzmannRand<double>;
 extern template class RayleighRand<double>;
 extern template class NoncentralChiSquaredRand<double>;
+extern template class NoncentralTRand<double>;
 extern template class NormalRand<double>;
 extern template class ParetoRand<double>;
 extern template class PlanckRand<double>;

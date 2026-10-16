@@ -20,6 +20,15 @@ All notable changes to RandLib are documented here. The project follows
   mixture evaluation now covers its full historical tail grid in seconds instead of minutes, with
   focused 40-digit mpmath references on both sides.
 
+### Distributions
+
+- Added the Tier 1 noncentral t distribution with centered Benton–Krishnamoorthy probability
+  series, direct survival probabilities, recurrence and integral densities, transformed sampling,
+  quantiles, moments, a conditional-normal characteristic function and constrained maximum-
+  likelihood fitting. Saddle-split integration and a small-denominator expansion retain accuracy
+  for large noncentrality and representable extreme tails; a 243-value 40-digit mpmath table and
+  focused exact-series regressions provide evidence.
+
 ### Numerical kernel
 
 - Added type-generic tanh-sinh quadrature for finite intervals with integrable endpoint
