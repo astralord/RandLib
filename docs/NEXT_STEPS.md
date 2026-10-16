@@ -206,6 +206,9 @@ Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the s
 default. The constructor, getters and setters preserve the selected location convention; tests prove
 S0/S1 equivalence for the pdf, CDF, survival function, characteristic function and seeded sampler,
 including the α = 1 logarithmic conversion. The near-α=1 numerical kernel and stable fitting remain.
+The first 5.2 primitive is also landed: `math::integrateTanhSinh` handles finite-interval endpoint
+singularities, including an endpoint-distance callable form that avoids cancellation. Oscillatory
+quadrature and the heavy-tail characteristic-function migrations remain.
 
 ## 4. Things that need the maintainer
 

@@ -4,7 +4,10 @@
 #include <cmath>
 #include <concepts>
 #include <limits>
+#include <numbers>
+#include <stdexcept>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace randlib::math
@@ -106,6 +109,59 @@ Real integrateFinite(const F &f, Real a, Real b, Real tolerance, int maxSubdivis
     return sum;
 }
 
+template <std::floating_point Real, class F>
+Real evaluateTanhSinh(const F &f, Real x, Real endpointDistance)
+{
+    if constexpr (std::invocable<F, Real, Real>)
+        return static_cast<Real>(f(x, endpointDistance));
+    else
+        return static_cast<Real>(f(x));
+}
+
+template <std::floating_point Real, class F>
+std::pair<Real, Real> tanhSinhLevel(const F &f, Real a, Real b, Real step)
+{
+    const Real halfWidth = (b - a) / 2;
+    const Real center = a + halfWidth;
+    const Real halfPi = std::numbers::pi_v<Real> / 2;
+    const Real centerWeight = halfWidth * halfPi;
+    const Real centerValue = evaluateTanhSinh<Real>(f, center, b - center);
+    Real sum = centerWeight * centerValue;
+    Real absoluteSum = centerWeight * std::fabs(centerValue);
+
+    for (int k = 1; k < 32768; ++k) {
+        const Real t = step * static_cast<Real>(k);
+        const Real coshT = std::cosh(t);
+        const Real transformed = halfPi * std::sinh(t);
+        const Real q = std::exp(-2 * transformed);
+        if (q == 0)
+            break;
+        const Real onePlusQ = 1 + q;
+        const Real endpointDistance = (b - a) * q / onePlusQ;
+        if (endpointDistance < std::numeric_limits<Real>::min())
+            break;
+        const Real weight = halfWidth * halfPi * coshT * 4 * q / (onePlusQ * onePlusQ);
+        if (weight == 0)
+            break;
+
+        const Real left = a + endpointDistance;
+        const Real right = b - endpointDistance;
+        Real leftValue = 0, rightValue = 0;
+        if constexpr (std::invocable<F, Real, Real>) {
+            leftValue = evaluateTanhSinh<Real>(f, left, -endpointDistance);
+            rightValue = evaluateTanhSinh<Real>(f, right, endpointDistance);
+        } else {
+            if (left != a)
+                leftValue = evaluateTanhSinh<Real>(f, left, -endpointDistance);
+            if (right != b)
+                rightValue = evaluateTanhSinh<Real>(f, right, endpointDistance);
+        }
+        sum += weight * (leftValue + rightValue);
+        absoluteSum += weight * (std::fabs(leftValue) + std::fabs(rightValue));
+    }
+    return {step * sum, step * absoluteSum};
+}
+
 } // namespace detail
 
 /**
@@ -144,6 +200,44 @@ Real integrate(const F &f, std::type_identity_t<Real> a, std::type_identity_t<Re
     }
     return detail::integrateFinite<Real>([&f, &distance, b](Real t) { return f(b - distance(t)) / (t * t); }, 0, 1,
                                          tolerance, maxSubdivisions);
+}
+
+/**
+ * Double-exponential tanh-sinh quadrature on a finite interval. This rule is intended for
+ * integrable endpoint singularities. A callable that accepts `(x, endpointDistance)` receives a
+ * negative distance `a - x` near the left endpoint and a positive distance `b - x` near the right
+ * endpoint, allowing cancellation-free evaluation when `x` rounds to an endpoint.
+ * @param f integrand accepting either `f(x)` or `f(x, endpointDistance)`
+ * @param a finite lower limit
+ * @param b finite upper limit
+ * @param tolerance error tolerance relative to the estimated integral of `|f|`
+ * @param maxRefinements maximum number of step halvings
+ * @return ∫_a^b f(x) dx
+ */
+template <std::floating_point Real = double, class F>
+Real integrateTanhSinh(const F &f, std::type_identity_t<Real> a, std::type_identity_t<Real> b,
+                       std::type_identity_t<Real> tolerance = 1e-11, int maxRefinements = 12)
+{
+    if (!std::isfinite(a) || !std::isfinite(b))
+        throw std::invalid_argument("tanh-sinh quadrature requires finite limits");
+    if (a > b)
+        return -integrateTanhSinh<Real>(f, b, a, tolerance, maxRefinements);
+    if (a == b)
+        return 0;
+    if (!(tolerance > 0) || maxRefinements < 1)
+        throw std::invalid_argument("tanh-sinh quadrature requires a positive tolerance and refinement count");
+
+    Real previous = 0;
+    for (int level = 0; level <= maxRefinements; ++level) {
+        const Real step = std::ldexp(Real{1}, -level);
+        const auto [estimate, absoluteEstimate] = detail::tanhSinhLevel<Real>(f, a, b, step);
+        const Real roundoff = 50 * std::numeric_limits<Real>::epsilon() * absoluteEstimate;
+        const Real target = std::max(tolerance * absoluteEstimate, roundoff);
+        if (level >= 2 && std::fabs(estimate - previous) <= target)
+            return estimate;
+        previous = estimate;
+    }
+    return previous;
 }
 
 } // namespace randlib::math

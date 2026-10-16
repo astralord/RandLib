@@ -12,6 +12,12 @@ All notable changes to RandLib are documented here. The project follows
   functions and sampling consistently use the selected convention, including the special
   logarithmic location conversion at alpha = 1.
 
+### Numerical kernel
+
+- Added type-generic tanh-sinh quadrature for finite intervals with integrable endpoint
+  singularities. Endpoint-aware callables receive the accurately computed distance to the nearer
+  boundary, avoiding cancellation when the abscissa itself rounds to that boundary.
+
 ## [2.0.0] - Unreleased
 
 ### Documentation

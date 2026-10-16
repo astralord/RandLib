@@ -84,6 +84,33 @@ TEST_CASE("Adaptive quadrature on finite and infinite intervals", "[numerics]")
                WithinRel(9.0, 1e-15));
 }
 
+TEST_CASE("Tanh-sinh quadrature resolves endpoint singularities", "[numerics]")
+{
+    const auto betaHalf = [](double x, double endpointDistance) {
+        const double leftDistance = endpointDistance < 0 ? -endpointDistance : x;
+        const double rightDistance = endpointDistance > 0 ? endpointDistance : 1 - x;
+        return 1 / std::sqrt(leftDistance * rightDistance);
+    };
+    CHECK_THAT(math::integrateTanhSinh(betaHalf, 0, 1), WithinRel(std::numbers::pi, 2e-13));
+    CHECK_THAT(math::integrateTanhSinh([](double x) { return std::log(x) * std::log1p(-x); }, 0, 1),
+               WithinRel(2 - std::numbers::pi * std::numbers::pi / 6, 2e-13));
+
+    const auto endpointAware = [](double x, double endpointDistance) {
+        if (x < 0.5)
+            return std::sqrt(x / (1 - x * x));
+        return std::sqrt(x / ((1 + x) * endpointDistance));
+    };
+    const double expected = 0.5 * std::tgamma(0.75) * std::tgamma(0.5) / std::tgamma(1.25);
+    CHECK_THAT(math::integrateTanhSinh(endpointAware, 0, 1), WithinRel(expected, 2e-13));
+
+    const long double result =
+        math::integrateTanhSinh<long double>([](long double x) { return 1 / std::sqrt(x); }, 0, 1, 1e-15L);
+    CHECK_THAT(static_cast<double>(result), WithinRel(2.0, 2e-15));
+    CHECK(math::integrateTanhSinh([](double x) { return x; }, 1, 0) ==
+          -math::integrateTanhSinh([](double x) { return x; }, 0, 1));
+    CHECK_THROWS_AS(math::integrateTanhSinh([](double x) { return x; }, 0, INFINITY), std::invalid_argument);
+}
+
 TEST_CASE("TOMS 748 finds bracketed roots to full precision", "[numerics]")
 {
     double root = math::findRoot([](double x) { return std::cos(x) - x; }, 0, 1);
