@@ -277,27 +277,27 @@ IntType BinomialDistribution<IntType>::variateWaiting(IntType number) const
 {
     /// waiting algorithm, using
     /// sum of geometrically distributed variables
-    IntType X = -1, sum = 0;
-    do {
-        sum += G.Variate() + 1;
+    IntType X = 0, sum = 0;
+    while (true) {
+        IntType wait = G.Variate();
+        if (wait >= number - sum)
+            return X;
+        sum += wait + 1;
         ++X;
-    } while (sum <= number);
-    return X;
+    }
 }
 
 template< typename IntType >
 IntType BinomialDistribution<IntType>::variateWaiting(IntType number, double probability, RandGenerator &randGenerator)
 {
-    IntType X = -1;
-    double sum = 0;
-    do {
-        IntType add = GeometricRand<IntType>::Variate(probability, randGenerator) + 1;
-        if (add < 0) /// we catched overflow
-            return X + 1;
-        sum += add;
+    IntType X = 0, sum = 0;
+    while (true) {
+        IntType wait = GeometricRand<IntType>::Variate(probability, randGenerator);
+        if (wait >= number - sum)
+            return X;
+        sum += wait + 1;
         ++X;
-    } while (sum <= number);
-    return X;
+    }
 }
 
 template< typename IntType >

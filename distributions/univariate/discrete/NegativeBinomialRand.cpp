@@ -100,7 +100,9 @@ template< typename IntType, typename T>
 IntType NegativeBinomialDistribution<IntType, T>::variateGeometricThroughExponential() const
 {
     float X = -ExponentialRand<float>::StandardVariate(this->localRandGenerator) / log1mProb;
-    return std::floor(X);
+    if (!std::isfinite(X) || X >= static_cast<long double>(std::numeric_limits<IntType>::max()))
+        return std::numeric_limits<IntType>::max();
+    return static_cast<IntType>(X);
 }
 
 template< typename IntType, typename T>

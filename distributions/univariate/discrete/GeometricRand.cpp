@@ -63,7 +63,9 @@ IntType GeometricRand<IntType>::Variate(double probability, RandGenerator &randG
     if (probability < 0.05) {
         double rate = -std::log1pl(-probability);
         float X = ExponentialRand<float>::StandardVariate(randGenerator) / rate;
-        return std::floor(X);
+        if (!std::isfinite(X) || X >= static_cast<long double>(std::numeric_limits<IntType>::max()))
+            return std::numeric_limits<IntType>::max();
+        return static_cast<IntType>(X);
     }
 
     double U = UniformRand<double>::StandardVariate(randGenerator);

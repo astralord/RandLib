@@ -124,6 +124,9 @@ coherence and sampling statistics. Every fix below has a regression test in
   produced an enormous positive exponent.
 - **B37** Double factorial now evaluates the defining product n(n − 2)…; the previous factorial
   identities shifted by the full input and returned incorrect values for every n > 1.
+- **B38** Geometric sampling saturates waiting times that exceed the result integer type instead
+  of performing an undefined floating-point conversion. Binomial waiting-time sampling compares
+  against the remaining trials before addition, preventing overflow and a beta-binomial hang.
 - Removed the unused private `POISSON` binomial generator selector. Binomial sampling continues to
   use its exact Bernoulli-sum, waiting-time and rejection algorithms rather than an approximation.
 - Noncentral chi-squared mode for 2 degrees of freedom; `DegenerateRand::Fit` accepted any sample.

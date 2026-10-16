@@ -25,8 +25,8 @@ plan and status.
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 11–14, Clang 15–18, AppleClang and MSVC 14.44 build warning-free in the current CI run. |
-| 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 27 further bugs (B11–B37) found by the test suite and fixed; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | GCC, Clang, MSVC, sanitizer, coverage and static-analysis jobs pass. AppleClang exposed a nonterminating aggregate discrete-sampling check; every discrete distribution is now an independently discovered, 60-second-bounded test, awaiting the final rerun. |
+| 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 28 further bugs (B11–B38) found by the test suite and fixed; see CHANGELOG.md. |
+| 1.5 Continuous integration | 🟡 | GCC, Clang, MSVC, sanitizer, coverage and static-analysis jobs pass. Isolating each discrete sampling check identified AppleClang's beta-binomial timeout as B38; the portable fix awaits its CI rerun. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
 | 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
 

@@ -11,6 +11,7 @@
 #include <chrono>
 #include <cmath>
 #include <complex>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -352,4 +353,20 @@ TEST_CASE("B37: double factorial uses every second factor", "[regression]")
     CHECK(RandMath::doubleFactorial(1) == 1.0);
     CHECK(RandMath::doubleFactorial(8) == 384.0);
     CHECK(RandMath::doubleFactorial(9) == 945.0);
+}
+
+TEST_CASE("B38: geometric waiting times do not overflow signed integers", "[regression]")
+{
+    const double probability = std::numeric_limits<double>::min();
+    RandGenerator generator;
+    generator.Reseed(20231010);
+
+    CHECK(GeometricRand<int>::Variate(probability, generator) == std::numeric_limits<int>::max());
+
+    GeometricRand<int> geometric(probability);
+    geometric.Reseed(20231010);
+    CHECK(geometric.Variate() == std::numeric_limits<int>::max());
+
+    generator.Reseed(20231010);
+    CHECK(BinomialRand<int>::Variate(20, probability, generator) == 0);
 }
