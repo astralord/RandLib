@@ -1,8 +1,8 @@
 # Stable distributions
 
-`StableRand<Real>` models an alpha-stable law with characteristic exponent alpha in `(0, 2]`,
-skewness beta in `[-1, 1]`, positive scale gamma, and location mu. The current public convention is
-Nolan's S1 parameterization. Important special cases are normal (`alpha=2`), Cauchy
+`StableRand<Real>` models an alpha-stable law with characteristic exponent alpha in `[0.1, 2]`,
+skewness beta in `[-1, 1]`, positive scale gamma, and location mu. Nolan's S1 parameterization is the
+source-compatible default; S0 is available explicitly. Important special cases are normal (`alpha=2`), Cauchy
 (`alpha=1, beta=0`), and Levy (`alpha=0.5, |beta|=1`).
 
 ```cpp
@@ -11,7 +11,8 @@ Nolan's S1 parameterization. Important special cases are normal (`alpha=2`), Cau
 #include <random>
 
 std::mt19937_64 engine(42);
-randlib::StableRand<double> stable(1.5, -0.3, 2.0, 1.0);
+using Stable = randlib::StableRand<double>;
+Stable stable(1.5, -0.3, 2.0, 1.0, Stable::Parameterization::S0);
 double draw = stable(engine);
 double density = stable.f(0.0);
 double probability = stable.F(0.0);
@@ -19,10 +20,17 @@ double probability = stable.F(0.0);
 
 ## Parameterization matters
 
-S1's location is discontinuous at `alpha=1` when `beta != 0`; formulas converting scale or changing
-parameterizations must include the logarithmic location shift. RandLib's `GetLocation()` and
-constructor location are S1 values. Do not compare them directly with software using S0 without an
-explicit conversion.
+S1's location is discontinuous at `alpha=1` when `beta != 0`; S0 is continuous in all four
+parameters. The constructor, `GetLocation()`, and location setter use the selected convention. S0
+and S1 locations for the same law are related by
+
+```text
+mu1 = mu0 - beta * gamma * tan(pi * alpha / 2)       (alpha != 1)
+mu1 = mu0 - (2 / pi) * beta * gamma * log(gamma)    (alpha == 1)
+```
+
+`SetParameterization()` changes only the convention used to report the location; it does not change
+the law. `SetScale()` preserves the location in the currently selected convention.
 
 ## Accuracy in v2.0
 

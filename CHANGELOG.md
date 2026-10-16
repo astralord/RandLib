@@ -3,6 +3,15 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - Unreleased
+
+### Stable distributions
+
+- Added Nolan's S0 parameterization alongside the source-compatible S1 default. Constructors,
+  location accessors, setters, names, support endpoints, probability functions, characteristic
+  functions and sampling consistently use the selected convention, including the special
+  logarithmic location conversion at alpha = 1.
+
 ## [2.0.0] - Unreleased
 
 ### Documentation

@@ -60,7 +60,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 5.1 Stable distributions (#1) | 🟡 | v1.2 fixed the CF sign, the α = 1 location, the B8 floor and the tails. Open: S0, the region near α = 1, the slow far tails of the α = 1 geometric stable density. |
+| 5.1 Stable distributions (#1) | 🟡 | Nolan S0 and S1 are both public, with tested location conversion, equivalent sampling and probability functions. Open: the region near α = 1, stable fitting, and the slow far tails of the α = 1 geometric stable density. |
 | 5.2 Heavy-tailed characteristic functions (#6, #10) | 🟡 | Heavy-tailed CFs are accurate to about 1e-3, the log-normal one to 6e-5 at σ² = 4 (tracked in `tests/data/reference_tolerances.csv`). |
 | 5.3 Marcum Q (#4) | 🟡 | v1.2 fixed the noncentral χ² density; the upper tail is still 1 − Marcum P. |
 | 5.4 Noncentral t (#7) | ⏳ | |

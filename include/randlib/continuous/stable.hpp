@@ -54,6 +54,13 @@ class StableDistribution : virtual public ContinuousDistribution<RealType>
     void sample(detail::EngineRef g, std::span<RealType> outputData) const override;
 
 protected:
+    /** Nolan parameterization used for the public location parameter. */
+    enum class Parameterization
+    {
+        S0, ///< continuous in all four parameters, including at alpha = 1
+        S1 ///< classical parameterization used by RandLib before v2.1
+    };
+
     double alpha = 2; ///< characteristic exponent α
     double beta = 0; ///< skewness β
     double mu = 0; ///< location μ
@@ -67,6 +74,8 @@ private:
     double xi = 0; ///< ξ = atan(-ζ) / α;
     double alpha_alpham1 = 2; ///< α / (α - 1)
     double logGammaPi_2 = randlib::consts::lnpi - 1.5 * randlib::consts::ln2; ///< log(π/(2γ)), used for α = 1
+    Parameterization parameterization = Parameterization::S1;
+    double locationParameter = 0;
 
     static constexpr double BIG_NUMBER = 1e9; ///< a.k.a. infinity for pdf and cdf calculations
     static constexpr double ALMOST_TWO = 1.99999; ///< parameter used to identify α close to 2
@@ -88,7 +97,8 @@ protected:
     double pdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use pdf tail approximation
     double cdftailBound = INFINITY; ///< boundary k such that for |x| > k we can use cdf tail approximation
 
-    StableDistribution(double exponent, double skewness, double scale = 1, double location = 0);
+    StableDistribution(double exponent, double skewness, double scale = 1, double location = 0,
+                       Parameterization parameterization = Parameterization::S1);
 
 public:
     virtual ~StableDistribution() {}
@@ -110,6 +120,7 @@ private:
     void setParametersForLevy();
     void setParametersForUnityExponent();
     void setParametersForGeneralExponent();
+    static double s0LocationShift(double exponent, double skewness, double scale);
 
 protected:
     void SetParameters(double exponent, double skewness, double scale = 1, double location = 0);
@@ -117,6 +128,7 @@ protected:
 public:
     void SetLocation(double location);
     void SetScale(double scale);
+    void SetParameterization(Parameterization value) noexcept;
 
     /**
      * @return characteristic exponent α
@@ -133,7 +145,11 @@ public:
     /**
      * @return location parameter μ
      */
-    [[nodiscard]] inline double GetLocation() const noexcept { return mu; }
+    [[nodiscard]] inline double GetLocation() const noexcept { return locationParameter; }
+    /**
+     * @return Nolan parameterization used by the public location parameter
+     */
+    [[nodiscard]] inline Parameterization GetParameterization() const noexcept { return parameterization; }
     /**
      * @return logarithm of the scale parameter γ
      */
@@ -473,8 +489,11 @@ template <typename RealType>
 class StableRand final : public StableDistribution<RealType>
 {
 public:
-    StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0)
-        : StableDistribution<RealType>(exponent, skewness, scale, location)
+    using Parameterization = typename StableDistribution<RealType>::Parameterization;
+
+    StableRand(double exponent = 2, double skewness = 0, double scale = 1, double location = 0,
+               Parameterization parameterization = Parameterization::S1)
+        : StableDistribution<RealType>(exponent, skewness, scale, location, parameterization)
     {
     }
     [[nodiscard]] std::string Name() const override;
@@ -529,7 +548,9 @@ namespace randlib
 {
 
 template <typename RealType>
-StableDistribution<RealType>::StableDistribution(double exponent, double skewness, double scale, double location)
+StableDistribution<RealType>::StableDistribution(double exponent, double skewness, double scale, double location,
+                                                 Parameterization selectedParameterization)
+    : parameterization(selectedParameterization)
 {
     SetParameters(exponent, skewness, scale, location);
 }
@@ -643,6 +664,16 @@ void StableDistribution<RealType>::setParametersForGeneralExponent()
 }
 
 template <typename RealType>
+double StableDistribution<RealType>::s0LocationShift(double exponent, double skewness, double scale)
+{
+    if (skewness == 0.0 || exponent == 2.0)
+        return 0.0;
+    if (exponent == 1.0)
+        return randlib::consts::two_inv_pi * skewness * scale * std::log(scale);
+    return skewness * scale * std::tan(randlib::consts::half_pi * exponent);
+}
+
+template <typename RealType>
 void StableDistribution<RealType>::SetParameters(double exponent, double skewness, double scale, double location)
 {
     if (!std::isfinite(location))
@@ -651,7 +682,9 @@ void StableDistribution<RealType>::SetParameters(double exponent, double skewnes
     alpha = exponent;
     alphaInv = 1.0 / alpha;
     beta = skewness;
-    mu = location;
+    locationParameter = location;
+    mu = locationParameter -
+         ((parameterization == Parameterization::S0) ? s0LocationShift(exponent, skewness, scale) : 0.0);
     gamma = scale;
     logGamma = std::log(gamma);
     alpha_alpham1 = alpha / (alpha - 1.0);
@@ -675,7 +708,14 @@ void StableDistribution<RealType>::SetLocation(double location)
 template <typename RealType>
 void StableDistribution<RealType>::SetScale(double scale)
 {
-    SetParameters(alpha, beta, scale, mu);
+    SetParameters(alpha, beta, scale, GetLocation());
+}
+
+template <typename RealType>
+void StableDistribution<RealType>::SetParameterization(Parameterization value) noexcept
+{
+    parameterization = value;
+    locationParameter = mu + ((parameterization == Parameterization::S0) ? s0LocationShift(alpha, beta, gamma) : 0.0);
 }
 
 template <typename RealType>
@@ -1705,9 +1745,13 @@ std::complex<double> StableDistribution<RealType>::CFImpl(double t) const
 template <typename RealType>
 std::string StableRand<RealType>::Name() const
 {
-    return "Stable(" + this->toStringWithPrecision(this->GetExponent()) + ", " +
-           this->toStringWithPrecision(this->GetSkewness()) + ", " + this->toStringWithPrecision(this->GetScale()) +
-           ", " + this->toStringWithPrecision(this->GetLocation()) + ")";
+    std::string name = "Stable(" + this->toStringWithPrecision(this->GetExponent()) + ", " +
+                       this->toStringWithPrecision(this->GetSkewness()) + ", " +
+                       this->toStringWithPrecision(this->GetScale()) + ", " +
+                       this->toStringWithPrecision(this->GetLocation());
+    if (this->GetParameterization() == Parameterization::S0)
+        name += ", S0";
+    return name + ")";
 }
 
 template <typename RealType>

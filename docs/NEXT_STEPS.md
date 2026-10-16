@@ -2,7 +2,7 @@
 
 Written so that work can resume with no other context. Read together with
 [MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md) (the plan, revised on 2026-10-11) and
-[ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-15.
+[ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-16.
 
 ## 1. Repository, branches and how changes reach GitHub
 
@@ -72,12 +72,11 @@ in its reason (mpmath value, exact formula, regression test).
 ### Reference values
 
 `tools/refdata/generate.py` (mpmath, 40 digits, runs for hours) writes `tests/data/reference/*.csv`
-and caches per case in `/root/RandLib/build/refdata-cache`. A run started on 2026-10-10 in
-`/root/RandLib` is **still running** for the skewed stable laws with α = 1
+and caches per case in `/root/RandLib/build/refdata-cache`. The run started on 2026-10-10 is no
+longer running; it did not finish the skewed stable laws with α = 1
 (`StableRand(1, 0.5, 1, 0)`, `StableRand(1, 0.5, 2, 1)`, `StableRand(0.995, 0.5, 1, 0)`,
-`StableRand(1, 0.005, 1, 0)`, `GeometricStableRand(1, 0.5, 1, 0)`); it is stuck in the deep tails. This is
-Phase 5 work: either let it finish, or kill it (`pkill -f "^python3 -u tools/refdata/generate"`) and add a
-cheaper mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
+`StableRand(1, 0.005, 1, 0)`, `GeometricStableRand(1, 0.5, 1, 0)`). This is Phase 5 work: add a cheaper
+mode (no tail quantiles below 1e-6) for α = 1. Once cached, write the CSVs with
 `python3 tools/refdata/generate.py --cached-only --cache /root/RandLib/build/refdata-cache` from the
 1.x worktree, remove the matching reviewed rules for those cases and regenerate the known deviations.
 
@@ -202,6 +201,11 @@ See plan Phase 5. Known concrete problems: geometric stable with α = 1 and β �
 density value in the far tails (the coherence test checks only 0.01 < F < 0.99 for it); stable laws
 near α = 1 throw `not_implemented`; heavy-tailed CFs accurate to ~1e-3 and the log-normal CF to 6e-5
 (overrides in `tests/data/reference_tolerances.csv`); noncentral χ² upper tail via 1 − Marcum P.
+
+Landed locally for 5.1: `StableRand::Parameterization::{S0,S1}` with S1 as the source-compatible
+default. The constructor, getters and setters preserve the selected location convention; tests prove
+S0/S1 equivalence for the pdf, CDF, survival function, characteristic function and seeded sampler,
+including the α = 1 logarithmic conversion. The near-α=1 numerical kernel and stable fitting remain.
 
 ## 4. Things that need the maintainer
 
