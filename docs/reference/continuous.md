@@ -864,3 +864,208 @@ excess kurtosis are
 No elementary median or mode is known. `Median()` uses the generic tail-aware TOMS 748 quantile
 solver, and `Mode()` minimizes the negative log density with the shared Brent search, starting from
 the mean. There is currently no `fit<ExponentiallyModifiedGaussianRand>` specialization.
+
+## Nakagami family
+
+### Nakagami distribution (`NakagamiRand`)
+
+`NakagamiRand(shape, spread)` uses \f$\mu>0\f$ and \f$\omega>0\f$. Although the conventional
+wireless-fading parameter range is often restricted to \f$\mu\geq1/2\f$, RandLib implements the
+normalized law for every positive shape. Its defining transformation is
+
+\f[
+ X^2\sim\operatorname{Gamma}\!\left(\mu,\frac{\mu}{\omega}\right),
+\f]
+
+where the second Gamma parameter is a rate. Therefore, for \f$x\geq0\f$,
+
+\f[
+ f(x)=\frac{2\mu^\mu}{\Gamma(\mu)\omega^\mu}
+ x^{2\mu-1}e^{-\mu x^2/\omega},
+\f]
+
+\f[
+ F(x)=P\!\left(\mu,\frac{\mu x^2}{\omega}\right),
+ \qquad
+ S(x)=Q\!\left(\mu,\frac{\mu x^2}{\omega}\right).
+\f]
+
+The direct Gamma upper tail is used for \f$S\f$. Quantiles and samples are respectively the square
+roots of Gamma quantiles and Gamma variates, so they inherit the Gamma family's tail inversion and
+shape-dependent sampling dispatch.
+
+All raw moments are summarized by
+
+\f[
+ \operatorname{E}X^r=
+ \frac{\Gamma(\mu+r/2)}{\Gamma(\mu)}
+ \left(\frac{\omega}{\mu}\right)^{r/2},
+ \qquad r>-2\mu.
+\f]
+
+In particular,
+
+\f[
+ m=\operatorname{E}X=
+ \frac{\Gamma(\mu+1/2)}{\Gamma(\mu)}
+ \sqrt{\frac\omega\mu},qquad
+ \operatorname{Var}X=\omega-m^2,
+\f]
+
+\f[
+ \operatorname{Mode}X=
+ \begin{cases}
+ \sqrt{\omega(1-1/(2\mu))},&\mu>1/2,\\
+ 0,&0<\mu\leq1/2.
+ \end{cases}
+\f]
+
+`Skewness()` and `ExcessKurtosis()` combine the same closed raw moments through order four. The
+median is the square root of the corresponding Gamma median.
+
+The characteristic function has the hypergeometric representation
+
+\f[
+ \begin{aligned}
+ \phi(t)={}&{}_1F_1\!\left(\mu;\frac12;-\frac{\omega t^2}{4\mu}\right)\\
+ &+it\sqrt{\frac\omega\mu}
+ \frac{\Gamma(\mu+1/2)}{\Gamma(\mu)}
+ {}_1F_1\!\left(\mu+\frac12;\frac32;-\frac{\omega t^2}{4\mu}\right).
+ \end{aligned}
+\f]
+
+RandLib evaluates the defining real and imaginary expectations by adaptive infinite-interval
+quadrature. When \f$\mu<1/2\f$, the density is singular at zero; the real part is then regularized as
+\f$1+\int_0^\infty(\cos(tx)-1)f(x)\,dx\f$. This corrects the archived document's broader
+\f$\mu<1\f$ threshold. There is currently no `fit<NakagamiRand>` specialization.
+
+### Chi distribution (`ChiRand`)
+
+`ChiRand(degree)` takes a positive integer \f$k\f$ and is
+
+\f[
+ X\sim\chi_k=\operatorname{Nakagami}\!\left(\frac{k}{2},k\right),
+ \qquad X^2\sim\chi_k^2.
+\f]
+
+Thus
+
+\f[
+ f(x)=\frac{2^{1-k/2}}{\Gamma(k/2)}x^{k-1}e^{-x^2/2},
+ \qquad
+ F(x)=P\!\left(\frac{k}{2},\frac{x^2}{2}\right),
+\f]
+
+\f[
+ \operatorname{E}X=\sqrt2\frac{\Gamma((k+1)/2)}{\Gamma(k/2)},qquad
+ \operatorname{Var}X=k-(\operatorname{E}X)^2,qquad
+ \operatorname{Mode}X=\sqrt{k-1}.
+\f]
+
+Its higher moments, characteristic function, direct upper tail, quantiles, and sampler are the
+corresponding Nakagami operations above. There is currently no `fit<ChiRand>` specialization.
+
+### Maxwell--Boltzmann distribution (`MaxwellBoltzmannRand`)
+
+`MaxwellBoltzmannRand(scale)` takes \f$\sigma>0\f$ and represents
+
+\f[
+ \frac{X}{\sigma}\sim\chi_3,
+ \qquad
+ X\sim\operatorname{Nakagami}\!\left(\frac32,3\sigma^2\right).
+\f]
+
+The factor three in the Nakagami spread is required by the current parameterization and corrects
+the missing factor in the archived document. RandLib specializes the density and tails as
+
+\f[
+ f(x)=\sqrt{\frac2\pi}\frac{x^2}{\sigma^3}e^{-x^2/(2\sigma^2)},
+\f]
+
+\f[
+ F(x)=\operatorname{erf}\!\left(\frac{x}{\sigma\sqrt2}\right)
+ -\sqrt{\frac2\pi}\frac{x}{\sigma}e^{-x^2/(2\sigma^2)},
+\f]
+
+\f[
+ S(x)=\operatorname{erfc}\!\left(\frac{x}{\sigma\sqrt2}\right)
+ +\sqrt{\frac2\pi}\frac{x}{\sigma}e^{-x^2/(2\sigma^2)}.
+\f]
+
+The summaries are
+
+\f[
+ \operatorname{E}X=2\sigma\sqrt{\frac2\pi},qquad
+ \operatorname{Var}X=\sigma^2\left(3-\frac8\pi\right),qquad
+ \operatorname{Mode}X=\sqrt2\,\sigma,
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2\sqrt2(16-5\pi)}{(3\pi-8)^{3/2}},
+ \qquad
+ \operatorname{ExKurt}X=
+ \frac{4\left[\pi(40-3\pi)-96\right]}{(3\pi-8)^2}.
+\f]
+
+Sampling uses \f$\sigma\sqrt{2E+Z^2}\f$ with an independent unit exponential \f$E\f$ and standard
+normal \f$Z\f$. Quantiles and the characteristic function use the general Nakagami paths. There is
+currently no `fit<MaxwellBoltzmannRand>` specialization.
+
+### Rayleigh distribution (`RayleighRand`)
+
+`RayleighRand(scale)` takes \f$\sigma>0\f$ and is
+
+\f[
+ \frac{X}{\sigma}\sim\chi_2,
+ \qquad
+ X\sim\operatorname{Nakagami}(1,2\sigma^2).
+\f]
+
+Its direct probability and quantile formulas are
+
+\f[
+ f(x)=\frac{x}{\sigma^2}e^{-x^2/(2\sigma^2)},qquad
+ F(x)=1-e^{-x^2/(2\sigma^2)},qquad
+ S(x)=e^{-x^2/(2\sigma^2)},
+\f]
+
+\f[
+ Q(p)=\sigma\sqrt{-2\log(1-p)},qquad
+ Q(1-p)=\sigma\sqrt{-2\log p}.
+\f]
+
+The lower probability uses `expm1` and the lower quantile uses `log1p`. Sampling uses
+\f$\sigma\sqrt{2E}\f$ with the shared unit-exponential ziggurat. The characteristic function is the
+\f$\mu=1,\omega=2\sigma^2\f$ case of the Nakagami formula and is evaluated by its quadrature path.
+
+The summaries are
+
+\f[
+ \operatorname{E}X=\sigma\sqrt{\frac\pi2},qquad
+ \operatorname{Var}X=\frac{4-\pi}{2}\sigma^2,qquad
+ \operatorname{Median}X=\sigma\sqrt{2\log2},qquad
+ \operatorname{Mode}X=\sigma,
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2\sqrt\pi(\pi-3)}{(4-\pi)^{3/2}},
+ \qquad
+ \operatorname{ExKurt}X=
+ -\frac{6\pi^2-24\pi+16}{(4-\pi)^2}.
+\f]
+
+`fit<RayleighRand>` supports MLE and the unbiased scale estimator. If
+\f$R^2=(2n)^{-1}\sum_i x_i^2\f$, then
+
+\f[
+ \hat\sigma_{\mathrm{MLE}}=R,qquad
+ \widetilde\sigma=
+ \frac{\sqrt n\,\Gamma(n)}{\Gamma(n+1/2)}R.
+\f]
+
+The correction follows from
+\f$\operatorname{E}R=\sigma\Gamma(n+1/2)/(\sqrt n\,\Gamma(n))\f$. RandLib evaluates the exact
+factor in the log domain through \f$n=100\f$ and uses its log-gamma-ratio asymptotic series for
+larger samples.
