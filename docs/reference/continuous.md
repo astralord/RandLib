@@ -1253,3 +1253,232 @@ hyperbolic cosine. Sampling uses
 \f]
 
 where \f$G\f$ is Catalan's constant. There are no parameters to fit.
+
+## Bounded algebraic distributions
+
+### Triangular distribution (`TriangularRand`)
+
+`TriangularRand(lower, mode, upper)` uses \f$a<b\f$ and \f$a\leq c\leq b\f$. Its density is
+
+\f[
+ f(x)=
+ \begin{cases}
+  \dfrac{2(x-a)}{(b-a)(c-a)},&a\leq x<c,\\[4pt]
+  \dfrac{2}{b-a},&x=c,\\[4pt]
+  \dfrac{2(b-x)}{(b-a)(b-c)},&c<x\leq b,\\[4pt]
+  0,&\text{otherwise},
+ \end{cases}
+\f]
+
+with the natural one-sided interpretation when \f$c=a\f$ or \f$c=b\f$. Its distribution and
+survival functions are evaluated directly as
+
+\f[
+ F(x)=
+ \begin{cases}
+  0,&x<a,\\
+  \dfrac{(x-a)^2}{(b-a)(c-a)},&a\leq x\leq c,\\[4pt]
+  1-\dfrac{(b-x)^2}{(b-a)(b-c)},&c<x<b,\\[4pt]
+  1,&x\geq b,
+ \end{cases}
+\f]
+
+and \f$S\f$ uses the complementary square in each branch rather than subtracting a computed tail
+from one. Inverting these branches gives both the quantile and sampling algorithm: for a uniform
+\f$U\f$, use
+
+\f[
+ X=
+ \begin{cases}
+  a+\sqrt{U(b-a)(c-a)},&U<(c-a)/(b-a),\\
+  b-\sqrt{(1-U)(b-a)(b-c)},&\text{otherwise}.
+ \end{cases}
+\f]
+
+For an interior mode the characteristic function is
+
+\f[
+ \phi(t)=
+ \frac{2\left[(b-a)e^{itc}-(b-c)e^{ita}-(c-a)e^{itb}\right]}
+ {(b-a)(c-a)(b-c)t^2}.
+\f]
+
+RandLib uses separate limiting expressions for a mode at either endpoint and returns one directly
+when cancellation makes the small-\f$t\f$ numerator indistinguishable from zero.
+
+The principal summaries are
+
+\f[
+ \operatorname{E}X=\frac{a+b+c}{3},\qquad
+ \operatorname{Var}X=\frac{a^2+b^2+c^2-ab-ac-bc}{18},
+\f]
+
+\f[
+ \operatorname{Median}X=
+ \begin{cases}
+  a+\sqrt{(b-a)(c-a)/2},&2c>a+b,\\
+  b-\sqrt{(b-a)(b-c)/2},&2c\leq a+b,
+ \end{cases}
+ \qquad \operatorname{Mode}X=c,
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{\sqrt2(a+b-2c)(2a-b-c)(a-2b+c)}
+ {5\left(a^2+b^2+c^2-ab-ac-bc\right)^{3/2}},
+ \qquad \operatorname{ExKurt}X=-\frac35.
+\f]
+
+There is currently no `fit<TriangularRand>` specialization.
+
+### Raised-cosine distributions (`RaisedCosineRand`, `RaabGreenRand`)
+
+`RaisedCosineRand(location, scale)` takes \f$\mu\in\mathbb R\f$ and \f$s>0\f$, with support
+\f$[\mu-s,\mu+s]\f$. Writing \f$y=(x-\mu)/s\f$,
+
+\f[
+ f(x)=\frac{1+\cos(\pi y)}{2s},\qquad
+ F(x)=\frac12\left(1+y+\frac{\sin(\pi y)}{\pi}\right),
+ \qquad |y|<1,
+\f]
+
+and the direct survival formula changes the two plus signs after one to minus signs. The
+characteristic function is
+
+\f[
+ \phi(t)=e^{i\mu t}\frac{\pi^2\sin(st)}{st\,[\pi^2-(st)^2]}.
+\f]
+
+At \f$st=\pi\f$ the displayed expression is indeterminate. The implementation rewrites it with a
+cardinal-sine factor, preserving the analytic limit instead of evaluating \f$0/0\f$ (B33).
+
+The mean, median, and mode all equal \f$\mu\f$, and
+
+\f[
+ \operatorname{Var}X=s^2\left(\frac13-\frac{2}{\pi^2}\right),\qquad
+ \operatorname{Skew}X=0,
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{6(90-\pi^4)}{5(\pi^2-6)^2}.
+\f]
+
+The CDF has no elementary inverse, so quantiles use the shared bracketed TOMS 748 solver. Sampling
+uses Devroye's alternating-series accept/reject method rather than numerically inverting the CDF.
+`RaabGreenRand` is the fixed \f$\mu=0,s=\pi\f$ specialization. Neither class currently has a
+free `fit` specialization.
+
+### Wigner semicircle distribution (`WignerSemicircleRand`)
+
+`WignerSemicircleRand(radius)` takes \f$R>0\f$ and has support \f$[-R,R]\f$:
+
+\f[
+ f(x)=\frac{2}{\pi R^2}\sqrt{R^2-x^2},
+\f]
+
+\f[
+ F(x)=\frac12+\frac1\pi\left[
+ \frac{x\sqrt{R^2-x^2}}{R^2}+\arcsin\frac{x}{R}
+ \right],\qquad -R\leq x\leq R.
+\f]
+
+The implementation does not evaluate that lower tail by adding nearly cancelling terms. For
+\f$x\leq0\f$ it sets
+
+\f[
+ \delta=1+x/R,\qquad \varphi=2\arcsin\sqrt{\delta/2},\qquad
+ F(x)=\frac{2\varphi-\sin(2\varphi)}{2\pi},
+\f]
+
+using a local series for \f$z-\sin z\f$ at small \f$z\f$; positive arguments and survival
+probabilities follow by symmetry. Quantiles use TOMS 748. Sampling exploits
+
+\f[
+ Y\sim\operatorname{Beta}(3/2,3/2),\qquad X=R(2Y-1).
+\f]
+
+The closed-form characteristic function and summaries are
+
+\f[
+ \phi(t)=\frac{2J_1(Rt)}{Rt},
+\f]
+
+\f[
+ \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=0,
+ \qquad \operatorname{Var}X=\frac{R^2}{4},
+\f]
+
+\f[
+ \operatorname{Skew}X=0,\qquad
+ \operatorname{ExKurt}X=-1,\qquad
+ h(X)=\log(\pi R)-\frac12.
+\f]
+
+The class currently obtains \f$\phi\f$ through the common finite-support expectation quadrature
+rather than a dedicated Bessel-function path. There is no `fit<WignerSemicircleRand>`
+specialization.
+
+### Irwin--Hall distribution (`IrwinHallRand`)
+
+`IrwinHallRand(number)` is the sum of \f$n\geq1\f$ independent standard uniform variables. On
+\f$0\leq x\leq n\f$,
+
+\f[
+ f(x)=\frac1{(n-1)!}\sum_{k=0}^{\lfloor x\rfloor}
+ (-1)^k{n\choose k}(x-k)^{n-1},
+\f]
+
+\f[
+ F(x)=\frac1{n!}\sum_{k=0}^{\lfloor x\rfloor}
+ (-1)^k{n\choose k}(x-k)^n.
+\f]
+
+RandLib has direct branches for \f$n=1\f$ and \f$n=2\f$; the general finite sums use a cached
+log-factorial and recursively updated binomial coefficients. The characteristic function is
+
+\f[
+ \phi(t)=\left(\frac{e^{it}-1}{it}\right)^n
+ =e^{int/2}\left[\frac{\sin(t/2)}{t/2}\right]^n.
+\f]
+
+Sampling explicitly sums \f$n\f$ independent uniforms. Other summaries are
+
+\f[
+ \operatorname{E}X=\operatorname{Median}X=\frac n2,\qquad
+ \operatorname{Var}X=\frac n{12},\qquad
+ \operatorname{Skew}X=0,\qquad
+ \operatorname{ExKurt}X=-\frac6{5n}.
+\f]
+
+The API returns \f$n/2\f$ as a representative mode; for \f$n=1\f$ the density is constant and the
+mode is not unique. Quantiles use TOMS 748, and there is no `fit<IrwinHallRand>` specialization.
+
+### Degenerate distribution (`DegenerateRand`)
+
+`DegenerateRand(value)` represents the point mass \f$P(X=a)=1\f$. It is retained in the continuous
+class hierarchy for API composition, but it is singular with respect to Lebesgue measure. Its
+`f(a)` and `logf(a)` return positive infinity as a sentinel, while both return zero or negative
+infinity, respectively, away from \f$a\f$. Its actual distribution functions are
+
+\f[
+ F(x)=\mathbf1_{[a,\infty)}(x),\qquad
+ S(x)=\mathbf1_{(-\infty,a)}(x),\qquad
+ Q(p)=a,
+\f]
+
+and
+
+\f[
+ \phi(t)=e^{iat},\qquad
+ \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=a,
+ \qquad \operatorname{Var}X=0,
+\f]
+
+\f[
+ h(X)=0.
+\f]
+
+Skewness and excess kurtosis are undefined and return NaN. Sampling always returns \f$a\f$.
+`fit<DegenerateRand>` supports MLE for a nonempty sample only when all observations are exactly
+equal; the common observation becomes the fitted point mass.
