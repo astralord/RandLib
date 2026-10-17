@@ -74,6 +74,7 @@ endif()
 
 if(RANDLIB_BUILD_DOCS)
     find_package(Doxygen REQUIRED)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
     include(FetchContent)
     FetchContent_Declare(doxygen_awesome
         URL https://github.com/jothepro/doxygen-awesome-css/archive/d52eafe3e9303399fda15661f3d7bb8fe3d7eabc.tar.gz
@@ -83,6 +84,7 @@ if(RANDLIB_BUILD_DOCS)
     FetchContent_GetProperties(doxygen_awesome SOURCE_DIR RANDLIB_DOXYGEN_AWESOME_DIR)
     configure_file(docs/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target(randlib_docs ALL
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/docs/check_reference_coverage.py
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMENT "Generating RandLib API documentation"
         VERBATIM)

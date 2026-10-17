@@ -354,6 +354,19 @@ A table of every breaking change with before/after code: namespace, include path
   with their current behavior (for example: stable pdf/cdf near α = 1 throw `not_implemented`).
 - [ ] Announce on the GitHub repo, r/cpp and the issues of people who asked for features (#18's reporter).
 
+### 4.5 Mathematical distribution reference
+- [x] Document every registered concrete distribution name with TeX definitions of its density or
+  mass, CDF and direct tail where applicable, generating or characteristic functions, moments,
+  support and important special cases.
+- [x] Explain the numerical algorithms used for probability functions, quantiles, sampling and
+  fitting, including direct-tail and limiting branches that differ from the simplest formula.
+- [x] Preserve the useful content of the archived `document.tex` while checking parameterizations
+  and implementation claims against the C++20 headers and regression evidence.
+- [x] Make the strict documentation target compare the executable distribution registry with the
+  mathematical-reference headings, so a newly registered class cannot silently remain undocumented.
+- [ ] Add generated plots in a separate visualization phase. Formula and algorithm coverage does not
+  depend on figures.
+
 ---
 
 ## Phase 5: Hard numerics (v2.1)
