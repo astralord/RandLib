@@ -106,6 +106,11 @@ All notable changes to RandLib are documented here. The project follows
 - Corrected Skellam modes by searching adjacent probabilities from the median (B46).
 - Unified static and constructed Poisson sampling on the same exact inversion/rejection algorithms,
   removing the static large-rate normal approximation (B47).
+- Accepted the deterministic `p = 1` endpoint for geometric and negative-binomial laws throughout
+  their probability, moment and sampling APIs, while rejecting the improper static `p = 0` case
+  (B48).
+- Reported geometric entropy in nats consistently with the rest of the API, including its finite
+  zero-entropy limit at `p = 1` (B49).
 
 ## [2.0.0-beta.1] - 2026-10-17
 
@@ -222,6 +227,11 @@ All notable changes to RandLib are documented here. The project follows
 - **B47** Static Poisson sampling now shares the exact inversion/rejection algorithms used by
   constructed distributions. This replaces its separate exponential-arrival algorithm through rate
   1000 and, more importantly, the inexact normal approximation above that boundary.
+- **B48** Geometric and negative-binomial distributions now accept the mathematically valid
+  `p = 1` endpoint as a deterministic zero law across probability functions, moments and sampling.
+  The improper `p = 0` geometric static sampler is rejected instead of returning the integer limit.
+- **B49** Geometric entropy is now reported in nats, consistently with the rest of the API, and
+  uses its finite zero-entropy limit at `p = 1`.
 
 ## [1.2.0] - 2026-10-17
 

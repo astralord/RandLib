@@ -525,3 +525,43 @@ TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regr
         CHECK(PoissonRand<int>::Variate(rate, staticGenerator) == distribution(instanceGenerator));
     }
 }
+
+TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regression]")
+{
+    PascalRand<int> negativeBinomial(3, 1);
+    CHECK(negativeBinomial.P(0) == 1);
+    CHECK(negativeBinomial.logP(0) == 0);
+    CHECK(negativeBinomial.P(1) == 0);
+    CHECK(negativeBinomial.logP(1) == -INFINITY);
+    CHECK(negativeBinomial.F(0) == 1);
+    CHECK(negativeBinomial.S(0) == 0);
+    CHECK(negativeBinomial.Mean() == 0);
+    CHECK(negativeBinomial.Variance() == 0);
+    CHECK(std::isnan(negativeBinomial.Skewness()));
+    CHECK(std::isnan(negativeBinomial.ExcessKurtosis()));
+    CHECK(negativeBinomial.Mode() == 0);
+    std::mt19937_64 negativeBinomialGenerator(42);
+    CHECK(negativeBinomial(negativeBinomialGenerator) == 0);
+    std::vector<int> sample(3, -1);
+    negativeBinomial.Sample(negativeBinomialGenerator, sample);
+    CHECK(sample == std::vector<int>{0, 0, 0});
+
+    GeometricRand<int> geometric(1);
+    CHECK(geometric.P(0) == 1);
+    CHECK(geometric.logP(0) == 0);
+    CHECK(geometric.P(1) == 0);
+    CHECK(geometric.logP(1) == -INFINITY);
+    CHECK(geometric.F(0) == 1);
+    CHECK(geometric.S(0) == 0);
+    CHECK(geometric.Median() == 0);
+    std::mt19937_64 generator(42);
+    CHECK(geometric(generator) == 0);
+    CHECK(GeometricRand<int>::Variate(1, generator) == 0);
+    CHECK_THROWS_AS(GeometricRand<int>::Variate(0, generator), std::invalid_argument);
+}
+
+TEST_CASE("B49: geometric entropy uses natural units", "[regression]")
+{
+    CHECK(GeometricRand<int>(1).Entropy() == 0);
+    CHECK_THAT(static_cast<double>(GeometricRand<int>(0.5).Entropy()), WithinRel(2 * std::log(2.0), 1e-15));
+}
