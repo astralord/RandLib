@@ -250,7 +250,7 @@ void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
         throw std::invalid_argument(this->fitErrorDescription(this->NOT_APPLICABLE, this->TOO_SMALL_VARIANCE));
     double guess = mean * mean / (variance - mean);
     size_t n = sample.size();
-    if (!RandMath::findRootNewtonFirstOrder<double>([sample, mean, n] (double x)
+    auto score = [&sample, mean, n] (double x)
     {
         double first = 0.0, second = 0.0;
         for (const IntType & var : sample) {
@@ -260,9 +260,18 @@ void NegativeBinomialRand<IntType, T>::Fit(const std::vector<IntType> &sample)
         first -= n * (RandMath::digammamLog(x) + std::log(x + mean));
         second -= n * (RandMath::trigamma(x) - mean / (x * (mean + x)));
         return DoublePair(first, second);
-    }, guess))
+    };
+    double logGuess = std::log(guess);
+    if (!RandMath::findRootNewtonFirstOrder<double>([&score] (double logNumber)
+    {
+        double number = std::exp(logNumber);
+        DoublePair value = score(number);
+        value.second *= number;
+        return value;
+    }, logGuess))
         throw std::runtime_error(this->fitErrorDescription(this->UNDEFINED_ERROR, "Error in root-finding algorithm"));
-    if (guess <= 0.0)
+    guess = std::exp(logGuess);
+    if (!std::isfinite(guess) || guess <= 0.0)
         throw std::runtime_error(this->fitErrorDescription(this->WRONG_RETURN, "Number should be positive, but returned value is " + this->toStringWithPrecision(guess)));
     SetParameters(guess, guess / (guess + mean));
 }

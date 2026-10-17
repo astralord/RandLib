@@ -3,6 +3,16 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - Unreleased
+
+### Fitting and numerical methods
+
+- **B39** Negative-binomial maximum-likelihood fitting optimizes the positive shape parameter in
+  log space, preventing Newton steps from crossing a special-function pole. The Newton helper now
+  rejects non-finite states after bounded backtracking instead of performing up to 100,000 futile
+  iterations. A three-observation regression uses the 50-digit mpmath score root
+  5.2122598849254577174.
+
 ## [1.2.0] - 2026-10-17
 
 A stabilization release: no API is removed and the file layout is unchanged, but
