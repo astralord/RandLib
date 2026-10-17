@@ -26,9 +26,9 @@ plan and status.
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 11–14, Clang 15–18, AppleClang and MSVC 14.44 build warning-free in the current CI run. |
 | 1.4 Correctness fixes B1–B10 | ✅ | B10 is deferred to v2 by design. 28 further bugs (B11–B38) found by the test suite and fixed; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | GCC, Clang, MSVC, sanitizer, coverage and static-analysis jobs pass. Isolating each discrete sampling check identified AppleClang's beta-binomial timeout as B38; the portable fix awaits its CI rerun. |
+| 1.5 Continuous integration | ✅ | CI run 39002870454 passes GCC 11–14, Clang 15–18, AppleClang, MSVC, sanitizer, coverage, static analysis, engine variants, portable special functions, and install/consumer checks. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
-| 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
+| 1.7 Release v1.2 | ✅ | `v1.2.0` tags the all-green tested commit f25fd1a. |
 
 ## Phase 2: Modern architecture (v2.0-alpha)
 

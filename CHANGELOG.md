@@ -3,7 +3,7 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
-## [1.2.0]
+## [1.2.0] - 2026-10-17
 
 A stabilization release: no API is removed and the file layout is unchanged, but
 **sampled values change for the same seed** (see B1–B6, B12, B26 below), and many
