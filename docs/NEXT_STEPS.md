@@ -48,7 +48,7 @@ cmake --build /tmp/b2
 Compilers on the pod: g++-13, g++-14, clang++-18. MSVC and AppleClang are only exercised by CI.
 
 Test families (both branches): `tests/unit` (golden v1.1 comparison, mpmath reference values, coherence,
-mode/median, parameters, regressions B1–B49, reproducibility, engines, numerics on 2.x) and
+mode/median, parameters, regressions B1–B52, reproducibility, engines, numerics on 2.x) and
 `tests/statistical` (KS/χ² sampling, moments, empirical CF, fitting). Tolerances follow plan section 9.
 
 ### Golden values and known deviations
@@ -88,11 +88,12 @@ Clang 15–18, sanitizers, engine variants, portable special functions, static a
 install consumer. The subsequent 4ad71f0 commit only records that result. B40 then corrected all
 three numerical branches of Rayleigh UMVU scale fitting, B41 restored the exact
 asymmetric-Laplace entropy, and B42 implemented the advertised central limit of the noncentral
-chi-squared law. B43--B49 then fixed Bernoulli, binomial, geometric and negative-binomial endpoints,
+chi-squared law. B43--B52 then fixed Bernoulli, binomial, geometric and negative-binomial endpoints,
 discrete-uniform lattice periods, the Skellam mode, the inconsistent static Poisson sampler, and
-geometric entropy units. Their evidence is an exact limit or identity, direct path-equivalence
-checks, and (for Skellam) 60-digit Bessel references.
-The complete local GCC 13 unit and statistical suites pass on both branches through B49, as do
+geometric entropy units, bivariate covariance, normal-inverse-gamma semantics and negative-correlation
+bivariate-normal CDFs. Their evidence is an exact limit or identity, direct path-equivalence checks,
+40- or 60-digit references, and regression tests.
+The complete local GCC 13 unit and statistical suites pass on `2.x` through B52, as do
 warning-clean GCC 14 and Clang 18 builds and unit suites; CI for these unreleased 1.2.1 fixes remains
 pending.
 

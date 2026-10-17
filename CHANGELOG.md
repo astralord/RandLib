@@ -111,6 +111,12 @@ All notable changes to RandLib are documented here. The project follows
   (B48).
 - Reported geometric entropy in nats consistently with the rest of the API, including its finite
   zero-entropy limit at `p = 1` (B49).
+- Corrected bivariate covariance conversion from correlation, including the trinomial correlation
+  formula and deterministic-marginal behavior (B50).
+- Corrected normal-inverse-gamma marginal scale, conditional sampling scale, joint CDF semantics,
+  and the domain on which correlation is defined (B51).
+- Corrected negative-correlation bivariate-normal CDFs for nonzero second location or nonunit scale,
+  including the exact countermonotonic limit (B52).
 
 ## [2.0.0-beta.1] - 2026-10-17
 
@@ -232,6 +238,15 @@ All notable changes to RandLib are documented here. The project follows
   The improper `p = 0` geometric static sampler is rejected instead of returning the integer limit.
 - **B49** Geometric entropy is now reported in nats, consistently with the rest of the API, and
   uses its finite zero-entropy limit at `p = 1`.
+- **B50** Bivariate covariance matrices now convert correlation with marginal standard deviations
+  rather than variances. Trinomial correlation uses the corresponding square-root formula and is
+  undefined when either marginal is deterministic.
+- **B51** Normal-inverse-gamma marginals and sampling now use the standard conditional variance
+  `sigma_squared / lambda`. Its `F` member now evaluates the joint CDF instead of a density-like
+  expression, and correlation is undefined when its required variances do not exist.
+- **B52** Bivariate-normal CDFs with negative correlation now standardize the reflected second
+  marginal before applying the normal CDF. This also restores the exact countermonotonic limit at
+  correlation `-1` when the second marginal has a nonzero location or nonunit scale.
 
 ## [1.2.0] - 2026-10-17
 

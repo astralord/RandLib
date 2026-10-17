@@ -7,6 +7,8 @@
 #include <randlib/continuous/inverse_gamma.hpp>
 #include <randlib/continuous/student_t.hpp>
 
+#include <algorithm>
+
 namespace randlib
 {
 
@@ -95,7 +97,7 @@ void NormalInverseGammaRand<RealType>::SetParameters(double location, double pre
     beta = this->Y.GetRate();
     this->X.SetDegree(2 * alpha);
     this->X.SetLocation(mu);
-    this->X.SetScale(std::sqrt(alpha * lambda / beta));
+    this->X.SetScale(std::sqrt(beta / (alpha * lambda)));
 
     pdfCoef = 0.5 * std::log(0.5 * lambda / randlib::consts::pi);
     pdfCoef += alpha * this->Y.GetLogRate() - this->Y.GetLogGammaShape();
@@ -131,15 +133,31 @@ double NormalInverseGammaRand<RealType>::F(const Pair<RealType> &point) const
     if (sigmaSq <= 0)
         return 0.0;
     RealType x = point.first;
-    RealType y = 0.5 * lambda;
-    RealType xmmu = x - mu;
-    y *= xmmu * xmmu / sigmaSq;
-    y = std::erfc(-std::sqrt(y));
-    RealType z = beta / sigmaSq;
-    RealType temp = alpha * std::log(z) - z;
-    y *= std::exp(temp - this->Y.GetLogGammaShape());
-    y *= 0.5 / sigmaSq;
-    return y;
+    if (x == -INFINITY)
+        return 0.0;
+    double marginalY = this->Y.F(sigmaSq);
+    if (x == INFINITY)
+        return marginalY;
+    if (sigmaSq == INFINITY)
+        return this->X.F(x);
+    if (x == mu)
+        return 0.5 * marginalY;
+
+    double lower = beta / sigmaSq;
+    double normalCoef = (x - mu) * std::sqrt(lambda / beta);
+    double logGammaAlpha = this->Y.GetLogGammaShape();
+    double shape = alpha;
+    double joint = math::integrate(
+        [lower, normalCoef, logGammaAlpha, shape](double t) {
+            double oneMinusT = 1.0 - t;
+            double u = lower + t / oneMinusT;
+            double logWeight = (shape - 1.0) * std::log(u) - u - logGammaAlpha;
+            logWeight -= 2.0 * std::log(oneMinusT);
+            double conditional = 0.5 * std::erfc(-normalCoef * std::sqrt(0.5 * u));
+            return std::exp(logWeight) * conditional;
+        },
+        0.0, 1.0);
+    return std::clamp(joint, 0.0, std::min(this->X.F(x), marginalY));
 }
 
 template <typename RealType>
@@ -148,7 +166,7 @@ Pair<RealType> NormalInverseGammaRand<RealType>::operator()(G &g) const
 {
     Pair<RealType> var;
     var.second = this->Y(g);
-    double coef = std::sqrt(var.second) / lambda;
+    double coef = std::sqrt(var.second / lambda);
     var.first = mu + coef * detail::standardNormal<RealType>(g);
     return var;
 }
@@ -156,7 +174,7 @@ Pair<RealType> NormalInverseGammaRand<RealType>::operator()(G &g) const
 template <typename RealType>
 long double NormalInverseGammaRand<RealType>::Correlation() const
 {
-    return 0.0;
+    return (alpha > 2.0) ? 0.0 : NAN;
 }
 
 template <typename RealType>

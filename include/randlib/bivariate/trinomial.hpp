@@ -160,9 +160,10 @@ Pair<IntType> TrinomialRand<IntType>::operator()(G &g) const
 template <typename IntType>
 long double TrinomialRand<IntType>::Correlation() const
 {
-    long double logp1 = this->X.GetLogProbability(), logp2 = this->Y.GetLogProbability();
-    long double log1mp1 = this->X.GetLog1mProbability(), log1mp2 = this->Y.GetLog1mProbability();
-    return -std::exp(logp1 + logp2 - log1mp1 - log1mp2);
+    long double p1 = this->X.GetProbability(), p2 = this->Y.GetProbability();
+    if (!(p1 > 0.0L && p1 < 1.0L && p2 > 0.0L && p2 < 1.0L))
+        return NAN;
+    return -std::sqrt(p1 * p2 / ((1.0L - p1) * (1.0L - p2)));
 }
 
 template <typename IntType>
