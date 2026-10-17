@@ -1482,3 +1482,367 @@ and
 Skewness and excess kurtosis are undefined and return NaN. Sampling always returns \f$a\f$.
 `fit<DegenerateRand>` supports MLE for a nonempty sample only when all observations are exactly
 equal; the common observation becomes the fitted point mass.
+
+## Extreme-value and power-tail families
+
+### Pareto distribution (`ParetoRand`)
+
+`ParetoRand(shape, scale)` uses \f$\alpha,\sigma>0\f$ and support \f$[\sigma,\infty)\f$:
+
+\f[
+ f(x)=\frac{\alpha\sigma^\alpha}{x^{\alpha+1}},\qquad
+ F(x)=1-\left(\frac{\sigma}{x}\right)^\alpha,\qquad
+ S(x)=\left(\frac{\sigma}{x}\right)^\alpha.
+\f]
+
+The lower probability is evaluated with `expm1`, while the survival probability is evaluated
+directly. Quantiles and the sampling identity are
+
+\f[
+ Q(p)=\sigma(1-p)^{-1/\alpha},\qquad
+ X=\sigma e^{E/\alpha},\quad E\sim\operatorname{Exponential}(1).
+\f]
+
+Specialized reciprocal and reciprocal-square-root transforms are used when \f$\alpha\f$ is one or
+two. The characteristic function can be written using an upper incomplete gamma function,
+
+\f[
+ \phi(t)=\alpha(-i\sigma t)^\alpha\Gamma(-\alpha,-i\sigma t),
+\f]
+
+but branch conventions make that representation awkward numerically. RandLib instead applies its
+semi-infinite oscillatory quadrature directly to \f$e^{itx}f(x)\f$.
+
+The finite summaries are
+
+\f[
+ \operatorname{E}X=\frac{\alpha\sigma}{\alpha-1}\quad(\alpha>1),
+\qquad
+ \operatorname{Var}X=\frac{\alpha\sigma^2}
+ {\left(\alpha-1\right)^2(\alpha-2)}\quad(\alpha>2),
+\f]
+
+\f[
+ \operatorname{Median}X=\sigma2^{1/\alpha},\qquad
+ \operatorname{Mode}X=\sigma,
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2(\alpha+1)}{\alpha-3}\sqrt{\frac{\alpha-2}{\alpha}}
+ \quad(\alpha>3),
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{6(\alpha^3+\alpha^2-6\alpha-2)}
+ {\alpha(\alpha-3)(\alpha-4)}\quad(\alpha>4),
+ \qquad
+ h(X)=\log\frac{\sigma}{\alpha}+1+\frac1\alpha.
+\f]
+
+Methods whose required moment does not exist report infinity; the variance is undefined and reports
+NaN when even the mean does not exist.
+
+`fit<ParetoRand>` supports MLE and UMVU estimators. Joint MLE sets
+
+\f[
+ \hat\sigma=x_{(1)},\qquad
+ \hat\alpha=\frac{n}{\sum_i\log(x_i/x_{(1)})}.
+\f]
+
+The implementation also retains the historical unbiased corrections for joint or separately fixed
+parameters. With \f$\sigma\f$ fixed, a Gamma \f$(a,b)\f$ shape--rate prior for \f$\alpha\f$ is
+conjugate:
+
+\f[
+ \alpha\mid x\sim\operatorname{Gamma}\left(
+ a+n,\ b+\sum_i\log(x_i/\sigma)\right).
+\f]
+
+The free `fit_bayes` API exposes this conditional update. Hill and Pickands estimators and
+peaks-over-threshold diagnostics are separately available from `randlib/fit/tail.hpp`.
+
+### Weibull distribution (`WeibullRand`)
+
+`WeibullRand(scale, shape)` uses \f$\lambda,k>0\f$. For \f$x\geq0\f$,
+
+\f[
+ f(x)=\frac{k}{\lambda}\left(\frac{x}{\lambda}\right)^{k-1}
+ e^{-(x/\lambda)^k},\qquad
+ F(x)=1-e^{-(x/\lambda)^k},\qquad
+ S(x)=e^{-(x/\lambda)^k}.
+\f]
+
+RandLib handles the finite, zero, or singular density limit at \f$x=0\f$ explicitly. The lower
+probability and quantile use `expm1` and `log1p`:
+
+\f[
+ Q(p)=\lambda[-\log(1-p)]^{1/k},\qquad
+ X=\lambda E^{1/k},\quad E\sim\operatorname{Exponential}(1).
+\f]
+
+Writing \f$g_r=\Gamma(1+r/k)\f$, the raw moments are
+\f$\operatorname{E}X^r=\lambda^r g_r\f$. In particular,
+
+\f[
+ \operatorname{E}X=\lambda g_1,\qquad
+ \operatorname{Var}X=\lambda^2(g_2-g_1^2),
+\f]
+
+\f[
+ \operatorname{Median}X=\lambda(\log2)^{1/k},\qquad
+ \operatorname{Mode}X=
+ \begin{cases}
+  0,&k\leq1,\\
+  \lambda(1-1/k)^{1/k},&k>1,
+ \end{cases}
+\f]
+
+and skewness and excess kurtosis are formed from \f$g_1,\ldots,g_4\f$ using the standard central-
+moment identities. Its entropy is
+
+\f[
+ h(X)=1+\gamma_E(1-1/k)+\log(\lambda/k).
+\f]
+
+For \f$k>1\f$, the characteristic function has the convergent power series
+
+\f[
+ \phi(t)=\sum_{n=0}^{\infty}
+ \frac{\Gamma(1+n/k)}{n!}(i\lambda t)^n.
+\f]
+
+RandLib sums its even and odd parts in the log domain when \f$k\geq1\f$ and
+\f$\lambda|t|\leq1/2\f$; otherwise it uses expectation quadrature. For \f$k<1\f$, where the
+moment series is not convergent, the real integral is split to regularize the density singularity at
+zero and the imaginary part is integrated directly.
+
+`fit<WeibullRand>` performs constrained two-parameter MLE, initialized at the exponential model
+\f$(\lambda,k)=(\bar x,1)\f$. With \f$k\f$ fixed, the MLE is
+
+\f[
+ \hat\lambda=\left(\frac1n\sum_i x_i^k\right)^{1/k}.
+\f]
+
+If \f$\lambda^k\sim\operatorname{InverseGamma}(a,b)\f$, the conditional conjugate posterior is
+
+\f[
+ \lambda^k\mid x\sim\operatorname{InverseGamma}
+ \left(a+n,\ b+\sum_i x_i^k\right),
+\f]
+
+which is exposed by `fit_bayes` with the known shape supplied separately.
+
+### Gumbel distribution (`GumbelRand`)
+
+`GumbelRand(location, scale)` uses \f$\mu\in\mathbb R\f$ and \f$\beta>0\f$. With
+\f$z=(x-\mu)/\beta\f$,
+
+\f[
+ f(x)=\frac1\beta e^{-z-e^{-z}},\qquad
+ F(x)=e^{-e^{-z}},\qquad
+ S(x)=1-e^{-e^{-z}}.
+\f]
+
+The survival function uses `expm1`; upper-tail quantiles use `log1p`. Sampling and the characteristic
+function follow from \f$X=\mu-\beta\log E\f$ for a unit exponential \f$E\f$:
+
+\f[
+ Q(p)=\mu-\beta\log[-\log p],\qquad
+ \phi(t)=e^{i\mu t}\Gamma(1-i\beta t).
+\f]
+
+The class currently evaluates the characteristic function through the common expectation quadrature
+rather than a dedicated complex-gamma path. Its summaries are
+
+\f[
+ \operatorname{E}X=\mu+\beta\gamma_E,\qquad
+ \operatorname{Var}X=\frac{\pi^2\beta^2}{6},
+\f]
+
+\f[
+ \operatorname{Median}X=\mu-\beta\log(\log2),\qquad
+ \operatorname{Mode}X=\mu,
+\f]
+
+\f[
+ \operatorname{Skew}X=\frac{12\sqrt6\,\zeta(3)}{\pi^3},\qquad
+ \operatorname{ExKurt}X=\frac{12}{5},\qquad
+ h(X)=1+\gamma_E+\log\beta.
+\f]
+
+`fit<GumbelRand>` performs constrained MLE, initialized by matching the sample mean and variance to
+the two displayed moments.
+
+### Frechet distribution (`FrechetRand`)
+
+`FrechetRand(shape, scale, location)` uses \f$\alpha,s>0\f$ and \f$m\in\mathbb R\f$, with support
+\f$(m,\infty)\f$. For \f$y=(x-m)/s>0\f$,
+
+\f[
+ f(x)=\frac{\alpha}{s}y^{-1-\alpha}e^{-y^{-\alpha}},\qquad
+ F(x)=e^{-y^{-\alpha}},\qquad
+ S(x)=1-e^{-y^{-\alpha}}.
+\f]
+
+Survival probabilities again use `expm1`. Direct inversion and sampling give
+
+\f[
+ Q(p)=m+s[-\log p]^{-1/\alpha},\qquad
+ X=m+sE^{-1/\alpha},\quad E\sim\operatorname{Exponential}(1).
+\f]
+
+There is no simpler generally useful characteristic-function expression; RandLib uses its
+semi-infinite oscillatory quadrature. Let \f$g_r=\Gamma(1-r/\alpha)\f$. Then
+
+\f[
+ \operatorname{E}X=m+sg_1\quad(\alpha>1),\qquad
+ \operatorname{Var}X=s^2(g_2-g_1^2)\quad(\alpha>2),
+\f]
+
+\f[
+ \operatorname{Median}X=m+s(\log2)^{-1/\alpha},\qquad
+ \operatorname{Mode}X=m+s\left(\frac{\alpha}{1+\alpha}\right)^{1/\alpha}.
+\f]
+
+For \f$\alpha>3\f$ and \f$\alpha>4\f$, respectively,
+
+\f[
+ \operatorname{Skew}X=
+ \frac{g_3-3g_1g_2+2g_1^3}{(g_2-g_1^2)^{3/2}},
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{g_4-4g_1g_3+6g_1^2g_2-3g_1^4}{(g_2-g_1^2)^2}-3,
+ \qquad
+ h(X)=1+\gamma_E(1+1/\alpha)+\log(s/\alpha).
+\f]
+
+`fit<FrechetRand>` performs constrained three-parameter MLE. Its initializer places the location
+slightly below the sample minimum, uses the sample range as scale, and starts with unit shape.
+
+### Generalized extreme-value distribution (`GeneralizedExtremeValueRand`)
+
+`GeneralizedExtremeValueRand(shape, scale, location)` uses finite \f$\xi,\mu\f$ and
+\f$\sigma>0\f$. Define
+
+\f[
+ z=\frac{x-\mu}{\sigma},\qquad T(x)=1+\xi z.
+\f]
+
+For \f$\xi\ne0\f$ and \f$T(x)>0\f$,
+
+\f[
+ F(x)=e^{-T(x)^{-1/\xi}},\qquad
+ f(x)=\frac1\sigma T(x)^{-1-1/\xi}e^{-T(x)^{-1/\xi}}.
+\f]
+
+The support begins at \f$\mu-\sigma/\xi\f$ when \f$\xi>0\f$ and ends there when
+\f$\xi<0\f$. The continuous \f$\xi=0\f$ limit is the Gumbel law above. `log1p` and `expm1`
+forms preserve this parameterization near zero, and survival probabilities are evaluated directly.
+If \f$E\sim\operatorname{Exponential}(1)\f$,
+
+\f[
+ X=
+ \begin{cases}
+  \mu-\sigma\log E,&\xi=0,\\
+  \mu+\dfrac{\sigma}{\xi}(E^{-\xi}-1),&\xi\ne0,
+ \end{cases}
+\f]
+
+which supplies both the sampler and the inverse CDF after replacing \f$E\f$ by
+\f$-\log p\f$. No dedicated closed-form characteristic function is used; the common expectation
+quadrature evaluates \f$\phi(t)=\int e^{itx}f(x)\,dx\f$.
+
+For \f$\xi\ne0\f$, write \f$g_r=\Gamma(1-r\xi)\f$. The finite first two moments are
+
+\f[
+ \operatorname{E}X=\mu+\sigma\frac{g_1-1}{\xi}\quad(\xi<1),
+\qquad
+ \operatorname{Var}X=\frac{\sigma^2}{\xi^2}(g_2-g_1^2)
+ \quad(\xi<1/2).
+\f]
+
+The Gumbel limits are used exactly at \f$\xi=0\f$. For \f$\xi>-1\f$ the mode is
+
+\f[
+ \operatorname{Mode}X=\mu+\frac{\sigma}{\xi}
+ \left[(1+\xi)^{-\xi}-1\right],
+\f]
+
+while for \f$\xi\leq-1\f$ the API returns the finite upper endpoint. Skewness exists for
+\f$\xi<1/3\f$, excess kurtosis for \f$\xi<1/4\f$, and both are formed from
+\f$g_1,\ldots,g_4\f$ by central-moment identities. The entropy is
+
+\f[
+ h(X)=1+\log\sigma+(1+\xi)\gamma_E.
+\f]
+
+`fit<GeneralizedExtremeValueRand>` uses constrained three-parameter MLE initialized at the Gumbel
+moment estimate.
+
+### Generalized Pareto distribution (`GeneralizedParetoRand`)
+
+`GeneralizedParetoRand(shape, scale, location)` uses finite \f$\xi,\mu\f$ and \f$\sigma>0\f$.
+For \f$z=(x-\mu)/\sigma\geq0\f$ and \f$T=1+\xi z>0\f$,
+
+\f[
+ S(x)=T^{-1/\xi},\qquad
+ F(x)=1-T^{-1/\xi},\qquad
+ f(x)=\frac1\sigma T^{-1-1/\xi}.
+\f]
+
+At \f$\xi=0\f$ these reduce continuously to the shifted exponential law. Negative shape gives the
+finite upper endpoint \f$\mu-\sigma/\xi\f$; nonnegative shape gives an infinite right tail.
+`log1p`, `expm1`, and direct survival evaluation protect the small-shape and far-tail cases.
+Sampling and quantiles use
+
+\f[
+ X=
+ \begin{cases}
+  \mu+\sigma E,&\xi=0,\\
+  \mu+\dfrac{\sigma}{\xi}(e^{\xi E}-1),&\xi\ne0,
+ \end{cases}
+ \qquad E\sim\operatorname{Exponential}(1).
+\f]
+
+The characteristic function is evaluated as the defining expectation by the common quadrature.
+The moments and summaries implemented by the class are
+
+\f[
+ \operatorname{E}X=\mu+\frac{\sigma}{1-\xi}\quad(\xi<1),
+\qquad
+ \operatorname{Var}X=\frac{\sigma^2}{(1-\xi)^2(1-2\xi)}
+ \quad(\xi<1/2),
+\f]
+
+\f[
+ \operatorname{Median}X=
+ \begin{cases}
+  \mu+\sigma\log2,&\xi=0,\\
+  \mu+\dfrac{\sigma}{\xi}(2^\xi-1),&\xi\ne0,
+ \end{cases}
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2(1+\xi)\sqrt{1-2\xi}}{1-3\xi}\quad(\xi<1/3),
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{3(1-2\xi)(2\xi^2+\xi+3)}{(1-3\xi)(1-4\xi)}-3
+ \quad(\xi<1/4),
+ \qquad h(X)=1+\xi+\log\sigma.
+\f]
+
+The density is decreasing for \f$\xi>-1\f$, so its mode is \f$\mu\f$. At \f$\xi=-1\f$ it is
+constant and the API returns \f$\mu\f$ as a representative mode; for \f$\xi<-1\f$ it increases
+toward the finite endpoint and the API returns that endpoint.
+
+`fit<GeneralizedParetoRand>` treats its input as nonnegative exceedances, fixes \f$\mu=0\f$, and
+performs constrained two-parameter MLE with \f$\xi>-1/2\f$. A moment estimate initializes the
+optimizer. The peaks-over-threshold helper in `randlib/fit/tail.hpp` subtracts the chosen threshold
+before invoking this fit.
