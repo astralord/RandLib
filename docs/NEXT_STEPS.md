@@ -297,6 +297,30 @@ posterior proportional to
 family. No `fit_bayes<StableRand>` overload was added. See [stable-count.md](stable-count.md) for the
 derivation and the proposed future research scope.
 
+Substantive Phase 6 commits before this handoff update, oldest first:
+
+```text
+6cf19da Add Stable Count reference oracle
+4bc6655 Implement Stable Count distribution
+66f6d08 Document Stable Count and conjugacy outcome
+```
+
+Validation on the current pod passed with GCC 13, GCC 14, and Clang 18 Release builds under
+`RANDLIB_WARNINGS_AS_ERRORS=ON`. The complete GCC 14 unit binary passed 1,022,193 assertions in 120
+cases; the complete statistical binary passed 235 assertions in 54 cases. Focused Stable Count
+unit/MLE, Tier 2 reference, and representative-alpha sampling filters also pass. The mpmath cache
+verification reproduces all 218 committed values exactly. The pinned Clang 18 formatting hook,
+blocking Clang-Tidy explicit-instantiation run, standalone public-header compile, deterministic
+single-header compile/run, hidden-state scan, release-note parser, strict Doxygen build, and
+`git diff --check` all pass. MSVC and AppleClang remain CI-only until the maintainer pushes.
+
+The branch is ready for review and for merge after v2.1. The maintainer push command is:
+
+```sh
+cd /root/RandLib
+git push origin stable-count:refs/heads/stable-count
+```
+
 ## 4. Things that need the maintainer
 
 Plan 0.1 and 0.5 (tracking issue, milestones), closing issues (#11 and others as they are fixed),
