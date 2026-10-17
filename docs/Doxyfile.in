@@ -10,6 +10,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/migration-v2.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/packaging.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/parallel-sampling.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/reference \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/stable-distributions.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/include/randlib
 FILE_PATTERNS          = *.hpp *.md
@@ -36,6 +37,10 @@ DISABLE_INDEX          = NO
 HTML_EXTRA_STYLESHEET  = @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome.css \
                          @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome-sidebar-only.css
 GENERATE_LATEX         = NO
+USE_MATHJAX            = YES
+MATHJAX_VERSION        = MathJax_3
+MATHJAX_FORMAT         = chtml
+MATHJAX_EXTENSIONS     = ams
 DOT_GRAPH_MAX_NODES    = 100
 QUIET                  = YES
 JAVADOC_AUTOBRIEF      = YES

@@ -77,6 +77,7 @@ The project also supplies a vcpkg overlay port and a Conan 2 recipe. Build contr
 ## Learn more
 
 - [API reference](https://astralord.github.io/RandLib/)
+- [Distribution and numerical-method reference](docs/reference/index.md)
 - [Fitting distributions](docs/fitting.md)
 - [Parallel sampling and streams](docs/parallel-sampling.md)
 - [Stable distributions](docs/stable-distributions.md)

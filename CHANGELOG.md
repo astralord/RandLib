@@ -5,6 +5,11 @@ All notable changes to RandLib are documented here. The project follows
 
 ## [2.1.0] - Unreleased
 
+### Documentation
+
+- Began a current mathematical reference for every public distribution, with TeX definitions,
+  moments, transforms, sampling and numerical-method notes rendered through MathJax in Doxygen.
+
 ### Stable distributions
 
 - Added Nolan's S0 parameterization alongside the source-compatible S1 default. Constructors,
