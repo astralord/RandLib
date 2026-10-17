@@ -45,6 +45,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B50** Bivariate covariance matrices now convert correlation with marginal standard deviations
   rather than variances. Trinomial correlation uses the corresponding square-root formula and is
   undefined when either marginal is deterministic.
+- **B51** Normal-inverse-gamma marginals and sampling now use the standard conditional variance
+  `sigma_squared / lambda`. Its `F` member now evaluates the joint CDF instead of a density-like
+  expression, and correlation is undefined when its required variances do not exist.
 
 ## [1.2.0] - 2026-10-17
 

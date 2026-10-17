@@ -557,3 +557,33 @@ TEST_CASE("B50: bivariate covariance uses marginal standard deviations", "[regre
     CHECK(std::isnan(degenerate.Correlation()));
     CHECK(std::get<1>(degenerate.Covariance()) == 0);
 }
+
+TEST_CASE("B51: normal-inverse-gamma marginals, sampling and joint CDF agree", "[regression]")
+{
+    NormalInverseGammaRand<double> distribution(2, 3, 4, 2);
+    const auto marginals = distribution.GetMarginalDistributions();
+    CHECK_THAT(marginals.first.GetScale(), WithinRel(std::sqrt(1.0 / 6.0), 1e-15));
+    const LongDoubleTriplet covariance = distribution.Covariance();
+    CHECK_THAT(static_cast<double>(std::get<0>(covariance)), WithinRel(2.0 / 9.0, 1e-15));
+    CHECK(std::get<1>(covariance) == 0);
+    CHECK_THAT(static_cast<double>(std::get<2>(covariance)), WithinRel(2.0 / 9.0, 1e-15));
+
+    const double sigmaSq = 1.0;
+    CHECK_THAT(distribution.F({2.0, sigmaSq}), WithinRel(0.5 * marginals.second.F(sigmaSq), 1e-15));
+    CHECK_THAT(distribution.F({1.0, sigmaSq}), WithinAbs(0.009262835921861568182061857402, 5e-11));
+    CHECK_THAT(distribution.F({3.0, sigmaSq}), WithinAbs(0.8478606245766854804799349441, 5e-11));
+    CHECK(distribution.F({-INFINITY, sigmaSq}) == 0);
+    CHECK(distribution.F({INFINITY, sigmaSq}) == marginals.second.F(sigmaSq));
+    CHECK(distribution.F({1.0, INFINITY}) == marginals.first.F(1.0));
+
+    distribution.Reseed(42);
+    InverseGammaRand<double> inverseGamma(4, 2);
+    inverseGamma.Reseed(RandEngine::DeriveSeed(42, 2));
+    RandGenerator normalGenerator;
+    normalGenerator.Reseed(42);
+    const double expectedSigmaSq = inverseGamma.Variate();
+    const double expectedX = 2 + std::sqrt(expectedSigmaSq / 3) * NormalRand<double>::StandardVariate(normalGenerator);
+    CHECK(distribution.Variate() == std::make_pair(expectedX, expectedSigmaSq));
+
+    CHECK(std::isnan(NormalInverseGammaRand<double>(0, 1, 1, 1).Correlation()));
+}

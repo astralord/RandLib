@@ -59,6 +59,8 @@ GeometricRand(0.3),Quantile1m,0.69999999999999996,skip,"B34: S(0) = 0.7 exactly,
 YuleRand(3),Quantile1m,0.050000000000000003,skip,"B34: S(3) = 3! 3! / 6! = 0.05 exactly, so the quantile is 3"
 "TrinomialRand(10, 0.2, 0.3)",Cov12,,skip,B50: exact multinomial covariance is -n p1 p2 = -0.6
 "TrinomialRand(10, 0.2, 0.3)",Correlation,,skip,B50: exact correlation is -sqrt(p1 p2 / ((1-p1)(1-p2))) = -sqrt(3/28)
+"NormalInverseGammaRand(0, 1, 1, 1)",Correlation,,skip,B51: correlation is undefined because the marginal variances are infinite
+"NormalInverseGammaRand(2, 3, 4, 2)",Cov11,,skip,B51: exact marginal variance is beta / (lambda (alpha - 1)) = 2/9
 "ArcsineRand(0.3, -1, 3)",CF_im,0.10000000000000001,skip,v1.1 value off by 7.5e-08 relative to the mpmath reference; now 1.3e-14
 "ArcsineRand(0.3, -1, 3)",CF_im,0.5,skip,v1.1 value off by 8.9e-08 relative to the mpmath reference; now 4.2e-14
 "ArcsineRand(0.3, -1, 3)",CF_im,1,skip,v1.1 value off by 1.2e-06 relative to the mpmath reference; now 1.3e-13
