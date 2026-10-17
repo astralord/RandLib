@@ -81,6 +81,7 @@ The project also supplies a vcpkg overlay port and a Conan 2 recipe. Build contr
 - [Fitting distributions](docs/fitting.md)
 - [Parallel sampling and streams](docs/parallel-sampling.md)
 - [Stable distributions](docs/stable-distributions.md)
+- [Stable Count distribution](docs/reference/distributions/stable-count.md)
 - [Accuracy and reference-data policy](docs/accuracy-policy.md)
 - [v1 to v2 migration](docs/migration-v2.md)
 - [Packaging and the single header](docs/packaging.md)

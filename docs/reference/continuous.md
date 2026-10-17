@@ -6,7 +6,7 @@ visible. The detailed entries are being migrated from the archived notes and che
 headers; no legacy accuracy statement is retained without current code or test evidence.
 
 <div class="reference-callout">
-  <strong>47 focused entries</strong>
+  <strong>48 focused entries</strong>
   <span>Choose a family below; each distribution opens on its own page with definitions, formulas, numerical methods, and fitting notes.</span>
 </div>
 
@@ -331,6 +331,12 @@ headers; no legacy accuracy statement is retained without current code or test e
     <a href="stable_distribution.html"><strong>Stable distribution</strong></a>
     <code>StableRand</code>
     <span class="distribution-card__meta">Density/mass and CDF plots</span>
+  </div>
+  <div class="distribution-card">
+    <span class="distribution-card__kind">Continuous</span>
+    <a href="stable_count_distribution.html"><strong>Stable Count distribution</strong></a>
+    <code>StableCountRand</code>
+    <span class="distribution-card__meta">Formula reference</span>
   </div>
   <div class="distribution-card">
     <span class="distribution-card__kind">Continuous</span>

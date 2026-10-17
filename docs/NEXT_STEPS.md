@@ -15,8 +15,7 @@ Written so that work can resume with no other context. Read together with
   | Path | Branch | Pushed as | Contents |
   |---|---|---|---|
   | `/root/RandLib-1.x` | `history` | `origin/1.x` | v1.2: C++17, original layout, fixes, CMake, tests, CI |
-  | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20 (Phases 2–5 landed) |
-  | `/root/RandLib-stable-count` | `stable-count` | `origin/stable-count` | isolated completed Phase 6 work for v2.2; merge only after the v2.0/v2.1 release line is ready |
+  | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20; Phases 2–6 landed |
 
 - The agent's GitHub account (`nebius-llm-robot`) has pull access only. **The maintainer pushes**, from a
   VS Code terminal on the pod:
@@ -76,6 +75,11 @@ longer running. Exhaustive skewed α=1 stable and geometric-stable generation wa
 40-digit former-gap and geometric-tail references were committed instead. The cache can be reused if
 the exhaustive grid is revisited, but no reference job is currently running and this is not a release
 gate.
+
+Stable Count has a separate bounded five-case grid and resumable cache. Regenerate and verify it
+with the exact commands in the
+[Stable Count reference](reference/distributions/stable-count.md#independent-reference-data). The
+committed table contains 218 values generated with mpmath 1.3.0; no cache file belongs in Git.
 
 ## 3. Immediate next actions
 
@@ -206,6 +210,10 @@ deployment; fitting, streams, stable-law, accuracy, packaging and migration guid
 legacy LaTeX source with its generated PDF removed. Five warning-clean examples (standard engine,
 parallel streams, model selection, stable fitting and Bayesian update) build and run through CTest.
 
+The first stable candidate is cumulative: Phases 5 and 6 completed before the v2.0 release gate and
+are now merged into `2.x`, so their notes are included in the `2.0.0` changelog section. Do not mint
+separate `v2.1.0` or `v2.2.0` tags for the same commit.
+
 Packaging is also landed and locally validated. `packaging/vcpkg/randlib` installs the current checkout
 as an overlay and its installed `RandLib::RandLib` target built the consumer example with vcpkg
 2026-09-26. `conan create . --build=missing` passed with Conan 2.33.0, packaging all 95 headers and
@@ -215,19 +223,19 @@ The release workflow compiles that artifact, extracts the exact tag's changelog 
 the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
 final release archive and checksum.
 
-Documentation run 39021654307 builds and deploys successfully from `2.x`. The public site at
-<https://astralord.github.io/RandLib/> serves that deployment, so task 4.1 is complete.
+Documentation run 39063924387 builds and deploys the redesigned reference successfully from `2.x`.
+The public site at <https://astralord.github.io/RandLib/> serves that deployment, so task 4.1 is
+complete.
 
-The mathematical reference on `2.x` replaces the incomplete legacy notes with 69 focused
+The mathematical reference on `2.x` replaces the incomplete legacy notes with 70 focused
 distribution pages and card-based continuous, discrete, bivariate, circular and singular family
 indexes. Each entry records the law, support, transforms, moments and the numerical methods actually
 used by v2. Twenty-seven entries publish 54 density, mass and CDF plots from the verified legacy
 set. The `randlib_docs` target compares `tests/support/cases.inc` with the complete recursive
 reference, builds Doxygen with warnings as errors, copies the plot assets, and validates generated
-page titles, MathJax delimiters, card links and images; it currently covers all 73 registered public
-names. Stable Count already has a detailed standalone guide on its isolated v2.2 branch; add its
-focused TeX reference page when that implementation is merged rather than advertising an API that
-is not yet present on `2.x`.
+page titles, MathJax delimiters, card links and images; it currently covers all 74 registered public
+names. Stable Count is integrated as a focused TeX reference page with definitions, transforms,
+moments, numerical methods, fitting, and the conjugacy-research result.
 
 The first tag runs exposed two release-workflow gaps: alpha and beta were published as ordinary
 GitHub releases, and an RC tag had no exact changelog heading. The local release-tooling fix marks
@@ -287,30 +295,35 @@ skewed short-tail quantiles portable on binary64-only platforms.
 
 ### 3.6 Phase 6: Stable Count and stable-prior research (v2.2)
 
-Stable Count integration is complete on the isolated `stable-count` branch and is deliberately not
-merged into `2.x` until the v2.0/v2.1 release work is complete. The starting evidence was experimental commit
+Stable Count integration is merged into `2.x`. The starting evidence was experimental commit
 [`c070098`](https://github.com/astralord/RandLib/commit/c0700988a88767cde9967b41e0cc459b8434cc6a)
-and Lihn's revised [Wright-function paper](https://arxiv.org/abs/2405.04693). The commit must not be
-ported mechanically: its sampler stops a positive-stable renewal sum at the arbitrary value
-`100000`, discards stable draws above `100000`, and uses mutable static state. It also carries the
-old `[0.1, 1)` and near-one limitations that Phase 5 removed from the stable kernel.
+and Lihn's revised [Wright-function paper](https://arxiv.org/abs/2405.04693). The experimental code
+was not ported mechanically: its finite renewal cutoff, discarded large stable draws, mutable static
+state, and old stable-kernel limitations are absent from the new implementation.
 
-Task 6.1 produced a fresh Tier 2 `StableCountRand` implementation from
-`N_alpha(x) = L_alpha(1/x) / (Gamma(1/alpha + 1) x)`, with explicit location/scale semantics,
-direct tails, quantiles, exact log-gamma moments, the `alpha = 1/2` Gamma reduction, a validated
-standard-URBG inverse-CDF sampler, a 218-value independent 40-digit Wright-series table and generic
-MLE with fixed parameters. GCC 13/14 and Clang 18 warnings-as-errors builds, 1,022,193 unit
-assertions, 235 statistical assertions, clang-tidy, formatting, header, single-header and Doxygen
-checks pass on that branch. It remains Tier 2; the paper's four-parameter generalized Stable Count
-family is a later proposal, not part of this first slice.
+`StableCountRand<Real>` implements the location-scale core law for `0 < alpha < 1`, with explicit
+location/scale semantics, direct tails, quantiles, exact log-gamma moments, the `alpha = 1/2` Gamma
+reduction, a standard-URBG inverse-CDF sampler, a 218-value independent 40-digit Wright-series table,
+and constrained generic MLE. The independent oracle covers exponents `0.2`, `0.5`, `0.8`, and
+`0.95`, a location-scale case, both tails, quantiles, and moments. The four-parameter generalized
+Stable Count family remains outside this first implementation.
 
-Task 6.2 is complete as investigated but not established. The paper supplies no normalized
-likelihood or posterior update. In the exact `alpha = 1/2` case, the natural stable-subordinator
-scale likelihood produces a quadratic exponential term and changes the power of the parameter, so
-the posterior leaves the core location-scale Stable Count family. The branch therefore keeps Stable
-Count standalone and adds no misleading `fit_bayes<StableRand>` overload; `docs/stable-count.md`
-records the derivation and distinguishes product, renewal and subordination identities from Bayesian
-conjugacy.
+The Phase 6.2 research gate is complete as **investigated but not established**. The paper provides
+no normalized likelihood or posterior update. In the exact `alpha = 1/2` case, the natural
+stable-subordinator scale likelihood produces a quadratic exponential term and changes the power of
+the parameter, so the posterior leaves the core location-scale Stable Count family. No misleading
+`fit_bayes<StableRand>` overload was added. The focused
+[Stable Count reference](reference/distributions/stable-count.md) records the derivation and
+distinguishes product, renewal, and subordination identities from Bayesian conjugacy.
+
+On the merged tree, GCC 13/14 and Clang 18 warnings-as-errors builds each pass 1,022,939 unit
+assertions in 137 cases. The complete statistical suites pass 235 assertions in 54 cases with each
+compiler; after the exact half-Gamma moment portability refinement, the rebuilt focused Stable Count
+sampling check also passes with all three. A fresh five-case mpmath generation reproduces all 218
+committed 40-digit values exactly. Formatting, Clang-Tidy, precompiled and single-header builds,
+hidden-state, release-note, and strict Doxygen gates pass. Pre-merge CI run 39063924326 confirms the
+tail correction on MSVC but exposed the Apple half-moment rounding issue fixed in the merge; require
+the complete exact-head matrix after pushing before tagging the release candidate.
 
 ## 4. Things that need the maintainer
 

@@ -168,6 +168,8 @@ class StableDistribution;
 template <typename RealType = double>
 class StableRand;
 template <typename RealType = double>
+class StableCountRand;
+template <typename RealType = double>
 class HoltsmarkRand;
 template <typename RealType = double>
 class LandauRand;

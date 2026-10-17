@@ -5,7 +5,7 @@ evaluate and sample them. It is the current counterpart of the archived 1.x `doc
 legacy source remains useful historical material, but statements here are checked against the v2
 headers and tests.
 
-RandLib currently exposes 71 concrete distribution classes: 49 continuous, 16 discrete, three
+RandLib currently exposes 72 concrete distribution classes: 50 continuous, 16 discrete, three
 bivariate, two circular and one singular. Related classes that share one mathematical family are
 documented together. Internal base classes are discussed only when their parameterization or
 algorithm affects a public law.
@@ -14,7 +14,7 @@ algorithm affects a public law.
 
 <div class="distribution-grid">
   <div class="distribution-card">
-    <span class="distribution-card__kind">49 C++ types · 47 entries</span>
+    <span class="distribution-card__kind">50 C++ types · 48 entries</span>
     <a href="continuous_distribution_reference.html"><strong>Continuous distributions</strong></a>
     <span>Densities, tails, quantiles, moments, samplers, and fitting.</span>
     <span class="distribution-card__meta">12 mathematical families</span>

@@ -616,6 +616,34 @@ TEST_CASE("Stable MLE refines the McCulloch estimate", "[fit][stable]")
     CHECK_THAT(result.distribution.GetLocation(), WithinAbs(0.5, 0.25));
 }
 
+TEST_CASE("Stable Count MLE supports free and fixed parameters", "[fit][stable-count]")
+{
+    using Distribution = StableCountRand<double>;
+    constexpr int sampleSize = 80;
+    const Distribution reference(0.5, 1.75, -0.4);
+    std::vector<double> sample;
+    sample.reserve(sampleSize);
+    for (int i = 0; i < sampleSize; ++i)
+        sample.push_back(reference.Quantile((i + 0.5) / sampleSize));
+
+    FitOptions fixedOptions;
+    fixedOptions.fixed = {{"exponent", 0.5}, {"location", -0.4}};
+    auto fixed = fit<Distribution>(sample, fixedOptions);
+    REQUIRE(fixed.converged);
+    CHECK(fixed.fixed == std::vector<bool>{true, false, true});
+    CHECK_THAT(fixed.distribution.GetScale(), WithinRel(1.75, 0.02));
+
+    FitOptions freeOptions;
+    freeOptions.max_iterations = 300;
+    auto free = fit<Distribution>(sample, freeOptions);
+    REQUIRE(free.converged);
+    CHECK_THAT(free.distribution.GetExponent(), WithinAbs(0.5, 0.08));
+    CHECK_THAT(free.distribution.GetScale(), WithinRel(1.75, 0.15));
+    CHECK_THAT(free.distribution.GetLocation(), WithinAbs(-0.4, 0.2));
+
+    CHECK_THROWS_AS(fit<Distribution>(std::array{1.0, 1.0, 1.0}), fit_error);
+}
+
 TEST_CASE("Log-stable fitting applies the stable estimator to logarithms", "[fit][stable][log-stable]")
 {
     using Distribution = LogStableRand<double>;

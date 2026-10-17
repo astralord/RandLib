@@ -57,8 +57,8 @@ Progress against this plan is tracked in [ROADMAP_STATUS.md](ROADMAP_STATUS.md).
 | 2. Modern architecture | Header-only C++20, URBG interop, no hidden state, API cleanup, numerical building blocks | **v2.0-alpha** | 10–15 days |
 | 3. Fitting and features | Unified fitting API, goodness of fit, tail estimators, extreme-value laws | **v2.0-beta** | 10–14 days |
 | 4. Docs and packaging | Docs site, examples, migration guide, vcpkg/Conan, benchmarks | **v2.0** | 4–6 days |
-| 5. Hard numerics | Stable laws near α = 1, heavy-tailed characteristic functions, Marcum Q, noncentral t, log-stable | **v2.1** | 15–25 days |
-| 6. Stable-count family | Stable Count distribution, validated sampling, and a rigorous stable-prior investigation | **v2.2** | 5–8 days |
+| 5. Hard numerics | Stable laws near α = 1, heavy-tailed characteristic functions, Marcum Q, noncentral t, log-stable | **v2.0 cumulative** | 15–25 days |
+| 6. Stable-count family | Stable Count distribution, validated sampling, and a rigorous stable-prior investigation | **v2.0 cumulative** | 5–8 days |
 
 \* One person's focused working days. Phases 5 and 6 contain research-grade work and their uncertain
 items are time-boxed.
@@ -67,6 +67,10 @@ Dependencies: 0 → 1 → 2 → 3 → 4 → 5 → 6. Phase 5 starts only when th
 Phases 2–4 is done. Phase 6 follows the stable-law kernel completed in Phase 5. Until then, numerical
 problems that need research are recorded (as an issue and, where a test must be relaxed, in
 `tests/data/reference_tolerances.csv`) and left for the corresponding research phase.
+
+Phases 5 and 6 were completed before the first stable v2 release. By maintainer decision their
+scope is folded into the cumulative `v2.0.0` candidate rather than creating multiple version tags
+for the same development line. The phase headings retain their original target versions as history.
 
 ---
 
@@ -411,8 +415,9 @@ Measured today: noncentral χ² CDF relative error of 2×10⁻⁴ in the bulk an
 - [ ] `LogStableRand` as the exponential of a stable variable: sampling, pdf, cdf, quantile, median and mode by transformation. Only allowed for β=−1 when moments are needed. Document that for other β no moments exist.
 - [ ] **No characteristic function** in v2.0. `CF()` throws `not_implemented` with an explanation. Revisit on demand.
 
-**Phase 5 done when:** #1, #4, #5, #6, #7 and #10 are closed or explicitly moved on under their time-box
-rules; accuracy targets are met in CI; and v2.1.0 is tagged.
+**Phase 5 done when:** #1, #4, #5, #6, #7 and #10 are closed or explicitly moved on under their
+time-box rules; accuracy targets are met in CI; and the work is included in a tagged stable v2
+release.
 
 ---
 
@@ -450,15 +455,14 @@ published density and the Phase 5 stable kernel.
 
 ### 6.2 Stable-prior semantics (time-boxed: 2–3 days)
 
-- [x] Formalize the claimed "conjugate prior" before adding an API: identify the random quantity
-  (count, count root, scale or reciprocal scale), write the normalized likelihood, and derive the
-  posterior hyperparameter update for an arbitrary sample size. Distinguish Bayesian conjugacy from
-  the paper's inverse-variable, product-mixture and subordination identities.
-- [x] Evaluate a `fit_bayes` overload for `StableRand`, adding it only if the posterior remains in
-  the Stable Count family and the supported stable parameterization is explicit. Verify
-  normalization, posterior moments and posterior-predictive values against high-precision
-  quadrature, including the `alpha = 1/2` special case.
-- [x] If posterior closure cannot be proved within the time box, keep `StableCountRand` as a
+- [x] Investigate the claimed "conjugate prior" before adding an API: search for the random quantity
+  (count, count root, scale or reciprocal scale), normalized likelihood, and arbitrary-sample
+  posterior update. The source specifies none of these; distinguish its inverse-variable,
+  product-mixture and subordination identities from Bayesian conjugacy.
+- [x] Do not add a `fit_bayes` overload for `StableRand`: the paper does not specify a normalized
+  likelihood or posterior update, and the exact `alpha = 1/2` natural stable-subordinator scale
+  likelihood provides a counterexample to closure in the core location-scale Stable Count family.
+- [x] Because posterior closure was not proved within the time box, keep `StableCountRand` as a
   standalone distribution and document the subordination relation without calling it a conjugate
   Bayesian prior. Record the missing derivation as a research issue rather than exposing a
   misleading closed-form update.
@@ -467,15 +471,16 @@ The generalized Stable Count family `(alpha, sigma, d, p)` from the 2025 revisio
 follow-up, not part of the first implementation. It should be proposed separately after the core
 Wright-function evaluation and sampler are independently validated.
 
-The implementation and research gates above are complete on the isolated `stable-count` branch.
+The implementation and research gates above are complete and merged into `2.x`.
 The exact half-stable case shows that the natural stable-subordinator scale likelihood does not
 preserve the core location-scale Stable Count family, so the conditional `fit_bayes` task completed
-with no overload. The branch remains isolated until the v2.0/v2.1 release line is ready; merging,
-adding the distribution to the TeX reference and tagging `v2.2.0` remain release work.
+with no overload. Stable Count is part of the focused TeX reference; exact-head CI and release
+tagging remain release work.
 
-**Phase 6 done when:** the core Stable Count distribution has reference-backed probability functions,
-moments, fitting and a validated standard-URBG sampler; the Bayesian-conjugacy claim is either proved
-and implemented or explicitly scoped to a non-Bayesian subordination identity; and v2.2.0 is tagged.
+**Phase 6 done when:** the core Stable Count distribution has reference-backed probability
+functions, moments, fitting and a validated standard-URBG sampler; the Bayesian-conjugacy claim is
+either proved and implemented or explicitly scoped to a non-Bayesian subordination identity; and
+the work is included in a tagged stable v2 release.
 
 ---
 
@@ -567,7 +572,7 @@ Measured on the baseline commit with GCC 13.3 and Clang 18. These are the number
 - **Bivariate:** NormalInverseGamma (as a conjugate prior)
 
 **Tier 2** (tested for coherence and sampling, best-effort accuracy):
-- **Continuous:** ExponentiallyModifiedGaussian, IrwinHall, KolmogorovSmirnov, MarchenkoPastur, Nakagami, Planck, RaisedCosine, Sech, Triangular, WignerSemicircle, Degenerate, Rice (new, via 3.5), StableCount (planned in Phase 6)
+- **Continuous:** ExponentiallyModifiedGaussian, IrwinHall, KolmogorovSmirnov, MarchenkoPastur, Nakagami, Planck, RaisedCosine, Sech, Triangular, WignerSemicircle, Degenerate, Rice (new, via 3.5), StableCount (new, via Phase 6)
 - **Discrete:** BetaBinomial, Categorical, HyperGeometric, NegativeHyperGeometric, Logarithmic, Rademacher, Skellam, Yule, Zeta, Zipf
 - **Circular:** VonMises, WrappedExponential
 - **Singular:** Cantor
@@ -579,6 +584,9 @@ Measured on the baseline commit with GCC 13.3 and Clang 18. These are the number
 
 ## Revision history
 
+- **2026-10-17:** completed the Phase 6 engineering and research gates. Stable Count ships as a
+  reference-backed Tier 2 distribution; Bayesian conjugacy remains unestablished and no Bayes API
+  was added after the half-stable closure counterexample.
 - **2026-10-17:** added Phase 6 for a clean Stable Count implementation based on the published
   Wright-function definition and for a separately gated investigation of the claimed stable-law
   conjugate-prior semantics. The 2021 experimental sampler is retained as design evidence only.

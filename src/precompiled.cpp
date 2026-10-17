@@ -56,6 +56,7 @@ template class randlib::RiceRand<double>;
 template class randlib::SechRand<double>;
 template class randlib::StableDistribution<double>;
 template class randlib::StableRand<double>;
+template class randlib::StableCountRand<double>;
 template class randlib::HoltsmarkRand<double>;
 template class randlib::LandauRand<double>;
 template class randlib::StudentTRand<double>;

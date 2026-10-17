@@ -3,13 +3,35 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
-## [2.1.0] - Unreleased
+## [2.0.0] - Unreleased
 
-### Documentation
+### Stable Count
+
+- Added the Tier 2 `StableCountRand<Real>` location-scale distribution for `0 < alpha < 1`, with
+  Wright/one-sided-stable density evaluation, direct reciprocal-stable probability tails, TOMS 748
+  quantiles, log-gamma moments, standard-URBG inverse sampling, and an exact
+  `Gamma(shape=3/2, scale=4)` half-stable fast path.
+- Added constrained maximum-likelihood fitting with fixed exponent, scale, or location; seeded
+  recovery and representative-alpha sampling checks; and a 218-value independent 40-digit mpmath
+  reference table covering central values, both tails, moments, and location-scale behavior.
+- Made the Stable Count oracle solve quantiles with guard precision and serialize exactly 40
+  significant digits, so a fresh five-case generation reproduces the committed table.
+- Switched moderate upper probabilities to the direct reciprocal-stable survival integral instead
+  of subtracting the lower CDF. This retains the one-percent tail on binary64-only extended-
+  precision platforms and restores portable `alpha = 0.2` upper quantiles.
+- Evaluated the first four exact half-Gamma raw moments without a log-gamma round trip, keeping
+  derived variance and kurtosis portable on Apple platforms where `long double` is binary64.
+- Extended `StableRand`'s valid exponent range from `[0.1, 2]` to `(0, 2]`, removing the historical
+  lower cutoff needed by the complete Stable Count parameter range.
+- Investigated the paper's "conjugate prior" claim and did not add a Bayesian overload. The paper
+  does not define the likelihood parameter or posterior update, and the exact half-stable natural
+  scale likelihood does not remain in the core Stable Count family.
+
+### Mathematical reference
 
 - Added a current mathematical reference for every public distribution, with TeX definitions,
   moments, transforms, sampling and numerical-method notes rendered through MathJax in Doxygen.
-  Sixty-nine focused distribution pages replace the monolithic category chapters, family landing
+  Seventy focused distribution pages replace the monolithic category chapters, family landing
   pages provide card navigation, and 54 density, mass and CDF plots from the verified legacy set are
   published with responsive styling. The strict docs target validates page structure, card links,
   plot assets, TeX delimiters and rendered titles.
@@ -70,8 +92,6 @@ All notable changes to RandLib are documented here. The project follows
 - Reduced the stable-law tangent argument, made quarter-turn tangent and inverse-tangent values
   exact, and evaluated the finite totally skewed integration-endpoint limit analytically. Short-tail
   quantiles now agree on platforms where `long double` is binary64.
-
-## [2.0.0] - Unreleased
 
 ### Documentation
 

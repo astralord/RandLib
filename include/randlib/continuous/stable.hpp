@@ -613,9 +613,9 @@ RealType StableDistribution<RealType>::MaxValue() const
 template <typename RealType>
 void StableDistribution<RealType>::parametersVerification(double exponent, double skewness, double scale)
 {
-    if (!(exponent >= 0.1 && exponent <= 2.0))
+    if (!(exponent > 0.0 && exponent <= 2.0))
         throw std::invalid_argument(
-            "Stable distribution: exponent should be in the interval [0.1, 2], but it's equal to " +
+            "Stable distribution: exponent should be in the interval (0, 2], but it's equal to " +
             std::to_string(exponent));
     if (!(std::fabs(skewness) <= 1.0))
         throw std::invalid_argument(

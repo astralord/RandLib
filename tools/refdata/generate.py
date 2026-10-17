@@ -36,14 +36,14 @@ def fmt_arg(x):
     return "%.17g" % x
 
 
-def fmt_value(v):
+def fmt_value(v, digits=25):
     if isinstance(v, mp.mpc):
         raise TypeError("complex value")
     if mp.isnan(v):
         return "nan"
     if mp.isinf(v):
         return "inf" if v > 0 else "-inf"
-    return mp.nstr(v, 25, min_fixed=-100, max_fixed=100) if v != 0 else "0"
+    return mp.nstr(v, digits, min_fixed=-100, max_fixed=100) if v != 0 else "0"
 
 
 def parse_case(case_id):
@@ -79,6 +79,11 @@ def golden_cases():
         "LogStableRand(0.5, -1, 1, 0)": {"x": ["0", "0.001", "0.1", "0.5", "0.9", "1"]},
         "LogStableRand(1, -1, 0.5, 0.25)": {"x": ["0", "0.01", "0.1", "0.5", "1", "2", "10"]},
         "LogStableRand(1.5, -1, 0.5, 0.25)": {"x": ["0", "0.01", "0.1", "0.5", "1", "2", "10"]},
+        "StableCountRand(0.2, 1, 0)": {"x": ["0", "0.1", "1", "10", "100"]},
+        "StableCountRand(0.5, 1, 0)": {"x": ["0", "0.01", "0.1", "1", "5", "20", "100"]},
+        "StableCountRand(0.8, 1, 0)": {"x": ["0", "0.1", "0.5", "1", "1.2", "2", "3"]},
+        "StableCountRand(0.95, 1, 0)": {"x": ["0", "0.5", "0.9", "1", "1.1", "1.2", "1.3"]},
+        "StableCountRand(0.8, 2, -1)": {"x": ["-1", "-0.8", "0", "1", "3", "5"]},
     })
     return cases
 
@@ -103,6 +108,8 @@ class Mapped:
 def continuous_quantile(dist, level, upper_tail):
     """x with F(x) = level (or S(x) = level when upper_tail), solved on a log scale."""
     level = mp.mpf(level)
+    if hasattr(dist, "quantile"):
+        return dist.quantile(level, upper_tail)
     m = Mapped(dist)
     if upper_tail:
         def g(u):
@@ -195,7 +202,8 @@ def compute_case(item):
             value = fn()
             if isinstance(value, mp.mpf) and value != 0 and mp.isfinite(value) and abs(value) < mp.mpf("1e-25"):
                 value = _confirm_tiny(fn, value)
-            rows.append((case_id, function, arg, fmt_value(value)))
+            digits = 40 if cls == "StableCountRand" else 25
+            rows.append((case_id, function, arg, fmt_value(value, digits)))
         except Exception as error:  # noqa: BLE001 - a missing value is reported, not fatal
             print(f"{case_id} {function}({arg}) failed: {error}", file=sys.stderr)
 
@@ -204,7 +212,7 @@ def compute_case(item):
         mp.mp.dps = 20
         x_args = sorted(x_args, key=float)[1::3]
     points = {float(x) for x in x_args}
-    is_stable = cls in ("StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand")
+    is_stable = cls in ("StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand", "StableCountRand")
     if not dist.discrete and not is_stable and not light:
         for level in TAIL_LEVELS:
             for upper in (False, True):
@@ -234,7 +242,8 @@ def compute_case(item):
             add("S", arg, lambda: dist.sf(xm))
 
     quantile = discrete_quantile if dist.discrete else continuous_quantile
-    for p in ([] if light else P_GRID):
+    probabilities = [1e-6, 0.01, 0.25, 0.5, 0.9, 0.99, 1 - 1e-6] if cls == "StableCountRand" else P_GRID
+    for p in ([] if light else probabilities):
         pm = mp.mpf(p)
         for name, upper in (("Quantile", False), ("Quantile1m", True)):
             if dist.discrete:
@@ -271,6 +280,7 @@ def main():
     parser.add_argument("--cache", default=os.path.join(ROOT, "build", "refdata-cache"),
                         help="directory for per-case results, reused by later runs (delete it to recompute)")
     parser.add_argument("--cached-only", action="store_true", help="write the CSV files from cached cases only")
+    parser.add_argument("--verify", action="store_true", help="compare regenerated values with committed CSVs")
     args = parser.parse_args()
 
     cases = golden_cases()
@@ -308,6 +318,15 @@ def main():
             with open(path, newline="") as f:
                 existing = [tuple(r.values()) for r in csv.DictReader(f) if r["case"] not in regenerated]
         rows = sorted(existing + rows, key=lambda r: (r[0], r[1], _arg_key(r[2])))
+        if args.verify:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"cannot verify missing reference file: {path}")
+            with open(path, newline="") as f:
+                committed = [tuple(row) for row in list(csv.reader(f))[1:]]
+            if rows != committed:
+                raise AssertionError(f"regenerated reference values differ from {path}")
+            print(f"verified {path}: {len(rows)} values", file=sys.stderr)
+            continue
         with open(path, "w", newline="") as f:
             writer = csv.writer(f, lineterminator="\n")
             writer.writerow(["case", "function", "arg", "value"])
@@ -328,7 +347,7 @@ def _cache_path(cache, case_id):
 
 def _cost(case_id):
     return 10 if case_id.startswith(
-        ("StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand", "GeometricStableRand")) else 1
+        ("StableRand", "HoltsmarkRand", "LandauRand", "LogStableRand", "StableCountRand", "GeometricStableRand")) else 1
 
 
 def _arg_key(arg):
