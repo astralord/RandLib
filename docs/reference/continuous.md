@@ -442,3 +442,207 @@ The mean, variance, median, mode, skewness, excess kurtosis, entropy, and raw in
 
 `fit<ExponentialRand>` supports the rate MLE \f$1/\bar x\f$ and its UMVU version
 \f$(1-1/n)/\bar x\f$. A Gamma prior is conjugate, as described for the Gamma family above.
+
+## Transformed beta and gamma laws
+
+### Beta-prime distribution (`BetaPrimeRand`)
+
+`BetaPrimeRand(alpha, beta)` accepts \f$\alpha,\beta>0\f$ and has support \f$[0,\infty)\f$. Its
+density and tail probabilities are
+
+\f[
+ f(x)=\frac{x^{\alpha-1}(1+x)^{-\alpha-\beta}}{B(\alpha,\beta)},
+ \qquad
+ F(x)=I_{x/(1+x)}(\alpha,\beta),
+\f]
+
+\f[
+ S(x)=I_{1/(1+x)}(\beta,\alpha).
+\f]
+
+The direct survival expression is important numerically: for large \f$x\f$, forming
+\f$x/(1+x)\f$ can round to one. RandLib instead passes \f$1/(1+x)\f$ and separately computed
+logarithms to the incomplete-beta implementation.
+
+The transformation
+
+\f[
+ Y=\frac{X}{1+X}\sim\operatorname{Beta}(\alpha,\beta),
+ \qquad
+ X=\frac{Y}{1-Y}
+\f]
+
+drives probability evaluation and sampling. A Beta quantile transformed by \f$y/(1-y)\f$ supplies
+the initial guess for a final TOMS 748 inversion; that refinement avoids losing upper-tail accuracy
+in the transformation itself. Sampling applies the same transform to the selected Beta sampler.
+
+The mathematical characteristic function can be written with Tricomi's confluent hypergeometric
+function,
+
+\f[
+ \phi(t)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\beta)}
+ U(\alpha,1-\beta,-it).
+\f]
+
+RandLib does not evaluate \f$U\f$; it uses the shared half-period Fourier integration and Wynn
+epsilon acceleration on the density over \f$[0,\infty)\f$.
+
+The principal moments, with their existence conditions, are
+
+\f[
+ \operatorname{E}X=\frac{\alpha}{\beta-1}\quad(\beta>1),
+\qquad
+ \operatorname{Var}X=\frac{\alpha(\alpha+\beta-1)}
+ { (\beta-2)(\beta-1)^2}\quad(\beta>2),
+\f]
+
+\f[
+ \operatorname{Mode}X=\max\!\left\{\frac{\alpha-1}{\beta+1},0\right\},
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2(2\alpha+\beta-1)}{\beta-3}
+ \sqrt{\frac{\beta-2}{\alpha(\alpha+\beta-1)}}
+ \quad(\beta>3),
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{6}{(\beta-3)(\beta-4)}
+ \left[
+ \frac{(\beta-1)^2(\beta-2)}{\alpha(\alpha+\beta-1)}+5\beta-11
+ \right]
+ \quad(\beta>4).
+\f]
+
+RandLib returns infinity when a listed moment does not exist. The median is one when
+\f$\alpha=\beta\f$ and is otherwise found through the quantile path.
+
+`fit<BetaPrimeRand>` performs MLE by transforming every observation to
+\f$Y_i=X_i/(1+X_i)\f$ and applying the Beta score-equation solver to
+\f$\overline{\log Y}\f$ and \f$\overline{\log(1-Y)}\f$.
+
+### Fisher F distribution (`FisherFRand`)
+
+`FisherFRand(degree1, degree2)` requires positive integer degrees \f$d_1,d_2\f$. It is a scaled
+beta-prime law,
+
+\f[
+ \frac{d_1}{d_2}X\sim
+ \operatorname{BetaPrime}\!\left(\frac{d_1}{2},\frac{d_2}{2}\right),
+\f]
+
+and therefore
+
+\f[
+ f(x)=\frac{(d_1/d_2)^{d_1/2}x^{d_1/2-1}}
+ {B(d_1/2,d_2/2)\left(1+d_1x/d_2\right)^{(d_1+d_2)/2}},
+\f]
+
+\f[
+ F(x)=I_{d_1x/(d_1x+d_2)}\!\left(\frac{d_1}{2},\frac{d_2}{2}\right),
+ \qquad
+ S(x)=I_{d_2/(d_1x+d_2)}\!\left(\frac{d_2}{2},\frac{d_1}{2}\right).
+\f]
+
+Its characteristic function is the beta-prime characteristic function evaluated at
+\f$td_2/d_1\f$ and is computed by the same oscillatory integrator. Quantiles and samples are likewise
+scaled beta-prime results.
+
+The main summaries are
+
+\f[
+ \operatorname{E}X=\frac{d_2}{d_2-2}\quad(d_2>2),
+\f]
+
+\f[
+ \operatorname{Var}X=
+ \frac{2d_2^2(d_1+d_2-2)}{d_1(d_2-2)^2(d_2-4)}
+ \quad(d_2>4),
+\f]
+
+\f[
+ \operatorname{Mode}X=
+ \begin{cases}
+ \dfrac{d_2(d_1-2)}{d_1(d_2+2)},&d_1>2,\\
+ 0,&d_1\leq2,
+ \end{cases}
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2d_1+d_2-2}{d_2-6}
+ \sqrt{\frac{8(d_2-4)}{d_1(d_1+d_2-2)}}
+ \quad(d_2>6),
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{12}{(d_2-6)(d_2-8)}
+ \left[
+ \frac{(d_2-2)^2(d_2-4)}{d_1(d_1+d_2-2)}+5d_2-22
+ \right]
+ \quad(d_2>8).
+\f]
+
+Undefined higher moments are reported as infinity. `fit<FisherFRand>` treats both degrees as
+discrete and searches the likelihood grid from one through 80 for each unfixed degree. This finite
+implementation search bound is part of the fitting API behavior, not a property of the law.
+
+### Inverse-gamma distribution (`InverseGammaRand`)
+
+`InverseGammaRand(shape, rate)` uses \f$\alpha,\beta>0\f$ and the reciprocal relationship
+
+\f[
+ X=\frac1Y,\qquad Y\sim\operatorname{Gamma}(\alpha,\beta).
+\f]
+
+For \f$x>0\f$,
+
+\f[
+ f(x)=\frac{\beta^\alpha}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\beta/x},
+ \qquad
+ F(x)=Q\!\left(\alpha,\frac\beta x\right),
+ \qquad
+ S(x)=P\!\left(\alpha,\frac\beta x\right).
+\f]
+
+RandLib evaluates those swapped Gamma tails directly, uses reciprocal Gamma quantiles, and samples
+by taking the reciprocal of a Gamma variate. The mathematical characteristic function is
+
+\f[
+ \phi(t)=\frac{2}{\Gamma(\alpha)}
+ \left(\sqrt{-i\beta t}\right)^\alpha
+ K_\alpha\!\left(2\sqrt{-i\beta t}\right),
+\f]
+
+with the continuous value one at \f$t=0\f$. The implementation instead uses the shared oscillatory
+Fourier integrator.
+
+The moments and shape summaries are
+
+\f[
+ \operatorname{E}X=\frac\beta{\alpha-1}\quad(\alpha>1),
+ \qquad
+ \operatorname{Var}X=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}
+ \quad(\alpha>2),
+\f]
+
+\f[
+ \operatorname{Mode}X=\frac\beta{\alpha+1},qquad
+ \operatorname{Median}X=\frac{1}{\operatorname{Median}(Y)},
+\f]
+
+\f[
+ \operatorname{Skew}X=\frac{4\sqrt{\alpha-2}}{\alpha-3}
+ \quad(\alpha>3),
+ \qquad
+ \operatorname{ExKurt}X=\frac{30\alpha-66}{(\alpha-3)(\alpha-4)}
+ \quad(\alpha>4).
+\f]
+
+`fit<InverseGammaRand>` initializes \f$\alpha=2+\bar x^2/s^2\f$ and
+\f$\beta=\bar x(\alpha-1)\f$, then runs the common constrained maximum-likelihood optimizer. The law
+also serves as the conditional conjugate prior for a normal variance when the normal location is
+fixed; that model is described with the normal family.
