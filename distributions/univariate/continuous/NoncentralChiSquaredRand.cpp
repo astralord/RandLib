@@ -18,8 +18,9 @@ void NoncentralChiSquaredRand<RealType>::SetParameters(double degree, double non
 {
     if (!(degree > 0.0))
         throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
-    if (!(noncentrality > 0.0))
-        throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
+    if (!(noncentrality >= 0.0) || !std::isfinite(noncentrality))
+        throw std::invalid_argument(
+            "Noncentral Chi-Squared distribution: noncentrality parameter should be non-negative and finite");
 
     k = degree;
     halfK = 0.5 * k;
@@ -27,9 +28,9 @@ void NoncentralChiSquaredRand<RealType>::SetParameters(double degree, double non
     lambda = noncentrality;
     halfLambda = 0.5 * lambda;
     sqrtLambda = std::sqrt(lambda);
-    logLambda = std::log(lambda);
+    logLambda = (lambda == 0.0) ? -INFINITY : std::log(lambda);
 
-    if (k < 1)
+    if (k < 1 && lambda > 0.0)
         Y.SetRate(halfLambda);
 }
 
@@ -56,6 +57,9 @@ double NoncentralChiSquaredRand<RealType>::logf(const RealType & x) const
             return -halfLambda - randlib::consts::ln2;
         return (k > 2) ? -INFINITY : INFINITY;
     }
+    if (lambda == 0.0)
+        return -halfK * randlib::consts::ln2 - std::lgamma(halfK)
+                + (halfK - 1) * std::log(x) - 0.5 * x;
     double halfKm1 = halfK - 1;
     double y = RandMath::logBesselI(halfKm1, std::sqrt(lambda * x));
     double z = halfKm1 * (std::log(x) - logLambda);
@@ -69,6 +73,8 @@ double NoncentralChiSquaredRand<RealType>::F(const RealType &x) const
     if (x <= 0.0)
         return 0.0;
     double halfX = 0.5 * x;
+    if (lambda == 0.0)
+        return RandMath::pgamma(halfK, halfX, std::log(halfK), std::lgamma(halfK));
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
     return RandMath::MarcumP(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
@@ -80,6 +86,8 @@ double NoncentralChiSquaredRand<RealType>::S(const RealType &x) const
     if (x <= 0.0)
         return 1.0;
     double halfX = 0.5 * x;
+    if (lambda == 0.0)
+        return RandMath::qgamma(halfK, halfX, std::log(halfK), std::lgamma(halfK));
     double sqrtHalfX = std::sqrt(halfX);
     double logHalfX = std::log(halfX);
     return RandMath::MarcumQ(halfK, halfLambda, halfX, sqrtLambda / randlib::consts::sqrt2, sqrtHalfX, logLambda - randlib::consts::ln2, logHalfX);
@@ -97,8 +105,12 @@ RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double nonce
 {
     if (!(degree > 0.0))
         throw std::invalid_argument("Noncentral Chi-Squared distribution: degree parameter should be positive");
-    if (!(noncentrality > 0.0))
-        throw std::invalid_argument("Noncentral Chi-Squared distribution: noncentrality parameter should be positive");
+    if (!(noncentrality >= 0.0) || !std::isfinite(noncentrality))
+        throw std::invalid_argument(
+            "Noncentral Chi-Squared distribution: noncentrality parameter should be non-negative and finite");
+
+    if (noncentrality == 0.0)
+        return 2 * GammaDistribution<RealType>::StandardVariate(0.5 * degree, randGenerator);
 
     if (degree >= 1) {
         RealType rv = (degree == 1) ? 0.0 : 2 * GammaDistribution<RealType>::StandardVariate(0.5 * degree - 0.5, randGenerator);
@@ -112,6 +124,8 @@ RealType NoncentralChiSquaredRand<RealType>::Variate(double degree, double nonce
 template < typename RealType >
 RealType NoncentralChiSquaredRand<RealType>::Variate() const
 {
+    if (lambda == 0.0)
+        return 2 * GammaDistribution<RealType>::StandardVariate(halfK, this->localRandGenerator);
     if (k < 1)
         return 2 * GammaDistribution<RealType>::StandardVariate(halfK + Y.Variate(), this->localRandGenerator);
     double X = variateForDegreeEqualOne();
@@ -123,6 +137,11 @@ RealType NoncentralChiSquaredRand<RealType>::Variate() const
 template < typename RealType >
 void NoncentralChiSquaredRand<RealType>::Sample(std::vector<RealType> &outputData) const
 {
+    if (lambda == 0.0) {
+        for (RealType & var : outputData)
+            var = 2 * GammaDistribution<RealType>::StandardVariate(halfK, this->localRandGenerator);
+        return;
+    }
     if (k >= 1) {
         for (RealType & var : outputData)
             var = variateForDegreeEqualOne();
@@ -160,6 +179,8 @@ long double NoncentralChiSquaredRand<RealType>::Variance() const
 template < typename RealType >
 RealType NoncentralChiSquaredRand<RealType>::Mode() const
 {
+    if (lambda == 0.0)
+        return std::max(0.0, k - 2);
     /// For k < 2 the density is unbounded at 0; for k = 2 it is finite there, and the
     /// maximum moves away from 0 for large enough noncentrality
     if (k < 2)

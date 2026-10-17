@@ -19,6 +19,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B41** Asymmetric-Laplace entropy now returns
   `1 + log(scale * (asymmetry + 1 / asymmetry))`; the previous `log1p` expression omitted the unit
   entropy contribution and put the scale term inside an unrelated sum.
+- **B42** Noncentral chi-squared distributions now accept zero noncentrality, as required by their
+  default constructor and central chi-squared limit. Density, direct tails, sampling and the mode use
+  exact gamma-limit formulas instead of singular Bessel/Marcum expressions.
 
 ## [1.2.0] - 2026-10-17
 
