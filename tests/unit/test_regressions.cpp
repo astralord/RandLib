@@ -539,3 +539,21 @@ TEST_CASE("B49: geometric entropy uses natural units", "[regression]")
     CHECK(GeometricRand<int>(1).Entropy() == 0);
     CHECK_THAT(static_cast<double>(GeometricRand<int>(0.5).Entropy()), WithinRel(2 * std::log(2.0), 1e-15));
 }
+
+TEST_CASE("B50: bivariate covariance uses marginal standard deviations", "[regression]")
+{
+    const BivariateNormalRand<double> normal(1, -2, 2, 3, 0.25);
+    const LongDoubleTriplet normalCovariance = normal.Covariance();
+    CHECK_THAT(static_cast<double>(std::get<0>(normalCovariance)), WithinRel(4.0, 1e-15));
+    CHECK_THAT(static_cast<double>(std::get<1>(normalCovariance)), WithinRel(1.5, 1e-15));
+    CHECK_THAT(static_cast<double>(std::get<2>(normalCovariance)), WithinRel(9.0, 1e-15));
+
+    const TrinomialRand<int> trinomial(10, 0.2, 0.3);
+    CHECK_THAT(static_cast<double>(trinomial.Correlation()), WithinRel(-std::sqrt(3.0 / 28.0), 1e-15));
+    const LongDoubleTriplet trinomialCovariance = trinomial.Covariance();
+    CHECK_THAT(static_cast<double>(std::get<1>(trinomialCovariance)), WithinAbs(-0.6, 1e-15));
+
+    const TrinomialRand<int> degenerate(5, 0, 0.4);
+    CHECK(std::isnan(degenerate.Correlation()));
+    CHECK(std::get<1>(degenerate.Covariance()) == 0);
+}

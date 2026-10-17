@@ -42,6 +42,9 @@ All notable changes to RandLib are documented here. The project follows
   The improper `p = 0` geometric static sampler is rejected instead of returning the integer limit.
 - **B49** Geometric entropy is now reported in nats, consistently with the rest of the API, and
   uses its finite zero-entropy limit at `p = 1`.
+- **B50** Bivariate covariance matrices now convert correlation with marginal standard deviations
+  rather than variances. Trinomial correlation uses the corresponding square-root formula and is
+  undefined when either marginal is deterministic.
 
 ## [1.2.0] - 2026-10-17
 
