@@ -362,3 +362,158 @@ Its generating functions and summaries are
 Both support points are modes and medians under common set-valued definitions; RandLib consistently
 returns the lower one, \f$-1\f$. The entropy is \f$\log2\f$. Sampling maps one unbiased engine bit
 to \f$-1\f$ or \f$1\f$. There are no parameters to fit.
+
+## Poisson family
+
+### Poisson distribution (`PoissonRand`)
+
+`PoissonRand(rate)` uses \f$\lambda>0\f$ and support
+\f$\{0,1,\ldots\}\f$:
+
+\f[
+ P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!}.
+\f]
+
+The interior log PMF uses Loader's saddle-point form,
+
+\f[
+ \log P(X=k)=
+ -\operatorname{stirlerr}(k)-\operatorname{bd0}(k,\lambda)
+ -\frac12\log(2\pi k),
+\f]
+
+instead of subtracting three large terms in
+\f$k\log\lambda-\lambda-\log(k!)\f$. The direct tails are regularized incomplete-gamma ratios:
+
+\f[
+ F(k)=Q(k+1,\lambda),
+ \qquad
+ S(k)=P(k+1,\lambda),
+ \qquad k\geq0.
+\f]
+
+Here \f$P(a,x)=\gamma(a,x)/\Gamma(a)\f$ and
+\f$Q(a,x)=\Gamma(a,x)/\Gamma(a)\f$.
+
+The probability-generating and characteristic functions are
+
+\f[
+ G(z)=e^{\lambda(z-1)},
+ \qquad
+ \phi(t)=e^{\lambda(e^{it}-1)}.
+\f]
+
+All cumulants equal \f$\lambda\f$, giving
+
+\f[
+ \operatorname{E}X=\operatorname{Var}X=\lambda,
+ \qquad
+ \operatorname{Skew}X=\lambda^{-1/2},
+ \qquad
+ \operatorname{ExKurt}X=\lambda^{-1}.
+\f]
+
+The mode is \f$\lfloor\lambda\rfloor\f$; for positive integer \f$\lambda\f$,
+\f$\lambda-1\f$ is also a mode and the API reports \f$\lambda\f$. `Median()` returns the
+standard accurate approximation
+
+\f[
+ \max\!\left(0,\left\lfloor\lambda+\frac13-\frac{0.02}{\lambda}\right\rfloor\right)
+\f]
+
+rather than running a probability search.
+
+Sampling uses inversion around \f$\lfloor\lambda\rfloor\f$ for \f$\lambda<10\f$. For larger rates
+it uses a multi-region normal/exponential rejection envelope and accepts against the exact Poisson
+log-PMF ratio. Constructed objects cache the envelope constants; the static convenience function
+builds the same constants for its supplied rate and engine, so both entry points sample the exact
+law.
+
+`fit<PoissonRand>` uses the shared closed-form MLE and method-of-moments estimate
+
+\f[
+ \widehat\lambda=\bar x.
+\f]
+
+For a shape--rate prior \f$\lambda\sim\operatorname{Gamma}(a,b)\f$, `fit_bayes` returns
+
+\f[
+ \lambda\mid x_1,\ldots,x_m\sim
+ \operatorname{Gamma}\!\left(a+\sum_jx_j,\ b+m\right).
+\f]
+
+The class exposes exponential-family adjusted cross-entropy terms for KL calculations, but no
+dedicated Shannon-entropy member.
+
+### Skellam distribution (`SkellamRand`)
+
+If \f$Y\sim\operatorname{Poisson}(\mu_1)\f$ and
+\f$Z\sim\operatorname{Poisson}(\mu_2)\f$ are independent, then
+\f$X=Y-Z\f$ has the Skellam law. RandLib requires \f$\mu_1,\mu_2>0\f$ and supports every integer.
+Its PMF is
+
+\f[
+ P(X=k)=
+ e^{-(\mu_1+\mu_2)}
+ \left(\frac{\mu_1}{\mu_2}\right)^{k/2}
+ I_{|k|}\!\left(2\sqrt{\mu_1\mu_2}\right).
+\f]
+
+`logP` evaluates this with the scaled log-Bessel kernel. With
+\f$Q_M(a,b)\f$ the generalized Marcum Q function and
+\f$P_M(a,b)=1-Q_M(a,b)\f$, the two direct tails are
+
+\f[
+ F(k)=
+ \begin{cases}
+ P_{-k}(\sqrt{2\mu_1},\sqrt{2\mu_2}),&k<0,\\
+ Q_{k+1}(\sqrt{2\mu_2},\sqrt{2\mu_1}),&k\geq0,
+ \end{cases}
+\f]
+
+\f[
+ S(k)=
+ \begin{cases}
+ Q_{-k}(\sqrt{2\mu_1},\sqrt{2\mu_2}),&k<0,\\
+ P_{k+1}(\sqrt{2\mu_2},\sqrt{2\mu_1}),&k\geq0.
+ \end{cases}
+\f]
+
+Thus neither tail is obtained by subtracting the other from one.
+
+The generating functions are
+
+\f[
+ G(z)=
+ \exp\!\left[\mu_1(z-1)+\mu_2(z^{-1}-1)\right],
+\f]
+
+\f[
+ \phi(t)=
+ \exp\!\left[
+  (\mu_1+\mu_2)(\cos t-1)
+  +i(\mu_1-\mu_2)\sin t
+ \right].
+\f]
+
+The principal summaries are
+
+\f[
+ \operatorname{E}X=\mu_1-\mu_2,
+ \qquad
+ \operatorname{Var}X=\mu_1+\mu_2,
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{\mu_1-\mu_2}{(\mu_1+\mu_2)^{3/2}},
+ \qquad
+ \operatorname{ExKurt}X=\frac1{\mu_1+\mu_2}.
+\f]
+
+The median is found by discrete probability search initialized at the mean. The mode search starts
+at that median and walks through adjacent log probabilities until it reaches a maximum; merely
+truncating \f$\mu_1-\mu_2\f$ is not generally correct.
+
+Sampling subtracts independent draws from two cached `PoissonRand` objects. There is currently no
+`fit<SkellamRand>` specialization or dedicated entropy member.
