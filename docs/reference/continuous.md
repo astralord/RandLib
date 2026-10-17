@@ -646,3 +646,221 @@ The moments and shape summaries are
 \f$\beta=\bar x(\alpha-1)\f$, then runs the common constrained maximum-likelihood optimizer. The law
 also serves as the conditional conjugate prior for a normal variance when the normal location is
 fixed; that model is described with the normal family.
+
+## Normal family
+
+### Normal distribution (`NormalRand`)
+
+`NormalRand(location, variance)` uses mean \f$\mu\in\mathbb R\f$ and variance
+\f$\sigma^2>0\f$; `FromMeanStd` is the explicit standard-deviation factory. Its density, tails, and
+characteristic function are
+
+\f[
+ f(x)=\frac{1}{\sigma\sqrt{2\pi}}
+ \exp\!\left[-\frac{(x-\mu)^2}{2\sigma^2}\right],
+\f]
+
+\f[
+ F(x)=\frac12\operatorname{erfc}\!\left(
+ \frac{\mu-x}{\sigma\sqrt2}\right),
+ \qquad
+ S(x)=\frac12\operatorname{erfc}\!\left(
+ \frac{x-\mu}{\sigma\sqrt2}\right),
+\f]
+
+\f[
+ \phi(t)=\exp\!\left(i\mu t-\frac12\sigma^2t^2\right).
+\f]
+
+Both tails are evaluated directly with `erfc`. Quantiles use the corresponding direct inverse-tail
+forms
+
+\f[
+ Q(p)=\mu-\sigma\sqrt2\,\operatorname{erfc}^{-1}(2p),
+ \qquad
+ Q(1-p)=\mu+\sigma\sqrt2\,\operatorname{erfc}^{-1}(2p).
+\f]
+
+RandLib's inverse error function uses piecewise Chebyshev approximations, with separate central,
+intermediate-tail, and extreme-tail coefficient sets. Sampling uses the shared 256-layer normal
+ziggurat and then applies \f$\mu+\sigma Z\f$.
+
+The normal law has
+
+\f[
+ \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=\mu,
+ \qquad
+ \operatorname{Var}X=\sigma^2,
+\f]
+
+\f[
+ \operatorname{Skew}X=0,qquad
+ \operatorname{ExKurt}X=0,qquad
+ h(X)=\frac12\log(2\pi e\sigma^2).
+\f]
+
+Raw integer moments are evaluated from
+
+\f[
+ \operatorname{E}X^n=
+ \sum_{\substack{0\leq k\leq n\\k\ \mathrm{even}}}
+ {n\choose k}\mu^{n-k}\sigma^k(k-1)!!,
+\f]
+
+where the \f$k=0\f$ term is one. In RandLib's stable-law convention the same law is
+\f$S_1(2,0,\sigma/\sqrt2,\mu)\f$.
+
+`fit<NormalRand>` supports MLE, method of moments, and UMVU estimation. With both parameters free,
+
+\f[
+ \hat\mu=\bar x,qquad
+ \hat\sigma^2_{\mathrm{MLE}}=\frac1n\sum_i(x_i-\bar x)^2,qquad
+ \widetilde{\sigma^2}=\frac1{n-1}\sum_i(x_i-\bar x)^2.
+\f]
+
+The legacy member API additionally exposes normal/Student-\f$t\f$ confidence intervals for the mean,
+chi-squared confidence intervals for the variance, and the gamma-ratio correction that makes the
+sample standard deviation unbiased when the mean is known.
+
+The conjugate models exposed by `fit_bayes` are:
+
+- for known \f$\sigma^2\f$ and prior
+  \f$\mu\sim N(\mu_0,1/\tau_0)\f$,
+  \f$\tau_n=\tau_0+n/\sigma^2\f$ and
+  \f$\mu_n=(\tau_0\mu_0+\sum_i x_i/\sigma^2)/\tau_n\f$;
+- for known \f$\mu\f$ and prior
+  \f$\sigma^2\sim\operatorname{InvGamma}(\alpha_0,\beta_0)\f$,
+  \f$\alpha_n=\alpha_0+n/2\f$ and
+  \f$\beta_n=\beta_0+\frac12\sum_i(x_i-\mu)^2\f$;
+- with both parameters unknown, a normal--inverse-gamma prior updates to
+
+\f[
+ \lambda_n=\lambda_0+n,qquad
+ \mu_n=\frac{\lambda_0\mu_0+n\bar x}{\lambda_n},qquad
+ \alpha_n=\alpha_0+\frac n2,
+\f]
+
+\f[
+ \beta_n=\beta_0+\frac n2\left[
+ s_n^2+\frac{\lambda_0}{\lambda_n}(\bar x-\mu_0)^2
+ \right],qquad
+ s_n^2=\frac1n\sum_i(x_i-\bar x)^2.
+\f]
+
+The joint prior itself is documented under `NormalInverseGammaRand` in the bivariate reference.
+
+### Log-normal distribution (`LogNormalRand`)
+
+`LogNormalRand(location, squaredScale)` parameterizes the logarithm:
+
+\f[
+ Y=\log X\sim N(\mu,\sigma^2).
+\f]
+
+The second constructor argument is the log-variance \f$\sigma^2\f$, while `GetScale()` returns the
+log-standard deviation \f$\sigma\f$. The explicit factories `FromLogMeanLogStd` and
+`FromLogMeanLogVariance` avoid that distinction at call sites.
+
+For \f$x>0\f$,
+
+\f[
+ f(x)=\frac{1}{x\sigma\sqrt{2\pi}}
+ \exp\!\left[-\frac{(\log x-\mu)^2}{2\sigma^2}\right],
+ \qquad
+ F(x)=\Phi\!\left(\frac{\log x-\mu}{\sigma}\right),
+\f]
+
+\f[
+ S(x)=\Phi\!\left(\frac{\mu-\log x}{\sigma}\right),qquad
+ Q(p)=\exp\!\left[\mu+\sigma\Phi^{-1}(p)\right].
+\f]
+
+Probability functions and both quantile tails delegate to the direct normal kernels after taking a
+logarithm; sampling exponentiates a normal variate. There is no elementary characteristic function:
+
+\f[
+ \phi(t)=\frac{1}{\sigma\sqrt{2\pi}}
+ \int_{-\infty}^{\infty}
+ \exp\!\left(ite^y-\frac{(y-\mu)^2}{2\sigma^2}\right)dy.
+\f]
+
+For \f$\sigma^2<4\f$, RandLib evaluates the real and imaginary expectations with the ordinary
+adaptive infinite-interval quadrature. For \f$\sigma^2\geq4\f$, it switches to the half-period
+oscillatory integrator with Wynn epsilon acceleration.
+
+Writing \f$v=e^{\sigma^2}\f$, the summaries are
+
+\f[
+ \operatorname{E}X=e^{\mu+\sigma^2/2},qquad
+ \operatorname{Var}X=(v-1)e^{2\mu+\sigma^2},
+\f]
+
+\f[
+ \operatorname{Median}X=e^\mu,qquad
+ \operatorname{Mode}X=e^{\mu-\sigma^2},qquad
+ \operatorname{Skew}X=(v+2)\sqrt{v-1},
+\f]
+
+\f[
+ \operatorname{ExKurt}X=v^4+2v^3+3v^2-6.
+\f]
+
+`fit<LogNormalRand>` is the closed-form normal MLE applied to \f$\log x_i\f$: the fitted location is
+the mean log and the fitted squared scale is the population variance of the logs. The same normal,
+inverse-gamma, and normal--inverse-gamma conjugate models are available through `fit_bayes`, again
+applied in log space.
+
+### Exponentially modified Gaussian distribution (`ExponentiallyModifiedGaussianRand`)
+
+`ExponentiallyModifiedGaussianRand(location, variance, rate)` represents the independent sum
+
+\f[
+ Z=X+Y,qquad X\sim N(\mu,\sigma^2),qquad
+ Y\sim\operatorname{Exponential}(\lambda).
+\f]
+
+For all real \f$z\f$,
+
+\f[
+ f(z)=\frac\lambda2
+ \exp\!\left[\frac\lambda2(2\mu+\lambda\sigma^2-2z)\right]
+ \operatorname{erfc}\!\left(
+ \frac{\mu+\lambda\sigma^2-z}{\sigma\sqrt2}\right).
+\f]
+
+With \f$w=(z-\mu)/\sigma\f$ and \f$v=\lambda\sigma\f$,
+
+\f[
+ F(z)=\Phi(w)-e^{-\lambda(z-\mu)+v^2/2}\Phi(w-v),
+\f]
+
+\f[
+ S(z)=\Phi(-w)+e^{-\lambda(z-\mu)+v^2/2}\Phi(w-v).
+\f]
+
+The separately implemented survival expression avoids subtracting the complete CDF from one. The
+characteristic function follows directly from independence:
+
+\f[
+ \phi(t)=\frac{\exp(i\mu t-\sigma^2t^2/2)}{1-it/\lambda}.
+\f]
+
+Sampling adds the library's normal and exponential variates. The mean, variance, skewness, and
+excess kurtosis are
+
+\f[
+ \operatorname{E}Z=\mu+\frac1\lambda,qquad
+ \operatorname{Var}Z=\sigma^2+\frac1{\lambda^2},
+\f]
+
+\f[
+ \operatorname{Skew}Z=
+ \frac{2\lambda^{-3}}{(\sigma^2+\lambda^{-2})^{3/2}},
+ \qquad
+ \operatorname{ExKurt}Z=
+ \frac{6\lambda^{-4}}{(\sigma^2+\lambda^{-2})^2}.
+\f]
+
+No elementary median or mode is known. `Median()` uses the generic tail-aware TOMS 748 quantile
+solver, and `Mode()` minimizes the negative log density with the shared Brent search, starting from
+the mean. There is currently no `fit<ExponentiallyModifiedGaussianRand>` specialization.
