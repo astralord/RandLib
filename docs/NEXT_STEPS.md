@@ -246,6 +246,31 @@ moments, and the deliberately unsupported nonzero characteristic function throws
 quarter-turn angle reduction and an analytic finite integration-endpoint limit keep the totally
 skewed short-tail quantiles portable on binary64-only platforms.
 
+### 3.6 Phase 6: Stable Count and stable-prior research (v2.2)
+
+The maintainer requested Stable Count as the next planned stable-family distribution. The starting
+evidence is experimental commit
+[`c070098`](https://github.com/astralord/RandLib/commit/c0700988a88767cde9967b41e0cc459b8434cc6a)
+and Lihn's revised [Wright-function paper](https://arxiv.org/abs/2405.04693). The commit must not be
+ported mechanically: its sampler stops a positive-stable renewal sum at the arbitrary value
+`100000`, discards stable draws above `100000`, and uses mutable static state. It also carries the
+old `[0.1, 1)` and near-one limitations that Phase 5 removed from the stable kernel.
+
+Plan task 6.1 now specifies a fresh `StableCountRand` implementation from
+`N_alpha(x) = L_alpha(1/x) / (Gamma(1/alpha + 1) x)`, with explicit location/scale semantics,
+direct tails, quantiles, exact log-gamma moments, the `alpha = 1/2` Gamma reduction, a validated
+standard-URBG sampler, 40-digit mpmath data and generic MLE. It starts in Tier 2 and is promoted only
+after its independent numerical and sampling evidence satisfies the Tier 1 policy. The paper's
+four-parameter generalized Stable Count family is a later proposal, not part of this first slice.
+
+Plan task 6.2 treats the phrase "conjugate prior" as a research claim, not yet an API contract. Before
+adding `fit_bayes<StableRand>`, write the normalized likelihood, identify whether the prior is on a
+count, count root, scale or reciprocal scale, and prove the posterior stays in the Stable Count
+family for arbitrary sample size. The paper also uses inverse-variable, product-mixture and
+subordination identities; those are useful, but they are not by themselves Bayesian conjugacy. If
+posterior closure is not established within the time box, ship Stable Count standalone and record
+the missing derivation instead of exposing a misleading closed-form update.
+
 ## 4. Things that need the maintainer
 
 Plan 0.1 and 0.5 (tracking issue, milestones), closing issues (#11 and others as they are fixed),

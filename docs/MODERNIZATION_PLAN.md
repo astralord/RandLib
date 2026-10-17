@@ -21,12 +21,13 @@ Progress against this plan is tracked in [ROADMAP_STATUS.md](ROADMAP_STATUS.md).
 6. [Phase 3: Fitting and features (v2.0-beta)](#phase-3-fitting-and-features-v20-beta)
 7. [Phase 4: Documentation, packaging, release (v2.0)](#phase-4-documentation-packaging-release-v20)
 8. [Phase 5: Hard numerics (v2.1)](#phase-5-hard-numerics-v21)
-9. [Section 8: Open issues mapping](#8-open-issues-mapping)
-10. [Section 9: Accuracy and testing policy](#9-accuracy-and-testing-policy)
-11. [Section 10: Risks and open decisions](#10-risks-and-open-decisions)
-12. [Appendix A: Baseline measurements](#appendix-a-baseline-measurements)
-13. [Appendix B: Distribution tiers](#appendix-b-distribution-tiers)
-14. [Revision history](#revision-history)
+9. [Phase 6: Stable-count family and stable priors (v2.2)](#phase-6-stable-count-family-and-stable-priors-v22)
+10. [Section 8: Open issues mapping](#8-open-issues-mapping)
+11. [Section 9: Accuracy and testing policy](#9-accuracy-and-testing-policy)
+12. [Section 10: Risks and open decisions](#10-risks-and-open-decisions)
+13. [Appendix A: Baseline measurements](#appendix-a-baseline-measurements)
+14. [Appendix B: Distribution tiers](#appendix-b-distribution-tiers)
+15. [Revision history](#revision-history)
 
 ---
 
@@ -57,12 +58,15 @@ Progress against this plan is tracked in [ROADMAP_STATUS.md](ROADMAP_STATUS.md).
 | 3. Fitting and features | Unified fitting API, goodness of fit, tail estimators, extreme-value laws | **v2.0-beta** | 10–14 days |
 | 4. Docs and packaging | Docs site, examples, migration guide, vcpkg/Conan, benchmarks | **v2.0** | 4–6 days |
 | 5. Hard numerics | Stable laws near α = 1, heavy-tailed characteristic functions, Marcum Q, noncentral t, log-stable | **v2.1** | 15–25 days |
+| 6. Stable-count family | Stable Count distribution, validated sampling, and a rigorous stable-prior investigation | **v2.2** | 5–8 days |
 
-\* One person's focused working days. Phase 5 is research-grade and each of its items is time-boxed.
+\* One person's focused working days. Phases 5 and 6 contain research-grade work and their uncertain
+items are time-boxed.
 
-Dependencies: 0 → 1 → 2 → 3 → 4 → 5. Phase 5 starts only when the engineering work of Phases 2–4
-is done; until then, numerical problems that need research are recorded (as an issue and, where a
-test must be relaxed, in `tests/data/reference_tolerances.csv`) and left for Phase 5.
+Dependencies: 0 → 1 → 2 → 3 → 4 → 5 → 6. Phase 5 starts only when the engineering work of
+Phases 2–4 is done. Phase 6 follows the stable-law kernel completed in Phase 5. Until then, numerical
+problems that need research are recorded (as an issue and, where a test must be relaxed, in
+`tests/data/reference_tolerances.csv`) and left for the corresponding research phase.
 
 ---
 
@@ -399,6 +403,63 @@ rules; accuracy targets are met in CI; and v2.1.0 is tagged.
 
 ---
 
+## Phase 6: Stable-count family and stable priors (v2.2)
+
+This phase revisits the experimental [`StableCountRand` commit](https://github.com/astralord/RandLib/commit/c0700988a88767cde9967b41e0cc459b8434cc6a)
+against Lihn's revised [Wright-function treatment](https://arxiv.org/abs/2405.04693). The old code is
+design evidence, not an implementation to port: its sampler uses an arbitrary hitting-time cutoff,
+rejects large stable draws and keeps mutable static state. The v2 implementation starts from the
+published density and the Phase 5 stable kernel.
+
+### 6.1 Stable Count distribution (3–5 days)
+
+- [ ] Add `StableCountRand<RealType>` under `include/randlib/continuous/` with exponent
+  `0 < alpha < 1`, positive scale and a finite location. Use the location-scale form of
+  `N_alpha(x) = L_alpha(1/x) / (Gamma(1/alpha + 1) x)` and state exactly which one-sided stable
+  parameterization and scale convention it requires.
+- [ ] Implement direct log-density, density, CDF, survival, quantile and all finite moments. Evaluate
+  tails directly instead of subtracting from one. Use the exact moment identity
+  `E[X^q] = Gamma((q + 1)/alpha) / (Gamma(q + 1) Gamma(1/alpha))` in the standard case, with
+  log-gamma arithmetic when the raw moment would overflow.
+- [ ] Preserve the `alpha = 1/2` reduction to `Gamma(shape=3/2, scale=4)` as an exact fast path and
+  document the degenerate limit as `alpha -> 1`. Do not retain the experimental `[0.1, 1)` or
+  near-one exclusions unless new numerical evidence requires a documented bound.
+- [ ] Supply a standard-URBG sampler with no hidden state. Inverse-CDF sampling is an acceptable
+  correctness-first implementation; a transformed or rejection sampler must have a derivation and
+  statistical evidence. Do not use the experimental fixed `100000` threshold or discard large
+  one-sided-stable draws.
+- [ ] Generate committed 40-digit mpmath reference grids from the Wright/one-sided-stable definition,
+  cross-check the half-stable Gamma case and moment identities, and cover normalization, support,
+  density/CDF/survival coherence, quantile round trips, reproducibility and seeded sampling tests.
+- [ ] Add generic MLE with fixed-parameter variants and seeded recovery tests. Land as Tier 2 first;
+  promote to Tier 1 only after the independent reference and sampling evidence meet the promotion
+  rule.
+
+### 6.2 Stable-prior semantics (time-boxed: 2–3 days)
+
+- [ ] Formalize the claimed "conjugate prior" before adding an API: identify the random quantity
+  (count, count root, scale or reciprocal scale), write the normalized likelihood, and derive the
+  posterior hyperparameter update for an arbitrary sample size. Distinguish Bayesian conjugacy from
+  the paper's inverse-variable, product-mixture and subordination identities.
+- [ ] Add a `fit_bayes` overload for `StableRand` only if the posterior remains in the Stable Count
+  family and the supported stable parameterization is explicit. Verify normalization, posterior
+  moments and posterior-predictive values against high-precision quadrature, including the
+  `alpha = 1/2` special case.
+- [ ] If posterior closure cannot be proved within the time box, keep `StableCountRand` as a
+  standalone distribution and document the subordination relation without calling it a conjugate
+  Bayesian prior. Record the missing derivation as a research issue rather than exposing a
+  misleading closed-form update.
+
+The generalized Stable Count family `(alpha, sigma, d, p)` from the 2025 revision is deliberately a
+follow-up, not part of the first implementation. It should be proposed separately after the core
+Wright-function evaluation and sampler are independently validated.
+
+**Phase 6 done when:** the core Stable Count distribution has reference-backed probability functions,
+moments, fitting and a validated standard-URBG sampler; the Bayesian-conjugacy claim is either proved
+and implemented or explicitly scoped to a non-Bayesian subordination identity; and v2.2.0 is tagged.
+
+---
+
 ## 8. Open issues mapping
 
 | # | Title | Where | Plan |
@@ -444,6 +505,7 @@ rules; accuracy targets are met in CI; and v2.1.0 is tagged.
 | **C++20 requirement** | Excludes very old toolchains | v1.2 remains C++17 and gets critical fixes for 12 months |
 | **Upstream ownership** | Plan needs maintainer buy-in if done from a fork | Phase 0.1. The maintainer has said he will review PRs. Land Phase 1 as small PRs. |
 | **Fitting scope creep** (censoring, mixtures, regression) | Phase 3 grows unbounded | v2.0 = i.i.d. univariate fitting + censoring (3.2) only; mixtures listed for v2.x |
+| **"Conjugate prior" is underspecified for Stable Count** | A Bayesian API could imply posterior closure that the cited product/subordination identity does not establish | Phase 6.2 requires a normalized likelihood and posterior-update derivation before any `fit_bayes<StableRand>` overload |
 | Python bindings (nanobind) | Wider audience, but SciPy covers most of it | Out of scope for v2.0; revisit if stable/fitting proves unique enough |
 
 **Decisions confirmed before Phase 2** (all as recommended):
@@ -486,7 +548,7 @@ Measured on the baseline commit with GCC 13.3 and Clang 18. These are the number
 - **Bivariate:** NormalInverseGamma (as a conjugate prior)
 
 **Tier 2** (tested for coherence and sampling, best-effort accuracy):
-- **Continuous:** ExponentiallyModifiedGaussian, IrwinHall, KolmogorovSmirnov, MarchenkoPastur, Nakagami, Planck, RaisedCosine, Sech, Triangular, WignerSemicircle, Degenerate, Rice (new, via 3.5)
+- **Continuous:** ExponentiallyModifiedGaussian, IrwinHall, KolmogorovSmirnov, MarchenkoPastur, Nakagami, Planck, RaisedCosine, Sech, Triangular, WignerSemicircle, Degenerate, Rice (new, via 3.5), StableCount (planned in Phase 6)
 - **Discrete:** BetaBinomial, Categorical, HyperGeometric, NegativeHyperGeometric, Logarithmic, Rademacher, Skellam, Yule, Zeta, Zipf
 - **Circular:** VonMises, WrappedExponential
 - **Singular:** Cantor
@@ -498,6 +560,9 @@ Measured on the baseline commit with GCC 13.3 and Clang 18. These are the number
 
 ## Revision history
 
+- **2026-10-17:** added Phase 6 for a clean Stable Count implementation based on the published
+  Wright-function definition and for a separately gated investigation of the claimed stable-law
+  conjugate-prior semantics. The 2021 experimental sampler is retained as design evidence only.
 - **2026-10-11:** at the maintainer's request, the hard numerical work on heavy-tailed laws (former 2.5
   tanh-sinh and oscillatory quadrature, 3.3–3.7) moved to the new Phase 5, after all engineering and
   refactoring work; v2.0 is released after Phase 4. The v2 branch is `2.x` instead of `main`.

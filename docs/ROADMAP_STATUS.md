@@ -65,3 +65,10 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 5.3 Marcum Q (#4) | ✅ | A saddle-centered Poisson mixture evaluates Marcum Q directly without tail cancellation. Noncentral χ² meets the Tier 1 bulk/tail targets with no overrides; the new Tier 2 Rice law has direct probability functions, sampling, moments and 40-digit mpmath references. |
 | 5.4 Noncentral t (#7) | ✅ | The v2 port provides direct CDF/survival series, hypergeometric, recurrence and integral densities, large-noncentrality/extreme-tail paths, sampling, quantiles, exact moments, a conditional-normal CF and constrained MLE. Three Tier 1 cases have a 243-value mpmath reference table, supplemented by focused 60-digit integral and exact-series regressions. |
 | 5.5 Log-stable (#5) | ✅ | `LogStableRand` provides the exponential stable transform, direct tails, sampling, quantiles, median, Jacobian-correct modes, exact finite moments, S0/S1 handling and log-transformed stable fitting. Exact quarter-turn angles and an analytic finite integration-endpoint limit make the short tail portable on binary64-only platforms. Four Tier 1 cases have a 198-value 40-digit mpmath table. Nonzero CFs deliberately throw `not_implemented` as planned. |
+
+## Phase 6: Stable-count family and stable priors (v2.2)
+
+| Task | Status | Notes |
+|---|---|---|
+| 6.1 Stable Count distribution | ⏳ | Planned from the published Wright/one-sided-stable definition. The 2021 experimental commit is specification evidence only: its cutoff-based sampler and mutable static state will not be ported. Reference-backed probability functions, exact moments, a standard-URBG sampler and fitting are required. |
+| 6.2 Stable-prior semantics | ⏳ | Research gate: identify the exact stable likelihood parameter and prove posterior closure before adding `fit_bayes<StableRand>`. If the cited relation is subordination rather than Bayesian conjugacy, document it as such and keep Stable Count standalone. |
