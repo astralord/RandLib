@@ -517,3 +517,498 @@ truncating \f$\mu_1-\mu_2\f$ is not generally correct.
 
 Sampling subtracts independent draws from two cached `PoissonRand` objects. There is currently no
 `fit<SkellamRand>` specialization or dedicated entropy member.
+
+## Geometric and logarithmic-series families
+
+### Geometric distribution (`GeometricRand`)
+
+`GeometricRand(p)` counts failures before the first success. With \f$0<p\leq1\f$, \f$q=1-p\f$,
+and \f$k\in\{0,1,\ldots\}\f$,
+
+\f[
+ P(X=k)=p q^k,
+ \qquad
+ F(k)=1-q^{k+1},
+ \qquad
+ S(k)=q^{k+1}.
+\f]
+
+The implementation evaluates \f$F\f$ with `expm1` and evaluates \f$S\f$ directly, so neither short
+tail is formed by subtracting a rounded probability from one. The probability-generating and
+characteristic functions are
+
+\f[
+ G(z)=\frac{p}{1-qz},
+ \qquad
+ \phi(t)=\frac{p}{1-qe^{it}}.
+\f]
+
+Its principal summaries are
+
+\f[
+ \operatorname{E}X=\frac qp,
+ \qquad
+ \operatorname{Var}X=\frac q{p^2},
+ \qquad
+ \operatorname{Skew}X=\frac{1+q}{\sqrt q},
+ \qquad
+ \operatorname{ExKurt}X=6+\frac{p^2}{q},
+\f]
+
+with the standardized moments undefined at the deterministic endpoint \f$p=1\f$. The mode is zero
+and the lower median is
+
+\f[
+ \left\lceil\frac{-\log2}{\log q}\right\rceil-1,
+\f]
+
+interpreted as zero when \f$p=1\f$. In natural units its Shannon entropy is
+
+\f[
+ H(X)=-\log p-\frac qp\log q
+     =\frac{-p\log p-q\log q}{p},
+\f]
+
+with the usual \f$0\log0=0\f$ limit.
+
+Sampling uses the identity
+
+\f[
+ X=\left\lfloor\frac{E}{-\log q}\right\rfloor,
+ \qquad E\sim\operatorname{Exp}(1),
+\f]
+
+for small \f$p\f$. Otherwise a constructed distribution inverts a cached 16-entry CDF table,
+recursively shifting by 16 when a uniform falls in the remaining tail. The static convenience
+sampler uses the exponential transform below a slightly lower crossover and ordinary sequential
+CDF inversion above it. All three paths sample the exact law.
+
+Both `fit<GeometricRand>` and `fit_moments<GeometricRand>` use the closed-form estimate
+
+\f[
+ \widehat p=\frac1{1+\bar x}.
+\f]
+
+The inherited legacy beta-prior member gives
+\f$\operatorname{Beta}(a+m,b+\sum_jx_j)\f$ for \f$m\f$ observations, but the unified
+`fit_bayes<GeometricRand>` specialization is not currently provided.
+
+### Negative-binomial distribution (`NegativeBinomialRand`, `PascalRand`, `PolyaRand`)
+
+RandLib counts failures before the \f$r\f$th success. `PascalRand<Int>` is the integer-shape alias;
+`PolyaRand<Int>` admits any real \f$r>0\f$. For \f$0<p\leq1\f$, \f$q=1-p\f$, and
+\f$k\in\{0,1,\ldots\}\f$,
+
+\f[
+ P(X=k)=
+ \frac{\Gamma(k+r)}{\Gamma(r)\,\Gamma(k+1)}p^r q^k.
+\f]
+
+The two tails are evaluated as regularized incomplete-beta functions,
+
+\f[
+ F(k)=I_p(r,k+1),
+ \qquad
+ S(k)=I_q(k+1,r),
+\f]
+
+and the log PMF uses `lgamma` and `lfact`. Its generating functions are
+
+\f[
+ G(z)=\left(\frac{p}{1-qz}\right)^r,
+ \qquad
+ \phi(t)=\left(\frac{p}{1-qe^{it}}\right)^r.
+\f]
+
+The principal summaries are
+
+\f[
+ \operatorname{E}X=\frac{rq}{p},
+ \qquad
+ \operatorname{Var}X=\frac{rq}{p^2},
+\f]
+
+\f[
+ \operatorname{Skew}X=\frac{1+q}{\sqrt{rq}},
+ \qquad
+ \operatorname{ExKurt}X=\frac6r+\frac{p^2}{rq}.
+\f]
+
+The reported mode is
+
+\f[
+ \max\!\left(0,\left\lfloor\frac{(r-1)q}{p}\right\rfloor\right),
+\f]
+
+and the median is found by the generic discrete quantile search.
+
+For integer \f$r\f$, sampling sums \f$r\f$ geometric variates, using the table or exponential
+method described above. For noninteger \f$r\f$ and the remaining parameter region it uses the exact
+gamma--Poisson mixture
+
+\f[
+ \Lambda\sim\operatorname{Gamma}\!\left(r,\frac p q\right),
+ \qquad
+ X\mid\Lambda\sim\operatorname{Poisson}(\Lambda),
+\f]
+
+where the gamma parameter shown is a rate. Overflowing geometric sums saturate at the integer
+result type's maximum.
+
+`fit<PolyaRand>` starts from the method-of-moments shape
+
+\f[
+ r_0=\frac{\bar x^2}{s^2-\bar x},
+ \qquad
+ p_0=\frac{r_0}{r_0+\bar x},
+\f]
+
+then solves the likelihood score for \f$\log r\f$ with guarded Newton steps and sets
+\f$\widehat p=\widehat r/(\widehat r+\bar x)\f$. It requires \f$s^2>\bar x\f$.
+With fixed \f$r\f$ and prior \f$p\sim\operatorname{Beta}(a,b)\f$, `fit_bayes` returns
+
+\f[
+ p\mid x_1,\ldots,x_m
+ \sim\operatorname{Beta}\!\left(a+rm,\ b+\sum_jx_j\right).
+\f]
+
+There is no dedicated Shannon-entropy member.
+
+### Logarithmic-series distribution (`LogarithmicRand`)
+
+For \f$0<p<1\f$ and \f$k\in\{1,2,\ldots\}\f$,
+
+\f[
+ P(X=k)=-\frac{p^k}{k\log(1-p)}.
+\f]
+
+Writing
+
+\f[
+ B_p(a,0)=\int_0^p\frac{t^{a-1}}{1-t}\,dt
+         =p^a\sum_{j=0}^{\infty}\frac{p^j}{a+j},
+\f]
+
+the implemented tails are
+
+\f[
+ F(k)=1+\frac{B_p(k+1,0)}{\log(1-p)},
+ \qquad
+ S(k)=-\frac{B_p(k+1,0)}{\log(1-p)}.
+\f]
+
+The series routine writes out its first three terms and continues until the next term is negligible;
+the survival probability is evaluated directly from that positive tail.
+
+The probability-generating and characteristic functions are
+
+\f[
+ G(z)=\frac{\log(1-pz)}{\log(1-p)},
+ \qquad
+ \phi(t)=\frac{\log(1-pe^{it})}{\log(1-p)}.
+\f]
+
+With \f$q=1-p\f$, the implemented moments are
+
+\f[
+ \operatorname{E}X=-\frac{p}{q\log q},
+ \qquad
+ \operatorname{Var}X=-\frac{p(p+\log q)}{q^2(\log q)^2}.
+\f]
+
+The mode is one and the median is obtained by the generic discrete quantile search. Sampling uses
+Kemp's second accelerated generator: two uniforms select the atom at one, the atom at two, or an
+inverse logarithmic tail in constant expected time. There is currently no fitting specialization or
+dedicated entropy member.
+
+## Sampling without replacement
+
+### Hypergeometric distribution (`HyperGeometricRand`)
+
+`HyperGeometricRand(N, n, K)` counts successes in \f$n\f$ draws without replacement from a
+population of size \f$N\f$ containing \f$K\f$ successes. RandLib requires
+\f$N>0\f$, \f$1\leq n\leq N\f$, and \f$1\leq K\leq N\f$. Its support is
+
+\f[
+ L=\max(0,n+K-N)\leq k\leq U=\min(n,K),
+\f]
+
+and its PMF is
+
+\f[
+ P(X=k)=\frac{\binom Kk\binom{N-K}{n-k}}{\binom Nn}.
+\f]
+
+The implementation evaluates the log PMF with log-factorials. For \f$F(k)\f$, it compares the
+number of support points below and above \f$k\f$, then either sums forward from the true lower
+support limit \f$L\f$ or subtracts the shorter upper sum from one. The generating functions are the
+finite sums
+
+\f[
+ G(z)=\frac1{\binom Nn}
+ \sum_{j=L}^{U}\binom Kj\binom{N-K}{n-j}z^j,
+ \qquad
+ \phi(t)=G(e^{it}).
+\f]
+
+The generic finite-support characteristic-function routine evaluates this sum numerically. The
+principal moments are
+
+\f[
+ \operatorname{E}X=\frac{nK}{N},
+ \qquad
+ \operatorname{Var}X=\frac{nK(N-K)(N-n)}{N^2(N-1)},
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{(N-2K)(N-2n)\sqrt{N-1}}
+ {(N-2)\sqrt{nK(N-K)(N-n)}}.
+\f]
+
+Writing \f$A=nK(N-K)(N-n)\f$, the implemented excess kurtosis is
+
+\f[
+ \operatorname{ExKurt}X=
+ \frac{
+  N^2(N-1)\{N(N+1)-6[K(N-K)+n(N-n)]\}
+  +6A(5N-6)}
+ {A(N-2)(N-3)}.
+\f]
+
+The displayed skewness formula applies to nondegenerate populations with \f$N>2\f$, and the
+displayed kurtosis formula applies when \f$N>3\f$. For the nondegenerate \f$N=2\f$ and \f$N=3\f$
+cases, RandLib evaluates the relevant finite central moment directly; standardized moments are
+undefined in deterministic cases. The reported mode is
+
+\f[
+ \left\lfloor\frac{(n+1)(K+1)}{N+2}\right\rfloor,
+\f]
+
+and the median uses the generic discrete quantile search.
+
+Sampling performs the draws sequentially. After \f$i\f$ objects have been considered and \f$s\f$
+successes observed, the next Bernoulli probability is \f$(K-s)/(N-i)\f$; the routine stops early
+once every population success has already been selected. Thus the algorithm is exact and uses at
+most \f$n\f$ engine draws. There is currently no fitting specialization or dedicated entropy
+member.
+
+### Negative-hypergeometric distribution (`NegativeHyperGeometricRand`)
+
+`NegativeHyperGeometricRand(N, M, m)` counts failures observed before the \f$m\f$th success when
+sampling without replacement from \f$N\f$ objects containing \f$M\f$ successes. The constraints
+are \f$N>0\f$ and \f$1\leq m\leq M\leq N\f$; the support is
+\f$k\in\{0,\ldots,N-M\}\f$. Its PMF is
+
+\f[
+ P(X=k)=
+ \frac{\binom{k+m-1}{k}\binom{N-m-k}{M-m}}{\binom NM}.
+\f]
+
+As in the ordinary hypergeometric implementation, the log PMF uses log-factorials and the CDF
+chooses between a forward sum and subtracting the shorter upper sum from one. Its generating
+functions are the finite sums
+
+\f[
+ G(z)=\frac1{\binom NM}
+ \sum_{j=0}^{N-M}
+ \binom{j+m-1}{j}\binom{N-m-j}{M-m}z^j,
+ \qquad
+ \phi(t)=G(e^{it}),
+\f]
+
+which the generic finite-support routine evaluates numerically. The implemented moments are
+
+\f[
+ \operatorname{E}X=\frac{m(N-M)}{M+1},
+\f]
+
+\f[
+ \operatorname{Var}X=
+ \frac{m(N+1)(N-M)(M-m+1)}{(M+1)^2(M+2)}.
+\f]
+
+The median and mode use the generic discrete probability searches; skewness, kurtosis, entropy,
+and fitting do not have dedicated implementations.
+
+Sampling updates the remaining-success fraction after each draw and stops at the \f$m\f$th
+success. If every failure must occur before that stopping success, it returns \f$N-M\f$ early.
+The method is exact and requires at most \f$N\f$ sequential Bernoulli draws.
+
+## Discrete power-law families
+
+### Zeta distribution (`ZetaRand`)
+
+For exponent \f$s>1\f$ and \f$k\in\{1,2,\ldots\}\f$,
+
+\f[
+ P(X=k)=\frac{k^{-s}}{\zeta(s)},
+\f]
+
+where \f$\zeta\f$ is the Riemann zeta function. With the generalized harmonic number
+\f$H_{k,s}=\sum_{j=1}^k j^{-s}\f$,
+
+\f[
+ F(k)=\frac{H_{k,s}}{\zeta(s)},
+ \qquad
+ S(k)=\frac{\zeta(s,k+1)}{\zeta(s)},
+\f]
+
+where the second numerator is the Hurwitz zeta tail. Up to \f$k=10^5\f$, the implementation forms
+\f$F\f$ from the harmonic sum and \f$S=1-F\f$. Beyond that threshold it evaluates \f$S\f$
+directly with a ten-correction Euler--Maclaurin expansion and obtains \f$F=1-S\f$.
+
+The generating functions are
+
+\f[
+ G(z)=\frac{\operatorname{Li}_s(z)}{\zeta(s)},
+ \qquad
+ \phi(t)=\frac{\operatorname{Li}_s(e^{it})}{\zeta(s)}.
+\f]
+
+RandLib's generic discrete CF evaluator sums outward from the median and applies a short Euler
+transform to the oscillatory remainder; it does not call a complex polylogarithm. More generally,
+
+\f[
+ \operatorname{E}(X^m)=
+ \begin{cases}
+ \dfrac{\zeta(s-m)}{\zeta(s)},&s>m+1,\\
+ +\infty,&s\leq m+1.
+ \end{cases}
+\f]
+
+Thus
+
+\f[
+ \operatorname{E}X=\frac{\zeta(s-1)}{\zeta(s)}\quad(s>2),
+\f]
+
+\f[
+ \operatorname{Var}X=
+ \frac{\zeta(s-2)}{\zeta(s)}-
+ \left(\frac{\zeta(s-1)}{\zeta(s)}\right)^2
+ \quad(s>3),
+\f]
+
+and the absent moments are reported as infinity. Skewness and excess kurtosis are assembled from
+the first four raw zeta-ratio moments and therefore require \f$s>4\f$ and \f$s>5\f$,
+respectively. The mode is one; the median is found by the generic discrete quantile search.
+
+Sampling uses Devroye's rejection method with a rounded Pareto proposal of shape \f$s-1\f$. For
+moderate proposals the acceptance ratio is evaluated directly; above \f$10^4\f$ it switches to
+`log1p` and `expm1` to avoid cancellation. Accepted values beyond the result type saturate at its
+maximum. There is currently no fitting specialization or dedicated entropy member.
+
+### Truncated Zipf distribution (`ZipfRand`)
+
+`ZipfRand(s, n)` is the zeta power law truncated to \f$\{1,\ldots,n\}\f$. RandLib requires
+\f$s>1\f$ and \f$n>0\f$. With \f$H_{n,s}=\sum_{j=1}^n j^{-s}\f$,
+
+\f[
+ P(X=k)=\frac{k^{-s}}{H_{n,s}},
+ \qquad
+ F(k)=\frac{H_{k,s}}{H_{n,s}}\quad(1\leq k<n).
+\f]
+
+Its generating functions are the finite sums
+
+\f[
+ G(z)=\frac1{H_{n,s}}\sum_{k=1}^n\frac{z^k}{k^s},
+ \qquad
+ \phi(t)=\frac1{H_{n,s}}\sum_{k=1}^n\frac{e^{ikt}}{k^s}.
+\f]
+
+The CF implementation evaluates the latter sum directly. All raw moments exist and satisfy
+
+\f[
+ \operatorname{E}(X^m)=\frac{H_{n,s-m}}{H_{n,s}}.
+\f]
+
+In particular,
+
+\f[
+ \operatorname{E}X=\frac{H_{n,s-1}}{H_{n,s}},
+ \qquad
+ \operatorname{Var}X=
+ \frac{H_{n,s-2}}{H_{n,s}}-
+ \left(\frac{H_{n,s-1}}{H_{n,s}}\right)^2.
+\f]
+
+Skewness and excess kurtosis are computed from these raw moments through order four. They are
+undefined for the degenerate case \f$n=1\f$. The mode is one and the median uses the generic
+discrete quantile search.
+
+Sampling is exact CDF inversion. Construction caches the first \f$\min(n,16)\f$ cumulative masses;
+a uniform in that prefix is resolved from the table, while a uniform in the remaining tail extends
+the cumulative sum one integer at a time. There is currently no fitting specialization or dedicated
+entropy member.
+
+### Yule--Simon distribution (`YuleRand`)
+
+For shape \f$\rho>0\f$ and \f$k\in\{1,2,\ldots\}\f$,
+
+\f[
+ P(X=k)=\rho B(k,\rho+1)
+ =\rho\frac{\Gamma(\rho+1)\Gamma(k)}{\Gamma(k+\rho+1)}.
+\f]
+
+RandLib evaluates this expression in the log domain. Its direct tails are
+
+\f[
+ S(k)=kB(k,\rho+1),
+ \qquad
+ F(k)=1-kB(k,\rho+1),
+\f]
+
+with the CDF formed by `expm1` so a small lower tail is retained. The probability-generating and
+characteristic functions are
+
+\f[
+ G(z)=\frac{\rho z}{\rho+1}
+ {}_2F_1(1,1;\rho+2;z),
+ \qquad
+ \phi(t)=G(e^{it}).
+\f]
+
+The generic discrete CF evaluator uses probability summation with an accelerated oscillatory tail,
+rather than evaluating the hypergeometric function. The principal summaries are
+
+\f[
+ \operatorname{E}X=
+ \begin{cases}\dfrac{\rho}{\rho-1},&\rho>1,\\+\infty,&\rho\leq1,\end{cases}
+\f]
+
+\f[
+ \operatorname{Var}X=
+ \begin{cases}
+ \dfrac{\rho^2}{(\rho-1)^2(\rho-2)},&\rho>2,\\
+ +\infty,&\rho\leq2,
+ \end{cases}
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{(\rho+1)^2\sqrt{\rho-2}}{\rho(\rho-3)}
+ \quad(\rho>3),
+\f]
+
+\f[
+ \operatorname{ExKurt}X=
+ \rho+3+
+ \frac{\rho(11\rho^2-49)-22}{\rho(\rho-4)(\rho-3)}
+ \quad(\rho>4).
+\f]
+
+Unavailable moments are reported as infinity. The mode is one, and the median uses the generic
+discrete quantile search.
+
+Sampling uses the exact mixture
+
+\f[
+ Y\sim\operatorname{Pareto}(\rho,1),
+ \qquad
+ X=1+\operatorname{Geometric}(1/Y).
+\f]
+
+Both constructed and static samplers implement that transformation. There is currently no fitting
+specialization or dedicated entropy member.
