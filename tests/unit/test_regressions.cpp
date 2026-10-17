@@ -446,3 +446,21 @@ TEST_CASE("B41: asymmetric-Laplace entropy includes the exponential contribution
     CHECK_THAT(static_cast<double>(AsymmetricLaplaceRand<double>(7, 3, 2).Entropy()),
                WithinRel(1 + std::log(7.5), 1e-15));
 }
+
+TEST_CASE("B42: zero noncentrality is the central chi-squared limit", "[regression]")
+{
+    const NoncentralChiSquaredRand<double> central(4, 0);
+    CHECK_THAT(central.f(2), WithinRel(0.5 / std::exp(1.0), 1e-14));
+    CHECK_THAT(central.F(2), WithinRel(1 - 2 / std::exp(1.0), 1e-14));
+    CHECK_THAT(central.S(2), WithinRel(2 / std::exp(1.0), 1e-14));
+    CHECK_THAT(central.CF(0.5).real(), WithinAbs(0.0, 1e-15));
+    CHECK_THAT(central.CF(0.5).imag(), WithinAbs(0.5, 1e-15));
+    CHECK(central.Mean() == 4);
+    CHECK(central.Variance() == 8);
+    CHECK(central.Mode() == 2);
+
+    std::mt19937_64 actualGenerator(42), expectedGenerator(42);
+    const double actual = NoncentralChiSquaredRand<double>::Variate(0.5, 0, actualGenerator);
+    const double expected = 2 * GammaDistribution<double>::StandardVariate(0.25, expectedGenerator);
+    CHECK(actual == expected);
+}

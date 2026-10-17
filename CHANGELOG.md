@@ -96,6 +96,8 @@ All notable changes to RandLib are documented here. The project follows
   consistently evaluating the exact gamma-ratio correction in the log domain (B40).
 - Corrected asymmetric-Laplace differential entropy to
   `1 + log(scale * (asymmetry + 1 / asymmetry))` (B41).
+- Supported zero noncentrality in noncentral chi-squared distributions, using exact central
+  chi-squared formulas for density, tails, sampling and the mode (B42).
 
 ## [2.0.0-beta.1] - 2026-10-17
 
@@ -194,6 +196,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B41** Asymmetric-Laplace entropy now returns
   `1 + log(scale * (asymmetry + 1 / asymmetry))`; the previous `log1p` expression omitted the unit
   entropy contribution and put the scale term inside an unrelated sum.
+- **B42** Noncentral chi-squared distributions now accept zero noncentrality, as required by their
+  default constructor and central chi-squared limit. Density, direct tails, sampling and the mode use
+  exact gamma-limit formulas instead of singular Bessel/Marcum expressions.
 
 ## [1.2.0] - 2026-10-17
 
