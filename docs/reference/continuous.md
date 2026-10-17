@@ -2530,3 +2530,360 @@ The implementation instead uses expectation quadrature. For \f$a<1\f$, its real 
 same analytic subtraction used by the CDF before integrating the remainder; the imaginary part is
 regular and is integrated directly. Quantiles use TOMS 748. There is currently no
 `fit<PlanckRand>` specialization or dedicated entropy member.
+
+## Stable families
+
+### Stable distribution (`StableRand`)
+
+`StableRand(exponent, skewness, scale, location, parameterization)` uses
+\f$\alpha\in[0.1,2]\f$, \f$\beta\in[-1,1]\f$, \f$\gamma>0\f$, and a finite location. The default
+is Nolan's S1 parameterization. For \f$\alpha\ne1\f$ its characteristic function is
+
+\f[
+ \phi_1(t)=
+ \exp\!\left\{
+  i\mu_1t-|\gamma t|^\alpha
+  \left[1-i\beta\,\operatorname{sgn}(t)\tan\frac{\pi\alpha}{2}\right]
+ \right\},
+\f]
+
+and for \f$\alpha=1\f$ it is
+
+\f[
+ \phi_1(t)=
+ \exp\!\left\{
+  i\mu_1t-\gamma|t|
+  \left[1+i\beta\frac{2}{\pi}\operatorname{sgn}(t)\log|t|\right]
+ \right\}.
+\f]
+
+The explicit S0 convention is continuous in all four parameters. Writing \f$u=|\gamma t|\f$,
+
+\f[
+ \phi_0(t)=
+ \exp\!\left\{
+  -u^\alpha+i\mu_0t
+  +i\beta\,\operatorname{sgn}(t)\tan\frac{\pi\alpha}{2}(u^\alpha-u)
+ \right\},
+ \qquad \alpha\ne1,
+\f]
+
+\f[
+ \phi_0(t)=
+ \exp\!\left\{
+  -u+i\mu_0t
+  -i\beta\frac{2}{\pi}\operatorname{sgn}(t)u\log u
+ \right\},
+ \qquad \alpha=1.
+\f]
+
+The same law has locations
+
+\f[
+ \mu_1=
+ \begin{cases}
+  \mu_0-\beta\gamma\tan(\pi\alpha/2),&\alpha\ne1,\\
+  \mu_0-\dfrac{2}{\pi}\beta\gamma\log\gamma,&\alpha=1.
+ \end{cases}
+\f]
+
+`SetParameterization` changes only which location convention is reported. It does not change the
+law. `SetScale` preserves the location in the currently selected convention.
+
+Except for special cases, the density and CDF have no elementary form. They can always be defined
+from the characteristic function by Fourier inversion,
+
+\f[
+ f(x)=\frac1\pi\int_0^\infty
+ \operatorname{Re}\!\left(e^{-itx}\phi(t)\right)\,dt,
+\f]
+
+\f[
+ F(x)=\frac12-\frac1\pi\int_0^\infty
+ \frac{\operatorname{Im}\!\left(e^{-itx}\phi(t)\right)}{t}\,dt.
+\f]
+
+RandLib does not use these improper integrals indiscriminately. The Gaussian
+\f$(\alpha=2)\f$, Cauchy \f$(\alpha=1,\beta=0)\f$, and one-sided Levy
+\f$(\alpha=1/2,|\beta|=1)\f$ cases dispatch to their closed forms. General S1 probabilities use
+Zolotarev finite-angle integral representations. The transformed integrand is sharply localized in
+the tails, so the implementation finds the unique zero of its exponent, estimates the peak width,
+and places logarithmically spaced quadrature breakpoints around it.
+
+Near the origin, analytic values and convergent power series avoid an ill-conditioned integral.
+Far into a heavy tail, ten-term inverse-power series are used; totally skewed short tails use their
+saddle-point asymptote. Skewed \f$\alpha=1\f$ laws use a separate finite-angle representation and
+an eighth-order logarithmic far-tail expansion. For S0 parameters close to \f$\alpha=1\f$, where
+the S1 location conversion becomes singular, RandLib instead evaluates the continuous S0 Fourier
+kernel by tanh--sinh quadrature and switches to the exact \f$\alpha=1\f$ limit at the closest
+representable exponents. `S(x)` follows direct upper-tail paths rather than subtracting \f$F(x)\f$
+where cancellation would destroy relative accuracy.
+
+For \f$\alpha<1\f$ and \f$\beta=1\f$ the support is \f$[\mu_1,\infty)\f$; for
+\f$\beta=-1\f$ it is \f$(-\infty,\mu_1]\f$. All other stable laws have support \f$\mathbb R\f$.
+For \f$\alpha<2\f$ the power-law tails are
+
+\f[
+ P(X>x)\sim C_\alpha(1+\beta)\gamma^\alpha x^{-\alpha},
+ \qquad
+ P(X<-x)\sim C_\alpha(1-\beta)\gamma^\alpha x^{-\alpha},
+\f]
+
+\f[
+ C_\alpha=\frac{\Gamma(\alpha)\sin(\pi\alpha/2)}{\pi}.
+\f]
+
+Translations are asymptotically negligible in these formulas. RandLib uses the corresponding
+inverse tail as the initial quantile estimate, then brackets and refines against the smaller of the
+two direct tails. Gaussian, Cauchy, and Levy quantiles use their exact inverse-error or tangent
+forms.
+
+The principal moments and summaries are
+
+\f[
+ \operatorname{E}X=
+ \begin{cases}
+  \mu_1,&\alpha>1,\\
+  +\infty,&\alpha\leq1,\ \beta=1,\\
+  -\infty,&\alpha\leq1,\ \beta=-1,\\
+  \text{undefined},&\alpha\leq1,\ |\beta|<1,
+ \end{cases}
+\f]
+
+\f[
+ \operatorname{Var}X=
+ \begin{cases}
+  2\gamma^2,&\alpha=2,\\
+  \infty,&\alpha<2.
+ \end{cases}
+\f]
+
+Only the Gaussian case reports finite skewness and excess kurtosis, both zero. Symmetric laws have
+median and mode \f$\mu_1\f$. For the Levy special cases the mode is
+\f$\mu_1+\beta\gamma/3\f$; other asymmetric medians and modes are found numerically from the direct
+probability and log-density functions.
+
+Sampling uses the Chambers--Mallows--Stuck construction. For \f$\alpha\ne1\f$, let
+\f$U\sim U(-\pi/2,\pi/2)\f$, \f$W\sim\operatorname{Exp}(1)\f$,
+
+\f[
+ B=\frac1\alpha\arctan\!\left(\beta\tan\frac{\pi\alpha}{2}\right),
+ \qquad
+ A=\left(1+\beta^2\tan^2\frac{\pi\alpha}{2}\right)^{1/(2\alpha)}.
+\f]
+
+A standard S1 variate is
+
+\f[
+ Z=A\,
+ \frac{\sin(\alpha(U+B))}{(\cos U)^{1/\alpha}}
+ \left[
+  \frac{\cos(U-\alpha(U+B))}{W}
+ \right]^{(1-\alpha)/\alpha}.
+\f]
+
+The class returns \f$\mu_1+\gamma Z\f$, with dedicated formulas for
+\f$\alpha=1\f$, \f$\alpha=1/2\f$, Gaussian, Cauchy, and Levy cases. A continuous S0
+\f$\alpha=1\f$ sampling limit prevents the S1 location shift from losing precision near one.
+
+`fit<StableRand>(sample, Method::Quantile)` implements McCulloch's estimator from the 5th, 25th,
+50th, 75th, and 95th sample percentiles. Lookup tables estimate \f$(\alpha,\beta)\f$, after which
+the theoretical quartiles determine scale and location. `Method::MLE` starts from that robust
+estimate and performs constrained likelihood optimization; fixed parameters are supported.
+Both methods return S0 parameters. There is no dedicated entropy member.
+
+### Holtsmark and Landau distributions (`HoltsmarkRand`, `LandauRand`)
+
+The named stable specializations preserve their conventional S1 definitions:
+
+\f[
+ \operatorname{Holtsmark}(\gamma,\mu)
+ =S_1\!\left(\frac32,0,\gamma,\mu\right),
+ \qquad
+ \phi(t)=\exp\!\left(i\mu t-|\gamma t|^{3/2}\right),
+\f]
+
+\f[
+ \operatorname{Landau}(\gamma,\mu)
+ =S_1(1,1,\gamma,\mu),
+\f]
+
+\f[
+ \phi(t)=
+ \exp\!\left\{
+  i\mu t-\gamma|t|
+  \left[1+i\frac{2}{\pi}\operatorname{sgn}(t)\log|t|\right]
+ \right\}.
+\f]
+
+Holtsmark is symmetric, so its mean, median, and mode are \f$\mu\f$; its variance is infinite.
+Landau has full real support, a divergent positive mean and infinite variance; its median and mode
+are obtained numerically. Both classes reuse every probability, quantile, and sampling path of
+`StableDistribution`. They do not have separate fitting specializations.
+
+### Geometric-stable distribution (`GeometricStableRand`)
+
+`GeometricStableRand(alpha, beta, gamma, mu)` is most compactly defined by exponential
+subordination. Let \f$W\sim\operatorname{Exp}(1)\f$, and conditional on \f$W=w\f$ let
+
+\f[
+ X\mid W=w\sim S_1\!\left(\alpha,\beta,\gamma w^{1/\alpha},\mu w\right).
+\f]
+
+For \f$\alpha=1\f$, the S1 scale law includes its usual logarithmic location correction. Define
+
+\f[
+ \psi(t)=
+ \begin{cases}
+ |\gamma t|^\alpha
+ \left[1-i\beta\operatorname{sgn}(t)\tan(\pi\alpha/2)\right]-i\mu t,
+ &\alpha\ne1,\\[3pt]
+ \gamma|t|
+ \left[1+i\beta\dfrac{2}{\pi}\operatorname{sgn}(t)\log|t|\right]-i\mu t,
+ &\alpha=1.
+ \end{cases}
+\f]
+
+Since \f$\operatorname{E}e^{-W\psi}=1/(1+\psi)\f$, the characteristic function is
+
+\f[
+ \phi(t)=\frac1{1+\psi(t)}.
+\f]
+
+The density and CDF are the exponential mixtures
+
+\f[
+ f(x)=\int_0^\infty e^{-w}
+ f_{S_1(\alpha,\beta,\gamma w^{1/\alpha},\mu w)}(x)\,dw,
+\f]
+
+\f[
+ F(x)=\int_0^\infty e^{-w}
+ F_{S_1(\alpha,\beta,\gamma w^{1/\alpha},\mu w)}(x)\,dw.
+\f]
+
+RandLib normally evaluates these in \f$u=\log w\f$, because the conditional stable features retain
+roughly constant width on that scale even in extreme tails. The omitted lower head is added
+analytically with the conditional function frozen at the cutoff, while \f$w>e^7\f$ is negligible
+under the exponential weight. The \f$\alpha=1\f$ path uses a separate bounded transformation so
+that tiny mixing variables do not repeatedly force expensive stable far-tail evaluations.
+
+Closed or specialized paths cover \f$\alpha=2\f$ (asymmetric Laplace), symmetric
+\f$\alpha=1\f$ (a Cauchy mixture), and \f$\alpha=1/2\f$ cases. At \f$\alpha=2\f$, define
+
+\f[
+ \kappa=\frac{\sqrt{\mu^2+4\gamma^2}-\mu}{2\gamma}.
+\f]
+
+Then the density is the asymmetric-Laplace form
+
+\f[
+ f(x)=\frac{\kappa}{\gamma(1+\kappa^2)}
+ \begin{cases}
+  e^{x/(\kappa\gamma)},&x<0,\\
+  e^{-\kappa x/\gamma},&x\geq0.
+ \end{cases}
+\f]
+
+For \f$\alpha<1,\beta=1,\mu\geq0\f$ the support is \f$[0,\infty)\f$; for
+\f$\alpha<1,\beta=-1,\mu\leq0\f$ it is \f$(-\infty,0]\f$; otherwise it is all of
+\f$\mathbb R\f$. The stable and geometric-stable laws have the same leading power tails, so
+quantile searches use the same asymptotic seed.
+
+The mean follows
+
+\f[
+ \operatorname{E}X=
+ \begin{cases}
+  \mu,&\alpha>1,\\
+  +\infty,&\alpha\leq1,\ \beta=1,\\
+  -\infty,&\alpha\leq1,\ \beta=-1,\\
+  \text{undefined},&\alpha\leq1,\ |\beta|<1.
+ \end{cases}
+\f]
+
+Only \f$\alpha=2\f$ has finite variance:
+
+\f[
+ \operatorname{Var}X=\mu^2+2\gamma^2.
+\f]
+
+In that case
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2(1-\kappa^6)}{(1+\kappa^4)^{3/2}},
+ \qquad
+ \operatorname{ExKurt}X=
+ 6-\frac{12}{(\kappa^2+\kappa^{-2})^2}.
+\f]
+
+The \f$\alpha=2\f$ median uses the exact asymmetric-Laplace quantile. The mode is zero for
+\f$\alpha=1\f$ and \f$\alpha=2\f$; other medians and modes use numerical search.
+
+Sampling draws the exponential mixing variable and the corresponding standard stable variate
+directly. For \f$\alpha\ne1\f$ this is
+
+\f[
+ X=\mu W+\gamma W^{1/\alpha}Z,
+ \qquad Z\sim S_1(\alpha,\beta,1,0),
+\f]
+
+with specialized but equivalent forms at \f$\alpha=1/2\f$ and \f$\alpha=1\f$. There is currently
+no `fit<GeometricStableRand>` specialization or dedicated entropy member.
+
+### Log-stable distribution (`LogStableRand`)
+
+If \f$X\f$ is the selected S0- or S1-parameterized stable law, `LogStableRand` defines
+
+\f[
+ Y=e^X.
+\f]
+
+For \f$y>0\f$,
+
+\f[
+ f_Y(y)=\frac{f_X(\log y)}{y},
+ \qquad
+ F_Y(y)=F_X(\log y),
+ \qquad
+ S_Y(y)=S_X(\log y),
+\f]
+
+and its quantiles and median are the exponentials of their stable counterparts. A one-sided
+stable support transforms endpoint by endpoint: a finite lower endpoint \f$\mu_1\f$ becomes
+\f$e^{\mu_1}\f$, a finite upper endpoint becomes \f$e^{\mu_1}\f$, and an infinite lower endpoint
+becomes zero.
+
+Positive integer moments exist for the Gaussian case and for non-Gaussian laws with
+\f$\beta=-1\f$. Let \f$\mu_1\f$ be the S1 location. For \f$r>0\f$ their logarithms are
+
+\f[
+ \log\operatorname{E}Y^r=
+ \begin{cases}
+ r\mu_1-\dfrac{(\gamma r)^\alpha}{\cos(\pi\alpha/2)},&\alpha\ne1,\\[7pt]
+ r\mu_1+\dfrac{2\gamma}{\pi}r\log r,&\alpha=1.
+ \end{cases}
+\f]
+
+The implementation evaluates the first four raw moments in the log domain, then forms variance,
+skewness, and excess kurtosis with `expm1`-based differences. For \f$\alpha=2\f$ this reduces to
+the log-normal law with underlying variance \f$2\gamma^2\f$. For other skewnesses, `Mean()` and
+`Variance()` return infinity and standardized higher moments return NaN.
+
+The Jacobian means that the mode is not generally \f$e^{\operatorname{Mode}X}\f$. RandLib returns
+zero when \f$\alpha<2\f$ and \f$\beta<1\f$, where the transformed density diverges at the boundary.
+For the Gaussian case,
+
+\f[
+ \operatorname{Mode}Y=e^{\mu_1-2\gamma^2}.
+\f]
+
+The remaining totally right-skewed cases minimize
+\f$-\log f_X(x)+x\f$ in log space. Sampling simply exponentiates a stable draw; finite-precision
+underflow and overflow are therefore possible for sufficiently heavy tails.
+
+`fit<LogStableRand>` requires positive observations, applies the stable McCulloch or MLE estimator
+to their logarithms, and returns S0 parameters. `CF(0)` is one, but nonzero characteristic-
+function arguments deliberately throw `randlib::not_implemented`: no production-quality
+oscillatory transform is included. There is no dedicated entropy member.
