@@ -1846,3 +1846,230 @@ toward the finite endpoint and the API returns that endpoint.
 performs constrained two-parameter MLE with \f$\xi>-1/2\f$. A moment estimate initializes the
 optimizer. The peaks-over-threshold helper in `randlib/fit/tail.hpp` subtracts the chosen threshold
 before invoking this fit.
+
+## Classical heavy-tailed location families
+
+### Cauchy distribution (`CauchyRand`)
+
+`CauchyRand(location, scale)` uses \f$\mu\in\mathbb R\f$ and \f$\gamma>0\f$:
+
+\f[
+ f(x)=\frac{\gamma}{\pi[\gamma^2+(x-\mu)^2]},
+\qquad
+ F(x)=\frac12+\frac1\pi\arctan\frac{x-\mu}{\gamma},
+\f]
+
+\f[
+ S(x)=\frac12-\frac1\pi\arctan\frac{x-\mu}{\gamma},
+\qquad
+ Q(p)=\mu-\frac{\gamma}{\tan(\pi p)}.
+\f]
+
+The lower and upper tails switch to reciprocal-argument `atan` identities to avoid cancellation.
+The characteristic function and entropy are
+
+\f[
+ \phi(t)=e^{i\mu t-\gamma|t|},\qquad
+ h(X)=\log(4\pi\gamma).
+\f]
+
+Sampling draws a uniform point \f$(U,V)\f$ from the unit disk and returns
+\f$\mu+\gamma U/V\f$; this ratio is standard Cauchy. The median and mode are \f$\mu\f$. Its mean,
+variance, skewness, and kurtosis do not exist; the inherited stable-family API reports NaN for the
+mean, skewness, and excess kurtosis and infinity for the variance.
+
+`fit<CauchyRand>` performs constrained two-parameter MLE, initialized at the sample median with
+scale equal to half the interquartile range.
+
+### Student t distribution (`StudentTRand`)
+
+`StudentTRand(degree, location, scale)` takes \f$\nu,\sigma>0\f$ and
+\f$\mu\in\mathbb R\f$. With \f$z=(x-\mu)/\sigma\f$,
+
+\f[
+ f(x)=\frac{\Gamma((\nu+1)/2)}
+ {\sigma\sqrt{\nu\pi}\,\Gamma(\nu/2)}
+ \left(1+\frac{z^2}{\nu}\right)^{-(\nu+1)/2}.
+\f]
+
+For \f$z<0\f$, define \f$q=\nu/(\nu+z^2)\f$. Then
+
+\f[
+ F(x)=\frac12 I_q(\nu/2,1/2),
+\f]
+
+and the other half of the CDF and the survival function follow by symmetry. RandLib evaluates the
+smaller tail directly. Near the median it uses the complementary incomplete-beta argument
+\f$z^2/(\nu+z^2)\f$, while in the far tail it uses the leading log-domain term if \f$q\f$ would
+underflow. Degrees one, two, and three also have simplified density branches.
+
+The characteristic function is
+
+\f[
+ \phi(t)=e^{i\mu t}
+ \frac{2^{1-\nu/2}}{\Gamma(\nu/2)}
+ \left(\sqrt\nu\,\sigma|t|\right)^{\nu/2}
+ K_{\nu/2}\!\left(\sqrt\nu\,\sigma|t|\right),
+\f]
+
+and is evaluated in the log domain with the modified Bessel \f$K\f$ kernel. Sampling uses
+
+\f[
+ X=\mu+\sigma\frac{Z}{\sqrt{V/\nu}},\qquad
+ Z\sim N(0,1),\quad V\sim\chi^2_\nu,
+\f]
+
+with the denominator generated through the Nakagami implementation. At \f$\nu=1\f$ the dedicated
+Cauchy sampler is used.
+
+The summaries are
+
+\f[
+ \operatorname{E}X=\mu\quad(\nu>1),\qquad
+ \operatorname{Var}X=\frac{\nu\sigma^2}{\nu-2}\quad(\nu>2),
+\f]
+
+\f[
+ \operatorname{Median}X=\operatorname{Mode}X=\mu,
+ \qquad \operatorname{Skew}X=0\quad(\nu>3),
+\f]
+
+\f[
+ \operatorname{ExKurt}X=\frac6{\nu-4}\quad(\nu>4).
+\f]
+
+The API distinguishes an infinite variance or fourth moment from summaries that are undefined
+because a lower moment is absent. The differential entropy, although not exposed by a dedicated
+member, is
+
+\f[
+ h(X)=\log\!\left[\sigma\sqrt\nu\,B(\nu/2,1/2)\right]
+ +\frac{\nu+1}{2}\left[
+ \psi((\nu+1)/2)-\psi(\nu/2)
+ \right].
+\f]
+
+Quantiles are analytic for \f$\nu=1,2,4\f$; all other degrees use the shared TOMS 748 inversion of
+the direct tails. `fit<StudentTRand>` performs constrained three-parameter MLE, initialized with
+\f$\nu=5\f$, the sample median, and an interquartile scale estimate.
+
+### Levy distribution (`LevyRand`)
+
+`LevyRand(location, scale)` uses \f$\mu\in\mathbb R\f$ and \f$\gamma>0\f$, with support closure
+\f$[\mu,\infty)\f$. Writing \f$y=x-\mu\f$ for \f$x>\mu\f$,
+
+\f[
+ f(x)=\sqrt{\frac{\gamma}{2\pi}}\,y^{-3/2}
+ e^{-\gamma/(2y)},
+\f]
+
+\f[
+ F(x)=\operatorname{erfc}\sqrt{\frac{\gamma}{2y}},\qquad
+ S(x)=\operatorname{erf}\sqrt{\frac{\gamma}{2y}}.
+\f]
+
+Both tails are therefore direct. Their inverse-error-function forms give
+
+\f[
+ Q(p)=\mu+\frac{\gamma}{2[\operatorname{erfc}^{-1}(p)]^2},
+\qquad
+ Q(1-p)=\mu+\frac{\gamma}{2[\operatorname{erf}^{-1}(p)]^2}.
+\f]
+
+The sampler uses the exact normal transform
+
+\f[
+ X=\mu+\frac{\gamma}{Z^2},\qquad Z\sim N(0,1),
+\f]
+
+and the characteristic function is
+
+\f[
+ \phi(t)=\exp\!\left(i\mu t-\sqrt{-2i\gamma t}\right),
+\f]
+
+with the principal square root. The mode is \f$\mu+\gamma/3\f$ and the median is the displayed
+quantile at \f$p=1/2\f$. The mean and variance diverge, while standardized higher moments are
+undefined. Its mathematical entropy is
+
+\f[
+ h(X)=\frac12+\log(4\gamma\sqrt\pi)+\frac32\gamma_E,
+\f]
+
+although the class does not currently expose an entropy member.
+
+With location fixed, the scale MLE is
+
+\f[
+ \hat\gamma=\frac{n}{\sum_i(x_i-\mu)^{-1}}.
+\f]
+
+`fit<LevyRand>` uses this closed-form scale at its initial location and then performs constrained
+two-parameter MLE; the default initial location lies slightly below the sample minimum.
+
+### Inverse-Gaussian distribution (`InverseGaussianRand`)
+
+`InverseGaussianRand(mean, shape)` takes \f$\mu,\lambda>0\f$. For \f$x>0\f$,
+
+\f[
+ f(x)=\sqrt{\frac{\lambda}{2\pi x^3}}
+ \exp\!\left[-\frac{\lambda(x-\mu)^2}{2\mu^2x}\right].
+\f]
+
+With
+
+\f[
+ a=\sqrt{\frac{\lambda}{x}}\left(\frac{x}{\mu}-1\right),
+ \qquad
+ b=-\sqrt{\frac{\lambda}{x}}\left(\frac{x}{\mu}+1\right),
+\f]
+
+the CDF is
+
+\f[
+ F(x)=\Phi(a)+e^{2\lambda/\mu}\Phi(b).
+\f]
+
+The naive formula can overflow or lose a tail to subtraction. RandLib combines the common
+exponential factor with the scaled complementary error function `erfcx`: it evaluates the lower
+tail directly when \f$x<\mu\f$ and the upper tail directly when \f$x\geq\mu\f$.
+
+The characteristic function is
+
+\f[
+ \phi(t)=\exp\!\left\{
+ \frac{\lambda}{\mu}\left[1-\sqrt{1-\frac{2i\mu^2t}{\lambda}}\right]
+ \right\}.
+\f]
+
+Sampling uses the Michael--Schucany--Haas transformation. For \f$V=Z^2\f$ with
+\f$Z\sim N(0,1)\f$, first form
+
+\f[
+ Y=\mu+\frac{\mu^2V}{2\lambda}
+ -\frac{\mu}{2\lambda}\sqrt{4\mu\lambda V+\mu^2V^2}.
+\f]
+
+Return \f$Y\f$ with probability \f$\mu/(\mu+Y)\f$, and otherwise return \f$\mu^2/Y\f$.
+The summaries are
+
+\f[
+ \operatorname{E}X=\mu,\qquad
+ \operatorname{Var}X=\frac{\mu^3}{\lambda},
+\f]
+
+\f[
+ \operatorname{Mode}X=\mu\left[
+ \sqrt{1+\frac{9\mu^2}{4\lambda^2}}-\frac{3\mu}{2\lambda}
+ \right],
+\f]
+
+\f[
+ \operatorname{Skew}X=3\sqrt{\frac{\mu}{\lambda}},\qquad
+ \operatorname{ExKurt}X=\frac{15\mu}{\lambda}.
+\f]
+
+The median and other quantiles use TOMS 748 over the direct probability functions. The class does
+not currently expose a dedicated entropy member. `fit<InverseGaussianRand>` performs constrained
+two-parameter MLE, initialized by the sample mean and the moment estimate
+\f$\lambda=\bar x^3/s_n^2\f$.
