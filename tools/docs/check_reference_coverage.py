@@ -10,10 +10,12 @@ def main() -> int:
     registry = (root / "tests/support/cases.inc").read_text(encoding="utf-8")
     classes = set(re.findall(r"\b[A-Z][A-Za-z0-9_]*Rand\b", registry))
 
-    headings = []
-    for path in sorted((root / "docs/reference").glob("*.md")):
-        headings.extend(line for line in path.read_text(encoding="utf-8").splitlines() if line.startswith("#"))
-    documented = set(re.findall(r"\b[A-Z][A-Za-z0-9_]*Rand\b", "\n".join(headings)))
+    distribution_pages = root / "docs/reference/distributions"
+    reference = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(distribution_pages.glob("*.md"))
+    )
+    documented = set(re.findall(r"\b[A-Z][A-Za-z0-9_]*Rand\b", reference))
 
     missing = sorted(classes - documented)
     if missing:

@@ -86,6 +86,11 @@ if(RANDLIB_BUILD_DOCS)
     add_custom_target(randlib_docs ALL
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/docs/check_reference_coverage.py
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/docs/legacy/images
+            ${CMAKE_CURRENT_BINARY_DIR}/docs/html/images
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/docs/check_rendered_reference.py
+            ${CMAKE_CURRENT_BINARY_DIR}/docs/html
         COMMENT "Generating RandLib API documentation"
         VERBATIM)
 endif()

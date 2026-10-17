@@ -1,0 +1,220 @@
+:root {
+    --randlib-card-background: color-mix(in srgb, var(--page-background-color) 94%, var(--primary-color));
+    --randlib-muted-background: color-mix(in srgb, var(--page-background-color) 96%, var(--page-foreground-color));
+}
+
+.contents {
+    max-width: 1240px;
+}
+
+.textblock > p,
+.textblock > ul,
+.textblock > ol {
+    max-width: 82ch;
+    line-height: 1.65;
+}
+
+.reference-callout {
+    display: flex;
+    gap: 0.65rem 1.5rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid var(--primary-color);
+    border-radius: 0 0.45rem 0.45rem 0;
+    background: var(--randlib-muted-background);
+}
+
+.reference-callout strong,
+.reference-callout b {
+    color: var(--primary-color);
+    font-size: 1.05rem;
+}
+
+.reference-hero {
+    margin: 1rem 0 2rem;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    border: 1px solid var(--separator-color);
+    border-radius: 0.75rem;
+    background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--primary-color) 18%, transparent), transparent 42%),
+        var(--randlib-card-background);
+}
+
+.reference-hero > strong,
+.reference-hero > b {
+    display: block;
+    margin-bottom: 0.65rem;
+    font-size: clamp(1.45rem, 3vw, 2.1rem);
+}
+
+.reference-hero > span {
+    display: block;
+    max-width: 72ch;
+    font-size: 1.05rem;
+    line-height: 1.65;
+}
+
+.distribution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.9rem;
+    margin: 1rem 0 2rem;
+}
+
+.distribution-card {
+    display: flex;
+    min-height: 9rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--separator-color);
+    border-radius: 0.65rem;
+    background: var(--randlib-card-background);
+    transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.distribution-card:hover,
+.distribution-card:focus-visible {
+    border-color: var(--primary-color);
+    box-shadow: 0 0.35rem 1.1rem color-mix(in srgb, var(--page-foreground-color) 12%, transparent);
+    transform: translateY(-2px);
+}
+
+.distribution-card strong,
+.distribution-card b {
+    font-size: 1.05rem;
+    line-height: 1.35;
+}
+
+.distribution-card > a {
+    color: var(--page-foreground-color);
+    text-decoration: none;
+}
+
+.distribution-card > a:hover,
+.distribution-card > a:focus-visible {
+    color: var(--primary-color);
+}
+
+.distribution-card code {
+    overflow-wrap: anywhere;
+}
+
+.distribution-card__kind {
+    align-self: flex-start;
+    color: var(--primary-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.distribution-card__meta {
+    margin-top: auto;
+    color: var(--page-foreground-color);
+    font-size: 0.82rem;
+    opacity: 0.68;
+}
+
+.distribution-breadcrumbs {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: -0.35rem 0 1.25rem;
+    color: var(--page-foreground-color);
+    font-size: 0.9rem;
+    opacity: 0.78;
+}
+
+.distribution-meta {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    margin: 0 0 1.5rem;
+}
+
+.distribution-meta > span {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    padding: 0.42rem 0.65rem;
+    border: 1px solid var(--separator-color);
+    border-radius: 999px;
+    background: var(--randlib-muted-background);
+    font-size: 0.86rem;
+}
+
+.distribution-meta strong,
+.distribution-meta b {
+    color: var(--primary-color);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.distribution-plots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.distribution-plot {
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid var(--separator-color);
+    border-radius: 0.65rem;
+    background: #fff;
+}
+
+.distribution-plots img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1.7;
+    object-fit: contain;
+}
+
+.distribution-plot__caption {
+    display: block;
+    padding: 0.65rem 0.8rem;
+    border-top: 1px solid var(--separator-color);
+    background: var(--randlib-card-background);
+    color: var(--page-foreground-color);
+    font-size: 0.84rem;
+}
+
+.plot-note {
+    color: var(--page-foreground-color);
+    font-size: 0.84rem;
+    opacity: 0.72;
+}
+
+.formulaDsp {
+    overflow-x: auto;
+    margin: 1rem 0 !important;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--separator-color);
+    border-radius: 0.5rem;
+    background: var(--randlib-muted-background);
+}
+
+.formulaDsp mjx-container {
+    min-width: max-content;
+}
+
+@media (max-width: 620px) {
+    .distribution-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .distribution-card {
+        min-height: auto;
+    }
+
+    .distribution-meta > span {
+        border-radius: 0.45rem;
+    }
+}

@@ -7,8 +7,12 @@ All notable changes to RandLib are documented here. The project follows
 
 ### Documentation
 
-- Began a current mathematical reference for every public distribution, with TeX definitions,
+- Added a current mathematical reference for every public distribution, with TeX definitions,
   moments, transforms, sampling and numerical-method notes rendered through MathJax in Doxygen.
+  Sixty-nine focused distribution pages replace the monolithic category chapters, family landing
+  pages provide card navigation, and 54 density, mass and CDF plots from the verified legacy set are
+  published with responsive styling. The strict docs target validates page structure, card links,
+  plot assets, TeX delimiters and rendered titles.
 
 ### Stable distributions
 

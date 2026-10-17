@@ -1,5 +1,6 @@
 # Build output
 build/
+build-docs/
 out/
 cov-int/
 

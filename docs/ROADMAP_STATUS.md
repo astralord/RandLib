@@ -51,11 +51,11 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | ✅ | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. Run 39021654307 builds and deploys the documentation from `2.x`; the public site serves that deployment. |
+| 4.1 Documentation | ✅ | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. The mathematical reference uses responsive family cards and focused per-distribution pages; the docs target validates the rendered structure, links, formula delimiters and assets. Run 39021654307 is the last public deployment before this redesign. |
 | 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
 | 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
 | 4.4 Release v2.0.0 | 🟡 | Release automation is ready, including prerelease classification and RC changelog fallback. The exact-head `v2.0.0-rc.1` tag, two-week soak, announcements and upstream vcpkg PR remain. The already-published alpha/beta GitHub releases need their prerelease flags corrected once by the maintainer. |
-| 4.5 Mathematical reference | ✅ | TeX definitions, moments, transforms, support and implementation methods cover all 73 registered public distribution names (71 concrete types plus the Pascal/Polya aliases). The strict docs target runs an executable coverage gate. Plots are intentionally deferred. Stable Count retains its detailed standalone guide on the isolated v2.2 branch and receives a reference entry when that code is merged. |
+| 4.5 Mathematical reference | ✅ | TeX definitions, moments, transforms, support and implementation methods cover all 73 registered public distribution names (71 concrete types plus the Pascal/Polya aliases) across 69 focused pages. Family indexes replace the four monoliths, 54 verified legacy plots illustrate 27 laws, and strict source/render gates check coverage, links, titles, formulas and assets. Stable Count retains its detailed standalone guide on the isolated v2.2 branch and receives a reference entry when that code is merged. |
 
 ## Phase 5: Hard numerics (v2.1)
 

@@ -218,14 +218,16 @@ final release archive and checksum.
 Documentation run 39021654307 builds and deploys successfully from `2.x`. The public site at
 <https://astralord.github.io/RandLib/> serves that deployment, so task 4.1 is complete.
 
-The isolated `documentation-reference` branch now replaces the incomplete legacy mathematical notes
-with TeX-based continuous, discrete, bivariate, circular and singular reference chapters. Each entry
-records the law, support, transforms, moments and the numerical methods actually used by v2. A
-coverage script compares `tests/support/cases.inc` with reference headings as part of
-`randlib_docs`; it currently covers all 73 registered public names. Figures are deliberately
-deferred to a later visualization framework. Stable Count already has a detailed standalone guide
-on its isolated v2.2 branch; add its TeX reference entry when that implementation is merged rather
-than advertising an API that is not yet present on `2.x`.
+The mathematical reference on `2.x` replaces the incomplete legacy notes with 69 focused
+distribution pages and card-based continuous, discrete, bivariate, circular and singular family
+indexes. Each entry records the law, support, transforms, moments and the numerical methods actually
+used by v2. Twenty-seven entries publish 54 density, mass and CDF plots from the verified legacy
+set. The `randlib_docs` target compares `tests/support/cases.inc` with the complete recursive
+reference, builds Doxygen with warnings as errors, copies the plot assets, and validates generated
+page titles, MathJax delimiters, card links and images; it currently covers all 73 registered public
+names. Stable Count already has a detailed standalone guide on its isolated v2.2 branch; add its
+focused TeX reference page when that implementation is merged rather than advertising an API that
+is not yet present on `2.x`.
 
 The first tag runs exposed two release-workflow gaps: alpha and beta were published as ordinary
 GitHub releases, and an RC tag had no exact changelog heading. The local release-tooling fix marks

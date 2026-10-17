@@ -35,7 +35,8 @@ GENERATE_TREEVIEW      = YES
 FULL_SIDEBAR           = NO
 DISABLE_INDEX          = NO
 HTML_EXTRA_STYLESHEET  = @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome.css \
-                         @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome-sidebar-only.css
+                         @RANDLIB_DOXYGEN_AWESOME_DIR@/doxygen-awesome-sidebar-only.css \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/randlib-docs.css
 GENERATE_LATEX         = NO
 USE_MATHJAX            = YES
 MATHJAX_VERSION        = MathJax_3
