@@ -98,6 +98,14 @@ All notable changes to RandLib are documented here. The project follows
   `1 + log(scale * (asymmetry + 1 / asymmetry))` (B41).
 - Supported zero noncentrality in noncentral chi-squared distributions, using exact central
   chi-squared formulas for density, tails, sampling and the mode (B42).
+- Defined Bernoulli entropy at deterministic endpoints by its zero-log-zero limit (B43).
+- Made binomial construction, scalar and bulk sampling, and modes exact at probability endpoints;
+  near-one probabilities are no longer rounded to deterministic bulk samples (B44).
+- Stabilized discrete-uniform characteristic functions at integer-lattice periods with a
+  reduced-angle sinc form (B45).
+- Corrected Skellam modes by searching adjacent probabilities from the median (B46).
+- Unified static and constructed Poisson sampling on the same exact inversion/rejection algorithms,
+  removing the static large-rate normal approximation (B47).
 
 ## [2.0.0-beta.1] - 2026-10-17
 
@@ -199,6 +207,21 @@ All notable changes to RandLib are documented here. The project follows
 - **B42** Noncentral chi-squared distributions now accept zero noncentrality, as required by their
   default constructor and central chi-squared limit. Density, direct tails, sampling and the mode use
   exact gamma-limit formulas instead of singular Bessel/Marcum expressions.
+- **B43** Bernoulli entropy is now linkable from downstream translation units and returns zero at
+  the accepted deterministic endpoints instead of evaluating the indeterminate floating-point
+  products `0 * log(0)`.
+- **B44** Binomial construction and cached sampling now handle the accepted deterministic
+  probabilities without configuring an invalid geometric helper. Binomial and Bernoulli modes at
+  `p = 1` are clamped to the upper support endpoint; the ordinary `floor((n + 1) * p)`
+  expression otherwise returned `n + 1`. Bulk sampling no longer rounds probabilities within
+  `1e-6` of one to a deterministic law.
+- **B45** Discrete-uniform characteristic functions now use a reduced-angle sinc form and return
+  exactly one at integer-lattice periods instead of dividing zero by zero.
+- **B46** Skellam modes now search adjacent probabilities from the median instead of truncating the
+  mean, which need not maximize the PMF. A three-point regression uses 60-digit Bessel references.
+- **B47** Static Poisson sampling now shares the exact inversion/rejection algorithms used by
+  constructed distributions. This replaces its separate exponential-arrival algorithm through rate
+  1000 and, more importantly, the inexact normal approximation above that boundary.
 
 ## [1.2.0] - 2026-10-17
 

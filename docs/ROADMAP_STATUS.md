@@ -23,7 +23,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 11–14, Clang 15–18, AppleClang and MSVC 14.44 build warning-free in the current CI run. |
-| 1.4 Correctness fixes | ✅ | B1–B9 as planned and B11–B38 shipped in v1.2; B10 was deferred to v2 by design. The post-release B39–B42 fitting, entropy and parameter-boundary fixes have landed for the unreleased v1.2.1. See CHANGELOG.md. |
+| 1.4 Correctness fixes | ✅ | B1–B9 as planned and B11–B38 shipped in v1.2; B10 was deferred to v2 by design. The post-release B39–B47 fitting, entropy, boundary and sampler fixes have landed for the unreleased v1.2.1. See CHANGELOG.md. |
 | 1.5 Continuous integration | ✅ | CI run 39018516580 passes B39 on GCC 11–14, Clang 15–18, AppleClang, MSVC, sanitizer, coverage, static analysis, engine variants, portable special functions, and install/consumer checks. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
 | 1.7 Release v1.2 | ✅ | `v1.2.0` tags the all-green tested commit f25fd1a. |

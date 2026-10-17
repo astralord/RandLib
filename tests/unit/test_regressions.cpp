@@ -464,3 +464,64 @@ TEST_CASE("B42: zero noncentrality is the central chi-squared limit", "[regressi
     const double expected = 2 * GammaDistribution<double>::StandardVariate(0.25, expectedGenerator);
     CHECK(actual == expected);
 }
+
+TEST_CASE("B43: Bernoulli endpoint entropy uses the zero-log-zero limit", "[regression]")
+{
+    CHECK(BernoulliRand(0).Entropy() == 0);
+    CHECK(BernoulliRand(1).Entropy() == 0);
+    CHECK_THAT(BernoulliRand(0.5).Entropy(), WithinRel(std::log(2.0), 1e-15));
+}
+
+TEST_CASE("B44: binomial probability boundaries preserve construction and sampling", "[regression]")
+{
+    const BinomialRand<int> certain(7, 1);
+    std::mt19937_64 certainGenerator(42);
+    CHECK(certain.Mode() == 7);
+    CHECK(certain(certainGenerator) == 7);
+    std::vector<int> sample(3);
+    certain.Sample(certainGenerator, sample);
+    CHECK(sample == std::vector<int>{7, 7, 7});
+
+    const BinomialRand<int> impossible(7, 0);
+    std::mt19937_64 impossibleGenerator(42);
+    CHECK(impossible.Mode() == 0);
+    CHECK(impossible(impossibleGenerator) == 0);
+    CHECK(BernoulliRand(1).Mode() == 1);
+    CHECK(BinomialRand<int>(5, 0.5).Mode() == 3);
+
+    BinomialRand<int> bulk(10000000, 1 - 9e-7), scalar(10000000, 1 - 9e-7);
+    std::mt19937_64 bulkGenerator(42), scalarGenerator(42);
+    std::vector<int> actual(4), expected(4);
+    bulk.Sample(bulkGenerator, actual);
+    for (int &value : expected)
+        value = scalar(scalarGenerator);
+    CHECK(actual == expected);
+}
+
+TEST_CASE("B45: discrete-uniform characteristic function handles lattice periods", "[regression]")
+{
+    const UniformDiscreteRand<int> distribution(-3, 7);
+    const double period = 2 * static_cast<double>(randlib::consts::pi);
+    CHECK_THAT(distribution.CF(period).real(), WithinAbs(1.0, 0.0));
+    CHECK_THAT(distribution.CF(period).imag(), WithinAbs(0.0, 0.0));
+    CHECK_THAT(distribution.CF(2 * period).real(), WithinAbs(1.0, 0.0));
+    CHECK_THAT(distribution.CF(-period).imag(), WithinAbs(0.0, 0.0));
+}
+
+TEST_CASE("B46: Skellam mode maximizes the PMF instead of truncating the mean", "[regression]")
+{
+    const SkellamRand<int> distribution(2, 1.1);
+    CHECK_THAT(distribution.P(0), WithinRel(0.2139951994197166138511878227306453, 1e-13));
+    CHECK_THAT(distribution.P(1), WithinRel(0.2329981383802911800024090128922231, 1e-13));
+    CHECK_THAT(distribution.P(2), WithinRel(0.1772656913264927706363333023355158, 1e-13));
+    CHECK(distribution.Mode() == 1);
+}
+
+TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regression]")
+{
+    for (double rate : {5.0, 1001.0}) {
+        const PoissonRand<int> distribution(rate);
+        std::mt19937_64 staticGenerator(42), instanceGenerator(42);
+        CHECK(PoissonRand<int>::Variate(rate, staticGenerator) == distribution(instanceGenerator));
+    }
+}

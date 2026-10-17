@@ -121,6 +121,8 @@ inline void BernoulliRand::sample(detail::EngineRef g, std::span<int> outputData
 
 inline double BernoulliRand::Entropy()
 {
+    if (p == 0.0 || q == 0.0)
+        return 0.0;
     return -(p * logProb + q * log1mProb);
 }
 
