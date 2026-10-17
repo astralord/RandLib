@@ -521,6 +521,12 @@ TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regressi
     CHECK(sample == std::vector<int>{0, 0, 0});
 
     GeometricRand<int> geometric(1);
+    CHECK(geometric.P(0) == 1);
+    CHECK(geometric.logP(0) == 0);
+    CHECK(geometric.P(1) == 0);
+    CHECK(geometric.logP(1) == -INFINITY);
+    CHECK(geometric.F(0) == 1);
+    CHECK(geometric.S(0) == 0);
     CHECK(geometric.Median() == 0);
     CHECK(geometric.Variate() == 0);
     RandGenerator generator;

@@ -19,12 +19,16 @@ void GeometricRand<IntType>::SetProbability(double probability)
 template < typename IntType >
 double GeometricRand<IntType>::P(const IntType &k) const
 {
+    if (this->p == 1.0)
+        return (k == 0) ? 1.0 : 0.0;
     return (k < 0) ? 0 : this->p * std::exp(k * this->log1mProb);
 }
 
 template < typename IntType >
 double GeometricRand<IntType>::logP(const IntType &k) const
 {
+    if (this->p == 1.0)
+        return (k == 0) ? 0.0 : -INFINITY;
     return (k < 0) ? -INFINITY : this->logProb + k * this->log1mProb;
 }
 
