@@ -30,6 +30,8 @@ All notable changes to RandLib are documented here. The project follows
   `p = 1` are clamped to the upper support endpoint; the ordinary `floor((n + 1) * p)`
   expression otherwise returned `n + 1`. Bulk sampling no longer rounds probabilities within
   `1e-6` of one to a deterministic law.
+- **B45** Discrete-uniform characteristic functions now use a reduced-angle sinc form and return
+  exactly one at integer-lattice periods instead of dividing zero by zero.
 
 ## [1.2.0] - 2026-10-17
 

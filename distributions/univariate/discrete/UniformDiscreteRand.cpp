@@ -123,13 +123,14 @@ long double UniformDiscreteRand<IntType>::ExcessKurtosis() const
 template< typename IntType >
 std::complex<double> UniformDiscreteRand<IntType>::CFImpl(double t) const
 {
-    double at = a * t;
-    double bp1t = (b + 1) * t;
-    double reNum = std::cos(at) - std::cos(bp1t);
-    double imNum = std::sin(at) - std::sin(bp1t);
-    std::complex<double> numerator(reNum, imNum);
-    std::complex<double> denominator(1.0 - std::cos(t), -std::sin(t));
-    return nInv * numerator / denominator;
+    const double period = 2 * static_cast<double>(randlib::consts::pi);
+    const double reduced = std::remainder(t, period);
+    if (reduced == 0.0)
+        return 1.0;
+    const double halfAngle = 0.5 * reduced;
+    const double amplitude = std::sin(n * halfAngle) / (n * std::sin(halfAngle));
+    const double phase = (0.5 * static_cast<double>(a) + 0.5 * static_cast<double>(b)) * reduced;
+    return amplitude * std::complex<double>(std::cos(phase), std::sin(phase));
 }
 
 template< typename IntType >

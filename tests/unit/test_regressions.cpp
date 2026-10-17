@@ -470,3 +470,13 @@ TEST_CASE("B44: binomial probability boundaries preserve construction and sampli
         value = scalar.Variate();
     CHECK(actual == expected);
 }
+
+TEST_CASE("B45: discrete-uniform characteristic function handles lattice periods", "[regression]")
+{
+    const UniformDiscreteRand<int> distribution(-3, 7);
+    const double period = 2 * static_cast<double>(randlib::consts::pi);
+    CHECK_THAT(distribution.CF(period).real(), WithinAbs(1.0, 0.0));
+    CHECK_THAT(distribution.CF(period).imag(), WithinAbs(0.0, 0.0));
+    CHECK_THAT(distribution.CF(2 * period).real(), WithinAbs(1.0, 0.0));
+    CHECK_THAT(distribution.CF(-period).imag(), WithinAbs(0.0, 0.0));
+}
