@@ -426,39 +426,39 @@ published density and the Phase 5 stable kernel.
 
 ### 6.1 Stable Count distribution (3–5 days)
 
-- [ ] Add `StableCountRand<RealType>` under `include/randlib/continuous/` with exponent
+- [x] Add `StableCountRand<RealType>` under `include/randlib/continuous/` with exponent
   `0 < alpha < 1`, positive scale and a finite location. Use the location-scale form of
   `N_alpha(x) = L_alpha(1/x) / (Gamma(1/alpha + 1) x)` and state exactly which one-sided stable
   parameterization and scale convention it requires.
-- [ ] Implement direct log-density, density, CDF, survival, quantile and all finite moments. Evaluate
+- [x] Implement direct log-density, density, CDF, survival, quantile and all finite moments. Evaluate
   tails directly instead of subtracting from one. Use the exact moment identity
   `E[X^q] = Gamma((q + 1)/alpha) / (Gamma(q + 1) Gamma(1/alpha))` in the standard case, with
   log-gamma arithmetic when the raw moment would overflow.
-- [ ] Preserve the `alpha = 1/2` reduction to `Gamma(shape=3/2, scale=4)` as an exact fast path and
+- [x] Preserve the `alpha = 1/2` reduction to `Gamma(shape=3/2, scale=4)` as an exact fast path and
   document the degenerate limit as `alpha -> 1`. Do not retain the experimental `[0.1, 1)` or
   near-one exclusions unless new numerical evidence requires a documented bound.
-- [ ] Supply a standard-URBG sampler with no hidden state. Inverse-CDF sampling is an acceptable
+- [x] Supply a standard-URBG sampler with no hidden state. Inverse-CDF sampling is an acceptable
   correctness-first implementation; a transformed or rejection sampler must have a derivation and
   statistical evidence. Do not use the experimental fixed `100000` threshold or discard large
   one-sided-stable draws.
-- [ ] Generate committed 40-digit mpmath reference grids from the Wright/one-sided-stable definition,
+- [x] Generate committed 40-digit mpmath reference grids from the Wright/one-sided-stable definition,
   cross-check the half-stable Gamma case and moment identities, and cover normalization, support,
   density/CDF/survival coherence, quantile round trips, reproducibility and seeded sampling tests.
-- [ ] Add generic MLE with fixed-parameter variants and seeded recovery tests. Land as Tier 2 first;
+- [x] Add generic MLE with fixed-parameter variants and seeded recovery tests. Land as Tier 2 first;
   promote to Tier 1 only after the independent reference and sampling evidence meet the promotion
   rule.
 
 ### 6.2 Stable-prior semantics (time-boxed: 2–3 days)
 
-- [ ] Formalize the claimed "conjugate prior" before adding an API: identify the random quantity
+- [x] Formalize the claimed "conjugate prior" before adding an API: identify the random quantity
   (count, count root, scale or reciprocal scale), write the normalized likelihood, and derive the
   posterior hyperparameter update for an arbitrary sample size. Distinguish Bayesian conjugacy from
   the paper's inverse-variable, product-mixture and subordination identities.
-- [ ] Add a `fit_bayes` overload for `StableRand` only if the posterior remains in the Stable Count
-  family and the supported stable parameterization is explicit. Verify normalization, posterior
-  moments and posterior-predictive values against high-precision quadrature, including the
-  `alpha = 1/2` special case.
-- [ ] If posterior closure cannot be proved within the time box, keep `StableCountRand` as a
+- [x] Evaluate a `fit_bayes` overload for `StableRand`, adding it only if the posterior remains in
+  the Stable Count family and the supported stable parameterization is explicit. Verify
+  normalization, posterior moments and posterior-predictive values against high-precision
+  quadrature, including the `alpha = 1/2` special case.
+- [x] If posterior closure cannot be proved within the time box, keep `StableCountRand` as a
   standalone distribution and document the subordination relation without calling it a conjugate
   Bayesian prior. Record the missing derivation as a research issue rather than exposing a
   misleading closed-form update.
@@ -466,6 +466,12 @@ published density and the Phase 5 stable kernel.
 The generalized Stable Count family `(alpha, sigma, d, p)` from the 2025 revision is deliberately a
 follow-up, not part of the first implementation. It should be proposed separately after the core
 Wright-function evaluation and sampler are independently validated.
+
+The implementation and research gates above are complete on the isolated `stable-count` branch.
+The exact half-stable case shows that the natural stable-subordinator scale likelihood does not
+preserve the core location-scale Stable Count family, so the conditional `fit_bayes` task completed
+with no overload. The branch remains isolated until the v2.0/v2.1 release line is ready; merging,
+adding the distribution to the TeX reference and tagging `v2.2.0` remain release work.
 
 **Phase 6 done when:** the core Stable Count distribution has reference-backed probability functions,
 moments, fitting and a validated standard-URBG sampler; the Bayesian-conjugacy claim is either proved
