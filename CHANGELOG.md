@@ -25,6 +25,11 @@ All notable changes to RandLib are documented here. The project follows
 - **B43** Bernoulli entropy is now linkable from downstream translation units and returns zero at
   the accepted deterministic endpoints instead of evaluating the indeterminate floating-point
   products `0 * log(0)`.
+- **B44** Binomial construction and cached sampling now handle the accepted deterministic
+  probabilities without configuring an invalid geometric helper. Binomial and Bernoulli modes at
+  `p = 1` are clamped to the upper support endpoint; the ordinary `floor((n + 1) * p)`
+  expression otherwise returned `n + 1`. Bulk sampling no longer rounds probabilities within
+  `1e-6` of one to a deterministic law.
 
 ## [1.2.0] - 2026-10-17
 

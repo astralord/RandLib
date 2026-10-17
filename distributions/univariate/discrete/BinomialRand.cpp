@@ -14,6 +14,8 @@ template< typename IntType >
 void BinomialDistribution<IntType>::SetGeneratorConstants()
 {
     minpq = std::min(p, q);
+    if (minpq == 0.0)
+        return;
     npFloor = std::floor(n * minpq);
     pFloor = npFloor / n;
     pRes = RandMath::areClose(npFloor, n * minpq) ? 0.0 : minpq - pFloor;
@@ -318,6 +320,10 @@ IntType BinomialDistribution<IntType>::variateBernoulliSum(IntType number, doubl
 template< typename IntType >
 IntType BinomialDistribution<IntType>::Variate() const
 {
+    if (p == 0.0)
+        return 0;
+    if (p == 1.0)
+        return n;
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     switch (genId) {
     case WAITING:
@@ -370,7 +376,7 @@ void BinomialDistribution<IntType>::Sample(std::vector<IntType> &outputData) con
         std::fill(outputData.begin(), outputData.end(), 0);
         return;
     }
-    if (RandMath::areClose(p, 1.0)) {
+    if (p == 1.0) {
         std::fill(outputData.begin(), outputData.end(), n);
         return;
     }
@@ -443,7 +449,7 @@ IntType BinomialDistribution<IntType>::Median() const
 template< typename IntType >
 IntType BinomialDistribution<IntType>::Mode() const
 {
-    return std::floor(np + p);
+    return std::min(n, static_cast<IntType>(std::floor(np + p)));
 }
 
 template< typename IntType >

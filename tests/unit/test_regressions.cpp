@@ -445,3 +445,28 @@ TEST_CASE("B43: Bernoulli endpoint entropy uses the zero-log-zero limit", "[regr
     CHECK(BernoulliRand(1).Entropy() == 0);
     CHECK_THAT(BernoulliRand(0.5).Entropy(), WithinRel(std::log(2.0), 1e-15));
 }
+
+TEST_CASE("B44: binomial probability boundaries preserve construction and sampling", "[regression]")
+{
+    const BinomialRand<int> certain(7, 1);
+    CHECK(certain.Mode() == 7);
+    CHECK(certain.Variate() == 7);
+    std::vector<int> sample(3);
+    certain.Sample(sample);
+    CHECK(sample == std::vector<int>{7, 7, 7});
+
+    const BinomialRand<int> impossible(7, 0);
+    CHECK(impossible.Mode() == 0);
+    CHECK(impossible.Variate() == 0);
+    CHECK(BernoulliRand(1).Mode() == 1);
+    CHECK(BinomialRand<int>(5, 0.5).Mode() == 3);
+
+    BinomialRand<int> bulk(10000000, 1 - 9e-7), scalar(10000000, 1 - 9e-7);
+    bulk.Reseed(42);
+    scalar.Reseed(42);
+    std::vector<int> actual(4), expected(4);
+    bulk.Sample(actual);
+    for (int &value : expected)
+        value = scalar.Variate();
+    CHECK(actual == expected);
+}
