@@ -57,15 +57,16 @@ double HyperGeometricRand<IntType>::logP(const IntType & k) const
 template < typename IntType >
 double HyperGeometricRand<IntType>::F(const IntType & k) const
 {
-    if (k < MinValue())
+    IntType minVal = MinValue();
+    if (k < minVal)
         return 0.0;
     IntType maxVal = MaxValue();
     if (k >= maxVal)
         return 1.0;
-    if (k <= 0.5 * maxVal) {
+    if (k - minVal <= maxVal - k) {
         /// sum P(X = i) going forward until k
         double sum = 0;
-        for (IntType i = 0; i <= k; ++i)
+        for (IntType i = minVal; i <= k; ++i)
             sum += P(i);
         return sum;
     }
@@ -81,12 +82,14 @@ IntType HyperGeometricRand<IntType>::Variate() const
 {
     double p = p0;
     IntType sum = 0;
-    for (int i = 1; i <= n; ++i)
+    for (IntType i = 1; i <= n; ++i)
     {
         if (BernoulliRand::Variate(p, this->localRandGenerator) && ++sum >= K)
             return sum;
-        p = K - sum;
-        p /= N - i;
+        if (i < n) {
+            p = K - sum;
+            p /= N - i;
+        }
     }
     return sum;
 }
@@ -94,12 +97,14 @@ IntType HyperGeometricRand<IntType>::Variate() const
 template < typename IntType >
 long double HyperGeometricRand<IntType>::Mean() const
 {
-    return static_cast<double>(n * K) / N;
+    return static_cast<long double>(n) * K / N;
 }
 
 template < typename IntType >
 long double HyperGeometricRand<IntType>::Variance() const
 {
+    if (n == N || K == N)
+        return 0.0L;
     long double numerator = n;
     numerator *= K;
     numerator *= N - K;
@@ -113,43 +118,53 @@ long double HyperGeometricRand<IntType>::Variance() const
 template < typename IntType >
 IntType HyperGeometricRand<IntType>::Mode() const
 {
-    double mode = (n + 1) * (K + 1);
-    return std::floor(mode / (N + 2));
+    long double mode = (static_cast<long double>(n) + 1.0L) * (static_cast<long double>(K) + 1.0L);
+    return static_cast<IntType>(std::floor(mode / (static_cast<long double>(N) + 2.0L)));
 }
 
 template < typename IntType >
 long double HyperGeometricRand<IntType>::Skewness() const
 {
-    long double skewness = N - 1;
-    skewness /= n;
-    skewness /= K;
-    skewness /= N - K;
-    skewness /= N - n;
+    if (n == N || K == N)
+        return NAN;
+    if (N == 2)
+        return 0.0L;
+    long double population = N, draws = n, successes = K;
+    long double skewness = population - 1.0L;
+    skewness /= draws;
+    skewness /= successes;
+    skewness /= population - successes;
+    skewness /= population - draws;
     skewness = std::sqrt(skewness);
-    skewness *= N - 2 * K;
-    skewness *= N - 2 * n;
-    return skewness / (N - 2);
+    skewness *= population - 2.0L * successes;
+    skewness *= population - 2.0L * draws;
+    return skewness / (population - 2.0L);
 }
 
 template < typename IntType >
 long double HyperGeometricRand<IntType>::ExcessKurtosis() const
 {
-    long double numerator = N;
-    numerator *= (N + 1);
-    long double a1 = K;
-    a1 *= N - K;
-    long double a2 = n;
-    a2 *= N - n;
+    long double variance = Variance();
+    if (variance == 0.0L)
+        return NAN;
+    if (N <= 3) {
+        long double mean = Mean(), fourthMoment = 0.0L;
+        for (IntType k = MinValue(); k <= MaxValue(); ++k) {
+            long double centered = k - mean;
+            fourthMoment += centered * centered * centered * centered * P(k);
+        }
+        return fourthMoment / (variance * variance) - 3.0L;
+    }
+
+    long double population = N, draws = n, successes = K;
+    long double numerator = population * (population + 1.0L);
+    long double a1 = successes * (population - successes);
+    long double a2 = draws * (population - draws);
     numerator -= 6 * (a1 + a2);
-    numerator *= N;
-    numerator *= N;
-    numerator *= N - 1;
-    long double aux = n;
-    aux *= K;
-    aux *= N - K;
-    aux *= N - n;
-    numerator += 6 * aux * (5 * N - 6);
-    long double denominator = aux * (N - 2) * (N - 3);
+    numerator *= population * population * (population - 1.0L);
+    long double aux = draws * successes * (population - successes) * (population - draws);
+    numerator += 6.0L * aux * (5.0L * population - 6.0L);
+    long double denominator = aux * (population - 2.0L) * (population - 3.0L);
     return numerator / denominator;
 }
 

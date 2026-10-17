@@ -644,3 +644,36 @@ TEST_CASE("B53: trinomial endpoints and modes stay on the probability simplex", 
         }
     }
 }
+
+TEST_CASE("B54: hypergeometric moments cover small, deterministic and large populations", "[regression]")
+{
+    const HyperGeometricRand<int> singleton(1, 1, 1);
+    CHECK(singleton.Mean() == 1);
+    CHECK(singleton.Variance() == 0);
+    CHECK(std::isnan(singleton.Skewness()));
+    CHECK(std::isnan(singleton.ExcessKurtosis()));
+
+    const HyperGeometricRand<int> symmetricBernoulli(2, 1, 1);
+    CHECK(symmetricBernoulli.Mean() == 0.5);
+    CHECK(symmetricBernoulli.Variance() == 0.25);
+    CHECK(symmetricBernoulli.Skewness() == 0);
+    CHECK_THAT(static_cast<double>(symmetricBernoulli.ExcessKurtosis()), WithinAbs(-2.0, 1e-15));
+
+    const HyperGeometricRand<int> smallAsymmetric(3, 1, 1);
+    CHECK_THAT(static_cast<double>(smallAsymmetric.Skewness()), WithinAbs(1.0 / std::sqrt(2.0), 1e-15));
+    CHECK_THAT(static_cast<double>(smallAsymmetric.ExcessKurtosis()), WithinAbs(-1.5, 1e-15));
+
+    const HyperGeometricRand<int> deterministic(10, 10, 4);
+    CHECK(deterministic.Mean() == 4);
+    CHECK(deterministic.Variance() == 0);
+    CHECK(std::isnan(deterministic.Skewness()));
+    CHECK(std::isnan(deterministic.ExcessKurtosis()));
+
+    const HyperGeometricRand<int> large(2000000000, 1500000000, 1000000000);
+    CHECK(large.Mean() == 750000000);
+    CHECK(large.Mode() == 750000000);
+
+    const HyperGeometricRand<int> shiftedSupport(100, 80, 70);
+    CHECK_THAT(shiftedSupport.F(shiftedSupport.MinValue()),
+               WithinAbs(shiftedSupport.P(shiftedSupport.MinValue()), 1e-15));
+}

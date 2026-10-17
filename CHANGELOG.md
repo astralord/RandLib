@@ -54,6 +54,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B53** Trinomial probability, CDF and sampling methods now handle zero-probability and
   deterministic categories without `0 * log(0)` or `0 / 0`. Modes are found by a simplex-aware
   neighbor search and can no longer return an impossible pair whose counts exceed `n`.
+- **B54** Hypergeometric means and modes no longer multiply in the integer parameter type, and
+  standardized moments now handle deterministic and populations of size two or three. CDF summation
+  starts at the actual support boundary, and sampling uses the distribution's integer type.
 
 ## [1.2.0] - 2026-10-17
 
