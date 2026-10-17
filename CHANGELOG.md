@@ -90,6 +90,13 @@ All notable changes to RandLib are documented here. The project follows
 - Removed a Bernoulli/binomial include cycle exposed by standalone public-header consumption without
   changing the exact sampling algorithm or engine advancement.
 
+### Correctness
+
+- Corrected Rayleigh UMVU scale fitting at the small-sample and asymptotic branch boundaries by
+  consistently evaluating the exact gamma-ratio correction in the log domain (B40).
+- Corrected asymmetric-Laplace differential entropy to
+  `1 + log(scale * (asymmetry + 1 / asymmetry))` (B41).
+
 ## [2.0.0-beta.1] - 2026-10-17
 
 ### Fitting
@@ -180,6 +187,13 @@ All notable changes to RandLib are documented here. The project follows
   rejects non-finite states after bounded backtracking instead of performing up to 100,000 futile
   iterations. A three-observation regression uses the 50-digit mpmath score root
   5.2122598849254577174.
+- **B40** Rayleigh UMVU scale fitting consistently evaluates the gamma-ratio correction in the log
+  domain. The small-sample branch previously passed a logarithm as the scale, while the large-sample
+  branch exponentiated half the scale squared and treated a log-ratio expansion as an ordinary
+  correction factor.
+- **B41** Asymmetric-Laplace entropy now returns
+  `1 + log(scale * (asymmetry + 1 / asymmetry))`; the previous `log1p` expression omitted the unit
+  entropy contribution and put the scale term inside an unrelated sum.
 
 ## [1.2.0] - 2026-10-17
 

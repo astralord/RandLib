@@ -422,3 +422,27 @@ TEST_CASE("B39: negative-binomial fitting stays in the positive shape domain", "
     CHECK_THAT(fitted.distribution.GetNumber(), WithinRel(5.2122598849254577174, 1e-10));
     CHECK_THAT(fitted.distribution.GetProbability(), WithinRel(0.79630061189656137372, 1e-10));
 }
+
+TEST_CASE("B40: Rayleigh unbiased scale fitting stays in the log domain", "[regression]")
+{
+    /// If R = sqrt(sum(X_i^2) / (2n)), then E[R] = sigma Gamma(n + 1/2) / (sqrt(n) Gamma(n)).
+    for (size_t n : {size_t{15}, size_t{16}, size_t{101}}) {
+        const std::vector<double> sample(n, 1.0);
+        const double mleScaleSquared = 0.5;
+        const double expected = std::exp(0.5 * std::log(n * mleScaleSquared) + std::lgamma(n) - std::lgamma(n + 0.5));
+
+        const auto fitted = fit<RayleighRand<double>>(sample, Method::UMVU);
+
+        INFO("sample size " << n);
+        CHECK_THAT(fitted.distribution.GetScale(), WithinRel(expected, 1e-12));
+    }
+}
+
+TEST_CASE("B41: asymmetric-Laplace entropy includes the exponential contribution", "[regression]")
+{
+    /// Integrating -log(f) gives 1 + log(gamma * (kappa + 1 / kappa)).
+    CHECK_THAT(static_cast<double>(LaplaceRand<double>(0, 1).Entropy()), WithinRel(1 + std::log(2.0), 1e-15));
+    CHECK_THAT(static_cast<double>(LaplaceRand<double>(4, 2).Entropy()), WithinRel(1 + std::log(4.0), 1e-15));
+    CHECK_THAT(static_cast<double>(AsymmetricLaplaceRand<double>(7, 3, 2).Entropy()),
+               WithinRel(1 + std::log(7.5), 1e-15));
+}

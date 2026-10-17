@@ -48,7 +48,7 @@ cmake --build /tmp/b2
 Compilers on the pod: g++-13, g++-14, clang++-18. MSVC and AppleClang are only exercised by CI.
 
 Test families (both branches): `tests/unit` (golden v1.1 comparison, mpmath reference values, coherence,
-mode/median, parameters, regressions B1–B39, reproducibility, engines, numerics on 2.x) and
+mode/median, parameters, regressions B1–B41, reproducibility, engines, numerics on 2.x) and
 `tests/statistical` (KS/χ² sampling, moments, empirical CF, fitting). Tolerances follow plan section 9.
 
 ### Golden values and known deviations
@@ -85,7 +85,10 @@ tested commit. Commit ba0592b is the first post-release fix: B39 keeps negative-
 inside the positive shape domain and is recorded under the unreleased 1.2.1 changelog section.
 Replacement run 39018516580 passes B39 in all 16 jobs, including AppleClang, MSVC, GCC 11–14,
 Clang 15–18, sanitizers, engine variants, portable special functions, static analysis and the
-install consumer. The subsequent 4ad71f0 commit only records that result.
+install consumer. The subsequent 4ad71f0 commit only records that result. B40 then corrected all
+three numerical branches of Rayleigh UMVU scale fitting, and B41 restored the exact
+asymmetric-Laplace entropy. Both have closed-form regression evidence and pass the complete local
+GCC 13 unit and statistical suites; CI for these unreleased 1.2.1 commits remains pending.
 
 ### 3.2 Phase 2 remainder (branch `2.x`)
 
@@ -209,9 +212,10 @@ Documentation run 39021654307 builds and deploys successfully from `2.x`. The pu
 The first tag runs exposed two release-workflow gaps: alpha and beta were published as ordinary
 GitHub releases, and an RC tag had no exact changelog heading. The local release-tooling fix marks
 every hyphenated SemVer tag as a prerelease, lets an RC reuse the final version's changelog section,
-and adds focused extraction tests to CI. After that fix is pushed and the exact head passes the full
-matrix, create annotated tag `v2.0.0-rc.1`. Do not start the two-week soak from the earlier alpha or
-beta tags.
+and adds focused extraction tests to CI. The CI result for the earlier release-tooling head is no
+longer sufficient because B40 and B41 subsequently changed the release candidate. Push both
+branches, wait for the complete matrix on the new exact 2.x head, and only then create annotated tag
+`v2.0.0-rc.1`. Do not start the two-week soak from the earlier alpha or beta tags.
 
 The maintainer must correct the two existing GitHub release records once; this does not move tags or
 rewrite history:
