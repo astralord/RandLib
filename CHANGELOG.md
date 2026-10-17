@@ -16,6 +16,9 @@ All notable changes to RandLib are documented here. The project follows
   domain. The small-sample branch previously passed a logarithm as the scale, while the large-sample
   branch exponentiated half the scale squared and treated a log-ratio expansion as an ordinary
   correction factor.
+- **B41** Asymmetric-Laplace entropy now returns
+  `1 + log(scale * (asymmetry + 1 / asymmetry))`; the previous `log1p` expression omitted the unit
+  entropy contribution and put the scale term inside an unrelated sum.
 
 ## [1.2.0] - 2026-10-17
 

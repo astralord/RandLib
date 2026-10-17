@@ -409,3 +409,12 @@ TEST_CASE("B40: Rayleigh unbiased scale fitting stays in the log domain", "[regr
         CHECK_THAT(fitted.GetScale(), WithinRel(expected, 1e-12));
     }
 }
+
+TEST_CASE("B41: asymmetric-Laplace entropy includes the exponential contribution", "[regression]")
+{
+    /// Integrating -log(f) gives 1 + log(gamma * (kappa + 1 / kappa)).
+    CHECK_THAT(static_cast<double>(LaplaceRand<double>(0, 1).Entropy()), WithinRel(1 + std::log(2.0), 1e-15));
+    CHECK_THAT(static_cast<double>(LaplaceRand<double>(4, 2).Entropy()), WithinRel(1 + std::log(4.0), 1e-15));
+    CHECK_THAT(static_cast<double>(AsymmetricLaplaceRand<double>(7, 3, 2).Entropy()),
+               WithinRel(1 + std::log(7.5), 1e-15));
+}

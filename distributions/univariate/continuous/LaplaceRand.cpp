@@ -97,7 +97,7 @@ template < typename RealType >
 long double AsymmetricLaplaceDistribution<RealType>::Entropy() const
 {
     double y = this->kappaInv + this->kappa;
-    return std::log1pl(this->gamma * y);
+    return 1.0 + std::log(this->gamma * y);
 }
 
 template < typename RealType >
