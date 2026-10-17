@@ -587,3 +587,10 @@ TEST_CASE("B51: normal-inverse-gamma marginals, sampling and joint CDF agree", "
 
     CHECK(std::isnan(NormalInverseGammaRand<double>(0, 1, 1, 1).Correlation()));
 }
+
+TEST_CASE("B52: negative-correlation bivariate normal CDF uses standardized limits", "[regression]")
+{
+    const BivariateNormalRand<double> distribution(1, -2, 2, 0.5, -1);
+    CHECK_THAT(distribution.F({3.0, -2.0}), WithinAbs(0.3413447460685429485852325456, 1e-15));
+    CHECK(distribution.F({1.0, -3.0}) == 0);
+}

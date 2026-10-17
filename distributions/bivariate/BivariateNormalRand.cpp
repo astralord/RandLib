@@ -80,13 +80,15 @@ double BivariateNormalRand<RealType>::F(const Pair<RealType> &point) const
         return this->X.F(point.first) * this->Y.F(point.second);
     /// Unnumbered equation between (3) and (4) in Section 2.2 of Genz (2004),
     /// integrating in terms of theta between asin(ρ) and +/- π/2
-    RealType p1, p2 = 0.0;
+    double p1, p2 = 0.0;
     RealType x = point.first, y = point.second;
     RealType xAdj = (x - mu1) / sigma1, yAdj = (y - mu2) / sigma2;
     if (rho > 0)
         p1 = (xAdj < yAdj) ? this->X.F(x) : this->Y.F(y);
-    else
-        p1 = std::max(this->X.F(x) - this->Y.F(-y), 0.0);
+    else {
+        double standardComplement = 0.5 * std::erfc(yAdj * randlib::consts::inv_sqrt2);
+        p1 = std::max(this->X.F(x) - standardComplement, 0.0);
+    }
     if (std::fabs(rho) < 1.0) {
         RealType lowLimit = std::asin(rho);
         RealType highLimit = RandMath::sign(rho) * randlib::consts::half_pi;

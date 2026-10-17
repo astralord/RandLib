@@ -48,6 +48,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B51** Normal-inverse-gamma marginals and sampling now use the standard conditional variance
   `sigma_squared / lambda`. Its `F` member now evaluates the joint CDF instead of a density-like
   expression, and correlation is undefined when its required variances do not exist.
+- **B52** Bivariate-normal CDFs with negative correlation now standardize the reflected second
+  marginal before applying the normal CDF. This also restores the exact countermonotonic limit at
+  correlation `-1` when the second marginal has a nonzero location or nonunit scale.
 
 ## [1.2.0] - 2026-10-17
 
