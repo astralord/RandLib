@@ -500,3 +500,30 @@ TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regr
         CHECK(PoissonRand<int>::Variate(rate, staticGenerator) == distribution.Variate());
     }
 }
+
+TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regression]")
+{
+    PascalRand<int> negativeBinomial(3, 1);
+    CHECK(negativeBinomial.P(0) == 1);
+    CHECK(negativeBinomial.logP(0) == 0);
+    CHECK(negativeBinomial.P(1) == 0);
+    CHECK(negativeBinomial.logP(1) == -INFINITY);
+    CHECK(negativeBinomial.F(0) == 1);
+    CHECK(negativeBinomial.S(0) == 0);
+    CHECK(negativeBinomial.Mean() == 0);
+    CHECK(negativeBinomial.Variance() == 0);
+    CHECK(std::isnan(negativeBinomial.Skewness()));
+    CHECK(std::isnan(negativeBinomial.ExcessKurtosis()));
+    CHECK(negativeBinomial.Mode() == 0);
+    CHECK(negativeBinomial.Variate() == 0);
+    std::vector<int> sample(3, -1);
+    negativeBinomial.Sample(sample);
+    CHECK(sample == std::vector<int>{0, 0, 0});
+
+    GeometricRand<int> geometric(1);
+    CHECK(geometric.Median() == 0);
+    CHECK(geometric.Variate() == 0);
+    RandGenerator generator;
+    CHECK(GeometricRand<int>::Variate(1, generator) == 0);
+    CHECK_THROWS_AS(GeometricRand<int>::Variate(0, generator), std::invalid_argument);
+}

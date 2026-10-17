@@ -37,6 +37,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B47** Static Poisson sampling now shares the exact inversion/rejection algorithms used by
   constructed distributions. This replaces its separate exponential-arrival algorithm through rate
   1000 and, more importantly, the inexact normal approximation above that boundary.
+- **B48** Geometric and negative-binomial distributions now accept the mathematically valid
+  `p = 1` endpoint as a deterministic zero law across probability functions, moments and sampling.
+  The improper `p = 0` geometric static sampler is rejected instead of returning the integer limit.
 
 ## [1.2.0] - 2026-10-17
 

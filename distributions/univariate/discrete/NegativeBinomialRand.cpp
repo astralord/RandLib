@@ -14,13 +14,18 @@ void NegativeBinomialDistribution<IntType, T>::SetParameters(T number, double pr
 {
     if (!(number > 0))
         throw std::invalid_argument("Negative-Binomial distribution: number parameter should be positive");
-    if (!(probability > 0.0 && probability < 1.0))
-        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should be in interval (0, 1)");
+    if (!(probability > 0.0 && probability <= 1.0))
+        throw std::invalid_argument("Negative-Binomial distribution: probability parameter should be in interval (0, 1]");
     r = number;
     p = probability;
     q = 1.0 - p;
     logProb = std::log(p);
     log1mProb = std::log1pl(-p);
+    if (p == 1.0) {
+        qDivP = 0.0;
+        pdfCoef = -std::lgamma(r);
+        return;
+    }
     GammaRV.SetParameters(r, p / q);
     qDivP = GammaRV.GetScale();
     pdfCoef = r * logProb;
@@ -49,6 +54,8 @@ double NegativeBinomialDistribution<IntType, T>::logP(const IntType &k) const
 {
     if (k < 0)
         return -INFINITY;
+    if (p == 1.0)
+        return (k == 0) ? 0.0 : -INFINITY;
     double y = std::lgammal(r + k);
     y -= RandMath::lfact(k);
     y += k * log1mProb;
@@ -61,6 +68,8 @@ double NegativeBinomialDistribution<IntType, T>::F(const IntType &k) const
 {
     if (k < 0)
         return 0.0;
+    if (p == 1.0)
+        return 1.0;
     int kp1 = k + 1;
     double logBetaFun = RandMath::logBeta(r, kp1);
     return RandMath::ibeta(p, r, kp1, logBetaFun, logProb, log1mProb);
@@ -71,6 +80,8 @@ double NegativeBinomialDistribution<IntType, T>::S(const IntType &k) const
 {
     if (k < 0)
         return 1.0;
+    if (p == 1.0)
+        return 0.0;
     int kp1 = k + 1;
     double logBetaFun = RandMath::logBeta(kp1, r);
     return RandMath::ibeta(q, kp1, r, logBetaFun, log1mProb, logProb);
@@ -134,6 +145,8 @@ IntType NegativeBinomialDistribution<IntType, T>::variateThroughExponential() co
 template< typename IntType, typename T>
 IntType NegativeBinomialDistribution<IntType, T>::Variate() const
 {
+    if (p == 1.0)
+        return 0;
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE)
         return variateByTable();
@@ -143,6 +156,10 @@ IntType NegativeBinomialDistribution<IntType, T>::Variate() const
 template< typename IntType, typename T>
 void NegativeBinomialDistribution<IntType, T>::Sample(std::vector<IntType> &outputData) const
 {
+    if (p == 1.0) {
+        std::fill(outputData.begin(), outputData.end(), 0);
+        return;
+    }
     GENERATOR_ID genId = GetIdOfUsedGenerator();
     if (genId == TABLE) {
         for (IntType & var : outputData)
@@ -193,12 +210,16 @@ IntType NegativeBinomialDistribution<IntType, T>::Mode() const
 template< typename IntType, typename T>
 long double NegativeBinomialDistribution<IntType, T>::Skewness() const
 {
+    if (p == 1.0)
+        return NAN;
     return (1 + q) / std::sqrt(q * r);
 }
 
 template< typename IntType, typename T>
 long double NegativeBinomialDistribution<IntType, T>::ExcessKurtosis() const
 {
+    if (p == 1.0)
+        return NAN;
     long double kurtosis = p / qDivP;
     kurtosis += 6;
     return kurtosis / r;
