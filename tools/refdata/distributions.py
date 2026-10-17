@@ -744,6 +744,126 @@ class Stable(Continuous):
         return mp.gamma(1 + 1 / self.a) * c ** (-1 / self.a) * mp.cos(d / self.a) / mp.pi
 
 
+class StableCount(Continuous):
+    """Stable Count from the published Wright-function definition.
+
+    This oracle sums W_{-alpha,0}(-x**alpha) directly with guard digits. It does
+    not call the production C++ stable kernel, so it detects an incorrect S0/S1
+    convention or positive-stable scale. Alpha=1/2 is independently reduced to
+    Gamma(shape=3/2, scale=4).
+    """
+
+    def __init__(self, alpha, scale=1, location=0):
+        self.a, self.scale, self.location = mp.mpf(alpha), mp.mpf(scale), mp.mpf(location)
+        self.lower = self.location
+        self.normalization = mp.gamma(1 / self.a + 1)
+        self.half_gamma = Gamma(mp.mpf(3) / 2, mp.mpf(1) / 4)
+
+    def _series(self, x, integrated):
+        if x <= 0:
+            return mp.mpf(0)
+        with mp.workdps(mp.mp.dps + 120):
+            total = mp.mpf(0)
+            largest = mp.mpf(0)
+            largest_index = 0
+            small = 0
+            epsilon = mp.mpf(10) ** (-mp.mp.dps + 20)
+            for k in range(1, 20000):
+                ak = self.a * k
+                term = (-1) ** k * x ** (ak + int(integrated)) * mp.rgamma(-ak)
+                term /= mp.factorial(k) * self.normalization
+                if integrated:
+                    term /= ak + 1
+                total += term
+                magnitude = abs(term)
+                if magnitude > largest:
+                    largest, largest_index, small = magnitude, k, 0
+                elif k > largest_index + 8 and magnitude <= epsilon * max(1, abs(total)):
+                    small += 1
+                    if small >= 40:
+                        return +total
+                else:
+                    small = 0
+        raise ArithmeticError("Stable Count Wright series did not converge within 20000 terms")
+
+    def _standard_pdf(self, x):
+        if self.a == mp.mpf(1) / 2:
+            return self.half_gamma.pdf(x)
+        return self._series(x, False)
+
+    def _standard_cdf(self, x):
+        if self.a == mp.mpf(1) / 2:
+            return self.half_gamma.cdf(x)
+        return self._series(x, True)
+
+    def _standard_tails(self, x):
+        if x <= 0:
+            return mp.mpf(0), mp.mpf(1)
+        if self.a == mp.mpf(1) / 2:
+            return self.half_gamma.cdf(x), self.half_gamma.sf(x)
+        with mp.workdps(mp.mp.dps + 60):
+            lower = self._standard_cdf(x)
+            return +lower, +(1 - lower)
+
+    def pdf(self, x):
+        z = (x - self.location) / self.scale
+        return self._standard_pdf(z) / self.scale if z > 0 else mp.mpf(0)
+
+    def logpdf(self, x):
+        value = self.pdf(x)
+        return mp.log(value) if value > 0 else -INF
+
+    def cdf(self, x):
+        z = (x - self.location) / self.scale
+        return self._standard_tails(z)[0]
+
+    def sf(self, x):
+        z = (x - self.location) / self.scale
+        return self._standard_tails(z)[1]
+
+    def _standard_moment(self, order):
+        return mp.gamma((order + 1) / self.a) / (mp.gamma(order + 1) * mp.gamma(1 / self.a))
+
+    def moments(self):
+        raw_standard = [mp.mpf(1)] + [self._standard_moment(order) for order in range(1, 5)]
+        raw = []
+        for order in range(1, 5):
+            raw.append(mp.fsum(math.comb(order, k) * self.location ** (order - k) * self.scale**k * raw_standard[k]
+                               for k in range(order + 1)))
+        mean = raw[0]
+        variance = raw[1] - mean * mean
+        third = raw[2] - 3 * mean * raw[1] + 2 * mean**3
+        fourth = raw[3] - 4 * mean * raw[2] + 6 * mean * mean * raw[1] - 3 * mean**4
+        return standardized_moments(mean, variance, third, fourth)
+
+    def quantile(self, level, upper_tail=False):
+        target = 1 - level if upper_tail else level
+        lo = mp.mpf(0)
+        hi = mp.mpf(1)
+        upper_cdf = self._standard_cdf(hi)
+        while upper_cdf < target:
+            hi = hi + mp.mpf("0.05") if self.a >= mp.mpf("0.9") else 2 * hi
+            upper_cdf = self._standard_cdf(hi)
+        tolerance = mp.mpf(10) ** (-mp.mp.dps - 5)
+        lower_value, upper_value = -target, upper_cdf - target
+        for _ in range(150):
+            point = hi - upper_value * (hi - lo) / (upper_value - lower_value)
+            if not lo < point < hi:
+                point = (lo + hi) / 2
+            value = self._standard_cdf(point) - target
+            if value == 0:
+                return self.location + self.scale * point
+            if value > 0:
+                hi, upper_value = point, value
+                lower_value /= 2
+            else:
+                lo, lower_value = point, value
+                upper_value /= 2
+            if hi - lo <= tolerance * max(1, hi):
+                return self.location + self.scale * (lo + hi) / 2
+        raise ArithmeticError("Stable Count quantile did not converge within 150 iterations")
+
+
 class LogStable(Continuous):
     def __init__(self, alpha, beta, gamma=1, mu=0):
         self.a, self.b = mp.mpf(alpha), mp.mpf(beta)
@@ -1704,6 +1824,7 @@ def make(cls, args):
         "CauchyRand": lambda: Cauchy(*a),
         "LevyRand": lambda: Levy(*a),
         "StableRand": lambda: Stable(*a),
+        "StableCountRand": lambda: StableCount(*a),
         "LogStableRand": lambda: LogStable(*a),
         "HoltsmarkRand": lambda: Stable(mp.mpf(3) / 2, 0, *a),
         "LandauRand": lambda: Stable(1, 1, *a),
