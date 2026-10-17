@@ -22,6 +22,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B42** Noncentral chi-squared distributions now accept zero noncentrality, as required by their
   default constructor and central chi-squared limit. Density, direct tails, sampling and the mode use
   exact gamma-limit formulas instead of singular Bessel/Marcum expressions.
+- **B43** Bernoulli entropy is now linkable from downstream translation units and returns zero at
+  the accepted deterministic endpoints instead of evaluating the indeterminate floating-point
+  products `0 * log(0)`.
 
 ## [1.2.0] - 2026-10-17
 

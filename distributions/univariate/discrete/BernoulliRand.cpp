@@ -71,5 +71,7 @@ void BernoulliRand::Sample(std::vector<int> &outputData) const
 
 double BernoulliRand::Entropy()
 {
+    if (p == 0.0 || q == 0.0)
+        return 0.0;
     return -(p * logProb + q * log1mProb);
 }

@@ -438,3 +438,10 @@ TEST_CASE("B42: zero noncentrality is the central chi-squared limit", "[regressi
     const double expected = 2 * GammaDistribution<double>::StandardVariate(0.25, expectedGenerator);
     CHECK(actual == expected);
 }
+
+TEST_CASE("B43: Bernoulli endpoint entropy uses the zero-log-zero limit", "[regression]")
+{
+    CHECK(BernoulliRand(0).Entropy() == 0);
+    CHECK(BernoulliRand(1).Entropy() == 0);
+    CHECK_THAT(BernoulliRand(0.5).Entropy(), WithinRel(std::log(2.0), 1e-15));
+}

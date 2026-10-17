@@ -36,7 +36,7 @@ public:
     static int StandardVariate(RandGenerator &randGenerator = ProbabilityDistribution<int>::staticRandGenerator);
     void Sample(std::vector<int> &outputData) const override;
 
-    inline double Entropy();
+    double Entropy();
 };
 
 #endif // BERNOULLIRAND_H
