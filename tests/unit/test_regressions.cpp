@@ -489,3 +489,14 @@ TEST_CASE("B46: Skellam mode maximizes the PMF instead of truncating the mean", 
     CHECK_THAT(distribution.P(2), WithinRel(0.1772656913264927706363333023355158, 1e-13));
     CHECK(distribution.Mode() == 1);
 }
+
+TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regression]")
+{
+    for (double rate : {5.0, 1001.0}) {
+        PoissonRand<int> distribution(rate);
+        RandGenerator staticGenerator;
+        distribution.Reseed(42);
+        staticGenerator.Reseed(42);
+        CHECK(PoissonRand<int>::Variate(rate, staticGenerator) == distribution.Variate());
+    }
+}

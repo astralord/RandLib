@@ -34,6 +34,9 @@ All notable changes to RandLib are documented here. The project follows
   exactly one at integer-lattice periods instead of dividing zero by zero.
 - **B46** Skellam modes now search adjacent probabilities from the median instead of truncating the
   mean, which need not maximize the PMF. A three-point regression uses 60-digit Bessel references.
+- **B47** Static Poisson sampling now shares the exact inversion/rejection algorithms used by
+  constructed distributions. This replaces its separate exponential-arrival algorithm through rate
+  1000 and, more importantly, the inexact normal approximation above that boundary.
 
 ## [1.2.0] - 2026-10-17
 

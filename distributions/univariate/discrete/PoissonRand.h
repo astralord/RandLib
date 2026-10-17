@@ -58,8 +58,8 @@ public:
 private:
     double acceptanceFunction(IntType X) const;
     bool generateByInversion() const;
-    IntType variateRejection() const;
-    IntType variateInversion() const;
+    IntType variateRejection(RandGenerator &randGenerator) const;
+    IntType variateInversion(RandGenerator &randGenerator) const;
 
 public:
     IntType Variate() const override;

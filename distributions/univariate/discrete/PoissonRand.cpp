@@ -152,16 +152,16 @@ bool PoissonRand<IntType>::generateByInversion() const
 }
 
 template < typename IntType >
-IntType PoissonRand<IntType>::variateRejection() const
+IntType PoissonRand<IntType>::variateRejection(RandGenerator &randGenerator) const
 {
     size_t iter = 0;
     IntType X = 0;
     do {
         bool reject = false;
         float W = 0.0;
-        float U = c * UniformRand<float>::StandardVariate(this->localRandGenerator);
+        float U = c * UniformRand<float>::StandardVariate(randGenerator);
         if (U <= c1) {
-            float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
+            float N = NormalRand<float>::StandardVariate(randGenerator);
             float Y = -std::fabs(N) * sqrtMu;
             X = std::floor(Y);
             if (X < -mu) {
@@ -172,7 +172,7 @@ IntType PoissonRand<IntType>::variateRejection() const
             }
         }
         else if (U <= c2) {
-            float N = NormalRand<float>::StandardVariate(this->localRandGenerator);
+            float N = NormalRand<float>::StandardVariate(randGenerator);
             float Y = 1.0 + std::fabs(N) * sqrtMupHalfDelta;
             X = std::ceil(Y);
             if (X > delta) {
@@ -189,13 +189,13 @@ IntType PoissonRand<IntType>::variateRejection() const
             X = 1;
         }
         else {
-            float V = ExponentialRand<float>::StandardVariate(this->localRandGenerator);
+            float V = ExponentialRand<float>::StandardVariate(randGenerator);
             float Y = delta + V * zeta;
             X = std::ceil(Y);
             W = -(2.0 + Y) / zeta;
         }
 
-        if (!reject && W - ExponentialRand<float>::StandardVariate(this->localRandGenerator) <= acceptanceFunction(X)) {
+        if (!reject && W - ExponentialRand<float>::StandardVariate(randGenerator) <= acceptanceFunction(X)) {
             return X + mu;
         }
 
@@ -204,9 +204,9 @@ IntType PoissonRand<IntType>::variateRejection() const
 }
 
 template < typename IntType >
-IntType PoissonRand<IntType>::variateInversion() const
+IntType PoissonRand<IntType>::variateInversion(RandGenerator &randGenerator) const
 {
-    double U = UniformRand<double>::StandardVariate(this->localRandGenerator);
+    double U = UniformRand<double>::StandardVariate(randGenerator);
     IntType k = mu;
     double s = Fmu, p = Pmu;
     if (s < U)
@@ -232,7 +232,8 @@ IntType PoissonRand<IntType>::variateInversion() const
 template < typename IntType >
 IntType PoissonRand<IntType>::Variate() const
 {
-    return generateByInversion() ? variateInversion() : variateRejection();
+    return generateByInversion() ? variateInversion(this->localRandGenerator)
+                                 : variateRejection(this->localRandGenerator);
 }
 
 template < typename IntType >
@@ -241,18 +242,9 @@ IntType PoissonRand<IntType>::Variate(double rate, RandGenerator &randGenerator)
     /// check validness of parameter
     if (!(rate > 0.0))
         throw std::invalid_argument("Poisson distribution: rate should be positive");
-    if (rate > 1000) {
-        /// approximate with normal distribution
-        float X = NormalRand<float>::StandardVariate(randGenerator);
-        return std::floor(rate + std::sqrt(rate) * X);
-    }
-    int k = -1;
-    double s = 0;
-    do {
-        s += ExponentialRand<double>::StandardVariate(randGenerator);
-        ++k;
-    } while (s < rate);
-    return k;
+    PoissonRand<IntType> distribution(rate);
+    return distribution.generateByInversion() ? distribution.variateInversion(randGenerator)
+                                              : distribution.variateRejection(randGenerator);
 }
 
 template < typename IntType >
@@ -260,11 +252,11 @@ void PoissonRand<IntType>::Sample(std::vector<IntType> &outputData) const
 {
     if (generateByInversion()) {
         for (IntType & var : outputData)
-            var = variateInversion();
+            var = variateInversion(this->localRandGenerator);
     }
     else {
         for (IntType & var : outputData)
-            var = variateRejection();
+            var = variateRejection(this->localRandGenerator);
     }
 }
 
