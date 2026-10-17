@@ -1069,3 +1069,187 @@ The correction follows from
 \f$\operatorname{E}R=\sigma\Gamma(n+1/2)/(\sqrt n\,\Gamma(n))\f$. RandLib evaluates the exact
 factor in the log domain through \f$n=100\f$ and uses its log-gamma-ratio asymptotic series for
 larger samples.
+
+## Exponential-tail location families
+
+### Asymmetric Laplace distributions (`AsymmetricLaplaceRand`, `CenteredAsymmetricLaplaceRand`)
+
+`AsymmetricLaplaceRand(shift, scale, asymmetry)` uses
+\f$m\in\mathbb R\f$, \f$\gamma>0\f$, and \f$\kappa>0\f$. With \f$z=x-m\f$,
+
+\f[
+ f(x)=\frac{\kappa}{\gamma(1+\kappa^2)}
+ \begin{cases}
+  e^{z/(\gamma\kappa)},&z<0,\\
+  e^{-\kappa z/\gamma},&z\geq0,
+ \end{cases}
+\f]
+
+\f[
+ F(x)=
+ \begin{cases}
+  \dfrac{\kappa^2}{1+\kappa^2}e^{z/(\gamma\kappa)},&z<0,\\
+  1-\dfrac{1}{1+\kappa^2}e^{-\kappa z/\gamma},&z\geq0,
+ \end{cases}
+\f]
+
+and the direct survival implementation uses one minus the first branch below \f$m\f$ and the
+exponential term in the second branch above it. The characteristic function is
+
+\f[
+ \phi(t)=\frac{e^{imt}}
+ {(1-i\gamma t/\kappa)(1+i\gamma\kappa t)}.
+\f]
+
+This follows from the sampling representation
+
+\f[
+ X=m+\gamma\left(\frac{E_1}{\kappa}-\kappa E_2\right),
+ \qquad E_1,E_2\stackrel{\mathrm{iid}}{\sim}\operatorname{Exponential}(1),
+\f]
+
+which is also RandLib's sampler. The summaries are
+
+\f[
+ \operatorname{E}X=m+\gamma(\kappa^{-1}-\kappa),
+ \qquad
+ \operatorname{Var}X=\gamma^2(\kappa^{-2}+\kappa^2),
+ \qquad
+ \operatorname{Mode}X=m,
+\f]
+
+\f[
+ \operatorname{Skew}X=
+ \frac{2(1-\kappa^6)}{(1+\kappa^4)^{3/2}},
+ \qquad
+ \operatorname{ExKurt}X=
+ 6-\frac{12}{(\kappa^2+\kappa^{-2})^2},
+\f]
+
+\f[
+ h(X)=1+\log\!\left[\gamma(\kappa+\kappa^{-1})\right].
+\f]
+
+The last expression is the corrected B41 implementation; the inherited 1.x code had used an
+unrelated `log1p` expression. The median is obtained without root finding:
+
+\f[
+ \operatorname{Median}X=
+ \begin{cases}
+  m+\gamma\kappa\log\!\left[(1+\kappa^{-2})/2\right],&\kappa>1,\\
+  m-(\gamma/\kappa)\log\!\left[(1+\kappa^2)/2\right],&0<\kappa\leq1.
+ \end{cases}
+\f]
+
+All other quantiles use the corresponding logarithm of the appropriate exponential branch.
+
+`CenteredAsymmetricLaplaceRand(scale, asymmetry)` fixes \f$m=0\f$. “Centered” therefore refers to
+the density's join and mode, not its mean unless \f$\kappa=1\f$. It exposes the exponential-family
+sufficient statistic
+\f$(\max(X,0),\max(-X,0))\f$ with natural parameters
+\f$(-\kappa/\gamma,-1/(\gamma\kappa))\f$.
+
+There is no free `fit` specialization for either asymmetric class. The deprecated member API can
+fit the scale from the weighted absolute deviations, fit the shift as the sample quantile whose
+level is \f$\kappa^2/(1+\kappa^2)\f$, and fit asymmetry from the resulting one-sided sums.
+
+### Laplace distribution (`LaplaceRand`)
+
+`LaplaceRand(shift, scale)` is the symmetric case \f$\kappa=1\f$:
+
+\f[
+ f(x)=\frac1{2\gamma}e^{-|x-m|/\gamma},
+ \qquad
+ \phi(t)=\frac{e^{imt}}{1+\gamma^2t^2}.
+\f]
+
+It uses the asymmetric family's direct piecewise CDF, survival function, logarithmic quantiles, and
+difference-of-exponentials sampler; the single-variate fast path equivalently draws an exponential
+magnitude and an independent sign bit. Its summaries reduce to
+
+\f[
+ \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=m,
+ \qquad
+ \operatorname{Var}X=2\gamma^2,
+\f]
+
+\f[
+ \operatorname{Skew}X=0,qquad
+ \operatorname{ExKurt}X=3,qquad
+ h(X)=1+\log(2\gamma).
+\f]
+
+`fit<LaplaceRand>` performs the closed-form MLE: a sample median estimates \f$m\f$, and the mean
+absolute deviation from that median estimates \f$\gamma\f$.
+
+### Logistic distribution (`LogisticRand`)
+
+`LogisticRand(location, scale)` uses \f$\mu\in\mathbb R\f$ and \f$s>0\f$. With
+\f$z=(x-\mu)/s\f$,
+
+\f[
+ f(x)=\frac{e^{-z}}{s(1+e^{-z})^2}
+ =\frac{e^{-|z|}}{s(1+e^{-|z|})^2},
+\f]
+
+\f[
+ F(x)=\frac1{1+e^{-z}},qquad
+ S(x)=\frac1{1+e^z},qquad
+ Q(p)=\mu+s\log\frac{p}{1-p}.
+\f]
+
+The density uses the symmetric second form to avoid overflow, `logf` uses a softplus kernel, and
+both quantile tails use `log1p`. Sampling applies the logit transform to an open-interval uniform
+variate. The characteristic function and summaries are
+
+\f[
+ \phi(t)=e^{i\mu t}\frac{\pi st}{\sinh(\pi st)},
+\f]
+
+\f[
+ \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=\mu,
+ \qquad
+ \operatorname{Var}X=\frac{\pi^2s^2}{3},
+\f]
+
+\f[
+ \operatorname{Skew}X=0,qquad
+ \operatorname{ExKurt}X=\frac65,qquad
+ h(X)=2+\log s.
+\f]
+
+`fit<LogisticRand>` initializes location with the sample mean and scale with
+\f$\sqrt{3s_n^2}/\pi\f$, then runs the common constrained MLE optimizer. With scale fixed, the
+deprecated `FitLocation` member instead solves the location score by safeguarded Newton iteration.
+
+### Hyperbolic secant distribution (`SechRand`)
+
+`SechRand` is parameter-free and standardized to unit variance:
+
+\f[
+ f(x)=\frac1{2\cosh(\pi x/2)},qquad
+ F(x)=\frac2\pi\arctan(e^{\pi x/2}),qquad
+ S(x)=\frac2\pi\arctan(e^{-\pi x/2}),
+\f]
+
+\f[
+ Q(p)=\frac2\pi\log\tan\frac{\pi p}{2},qquad
+ \phi(t)=\frac1{\cosh t}.
+\f]
+
+The log density uses softplus rather than taking the logarithm of a potentially overflowing
+hyperbolic cosine. Sampling uses
+\f$(2/\pi)\log|C|\f$ for a standard Cauchy variate \f$C\f$. Finally,
+
+\f[
+ \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=0,qquad
+ \operatorname{Var}X=1,qquad
+ \operatorname{Skew}X=0,qquad
+ \operatorname{ExKurt}X=2,
+\f]
+
+\f[
+ h(X)=\frac{4G}{\pi},
+\f]
+
+where \f$G\f$ is Catalan's constant. There are no parameters to fit.
