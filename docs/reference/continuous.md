@@ -2328,3 +2328,205 @@ Quantiles use TOMS 748 over the direct tails, starting at the mean when it exist
 uses the common log-density minimizer. `fit<NoncentralTRand>` performs constrained MLE for
 \f$(\nu,\delta)\f$; it starts at \f$\nu=10\f$ unless the degree is fixed, and scales the sample
 median by \f$m_1\f$ to initialize \f$\delta\f$. There is no dedicated entropy member.
+
+## Spectral and goodness-of-fit laws
+
+### Kolmogorov distribution (`KolmogorovSmirnovRand`)
+
+`KolmogorovSmirnovRand` is the parameter-free limiting distribution of the two-sided
+Kolmogorov--Smirnov statistic. Its CDF has the Jacobi-transformed small-argument series
+
+\f[
+ F(x)=\frac{\sqrt{2\pi}}{x}
+ \sum_{k=1}^{\infty}
+ \exp\!\left[-\frac{(2k-1)^2\pi^2}{8x^2}\right],
+ \qquad x>0,
+\f]
+
+while its survival function has the rapidly convergent large-argument series
+
+\f[
+ S(x)=2\sum_{k=1}^{\infty}(-1)^{k-1}e^{-2k^2x^2}.
+\f]
+
+RandLib uses the first representation through \f$x=1\f$ and the second above one, always evaluating
+the naturally small tail. Their differentiated density series are
+
+\f[
+ f(x)=\frac{\sqrt{2\pi}}{4x^4}
+ \sum_{k=1}^{\infty}
+ \left[(2k-1)^2\pi^2-4x^2\right]
+ e^{-(2k-1)^2\pi^2/(8x^2)}
+\f]
+
+for \f$x<1\f$, and
+
+\f[
+ f(x)=8x\sum_{k=1}^{\infty}(-1)^{k-1}k^2e^{-2k^2x^2}
+\f]
+
+for \f$x\geq1\f$. Every series stops when its next term is negligible relative to the accumulated
+sum. `logF` and `logS` use `log1p` only on the complementary side of the switch.
+
+The principal summaries are
+
+\f[
+ \operatorname{E}X=\sqrt{\frac\pi2}\log2,
+ \qquad
+ \operatorname{Var}X=\frac{\pi^2}{12}-\frac\pi2(\log2)^2,
+\f]
+
+\f[
+ \operatorname{Mode}X\approx0.735467812776958,
+ \qquad
+ \operatorname{Median}X\approx0.82757355518990761.
+\f]
+
+The characteristic function and higher standardized moments use the common expectation quadrature.
+Quantiles use TOMS 748, initialized by the leading large-argument survival approximation.
+
+Sampling implements Devroye's alternating-series method. It chooses the interval at
+\f$x=0.75\f$ using the precomputed probability
+\f$F(0.75)\approx0.3728329582237386\f$. The left proposal transforms a rejection sample from a
+truncated Gamma \f$(3/2)\f$ law; the right proposal is an exponential transform. Alternating bounds
+then accept or reject without evaluating an infinite series to a fixed cutoff. There are no
+parameters to fit and no dedicated entropy member.
+
+### Marchenko--Pastur distribution (`MarchenkoPasturRand`)
+
+`MarchenkoPasturRand(ratio, scale)` uses \f$\lambda,s>0\f$. Define
+
+\f[
+ a=(1-\sqrt\lambda)^2,\qquad b=(1+\sqrt\lambda)^2.
+\f]
+
+Its continuous density on \f$[sa,sb]\f$ is
+
+\f[
+ f(x)=\frac{\sqrt{(b-x/s)(x/s-a)}}{2\pi\lambda x}.
+\f]
+
+When \f$\lambda>1\f$ the distribution also has an atom
+
+\f[
+ P(X=0)=1-\frac1\lambda,
+\f]
+
+and the continuous component has total mass \f$1/\lambda\f$. `f(0)` returns infinity as an API
+sentinel for that atom; it is not a Lebesgue density there. A compact definition of the CDF is
+
+\f[
+ F(x)=\left(1-\frac1\lambda\right)_+\mathbf1_{[0,\infty)}(x)
+ +\int_{sa}^{\min(x,sb)} f(u)\,du.
+\f]
+
+RandLib evaluates the integral's closed antiderivative with square roots and two branch-aware
+`atan` terms. It has separate formulas for \f$\lambda\leq1\f$ and \f$\lambda>1\f$, and computes
+the latter's survival probability directly. This path includes the cancellation fix at the lower
+edge recorded as B30.
+
+The raw moments form a Narayana polynomial. For \f$n\geq1\f$,
+
+\f[
+ \operatorname{E}X^n=s^n
+ \sum_{k=0}^{n-1}\frac1{k+1}{n\choose k}{n-1\choose k}\lambda^k.
+\f]
+
+In particular,
+
+\f[
+ \operatorname{E}X=s,\qquad
+ \operatorname{Var}X=s^2\lambda,\qquad
+ \operatorname{Skew}X=\sqrt\lambda,
+ \qquad
+ \operatorname{ExKurt}X=\lambda-1.
+\f]
+
+For \f$\lambda\leq1\f$ the continuous-density mode is
+
+\f[
+ \operatorname{Mode}X=s\frac{(\lambda-1)^2}{\lambda+1};
+\f]
+
+for \f$\lambda>1\f$ the atom makes zero the mode reported by the API.
+
+Sampling uses beta rejection envelopes selected by ratio. For \f$\lambda<0.3\f$ or
+\f$\lambda>3.3\f$, the proposal is a shifted/scaled Beta \f$(3/2,3/2)\f$ law on \f$[a,b]\f$;
+intermediate ratios use Beta \f$(1/2,3/2)\f$ on \f$[0,b]\f$. When \f$\lambda>1\f$, an initial
+uniform draw returns the zero atom with probability \f$1-1/\lambda\f$.
+
+Quantiles account for the zero atom before applying TOMS 748 to the continuous component. The
+characteristic function is evaluated from
+
+\f[
+ \phi(t)=\left(1-\frac1\lambda\right)_+
+ +\int_{sa}^{sb}e^{itx}f(x)\,dx.
+\f]
+
+At \f$\lambda=1\f$ the real integrand is rewritten as
+\f$1+(\cos(tx)-1)\f$ to remove the density singularity; for \f$\lambda>1\f$ the atom is added
+explicitly. There is currently no `fit<MarchenkoPasturRand>` specialization or entropy member.
+
+### Planck distribution (`PlanckRand`)
+
+`PlanckRand(shape, scale)` uses \f$a,b>0\f$. With \f$s=a+1\f$, its density is
+
+\f[
+ f(x)=\frac{b^s}{\Gamma(s)\zeta(s)}
+ \frac{x^{s-1}}{e^{bx}-1},\qquad x>0.
+\f]
+
+Expanding the Bose--Einstein denominator gives the distribution functions
+
+\f[
+ F(x)=\frac1{\Gamma(s)\zeta(s)}
+ \sum_{n=1}^{\infty}\frac{\gamma(s,nbx)}{n^s},
+ \qquad
+ S(x)=\frac1{\Gamma(s)\zeta(s)}
+ \sum_{n=1}^{\infty}\frac{\Gamma(s,nbx)}{n^s}.
+\f]
+
+The current class evaluates \f$F\f$ by adaptive quadrature and inherits \f$S=1-F\f$. When
+\f$a<1\f$, the density is singular at zero, so the implementation subtracts
+\f$1/(bx)\f$ from \f$1/(e^{bx}-1)\f$, integrates the regular remainder, and adds the singular
+power integral analytically. `expm1` and a dedicated `log(expm1)` kernel protect the density near
+zero and in the far tail.
+
+The exact mixture sampler is
+
+\f[
+ N\sim\operatorname{Zeta}(s),\qquad
+ G\sim\operatorname{Gamma}(s,\text{rate }b),\qquad
+ X=G/N,
+\f]
+
+with independent \f$N\f$ and \f$G\f$. Its raw moments are
+
+\f[
+ \operatorname{E}X^r=\frac{\Gamma(s+r)}{\Gamma(s)b^r}
+ \frac{\zeta(s+r)}{\zeta(s)},\qquad r>-a.
+\f]
+
+RandLib uses this identity for the first four raw moments and forms variance, skewness, and excess
+kurtosis from the corresponding central moments. The mode is
+
+\f[
+ \operatorname{Mode}X=
+ \begin{cases}
+  0,&a\leq1,\\
+  \dfrac{a+W_0(-ae^{-a})}{b},&a>1,
+ \end{cases}
+\f]
+
+where \f$W_0\f$ is the principal Lambert-W branch.
+
+Mathematically, the characteristic function is the Hurwitz-zeta ratio
+
+\f[
+ \phi(t)=\frac{\zeta(s,1-it/b)}{\zeta(s)}.
+\f]
+
+The implementation instead uses expectation quadrature. For \f$a<1\f$, its real part applies the
+same analytic subtraction used by the CDF before integrating the remainder; the imaginary part is
+regular and is integrated directly. Quantiles use TOMS 748. There is currently no
+`fit<PlanckRand>` specialization or dedicated entropy member.
