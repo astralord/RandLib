@@ -88,7 +88,7 @@ All notable changes to RandLib are documented here. The project follows
 - Removed a Bernoulli/binomial include cycle exposed by standalone public-header consumption without
   changing the exact sampling algorithm or engine advancement.
 
-## [2.0.0-beta.1] - Unreleased
+## [2.0.0-beta.1] - 2026-10-17
 
 ### Fitting
 
@@ -127,7 +127,7 @@ All notable changes to RandLib are documented here. The project follows
 - Removed the unused private `POISSON` binomial generator selector. The exact Bernoulli-sum,
   waiting-time and rejection samplers remain; no approximation is introduced.
 
-## [2.0.0-alpha.1] - Unreleased
+## [2.0.0-alpha.1] - 2026-10-17
 
 ### Architecture
 

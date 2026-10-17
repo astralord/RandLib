@@ -1,7 +1,7 @@
 # Next steps: handoff for continuing the modernization
 
 Written so that work can resume with no other context. Read together with
-[MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md) (the plan, revised on 2026-10-11) and
+[MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md) (the plan, revised on 2026-10-17) and
 [ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-17.
 
 ## 1. Repository, branches and how changes reach GitHub
@@ -15,15 +15,15 @@ Written so that work can resume with no other context. Read together with
   | Path | Branch | Pushed as | Contents |
   |---|---|---|---|
   | `/root/RandLib-1.x` | `history` | `origin/1.x` | v1.2: C++17, original layout, fixes, CMake, tests, CI |
-  | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20 (Phases 2–5 of the plan) |
+  | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20 (Phases 2–5 landed; Phase 6 planned) |
 
 - The agent's GitHub account (`nebius-llm-robot`) has pull access only. **The maintainer pushes**, from a
   VS Code terminal on the pod:
 
   ```sh
   cd /root/RandLib
-  git push origin history:refs/heads/1.x 2.x
-  git push origin v1.2.0
+  git push origin history:refs/heads/1.x 2.x \
+    v2.0.0-alpha.1 v2.0.0-beta.1
   ```
 
   Only add commits on top of what is pushed; never amend or rebase pushed commits.
@@ -81,11 +81,12 @@ gate.
 
 ### 3.1 v1.2 release and 1.2.1 follow-up (branch `history` → `origin/1.x`)
 
-CI run 39002870454 passes all 16 jobs at f25fd1a, including AppleClang, MSVC, GCC 11–14,
-Clang 15–18, sanitizers, engine variants, portable special functions, static analysis and the
-install consumer. The annotated `v1.2.0` tag points to that exact tested commit and is ready for the
-maintainer to push. Commit ba0592b is the first post-release fix: B39 keeps negative-binomial fitting
+CI run 39002870454 passes all 16 jobs at f25fd1a, and the pushed `v1.2.0` tag points to that exact
+tested commit. Commit ba0592b is the first post-release fix: B39 keeps negative-binomial fitting
 inside the positive shape domain and is recorded under the unreleased 1.2.1 changelog section.
+Replacement run 39018516580 passes B39 in all 16 jobs, including AppleClang, MSVC, GCC 11–14,
+Clang 15–18, sanitizers, engine variants, portable special functions, static analysis and the
+install consumer. The subsequent 4ad71f0 commit only records that result.
 
 ### 3.2 Phase 2 remainder (branch `2.x`)
 
@@ -106,10 +107,11 @@ inside the positive shape domain and is recorded under the unreleased 1.2.1 chan
   header-only implementations and uses a standard engine in its v2 regression. CI run 39002870514
   passes every job except MSVC: its deterministic negative-binomial MLE crossed the positive shape
   boundary, spent 36 minutes in Newton iteration, then threw. B39 landed on `history` first and is
-  merged into the current local `2.x`: the fitter works in log-shape coordinates, and Newton rejects
-  non-finite states after bounded backtracking. Warning-clean GCC 14 and Clang 18 builds pass their
-  complete unit suites, all fitting tests and the formerly failing case. Push both branches and
-  require the replacement MSVC job, along with the full matrix, to pass before tagging.
+  merged into `2.x`: the fitter works in log-shape coordinates, and Newton rejects non-finite states
+  after bounded backtracking. Replacement CI run 39018516566 passes all 17 jobs at 2a2194c,
+  including the formerly failing MSVC fit, AppleClang, GCC 11–14, Clang 15–18, sanitizer, blocking
+  clang-tidy, coverage, precompiled/single-header, portable-special-function, no-static-state and
+  install-consumer lanes.
 - **2.5 Numerical building blocks**: done. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
@@ -140,10 +142,9 @@ inside the positive shape domain and is recorded under the unreleased 1.2.1 chan
   - Done: `areClose` and the Newton tolerance are private math details; the public
     `Pair`/`Triplet` aliases moved from `math/constants.hpp` to `core/fwd.hpp`; the global pair
     arithmetic overloads were removed in favor of an explicit exponential-family inner product.
-- After the local portability fix is pushed and every 2.x CI job is green, tag
-  `v2.0.0-alpha.1` on `2.x`. Phase 2 is otherwise complete. Because Phases 3–5 landed while the
-  cross-platform gate was being repaired, this is a delayed prerelease checkpoint rather than the
-  historical end of the Phase 2 commits.
+- The annotated `v2.0.0-alpha.1` tag points to the exact all-green commit 2a2194c. Because Phases
+  3–5 landed while the cross-platform gate was being repaired, this is a delayed prerelease
+  checkpoint rather than the historical end of the Phase 2 commits.
 
 ### 3.3 Phase 3: fitting and features (v2.0-beta)
 
@@ -184,9 +185,8 @@ Follow plan 3.1–3.3. Design notes gathered so far:
   constrained-likelihood pipeline.
 - 3.3 implementation is done: the unused private binomial `POISSON` selector is removed on both
   branches. The maintainer still needs to close #11 with the exact-sampling rationale.
-- The beta changelog section is now separate from the alpha notes. Once the delayed alpha checkpoint
-  is tagged on an all-green head, tag that same tested head `v2.0.0-beta.1`; all Phase 3 engineering
-  already precedes it.
+- The beta changelog section is separate from the alpha notes. The annotated `v2.0.0-beta.1` tag
+  points to the same all-green commit 2a2194c; all Phase 3 engineering precedes it.
 
 ### 3.4 Phase 4: documentation, packaging, release (v2.0)
 
@@ -204,10 +204,10 @@ The release workflow compiles that artifact, extracts the exact tag's changelog 
 the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
 final release archive and checksum.
 
-The documentation build in run 39002870515 passed. Deployment failed with GitHub's explicit
-`Invalid deployment branch` response because the `github-pages` environment currently permits only
-`master`; the maintainer must allow `2.x`. The remaining Phase 4 actions are the release-candidate
-soak, upstream vcpkg PR and release announcements.
+The documentation build and artifact upload in replacement run 39018516579 passed. Deployment still
+failed with GitHub's explicit `Invalid deployment branch` response because the `github-pages`
+environment currently permits only `master`; the maintainer must allow `2.x`. The remaining Phase 4
+actions are the release-candidate soak, upstream vcpkg PR and release announcements.
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 

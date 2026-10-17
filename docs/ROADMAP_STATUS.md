@@ -37,13 +37,13 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 2.3 Remove hidden state | ✅ | CI job fails on static or `thread_local` variables that are not constant. |
 | 2.4 API cleanup | ✅ | Non-const `Reseed`, `std::span`, `[[nodiscard]]`, `enum class Support`, `fit_error`, `final`, named factories, private type-erased sampling adapters, and internal numerical helpers isolated in `math::detail`. |
 | 2.5 Numerical building blocks | ✅ | `math/quadrature.hpp` (adaptive Gauss–Kronrod, infinite limits), `math/roots.hpp` (TOMS 748, Newton, Halley; used by the quantile search), `math/optimize.hpp` (Brent, Nelder–Mead, BFGS), and all special functions are templates on their floating-point type with separate `long double` coverage. |
-| 2.6 Tooling | ✅ | Clang 18 formatting and pre-commit, blocking clang-tidy over the explicit instantiations and public headers, and opt-in Google Benchmark sampling comparisons. The alpha tag remains gated on replacement CI for B39. |
+| 2.6 Tooling | ✅ | Clang 18 formatting and pre-commit, blocking clang-tidy over the explicit instantiations and public headers, and opt-in Google Benchmark sampling comparisons. CI run 39018516566 passes all 17 jobs at 2a2194c; `v2.0.0-alpha.1` tags that exact tested commit. |
 
 ## Phase 3: Fitting and features (v2.0-beta)
 
 | Task | Status | Notes |
 |---|---|---|
-| 3.1 Fitting API | ✅ | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers 36 distribution types, including bounded searches for integer-valued parameters and the stable family. Seeded recovery grids and SciPy comparison fixtures are committed, and legacy mutating `Fit*` members are deprecated until v3. |
+| 3.1 Fitting API | ✅ | `FitResult`, constrained fixed-parameter MLE, AIC/BIC, numerical-Hessian covariance, method-of-moments entry point, conjugate Bayes, model selection and goodness-of-fit are implemented. The free API covers 36 distribution types, including bounded searches for integer-valued parameters and the stable family. Seeded recovery grids and SciPy comparison fixtures are committed, legacy mutating `Fit*` members are deprecated until v3, and `v2.0.0-beta.1` tags the all-green tested commit. |
 | 3.2 Tail estimators and extreme-value distributions | ✅ | Generalized Pareto and GEV laws have mpmath references and MLEs; Hill/Pickands diagnostics, peaks-over-threshold fitting, and censored/truncated MLE are implemented. |
 | 3.3 Close #11 | 🟡 | The unused private `POISSON` selector is removed; exact Bernoulli-sum, waiting-time and rejection sampling remain. Closing #11 with that rationale needs the maintainer. |
 
@@ -51,7 +51,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. Run 39002870515 builds the documentation successfully; Pages rejected `2.x` because the environment permits only `master`, so its allowed branches need a maintainer update. |
+| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. Replacement run 39018516579 builds and uploads the documentation successfully; Pages still rejects `2.x` because the environment permits only `master`, so its allowed branches need a maintainer update. |
 | 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
 | 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
 | 4.4 Release v2.0.0 | 🚫 | Release automation is ready. Release candidates, the two-week soak, announcements and the upstream vcpkg PR need the maintainer. |
