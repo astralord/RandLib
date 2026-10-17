@@ -3,6 +3,23 @@
 All notable changes to RandLib are documented here. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - Unreleased
+
+### Stable Count
+
+- Added the Tier 2 `StableCountRand<Real>` location-scale distribution for `0 < alpha < 1`, with
+  Wright/one-sided-stable density evaluation, direct reciprocal-stable probability tails, TOMS 748
+  quantiles, log-gamma moments, standard-URBG inverse sampling, and an exact
+  `Gamma(shape=3/2, scale=4)` half-stable fast path.
+- Added constrained maximum-likelihood fitting with fixed exponent, scale, or location; seeded
+  recovery and representative-alpha sampling checks; and a 218-value independent 40-digit mpmath
+  reference table covering central values, both tails, moments, and location-scale behavior.
+- Extended `StableRand`'s valid exponent range from `[0.1, 2]` to `(0, 2]`, removing the historical
+  lower cutoff needed by the complete Stable Count parameter range.
+- Investigated the paper's "conjugate prior" claim and did not add a Bayesian overload. The paper
+  does not define the likelihood parameter or posterior update, and the exact half-stable natural
+  scale likelihood does not remain in the core Stable Count family.
+
 ## [2.1.0] - Unreleased
 
 ### Stable distributions

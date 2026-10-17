@@ -70,5 +70,5 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 6.1 Stable Count distribution | ⏳ | Planned from the published Wright/one-sided-stable definition. The 2021 experimental commit is specification evidence only: its cutoff-based sampler and mutable static state will not be ported. Reference-backed probability functions, exact moments, a standard-URBG sampler and fitting are required. |
-| 6.2 Stable-prior semantics | ⏳ | Research gate: identify the exact stable likelihood parameter and prove posterior closure before adding `fit_bayes<StableRand>`. If the cited relation is subordination rather than Bayesian conjugacy, document it as such and keep Stable Count standalone. |
+| 6.1 Stable Count distribution | ✅ | Tier 2 `StableCountRand` implements the published core law for `0 < alpha < 1`, direct reciprocal-stable tails, exact half-Gamma behavior, moments, inverse-CDF sampling and constrained MLE. A 218-value independent 40-digit Wright-series table, normalization, scale-mapping, sampling, fitting and engine tests are committed. |
+| 6.2 Stable-prior semantics | ✅ | Investigated but not established. The paper gives no normalized likelihood or posterior update, and the exact half-stable natural scale likelihood leaves the core Stable Count family. No misleading `fit_bayes<StableRand>` overload was added; product, renewal and subordination identities are documented separately from conjugacy. |

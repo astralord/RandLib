@@ -10,6 +10,7 @@ INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/README.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/migration-v2.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/packaging.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/parallel-sampling.md \
+                         @CMAKE_CURRENT_SOURCE_DIR@/docs/stable-count.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/docs/stable-distributions.md \
                          @CMAKE_CURRENT_SOURCE_DIR@/include/randlib
 FILE_PATTERNS          = *.hpp *.md

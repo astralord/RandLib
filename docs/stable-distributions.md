@@ -1,6 +1,6 @@
 # Stable distributions
 
-`StableRand<Real>` models an alpha-stable law with characteristic exponent alpha in `[0.1, 2]`,
+`StableRand<Real>` models an alpha-stable law with characteristic exponent alpha in `(0, 2]`,
 skewness beta in `[-1, 1]`, positive scale gamma, and location mu. Nolan's S1 parameterization is the
 source-compatible default; S0 is available explicitly. Important special cases are normal (`alpha=2`), Cauchy
 (`alpha=1, beta=0`), and Levy (`alpha=0.5, |beta|=1`).
@@ -45,6 +45,10 @@ the law. `SetScale()` preserves the location in the currently selected conventio
 The executable tolerance registry in `tests/data/reference_tolerances.csv` is authoritative. Stable
 reference generation is deliberately expensive; see [the accuracy policy](accuracy-policy.md) before
 changing a result or tolerance.
+
+The positive one-sided stable kernel below exponent `0.1` is also used by the
+[Stable Count distribution](stable-count.md). The broader range removes the historical cutoff; the
+most extreme exponents can still be substantially slower than the primary stable reference grid.
 
 Geometric stable laws use an exponential mixture of stable laws. Alpha-one tail expansions keep
 that mixture practical even when it probes stable probabilities at enormous arguments.

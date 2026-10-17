@@ -25,7 +25,7 @@ namespace randlib
  * \f]
  *
  * where the positive stable density has Laplace transform
- * \f$\mathbb{E}[\exp(-sS)]=\exp(-s^\alpha)\f$. In RandLib's S1 convention this is
+ * \f$\mathrm{E}[\exp(-sS)]=\exp(-s^\alpha)\f$. In RandLib's S1 convention this is
  * `StableRand(alpha, 1, pow(cos(pi * alpha / 2), 1 / alpha), 0, S1)`.
  * `StableCountRand(alpha, scale, location)` is the law of `location + scale * X`
  * for standard Stable Count `X`.

@@ -16,6 +16,7 @@ Written so that work can resume with no other context. Read together with
   |---|---|---|---|
   | `/root/RandLib-1.x` | `history` | `origin/1.x` | v1.2: C++17, original layout, fixes, CMake, tests, CI |
   | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20 (Phases 2–5 landed; Phase 6 planned) |
+  | `/root/RandLib-stable-count` | `stable-count` | `origin/stable-count` after maintainer push | Isolated Phase 6 work; do not merge into `2.x` before v2.1 |
 
 - The agent's GitHub account (`nebius-llm-robot`) has pull access only. **The maintainer pushes**, from a
   VS Code terminal on the pod:
@@ -24,6 +25,10 @@ Written so that work can resume with no other context. Read together with
   cd /root/RandLib
   git push origin history:refs/heads/1.x 2.x
   ```
+
+  Phase 6 is pushed separately with
+  `git push origin stable-count:refs/heads/stable-count`; do not merge it into the release-soak
+  worktree.
 
   Only add commits on top of what is pushed; never amend or rebase pushed commits.
 - 1.x fixes are made on `history` first and then merged into `2.x` (`git merge --no-ff history` in
@@ -75,6 +80,10 @@ longer running. Exhaustive skewed α=1 stable and geometric-stable generation wa
 40-digit former-gap and geometric-tail references were committed instead. The cache can be reused if
 the exhaustive grid is revisited, but no reference job is currently running and this is not a release
 gate.
+
+Stable Count has a separate bounded five-case grid and resumable cache. Regenerate and verify it
+with the exact commands in [stable-count.md](stable-count.md#independent-reference-data). The
+committed table contains 218 values generated with mpmath 1.3.0; no cache file belongs in Git.
 
 ## 3. Immediate next actions
 
@@ -263,28 +272,30 @@ skewed short-tail quantiles portable on binary64-only platforms.
 
 ### 3.6 Phase 6: Stable Count and stable-prior research (v2.2)
 
-The maintainer requested Stable Count as the next planned stable-family distribution. The starting
-evidence is experimental commit
-[`c070098`](https://github.com/astralord/RandLib/commit/c0700988a88767cde9967b41e0cc459b8434cc6a)
-and Lihn's revised [Wright-function paper](https://arxiv.org/abs/2405.04693). The commit must not be
-ported mechanically: its sampler stops a positive-stable renewal sum at the arbitrary value
-`100000`, discards stable draws above `100000`, and uses mutable static state. It also carries the
-old `[0.1, 1)` and near-one limitations that Phase 5 removed from the stable kernel.
+Phase 6 engineering is complete on the isolated `stable-count` branch based on `551852e`. It must
+remain separate until v2.0 and v2.1 release work is complete.
 
-Plan task 6.1 now specifies a fresh `StableCountRand` implementation from
-`N_alpha(x) = L_alpha(1/x) / (Gamma(1/alpha + 1) x)`, with explicit location/scale semantics,
-direct tails, quantiles, exact log-gamma moments, the `alpha = 1/2` Gamma reduction, a validated
-standard-URBG sampler, 40-digit mpmath data and generic MLE. It starts in Tier 2 and is promoted only
-after its independent numerical and sampling evidence satisfies the Tier 1 policy. The paper's
-four-parameter generalized Stable Count family is a later proposal, not part of this first slice.
+`StableCountRand<Real>` implements the location-scale core law for `0 < alpha < 1`. The paper's
+positive stable law maps to RandLib S1 with `beta=1` and
+`gamma=cos(pi alpha/2)^(1/alpha)`. Density and central probabilities use bounded Wright series with
+reciprocal-stable quadrature fallback; small survival probabilities use the direct integral over
+`[0,1/x]`. Generic TOMS 748 supplies quantiles, sampling is inverse CDF except for the exact
+half-Gamma path, and all raw moments use log-gamma ratios. Constrained generic MLE supports fixed
+exponent, scale, and location. The law remains Tier 2. The four-parameter generalized family is out
+of scope.
 
-Plan task 6.2 treats the phrase "conjugate prior" as a research claim, not yet an API contract. Before
-adding `fit_bayes<StableRand>`, write the normalized likelihood, identify whether the prior is on a
-count, count root, scale or reciprocal scale, and prove the posterior stays in the Stable Count
-family for arbitrary sample size. The paper also uses inverse-variable, product-mixture and
-subordination identities; those are useful, but they are not by themselves Bayesian conjugacy. If
-posterior closure is not established within the time box, ship Stable Count standalone and record
-the missing derivation instead of exposing a misleading closed-form update.
+The independent mpmath/Wright oracle covers alpha `0.2`, `0.5`, `0.8`, and `0.95`, including a
+location-scale case, both tails, quantiles, and moments. Focused tests cover normalization, the exact
+`Gamma(3/2, scale=4)` reduction, the S1 scale mapping, alpha-to-one degeneration, reproducibility,
+three representative sampling grids, MLE recovery, standard engines, and `long double`.
+
+The Phase 6.2 research gate is complete as **investigated but not established**. The latest paper
+uses the words "conjugate prior" but defines no likelihood parameter, posterior update, or predictive
+law. For the natural half-stable subordinator likelihood, a Stable Count/Gamma prior produces a
+posterior proportional to
+`lambda^(n+1/2) exp(-lambda^2 sum(1/y_i)/4 - lambda/4)`, which is outside the core Stable Count
+family. No `fit_bayes<StableRand>` overload was added. See [stable-count.md](stable-count.md) for the
+derivation and the proposed future research scope.
 
 ## 4. Things that need the maintainer
 
