@@ -265,3 +265,180 @@ When \f$a\f$ is fixed and the width \f$\theta=b-a\f$ has prior
 \f]
 
 The posterior mean or mode supplies the Bayesian or MAP point estimate, respectively.
+
+## Gamma family
+
+### Gamma distribution (`GammaRand`)
+
+`GammaRand(shape, rate)` uses the rate parameterization
+\f$\alpha>0,\beta>0\f$. The named factories `FromShapeRate` and `FromShapeScale` make the
+rate-versus-scale convention explicit; the scale is \f$\theta=1/\beta\f$. For \f$x\geq0\f$,
+
+\f[
+ f(x)=\frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x},\qquad
+ F(x)=P(\alpha,\beta x),\qquad
+ S(x)=Q(\alpha,\beta x),
+\f]
+
+where \f$P\f$ and \f$Q\f$ are the regularized lower and upper incomplete gamma functions. RandLib
+has direct implementations of all four of \f$F,S,\log F,\log S\f$; small tails therefore do not
+depend on subtracting from one. The characteristic function is
+
+\f[
+ \phi(t)=\left(1-\frac{it}{\beta}\right)^{-\alpha}.
+\f]
+
+The moments and principal summaries are
+
+\f[
+ \operatorname{E}X=\frac{\alpha}{\beta},\qquad
+ \operatorname{Var}X=\frac{\alpha}{\beta^2},\qquad
+ \operatorname{Mode}X=\frac{\max\{\alpha-1,0\}}{\beta},
+\f]
+
+\f[
+ \operatorname{Skew}X=\frac{2}{\sqrt\alpha},\qquad
+ \operatorname{ExKurt}X=\frac{6}{\alpha}.
+\f]
+
+The historical methods `GeometricMean()` and `GeometricVariance()` return log-moments:
+
+\f[
+ \operatorname{E}\log X=\psi(\alpha)-\log\beta,
+ \qquad \operatorname{Var}(\log X)=\psi_1(\alpha).
+\f]
+
+The differential entropy exposed through the exponential-family API is
+
+\f[
+ h(X)=\alpha-\log\beta+\log\Gamma(\alpha)+(1-\alpha)\psi(\alpha).
+\f]
+
+Except at \f$\alpha=1\f$, where the exponential formula applies, medians and quantiles are found by
+inverting the appropriate incomplete-gamma tail. Initial approximations follow Gil, Segura, and
+Temme: a power series seeds small lower-tail probabilities, a Lambert-\f$W_{-1}\f$ asymptotic seeds
+large values, and an inverse-complementary-error-function plus Lambert-\f$W\f$ approximation handles
+large shapes. The result is refined by the shared bracketed TOMS 748 solver. Upper quantiles use
+\f$Q\f$ and \f$\log Q\f$ directly.
+
+The sampler dispatches by shape:
+
+- integer shapes one through three are sums of unit exponential variates;
+- \f$\alpha=3/2\f$ is an exponential plus half the square of a standard normal;
+- very small shapes use Best's RGS algorithm in a configured object and Ahrens--Dieter GS in the
+  static `StandardVariate` path;
+- \f$1<\alpha<1.2\f$ uses Fishman's rejection algorithm;
+- the remaining region uses Marsaglia--Tsang rejection.
+
+The accepted unit-rate variate is divided by \f$\beta\f$. All rejection algorithms consume the
+caller-owned engine and enforce the library's defensive iteration limit.
+
+`fit<GammaRand>` performs maximum likelihood for shape and rate on positive samples. If
+\f$\bar x\f$ and \f$\overline{\log x}\f$ are the sample means, the profiled rate is
+\f$\hat\beta=\hat\alpha/\bar x\f$ and the remaining equation is
+
+\f[
+ \log\hat\alpha-\psi(\hat\alpha)
+ =\log\bar x-\overline{\log x}.
+\f]
+
+RandLib initializes \f$\hat\alpha\f$ with a closed approximation and solves this equation by
+safeguarded Newton iteration using \f$1/\alpha-\psi_1(\alpha)\f$. With a known shape, the rate MLE
+is \f$\alpha/\bar x\f$ and its UMVU alternative is
+\f$(\alpha-1/n)/\bar x\f$.
+
+For fixed shape \f$\alpha\f$, a Gamma prior
+\f$\beta\sim\operatorname{Gamma}(\kappa,\gamma)\f$ is conjugate to the rate:
+
+\f[
+ \beta\mid x\sim\operatorname{Gamma}\!\left(
+ \alpha n+\kappa,\gamma+\sum_i x_i\right).
+\f]
+
+`fit_bayes<ExponentialRand>` exposes the \f$\alpha=1\f$ case. The class also exposes the
+two-parameter exponential-family representation with sufficient statistic
+\f$(\log X,X)\f$ and natural parameter \f$(\alpha-1,-\beta)\f$.
+
+### Chi-squared distribution (`ChiSquaredRand`)
+
+`ChiSquaredRand(degree)` takes a positive integer \f$k\f$ and is
+
+\f[
+ X\sim\chi_k^2=\operatorname{Gamma}\!\left(\frac{k}{2},\frac12\right).
+\f]
+
+Its density, CDF, survival function, characteristic function, quantiles, and sampler are inherited
+from the Gamma implementation. In particular,
+
+\f[
+ \phi(t)=(1-2it)^{-k/2},\qquad
+ \operatorname{E}X=k,\qquad
+ \operatorname{Var}X=2k,
+\f]
+
+\f[
+ \operatorname{Mode}X=\max\{k-2,0\},\qquad
+ \operatorname{Skew}X=\sqrt{\frac8k},\qquad
+ \operatorname{ExKurt}X=\frac{12}{k}.
+\f]
+
+It is also the distribution of \f$\sum_{j=1}^{k}Z_j^2\f$ for independent standard normals.
+`fit<ChiSquaredRand>` treats the degree as discrete: it evaluates the log likelihood over positive
+integer degrees up to an adaptive, bounded search limit and returns the maximizer. A fixed degree
+bypasses the search.
+
+### Erlang distribution (`ErlangRand`)
+
+`ErlangRand(shape, rate)` restricts the Gamma shape to a positive integer \f$k\f$:
+
+\f[
+ X\sim\operatorname{Erlang}(k,\beta)
+ =\operatorname{Gamma}(k,\beta)
+ \stackrel{d}{=}\sum_{j=1}^{k}E_j,
+ \qquad E_j\sim\operatorname{Exponential}(\beta).
+\f]
+
+It otherwise uses all Gamma formulas and algorithms. For integer shape the sampler explicitly sums
+\f$k\f$ exponential variates when \f$k\leq3\f$ and uses the general Gamma dispatch for larger
+values. `fit<ErlangRand>` profiles the rate as \f$k/\bar x\f$ for every candidate integer shape and
+selects the largest likelihood. The candidate ceiling is derived from the moment estimate
+\f$\bar x^2/s^2\f$ and bounded by the implementation; fixed shape and rate constraints are honored.
+
+### Exponential distribution (`ExponentialRand`)
+
+`ExponentialRand(rate)` is the \f$\alpha=1\f$ Gamma law. The factory `FromScale` accepts its mean
+\f$\theta=1/\beta\f$. For \f$x\geq0\f$,
+
+\f[
+ f(x)=\beta e^{-\beta x},\qquad
+ F(x)=1-e^{-\beta x},\qquad
+ S(x)=e^{-\beta x},
+\f]
+
+\f[
+ Q(p)=-\frac{\log(1-p)}{\beta},\qquad
+ \phi(t)=\frac{\beta}{\beta-it}.
+\f]
+
+RandLib evaluates \f$F\f$ with `expm1`, evaluates \f$S\f$ directly, and uses `log1p` for the lower
+quantile so both tails retain precision. Sampling scales the shared 256-layer unit-exponential
+ziggurat by \f$1/\beta\f$.
+
+The mean, variance, median, mode, skewness, excess kurtosis, entropy, and raw integer moments are
+
+\f[
+ \operatorname{E}X=\frac1\beta,\quad
+ \operatorname{Var}X=\frac1{\beta^2},\quad
+ \operatorname{Median}X=\frac{\log2}{\beta},\quad
+ \operatorname{Mode}X=0,
+\f]
+
+\f[
+ \operatorname{Skew}X=2,\qquad
+ \operatorname{ExKurt}X=6,\qquad
+ h(X)=1-\log\beta,\qquad
+ \operatorname{E}X^r=\frac{r!}{\beta^r}\quad(r=0,1,\ldots).
+\f]
+
+`fit<ExponentialRand>` supports the rate MLE \f$1/\bar x\f$ and its UMVU version
+\f$(1-1/n)/\bar x\f$. A Gamma prior is conjugate, as described for the Gamma family above.
