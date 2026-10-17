@@ -85,6 +85,8 @@ All notable changes to RandLib are documented here. The project follows
   `test_package` consumer.
 - Added deterministic single-header generation and a CI smoke test. Tagged v2 releases extract their
   matching changelog section and attach `randlib_single.hpp` with its SHA-256 checksum.
+- Made release-candidate tags reuse the corresponding final-version changelog section and mark every
+  SemVer prerelease GitHub release as a prerelease.
 - Removed a Bernoulli/binomial include cycle exposed by standalone public-header consumption without
   changing the exact sampling algorithm or engine advancement.
 

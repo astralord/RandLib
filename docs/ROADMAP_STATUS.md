@@ -51,10 +51,10 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. Replacement run 39018516579 builds and uploads the documentation successfully; Pages still rejects `2.x` because the environment permits only `master`, so its allowed branches need a maintainer update. |
+| 4.1 Documentation | ✅ | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. Run 39021654307 builds and deploys the documentation from `2.x`; the public site serves that deployment. |
 | 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
 | 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
-| 4.4 Release v2.0.0 | 🚫 | Release automation is ready. Release candidates, the two-week soak, announcements and the upstream vcpkg PR need the maintainer. |
+| 4.4 Release v2.0.0 | 🟡 | Release automation is ready, including prerelease classification and RC changelog fallback. The exact-head `v2.0.0-rc.1` tag, two-week soak, announcements and upstream vcpkg PR remain. The already-published alpha/beta GitHub releases need their prerelease flags corrected once by the maintainer. |
 
 ## Phase 5: Hard numerics (v2.1)
 

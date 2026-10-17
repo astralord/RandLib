@@ -22,8 +22,7 @@ Written so that work can resume with no other context. Read together with
 
   ```sh
   cd /root/RandLib
-  git push origin history:refs/heads/1.x 2.x \
-    v2.0.0-alpha.1 v2.0.0-beta.1
+  git push origin history:refs/heads/1.x 2.x
   ```
 
   Only add commits on top of what is pushed; never amend or rebase pushed commits.
@@ -204,10 +203,26 @@ The release workflow compiles that artifact, extracts the exact tag's changelog 
 the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
 final release archive and checksum.
 
-The documentation build and artifact upload in replacement run 39018516579 passed. Deployment still
-failed with GitHub's explicit `Invalid deployment branch` response because the `github-pages`
-environment currently permits only `master`; the maintainer must allow `2.x`. The remaining Phase 4
-actions are the release-candidate soak, upstream vcpkg PR and release announcements.
+Documentation run 39021654307 builds and deploys successfully from `2.x`. The public site at
+<https://astralord.github.io/RandLib/> serves that deployment, so task 4.1 is complete.
+
+The first tag runs exposed two release-workflow gaps: alpha and beta were published as ordinary
+GitHub releases, and an RC tag had no exact changelog heading. The local release-tooling fix marks
+every hyphenated SemVer tag as a prerelease, lets an RC reuse the final version's changelog section,
+and adds focused extraction tests to CI. After that fix is pushed and the exact head passes the full
+matrix, create annotated tag `v2.0.0-rc.1`. Do not start the two-week soak from the earlier alpha or
+beta tags.
+
+The maintainer must correct the two existing GitHub release records once; this does not move tags or
+rewrite history:
+
+```sh
+gh release edit v2.0.0-alpha.1 -R astralord/RandLib --prerelease
+gh release edit v2.0.0-beta.1 -R astralord/RandLib --prerelease
+```
+
+The remaining Phase 4 actions are the release-candidate soak, upstream vcpkg PR and release
+announcements.
 
 ### 3.5 Phase 5: hard numerics (v2.1), deliberately last
 

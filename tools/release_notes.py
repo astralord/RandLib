@@ -8,18 +8,32 @@ import re
 from pathlib import Path
 
 
-def extract(changelog: str, tag: str) -> str:
-    version = tag.removeprefix("v")
+def extract_section(changelog: str, version: str) -> str | None:
     heading = re.compile(rf"^## \[{re.escape(version)}\](?:\s+-.*)?$", re.MULTILINE)
     match = heading.search(changelog)
     if match is None:
-        raise ValueError(f"CHANGELOG.md has no [{version}] section")
+        return None
     next_heading = re.search(r"^## \[", changelog[match.end() :], re.MULTILINE)
     end = match.end() + next_heading.start() if next_heading else len(changelog)
     body = changelog[match.end() : end].strip()
     if not body:
         raise ValueError(f"CHANGELOG.md section [{version}] is empty")
     return body + "\n"
+
+
+def extract(changelog: str, tag: str) -> str:
+    version = tag.removeprefix("v")
+    body = extract_section(changelog, version)
+    if body is not None:
+        return body
+
+    base_version, separator, _ = version.partition("-")
+    if separator:
+        body = extract_section(changelog, base_version)
+        if body is not None:
+            return body
+
+    raise ValueError(f"CHANGELOG.md has no [{version}] section")
 
 
 def main() -> None:

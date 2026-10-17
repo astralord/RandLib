@@ -130,6 +130,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - name: Test release notes
+        run: python3 tools/test_release_notes.py
       - run: sudo apt-get update && sudo apt-get install -y g++-13
       - name: Generate and compile
         run: |

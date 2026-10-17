@@ -22,9 +22,14 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create "${GITHUB_REF_NAME}"
-          randlib_single.hpp randlib_single.hpp.sha256
-          --verify-tag
-          --title "RandLib ${GITHUB_REF_NAME#v}"
-          --notes-file release-notes.md
+        run: |
+          release_flags=()
+          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+            release_flags+=(--prerelease)
+          fi
+          gh release create "${GITHUB_REF_NAME}" \
+            randlib_single.hpp randlib_single.hpp.sha256 \
+            --verify-tag \
+            --title "RandLib ${GITHUB_REF_NAME#v}" \
+            --notes-file release-notes.md \
+            "${release_flags[@]}"
