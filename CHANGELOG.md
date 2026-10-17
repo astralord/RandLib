@@ -32,6 +32,8 @@ All notable changes to RandLib are documented here. The project follows
   `1e-6` of one to a deterministic law.
 - **B45** Discrete-uniform characteristic functions now use a reduced-angle sinc form and return
   exactly one at integer-lattice periods instead of dividing zero by zero.
+- **B46** Skellam modes now search adjacent probabilities from the median instead of truncating the
+  mean, which need not maximize the PMF. A three-point regression uses 60-digit Bessel references.
 
 ## [1.2.0] - 2026-10-17
 

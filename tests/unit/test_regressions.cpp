@@ -480,3 +480,12 @@ TEST_CASE("B45: discrete-uniform characteristic function handles lattice periods
     CHECK_THAT(distribution.CF(2 * period).real(), WithinAbs(1.0, 0.0));
     CHECK_THAT(distribution.CF(-period).imag(), WithinAbs(0.0, 0.0));
 }
+
+TEST_CASE("B46: Skellam mode maximizes the PMF instead of truncating the mean", "[regression]")
+{
+    const SkellamRand<int> distribution(2, 1.1);
+    CHECK_THAT(distribution.P(0), WithinRel(0.2139951994197166138511878227306453, 1e-13));
+    CHECK_THAT(distribution.P(1), WithinRel(0.2329981383802911800024090128922231, 1e-13));
+    CHECK_THAT(distribution.P(2), WithinRel(0.1772656913264927706363333023355158, 1e-13));
+    CHECK(distribution.Mode() == 1);
+}
