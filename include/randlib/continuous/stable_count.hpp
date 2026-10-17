@@ -243,7 +243,7 @@ double StableCountRand<RealType>::F(const RealType &x) const
         return math::pgamma(1.5, 0.25 * standardized, logShape, logGammaShape);
     }
     const double lower = directStandardCdf(standardized);
-    return (lower <= 0.999) ? lower : 1 - directStandardSurvival(standardized);
+    return (lower <= 0.95) ? lower : 1 - directStandardSurvival(standardized);
 }
 
 template <typename RealType>
@@ -258,7 +258,7 @@ double StableCountRand<RealType>::S(const RealType &x) const
         return math::qgamma(1.5, 0.25 * standardized, logShape, logGammaShape);
     }
     const double lower = directStandardCdf(standardized);
-    return (lower <= 0.999) ? 1 - lower : directStandardSurvival(standardized);
+    return (lower <= 0.95) ? 1 - lower : directStandardSurvival(standardized);
 }
 
 template <typename RealType>

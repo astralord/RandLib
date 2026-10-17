@@ -306,9 +306,10 @@ Substantive Phase 6 commits before this handoff update, oldest first:
 ```
 
 Validation on the current pod passed with GCC 13, GCC 14, and Clang 18 Release builds under
-`RANDLIB_WARNINGS_AS_ERRORS=ON`. The complete GCC 14 unit binary passed 1,022,193 assertions in 120
-cases; the complete statistical binary passed 235 assertions in 54 cases. Focused Stable Count
-unit/MLE, Tier 2 reference, and representative-alpha sampling filters also pass. The mpmath cache
+`RANDLIB_WARNINGS_AS_ERRORS=ON`. The complete unit binary passed 1,022,195 assertions in 121 cases
+with each compiler; the complete statistical binary passed 235 assertions in 54 cases. Focused
+Stable Count unit/MLE, Tier 2 reference, and representative-alpha sampling filters also pass. The
+mpmath cache
 verification reproduces all 218 committed values exactly. The pinned Clang 18 formatting hook,
 blocking Clang-Tidy explicit-instantiation run, standalone public-header compile, deterministic
 single-header compile/run, hidden-state scan, release-note parser, strict Doxygen build, and

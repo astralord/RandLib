@@ -106,6 +106,14 @@ TEST_CASE("Stable Count probability functions and quantiles preserve both tails"
     CHECK(normalization == Approx(1).margin(2e-8));
 }
 
+TEST_CASE("Stable Count evaluates moderate upper tails directly", "[stable-count]")
+{
+    StableCountRand<double> distribution(0.2);
+    constexpr double upperTailQuantile = 171301.11941043584;
+    CHECK(distribution.S(upperTailQuantile) == Approx(0.01).margin(2e-14));
+    CHECK(distribution.F(upperTailQuantile) + distribution.S(upperTailQuantile) == Approx(1).margin(2e-14));
+}
+
 TEST_CASE("Stable Count approaches its degenerate alpha-one limit", "[stable-count]")
 {
     StableCountRand<double> distribution(0.999);

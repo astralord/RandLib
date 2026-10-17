@@ -14,6 +14,9 @@ All notable changes to RandLib are documented here. The project follows
 - Added constrained maximum-likelihood fitting with fixed exponent, scale, or location; seeded
   recovery and representative-alpha sampling checks; and a 218-value independent 40-digit mpmath
   reference table covering central values, both tails, moments, and location-scale behavior.
+- Switched moderate upper probabilities to the direct reciprocal-stable survival integral instead
+  of subtracting the lower CDF. This retains the one-percent tail on binary64-only extended-
+  precision platforms and restores portable `alpha = 0.2` upper quantiles.
 - Extended `StableRand`'s valid exponent range from `[0.1, 2]` to `(0, 2]`, removing the historical
   lower cutoff needed by the complete Stable Count parameter range.
 - Investigated the paper's "conjugate prior" claim and did not add a Bayesian overload. The paper
