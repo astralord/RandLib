@@ -57,6 +57,8 @@ All notable changes to RandLib are documented here. The project follows
 - **B54** Hypergeometric means and modes no longer multiply in the integer parameter type, and
   standardized moments now handle deterministic and populations of size two or three. CDF summation
   starts at the actual support boundary, and sampling uses the distribution's integer type.
+- **B55** Negative-hypergeometric means and variances now promote integer parameters before adding
+  or multiplying them, preventing overflow for large populations.
 
 ## [1.2.0] - 2026-10-17
 

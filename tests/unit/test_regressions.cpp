@@ -677,3 +677,17 @@ TEST_CASE("B54: hypergeometric moments cover small, deterministic and large popu
     CHECK_THAT(shiftedSupport.F(shiftedSupport.MinValue()),
                WithinAbs(shiftedSupport.P(shiftedSupport.MinValue()), 1e-15));
 }
+
+TEST_CASE("B55: negative-hypergeometric moments do not overflow before conversion", "[regression]")
+{
+    const int population = std::numeric_limits<int>::max();
+    const int successes = population - 1;
+    const int target = 1000000000;
+    const NegativeHyperGeometricRand<int> distribution(population, successes, target);
+    const long double expectedMean = static_cast<long double>(target) / population;
+    const long double expectedVariance =
+        target * (1.0L - static_cast<long double>(target) / population) / population;
+    CHECK_THAT(static_cast<double>(distribution.Mean()), WithinRel(static_cast<double>(expectedMean), 1e-15));
+    CHECK_THAT(static_cast<double>(distribution.Variance()), WithinRel(static_cast<double>(expectedVariance), 1e-15));
+    CHECK(distribution.Variance() > 0);
+}

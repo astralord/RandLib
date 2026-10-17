@@ -96,18 +96,18 @@ IntType NegativeHyperGeometricRand<IntType>::Variate() const
 template < typename IntType >
 long double NegativeHyperGeometricRand<IntType>::Mean() const
 {
-    double mean = m;
+    long double mean = m;
     mean *= N - M;
-    mean /= M + 1;
+    mean /= static_cast<long double>(M) + 1.0L;
     return mean;
 }
 
 template < typename IntType >
 long double NegativeHyperGeometricRand<IntType>::Variance() const
 {
-    double Mp1 = M + 1;
-    double var = 1 - m / Mp1;
-    var *= N + 1;
+    long double Mp1 = static_cast<long double>(M) + 1.0L;
+    long double var = 1.0L - m / Mp1;
+    var *= static_cast<long double>(N) + 1.0L;
     var *= N - M;
     var /= Mp1 * (Mp1 + 1);
     return m * var;
