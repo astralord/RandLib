@@ -2,7 +2,7 @@
 
 Written so that work can resume with no other context. Read together with
 [MODERNIZATION_PLAN.md](MODERNIZATION_PLAN.md) (the plan, revised on 2026-10-11) and
-[ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-16.
+[ROADMAP_STATUS.md](ROADMAP_STATUS.md) (status per task). State as of 2026-10-17.
 
 ## 1. Repository, branches and how changes reach GitHub
 
@@ -23,7 +23,7 @@ Written so that work can resume with no other context. Read together with
   ```sh
   cd /root/RandLib
   git push origin history:refs/heads/1.x 2.x
-  git push origin v1.2.0            # only once 1.x CI is green, see 3.1
+  git push origin v1.2.0
   ```
 
   Only add commits on top of what is pushed; never amend or rebase pushed commits.
@@ -49,7 +49,7 @@ cmake --build /tmp/b2
 Compilers on the pod: g++-13, g++-14, clang++-18. MSVC and AppleClang are only exercised by CI.
 
 Test families (both branches): `tests/unit` (golden v1.1 comparison, mpmath reference values, coherence,
-mode/median, parameters, regressions B1–B38, reproducibility, engines, numerics on 2.x) and
+mode/median, parameters, regressions B1–B39, reproducibility, engines, numerics on 2.x) and
 `tests/statistical` (KS/χ² sampling, moments, empirical CF, fitting). Tolerances follow plan section 9.
 
 ### Golden values and known deviations
@@ -79,17 +79,13 @@ gate.
 
 ## 3. Immediate next actions
 
-### 3.1 Finish v1.2 (branch `history` → `origin/1.x`)
+### 3.1 v1.2 release and 1.2.1 follow-up (branch `history` → `origin/1.x`)
 
-1. The pushed `history` head is 92bf8f7. CI run 38966648994 isolated AppleClang's only failure to
-   `BetaBinomialRand<>(20, 0.5, 0.5)`, which hit its 60-second bound. Clang 18 UBSan reproduced an
-   out-of-range floating-to-integer conversion in the geometric waiting-time sampler. Local commits
-   4e8b90e and f25fd1a record B38, saturate unrepresentable geometric and negative-binomial results,
-   and make binomial waiting arithmetic overflow-safe. GCC 14 and Clang 18 warning-clean builds pass
-   locally; Clang UBSan passes the exact beta-binomial case and all 105 bounded tests. Push both
-   branches and require the replacement AppleClang job to pass before tagging.
-2. When every job is green, tag: `git -C /root/RandLib-1.x tag -a v1.2.0 -m "RandLib 1.2.0"`, ask the
-   maintainer to push the tag, update ROADMAP_STATUS (1.3, 1.5, 1.7) on both branches.
+CI run 39002870454 passes all 16 jobs at f25fd1a, including AppleClang, MSVC, GCC 11–14,
+Clang 15–18, sanitizers, engine variants, portable special functions, static analysis and the
+install consumer. The annotated `v1.2.0` tag points to that exact tested commit and is ready for the
+maintainer to push. Commit ba0592b is the first post-release fix: B39 keeps negative-binomial fitting
+inside the positive shape domain and is recorded under the unreleased 1.2.1 changelog section.
 
 ### 3.2 Phase 2 remainder (branch `2.x`)
 
@@ -107,8 +103,13 @@ gate.
   GCC 14 passes the unit/example and isolated-discrete suites. The expanded v2 continuous sampling
   grid keeps a one-hour bound, while every discrete case remains bounded at 60 seconds. The B38
   sampler fix from 1.x, including checked negative-binomial accumulation, is ported into the
-  header-only implementations and uses a standard engine in its v2 regression. Push the local
-  commits and require AppleClang and MSVC to pass before tagging.
+  header-only implementations and uses a standard engine in its v2 regression. CI run 39002870514
+  passes every job except MSVC: its deterministic negative-binomial MLE crossed the positive shape
+  boundary, spent 36 minutes in Newton iteration, then threw. B39 landed on `history` first and is
+  merged into the current local `2.x`: the fitter works in log-shape coordinates, and Newton rejects
+  non-finite states after bounded backtracking. Warning-clean GCC 14 and Clang 18 builds pass their
+  complete unit suites, all fitting tests and the formerly failing case. Push both branches and
+  require the replacement MSVC job, along with the full matrix, to pass before tagging.
 - **2.5 Numerical building blocks**: done. `math/quadrature.hpp`, `math/roots.hpp`,
   `math/optimize.hpp`, and the functions in `math/functions.hpp`, `gamma.hpp`, `beta.hpp` and
   `special_functions.hpp` are templates on their floating-point type. Mixed integer/floating call
@@ -203,7 +204,7 @@ The release workflow compiles that artifact, extracts the exact tag's changelog 
 the header and SHA-256 checksum. The upstream vcpkg port must replace the checkout source with the
 final release archive and checksum.
 
-The documentation build in run 38918400230 passed. Deployment failed with GitHub's explicit
+The documentation build in run 39002870515 passed. Deployment failed with GitHub's explicit
 `Invalid deployment branch` response because the `github-pages` environment currently permits only
 `master`; the maintainer must allow `2.x`. The remaining Phase 4 actions are the release-candidate
 soak, upstream vcpkg PR and release announcements.

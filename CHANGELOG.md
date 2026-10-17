@@ -149,6 +149,9 @@ All notable changes to RandLib are documented here. The project follows
   distributions against the standard library, plus stable-law sampling.
 - Engine-adapter interoperability tests now verify identical engine advancement and allow up to
   eight ULPs of platform-dependent variation between direct and type-erased sampling paths.
+- Negative-binomial maximum-likelihood fitting now optimizes its positive shape parameter in log
+  space. Newton iterations reject non-finite states after bounded backtracking instead of stalling
+  on a platform-dependent special-function pole (B39).
 
 ### API cleanup
 
@@ -166,7 +169,17 @@ All notable changes to RandLib are documented here. The project follows
 - Templated factorial and combinatorial return types; calls without an explicit type retain their
   previous `long double` result.
 
-## [1.2.0]
+## [1.2.1] - Unreleased
+
+### Fitting and numerical methods
+
+- **B39** Negative-binomial maximum-likelihood fitting optimizes the positive shape parameter in
+  log space, preventing Newton steps from crossing a special-function pole. The Newton helper now
+  rejects non-finite states after bounded backtracking instead of performing up to 100,000 futile
+  iterations. A three-observation regression uses the 50-digit mpmath score root
+  5.2122598849254577174.
+
+## [1.2.0] - 2026-10-17
 
 A stabilization release: no API is removed and the file layout is unchanged, but
 **sampled values change for the same seed** (see B1–B6, B12, B26 below), and many

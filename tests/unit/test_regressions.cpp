@@ -403,3 +403,22 @@ TEST_CASE("B38: geometric waiting times do not overflow signed integers", "[regr
     generator.seed(20231010);
     CHECK(BinomialRand<int>::Variate(20, probability, generator) == 0);
 }
+
+TEST_CASE("B39: negative-binomial fitting stays in the positive shape domain", "[regression]")
+{
+    double invalidRoot = 1.0;
+    int evaluations = 0;
+    CHECK_FALSE(math::findRootNewtonFirstOrder<double>(
+        [&evaluations](double) {
+            ++evaluations;
+            return DoublePair(1.0, std::numeric_limits<double>::quiet_NaN());
+        },
+        invalidRoot));
+    CHECK(evaluations == 1);
+
+    const std::vector<int> sample = {0, 1, 3};
+    auto fitted = fit<PolyaRand<int>>(sample);
+    REQUIRE(fitted.converged);
+    CHECK_THAT(fitted.distribution.GetNumber(), WithinRel(5.2122598849254577174, 1e-10));
+    CHECK_THAT(fitted.distribution.GetProbability(), WithinRel(0.79630061189656137372, 1e-10));
+}

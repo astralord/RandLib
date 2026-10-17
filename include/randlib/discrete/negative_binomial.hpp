@@ -402,20 +402,28 @@ void NegativeBinomialRand<IntType, T>::Fit(std::span<const IntType> sample)
         throw this->fitError(FitErrorCode::NotApplicable, this->TOO_SMALL_VARIANCE);
     double guess = mean * mean / (variance - mean);
     size_t n = sample.size();
+    auto score = [sample, mean, n](double x) {
+        double first = 0.0, second = 0.0;
+        for (const IntType &var : sample) {
+            first += math::digamma(var + x);
+            second += math::trigamma(var + x);
+        }
+        first -= n * (math::digammamLog(x) + std::log(x + mean));
+        second -= n * (math::trigamma(x) - mean / (x * (mean + x)));
+        return DoublePair(first, second);
+    };
+    double logGuess = std::log(guess);
     if (!math::findRootNewtonFirstOrder<double>(
-            [sample, mean, n](double x) {
-                double first = 0.0, second = 0.0;
-                for (const IntType &var : sample) {
-                    first += math::digamma(var + x);
-                    second += math::trigamma(var + x);
-                }
-                first -= n * (math::digammamLog(x) + std::log(x + mean));
-                second -= n * (math::trigamma(x) - mean / (x * (mean + x)));
-                return DoublePair(first, second);
+            [&score](double logNumber) {
+                double number = std::exp(logNumber);
+                DoublePair value = score(number);
+                value.second *= number;
+                return value;
             },
-            guess))
+            logGuess))
         throw this->fitError(FitErrorCode::Undefined, "Error in root-finding algorithm");
-    if (guess <= 0.0)
+    guess = std::exp(logGuess);
+    if (!std::isfinite(guess) || guess <= 0.0)
         throw this->fitError(FitErrorCode::WrongReturn,
                              "Number should be positive, but returned value is " + this->toStringWithPrecision(guess));
     SetParameters(guess, guess / (guess + mean));

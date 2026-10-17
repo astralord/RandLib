@@ -23,10 +23,10 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 1.1 Repository hygiene | ✅ | |
 | 1.2 CMake build | ✅ | Presets, install/export, `find_package`, consumer example built in CI. |
 | 1.3 Compiler portability (#18) | ✅ | GCC 11–14, Clang 15–18, AppleClang and MSVC 14.44 build warning-free in the current CI run. |
-| 1.4 Correctness fixes | ✅ | B1–B9 as planned, B10 deferred to v2 by design, and B11–B38 found by the test suite; see CHANGELOG.md. |
-| 1.5 Continuous integration | 🟡 | GCC, Clang, MSVC, sanitizer, coverage and static-analysis jobs pass. Isolating each discrete sampling check identified AppleClang's beta-binomial timeout as B38; the portable fix awaits its CI rerun. |
+| 1.4 Correctness fixes | ✅ | B1–B9 as planned and B11–B38 shipped in v1.2; B10 was deferred to v2 by design. The post-release B39 negative-binomial fitting portability fix is queued for v1.2.1. See CHANGELOG.md. |
+| 1.5 Continuous integration | ✅ | CI run 39002870454 passes GCC 11–14, Clang 15–18, AppleClang, MSVC, sanitizer, coverage, static analysis, engine variants, portable special functions, and install/consumer checks. |
 | 1.6 Test suite (#12) | ✅ | Golden, reference, coherence, mode/median, reproducibility, engines, parameters, regressions, sampling (KS/χ², moments, empirical CF) and fitting. |
-| 1.7 Release v1.2 | 🟡 | CHANGELOG written; `v1.2.0` is tagged once CI is green on all compilers. |
+| 1.7 Release v1.2 | ✅ | `v1.2.0` tags the all-green tested commit f25fd1a. |
 
 ## Phase 2: Modern architecture (v2.0-alpha, branch `2.x`)
 
@@ -37,7 +37,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 | 2.3 Remove hidden state | ✅ | CI job fails on static or `thread_local` variables that are not constant. |
 | 2.4 API cleanup | ✅ | Non-const `Reseed`, `std::span`, `[[nodiscard]]`, `enum class Support`, `fit_error`, `final`, named factories, private type-erased sampling adapters, and internal numerical helpers isolated in `math::detail`. |
 | 2.5 Numerical building blocks | ✅ | `math/quadrature.hpp` (adaptive Gauss–Kronrod, infinite limits), `math/roots.hpp` (TOMS 748, Newton, Halley; used by the quantile search), `math/optimize.hpp` (Brent, Nelder–Mead, BFGS), and all special functions are templates on their floating-point type with separate `long double` coverage. |
-| 2.6 Tooling | ✅ | Clang 18 formatting and pre-commit, blocking clang-tidy over the explicit instantiations and public headers, and opt-in Google Benchmark sampling comparisons. |
+| 2.6 Tooling | ✅ | Clang 18 formatting and pre-commit, blocking clang-tidy over the explicit instantiations and public headers, and opt-in Google Benchmark sampling comparisons. The alpha tag remains gated on replacement CI for B39. |
 
 ## Phase 3: Fitting and features (v2.0-beta)
 
@@ -51,7 +51,7 @@ Legend: ✅ done · 🟡 partly done (see note) · ⏳ not started · 🚫 needs
 
 | Task | Status | Notes |
 |---|---|---|
-| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. The documentation build passes; Pages rejected `2.x` because the environment permits only `master`, so its allowed branches need a maintainer update. |
+| 4.1 Documentation | 🟡 | README, strict Doxygen + Pages, fitting/streams/stable/accuracy guides, legacy-source archive, and five CI-compiled examples are done. Run 39002870515 builds the documentation successfully; Pages rejected `2.x` because the environment permits only `master`, so its allowed branches need a maintainer update. |
 | 4.2 Migration guide | ✅ | Every planned breaking change has before/after guidance, including namespace/layout, engines, `Reseed`, spans, fitting, support enums, final classes and reproducibility. |
 | 4.3 Packaging | ✅ | The local-source vcpkg overlay and Conan 2 test package are validated; deterministic amalgamation compiles on GCC 13/14 and Clang 18; tag releases attach the header and checksum. The upstream vcpkg PR remains a maintainer action. |
 | 4.4 Release v2.0.0 | 🚫 | Release automation is ready. Release candidates, the two-week soak, announcements and the upstream vcpkg PR need the maintainer. |

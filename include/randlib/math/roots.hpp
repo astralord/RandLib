@@ -231,23 +231,41 @@ bool findRootNewtonFirstOrder(const std::function<DoublePair(RealType)> &funPtr,
     DoublePair y = funPtr(root);
     double fun = y.first;
     double grad = y.second;
+    if (!std::isfinite(root) || !std::isfinite(fun) || !std::isfinite(grad))
+        return false;
     if (std::fabs(fun) < math::detail::minimumTolerance)
         return true;
     do {
         double alpha = 1.0;
         double oldRoot = root;
         double oldFun = fun;
-        step = std::min(MAX_STEP, std::max(-MAX_STEP, fun / grad));
-        do {
+        double newtonStep = fun / grad;
+        if (!std::isfinite(newtonStep))
+            return false;
+        step = std::min(MAX_STEP, std::max(-MAX_STEP, newtonStep));
+        bool accepted = false;
+        for (int backtrack = 0; backtrack < 64; ++backtrack) {
             root = oldRoot - alpha * step;
+            if (!std::isfinite(root)) {
+                alpha *= 0.5;
+                continue;
+            }
             y = funPtr(root);
             fun = y.first;
             grad = y.second;
             if (std::fabs(fun) < math::detail::minimumTolerance)
                 return true;
+            if (std::isfinite(fun) && std::isfinite(grad) && std::fabs(grad) > math::detail::minimumTolerance &&
+                std::fabs(fun) <= std::fabs(oldFun)) {
+                accepted = true;
+                break;
+            }
             alpha *= 0.5;
-        } while ((std::fabs(grad) <= math::detail::minimumTolerance || std::fabs(oldFun) < std::fabs(fun)) &&
-                 alpha > 0);
+        }
+        if (!accepted) {
+            root = oldRoot;
+            return false;
+        }
         /// Check convergence criteria
         double diffX = std::fabs(root - oldRoot);
         double relDiffX = std::fabs(diffX / oldRoot);
