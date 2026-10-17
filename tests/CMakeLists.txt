@@ -34,6 +34,7 @@ add_executable(randlib_unit_tests
     unit/test_reference.cpp
     unit/test_regressions.cpp
     unit/test_stable.cpp
+    unit/test_stable_count.cpp
     unit/test_reproducibility.cpp)
 target_link_libraries(randlib_unit_tests PRIVATE randlib_test_support Catch2::Catch2WithMain)
 catch_discover_tests(randlib_unit_tests PROPERTIES LABELS unit)

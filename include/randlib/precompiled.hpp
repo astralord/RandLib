@@ -64,6 +64,7 @@ extern template class RiceRand<double>;
 extern template class SechRand<double>;
 extern template class StableDistribution<double>;
 extern template class StableRand<double>;
+extern template class StableCountRand<double>;
 extern template class HoltsmarkRand<double>;
 extern template class LandauRand<double>;
 extern template class StudentTRand<double>;

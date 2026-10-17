@@ -8,6 +8,7 @@
 #include "stats.h"
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <complex>
@@ -231,6 +232,39 @@ TEST_CASE("Continuous samples follow their distribution", "[statistical]")
     auto cases = casesOfKind(Kind::Continuous);
     std::erase_if(cases, [](const Case *testCase) { return !testCase->testSampling; });
     report(cases, runContinuous(cases, [](const Case &c) { return c.makeContinuous(); }));
+}
+
+TEST_CASE("Stable Count inverse samples match independent quartiles", "[statistical][stable-count]")
+{
+    struct SamplingCase
+    {
+        double exponent;
+        std::array<double, 3> quartiles;
+    };
+    constexpr std::array cases{
+        SamplingCase{0.2, {981.1353613230349, 3865.491718469079, 13278.848675811233}},
+        SamplingCase{0.8, {1.0920923194471634, 1.4831845398887014, 1.8506681858753713}},
+        SamplingCase{0.95, {1.00947313942679, 1.1232778646876066, 1.199141995676045}},
+    };
+    constexpr std::size_t sampleSize = 1024;
+    for (std::size_t caseIndex = 0; caseIndex < cases.size(); ++caseIndex) {
+        const auto &[exponent, quartiles] = cases[caseIndex];
+        StableCountRand<double> distribution(exponent);
+        Pcg64 engine(BASE_SEED + caseIndex);
+        std::array<std::size_t, 4> counts{};
+        for (std::size_t i = 0; i < sampleSize; ++i) {
+            const double value = distribution(engine);
+            const auto bin = std::upper_bound(quartiles.begin(), quartiles.end(), value) - quartiles.begin();
+            ++counts[static_cast<std::size_t>(bin)];
+        }
+        double statistic = 0;
+        for (std::size_t count : counts) {
+            constexpr double expected = sampleSize / 4.0;
+            statistic += (count - expected) * (count - expected) / expected;
+        }
+        INFO("alpha = " << exponent);
+        CHECK(chiSquaredSurvival(statistic, 3) > MIN_P_VALUE);
+    }
 }
 
 TEST_CASE("Singular samples follow their distribution", "[statistical]")

@@ -42,6 +42,7 @@
 #include <randlib/continuous/rice.hpp>
 #include <randlib/continuous/sech.hpp>
 #include <randlib/continuous/stable.hpp>
+#include <randlib/continuous/stable_count.hpp>
 #include <randlib/continuous/student_t.hpp>
 #include <randlib/continuous/uniform.hpp>
 #include <randlib/continuous/triangular.hpp>

@@ -25,6 +25,7 @@
 #include <randlib/continuous/pareto.hpp>
 #include <randlib/continuous/student_t.hpp>
 #include <randlib/continuous/stable.hpp>
+#include <randlib/continuous/stable_count.hpp>
 #include <randlib/continuous/uniform.hpp>
 #include <randlib/continuous/weibull.hpp>
 #include <randlib/discrete/bernoulli.hpp>
@@ -561,6 +562,44 @@ struct FitModel<LogStableRand<Real>>
     }
 
     static bool hasClosedForm(Method method) { return FitModel<Stable>::hasClosedForm(method); }
+};
+
+template <std::floating_point Real>
+struct FitModel<StableCountRand<Real>>
+{
+    using Distribution = StableCountRand<Real>;
+
+    static std::vector<FitParameter> parameters(const Distribution &distribution)
+    {
+        return {{"exponent", distribution.GetExponent(), 0.0, 1.0},
+                {"scale", distribution.GetScale(), 0.0, std::nullopt},
+                {"location", distribution.GetLocation(), std::nullopt, std::nullopt}};
+    }
+
+    static Distribution make(std::span<const double> parameters)
+    {
+        return Distribution(parameters[0], parameters[1], parameters[2]);
+    }
+
+    static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &fixed)
+    {
+        requireMethod(method, "Stable Count", {Method::MLE});
+        const auto [minimum, maximum] = std::ranges::minmax(sample);
+        const double spread = static_cast<double>(maximum - minimum);
+        if (!(spread > 0))
+            throw fit_error(FitErrorCode::WrongSample, "Stable Count distribution: sample spread should be positive");
+        const double exponent = fixed.contains("exponent") ? fixed.at("exponent") : 0.5;
+        const double location =
+            fixed.contains("location") ? fixed.at("location") : static_cast<double>(minimum) - 0.05 * spread;
+        const double mean = static_cast<double>(sampleMeanAndVariance(sample).first);
+        const Distribution standard(exponent);
+        const double scale = fixed.contains("scale")
+                                 ? fixed.at("scale")
+                                 : std::max(static_cast<double>((mean - location) / standard.Mean()), spread * 1e-3);
+        return Distribution(exponent, scale, location);
+    }
+
+    static bool hasClosedForm(Method) { return false; }
 };
 
 template <std::floating_point Real>
