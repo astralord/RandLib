@@ -51,6 +51,9 @@ All notable changes to RandLib are documented here. The project follows
 - **B52** Bivariate-normal CDFs with negative correlation now standardize the reflected second
   marginal before applying the normal CDF. This also restores the exact countermonotonic limit at
   correlation `-1` when the second marginal has a nonzero location or nonunit scale.
+- **B53** Trinomial probability, CDF and sampling methods now handle zero-probability and
+  deterministic categories without `0 * log(0)` or `0 / 0`. Modes are found by a simplex-aware
+  neighbor search and can no longer return an impossible pair whose counts exceed `n`.
 
 ## [1.2.0] - 2026-10-17
 

@@ -594,3 +594,53 @@ TEST_CASE("B52: negative-correlation bivariate normal CDF uses standardized limi
     CHECK_THAT(distribution.F({3.0, -2.0}), WithinAbs(0.3413447460685429485852325456, 1e-15));
     CHECK(distribution.F({1.0, -3.0}) == 0);
 }
+
+TEST_CASE("B53: trinomial endpoints and modes stay on the probability simplex", "[regression]")
+{
+    const TrinomialRand<int> boundary(5, 0.4, 0.6);
+    CHECK_THAT(boundary.P({2, 3}), WithinAbs(0.3456, 1e-15));
+    CHECK_THAT(boundary.F({2, 3}), WithinAbs(0.3456, 1e-15));
+    CHECK(std::isfinite(boundary.logP({2, 3})));
+    CHECK(boundary.logP({1, 1}) == -INFINITY);
+
+    TrinomialRand<int> firstDeterministic(5, 1, 0);
+    CHECK(firstDeterministic.P({5, 0}) == 1);
+    CHECK(firstDeterministic.logP({5, 0}) == 0);
+    CHECK(firstDeterministic.logP({0, 0}) == -INFINITY);
+    CHECK(firstDeterministic.F({4, 5}) == 0);
+    CHECK(firstDeterministic.F({5, 0}) == 1);
+    CHECK(firstDeterministic.Variate() == std::make_pair(5, 0));
+
+    TrinomialRand<int> secondDeterministic(5, 0, 1);
+    CHECK(secondDeterministic.P({0, 5}) == 1);
+    CHECK(secondDeterministic.logP({0, 5}) == 0);
+    CHECK(secondDeterministic.logP({0, 0}) == -INFINITY);
+    CHECK(secondDeterministic.F({5, 4}) == 0);
+    CHECK(secondDeterministic.F({0, 5}) == 1);
+    CHECK(secondDeterministic.Variate() == std::make_pair(0, 5));
+
+    const TrinomialRand<int> formerInvalidMode(1, 0.26, 0.49);
+    CHECK(formerInvalidMode.Mode() == std::make_pair(0, 1));
+    CHECK(formerInvalidMode.Mode().first + formerInvalidMode.Mode().second <= 1);
+
+    const std::vector<double> probabilities{0.0, 0.1, 0.25, 0.4, 0.6, 1.0};
+    for (int n = 1; n <= 6; ++n) {
+        for (double p1 : probabilities) {
+            for (double p2 : probabilities) {
+                if (p1 + p2 > 1.0)
+                    continue;
+                const TrinomialRand<int> distribution(n, p1, p2);
+                const auto mode = distribution.Mode();
+                double maximum = 0.0;
+                for (int x = 0; x <= n; ++x)
+                    for (int y = 0; y <= n - x; ++y)
+                        maximum = std::max(maximum, distribution.P({x, y}));
+                CAPTURE(n, p1, p2, mode);
+                CHECK(mode.first >= 0);
+                CHECK(mode.second >= 0);
+                CHECK(mode.first + mode.second <= n);
+                CHECK_THAT(distribution.P(mode), WithinAbs(maximum, 1e-15));
+            }
+        }
+    }
+}

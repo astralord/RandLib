@@ -1,5 +1,7 @@
 #include "TrinomialRand.h"
 
+#include <algorithm>
+
 template< typename IntType >
 TrinomialRand<IntType>::TrinomialRand(int number, double probability1, double probability2)
 {
@@ -30,8 +32,8 @@ void TrinomialRand<IntType>::SetParameters(int number, double probability1, doub
     this->Y.SetParameters(n, p2);
 
     log1mProb = std::log1pl(-p1 - p2);
-    p1_1mp2 = p1 / (1.0 - p2);
-    p2_1mp1 = p2 / (1.0 - p1);
+    p1_1mp2 = (p2 == 1.0) ? 0.0 : p1 / (1.0 - p2);
+    p2_1mp1 = (p1 == 1.0) ? 0.0 : p2 / (1.0 - p1);
 }
 
 template< typename IntType >
@@ -45,16 +47,19 @@ template< typename IntType >
 double TrinomialRand<IntType>::logP(const Pair<IntType> &point) const
 {
     IntType x = point.first, y = point.second;
-    if (x < 0 || y < 0 || x + y > n)
+    if (x < 0 || y < 0 || x > n || y > n - x)
         return -INFINITY;
     IntType nmxmy = n - x - y;
     double res = this->X.GetLogFactorialN();
     res -= RandMath::lfact(x);
     res -= RandMath::lfact(y);
     res -= RandMath::lfact(nmxmy);
-    res += x * this->X.GetLogProbability();
-    res += y * this->Y.GetLogProbability();
-    res += nmxmy * log1mProb;
+    if (x > 0)
+        res += x * this->X.GetLogProbability();
+    if (y > 0)
+        res += y * this->Y.GetLogProbability();
+    if (nmxmy > 0)
+        res += nmxmy * log1mProb;
     return res;
 }
 
@@ -64,12 +69,16 @@ double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
     int x = point.first, y = point.second;
     if (x < 0 || y < 0)
         return 0.0;
+    double p1 = this->X.GetProbability(), p2 = this->Y.GetProbability();
+    if (p1 == 1.0)
+        return (x >= n) ? 1.0 : 0.0;
+    if (p2 == 1.0)
+        return (y >= n) ? 1.0 : 0.0;
     if (x >= n)
         return this->Y.F(y);
     if (y >= n)
         return this->X.F(x);
     double sum = 0.0;
-    double p1 = this->X.GetProbability(), p2 = this->Y.GetProbability();
     if (x > y) {
         double ratio = (1 - p2 - p1) / (1 - p2);
         for (int i = 0; i <= y; ++i) {
@@ -93,6 +102,10 @@ double TrinomialRand<IntType>::F(const Pair<IntType> &point) const
 template< typename IntType >
 Pair<IntType> TrinomialRand<IntType>::Variate() const
 {
+    if (this->X.GetProbability() == 1.0)
+        return IntPair(n, 0);
+    if (this->Y.GetProbability() == 1.0)
+        return IntPair(0, n);
     if (this->X.GetProbability() > this->Y.GetProbability()) {
         IntType x = this->X.Variate();
         IntType y = BinomialDistribution<IntType>::Variate(n - x, p2_1mp1, this->localRandGenerator);
@@ -115,38 +128,40 @@ long double TrinomialRand<IntType>::Correlation() const
 template< typename IntType >
 Pair<IntType> TrinomialRand<IntType>::Mode() const
 {
-    IntType modeX = this->X.Mode(), modeY = this->Y.Mode();
-    double modeValue = this->P(std::make_pair(modeX, modeY));
-    double modeValuexp1 = this->P(std::make_pair(modeX + 1, modeY));
-    double modeValuexm1 = this->P(std::make_pair(modeX - 1, modeY));
-    double modeValueyp1 = this->P(std::make_pair(modeX, modeY + 1));
-    double modeValueym1 = this->P(std::make_pair(modeX, modeY - 1));
+    IntType modeX = static_cast<IntType>(std::floor(n * this->X.GetProbability()));
+    IntType modeY = static_cast<IntType>(std::floor(n * this->Y.GetProbability()));
+    modeY = std::min(modeY, static_cast<IntType>(n - modeX));
+    Pair<IntType> mode(modeX, modeY);
+    double modeValue = logP(mode);
 
-    while (modeValuexp1 > modeValue) {
-        modeX += 1;
-        modeValue = modeValuexp1;
-        modeValuexp1 = this->P(std::make_pair(modeX + 1, modeY));
+    while (true) {
+        Pair<IntType> best = mode;
+        double bestValue = modeValue;
+        auto consider = [this, &best, &bestValue](IntType x, IntType y) {
+            double value = logP(std::make_pair(x, y));
+            if (value > bestValue) {
+                best = std::make_pair(x, y);
+                bestValue = value;
+            }
+        };
+
+        if (mode.first + mode.second < n) {
+            consider(mode.first + 1, mode.second);
+            consider(mode.first, mode.second + 1);
+        }
+        if (mode.first > 0) {
+            consider(mode.first - 1, mode.second);
+            consider(mode.first - 1, mode.second + 1);
+        }
+        if (mode.second > 0) {
+            consider(mode.first, mode.second - 1);
+            consider(mode.first + 1, mode.second - 1);
+        }
+        if (best == mode)
+            return mode;
+        mode = best;
+        modeValue = bestValue;
     }
-
-    while (modeValuexm1 > modeValue) {
-        modeX -= 1;
-        modeValue = modeValuexm1;
-        modeValuexp1 = this->P(std::make_pair(modeX - 1, modeY));
-    }
-
-    while (modeValueyp1 > modeValue) {
-        modeY += 1;
-        modeValue = modeValueyp1;
-        modeValueyp1 = this->P(std::make_pair(modeX, modeY + 1));
-    }
-
-    while (modeValueym1 > modeValue) {
-        modeY += 1;
-        modeValue = modeValueym1;
-        modeValueym1 = this->P(std::make_pair(modeX, modeY - 1));
-    }
-
-    return std::make_pair(modeX, modeY);
 }
 
 template class TrinomialRand<int>;
