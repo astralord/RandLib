@@ -527,3 +527,9 @@ TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regressi
     CHECK(GeometricRand<int>::Variate(1, generator) == 0);
     CHECK_THROWS_AS(GeometricRand<int>::Variate(0, generator), std::invalid_argument);
 }
+
+TEST_CASE("B49: geometric entropy uses natural units", "[regression]")
+{
+    CHECK(GeometricRand<int>(1).Entropy() == 0);
+    CHECK_THAT(static_cast<double>(GeometricRand<int>(0.5).Entropy()), WithinRel(2 * std::log(2.0), 1e-15));
+}

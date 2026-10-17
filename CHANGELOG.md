@@ -40,6 +40,8 @@ All notable changes to RandLib are documented here. The project follows
 - **B48** Geometric and negative-binomial distributions now accept the mathematically valid
   `p = 1` endpoint as a deterministic zero law across probability functions, moments and sampling.
   The improper `p = 0` geometric static sampler is rejected instead of returning the integer limit.
+- **B49** Geometric entropy is now reported in nats, consistently with the rest of the API, and
+  uses its finite zero-entropy limit at `p = 1`.
 
 ## [1.2.0] - 2026-10-17
 

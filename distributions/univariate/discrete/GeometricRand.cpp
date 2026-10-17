@@ -115,9 +115,11 @@ IntType GeometricRand<IntType>::Median() const
 template < typename IntType >
 long double GeometricRand<IntType>::Entropy() const
 {
+    if (this->p == 1.0)
+        return 0.0;
     double a = -this->q * this->log1mProb;
     double b = -this->p * this->logProb;
-    return (a + b) / (randlib::consts::ln2 * this->p);
+    return (a + b) / this->p;
 }
 
 template class GeometricRand<int>;
