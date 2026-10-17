@@ -95,6 +95,39 @@ All notable changes to RandLib are documented here. The project follows
 - Removed a Bernoulli/binomial include cycle exposed by standalone public-header consumption without
   changing the exact sampling algorithm or engine advancement.
 
+### Correctness
+
+- Corrected Rayleigh UMVU scale fitting at the small-sample and asymptotic branch boundaries by
+  consistently evaluating the exact gamma-ratio correction in the log domain (B40).
+- Corrected asymmetric-Laplace differential entropy to
+  `1 + log(scale * (asymmetry + 1 / asymmetry))` (B41).
+- Supported zero noncentrality in noncentral chi-squared distributions, using exact central
+  chi-squared formulas for density, tails, sampling and the mode (B42).
+- Defined Bernoulli entropy at deterministic endpoints by its zero-log-zero limit (B43).
+- Made binomial construction, scalar and bulk sampling, and modes exact at probability endpoints;
+  near-one probabilities are no longer rounded to deterministic bulk samples (B44).
+- Stabilized discrete-uniform characteristic functions at integer-lattice periods with a
+  reduced-angle sinc form (B45).
+- Corrected Skellam modes by searching adjacent probabilities from the median (B46).
+- Unified static and constructed Poisson sampling on the same exact inversion/rejection algorithms,
+  removing the static large-rate normal approximation (B47).
+- Accepted the deterministic `p = 1` endpoint for geometric and negative-binomial laws throughout
+  their probability, moment and sampling APIs, while rejecting the improper static `p = 0` case
+  (B48).
+- Reported geometric entropy in nats consistently with the rest of the API, including its finite
+  zero-entropy limit at `p = 1` (B49).
+- Corrected bivariate covariance conversion from correlation, including the trinomial correlation
+  formula and deterministic-marginal behavior (B50).
+- Corrected normal-inverse-gamma marginal scale, conditional sampling scale, joint CDF semantics,
+  and the domain on which correlation is defined (B51).
+- Corrected negative-correlation bivariate-normal CDFs for nonzero second location or nonunit scale,
+  including the exact countermonotonic limit (B52).
+- Made trinomial probability, CDF, sampling and mode evaluation exact at zero-probability and
+  deterministic category boundaries (B53).
+- Hardened hypergeometric CDF traversal, sampling counters, large-population means and modes, and
+  standardized moments for deterministic and two- or three-element populations (B54).
+- Prevented overflow in negative-hypergeometric moments for large integer populations (B55).
+
 ## [2.0.0-beta.1] - 2026-10-17
 
 ### Fitting
@@ -185,6 +218,53 @@ All notable changes to RandLib are documented here. The project follows
   rejects non-finite states after bounded backtracking instead of performing up to 100,000 futile
   iterations. A three-observation regression uses the 50-digit mpmath score root
   5.2122598849254577174.
+- **B40** Rayleigh UMVU scale fitting consistently evaluates the gamma-ratio correction in the log
+  domain. The small-sample branch previously passed a logarithm as the scale, while the large-sample
+  branch exponentiated half the scale squared and treated a log-ratio expansion as an ordinary
+  correction factor.
+- **B41** Asymmetric-Laplace entropy now returns
+  `1 + log(scale * (asymmetry + 1 / asymmetry))`; the previous `log1p` expression omitted the unit
+  entropy contribution and put the scale term inside an unrelated sum.
+- **B42** Noncentral chi-squared distributions now accept zero noncentrality, as required by their
+  default constructor and central chi-squared limit. Density, direct tails, sampling and the mode use
+  exact gamma-limit formulas instead of singular Bessel/Marcum expressions.
+- **B43** Bernoulli entropy is now linkable from downstream translation units and returns zero at
+  the accepted deterministic endpoints instead of evaluating the indeterminate floating-point
+  products `0 * log(0)`.
+- **B44** Binomial construction and cached sampling now handle the accepted deterministic
+  probabilities without configuring an invalid geometric helper. Binomial and Bernoulli modes at
+  `p = 1` are clamped to the upper support endpoint; the ordinary `floor((n + 1) * p)`
+  expression otherwise returned `n + 1`. Bulk sampling no longer rounds probabilities within
+  `1e-6` of one to a deterministic law.
+- **B45** Discrete-uniform characteristic functions now use a reduced-angle sinc form and return
+  exactly one at integer-lattice periods instead of dividing zero by zero.
+- **B46** Skellam modes now search adjacent probabilities from the median instead of truncating the
+  mean, which need not maximize the PMF. A three-point regression uses 60-digit Bessel references.
+- **B47** Static Poisson sampling now shares the exact inversion/rejection algorithms used by
+  constructed distributions. This replaces its separate exponential-arrival algorithm through rate
+  1000 and, more importantly, the inexact normal approximation above that boundary.
+- **B48** Geometric and negative-binomial distributions now accept the mathematically valid
+  `p = 1` endpoint as a deterministic zero law across probability functions, moments and sampling.
+  The improper `p = 0` geometric static sampler is rejected instead of returning the integer limit.
+- **B49** Geometric entropy is now reported in nats, consistently with the rest of the API, and
+  uses its finite zero-entropy limit at `p = 1`.
+- **B50** Bivariate covariance matrices now convert correlation with marginal standard deviations
+  rather than variances. Trinomial correlation uses the corresponding square-root formula and is
+  undefined when either marginal is deterministic.
+- **B51** Normal-inverse-gamma marginals and sampling now use the standard conditional variance
+  `sigma_squared / lambda`. Its `F` member now evaluates the joint CDF instead of a density-like
+  expression, and correlation is undefined when its required variances do not exist.
+- **B52** Bivariate-normal CDFs with negative correlation now standardize the reflected second
+  marginal before applying the normal CDF. This also restores the exact countermonotonic limit at
+  correlation `-1` when the second marginal has a nonzero location or nonunit scale.
+- **B53** Trinomial probability, CDF and sampling methods now handle zero-probability and
+  deterministic categories without `0 * log(0)` or `0 / 0`. Modes are found by a simplex-aware
+  neighbor search and can no longer return an impossible pair whose counts exceed `n`.
+- **B54** Hypergeometric means and modes no longer multiply in the integer parameter type, and
+  standardized moments now handle deterministic and populations of size two or three. CDF summation
+  starts at the actual support boundary, and sampling uses the distribution's integer type.
+- **B55** Negative-hypergeometric means and variances now promote integer parameters before adding
+  or multiplying them, preventing overflow for large populations.
 
 ## [1.2.0] - 2026-10-17
 

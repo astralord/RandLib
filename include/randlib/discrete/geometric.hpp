@@ -63,20 +63,24 @@ std::string GeometricRand<IntType>::Name() const
 template <typename IntType>
 void GeometricRand<IntType>::SetProbability(double probability)
 {
-    if (!(probability >= 0.0 && probability <= 1.0))
-        throw std::invalid_argument("Geometric distribution: probability parameter should be in interval [0, 1]");
+    if (!(probability > 0.0 && probability <= 1.0))
+        throw std::invalid_argument("Geometric distribution: probability parameter should be in interval (0, 1]");
     this->SetParameters(1, probability);
 }
 
 template <typename IntType>
 double GeometricRand<IntType>::P(const IntType &k) const
 {
+    if (this->p == 1.0)
+        return (k == 0) ? 1.0 : 0.0;
     return (k < 0) ? 0 : this->p * std::exp(k * this->log1mProb);
 }
 
 template <typename IntType>
 double GeometricRand<IntType>::logP(const IntType &k) const
 {
+    if (this->p == 1.0)
+        return (k == 0) ? 0.0 : -INFINITY;
     return (k < 0) ? -INFINITY : this->logProb + k * this->log1mProb;
 }
 
@@ -96,6 +100,8 @@ template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType GeometricRand<IntType>::operator()(G &g) const
 {
+    if (this->p == 1.0)
+        return 0;
     typename PascalRand<IntType>::GENERATOR_ID genId = this->GetIdOfUsedGenerator();
     if (genId == this->EXPONENTIAL)
         return this->variateGeometricThroughExponential(g);
@@ -109,10 +115,13 @@ template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType GeometricRand<IntType>::Variate(double probability, G &g)
 {
-    if (!(probability <= 1.0 && probability >= 0.0))
+    if (!(probability <= 1.0 && probability > 0.0))
         throw std::invalid_argument(
-            "Geometric distribution: probability parameter should be in interval [0, 1], but it's equal to " +
+            "Geometric distribution: probability parameter should be in interval (0, 1], but it's equal to " +
             std::to_string(probability));
+
+    if (probability == 1.0)
+        return 0;
 
     /// here we use 0.05 instead of 0.08 because log(q) wasn't hashed
     if (probability < 0.05) {
@@ -137,6 +146,10 @@ IntType GeometricRand<IntType>::Variate(double probability, G &g)
 template <typename IntType>
 void GeometricRand<IntType>::sample(detail::EngineRef g, std::span<IntType> outputData) const
 {
+    if (this->p == 1.0) {
+        std::fill(outputData.begin(), outputData.end(), 0);
+        return;
+    }
     typename PascalRand<IntType>::GENERATOR_ID genId = this->GetIdOfUsedGenerator();
     if (genId == this->EXPONENTIAL) {
         for (IntType &var : outputData)
@@ -150,6 +163,8 @@ void GeometricRand<IntType>::sample(detail::EngineRef g, std::span<IntType> outp
 template <typename IntType>
 IntType GeometricRand<IntType>::Median() const
 {
+    if (this->p == 1.0)
+        return 0;
     double median = -randlib::consts::ln2 / this->log1mProb;
     double flooredMedian = std::floor(median);
     return (math::detail::areClose(median, flooredMedian, 1e-8)) ? flooredMedian - 1 : flooredMedian;
@@ -158,9 +173,11 @@ IntType GeometricRand<IntType>::Median() const
 template <typename IntType>
 long double GeometricRand<IntType>::Entropy() const
 {
+    if (this->p == 1.0)
+        return 0.0;
     double a = -this->q * this->log1mProb;
     double b = -this->p * this->logProb;
-    return (a + b) / (randlib::consts::ln2 * this->p);
+    return (a + b) / this->p;
 }
 
 } // namespace randlib

@@ -357,21 +357,8 @@ template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType PoissonRand<IntType>::Variate(double rate, G &g)
 {
-    /// check validness of parameter
-    if (!(rate > 0.0))
-        throw std::invalid_argument("Poisson distribution: rate should be positive");
-    if (rate > 1000) {
-        /// approximate with normal distribution
-        float X = detail::standardNormal<float>(g);
-        return std::floor(rate + std::sqrt(rate) * X);
-    }
-    int k = -1;
-    double s = 0;
-    do {
-        s += detail::standardExponential<double>(g);
-        ++k;
-    } while (s < rate);
-    return k;
+    const PoissonRand<IntType> distribution(rate);
+    return distribution(g);
 }
 
 template <typename IntType>

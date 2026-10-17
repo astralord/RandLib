@@ -174,7 +174,7 @@ std::complex<double> SkellamRand<IntType>::CFImpl(double t) const
 template <typename IntType>
 IntType SkellamRand<IntType>::Mode() const
 {
-    return Mean();
+    return DiscreteDistribution<IntType>::Mode();
 }
 
 template <typename IntType>

@@ -686,10 +686,10 @@ void RayleighRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased
     }
     /// Calculate unbiased sigma
     else if (n > 100) {
-        double coef = 1.0 / (640 * std::pow(n, 5));
-        coef -= 1.0 / (192 * std::pow(n, 3));
-        coef += 0.125 / n;
-        SetScale(std::exp(std::log1pl(coef) + 0.5 * sigmaBiasedSq)); /// err ~ o(n^{-6.5}) < 1e-13
+        double logCorrection = 1.0 / (640 * std::pow(n, 5));
+        logCorrection -= 1.0 / (192 * std::pow(n, 3));
+        logCorrection += 0.125 / n;
+        SetScale(std::exp(logCorrection + 0.5 * std::log(sigmaBiasedSq))); /// err ~ o(n^{-6.5}) < 1e-13
     } else if (n > 15) {
         double coef = math::lfact(n);
         coef += math::lfact(n - 1);
@@ -705,7 +705,7 @@ void RayleighRand<RealType>::Fit(std::span<const RealType> sample, bool unbiased
         scale += 0.5 * std::log(n / randlib::consts::pi * sigmaBiasedSq);
         scale += 2 * n * randlib::consts::ln2;
         scale -= math::lfact(2 * n);
-        SetScale(scale);
+        SetScale(std::exp(scale));
     }
 }
 

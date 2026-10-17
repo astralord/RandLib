@@ -422,3 +422,297 @@ TEST_CASE("B39: negative-binomial fitting stays in the positive shape domain", "
     CHECK_THAT(fitted.distribution.GetNumber(), WithinRel(5.2122598849254577174, 1e-10));
     CHECK_THAT(fitted.distribution.GetProbability(), WithinRel(0.79630061189656137372, 1e-10));
 }
+
+TEST_CASE("B40: Rayleigh unbiased scale fitting stays in the log domain", "[regression]")
+{
+    /// If R = sqrt(sum(X_i^2) / (2n)), then E[R] = sigma Gamma(n + 1/2) / (sqrt(n) Gamma(n)).
+    for (size_t n : {size_t{15}, size_t{16}, size_t{101}}) {
+        const std::vector<double> sample(n, 1.0);
+        const double mleScaleSquared = 0.5;
+        const double expected = std::exp(0.5 * std::log(n * mleScaleSquared) + std::lgamma(n) - std::lgamma(n + 0.5));
+
+        const auto fitted = fit<RayleighRand<double>>(sample, Method::UMVU);
+
+        INFO("sample size " << n);
+        CHECK_THAT(fitted.distribution.GetScale(), WithinRel(expected, 1e-12));
+    }
+}
+
+TEST_CASE("B41: asymmetric-Laplace entropy includes the exponential contribution", "[regression]")
+{
+    /// Integrating -log(f) gives 1 + log(gamma * (kappa + 1 / kappa)).
+    CHECK_THAT(static_cast<double>(LaplaceRand<double>(0, 1).Entropy()), WithinRel(1 + std::log(2.0), 1e-15));
+    CHECK_THAT(static_cast<double>(LaplaceRand<double>(4, 2).Entropy()), WithinRel(1 + std::log(4.0), 1e-15));
+    CHECK_THAT(static_cast<double>(AsymmetricLaplaceRand<double>(7, 3, 2).Entropy()),
+               WithinRel(1 + std::log(7.5), 1e-15));
+}
+
+TEST_CASE("B42: zero noncentrality is the central chi-squared limit", "[regression]")
+{
+    const NoncentralChiSquaredRand<double> central(4, 0);
+    CHECK_THAT(central.f(2), WithinRel(0.5 / std::exp(1.0), 1e-14));
+    CHECK_THAT(central.F(2), WithinRel(1 - 2 / std::exp(1.0), 1e-14));
+    CHECK_THAT(central.S(2), WithinRel(2 / std::exp(1.0), 1e-14));
+    CHECK_THAT(central.CF(0.5).real(), WithinAbs(0.0, 1e-15));
+    CHECK_THAT(central.CF(0.5).imag(), WithinAbs(0.5, 1e-15));
+    CHECK(central.Mean() == 4);
+    CHECK(central.Variance() == 8);
+    CHECK(central.Mode() == 2);
+
+    std::mt19937_64 actualGenerator(42), expectedGenerator(42);
+    const double actual = NoncentralChiSquaredRand<double>::Variate(0.5, 0, actualGenerator);
+    const double expected = 2 * GammaDistribution<double>::StandardVariate(0.25, expectedGenerator);
+    CHECK(actual == expected);
+}
+
+TEST_CASE("B43: Bernoulli endpoint entropy uses the zero-log-zero limit", "[regression]")
+{
+    CHECK(BernoulliRand(0).Entropy() == 0);
+    CHECK(BernoulliRand(1).Entropy() == 0);
+    CHECK_THAT(BernoulliRand(0.5).Entropy(), WithinRel(std::log(2.0), 1e-15));
+}
+
+TEST_CASE("B44: binomial probability boundaries preserve construction and sampling", "[regression]")
+{
+    const BinomialRand<int> certain(7, 1);
+    std::mt19937_64 certainGenerator(42);
+    CHECK(certain.Mode() == 7);
+    CHECK(certain(certainGenerator) == 7);
+    std::vector<int> sample(3);
+    certain.Sample(certainGenerator, sample);
+    CHECK(sample == std::vector<int>{7, 7, 7});
+
+    const BinomialRand<int> impossible(7, 0);
+    std::mt19937_64 impossibleGenerator(42);
+    CHECK(impossible.Mode() == 0);
+    CHECK(impossible(impossibleGenerator) == 0);
+    CHECK(BernoulliRand(1).Mode() == 1);
+    CHECK(BinomialRand<int>(5, 0.5).Mode() == 3);
+
+    BinomialRand<int> bulk(10000000, 1 - 9e-7), scalar(10000000, 1 - 9e-7);
+    std::mt19937_64 bulkGenerator(42), scalarGenerator(42);
+    std::vector<int> actual(4), expected(4);
+    bulk.Sample(bulkGenerator, actual);
+    for (int &value : expected)
+        value = scalar(scalarGenerator);
+    CHECK(actual == expected);
+}
+
+TEST_CASE("B45: discrete-uniform characteristic function handles lattice periods", "[regression]")
+{
+    const UniformDiscreteRand<int> distribution(-3, 7);
+    const double period = 2 * static_cast<double>(randlib::consts::pi);
+    CHECK_THAT(distribution.CF(period).real(), WithinAbs(1.0, 0.0));
+    CHECK_THAT(distribution.CF(period).imag(), WithinAbs(0.0, 0.0));
+    CHECK_THAT(distribution.CF(2 * period).real(), WithinAbs(1.0, 0.0));
+    CHECK_THAT(distribution.CF(-period).imag(), WithinAbs(0.0, 0.0));
+}
+
+TEST_CASE("B46: Skellam mode maximizes the PMF instead of truncating the mean", "[regression]")
+{
+    const SkellamRand<int> distribution(2, 1.1);
+    CHECK_THAT(distribution.P(0), WithinRel(0.2139951994197166138511878227306453, 1e-13));
+    CHECK_THAT(distribution.P(1), WithinRel(0.2329981383802911800024090128922231, 1e-13));
+    CHECK_THAT(distribution.P(2), WithinRel(0.1772656913264927706363333023355158, 1e-13));
+    CHECK(distribution.Mode() == 1);
+}
+
+TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regression]")
+{
+    for (double rate : {5.0, 1001.0}) {
+        const PoissonRand<int> distribution(rate);
+        std::mt19937_64 staticGenerator(42), instanceGenerator(42);
+        CHECK(PoissonRand<int>::Variate(rate, staticGenerator) == distribution(instanceGenerator));
+    }
+}
+
+TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regression]")
+{
+    PascalRand<int> negativeBinomial(3, 1);
+    CHECK(negativeBinomial.P(0) == 1);
+    CHECK(negativeBinomial.logP(0) == 0);
+    CHECK(negativeBinomial.P(1) == 0);
+    CHECK(negativeBinomial.logP(1) == -INFINITY);
+    CHECK(negativeBinomial.F(0) == 1);
+    CHECK(negativeBinomial.S(0) == 0);
+    CHECK(negativeBinomial.Mean() == 0);
+    CHECK(negativeBinomial.Variance() == 0);
+    CHECK(std::isnan(negativeBinomial.Skewness()));
+    CHECK(std::isnan(negativeBinomial.ExcessKurtosis()));
+    CHECK(negativeBinomial.Mode() == 0);
+    std::mt19937_64 negativeBinomialGenerator(42);
+    CHECK(negativeBinomial(negativeBinomialGenerator) == 0);
+    std::vector<int> sample(3, -1);
+    negativeBinomial.Sample(negativeBinomialGenerator, sample);
+    CHECK(sample == std::vector<int>{0, 0, 0});
+
+    GeometricRand<int> geometric(1);
+    CHECK(geometric.P(0) == 1);
+    CHECK(geometric.logP(0) == 0);
+    CHECK(geometric.P(1) == 0);
+    CHECK(geometric.logP(1) == -INFINITY);
+    CHECK(geometric.F(0) == 1);
+    CHECK(geometric.S(0) == 0);
+    CHECK(geometric.Median() == 0);
+    std::mt19937_64 generator(42);
+    CHECK(geometric(generator) == 0);
+    CHECK(GeometricRand<int>::Variate(1, generator) == 0);
+    CHECK_THROWS_AS(GeometricRand<int>::Variate(0, generator), std::invalid_argument);
+}
+
+TEST_CASE("B49: geometric entropy uses natural units", "[regression]")
+{
+    CHECK(GeometricRand<int>(1).Entropy() == 0);
+    CHECK_THAT(static_cast<double>(GeometricRand<int>(0.5).Entropy()), WithinRel(2 * std::log(2.0), 1e-15));
+}
+
+TEST_CASE("B50: bivariate covariance uses marginal standard deviations", "[regression]")
+{
+    const BivariateNormalRand<double> normal(1, -2, 2, 3, 0.25);
+    const LongDoubleTriplet normalCovariance = normal.Covariance();
+    CHECK_THAT(static_cast<double>(std::get<0>(normalCovariance)), WithinRel(4.0, 1e-15));
+    CHECK_THAT(static_cast<double>(std::get<1>(normalCovariance)), WithinRel(1.5, 1e-15));
+    CHECK_THAT(static_cast<double>(std::get<2>(normalCovariance)), WithinRel(9.0, 1e-15));
+
+    const TrinomialRand<int> trinomial(10, 0.2, 0.3);
+    CHECK_THAT(static_cast<double>(trinomial.Correlation()), WithinRel(-std::sqrt(3.0 / 28.0), 1e-15));
+    const LongDoubleTriplet trinomialCovariance = trinomial.Covariance();
+    CHECK_THAT(static_cast<double>(std::get<1>(trinomialCovariance)), WithinAbs(-0.6, 1e-15));
+
+    const TrinomialRand<int> degenerate(5, 0, 0.4);
+    CHECK(std::isnan(degenerate.Correlation()));
+    CHECK(std::get<1>(degenerate.Covariance()) == 0);
+}
+
+TEST_CASE("B51: normal-inverse-gamma marginals, sampling and joint CDF agree", "[regression]")
+{
+    NormalInverseGammaRand<double> distribution(2, 3, 4, 2);
+    const auto marginals = distribution.GetMarginalDistributions();
+    CHECK_THAT(marginals.first.GetScale(), WithinRel(std::sqrt(1.0 / 6.0), 1e-15));
+    const LongDoubleTriplet covariance = distribution.Covariance();
+    CHECK_THAT(static_cast<double>(std::get<0>(covariance)), WithinRel(2.0 / 9.0, 1e-15));
+    CHECK(std::get<1>(covariance) == 0);
+    CHECK_THAT(static_cast<double>(std::get<2>(covariance)), WithinRel(2.0 / 9.0, 1e-15));
+
+    const double sigmaSq = 1.0;
+    CHECK_THAT(distribution.F({2.0, sigmaSq}), WithinRel(0.5 * marginals.second.F(sigmaSq), 1e-15));
+    CHECK_THAT(distribution.F({1.0, sigmaSq}), WithinAbs(0.009262835921861568182061857402, 5e-11));
+    CHECK_THAT(distribution.F({3.0, sigmaSq}), WithinAbs(0.8478606245766854804799349441, 5e-11));
+    CHECK(distribution.F({-INFINITY, sigmaSq}) == 0);
+    CHECK(distribution.F({INFINITY, sigmaSq}) == marginals.second.F(sigmaSq));
+    CHECK(distribution.F({1.0, INFINITY}) == marginals.first.F(1.0));
+
+    std::mt19937_64 generator(42);
+    std::mt19937_64 expectedGenerator(42);
+    InverseGammaRand<double> inverseGamma(4, 2);
+    const double expectedSigmaSq = inverseGamma(expectedGenerator);
+    const double expectedX = 2 + std::sqrt(expectedSigmaSq / 3) * detail::standardNormal<double>(expectedGenerator);
+    CHECK(distribution(generator) == std::make_pair(expectedX, expectedSigmaSq));
+
+    CHECK(std::isnan(NormalInverseGammaRand<double>(0, 1, 1, 1).Correlation()));
+}
+
+TEST_CASE("B52: negative-correlation bivariate normal CDF uses standardized limits", "[regression]")
+{
+    const BivariateNormalRand<double> distribution(1, -2, 2, 0.5, -1);
+    CHECK_THAT(distribution.F({3.0, -2.0}), WithinAbs(0.3413447460685429485852325456, 1e-15));
+    CHECK(distribution.F({1.0, -3.0}) == 0);
+}
+
+TEST_CASE("B53: trinomial endpoints and modes stay on the probability simplex", "[regression]")
+{
+    const TrinomialRand<int> boundary(5, 0.4, 0.6);
+    CHECK_THAT(boundary.P({2, 3}), WithinAbs(0.3456, 1e-15));
+    CHECK_THAT(boundary.F({2, 3}), WithinAbs(0.3456, 1e-15));
+    CHECK(std::isfinite(boundary.logP({2, 3})));
+    CHECK(boundary.logP({1, 1}) == -INFINITY);
+
+    TrinomialRand<int> firstDeterministic(5, 1, 0);
+    CHECK(firstDeterministic.P({5, 0}) == 1);
+    CHECK(firstDeterministic.logP({5, 0}) == 0);
+    CHECK(firstDeterministic.logP({0, 0}) == -INFINITY);
+    CHECK(firstDeterministic.F({4, 5}) == 0);
+    CHECK(firstDeterministic.F({5, 0}) == 1);
+    std::mt19937_64 firstGenerator(42);
+    CHECK(firstDeterministic(firstGenerator) == std::make_pair(5, 0));
+
+    TrinomialRand<int> secondDeterministic(5, 0, 1);
+    CHECK(secondDeterministic.P({0, 5}) == 1);
+    CHECK(secondDeterministic.logP({0, 5}) == 0);
+    CHECK(secondDeterministic.logP({0, 0}) == -INFINITY);
+    CHECK(secondDeterministic.F({5, 4}) == 0);
+    CHECK(secondDeterministic.F({0, 5}) == 1);
+    std::mt19937_64 secondGenerator(42);
+    CHECK(secondDeterministic(secondGenerator) == std::make_pair(0, 5));
+
+    const TrinomialRand<int> formerInvalidMode(1, 0.26, 0.49);
+    CHECK(formerInvalidMode.Mode() == std::make_pair(0, 1));
+    CHECK(formerInvalidMode.Mode().first + formerInvalidMode.Mode().second <= 1);
+
+    const std::vector<double> probabilities{0.0, 0.1, 0.25, 0.4, 0.6, 1.0};
+    for (int n = 1; n <= 6; ++n) {
+        for (double p1 : probabilities) {
+            for (double p2 : probabilities) {
+                if (p1 + p2 > 1.0)
+                    continue;
+                const TrinomialRand<int> distribution(n, p1, p2);
+                const auto mode = distribution.Mode();
+                double maximum = 0.0;
+                for (int x = 0; x <= n; ++x)
+                    for (int y = 0; y <= n - x; ++y)
+                        maximum = std::max(maximum, distribution.P({x, y}));
+                CAPTURE(n, p1, p2, mode);
+                CHECK(mode.first >= 0);
+                CHECK(mode.second >= 0);
+                CHECK(mode.first + mode.second <= n);
+                CHECK_THAT(distribution.P(mode), WithinAbs(maximum, 1e-15));
+            }
+        }
+    }
+}
+
+TEST_CASE("B54: hypergeometric moments cover small, deterministic and large populations", "[regression]")
+{
+    const HyperGeometricRand<int> singleton(1, 1, 1);
+    CHECK(singleton.Mean() == 1);
+    CHECK(singleton.Variance() == 0);
+    CHECK(std::isnan(singleton.Skewness()));
+    CHECK(std::isnan(singleton.ExcessKurtosis()));
+
+    const HyperGeometricRand<int> symmetricBernoulli(2, 1, 1);
+    CHECK(symmetricBernoulli.Mean() == 0.5);
+    CHECK(symmetricBernoulli.Variance() == 0.25);
+    CHECK(symmetricBernoulli.Skewness() == 0);
+    CHECK_THAT(static_cast<double>(symmetricBernoulli.ExcessKurtosis()), WithinAbs(-2.0, 1e-15));
+
+    const HyperGeometricRand<int> smallAsymmetric(3, 1, 1);
+    CHECK_THAT(static_cast<double>(smallAsymmetric.Skewness()), WithinAbs(1.0 / std::sqrt(2.0), 1e-15));
+    CHECK_THAT(static_cast<double>(smallAsymmetric.ExcessKurtosis()), WithinAbs(-1.5, 1e-15));
+
+    const HyperGeometricRand<int> deterministic(10, 10, 4);
+    CHECK(deterministic.Mean() == 4);
+    CHECK(deterministic.Variance() == 0);
+    CHECK(std::isnan(deterministic.Skewness()));
+    CHECK(std::isnan(deterministic.ExcessKurtosis()));
+
+    const HyperGeometricRand<int> large(2000000000, 1500000000, 1000000000);
+    CHECK(large.Mean() == 750000000);
+    CHECK(large.Mode() == 750000000);
+
+    const HyperGeometricRand<int> shiftedSupport(100, 80, 70);
+    CHECK_THAT(shiftedSupport.F(shiftedSupport.MinValue()),
+               WithinAbs(shiftedSupport.P(shiftedSupport.MinValue()), 1e-15));
+}
+
+TEST_CASE("B55: negative-hypergeometric moments do not overflow before conversion", "[regression]")
+{
+    const int population = std::numeric_limits<int>::max();
+    const int successes = population - 1;
+    const int target = 1000000000;
+    const NegativeHyperGeometricRand<int> distribution(population, successes, target);
+    const long double expectedMean = static_cast<long double>(target) / population;
+    const long double expectedVariance = target * (1.0L - static_cast<long double>(target) / population) / population;
+    CHECK_THAT(static_cast<double>(distribution.Mean()), WithinRel(static_cast<double>(expectedMean), 1e-15));
+    CHECK_THAT(static_cast<double>(distribution.Variance()), WithinRel(static_cast<double>(expectedVariance), 1e-15));
+    CHECK(distribution.Variance() > 0);
+}
