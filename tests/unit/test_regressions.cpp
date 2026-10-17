@@ -618,3 +618,101 @@ TEST_CASE("B52: negative-correlation bivariate normal CDF uses standardized limi
     CHECK_THAT(distribution.F({3.0, -2.0}), WithinAbs(0.3413447460685429485852325456, 1e-15));
     CHECK(distribution.F({1.0, -3.0}) == 0);
 }
+
+TEST_CASE("B53: trinomial endpoints and modes stay on the probability simplex", "[regression]")
+{
+    const TrinomialRand<int> boundary(5, 0.4, 0.6);
+    CHECK_THAT(boundary.P({2, 3}), WithinAbs(0.3456, 1e-15));
+    CHECK_THAT(boundary.F({2, 3}), WithinAbs(0.3456, 1e-15));
+    CHECK(std::isfinite(boundary.logP({2, 3})));
+    CHECK(boundary.logP({1, 1}) == -INFINITY);
+
+    TrinomialRand<int> firstDeterministic(5, 1, 0);
+    CHECK(firstDeterministic.P({5, 0}) == 1);
+    CHECK(firstDeterministic.logP({5, 0}) == 0);
+    CHECK(firstDeterministic.logP({0, 0}) == -INFINITY);
+    CHECK(firstDeterministic.F({4, 5}) == 0);
+    CHECK(firstDeterministic.F({5, 0}) == 1);
+    std::mt19937_64 firstGenerator(42);
+    CHECK(firstDeterministic(firstGenerator) == std::make_pair(5, 0));
+
+    TrinomialRand<int> secondDeterministic(5, 0, 1);
+    CHECK(secondDeterministic.P({0, 5}) == 1);
+    CHECK(secondDeterministic.logP({0, 5}) == 0);
+    CHECK(secondDeterministic.logP({0, 0}) == -INFINITY);
+    CHECK(secondDeterministic.F({5, 4}) == 0);
+    CHECK(secondDeterministic.F({0, 5}) == 1);
+    std::mt19937_64 secondGenerator(42);
+    CHECK(secondDeterministic(secondGenerator) == std::make_pair(0, 5));
+
+    const TrinomialRand<int> formerInvalidMode(1, 0.26, 0.49);
+    CHECK(formerInvalidMode.Mode() == std::make_pair(0, 1));
+    CHECK(formerInvalidMode.Mode().first + formerInvalidMode.Mode().second <= 1);
+
+    const std::vector<double> probabilities{0.0, 0.1, 0.25, 0.4, 0.6, 1.0};
+    for (int n = 1; n <= 6; ++n) {
+        for (double p1 : probabilities) {
+            for (double p2 : probabilities) {
+                if (p1 + p2 > 1.0)
+                    continue;
+                const TrinomialRand<int> distribution(n, p1, p2);
+                const auto mode = distribution.Mode();
+                double maximum = 0.0;
+                for (int x = 0; x <= n; ++x)
+                    for (int y = 0; y <= n - x; ++y)
+                        maximum = std::max(maximum, distribution.P({x, y}));
+                CAPTURE(n, p1, p2, mode);
+                CHECK(mode.first >= 0);
+                CHECK(mode.second >= 0);
+                CHECK(mode.first + mode.second <= n);
+                CHECK_THAT(distribution.P(mode), WithinAbs(maximum, 1e-15));
+            }
+        }
+    }
+}
+
+TEST_CASE("B54: hypergeometric moments cover small, deterministic and large populations", "[regression]")
+{
+    const HyperGeometricRand<int> singleton(1, 1, 1);
+    CHECK(singleton.Mean() == 1);
+    CHECK(singleton.Variance() == 0);
+    CHECK(std::isnan(singleton.Skewness()));
+    CHECK(std::isnan(singleton.ExcessKurtosis()));
+
+    const HyperGeometricRand<int> symmetricBernoulli(2, 1, 1);
+    CHECK(symmetricBernoulli.Mean() == 0.5);
+    CHECK(symmetricBernoulli.Variance() == 0.25);
+    CHECK(symmetricBernoulli.Skewness() == 0);
+    CHECK_THAT(static_cast<double>(symmetricBernoulli.ExcessKurtosis()), WithinAbs(-2.0, 1e-15));
+
+    const HyperGeometricRand<int> smallAsymmetric(3, 1, 1);
+    CHECK_THAT(static_cast<double>(smallAsymmetric.Skewness()), WithinAbs(1.0 / std::sqrt(2.0), 1e-15));
+    CHECK_THAT(static_cast<double>(smallAsymmetric.ExcessKurtosis()), WithinAbs(-1.5, 1e-15));
+
+    const HyperGeometricRand<int> deterministic(10, 10, 4);
+    CHECK(deterministic.Mean() == 4);
+    CHECK(deterministic.Variance() == 0);
+    CHECK(std::isnan(deterministic.Skewness()));
+    CHECK(std::isnan(deterministic.ExcessKurtosis()));
+
+    const HyperGeometricRand<int> large(2000000000, 1500000000, 1000000000);
+    CHECK(large.Mean() == 750000000);
+    CHECK(large.Mode() == 750000000);
+
+    const HyperGeometricRand<int> shiftedSupport(100, 80, 70);
+    CHECK_THAT(shiftedSupport.F(shiftedSupport.MinValue()),
+               WithinAbs(shiftedSupport.P(shiftedSupport.MinValue()), 1e-15));
+}
+
+TEST_CASE("B55: negative-hypergeometric moments do not overflow before conversion", "[regression]")
+{
+    const int population = std::numeric_limits<int>::max();
+    const int successes = population - 1;
+    const int target = 1000000000;
+    const NegativeHyperGeometricRand<int> distribution(population, successes, target);
+    const long double expectedMean = static_cast<long double>(target) / population;
+    const long double expectedVariance = target * (1.0L - static_cast<long double>(target) / population) / population;
+    CHECK_THAT(static_cast<double>(distribution.Mean()), WithinRel(static_cast<double>(expectedMean), 1e-15));
+    CHECK_THAT(static_cast<double>(distribution.Variance()), WithinRel(static_cast<double>(expectedVariance), 1e-15));
+    CHECK(distribution.Variance() > 0);
+}

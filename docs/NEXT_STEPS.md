@@ -15,7 +15,8 @@ Written so that work can resume with no other context. Read together with
   | Path | Branch | Pushed as | Contents |
   |---|---|---|---|
   | `/root/RandLib-1.x` | `history` | `origin/1.x` | v1.2: C++17, original layout, fixes, CMake, tests, CI |
-  | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20 (Phases 2–5 landed; Phase 6 planned) |
+  | `/root/RandLib-2.x` | `2.x` | `origin/2.x` | v2: header-only C++20 (Phases 2–5 landed) |
+  | `/root/RandLib-stable-count` | `stable-count` | `origin/stable-count` | isolated completed Phase 6 work for v2.2; merge only after the v2.0/v2.1 release line is ready |
 
 - The agent's GitHub account (`nebius-llm-robot`) has pull access only. **The maintainer pushes**, from a
   VS Code terminal on the pod:
@@ -48,7 +49,7 @@ cmake --build /tmp/b2
 Compilers on the pod: g++-13, g++-14, clang++-18. MSVC and AppleClang are only exercised by CI.
 
 Test families (both branches): `tests/unit` (golden v1.1 comparison, mpmath reference values, coherence,
-mode/median, parameters, regressions B1–B52, reproducibility, engines, numerics on 2.x) and
+mode/median, parameters, regressions B1–B55, reproducibility, engines, numerics on 2.x) and
 `tests/statistical` (KS/χ² sampling, moments, empirical CF, fitting). Tolerances follow plan section 9.
 
 ### Golden values and known deviations
@@ -88,14 +89,15 @@ Clang 15–18, sanitizers, engine variants, portable special functions, static a
 install consumer. The subsequent 4ad71f0 commit only records that result. B40 then corrected all
 three numerical branches of Rayleigh UMVU scale fitting, B41 restored the exact
 asymmetric-Laplace entropy, and B42 implemented the advertised central limit of the noncentral
-chi-squared law. B43--B52 then fixed Bernoulli, binomial, geometric and negative-binomial endpoints,
+chi-squared law. B43--B55 then fixed Bernoulli, binomial, geometric and negative-binomial endpoints,
 discrete-uniform lattice periods, the Skellam mode, the inconsistent static Poisson sampler, and
 geometric entropy units, bivariate covariance, normal-inverse-gamma semantics and negative-correlation
-bivariate-normal CDFs. Their evidence is an exact limit or identity, direct path-equivalence checks,
-40- or 60-digit references, and regression tests.
-The complete local GCC 13 unit and statistical suites pass on `2.x` through B52, as do
-warning-clean GCC 14 and Clang 18 builds and unit suites; CI for these unreleased 1.2.1 fixes remains
-pending.
+bivariate-normal CDFs, trinomial endpoints and modes, and hypergeometric-family moment overflow.
+Their evidence is an exact limit or identity, direct path-equivalence checks, 40- or 60-digit
+references, and regression tests. The complete local GCC 13 unit and statistical suites pass on
+`2.x` through B52. B53--B55 then pass the complete GCC 13/14 and Clang 18 unit suites, warnings-as-
+errors builds and every affected statistical sampling case; CI for these unreleased 1.2.1 fixes
+remains pending.
 
 ### 3.2 Phase 2 remainder (branch `2.x`)
 
@@ -274,28 +276,30 @@ skewed short-tail quantiles portable on binary64-only platforms.
 
 ### 3.6 Phase 6: Stable Count and stable-prior research (v2.2)
 
-The maintainer requested Stable Count as the next planned stable-family distribution. The starting
-evidence is experimental commit
+Stable Count integration is complete on the isolated `stable-count` branch and is deliberately not
+merged into `2.x` until the v2.0/v2.1 release work is complete. The starting evidence was experimental commit
 [`c070098`](https://github.com/astralord/RandLib/commit/c0700988a88767cde9967b41e0cc459b8434cc6a)
 and Lihn's revised [Wright-function paper](https://arxiv.org/abs/2405.04693). The commit must not be
 ported mechanically: its sampler stops a positive-stable renewal sum at the arbitrary value
 `100000`, discards stable draws above `100000`, and uses mutable static state. It also carries the
 old `[0.1, 1)` and near-one limitations that Phase 5 removed from the stable kernel.
 
-Plan task 6.1 now specifies a fresh `StableCountRand` implementation from
+Task 6.1 produced a fresh Tier 2 `StableCountRand` implementation from
 `N_alpha(x) = L_alpha(1/x) / (Gamma(1/alpha + 1) x)`, with explicit location/scale semantics,
 direct tails, quantiles, exact log-gamma moments, the `alpha = 1/2` Gamma reduction, a validated
-standard-URBG sampler, 40-digit mpmath data and generic MLE. It starts in Tier 2 and is promoted only
-after its independent numerical and sampling evidence satisfies the Tier 1 policy. The paper's
-four-parameter generalized Stable Count family is a later proposal, not part of this first slice.
+standard-URBG inverse-CDF sampler, a 218-value independent 40-digit Wright-series table and generic
+MLE with fixed parameters. GCC 13/14 and Clang 18 warnings-as-errors builds, 1,022,193 unit
+assertions, 235 statistical assertions, clang-tidy, formatting, header, single-header and Doxygen
+checks pass on that branch. It remains Tier 2; the paper's four-parameter generalized Stable Count
+family is a later proposal, not part of this first slice.
 
-Plan task 6.2 treats the phrase "conjugate prior" as a research claim, not yet an API contract. Before
-adding `fit_bayes<StableRand>`, write the normalized likelihood, identify whether the prior is on a
-count, count root, scale or reciprocal scale, and prove the posterior stays in the Stable Count
-family for arbitrary sample size. The paper also uses inverse-variable, product-mixture and
-subordination identities; those are useful, but they are not by themselves Bayesian conjugacy. If
-posterior closure is not established within the time box, ship Stable Count standalone and record
-the missing derivation instead of exposing a misleading closed-form update.
+Task 6.2 is complete as investigated but not established. The paper supplies no normalized
+likelihood or posterior update. In the exact `alpha = 1/2` case, the natural stable-subordinator
+scale likelihood produces a quadratic exponential term and changes the power of the parameter, so
+the posterior leaves the core location-scale Stable Count family. The branch therefore keeps Stable
+Count standalone and adds no misleading `fit_bayes<StableRand>` overload; `docs/stable-count.md`
+records the derivation and distinguishes product, renewal and subordination identities from Bayesian
+conjugacy.
 
 ## 4. Things that need the maintainer
 

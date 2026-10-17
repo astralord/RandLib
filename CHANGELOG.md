@@ -117,6 +117,11 @@ All notable changes to RandLib are documented here. The project follows
   and the domain on which correlation is defined (B51).
 - Corrected negative-correlation bivariate-normal CDFs for nonzero second location or nonunit scale,
   including the exact countermonotonic limit (B52).
+- Made trinomial probability, CDF, sampling and mode evaluation exact at zero-probability and
+  deterministic category boundaries (B53).
+- Hardened hypergeometric CDF traversal, sampling counters, large-population means and modes, and
+  standardized moments for deterministic and two- or three-element populations (B54).
+- Prevented overflow in negative-hypergeometric moments for large integer populations (B55).
 
 ## [2.0.0-beta.1] - 2026-10-17
 
@@ -247,6 +252,14 @@ All notable changes to RandLib are documented here. The project follows
 - **B52** Bivariate-normal CDFs with negative correlation now standardize the reflected second
   marginal before applying the normal CDF. This also restores the exact countermonotonic limit at
   correlation `-1` when the second marginal has a nonzero location or nonunit scale.
+- **B53** Trinomial probability, CDF and sampling methods now handle zero-probability and
+  deterministic categories without `0 * log(0)` or `0 / 0`. Modes are found by a simplex-aware
+  neighbor search and can no longer return an impossible pair whose counts exceed `n`.
+- **B54** Hypergeometric means and modes no longer multiply in the integer parameter type, and
+  standardized moments now handle deterministic and populations of size two or three. CDF summation
+  starts at the actual support boundary, and sampling uses the distribution's integer type.
+- **B55** Negative-hypergeometric means and variances now promote integer parameters before adding
+  or multiplying them, preventing overflow for large populations.
 
 ## [1.2.0] - 2026-10-17
 
