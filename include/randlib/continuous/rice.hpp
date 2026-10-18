@@ -162,10 +162,20 @@ long double RiceRand<RealType>::Mean() const
 {
     const long double k = halfNoncentrality;
     const long double h = 0.5L * k;
-    const long double logI0 = math::logBesselI(0.0L, h);
-    const long double ratio = (h == 0) ? 0 : std::exp(math::logBesselI(1.0L, h) - logI0);
-    return static_cast<long double>(sigma) * std::sqrt(randlib::consts::pi / 2.0L) * std::exp(logI0 - h) *
-           (1 + k + k * ratio);
+    /// For large h the scaled Bessel functions e^{-h} I(h) come from their Hankel series: log I(h) - h would
+    /// lose h ulps of the logarithm where long double is binary64
+    static constexpr long double HANKEL_ARGUMENT = 50;
+    long double scaledI0 = 0, ratio = 0;
+    if (h > HANKEL_ARGUMENT) {
+        const long double logSeries0 = math::detail::logHankelSeries<long double>(0, h, -1);
+        scaledI0 = std::exp(logSeries0) / std::sqrt(2 * static_cast<long double>(randlib::consts::pi) * h);
+        ratio = std::exp(math::detail::logHankelSeries<long double>(1, h, -1) - logSeries0);
+    } else {
+        const long double logI0 = math::logBesselI(0.0L, h);
+        scaledI0 = std::exp(logI0 - h);
+        ratio = (h == 0) ? 0 : std::exp(math::logBesselI(1.0L, h) - logI0);
+    }
+    return static_cast<long double>(sigma) * std::sqrt(randlib::consts::pi / 2.0L) * scaledI0 * (1 + k + k * ratio);
 }
 
 template <typename RealType>

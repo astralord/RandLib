@@ -186,7 +186,7 @@ inline Real ibetaContinuedFractionLentz(Real x, Real a, Real b, Real logBetaFun,
 {
     constexpr Real epsilon = std::numeric_limits<Real>::epsilon();
     constexpr Real tiny = std::numeric_limits<Real>::min() / epsilon;
-    auto guard = [tiny](Real value) { return (std::fabs(value) < tiny) ? tiny : value; };
+    auto guard = [](Real value) { return (std::fabs(value) < tiny) ? tiny : value; };
     Real c = 1, d = 1 / guard(1 - (a + b) * x / (a + 1));
     Real fraction = d;
     for (int m = 1; m < 1000000; ++m) {

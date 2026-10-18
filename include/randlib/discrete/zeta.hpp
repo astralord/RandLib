@@ -140,10 +140,10 @@ double ZetaRand<IntType>::S(const IntType &k) const
         return 1.0;
     /// Σ_{n > k} n^{-s}: the first terms directly, the rest by Euler-Maclaurin, without cancellation
     long double tail = 0;
-    long double first = static_cast<long double>(k) + 1.0L;
-    for (; first < DIRECT_TERMS; first += 1)
-        tail += std::pow(first, -static_cast<long double>(s));
-    tail += detail::zetaTail(s, first);
+    long long first = static_cast<long long>(k) + 1;
+    for (; first < DIRECT_TERMS; ++first)
+        tail += std::pow(static_cast<long double>(first), -static_cast<long double>(s));
+    tail += detail::zetaTail(s, static_cast<long double>(first));
     return static_cast<double>(tail / zetaS);
 }
 
