@@ -2,8 +2,7 @@
 
 This page documents every concrete continuous distribution in RandLib. Related special cases share
 one section so that their parameter transformations and common numerical implementation remain
-visible. The detailed entries are being migrated from the archived notes and checked against the v2
-headers; no legacy accuracy statement is retained without current code or test evidence.
+visible. Every detailed entry is checked against the public headers and test evidence.
 
 <div class="reference-callout">
   <strong>48 focused entries</strong>

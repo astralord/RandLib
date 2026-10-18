@@ -766,7 +766,7 @@ RealType GammaDistribution<RealType>::initRootForSmallP(double r) const
     c[0] *= this->alpha;
     c[0] += 2888;
     c[0] /= denominator;
-    /// now calculate root
+    /// Calculate the root.
     for (int i = 0; i != 5; ++i) {
         root += c[i];
         root *= r;

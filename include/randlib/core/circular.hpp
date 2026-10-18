@@ -12,7 +12,7 @@ namespace randlib
  * @brief The CircularDistribution class <BR>
  * Abstract class for all continuous circular distributions
  *
- * Note that all the moments are now useless, we implement circular moments instead.
+ * Circular summaries are represented by circular moments rather than linear moments.
  */
 template <typename RealType>
 class CircularDistribution : public ContinuousDistribution<RealType>

@@ -51,7 +51,7 @@ The moments and principal summaries are
  \operatorname{ExKurt}X=\frac{6}{\alpha}.
 \f]
 
-The historical methods `GeometricMean()` and `GeometricVariance()` return log-moments:
+`GeometricMean()` and `GeometricVariance()` return log-moments:
 
 \f[
  \operatorname{E}\log X=\psi(\alpha)-\log\beta,

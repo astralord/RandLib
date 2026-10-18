@@ -70,8 +70,7 @@ which is also RandLib's sampler. The summaries are
  h(X)=1+\log\!\left[\gamma(\kappa+\kappa^{-1})\right].
 \f]
 
-The last expression is the corrected B41 implementation; the inherited 1.x code had used an
-unrelated `log1p` expression. The median is obtained without root finding:
+The median is obtained without root finding:
 
 \f[
  \operatorname{Median}X=

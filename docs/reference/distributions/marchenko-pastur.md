@@ -47,9 +47,8 @@ sentinel for that atom; it is not a Lebesgue density there. A compact definition
 ## Numerical evaluation and quantiles
 
 RandLib evaluates the integral's closed antiderivative with square roots and two branch-aware
-`atan` terms. It has separate formulas for \f$\lambda\leq1\f$ and \f$\lambda>1\f$, and computes
-the latter's survival probability directly. This path includes the cancellation fix at the lower
-edge recorded as B30.
+`atan` terms. It has separate formulas for \f$\lambda\leq1\f$ and \f$\lambda>1\f$, computes
+the latter's survival probability directly, and avoids cancellation at the lower edge.
 
 The raw moments form a Narayana polynomial. For \f$n\geq1\f$,
 

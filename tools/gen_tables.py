@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Generates include/randlib/core/ziggurat_tables.hpp.
 
-The ziggurat tables of the normal and exponential samplers (256 layers, Marsaglia and Tsang 2000)
-used to be computed at static initialization with std::log and std::sqrt, which no compiler can
-evaluate at compile time. This script evaluates the same recurrences in 40-digit arithmetic and
-writes them as literal constexpr arrays.
+This script evaluates the 256-layer Marsaglia--Tsang recurrences for the normal and exponential
+samplers in 40-digit arithmetic and writes them as literal constexpr arrays. Literal tables avoid
+requiring compile-time evaluation of std::log and std::sqrt.
 
 Usage: tools/gen_tables.py > include/randlib/core/ziggurat_tables.hpp
 """

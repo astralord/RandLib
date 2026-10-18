@@ -95,8 +95,8 @@ The mean absolute deviation about the mean is available as
  {B(\alpha,\beta)(\alpha+\beta)^{\alpha+\beta+1}}.
 \f]
 
-`GeometricMean()` and `GeometricVariance()` retain historical API names but return the log-moments
-of the standardized variable \f$Y=(X-a)/d\f$:
+`GeometricMean()` and `GeometricVariance()` return the log-moments of the standardized variable
+\f$Y=(X-a)/d\f$:
 
 \f[
  \operatorname{E}\log Y=\psi(\alpha)-\psi(\alpha+\beta),\qquad

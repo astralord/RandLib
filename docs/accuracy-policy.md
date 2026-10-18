@@ -25,15 +25,16 @@ Probability values are generated with mpmath at 40 decimal digits. Exact identit
 special cases supplement those tables. Another double-precision library is useful for investigation,
 but it is not accepted as the sole reference for changing a golden value.
 
-Every output difference from the v1.1 golden corpus must have one of:
+Every output difference from the baseline golden corpus must have one of:
 
 - a committed mpmath reference;
 - an exact formula recorded in the deviation reason; or
 - a focused regression test establishing the corrected invariant.
 
-`tools/refdata/generate.py` regenerates high-precision reference CSVs. The procedure for reviewing and
-classifying golden deviations is in `NEXT_STEPS.md`. Reference generators and their dependency
-versions are part of the evidence and are committed with the data.
+`tools/refdata/generate.py` regenerates high-precision reference CSVs.
+`tools/golden/classify_deviations.py` combines reviewed classifications with reference-backed
+exceptions. Reference generators and their dependency versions are part of the evidence and are
+committed with the data.
 
 ## Test layers
 

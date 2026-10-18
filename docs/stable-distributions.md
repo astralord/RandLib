@@ -37,7 +37,7 @@ the law. `SetScale()` preserves the location in the currently selected conventio
 | Operation/region | Current behavior |
 |---|---|
 | Sampling and characteristic function | Available over the complete valid parameter range. |
-| PDF/CDF | Compared with 40-digit mpmath references, including the former skewed near-`alpha=1` gap; target is `1e-9` absolute error. |
+| PDF/CDF | Compared with 40-digit mpmath references, including skewed inputs near `alpha=1`; target is `1e-9` absolute error. |
 | Direct survival probabilities | Used instead of `1-F` to avoid cancellation in supported tails. |
 | Far-tail quantiles | Seeded from the stable power-law asymptote before root finding. |
 | Fitting | McCulloch quantile fitting and constrained MLE return S0 parameters. |
@@ -47,9 +47,8 @@ reference generation is deliberately expensive; see [the accuracy policy](accura
 changing a result or tolerance.
 
 The positive one-sided stable kernel below exponent `0.1` is also used by the
-[Stable Count distribution](reference/distributions/stable-count.md). The broader range removes the
-historical cutoff; the most extreme exponents can still be substantially slower than the primary
-stable reference grid.
+[Stable Count distribution](reference/distributions/stable-count.md). The most extreme exponents
+can be substantially slower than the primary stable reference grid.
 
 Geometric stable laws use an exponential mixture of stable laws. Alpha-one tail expansions keep
 that mixture practical even when it probes stable probabilities at enormous arguments.

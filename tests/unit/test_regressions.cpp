@@ -1,6 +1,5 @@
-// Regression tests for specific bugs. IDs B1-B10 are those of docs/MODERNIZATION_PLAN.md,
-// the others are listed in CHANGELOG.md under 1.2.0. Expected values come from mpmath
-// (tools/refdata) unless they follow from a closed form written in the test.
+// Expected values come from mpmath (tools/refdata) unless they follow from a closed form written
+// in the test.
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
@@ -26,9 +25,9 @@ namespace
 const double PI = 3.14159265358979323846;
 }
 
-TEST_CASE("B1: normal samples do not depend on other instances", "[regression]")
+TEST_CASE("normal samples do not depend on other instances", "[regression]")
 {
-    /// The ziggurat used to cache a leftover exponential in a static thread_local variable
+    /// Separate distribution objects must not share cached sampler state.
     NormalRand<double> a(0, 1), b(0, 1), other(0, 1);
     a.Reseed(42);
     b.Reseed(42);
@@ -39,7 +38,7 @@ TEST_CASE("B1: normal samples do not depend on other instances", "[regression]")
     CHECK(first == second);
 }
 
-TEST_CASE("B5: 64-bit engines yield uniforms in (0, 1)", "[regression]")
+TEST_CASE("64-bit engines yield uniforms in (0, 1)", "[regression]")
 {
     DefaultEngine generator(5);
     double smallest = 1, largest = 0;
@@ -53,7 +52,7 @@ TEST_CASE("B5: 64-bit engines yield uniforms in (0, 1)", "[regression]")
     CHECK(largest > 0.999);
 }
 
-TEST_CASE("B7: stable laws with exponent close to 1 can be constructed and sampled", "[regression]")
+TEST_CASE("stable laws with exponent close to 1 can be constructed and sampled", "[regression]")
 {
     StableRand<double> nearOne(0.995, 0.5, 1, 0), smallSkew(1, 0.005, 1, 0);
     nearOne.Reseed(7);
@@ -69,7 +68,7 @@ TEST_CASE("B7: stable laws with exponent close to 1 can be constructed and sampl
     CHECK(std::isfinite(smallSkew.Quantile(0.3)));
 }
 
-TEST_CASE("B8: totally skewed stable distribution function has no floor", "[regression]")
+TEST_CASE("totally skewed stable distribution function has no floor", "[regression]")
 {
     StableRand<double> X(0.6, 1, 1, 0);
     CHECK(X.F(0.0) == 0.0);
@@ -77,7 +76,7 @@ TEST_CASE("B8: totally skewed stable distribution function has no floor", "[regr
     CHECK_THAT(X.F(0.2542), WithinRel(8.5586231489170863891e-4, 1e-9));
 }
 
-TEST_CASE("B9: normal samples are symmetric", "[regression]")
+TEST_CASE("normal samples are symmetric", "[regression]")
 {
     NormalRand<double> X(0, 1);
     X.Reseed(9);
@@ -88,9 +87,9 @@ TEST_CASE("B9: normal samples are symmetric", "[regression]")
     CHECK(std::fabs(positive - 500000.0) < 2500.0);
 }
 
-TEST_CASE("B11: quantiles are deterministic", "[regression]")
+TEST_CASE("quantiles are deterministic", "[regression]")
 {
-    /// The generic quantile used a sampled initial guess from a shared static vector
+    /// Quantile evaluation must be deterministic and free of shared sampler state.
     BetaPrimeRand<double> a(2, 3), b(2, 3);
     a.Reseed(1);
     b.Reseed(2);
@@ -98,7 +97,7 @@ TEST_CASE("B11: quantiles are deterministic", "[regression]")
     CHECK(a.Quantile(0.3) == a.Quantile(0.3));
 }
 
-TEST_CASE("B12: Bernoulli bits come from the generator that is passed", "[regression]")
+TEST_CASE("Bernoulli bits come from the generator that is passed", "[regression]")
 {
     Pcg32 first(12), second(12);
     std::vector<int> a, b;
@@ -109,14 +108,14 @@ TEST_CASE("B12: Bernoulli bits come from the generator that is passed", "[regres
     CHECK(a == b);
 }
 
-TEST_CASE("B13: logarithm of pi has full precision", "[regression]")
+TEST_CASE("logarithm of pi has full precision", "[regression]")
 {
     CHECK_THAT(static_cast<double>(randlib::consts::lnpi), WithinRel(std::log(PI), 1e-16));
     CauchyRand<double> X(0, 1);
     CHECK_THAT(X.logf(0.0), WithinRel(-std::log(PI), 1e-15));
 }
 
-TEST_CASE("B14: normal raw moments", "[regression]")
+TEST_CASE("normal raw moments", "[regression]")
 {
     NormalRand<double> X(2, 0.09);
     double mu = 2, var = 0.09;
@@ -125,10 +124,9 @@ TEST_CASE("B14: normal raw moments", "[regression]")
                WithinRel(std::pow(mu, 4) + 6 * mu * mu * var + 3 * var * var, 1e-14));
 }
 
-TEST_CASE("B15: classes that could not be used", "[regression]")
+TEST_CASE("classes that could not be used", "[regression]")
 {
-    /// BaldingNicholsRand hid F(x) behind a data member, CenteredAsymmetricLaplaceRand was abstract,
-    /// WrappedExponentialRand was never instantiated and base destructors were protected
+    /// Public concrete distributions support probability evaluation and polymorphic destruction.
     BaldingNicholsRand<double> balding(0.3, 0.6);
     CHECK(balding.F(0.5) > 0.0);
     CenteredAsymmetricLaplaceRand<double> laplace(1, 2);
@@ -139,7 +137,7 @@ TEST_CASE("B15: classes that could not be used", "[regression]")
     CHECK(owned->Mean() == 0.0);
 }
 
-TEST_CASE("B16: wrapped exponential circular moments and characteristic function", "[regression]")
+TEST_CASE("wrapped exponential circular moments and characteristic function", "[regression]")
 {
     double lambda = 0.7;
     WrappedExponentialRand<double> X(lambda);
@@ -150,23 +148,23 @@ TEST_CASE("B16: wrapped exponential circular moments and characteristic function
     CHECK_THROWS_AS(X.SetRate(-1), std::invalid_argument);
 }
 
-TEST_CASE("B17: incomplete gamma ratios keep full precision for large shapes", "[regression]")
+TEST_CASE("incomplete gamma ratios keep full precision for large shapes", "[regression]")
 {
-    /// Poisson(40) and Gamma(50, 3) used to be off by up to 1e-3
+    /// Large-shape incomplete-gamma ratios retain full precision.
     PoissonRand<int> P(40);
     CHECK_THAT(P.F(40), WithinRel(0.54191817836253703985, 1e-13));
     GammaRand<double> G(50, 3);
     CHECK_THAT(G.F(15.0), WithinRel(0.24680203440017027271, 1e-12));
 }
 
-TEST_CASE("B18: logarithm of the beta function does not underflow", "[regression]")
+TEST_CASE("logarithm of the beta function does not underflow", "[regression]")
 {
     CHECK_THAT(static_cast<double>(math::logBeta(600, 600)), WithinRel(-833.70936104274857839, 1e-15));
     BetaRand<double> X(600, 600);
     CHECK(std::isfinite(X.f(0.5)));
 }
 
-TEST_CASE("B19: right-triangular distributions", "[regression]")
+TEST_CASE("right-triangular distributions", "[regression]")
 {
     TriangularRand<double> X(0, 0, 1);
     CHECK(X.f(0.0) == 2.0);
@@ -174,7 +172,7 @@ TEST_CASE("B19: right-triangular distributions", "[regression]")
     CHECK(std::isfinite(X.CF(1.0).real()));
 }
 
-TEST_CASE("B20: modified Bessel function of negative and half-integer order", "[regression]")
+TEST_CASE("modified Bessel function of negative and half-integer order", "[regression]")
 {
     /// I_{1/2}(x) = sqrt(2 / (pi x)) sinh x and I_{-1/2}(x) = sqrt(2 / (pi x)) cosh x
     double x = 2.0;
@@ -184,7 +182,7 @@ TEST_CASE("B20: modified Bessel function of negative and half-integer order", "[
                WithinRel(std::log(std::cosh(x) * std::sqrt(2 / (PI * x))), 1e-14));
 }
 
-TEST_CASE("B21: stable characteristic function and location for exponent 1", "[regression]")
+TEST_CASE("stable characteristic function and location for exponent 1", "[regression]")
 {
     /// S1 parameterization: phi(t) = exp(-(gamma t)^a (1 - i b tan(pi a / 2)) + i mu t) for t > 0
     StableRand<double> X(1.5, 0.5, 1, 0);
@@ -195,7 +193,7 @@ TEST_CASE("B21: stable characteristic function and location for exponent 1", "[r
     CHECK_THAT(Y.F(1.0), WithinRel(0.37109122054964755289, 1e-9));
 }
 
-TEST_CASE("B22: stable tails", "[regression]")
+TEST_CASE("stable tails", "[regression]")
 {
     StableRand<double> unity(1, 0.5, 1, 0);
     CHECK_THAT(unity.f(300.0), WithinRel(5.3592152809976668665e-6, 1e-9));
@@ -204,7 +202,7 @@ TEST_CASE("B22: stable tails", "[regression]")
     CHECK_THAT(skewed.S(638542.0), WithinRel(1.445556098e-8, 1e-8));
 }
 
-TEST_CASE("B23: survival functions in the far tails", "[regression]")
+TEST_CASE("survival functions in the far tails", "[regression]")
 {
     CauchyRand<double> cauchy(0, 1);
     CHECK_THAT(cauchy.F(-3.183098861833411e29), WithinRel(1e-30, 1e-9));
@@ -217,7 +215,7 @@ TEST_CASE("B23: survival functions in the far tails", "[regression]")
     CHECK(logistic.f(-690.77552789821368) > 0.0);
 }
 
-TEST_CASE("B24: discrete distribution functions and medians", "[regression]")
+TEST_CASE("discrete distribution functions and medians", "[regression]")
 {
     LogarithmicRand<int> logarithmic(0.9);
     CHECK_THAT(logarithmic.F(3) - logarithmic.F(2), WithinRel(logarithmic.P(3), 1e-13));
@@ -231,14 +229,14 @@ TEST_CASE("B24: discrete distribution functions and medians", "[regression]")
     CHECK(categorical.Quantile1m(0.5) == 1);
 }
 
-TEST_CASE("B25: invalid parameters are not silently replaced", "[regression]")
+TEST_CASE("invalid parameters are not silently replaced", "[regression]")
 {
     CHECK_THROWS_AS(LogNormalRand<double>(0, -1), std::invalid_argument);
     CHECK_THROWS_AS(BaldingNicholsRand<double>(1.5, 0.5), std::invalid_argument);
     CHECK_THROWS_AS(NegativeBinomialRand<int>(-1, 0.5), std::invalid_argument);
 }
 
-TEST_CASE("B26: composite distributions reseed every generator they use", "[regression]")
+TEST_CASE("composite distributions reseed every generator they use", "[regression]")
 {
     PlanckRand<double> a(3, 2), b(3, 2);
     a.Reseed(26);
@@ -250,7 +248,7 @@ TEST_CASE("B26: composite distributions reseed every generator they use", "[regr
     CHECK(c.Variate() == d.Variate());
 }
 
-TEST_CASE("B27: heavy-tailed discrete characteristic functions terminate", "[regression]")
+TEST_CASE("heavy-tailed discrete characteristic functions terminate", "[regression]")
 {
     ZetaRand<int> zeta(2);
     auto start = std::chrono::steady_clock::now();
@@ -272,7 +270,7 @@ TEST_CASE("B27: heavy-tailed discrete characteristic functions terminate", "[reg
     CHECK_THAT(lightPhi.imag(), WithinAbs(0.1173998095713813435, 1e-14));
 }
 
-TEST_CASE("B28: Cantor characteristic function depends on t", "[regression]")
+TEST_CASE("Cantor characteristic function depends on t", "[regression]")
 {
     CantorRand X;
     double t = 3.0, product = 1.0;
@@ -281,9 +279,9 @@ TEST_CASE("B28: Cantor characteristic function depends on t", "[regression]")
     CHECK_THAT(X.CF(t).real(), WithinAbs(std::cos(t / 2) * product, 1e-12));
 }
 
-TEST_CASE("B29: geometric stable distribution function for exponent 1", "[regression]")
+TEST_CASE("geometric stable distribution function for exponent 1", "[regression]")
 {
-    /// The mixture integral missed the alpha = 1 shift (2/pi) b gamma w log(gamma w)
+    /// The alpha = 1 mixture includes the shift (2/pi) b gamma w log(gamma w).
     GeometricStableRand<double> X(1, 0.5, 1, 0);
     X.Reseed(29);
     std::vector<double> sample(20000);
@@ -300,22 +298,22 @@ TEST_CASE("B29: geometric stable distribution function for exponent 1", "[regres
     CHECK_THAT(X.F(570.9), WithinAbs(0.9991581026900738992757455, 1e-9));
 }
 
-TEST_CASE("B30: Marchenko-Pastur distribution function next to the lower edge", "[regression]")
+TEST_CASE("Marchenko-Pastur distribution function next to the lower edge", "[regression]")
 {
-    /// For x below ~1e-16 the square root in the formula vanished and F(x) came out as 1/4
+    /// The lower-edge expansion remains accurate after direct square-root terms lose resolution.
     MarchenkoPasturRand<double> X(1, 1);
     CHECK(X.F(1e-17) < 1e-8);
     CHECK_THAT(X.F(1e-10), WithinRel(2 / PI * 1e-5, 1e-4));
 }
 
-TEST_CASE("B31: Rademacher mode is deterministic", "[regression]")
+TEST_CASE("Rademacher mode is deterministic", "[regression]")
 {
     RademacherRand X;
     for (int i = 0; i < 20; ++i)
         CHECK(X.Mode() == -1);
 }
 
-TEST_CASE("B32: Poisson and binomial probabilities do not depend on the accuracy of lgamma", "[regression]")
+TEST_CASE("Poisson and binomial probabilities do not depend on the accuracy of lgamma", "[regression]")
 {
     /// k log(λ) - λ - log(k!) cancelled about four digits; the saddle-point form keeps full precision
     CHECK_THAT(PoissonRand<int>(1000).P(977), WithinRel(0.009776061021570442222212799, 1e-14));
@@ -343,7 +341,7 @@ TEST_CASE("Cantor quantiles are exact", "[regression]")
         CHECK_THAT(X.Quantile(p), WithinRel(exact(p), 1e-12));
 }
 
-TEST_CASE("B33: raised cosine characteristic function at st = pi", "[regression]")
+TEST_CASE("raised cosine characteristic function at st = pi", "[regression]")
 {
     /// (1 + cos x) / (2 pi) on [-pi, pi]: CF(1) = 1/2, the limit of a 0 / 0 expression
     CHECK_THAT(RaisedCosineRand<double>(0, PI).CF(1).real(), WithinAbs(0.5, 1e-15));
@@ -351,14 +349,14 @@ TEST_CASE("B33: raised cosine characteristic function at st = pi", "[regression]
     CHECK_THAT(RaisedCosineRand<double>(0, PI).CF(1 + 1e-9).real(), WithinAbs(0.5, 1e-8));
 }
 
-TEST_CASE("B34: discrete quantiles at an exact probability level", "[regression]")
+TEST_CASE("discrete quantiles at an exact probability level", "[regression]")
 {
     /// F(2) = 1/2 exactly for NB(3, 1/2); a last-bit error in F must not move the median
     CHECK(PascalRand<int>(3, 0.5).Quantile(0.5) == 2);
     CHECK(PascalRand<int>(3, 0.5).Median() == 2);
 }
 
-TEST_CASE("B35: zeta probabilities in the far tail terminate", "[regression]")
+TEST_CASE("zeta probabilities in the far tail terminate", "[regression]")
 {
     ZetaRand<int> X(3.5);
     /// mpmath Hurwitz-zeta references at 80 decimal digits
@@ -366,9 +364,9 @@ TEST_CASE("B35: zeta probabilities in the far tail terminate", "[regression]")
     CHECK_THAT(X.S(1000000000), WithinRel(1.122635166277711578412826611568585e-23, 1e-15));
 }
 
-TEST_CASE("B36: uniform likelihoods use a negative sample-count exponent", "[regression]")
+TEST_CASE("uniform likelihoods use a negative sample-count exponent", "[regression]")
 {
-    /// The exact likelihood is p(x)^n; negating the unsigned sample size wrapped to a huge positive exponent
+    /// The exact likelihood is p(x)^n with a signed negative exponent after taking reciprocals.
     const std::vector<double> continuousSample = {0.25, 0.5, 1.5};
     CHECK(UniformRand<double>(0, 2).LikelihoodFunction(continuousSample) == 0.125);
 
@@ -376,7 +374,7 @@ TEST_CASE("B36: uniform likelihoods use a negative sample-count exponent", "[reg
     CHECK(UniformDiscreteRand<int>(0, 1).LikelihoodFunction(discreteSample) == 0.125);
 }
 
-TEST_CASE("B37: double factorial uses every second factor", "[regression]")
+TEST_CASE("double factorial uses every second factor", "[regression]")
 {
     CHECK(math::doubleFactorial(-1) == 0.0);
     CHECK(math::doubleFactorial(0) == 1.0);
@@ -385,7 +383,7 @@ TEST_CASE("B37: double factorial uses every second factor", "[regression]")
     CHECK(math::doubleFactorial(9) == 945.0);
 }
 
-TEST_CASE("B38: geometric waiting times do not overflow signed integers", "[regression]")
+TEST_CASE("geometric waiting times do not overflow signed integers", "[regression]")
 {
     const double probability = std::numeric_limits<double>::min();
     std::mt19937_64 generator(20231010);
@@ -404,7 +402,7 @@ TEST_CASE("B38: geometric waiting times do not overflow signed integers", "[regr
     CHECK(BinomialRand<int>::Variate(20, probability, generator) == 0);
 }
 
-TEST_CASE("B39: negative-binomial fitting stays in the positive shape domain", "[regression]")
+TEST_CASE("negative-binomial fitting stays in the positive shape domain", "[regression]")
 {
     double invalidRoot = 1.0;
     int evaluations = 0;
@@ -423,7 +421,7 @@ TEST_CASE("B39: negative-binomial fitting stays in the positive shape domain", "
     CHECK_THAT(fitted.distribution.GetProbability(), WithinRel(0.79630061189656137372, 1e-10));
 }
 
-TEST_CASE("B40: Rayleigh unbiased scale fitting stays in the log domain", "[regression]")
+TEST_CASE("Rayleigh unbiased scale fitting stays in the log domain", "[regression]")
 {
     /// If R = sqrt(sum(X_i^2) / (2n)), then E[R] = sigma Gamma(n + 1/2) / (sqrt(n) Gamma(n)).
     for (size_t n : {size_t{15}, size_t{16}, size_t{101}}) {
@@ -438,7 +436,7 @@ TEST_CASE("B40: Rayleigh unbiased scale fitting stays in the log domain", "[regr
     }
 }
 
-TEST_CASE("B41: asymmetric-Laplace entropy includes the exponential contribution", "[regression]")
+TEST_CASE("asymmetric-Laplace entropy includes the exponential contribution", "[regression]")
 {
     /// Integrating -log(f) gives 1 + log(gamma * (kappa + 1 / kappa)).
     CHECK_THAT(static_cast<double>(LaplaceRand<double>(0, 1).Entropy()), WithinRel(1 + std::log(2.0), 1e-15));
@@ -447,7 +445,7 @@ TEST_CASE("B41: asymmetric-Laplace entropy includes the exponential contribution
                WithinRel(1 + std::log(7.5), 1e-15));
 }
 
-TEST_CASE("B42: zero noncentrality is the central chi-squared limit", "[regression]")
+TEST_CASE("zero noncentrality is the central chi-squared limit", "[regression]")
 {
     const NoncentralChiSquaredRand<double> central(4, 0);
     CHECK_THAT(central.f(2), WithinRel(0.5 / std::exp(1.0), 1e-14));
@@ -465,14 +463,14 @@ TEST_CASE("B42: zero noncentrality is the central chi-squared limit", "[regressi
     CHECK(actual == expected);
 }
 
-TEST_CASE("B43: Bernoulli endpoint entropy uses the zero-log-zero limit", "[regression]")
+TEST_CASE("Bernoulli endpoint entropy uses the zero-log-zero limit", "[regression]")
 {
     CHECK(BernoulliRand(0).Entropy() == 0);
     CHECK(BernoulliRand(1).Entropy() == 0);
     CHECK_THAT(BernoulliRand(0.5).Entropy(), WithinRel(std::log(2.0), 1e-15));
 }
 
-TEST_CASE("B44: binomial probability boundaries preserve construction and sampling", "[regression]")
+TEST_CASE("binomial probability boundaries preserve construction and sampling", "[regression]")
 {
     const BinomialRand<int> certain(7, 1);
     std::mt19937_64 certainGenerator(42);
@@ -498,7 +496,7 @@ TEST_CASE("B44: binomial probability boundaries preserve construction and sampli
     CHECK(actual == expected);
 }
 
-TEST_CASE("B45: discrete-uniform characteristic function handles lattice periods", "[regression]")
+TEST_CASE("discrete-uniform characteristic function handles lattice periods", "[regression]")
 {
     const UniformDiscreteRand<int> distribution(-3, 7);
     const double period = 2 * static_cast<double>(randlib::consts::pi);
@@ -508,7 +506,7 @@ TEST_CASE("B45: discrete-uniform characteristic function handles lattice periods
     CHECK_THAT(distribution.CF(-period).imag(), WithinAbs(0.0, 0.0));
 }
 
-TEST_CASE("B46: Skellam mode maximizes the PMF instead of truncating the mean", "[regression]")
+TEST_CASE("Skellam mode maximizes the PMF instead of truncating the mean", "[regression]")
 {
     const SkellamRand<int> distribution(2, 1.1);
     CHECK_THAT(distribution.P(0), WithinRel(0.2139951994197166138511878227306453, 1e-13));
@@ -517,7 +515,7 @@ TEST_CASE("B46: Skellam mode maximizes the PMF instead of truncating the mean", 
     CHECK(distribution.Mode() == 1);
 }
 
-TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regression]")
+TEST_CASE("static Poisson sampling uses the exact cached algorithm", "[regression]")
 {
     for (double rate : {5.0, 1001.0}) {
         const PoissonRand<int> distribution(rate);
@@ -526,7 +524,7 @@ TEST_CASE("B47: static Poisson sampling uses the exact cached algorithm", "[regr
     }
 }
 
-TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regression]")
+TEST_CASE("negative-binomial success endpoint is deterministic", "[regression]")
 {
     PascalRand<int> negativeBinomial(3, 1);
     CHECK(negativeBinomial.P(0) == 1);
@@ -560,13 +558,13 @@ TEST_CASE("B48: negative-binomial success endpoint is deterministic", "[regressi
     CHECK_THROWS_AS(GeometricRand<int>::Variate(0, generator), std::invalid_argument);
 }
 
-TEST_CASE("B49: geometric entropy uses natural units", "[regression]")
+TEST_CASE("geometric entropy uses natural units", "[regression]")
 {
     CHECK(GeometricRand<int>(1).Entropy() == 0);
     CHECK_THAT(static_cast<double>(GeometricRand<int>(0.5).Entropy()), WithinRel(2 * std::log(2.0), 1e-15));
 }
 
-TEST_CASE("B50: bivariate covariance uses marginal standard deviations", "[regression]")
+TEST_CASE("bivariate covariance uses marginal standard deviations", "[regression]")
 {
     const BivariateNormalRand<double> normal(1, -2, 2, 3, 0.25);
     const LongDoubleTriplet normalCovariance = normal.Covariance();
@@ -584,7 +582,7 @@ TEST_CASE("B50: bivariate covariance uses marginal standard deviations", "[regre
     CHECK(std::get<1>(degenerate.Covariance()) == 0);
 }
 
-TEST_CASE("B51: normal-inverse-gamma marginals, sampling and joint CDF agree", "[regression]")
+TEST_CASE("normal-inverse-gamma marginals, sampling and joint CDF agree", "[regression]")
 {
     NormalInverseGammaRand<double> distribution(2, 3, 4, 2);
     const auto marginals = distribution.GetMarginalDistributions();
@@ -612,14 +610,14 @@ TEST_CASE("B51: normal-inverse-gamma marginals, sampling and joint CDF agree", "
     CHECK(std::isnan(NormalInverseGammaRand<double>(0, 1, 1, 1).Correlation()));
 }
 
-TEST_CASE("B52: negative-correlation bivariate normal CDF uses standardized limits", "[regression]")
+TEST_CASE("negative-correlation bivariate normal CDF uses standardized limits", "[regression]")
 {
     const BivariateNormalRand<double> distribution(1, -2, 2, 0.5, -1);
     CHECK_THAT(distribution.F({3.0, -2.0}), WithinAbs(0.3413447460685429485852325456, 1e-15));
     CHECK(distribution.F({1.0, -3.0}) == 0);
 }
 
-TEST_CASE("B53: trinomial endpoints and modes stay on the probability simplex", "[regression]")
+TEST_CASE("trinomial endpoints and modes stay on the probability simplex", "[regression]")
 {
     const TrinomialRand<int> boundary(5, 0.4, 0.6);
     CHECK_THAT(boundary.P({2, 3}), WithinAbs(0.3456, 1e-15));
@@ -671,7 +669,7 @@ TEST_CASE("B53: trinomial endpoints and modes stay on the probability simplex", 
     }
 }
 
-TEST_CASE("B54: hypergeometric moments cover small, deterministic and large populations", "[regression]")
+TEST_CASE("hypergeometric moments cover small, deterministic and large populations", "[regression]")
 {
     const HyperGeometricRand<int> singleton(1, 1, 1);
     CHECK(singleton.Mean() == 1);
@@ -704,7 +702,7 @@ TEST_CASE("B54: hypergeometric moments cover small, deterministic and large popu
                WithinAbs(shiftedSupport.P(shiftedSupport.MinValue()), 1e-15));
 }
 
-TEST_CASE("B55: negative-hypergeometric moments do not overflow before conversion", "[regression]")
+TEST_CASE("negative-hypergeometric moments do not overflow before conversion", "[regression]")
 {
     const int population = std::numeric_limits<int>::max();
     const int successes = population - 1;

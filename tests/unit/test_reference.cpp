@@ -1,5 +1,5 @@
 // Accuracy against 40-digit mpmath reference values (tests/data/reference, written by
-// tools/refdata/generate.py), with the tolerances of docs/MODERNIZATION_PLAN.md section 9.
+// tools/refdata/generate.py), with the tolerances documented in docs/accuracy-policy.md.
 // Loosened tolerances live in tests/data/reference_tolerances.csv, one row per gap, and
 // each row must link the issue that tracks it.
 

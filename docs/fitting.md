@@ -102,6 +102,5 @@ diagnostics. `fit_peaks_over_threshold` fits a generalized Pareto distribution t
 chosen threshold. Threshold selection remains a modeling decision: inspect stability over a range of
 orders or thresholds rather than accepting one automatic value.
 
-The old mutating member functions named `Fit*` remain for source compatibility but are deprecated and
-will be removed in v3. Define `RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS` only as a temporary migration
-aid.
+The mutating member functions named `Fit*` are deprecated and will be removed in v3. Define
+`RANDLIB_DISABLE_DEPRECATED_FIT_WARNINGS` only as a temporary migration aid.

@@ -1,8 +1,8 @@
 # RandLib
 
-[![CI](https://github.com/astralord/RandLib/actions/workflows/ci.yml/badge.svg?branch=2.x)](https://github.com/astralord/RandLib/actions/workflows/ci.yml)
-[![Documentation](https://github.com/astralord/RandLib/actions/workflows/docs.yml/badge.svg?branch=2.x)](https://astralord.github.io/RandLib/)
-[![codecov](https://codecov.io/gh/astralord/RandLib/branch/2.x/graph/badge.svg)](https://codecov.io/gh/astralord/RandLib)
+[![CI](https://github.com/astralord/RandLib/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/astralord/RandLib/actions/workflows/ci.yml)
+[![Documentation](https://github.com/astralord/RandLib/actions/workflows/docs.yml/badge.svg?branch=master)](https://astralord.github.io/RandLib/)
+[![codecov](https://codecov.io/gh/astralord/RandLib/branch/master/graph/badge.svg)](https://codecov.io/gh/astralord/RandLib)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C.svg)](https://en.cppreference.com/w/cpp/20)
 
@@ -10,8 +10,8 @@ Fit probability distributions and handle heavy tails in modern C++. RandLib is a
 header-only C++20 library for sampling, probability functions, moments, parameter estimation, model
 selection, goodness-of-fit testing, extreme-value analysis, and stable laws.
 
-The `2.x` branch is the next major version. The source-compatible C++17 maintenance release remains
-on `1.x`; see the [v1 to v2 migration guide](docs/migration-v2.md).
+RandLib 2 is the current C++20 release line. The source-compatible C++17 maintenance release remains
+available on `1.x`; see the [v1 to v2 migration guide](docs/migration-v2.md).
 
 ## Quick start
 

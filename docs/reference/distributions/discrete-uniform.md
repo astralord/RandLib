@@ -40,7 +40,7 @@ The probability-generating function and characteristic function are
 
 At integer multiples of \f$2\pi\f$, the continuous limit is exactly one. RandLib first reduces the
 angle modulo \f$2\pi\f$, returns that exact limit at a lattice period, and otherwise evaluates the
-centered sinc form. This avoids both the former \f$0/0\f$ and precision loss from subtracting nearby
+centered sinc form. This avoids both an indeterminate \f$0/0\f$ and precision loss from subtracting nearby
 trigonometric values.
 
 For \f$n>1\f$,

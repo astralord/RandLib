@@ -236,6 +236,6 @@ Reciprocal-scale choices add the corresponding Jacobian and do not repair closur
 random count is a latent renewal index, not a normalized likelihood parameter for an observed
 stable sample.
 
-Phase 6.2 is therefore complete as **investigated but not established**. A future Bayesian API
-would require a new normalized likelihood, a proved posterior family, a posterior-predictive
-construction, and independent quadrature evidence.
+Conjugacy is therefore **not established**. A future Bayesian API would require a new normalized
+likelihood, a proved posterior family, a posterior-predictive construction, and independent
+quadrature evidence.

@@ -1,16 +1,14 @@
 # Mathematical reference {#mathematical_reference}
 
 This reference describes the probability laws implemented by RandLib and the algorithms used to
-evaluate and sample them. It is the current counterpart of the archived 1.x `document.tex`: the
-legacy source remains useful historical material, but statements here are checked against the v2
-headers and tests.
+evaluate and sample them. Its statements are checked against the public headers and tests.
 
 RandLib currently exposes 72 concrete distribution classes: 50 continuous, 16 discrete, three
 bivariate, two circular and one singular. Related classes that share one mathematical family are
 documented together. Internal base classes are discussed only when their parameterization or
 algorithm affects a public law.
 
-<div class="reference-hero"><strong>Find a distribution</strong><span>Browse by kind and then by mathematical family. Every law now has a focused page instead of being buried in a chapter-length stream of text.</span></div>
+<div class="reference-hero"><strong>Find a distribution</strong><span>Browse by kind and then by mathematical family. Every law has a focused page with its formulas and implementation notes.</span></div>
 
 <div class="distribution-grid">
   <div class="distribution-card">
@@ -96,10 +94,9 @@ defined.
 ## Source and evidence policy
 
 The implementation is authoritative for RandLib parameter names and conventions; a standard
-mathematical source is authoritative for the law itself. When the archived notes disagree with v2,
-the current entry explains the v2 behavior rather than silently copying the old text. Numerical
-claims follow the [accuracy and reference-data policy](../accuracy-policy.md) and are backed by exact
-identities, committed high-precision data or focused regression tests.
+mathematical source is authoritative for the law itself. Numerical claims follow the
+[accuracy and reference-data policy](../accuracy-policy.md) and are backed by exact identities,
+committed high-precision data or focused regression tests.
 
 The focused pages currently publish 54 representative density, mass, and CDF plots migrated from
 the archived PDF for the laws whose constructor conventions still match. Plot legends identify the

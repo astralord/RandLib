@@ -84,9 +84,8 @@ NaN when even the mean does not exist.
  \hat\alpha=\frac{n}{\sum_i\log(x_i/x_{(1)})}.
 \f]
 
-The implementation also retains the historical unbiased corrections for joint or separately fixed
-parameters. With \f$\sigma\f$ fixed, a Gamma \f$(a,b)\f$ shape--rate prior for \f$\alpha\f$ is
-conjugate:
+UMVU fitting applies the unbiased corrections for joint or separately fixed parameters. With
+\f$\sigma\f$ fixed, a Gamma \f$(a,b)\f$ shape--rate prior for \f$\alpha\f$ is conjugate:
 
 \f[
  \alpha\mid x\sim\operatorname{Gamma}\left(

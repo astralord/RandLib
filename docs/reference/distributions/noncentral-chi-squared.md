@@ -46,8 +46,8 @@ The distribution and survival functions use the generalized Marcum functions,
 RandLib evaluates both tails directly through a Poisson mixture centered at the combined
 Poisson/incomplete-gamma saddle. The summation proceeds outward in both directions with scaled
 recurrences, avoiding both a long walk from index zero and the cancellation in \f$1-F\f$. At
-\f$\lambda=0\f$, B42 selects the exact regularized incomplete-gamma limits rather than sending a
-singular zero argument through the Bessel or Marcum formulas.
+\f$\lambda=0\f$, the exact regularized incomplete-gamma limits avoid sending a singular zero
+argument through the Bessel or Marcum formulas.
 
 The characteristic function is
 

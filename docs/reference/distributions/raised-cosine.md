@@ -31,7 +31,7 @@ characteristic function is
 \f]
 
 At \f$st=\pi\f$ the displayed expression is indeterminate. The implementation rewrites it with a
-cardinal-sine factor, preserving the analytic limit instead of evaluating \f$0/0\f$ (B33).
+cardinal-sine factor, preserving the analytic limit instead of evaluating \f$0/0\f$.
 
 The mean, median, and mode all equal \f$\mu\f$, and
 
