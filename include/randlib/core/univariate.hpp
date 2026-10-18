@@ -109,14 +109,14 @@ public:
      * @param y
      * Fills vector y with Quantile(p)
      */
-    void QuantileFunction(std::span<const double> p, std::span<T> y);
+    void QuantileFunction(std::span<const double> p, std::span<T> y) const;
 
     /**
      * @param p
      * @param y
      * Fills vector y with Quantile1m(p)
      */
-    void QuantileFunction1m(std::span<const double> p, std::span<T> y);
+    void QuantileFunction1m(std::span<const double> p, std::span<T> y) const;
 
     /**
      * @param t
@@ -338,18 +338,18 @@ T UnivariateDistribution<T>::Quantile1m(double p) const
 }
 
 template <typename T>
-void UnivariateDistribution<T>::QuantileFunction(std::span<const double> p, std::span<T> y)
+void UnivariateDistribution<T>::QuantileFunction(std::span<const double> p, std::span<T> y) const
 {
-    int size = std::min(p.size(), y.size());
-    for (int i = 0; i != size; ++i)
+    const size_t size = std::min(p.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->Quantile(p[i]);
 }
 
 template <typename T>
-void UnivariateDistribution<T>::QuantileFunction1m(std::span<const double> p, std::span<T> y)
+void UnivariateDistribution<T>::QuantileFunction1m(std::span<const double> p, std::span<T> y) const
 {
-    int size = std::min(p.size(), y.size());
-    for (int i = 0; i != size; ++i)
+    const size_t size = std::min(p.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->Quantile1m(p[i]);
 }
 
@@ -379,16 +379,16 @@ template <typename T>
 void UnivariateDistribution<T>::CharacteristicFunction(std::span<const double> t,
                                                        std::span<std::complex<double>> y) const
 {
-    int size = std::min(t.size(), y.size());
-    for (int i = 0; i != size; ++i)
+    const size_t size = std::min(t.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->CF(t[i]);
 }
 
 template <typename T>
 void UnivariateDistribution<T>::HazardFunction(std::span<const T> x, std::span<double> y) const
 {
-    int size = std::min(x.size(), y.size());
-    for (int i = 0; i != size; ++i)
+    const size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->Hazard(x[i]);
 }
 
@@ -625,7 +625,7 @@ UnivariateDistribution<T>::GetSampleStatistics(std::span<const T> sample)
             M3 += m3 + (DeltaSq * Delta * t * (t - 1) * BIG_NUMBER) / (tp1 * tp1);
             M3 += 3 * Delta * (t * m2 - M2) / tp1;
             /// M2 and M1
-            M2 += m2 + (DeltaSq * t) / tp1;
+            M2 += m2 + (DeltaSq * t * BIG_NUMBER) / tp1;
             M1 += Delta / tp1;
             k = 0;
             m1 = 0;
@@ -650,7 +650,7 @@ UnivariateDistribution<T>::GetSampleStatistics(std::span<const T> sample)
         M3 += m3 + (DeltaSq * Delta * t * res * (t - res) * BIG_NUMBER) / (tpres * tpres);
         M3 += 3 * Delta * (t * m2 - res * M2) / tpres;
         /// M2 and M1
-        M2 += m2 + (DeltaSq * t * res) / tpres;
+        M2 += m2 + (DeltaSq * t * res * BIG_NUMBER) / tpres;
         M1 += Delta * res / tpres;
     }
 

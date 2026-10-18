@@ -47,6 +47,7 @@ public:
 
 private:
     DoublePair faux(const RealType &x) const;
+    double exponentialTerm(const RealType &x) const;
 
 public:
     [[nodiscard]] double f(const RealType &x) const override;
@@ -115,14 +116,15 @@ void ExponentiallyModifiedGaussianRand<RealType>::SetParameters(double location,
 template <typename RealType>
 DoublePair ExponentiallyModifiedGaussianRand<RealType>::faux(const RealType &x) const
 {
+    /// f(x) = λ / 2 erfc(z) exp(λ(c - x)) with z = (a - x) / (√2 σ). For z ≥ 0 the exponent combines with
+    /// erfc(z) = erfcx(z) exp(-z²) into -(x - μ)² / (2σ²), avoiding 0 * ∞ when erfc underflows
     double lambda = Y.GetRate();
-    double y = a - x;
-    y *= b;
-    y = std::erfc(y);
-    y *= 0.5 * lambda;
-    double exponent = c - x;
-    exponent *= lambda;
-    return std::make_pair(y, exponent);
+    double z = (a - x) * b;
+    if (z >= 0) {
+        double w = (x - X.GetLocation()) * b;
+        return std::make_pair(0.5 * lambda * math::erfcx(z), -w * w);
+    }
+    return std::make_pair(0.5 * lambda * std::erfc(z), lambda * (c - x));
 }
 
 template <typename RealType>
@@ -140,25 +142,25 @@ double ExponentiallyModifiedGaussianRand<RealType>::logf(const RealType &x) cons
 }
 
 template <typename RealType>
+double ExponentiallyModifiedGaussianRand<RealType>::exponentialTerm(const RealType &x) const
+{
+    /// exp(v² / 2 - v w) Φ(w - v) with w = (x - μ) / σ; for w < v it equals exp(-w² / 2) erfcx((v - w) / √2) / 2
+    double w = (x - X.GetLocation()) / X.GetScale();
+    if (w < v)
+        return 0.5 * std::exp(-0.5 * w * w) * math::erfcx((v - w) * randlib::consts::inv_sqrt2);
+    return std::exp(v * (0.5 * v - w)) * X.F(x - v * X.GetScale());
+}
+
+template <typename RealType>
 double ExponentiallyModifiedGaussianRand<RealType>::F(const RealType &x) const
 {
-    double u = Y.GetRate() * (x - X.GetLocation());
-    double y = X.F(x);
-    double exponent = -u + 0.5 * v * v;
-    exponent = std::exp(exponent);
-    exponent *= X.F(x - v * X.GetScale());
-    return y - exponent;
+    return std::max(X.F(x) - exponentialTerm(x), 0.0);
 }
 
 template <typename RealType>
 double ExponentiallyModifiedGaussianRand<RealType>::S(const RealType &x) const
 {
-    double u = Y.GetRate() * (x - X.GetLocation());
-    double y = X.S(x);
-    double exponent = -u + 0.5 * v * v;
-    exponent = std::exp(exponent);
-    exponent *= X.F(x - v * X.GetScale());
-    return y + exponent;
+    return std::min(X.S(x) + exponentialTerm(x), 1.0);
 }
 
 template <typename RealType>

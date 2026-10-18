@@ -10,7 +10,12 @@ RandLib evaluates logarithms before exponentiating whenever a density, mass or l
 large products or gamma-function ratios. Expressions such as \f$1-e^x\f$ and \f$\log(1-e^x)\f$ use
 `expm1`, `log1p` and a dedicated `log1mexp` split to avoid cancellation. Regularized incomplete beta
 and gamma functions return lower and upper probabilities together, including their logarithms, so a
-small upper tail is not obtained by subtracting a rounded lower tail from one.
+small upper tail is not obtained by subtracting a rounded lower tail from one. The incomplete beta
+function takes \f$\log x\f$ and \f$\log(1-x)\f$ from its caller and recovers \f$1-x\f$ from them, so an
+argument such as \f$1-10^{-30}\f$ that rounds to one keeps its complement. Shapes up to 4096 use finite
+continued fractions and power series; larger shapes use the modified Lentz continued fraction of
+DiDonato and Morris on the side where it converges, preferring the side whose argument is tiny. No
+branch evaluates a series whose convergence rate is an argument within \f$10^{-3}\f$ of one.
 
 The same rule applies at the distribution layer: `S(x)` is a first-class probability function.
 Quantile searches choose `F` or `S` according to the requested probability and use logarithmic tail
@@ -28,7 +33,14 @@ and
 
 supplies the local error indicator. A heap repeatedly bisects the segment with the largest indicator.
 Iteration stops when the accumulated estimate satisfies the requested relative tolerance or reaches
-a roundoff floor proportional to the estimated integral of \f$|f|\f$.
+a roundoff floor proportional to the estimated integral of \f$|f|\f$. As in QUADPACK, it also stops
+after six bisections that leave the estimate unchanged to \f$10^{-5}\f$ without reducing the error,
+or twenty that increase it: rounding errors of the integrand then dominate, and further subdivision
+cannot reach the tolerance.
+
+Expectations \f$\mathbb{E}[g(X)]\f$ without a closed form integrate \f$g\,f\f$ on both sides of the
+median \f$c\f$ with the map \f$x=c\pm s\,u/(1-u)\f$, where \f$s=1/f(c)\f$ is the scale of the bulk, so a
+narrow peak far from the origin is resolved and infinite tails become finite intervals.
 
 Semi-infinite intervals use the QUADPACK-style rational map
 
@@ -69,6 +81,12 @@ the partial sums
 are accelerated with Wynn's epsilon algorithm. Three negligible consecutive cycles terminate a
 directly convergent tail; otherwise the best stable even-order epsilon estimate is returned. This is
 the production path for several heavy-tailed characteristic functions.
+
+For a characteristic function the amplitude is a density, and the survival function bounds the
+remaining contribution. The walk then starts where the mass begins, at \f$Q(10^{-15})\f$; the mass
+within \f$\delta=10^{-11}/\omega\f$ of the end \f$a\f$ of the support enters as \f$F(a+\delta)e^{i\omega a}\f$,
+whatever its singularity. It stops once \f$S\f$ is below the tolerance, and is accelerated only beyond
+half of the mass, so empty half-periods below a distant bulk do not end it.
 
 ## Quantiles and scalar roots
 

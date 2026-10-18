@@ -33,7 +33,12 @@ All notable changes to RandLib are documented here. The project follows
   density, direct tails, sampling, quantiles, median, correct boundary/interior modes, S0/S1
   parameterization and stable-family fitting. Exact Laplace-exponent moments cover totally
   left-skewed laws and the Gaussian case; other non-Gaussian skewnesses report divergent moments.
-  Its characteristic function deliberately throws `not_implemented` away from zero.
+- Implemented the log-stable characteristic function (#5) by half-period Fourier integration
+  bounded by the survival function, with the mass near zero entering through the distribution
+  function. Independent references cover the Gaussian case, log-Cauchy and log-Levy laws, and the
+  convergent moment series of totally left-skewed laws.
+- Removed the last stable tolerance override (#1): far upper-tail Landau quantiles near `1e10` now
+  meet the default reference tolerance.
 
 ### Distributions
 
@@ -52,6 +57,52 @@ All notable changes to RandLib are documented here. The project follows
   and grouped central-moment identities. Exact probability levels at zero now invert to zero.
 - Evaluated its moderate-argument density directly from the hypergeometric representation, avoiding
   cancellation between two probabilities on binary64-only platforms.
+
+### Accuracy and robustness
+
+- Evaluated the log-normal characteristic function (#6) by the exact saddle-point representation of
+  Asmussen, Jensen and Rojas-Nandayapa with a complex Lambert W function, keeping relative
+  accuracy where it is tiny, for example `8.3e-29` at `t = 10` for `LogNormal(3, 0.01)`.
+- Made the incomplete beta function recover `1 - x` from its logarithm, so the beta survival
+  function no longer returns one below `x = 1e-16` and the beta-prime distribution function no longer
+  rounds to one for large `x`. Shapes above 4096 use a modified Lentz continued fraction: binomial
+  laws with `n = 2e9` take microseconds instead of seconds, with relative errors of `1e-13` instead
+  of `5e-5`; for shapes up to `1e12` the measured worst case is `1e-8`, just above the convergence
+  boundary of extremely skewed laws.
+  Arguments near one are never evaluated by slowly converging series, which bounds the cost of
+  noncentral t fitting at extreme trial parameters.
+- Computed binomial distribution functions from a cancellation-free log-beta value; the MSVC bulk
+  tolerance override is removed (#12).
+- Started the characteristic-function walk where the mass begins and bounded it by the survival
+  function: Frechet and Rice laws concentrated far from the end of their support no longer return
+  zero. Expectations without closed forms integrate on both sides of the median with a bulk-scaled
+  map, fixing zero characteristic functions of narrow Gumbel and log-normal laws.
+- Added QUADPACK roundoff detection to adaptive quadrature, making Stable Count probabilities near
+  `alpha = 1/2` about a thousand times faster.
+- Evaluated Marcum P for large noncentrality by a saddle-centered lower-tail mixture, fixing NaN
+  Rice distribution functions, and made both Marcum functions complementary to rounding.
+- Added Hankel expansions to the logarithms of overflowing or underflowing Bessel functions and a
+  large-order series for underflowing `I`, fixing Rice moments and Skellam tail probabilities;
+  `logBesselK` now uses the symmetry in the order instead of returning NaN.
+- Evaluated the exponentially modified Gaussian density and tails through `erfcx`, fixing NaN lower
+  tails for large `rate * sigma`; Irwin-Hall functions on the nearer half of the symmetric support,
+  fixing negative survival probabilities; Planck and zeta survival functions without subtracting from
+  one; von Mises tails below the series threshold by direct integration; and generalized
+  extreme-value moments near the Gumbel limit without cancellation.
+- Fixed negative-binomial sampling for small shapes, where the mixing gamma variate underflows.
+- Made the Brent minimizer behind the generic `Mode()` use a relative tolerance: an absolute
+  `1e-8` never ended the iteration once doubles near the minimum were spaced farther apart. Stable
+  Count modes are searched in `log(x)`, where small exponents are no longer flat over many orders.
+- Fixed `GetSampleStatistics` for more than 10 000 observations, the sort check, cell set and degrees
+  of freedom of `PearsonChiSquaredTest`, and empty-sample handling in the member goodness-of-fit
+  tests. Bulk evaluation helpers no longer write past a shorter output span, and
+  `QuantileFunction` and `QuantileFunction1m` are `const`.
+- `fit` now rejects `Method::Bayes` for normal and Poisson models instead of returning a likelihood
+  estimate; conjugate updates use `fit_bayes`.
+- Added a statistical check that unified maximum-likelihood fits are local maxima of the likelihood,
+  completing the unit-testing checklist of #12, and `dev-unit` and `dev-statistical` test presets.
+- Documented why binomial sampling stays exact instead of switching to a Poisson approximation
+  (#11).
 
 ### Numerical kernel
 

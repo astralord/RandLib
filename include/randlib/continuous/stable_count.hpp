@@ -95,7 +95,18 @@ public:
     [[nodiscard]] long double FourthMoment() const override { return Moment(4); }
     [[nodiscard]] long double Skewness() const override;
     [[nodiscard]] long double ExcessKurtosis() const override;
+    [[nodiscard]] RealType Mode() const override;
 };
+
+template <typename RealType>
+RealType StableCountRand<RealType>::Mode() const
+{
+    /// The standard density is unimodal on (0, ∞) but, for small exponents, flat over many orders of magnitude
+    /// around a mode of order one, so its maximum is searched in log(x)
+    double logMode = 0;
+    math::findMin<double>([this](double u) { return -standardLogDensity(std::exp(u)); }, 0.0, logMode);
+    return static_cast<RealType>(nu + theta * std::exp(logMode));
+}
 
 template <typename RealType>
 void StableCountRand<RealType>::SetParameters(double exponent, double scale, double location)

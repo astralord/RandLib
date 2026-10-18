@@ -188,9 +188,7 @@ std::string ProbabilityDistribution<T>::toStringWithPrecision(const double a_val
 template <typename T>
 void ProbabilityDistribution<T>::CumulativeDistributionFunction(std::span<const T> x, std::span<double> y) const
 {
-    size_t size = x.size();
-    if (size > y.size())
-        return;
+    const size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = this->F(x[i]);
 }
@@ -204,9 +202,7 @@ double ProbabilityDistribution<T>::S(const T &x) const
 template <typename T>
 void ProbabilityDistribution<T>::SurvivalFunction(std::span<const T> x, std::span<double> y) const
 {
-    size_t size = x.size();
-    if (size > y.size())
-        return;
+    const size_t size = std::min(x.size(), y.size());
     for (size_t i = 0; i != size; ++i)
         y[i] = this->S(x[i]);
 }

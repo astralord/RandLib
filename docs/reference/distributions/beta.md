@@ -35,7 +35,8 @@ On the support its density and distribution functions are
 
 where \f$B\f$ is the beta function and \f$I\f$ is the regularized incomplete beta function. The
 direct expression for \f$S\f$ is also the implementation path; the upper tail is not formed as
-`1 - F(x)`. The characteristic function has the closed form
+`1 - F(x)`. Both tails use the exact distances \f$x-a\f$ and \f$b-x\f$ to the ends of the support,
+so neither rounds to an endpoint where \f$1-y\f$ would lose its digits. The characteristic function has the closed form
 
 \f[
  \phi(t)=e^{ita}\,{}_1F_1\!\left(\alpha;\alpha+\beta;itd\right).

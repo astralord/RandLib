@@ -50,6 +50,8 @@ private:
     double logBetaFun = 0; ///< log(B(α, β)
     double betaFun = 1; ///< B(α, β)
 
+    static double logStandardized(double distance, double complement);
+
     /// coefficients for generators
     struct genCoef_t
     {
@@ -474,23 +476,29 @@ double BetaDistribution<RealType>::f(const RealType &x) const
 template <typename RealType>
 double BetaDistribution<RealType>::logf(const RealType &x) const
 {
-    /// Standardize
-    double xSt = (x - a) * bmaInv;
-    if (xSt < 0.0 || xSt > 1.0)
+    if (x < a || x > b)
         return -INFINITY;
-    if (xSt == 0.0) {
+    if (x == a) {
         if (alpha == 1)
             return std::log(beta / bma);
         return (alpha > 1) ? -INFINITY : INFINITY;
     }
-    if (xSt == 1.0) {
+    if (x == b) {
         if (beta == 1)
             return std::log(alpha / bma);
         return (beta > 1) ? -INFINITY : INFINITY;
     }
-    double y = (alpha - 1) * std::log(xSt);
-    y += (beta - 1) * std::log1pl(-xSt);
+    const double xSt = (x - a) * bmaInv, ySt = (b - x) * bmaInv;
+    double y = (alpha - 1) * logStandardized(xSt, ySt);
+    y += (beta - 1) * logStandardized(ySt, xSt);
     return y - logBetaFun - logbma;
+}
+
+template <typename RealType>
+double BetaDistribution<RealType>::logStandardized(double distance, double complement)
+{
+    /// log of a standardized distance, through its complement when that one is the accurate one
+    return (complement < 0.5) ? std::log1p(-complement) : std::log(distance);
 }
 
 template <typename RealType>
@@ -500,12 +508,13 @@ double BetaDistribution<RealType>::F(const RealType &x) const
         return 0.0;
     if (x >= b)
         return 1.0;
-    /// Standardize
-    double xSt = (x - a) * bmaInv;
+    /// Standardize: distances to both ends are exact, unlike 1 minus the standardized value
+    double xSt = std::min((x - a) * bmaInv, 1.0), ySt = std::min((b - x) * bmaInv, 1.0);
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
-        return randlib::consts::two_inv_pi * std::asin(std::sqrt(xSt));
-    return math::ibeta(xSt, alpha, beta, logBetaFun, std::log(xSt), std::log1pl(-xSt));
+        return (xSt <= ySt) ? randlib::consts::two_inv_pi * std::asin(std::sqrt(xSt))
+                            : 1.0 - randlib::consts::two_inv_pi * std::asin(std::sqrt(ySt));
+    return math::ibeta(xSt, alpha, beta, logBetaFun, logStandardized(xSt, ySt), logStandardized(ySt, xSt));
 }
 
 template <typename RealType>
@@ -515,12 +524,13 @@ double BetaDistribution<RealType>::S(const RealType &x) const
         return 1.0;
     if (x >= b)
         return 0.0;
-    /// Standardize
-    double xSt = (x - a) / bma;
+    /// Standardize: distances to both ends are exact, unlike 1 minus the standardized value
+    double xSt = std::min((x - a) * bmaInv, 1.0), ySt = std::min((b - x) * bmaInv, 1.0);
     /// Workaround known case
     if (alpha == beta && beta == 0.5)
-        return randlib::consts::two_inv_pi * std::acos(std::sqrt(xSt));
-    return math::ibeta(1.0 - xSt, beta, alpha, logBetaFun, std::log1pl(-xSt), std::log(xSt));
+        return (ySt <= xSt) ? randlib::consts::two_inv_pi * std::asin(std::sqrt(ySt))
+                            : 1.0 - randlib::consts::two_inv_pi * std::asin(std::sqrt(xSt));
+    return math::ibeta(ySt, beta, alpha, logBetaFun, logStandardized(ySt, xSt), logStandardized(xSt, ySt));
 }
 
 template <typename RealType>

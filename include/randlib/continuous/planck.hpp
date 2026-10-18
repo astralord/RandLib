@@ -59,6 +59,7 @@ public:
     [[nodiscard]] double f(const RealType &x) const override;
     [[nodiscard]] double logf(const RealType &x) const override;
     [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
@@ -172,6 +173,16 @@ double PlanckRand<RealType>::F(const RealType &x) const
     double integral1 = std::exp(aux) / (b * a);
     double integral2 = math::integrate([this](double t) { return h(t); }, 0, x);
     return integral1 + integral2;
+}
+
+template <typename RealType>
+double PlanckRand<RealType>::S(const RealType &x) const
+{
+    if (x <= 0)
+        return 1.0;
+    /// The upper tail is integrated directly; 1 - F would cancel there
+    double upper = math::integrate([this](double t) { return f(t); }, x, INFINITY);
+    return (upper < 0.5) ? upper : 1.0 - F(x);
 }
 
 template <typename RealType>

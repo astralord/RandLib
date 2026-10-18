@@ -330,13 +330,9 @@ struct FitModel<NormalRand<Real>>
 
     static Distribution initial(std::span<const Real> sample, Method method, const FixedParameterMap &)
     {
+        requireMethod(method, "Normal", {Method::MLE, Method::MethodOfMoments, Method::UMVU});
         Distribution distribution;
-        if (method == Method::MLE || method == Method::MethodOfMoments)
-            distribution.Fit(sample);
-        else if (method == Method::UMVU)
-            distribution.Fit(sample, true);
-        else
-            throw fit_error(FitErrorCode::NotApplicable, "Normal distribution: quantile fitting is not implemented");
+        distribution.Fit(sample, method == Method::UMVU);
         return distribution;
     }
 
@@ -1304,8 +1300,7 @@ struct FitModel<PoissonRand<Int>>
 
     static Distribution initial(std::span<const Int> sample, Method method, const FixedParameterMap &)
     {
-        if (method == Method::Quantile)
-            throw fit_error(FitErrorCode::NotApplicable, "Poisson distribution: quantile fitting is not implemented");
+        requireMethod(method, "Poisson", {Method::MLE, Method::MethodOfMoments, Method::UMVU});
         Distribution distribution;
         distribution.Fit(sample);
         return distribution;

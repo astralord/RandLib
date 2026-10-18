@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <initializer_list>
 #include <limits>
 #include <map>
 #include <string>
@@ -118,6 +119,12 @@ TEST_CASE("Unified fitting rejects invalid options", "[fit]")
     CHECK_THROWS_AS(fit<NormalRand<double>>(std::span<const double>{}), fit_error);
     const std::vector<double> nonFinite = {1, std::numeric_limits<double>::quiet_NaN()};
     CHECK_THROWS_AS(fit<NormalRand<double>>(nonFinite), fit_error);
+
+    /// conjugate updates go through fit_bayes; fit must not return a likelihood estimate labelled Bayes
+    CHECK_THROWS_WITH(fit<NormalRand<double>>(sample, Method::Bayes),
+                      "Normal distribution: requested fitting method is not implemented");
+    CHECK_THROWS_AS(fit<PoissonRand<int>>(std::vector<int>{1, 2, 3}, Method::Bayes), fit_error);
+    CHECK(fit<PoissonRand<int>>(std::vector<int>{1, 2, 3}, Method::UMVU).distribution.GetRate() == 2);
 }
 
 TEST_CASE("Unified fitting exposes existing continuous estimators", "[fit]")
@@ -713,6 +720,49 @@ TEST_CASE("Goodness-of-fit reports a discrete chi-squared test", "[fit][gof]")
     CHECK(result.bins == 2);
 
     CHECK_THROWS_AS(goodness_of_fit(BernoulliRand(0.5), std::vector<int>{0, 1}), std::invalid_argument);
+}
+
+TEST_CASE("Member goodness-of-fit tests validate samples and count every cell", "[fit][gof]")
+{
+    /// Binomial(4, 1/2) expects 10, 40, 60, 40 and 10 of 160 observations
+    const BinomialRand<int> binomial(4, 0.5);
+    auto sample = [](std::initializer_list<int> counts) {
+        std::vector<int> values;
+        int value = 0;
+        for (int count : counts) {
+            values.insert(values.end(), count, value);
+            ++value;
+        }
+        return values;
+    };
+    /// Pearson's statistic 8 lies between the 95% quantiles of chi-squared with 3 and 4 degrees of freedom
+    const auto shifted = sample({18, 32, 60, 40, 10});
+    CHECK(binomial.PearsonChiSquaredTest(shifted, 0.05));
+    CHECK_FALSE(binomial.PearsonChiSquaredTest(shifted, 0.05, 1));
+    /// the empty cell {4} contributes its expected count 10 to the statistic 12.5
+    CHECK_FALSE(binomial.PearsonChiSquaredTest(sample({10, 40, 60, 50}), 0.05));
+
+    const std::vector<int> unsorted = {2, 1, 2, 3};
+    CHECK_THROWS_AS(binomial.PearsonChiSquaredTest(unsorted, 0.05), std::invalid_argument);
+    CHECK_THROWS_AS(binomial.PearsonChiSquaredTest(std::span<const int>{}, 0.05), std::invalid_argument);
+    CHECK_THROWS_AS(binomial.PearsonChiSquaredTest(shifted, 1.5), std::invalid_argument);
+    /// every observation in the lower cell (-∞, 2]: the statistic 5.45 has four degrees of freedom
+    const PoissonRand<int> poisson(3);
+    bool accepted = false;
+    REQUIRE_NOTHROW(accepted = poisson.PearsonChiSquaredTest(std::vector<int>{0, 0, 1, 1}, 0.05, 2, 5));
+    CHECK(accepted);
+    /// unobserved values of a heavy tail are accounted for together, not one by one
+    ZetaRand<int> zeta(1.2);
+    zeta.Reseed(5);
+    std::vector<int> heavy(2000);
+    zeta.Sample(heavy);
+    std::ranges::sort(heavy);
+    REQUIRE(heavy.back() > 1000000);
+    CHECK_NOTHROW(zeta.PearsonChiSquaredTest(heavy, 0.05));
+
+    const NormalRand<double> normal;
+    CHECK_THROWS_AS(normal.KolmogorovSmirnovTest(std::span<const double>{}, 0.05), std::invalid_argument);
+    CHECK_THROWS_AS(normal.KolmogorovSmirnovTest(std::vector<double>{0.0}, 0.0), std::invalid_argument);
 }
 
 TEST_CASE("Unified fitting agrees with SciPy on fixed datasets", "[fit][scipy]")

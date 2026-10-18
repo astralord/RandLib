@@ -179,33 +179,49 @@ inline Real ibetaContinuedFraction2(Real x, Real a, Real b, int number, Real log
     return y;
 }
 
+/// Continued fraction of I(x, a, b) (DiDonato and Morris, also Numerical Recipes betacf) by the modified Lentz
+/// method; it converges for x below (a + 1) / (a + b + 2) in far fewer terms than b for large shapes
 template <std::floating_point Real>
-inline Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b,
-                  std::type_identity_t<Real> logBetaFun, std::type_identity_t<Real> logX,
-                  std::type_identity_t<Real> log1mX)
+inline Real ibetaContinuedFractionLentz(Real x, Real a, Real b, Real logBetaFun, Real logX, Real log1mX)
 {
-    /// Check special and incorrect values of parameters
-    if (a <= 0 || b <= 0 || x < 0.0 || x > 1.0)
-        throw std::invalid_argument(
-            "Parameters (a, b) of incomplete beta function should be both positive, but they're equal to " +
-            std::to_string(a) + " and " + std::to_string(b) + " respectively");
-    if (x < 0.0 || x > 1.0)
-        throw std::invalid_argument(
-            "Argument x of incomplete beta function should be in interval [0, 1], but it's equal to " +
-            std::to_string(x));
-    if (x == 0.0)
-        return 0.0;
-    if (x == 1.0)
-        return 1.0;
+    constexpr Real epsilon = std::numeric_limits<Real>::epsilon();
+    constexpr Real tiny = std::numeric_limits<Real>::min() / epsilon;
+    auto guard = [tiny](Real value) { return (std::fabs(value) < tiny) ? tiny : value; };
+    Real c = 1, d = 1 / guard(1 - (a + b) * x / (a + 1));
+    Real fraction = d;
+    for (int m = 1; m < 1000000; ++m) {
+        const Real even = m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m));
+        d = 1 / guard(1 + even * d);
+        c = guard(1 + even / c);
+        fraction *= d * c;
+        const Real odd = -(a + m) * (a + b + m) * x / ((a + 2 * m) * (a + 2 * m + 1));
+        d = 1 / guard(1 + odd * d);
+        c = guard(1 + odd / c);
+        const Real step = d * c;
+        fraction *= step;
+        if (std::fabs(step - 1) <= epsilon)
+            break;
+    }
+    return std::exp(a * logX + b * log1mX - logBetaFun) * fraction / a;
+}
+
+namespace detail
+{
+
+/// Beyond this size of a shape the finite continued fractions of ibetaLowerTail accumulate rounding errors, and
+/// its power series converge at the rate x close to 1
+inline constexpr double IBETA_LARGEST_FINITE_SHAPE = 4096;
+
+} // namespace detail
+
+/// I(x, a, b) for x not above the mean a / (a + b) and shapes up to IBETA_LARGEST_FINITE_SHAPE
+template <std::floating_point Real>
+inline Real ibetaLowerTail(Real x, Real a, Real b, Real logBetaFun, Real logX, Real log1mX)
+{
     if (b == 1.0)
         return std::exp(a * logX);
     if (a == 1.0)
         return -std::expm1(b * log1mX);
-
-    /// If x is greater than mean of Beta distribution,
-    /// convergence of complementary distribution function is faster
-    if (x > a / (a + b))
-        return Real{1} - ibeta(Real{1} - x, b, a);
 
     /// We truncate after 0.45 instead of 0.5 here
     /// in order to avoid x being too close to 0.5
@@ -228,6 +244,53 @@ inline Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Rea
     Real apn = a + static_cast<Real>(number);
     Real residue = ibetaPowerSeries2(x, apn, b, logBeta(apn, b), logX, log1mX);
     return ecd + residue;
+}
+
+template <std::floating_point Real>
+inline Real ibeta(Real x, std::type_identity_t<Real> a, std::type_identity_t<Real> b,
+                  std::type_identity_t<Real> logBetaFun, std::type_identity_t<Real> logX,
+                  std::type_identity_t<Real> log1mX)
+{
+    /// Check special and incorrect values of parameters
+    if (!(a > 0 && b > 0))
+        throw std::invalid_argument(
+            "Parameters (a, b) of incomplete beta function should be both positive, but they're equal to " +
+            std::to_string(a) + " and " + std::to_string(b) + " respectively");
+    if (!(x >= 0.0 && x <= 1.0))
+        throw std::invalid_argument(
+            "Argument x of incomplete beta function should be in interval [0, 1], but it's equal to " +
+            std::to_string(x));
+    /// x may be a rounded complement such as 1 - t for tiny t, so 1 - x is recovered from log(1 - x)
+    if (x == 0.0 || logX == -INFINITY)
+        return 0.0;
+    if (log1mX == -INFINITY)
+        return 1.0;
+    const Real y = (x < 0.5) ? Real{1} - x : std::exp(log1mX);
+
+    /// For large shapes the continued fraction converges below c = (a + 1) / (a + b + 2). For a tiny x the
+    /// complementary fraction at 1 - x would lose its digits, and the direct one still converges up to about
+    /// four standard deviations above c, so the side whose argument is tiny is preferred there
+    if (std::max(a, b) > detail::IBETA_LARGEST_FINITE_SHAPE) {
+        constexpr Real TINY_ARGUMENT = 1e-4, DEVIATIONS = 4;
+        const Real c = (a + 1) / (a + b + 2);
+        const bool directExtends = x < TINY_ARGUMENT && x < c * (1 + DEVIATIONS / std::sqrt(a + 1));
+        const bool complementExtends = y < TINY_ARGUMENT && y < (1 - c) * (1 + DEVIATIONS / std::sqrt(b + 1));
+        const bool direct = (x < c) ? !complementExtends : directExtends;
+        if (direct)
+            return ibetaContinuedFractionLentz<Real>(x, a, b, logBetaFun, logX, log1mX);
+        return Real{1} - ibetaContinuedFractionLentz<Real>(y, b, a, logBetaFun, log1mX, logX);
+    }
+
+    /// If x is greater than mean of Beta distribution,
+    /// convergence of complementary distribution function is faster.
+    /// Close to 1 the series below converge only at the rate x, so the argument is never moved there: a
+    /// tiny argument beyond a tinier mean is evaluated directly, and one within this distance of 1 under
+    /// the mean (for a tiny second shape) through the complement, losing at most ε / I(x, a, b)
+    constexpr Real SLOW_SERIES_DISTANCE = 1e-3;
+    const bool complement = (x > a / (a + b)) ? x >= SLOW_SERIES_DISTANCE : y < SLOW_SERIES_DISTANCE;
+    if (complement)
+        return Real{1} - ibetaLowerTail<Real>(y, b, a, logBetaFun, log1mX, logX);
+    return ibetaLowerTail<Real>(x, a, b, logBetaFun, logX, log1mX);
 }
 
 template <std::floating_point Real>

@@ -79,9 +79,8 @@ S1 location, their logarithms are
 
 The Gaussian `alpha = 2` case has moments for every beta because beta does not change that law. For
 other non-Gaussian skewnesses, `Mean()` and `Variance()` return infinity and standardized higher
-moments return NaN. `CF(0)` is one as for every distribution; `CF(t)` for nonzero `t` throws
-`randlib::not_implemented` because no production-quality log-stable characteristic-function
-algorithm is included in v2.1.
+moments return NaN. The characteristic function has no closed form; `CF(t)` integrates the density
+numerically against \f$e^{itx}\f$, as described in the log-stable reference.
 
 As with any exponential transform, finite-precision sampling can underflow to zero or overflow to
 infinity when the stable draw lies outside the logarithmic range of `Real`. This is observable for

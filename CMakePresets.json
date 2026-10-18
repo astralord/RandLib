@@ -58,6 +58,18 @@
   ],
   "testPresets": [
     {"name": "dev", "configurePreset": "dev", "output": {"outputOnFailure": true}},
+    {
+      "name": "dev-unit",
+      "inherits": "dev",
+      "filter": {"include": {"label": "unit"}},
+      "execution": {"jobs": 4}
+    },
+    {
+      "name": "dev-statistical",
+      "inherits": "dev",
+      "filter": {"include": {"label": "statistical"}},
+      "execution": {"jobs": 4}
+    },
     {"name": "asan", "configurePreset": "asan", "output": {"outputOnFailure": true}},
     {"name": "ubsan", "configurePreset": "ubsan", "output": {"outputOnFailure": true}}
   ]

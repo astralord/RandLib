@@ -25,7 +25,9 @@ where \f$I_\nu\f$ is the modified Bessel function of the first kind. The CDF has
 closed form. Below the implementation crossover \f$\kappa=10.5\f$, RandLib evaluates a backwards
 trigonometric recurrence whose order is selected from \f$\kappa\f$. At larger concentration it
 uses a normal/`erfc` approximation designed for the concentrated regime. The large-concentration
-survival function has its own complementary-`erfc` branch; below the crossover it is \f$1-F\f$.
+survival function has its own complementary-`erfc` branch. Below the crossover both tails use the
+symmetry about \f$\mu\f$: the recurrence evaluates the lower tail only, and a lower tail under
+\f$10^{-3}\f$, where its absolute rounding error would dominate, is integrated directly.
 
 ## Moments and shape
 

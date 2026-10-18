@@ -396,9 +396,8 @@ double BinomialDistribution<IntType>::F(const IntType &k) const
     if (k >= n)
         return 1.0;
     int nmk = n - k, kp1 = k + 1;
-    double logBetaFun = math::lfact(n - kp1);
-    logBetaFun += math::lfact(k);
-    logBetaFun -= lfactn;
+    /// log B(n - k, k + 1) without the cancellation between log-factorials of n
+    double logBetaFun = math::logBeta(nmk, kp1);
     return math::ibeta(q, nmk, kp1, logBetaFun, log1mProb, logProb);
 }
 

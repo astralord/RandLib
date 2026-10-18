@@ -33,9 +33,10 @@ where \f$\zeta\f$ is the Riemann zeta function. With the generalized harmonic nu
  S(k)=\frac{\zeta(s,k+1)}{\zeta(s)},
 \f]
 
-where the second numerator is the Hurwitz zeta tail. Up to \f$k=10^5\f$, the implementation forms
-\f$F\f$ from the harmonic sum and \f$S=1-F\f$. Beyond that threshold it evaluates \f$S\f$
-directly with a ten-correction Euler--Maclaurin expansion and obtains \f$F=1-S\f$.
+where the second numerator is the Hurwitz zeta tail. The implementation evaluates \f$S\f$ directly:
+terms below \f$n=16\f$ are summed, and the rest of the tail uses a ten-correction Euler--Maclaurin
+expansion. For \f$k<16\f$ it forms \f$F\f$ from the harmonic sum and otherwise obtains \f$F=1-S\f$, so
+neither tail is evaluated by subtraction and no evaluation sums more than sixteen terms.
 
 The generating functions are
 

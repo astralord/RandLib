@@ -252,7 +252,9 @@ template <typename IntType, typename T>
 template <std::uniform_random_bit_generator G>
 IntType NegativeBinomialDistribution<IntType, T>::variateThroughGammaPoisson(G &g) const
 {
-    return PoissonRand<IntType>::Variate(GammaRV(g), g);
+    /// For small shapes the gamma rate underflows to zero, the limit in which the Poisson variate is zero
+    const float rate = GammaRV(g);
+    return (rate > 0) ? PoissonRand<IntType>::Variate(rate, g) : 0;
 }
 
 template <typename IntType, typename T>

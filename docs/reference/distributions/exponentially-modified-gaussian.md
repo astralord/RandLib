@@ -44,7 +44,11 @@ With \f$w=(z-\mu)/\sigma\f$ and \f$v=\lambda\sigma\f$,
  S(z)=\Phi(-w)+e^{-\lambda(z-\mu)+v^2/2}\Phi(w-v).
 \f]
 
-The separately implemented survival expression avoids subtracting the complete CDF from one. The
+The separately implemented survival expression avoids subtracting the complete CDF from one. Where
+\f$w<v\f$, the exponential term is evaluated as \f$\tfrac12e^{-w^2/2}\operatorname{erfcx}((v-w)/\sqrt2)\f$
+and, for \f$\mu+\lambda\sigma^2\ge z\f$, the density as
+\f$\tfrac\lambda2\operatorname{erfcx}\bigl((\mu+\lambda\sigma^2-z)/(\sqrt2\sigma)\bigr)e^{-w^2/2}\f$, so an
+underflowing complementary error function never multiplies an overflowing exponential. The
 characteristic function follows directly from independence:
 
 \f[

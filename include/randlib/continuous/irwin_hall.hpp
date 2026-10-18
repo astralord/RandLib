@@ -42,6 +42,7 @@ public:
     [[nodiscard]] double f(const RealType &x) const override;
     [[nodiscard]] double logf(const RealType &x) const override;
     [[nodiscard]] double F(const RealType &x) const override;
+    [[nodiscard]] double S(const RealType &x) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] RealType operator()(G &g) const;
 
@@ -53,6 +54,8 @@ public:
     [[nodiscard]] long double ExcessKurtosis() const override;
 
 private:
+    /// alternating sum of the density (power n - 1) or distribution function (power n) for x ≤ n / 2
+    double lowerHalfSum(double x, int power) const;
     std::complex<double> CFImpl(double t) const override;
 };
 
@@ -82,6 +85,21 @@ void IrwinHallRand<RealType>::SetNumber(int number)
 }
 
 template <typename RealType>
+double IrwinHallRand<RealType>::lowerHalfSum(double x, int power) const
+{
+    double sum = 0.0;
+    int last = std::floor(x);
+    for (int i = 0; i <= last; ++i) {
+        double add = power * std::log(x - i);
+        add -= math::lfact(i);
+        add -= math::lfact(n - i);
+        add = std::exp(add);
+        sum += (i % 2) ? -add : add;
+    }
+    return sum;
+}
+
+template <typename RealType>
 double IrwinHallRand<RealType>::f(const RealType &x) const
 {
     if (x < 0 || x > n)
@@ -92,17 +110,8 @@ double IrwinHallRand<RealType>::f(const RealType &x) const
         return 1.0;
     if (n == 2)
         return (x <= 1.0) ? x : 2.0 - x;
-    /// General case
-    double sum = 0.0;
-    int last = std::floor(x);
-    for (int i = 0; i <= last; ++i) {
-        double add = (n - 1) * std::log(x - i);
-        add -= math::lfact(i);
-        add -= math::lfact(n - i);
-        add = std::exp(add);
-        sum += (i % 2) ? -add : add;
-    }
-    return n * sum;
+    /// General case, symmetric around n / 2, where the alternating sum cancels least
+    return n * lowerHalfSum(std::min<double>(x, n - x), n - 1);
 }
 
 template <typename RealType>
@@ -128,17 +137,20 @@ double IrwinHallRand<RealType>::F(const RealType &x) const
         double temp = 2.0 - x;
         return 1.0 - 0.5 * temp * temp;
     }
-    /// General case
-    double sum = 0.0;
-    int last = std::floor(x);
-    for (int i = 0; i <= last; ++i) {
-        double add = n * std::log(x - i);
-        add -= math::lfact(i);
-        add -= math::lfact(n - i);
-        add = std::exp(add);
-        sum += (i % 2) ? -add : add;
-    }
-    return sum;
+    /// General case: n - X has the same distribution as X
+    return (2 * x <= n) ? lowerHalfSum(x, n) : 1.0 - lowerHalfSum(n - x, n);
+}
+
+template <typename RealType>
+double IrwinHallRand<RealType>::S(const RealType &x) const
+{
+    if (x <= 0)
+        return 1.0;
+    if (x >= n)
+        return 0.0;
+    if (n <= 2)
+        return F(n - x);
+    return (2 * x >= n) ? lowerHalfSum(n - x, n) : 1.0 - lowerHalfSum(x, n);
 }
 
 template <typename RealType>

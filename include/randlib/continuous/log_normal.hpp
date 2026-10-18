@@ -246,8 +246,39 @@ RealType LogNormalRand<RealType>::quantileImpl1m(double p) const
 template <typename RealType>
 std::complex<double> LogNormalRand<RealType>::CFImpl(double t) const
 {
-    if (X.Variance() < 4)
-        return UnivariateDistribution<RealType>::CFImpl(t);
+    /// The Laplace transform at -it in the exact saddle-point form of Asmussen, Jensen and Rojas-Nandayapa
+    /// (2016): with W = W0(-i t σ² e^μ), φ(t) = exp(-(W² + 2W) / (2σ²)) E[exp(-(W / σ²)(e^{σZ} - 1 - σZ))] for
+    /// Z ~ N(0, 1). As Re W > 0, the integrand is bounded by the normal density and the expectation is smooth
+    /// and of order one, so φ keeps its relative accuracy where it is tiny
+    static constexpr double NORMAL_RANGE = 10;
+    const double sigma = X.GetScale(), sigmaSq = sigma * sigma;
+    const std::complex<double> w = math::W0Lambert(std::complex<double>(0, -t * sigmaSq * expMu));
+    const std::complex<double> scaled = w / sigmaSq;
+    auto integrand = [sigma, scaled](double u) {
+        const double v = sigma * u;
+        /// e^v - 1 - v without cancellation for small v
+        double excess = 0;
+        if (std::fabs(v) < 0.5) {
+            double term = v;
+            for (int k = 2; k < 30 && std::fabs(term) > std::numeric_limits<double>::epsilon() * std::fabs(excess);
+                 ++k) {
+                term *= v / k;
+                excess += term;
+            }
+        } else {
+            excess = std::expm1(v) - v;
+        }
+        return std::exp(-0.5 * u * u - scaled * excess);
+    };
+    const double re =
+        math::integrate([&integrand](double u) { return integrand(u).real(); }, -NORMAL_RANGE, NORMAL_RANGE);
+    const double im =
+        math::integrate([&integrand](double u) { return integrand(u).imag(); }, -NORMAL_RANGE, NORMAL_RANGE);
+    const std::complex<double> expectation =
+        std::complex<double>(re, im) / static_cast<double>(randlib::consts::sqrt2pi);
+    const std::complex<double> value = std::exp(-(w * w + 2.0 * w) / (2 * sigmaSq)) * expectation;
+    if (std::isfinite(value.real()) && std::isfinite(value.imag()))
+        return value;
     return this->integrateCharacteristicFunction(t);
 }
 

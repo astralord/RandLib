@@ -162,7 +162,12 @@ double BetaPrimeRand<RealType>::logf(const RealType &x) const
 template <typename RealType>
 double BetaPrimeRand<RealType>::F(const RealType &x) const
 {
-    return (x > 0) ? B.F(x / (1.0 + x)) : 0;
+    if (x <= 0)
+        return 0;
+    if (std::isinf(x))
+        return 1;
+    /// I_{x/(1+x)}(α, β) with exact logarithms: x / (1 + x) itself rounds to 1 for large x
+    return math::ibeta(x / (1.0 + x), alpha, beta, GetLogBetaFunction(), std::log(x) - std::log1pl(x), -std::log1pl(x));
 }
 
 template <typename RealType>
@@ -170,6 +175,8 @@ double BetaPrimeRand<RealType>::S(const RealType &x) const
 {
     if (x <= 0)
         return 1;
+    if (std::isinf(x))
+        return 0;
     /// I_{1/(1+x)}(β, α) directly: forming x / (1 + x) would round to 1 for large x
     double y = 1.0 / (1.0 + x);
     return math::ibeta(y, beta, alpha, GetLogBetaFunction(), -std::log1pl(x), std::log(x) - std::log1pl(x));

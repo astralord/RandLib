@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <functional>
+#include <span>
 #include <vector>
 
 using namespace randlib;
@@ -315,4 +316,68 @@ TEST_CASE("Unified fits recover parameters across grids and sample sizes", "[fit
             requireClose(fitted.distribution.GetRate() / rate, 1, 0.2);
         }
     }
+}
+
+namespace
+{
+
+/// L(θ - ε) ≤ L(θ) ≥ L(θ + ε) for every free continuous parameter θ of a unified maximum-likelihood fit
+template <class Distribution>
+void requireUnifiedLocalMaximum(std::span<const typename Distribution::value_type> sample)
+{
+    const auto result = fit<Distribution>(sample);
+    REQUIRE(result.converged);
+    const auto specifications = detail::FitModel<Distribution>::parameters(result.distribution);
+    std::vector<bool> free(result.parameters.size());
+    for (size_t i = 0; i < free.size(); ++i)
+        free[i] = !result.fixed[i] && !specifications[i].integral;
+    requireLocalMaximum(
+        [&sample](const std::vector<double> &parameters) {
+            return detail::FitModel<Distribution>::make(parameters).LogLikelihoodFunction(sample);
+        },
+        result.parameters, free);
+}
+
+template <class Distribution, class Source>
+void checkUnifiedLocalMaximum(const Source &source, unsigned long seed)
+{
+    INFO(source.Name());
+    using Value = typename Distribution::value_type;
+    const auto sample = draw<Source, Value>(source, seed, 2000);
+    requireUnifiedLocalMaximum<Distribution>(std::span<const Value>(sample));
+}
+
+} // namespace
+
+TEST_CASE("Unified maximum-likelihood fits are local maxima of the likelihood", "[fitting][fit-maximum]")
+{
+    unsigned long seed = 300;
+    checkUnifiedLocalMaximum<NormalRand<double>>(NormalRand<double>(1, 2), seed++);
+    checkUnifiedLocalMaximum<StudentTRand<double>>(StudentTRand<double>(4, 1, 2), seed++);
+    checkUnifiedLocalMaximum<NoncentralTRand<double>>(NoncentralTRand<double>(6, 1.5), seed++);
+    checkUnifiedLocalMaximum<CauchyRand<double>>(CauchyRand<double>(-1, 0.5), seed++);
+    checkUnifiedLocalMaximum<GumbelRand<double>>(GumbelRand<double>(2, 3), seed++);
+    checkUnifiedLocalMaximum<FrechetRand<double>>(FrechetRand<double>(3, 2, 1), seed++);
+    checkUnifiedLocalMaximum<GeneralizedParetoRand<double>>(GeneralizedParetoRand<double>(0.2, 1.5, 0), seed++);
+    checkUnifiedLocalMaximum<GeneralizedExtremeValueRand<double>>(GeneralizedExtremeValueRand<double>(0.1, 2, -1),
+                                                                  seed++);
+    checkUnifiedLocalMaximum<InverseGammaRand<double>>(InverseGammaRand<double>(3, 2), seed++);
+    checkUnifiedLocalMaximum<InverseGaussianRand<double>>(InverseGaussianRand<double>(2, 5), seed++);
+    checkUnifiedLocalMaximum<NoncentralChiSquaredRand<double>>(NoncentralChiSquaredRand<double>(3, 4), seed++);
+    checkUnifiedLocalMaximum<LogNormalRand<double>>(LogNormalRand<double>(0.5, 0.3), seed++);
+    checkUnifiedLocalMaximum<ExponentialRand<double>>(ExponentialRand<double>(2.5), seed++);
+    checkUnifiedLocalMaximum<GammaRand<double>>(GammaRand<double>(2.5, 0.5), seed++);
+    checkUnifiedLocalMaximum<ErlangRand<double>>(ErlangRand<double>(3, 2), seed++);
+    checkUnifiedLocalMaximum<BetaRand<double>>(BetaRand<double>(2, 5), seed++);
+    checkUnifiedLocalMaximum<BetaPrimeRand<double>>(BetaPrimeRand<double>(3, 4), seed++);
+    checkUnifiedLocalMaximum<WeibullRand<double>>(WeibullRand<double>(2, 1.5), seed++);
+    checkUnifiedLocalMaximum<LaplaceRand<double>>(LaplaceRand<double>(1, 2), seed++);
+    checkUnifiedLocalMaximum<LogisticRand<double>>(LogisticRand<double>(1, 2), seed++);
+    checkUnifiedLocalMaximum<LevyRand<double>>(LevyRand<double>(0, 1), seed++);
+    checkUnifiedLocalMaximum<RayleighRand<double>>(RayleighRand<double>(2), seed++);
+    checkUnifiedLocalMaximum<ParetoRand<double>>(ParetoRand<double>(3, 2), seed++);
+    checkUnifiedLocalMaximum<UniformRand<double>>(UniformRand<double>(-1, 3), seed++);
+    checkUnifiedLocalMaximum<PoissonRand<int>>(PoissonRand<int>(4.5), seed++);
+    checkUnifiedLocalMaximum<GeometricRand<int>>(GeometricRand<int>(0.3), seed++);
+    checkUnifiedLocalMaximum<NegativeBinomialRand<int, double>>(NegativeBinomialRand<int, double>(3.5, 0.4), seed++);
 }

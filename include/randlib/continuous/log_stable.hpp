@@ -82,7 +82,7 @@ public:
 private:
     RealType quantileImpl(double p) const override { return std::exp(stable.Quantile(p)); }
     RealType quantileImpl1m(double p) const override { return std::exp(stable.Quantile1m(p)); }
-    std::complex<double> CFImpl(double) const override;
+    std::complex<double> CFImpl(double t) const override;
 };
 
 template <typename RealType>
@@ -225,9 +225,9 @@ RealType LogStableRand<RealType>::Mode() const
 }
 
 template <typename RealType>
-std::complex<double> LogStableRand<RealType>::CFImpl(double) const
+std::complex<double> LogStableRand<RealType>::CFImpl(double t) const
 {
-    throw not_implemented("Log-stable characteristic function is not implemented");
+    return this->integrateCharacteristicFunction(t);
 }
 
 } // namespace randlib

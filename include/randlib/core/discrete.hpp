@@ -135,14 +135,16 @@ namespace randlib
 template <typename IntType>
 void DiscreteDistribution<IntType>::ProbabilityMassFunction(std::span<const IntType> x, std::span<double> y) const
 {
-    for (size_t i = 0; i != x.size(); ++i)
+    const size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->P(x[i]);
 }
 
 template <typename IntType>
 void DiscreteDistribution<IntType>::LogProbabilityMassFunction(std::span<const IntType> x, std::span<double> y) const
 {
-    for (size_t i = 0; i != x.size(); ++i)
+    const size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->logP(x[i]);
 }
 
@@ -389,14 +391,17 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(std::span<const IntTyp
                                                           int lowerBoundary, int upperBoundary,
                                                           size_t numberOfEstimatedParameters) const
 {
-    size_t n = orderStatistic.size(), i = 0, k = 0;
-    double nInv = 1.0 / n, sum = 0.0;
+    const size_t n = orderStatistic.size();
 
     /// Sanity checks
+    if (n == 0)
+        throw std::invalid_argument("Order statistic should not be empty");
+    if (!(alpha > 0 && alpha < 1))
+        throw std::invalid_argument("Significance level should be positive and smaller than 1");
     if (lowerBoundary >= upperBoundary)
         throw std::invalid_argument("Lower boundary should be smaller than upper one");
     for (size_t j = 1; j != n; ++j) {
-        if (orderStatistic[i] < orderStatistic[j - 1])
+        if (orderStatistic[j] < orderStatistic[j - 1])
             throw std::invalid_argument("Order statistic should be sorted in ascending order");
     }
     if (orderStatistic[0] < this->MinValue())
@@ -408,42 +413,53 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(std::span<const IntTyp
             "Some elements in the sample are too large to belong to this distribution, they should be smaller than " +
             this->toStringWithPrecision(this->MaxValue()));
 
-    /// Lower interval
-    IntType x = orderStatistic[0];
-    if (lowerBoundary > this->MinValue()) {
-        auto upIt = std::upper_bound(orderStatistic.begin(), orderStatistic.end(), lowerBoundary);
-        i += upIt - orderStatistic.begin();
-        x = orderStatistic[i];
-        double prob = nInv * i, expectedProb = this->F(lowerBoundary);
-        double addon = prob - expectedProb;
-        addon *= addon;
-        addon /= expectedProb;
-        sum += addon;
+    /// Cells are (-∞, lower], every value in (lower, upper], including unobserved ones, and (upper, ∞).
+    /// A boundary at the end of the support is replaced by the extreme observation, so the tails beyond
+    /// the sample are grouped into one cell each. An unobserved value contributes its probability to the
+    /// sum, so those cells are accounted for together
+    const long long minValue = this->MinValue(), maxValue = this->MaxValue();
+    const long long lower = (lowerBoundary > minValue) ? lowerBoundary : orderStatistic[0] - 1LL;
+    const long long upper = (upperBoundary < maxValue) ? upperBoundary : orderStatistic[n - 1];
+    const double nInv = 1.0 / n;
+    double sum = 0.0;
+    size_t k = 0;
+    auto addCell = [&sum, &k, nInv](size_t count, double expectedProb) {
+        if (!(expectedProb > 0)) {
+            if (count > 0)
+                sum = INFINITY;
+            return;
+        }
+        double addon = nInv * count - expectedProb;
+        sum += addon * addon / expectedProb;
         ++k;
+    };
+
+    size_t i = 0;
+    if (lower >= minValue) {
+        i = std::upper_bound(orderStatistic.begin(), orderStatistic.end(), lower) - orderStatistic.begin();
+        addCell(i, this->F(static_cast<IntType>(lower)));
     }
-    /// Middle intervals
-    while (i < n && x < upperBoundary) {
-        size_t count = 1;
-        x = orderStatistic[i];
-        while (i + count < n && x == orderStatistic[i + count])
+    double observedMass = 0;
+    long long distinct = 0;
+    while (i < n && orderStatistic[i] <= upper) {
+        const IntType x = orderStatistic[i];
+        size_t count = 0;
+        for (; i < n && orderStatistic[i] == x; ++i)
             ++count;
-        double prob = nInv * count, expectedProb = this->P(x);
-        double addon = prob - expectedProb;
-        addon *= addon;
-        addon /= expectedProb;
-        sum += addon;
-        i += count;
-        ++k;
+        const double probability = this->P(x);
+        observedMass += probability;
+        ++distinct;
+        addCell(count, probability);
     }
-    /// Upper interval
-    if (upperBoundary < this->MaxValue()) {
-        double prob = nInv * (n - i), expectedProb = this->S(upperBoundary);
-        double addon = prob - expectedProb;
-        addon *= addon;
-        addon /= expectedProb;
-        sum += addon;
-        ++k;
+    const long long unobserved = upper - lower - distinct;
+    if (unobserved > 0) {
+        const double cellMass =
+            this->F(static_cast<IntType>(upper)) - ((lower >= minValue) ? this->F(static_cast<IntType>(lower)) : 0.0);
+        sum += std::max(cellMass - observedMass, 0.0);
+        k += static_cast<size_t>(unobserved);
     }
+    if (upper < maxValue)
+        addCell(n - i, this->S(static_cast<IntType>(upper)));
 
     if (k <= numberOfEstimatedParameters + 1) {
         throw std::invalid_argument("Sample is too small, number of groups (" + this->toStringWithPrecision(k) +
@@ -451,7 +467,7 @@ bool DiscreteDistribution<IntType>::PearsonChiSquaredTest(std::span<const IntTyp
                                     this->toStringWithPrecision(numberOfEstimatedParameters + 1) + ")");
     }
     double statistic = n * sum;
-    ChiSquaredRand X(k - 1);
+    ChiSquaredRand X(k - 1 - numberOfEstimatedParameters);
     double q = X.Quantile1m(alpha);
     return statistic <= q;
 }

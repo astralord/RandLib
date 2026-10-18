@@ -26,6 +26,7 @@ class ZetaRand final : public DiscreteDistribution<IntType>
     double zetaS = randlib::consts::pi_sq / 6.0; ///< ζ(s), where ζ stands for Riemann zeta-function
     double logZetaS = 2 * randlib::consts::lnpi - randlib::consts::ln2 - randlib::consts::ln3; ///< ln(ζ(s))
     double b = 0.5; ///< 1 - 2^(1-s)
+    static constexpr int DIRECT_TERMS = 16; ///< terms summed directly before the Euler-Maclaurin tail
 
 public:
     explicit ZetaRand(double exponent = 2.0);
@@ -129,7 +130,7 @@ double ZetaRand<IntType>::F(const IntType &k) const
 {
     if (k < 1)
         return 0.0;
-    return (k <= 100000) ? math::harmonicNumber(s, k) / zetaS : 1.0 - S(k);
+    return (k < DIRECT_TERMS) ? math::harmonicNumber(s, k) / zetaS : 1.0 - S(k);
 }
 
 template <typename IntType>
@@ -137,9 +138,13 @@ double ZetaRand<IntType>::S(const IntType &k) const
 {
     if (k < 1)
         return 1.0;
-    if (k <= 100000)
-        return 1.0 - F(k);
-    return static_cast<double>(detail::zetaTail(s, static_cast<long double>(k) + 1.0L) / zetaS);
+    /// Σ_{n > k} n^{-s}: the first terms directly, the rest by Euler-Maclaurin, without cancellation
+    long double tail = 0;
+    long double first = static_cast<long double>(k) + 1.0L;
+    for (; first < DIRECT_TERMS; first += 1)
+        tail += std::pow(first, -static_cast<long double>(s));
+    tail += detail::zetaTail(s, first);
+    return static_cast<double>(tail / zetaS);
 }
 
 template <typename IntType>

@@ -104,15 +104,26 @@ namespace randlib
 template <typename RealType>
 std::complex<double> ContinuousDistribution<RealType>::integrateCharacteristicFunction(double t) const
 {
-    const RealType lower = this->MinValue();
-    return math::integrateOscillatory([this](double x) { return this->f(x); }, t, static_cast<double>(lower));
+    /// Within δ = 1e-11 / t of the end a of the support e^{itx} = e^{ita} to that accuracy, so the mass
+    /// there enters as F(a + δ) e^{ita}, whatever its singularity. The walk over half-periods starts where
+    /// the remaining mass begins and stops when the survival function bounds the rest, so that a bulk many
+    /// periods above the end of the support is not skipped as negligible
+    static constexpr double NEGLIGIBLE_MASS = 1e-15, PHASE_TOLERANCE = 1e-11;
+    const double minimum = this->MinValue();
+    const bool bounded = std::isfinite(minimum);
+    const double head = bounded ? minimum + PHASE_TOLERANCE / t : -INFINITY;
+    const double lower = std::max(head, static_cast<double>(this->Quantile(NEGLIGIBLE_MASS)));
+    const std::complex<double> headMass = bounded ? this->F(head) * std::polar(1.0, t * minimum) : 0.0;
+    return headMass + math::integrateOscillatory([this](double x) { return this->f(x); }, t, lower,
+                                                 [this](double x) { return this->S(x); });
 }
 
 template <typename RealType>
 void ContinuousDistribution<RealType>::ProbabilityDensityFunction(std::span<const RealType> x,
                                                                   std::span<double> y) const
 {
-    for (size_t i = 0; i != x.size(); ++i)
+    const size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->f(x[i]);
 }
 
@@ -120,7 +131,8 @@ template <typename RealType>
 void ContinuousDistribution<RealType>::LogProbabilityDensityFunction(std::span<const RealType> x,
                                                                      std::span<double> y) const
 {
-    for (size_t i = 0; i != x.size(); ++i)
+    const size_t size = std::min(x.size(), y.size());
+    for (size_t i = 0; i != size; ++i)
         y[i] = this->logf(x[i]);
 }
 
@@ -286,77 +298,36 @@ long double ContinuousDistribution<RealType>::ExpectedValue(const std::function<
 {
     /// attempt to calculate expected value by numerical method
     /// use for distributions w/o explicit formula
-    RealType lowerBoundary = minPoint, upperBoundary = maxPoint;
-    if (this->isRightBounded())
-        lowerBoundary = std::max(minPoint, lowerBoundary);
-    if (this->isLeftBounded())
-        upperBoundary = std::min(maxPoint, upperBoundary);
-
-    if (lowerBoundary >= upperBoundary)
+    const double lowerBoundary = std::max(minPoint, this->MinValue());
+    const double upperBoundary = std::min(maxPoint, this->MaxValue());
+    if (!(lowerBoundary < upperBoundary))
         return 0.0;
 
-    bool isLeftBoundFinite = std::isfinite(lowerBoundary), isRightBoundFinite = std::isfinite(upperBoundary);
-
-    /// Integrate on finite interval [a, b]
-    if (isLeftBoundFinite && isRightBoundFinite) {
+    /// Each side of the median is mapped by x = c ± s u / (1 - u) with the bulk scale s = 1 / f(c), so
+    /// that a narrow peak far from the origin is resolved and infinite tails become finite intervals
+    double center = std::clamp<double>(this->Median(), lowerBoundary, upperBoundary);
+    if (!std::isfinite(center))
+        center = std::isfinite(lowerBoundary) ? lowerBoundary : (std::isfinite(upperBoundary) ? upperBoundary : 0.0);
+    double scale = 1.0 / this->f(center);
+    if (!(scale > 0) || !std::isfinite(scale))
+        scale = 1.0;
+    auto side = [this, &funPtr, center, scale](double end, double direction) -> long double {
+        const double ratio = direction * (end - center) / scale;
+        if (!(ratio > 0))
+            return 0.0;
+        const double limit = std::isfinite(ratio) ? ratio / (1 + ratio) : 1.0;
         return math::integrate(
-            [this, funPtr](double x) {
-                double y = funPtr(x);
-                return (y == 0.0) ? 0.0 : y * f(x);
+            [this, &funPtr, center, scale, direction](double u) {
+                if (u >= 1.0)
+                    return 0.0;
+                const double denominator = 1.0 - u;
+                const double x = center + direction * scale * u / denominator;
+                const double y = funPtr(x);
+                return (y == 0.0) ? 0.0 : y * this->f(x) * scale / (denominator * denominator);
             },
-            lowerBoundary, upperBoundary);
-    }
-
-    /// Integrate on semifinite interval [a, inf)
-    if (isLeftBoundFinite) {
-        return math::integrate(
-            [this, funPtr, lowerBoundary](double x) {
-                if (x >= 1.0)
-                    return 0.0;
-                double denom = 1.0 - x;
-                double t = lowerBoundary + x / denom;
-                double y = funPtr(t);
-                if (y == 0.0)
-                    return 0.0;
-                y *= this->f(t);
-                denom *= denom;
-                return y / denom;
-            },
-            0.0, 1.0);
-    }
-
-    /// Integrate on semifinite intervale (-inf, b]
-    if (isRightBoundFinite) {
-        return math::integrate(
-            [this, funPtr, upperBoundary](double x) {
-                if (x <= 0.0)
-                    return 0.0;
-                double t = upperBoundary - (1.0 - x) / x;
-                double y = funPtr(t);
-                if (y == 0.0)
-                    return 0.0;
-                y *= this->f(t);
-                return y / (x * x);
-            },
-            0.0, 1.0);
-    }
-
-    /// Infinite case
-    return math::integrate(
-        [this, funPtr](double x) {
-            if (std::fabs(x) >= 1.0)
-                return 0.0;
-            double x2 = x * x;
-            double denom = 1.0 - x2;
-            double t = x / denom;
-            double y = funPtr(t);
-            if (y == 0.0)
-                return 0.0;
-            y *= this->f(t);
-            denom *= denom;
-            return y * (1.0 + x2) / denom;
-        },
-        -1.0, 1.0);
+            0.0, limit);
+    };
+    return side(lowerBoundary, -1.0) + side(upperBoundary, 1.0);
 }
 
 template <typename RealType>
@@ -388,9 +359,13 @@ template <typename RealType>
 bool ContinuousDistribution<RealType>::KolmogorovSmirnovTest(std::span<const RealType> orderStatistic,
                                                              double alpha) const
 {
+    size_t n = orderStatistic.size();
+    if (n == 0)
+        throw std::invalid_argument("Order statistic should not be empty");
+    if (!(alpha > 0 && alpha < 1))
+        throw std::invalid_argument("Significance level should be positive and smaller than 1");
     KolmogorovSmirnovRand KSRand;
     double K = KSRand.Quantile1m(alpha);
-    size_t n = orderStatistic.size();
     double interval = K / std::sqrt(n);
     double nInv = 1.0 / n;
     double Fn = 0.0;

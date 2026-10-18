@@ -43,9 +43,12 @@ The distribution and survival functions use the generalized Marcum functions,
 
 ## Numerical evaluation and quantiles
 
-RandLib evaluates both tails directly through a Poisson mixture centered at the combined
-Poisson/incomplete-gamma saddle. The summation proceeds outward in both directions with scaled
-recurrences, avoiding both a long walk from index zero and the cancellation in \f$1-F\f$. At
+RandLib evaluates the smaller tail directly through a Poisson mixture centered at the combined
+Poisson/incomplete-gamma saddle, the lower one below the mean \f$k/2+\lambda/2\f$ of the mixture and
+the upper one above it; the other tail is its complement, so \f$F+S=1\f$ to rounding. The summation
+proceeds outward in both directions with stable recurrences, avoiding both a long walk from index
+zero and the cancellation in \f$1-F\f$. Below \f$\lambda/2=30\f$ the lower tail uses the direct
+Marcum series. At
 \f$\lambda=0\f$, the exact regularized incomplete-gamma limits avoid sending a singular zero
 argument through the Bessel or Marcum formulas.
 

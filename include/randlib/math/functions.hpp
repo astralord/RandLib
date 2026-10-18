@@ -5,6 +5,7 @@
 #include <concepts>
 #include <functional>
 #include <complex>
+#include <limits>
 #include <vector>
 #include <utility>
 #include <type_traits>
@@ -149,6 +150,13 @@ Real logBesselK(std::type_identity_t<Real> nu, Real x);
  */
 template <std::floating_point Real>
 Real W0Lambert(Real x, std::type_identity_t<Real> epsilon = Real{1e-11});
+
+/**
+ * @param z complex argument off the branch cut (-∞, -1/e]
+ * @return principal branch W0 of the Lambert W function: such w that w e^w = z
+ */
+template <std::floating_point Real>
+std::complex<Real> W0Lambert(std::complex<Real> z);
 
 /**
  * @param x
@@ -536,6 +544,35 @@ inline Real harmonicNumber(Real exponent, int number)
     return res;
 }
 
+namespace detail
+{
+
+/**
+ * @param nu order
+ * @param x large argument
+ * @param sign -1 for I and +1 for K
+ * @return log Σ_k sign^k a_k(ν) / x^k of the Hankel expansions of I and K, truncated at the smallest term
+ */
+template <std::floating_point Real>
+inline Real logHankelSeries(Real nu, Real x, int sign)
+{
+    const Real mu = 4 * nu * nu;
+    Real term = 1, sum = 1;
+    for (int k = 1; k < 64; ++k) {
+        const Real odd = 2 * k - 1;
+        const Real next = term * sign * (mu - odd * odd) / (8 * k * x);
+        if (!(std::fabs(next) < std::fabs(term)))
+            break;
+        term = next;
+        sum += term;
+        if (std::fabs(term) <= std::numeric_limits<Real>::epsilon() * std::fabs(sum))
+            break;
+    }
+    return std::log(sum);
+}
+
+} // namespace detail
+
 template <std::floating_point Real>
 inline Real logBesselI(std::type_identity_t<Real> nu, Real x)
 {
@@ -578,25 +615,39 @@ inline Real logBesselI(std::type_identity_t<Real> nu, Real x)
         return (y <= 0) ? -INFINITY : std::log(y);
     }
 
-    Real besseli = math::besselI(nu, x); // TODO: expand Hankel asymptotic expansions
+    Real besseli = math::besselI(nu, x);
+    if (std::isfinite(besseli) && !(besseli > Real{1e-250})) {
+        /// Large order: I_ν(x) = (x/2)^ν / Γ(ν + 1) Σ_j (x²/4)^j / (j! (ν + 1)_j) underflows, its logarithm does not
+        const Real quarterSquare = Real{0.25} * x * x;
+        Real term = 1, sum = 1;
+        for (int j = 1; j < 100000; ++j) {
+            term *= quarterSquare / (j * (nu + j));
+            sum += term;
+            if (term <= std::numeric_limits<Real>::epsilon() * sum)
+                break;
+        }
+        return nu * std::log(Real{0.5} * x) - std::lgamma(nu + 1) + std::log(sum);
+    }
     return std::isfinite(besseli) ? std::log(besseli)
-                                  : x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x));
+                                  : x - 0.5 * (randlib::consts::ln2 + randlib::consts::lnpi + std::log(x)) +
+                                        detail::logHankelSeries<Real>(nu, x, -1);
 }
 
 template <std::floating_point Real>
 inline Real logBesselK(std::type_identity_t<Real> nu, Real x)
 {
-    if (nu < 0.0)
-        return NAN; /// K(-ν, x) = -K(ν, x) < 0
+    /// K(-ν, x) = K(ν, x)
+    nu = std::fabs(nu);
 
     if (x == 0.0)
         return INFINITY;
 
     Real besselk = 0;
     if (nu == 0.5 || (besselk = math::besselK(nu, x)) == 0)
-        return 0.5 * (randlib::consts::lnpi - randlib::consts::ln2 - std::log(x)) - x;
+        return 0.5 * (randlib::consts::lnpi - randlib::consts::ln2 - std::log(x)) - x +
+               detail::logHankelSeries<Real>(nu, x, 1);
 
-    if (!std::isfinite(besselk)) // TODO: expand Hankel asymptotic expansions
+    if (!std::isfinite(besselk))
         return (nu == 0) ? std::log(-std::log(x))
                          : std::lgamma(nu) - static_cast<Real>(randlib::consts::ln2) - nu * std::log(Real{0.5} * x);
 
@@ -646,6 +697,25 @@ inline Real W0Lambert(Real x, std::type_identity_t<Real> epsilon)
         w = logX - loglogX;
     }
     return detail::WLambert(x, w, epsilon);
+}
+
+template <std::floating_point Real>
+inline std::complex<Real> W0Lambert(std::complex<Real> z)
+{
+    using Complex = std::complex<Real>;
+    if (z == Complex(0))
+        return 0;
+    /// Winitzki's approximation, refined by Halley's iteration
+    const Complex logShifted = std::log(Real(1) + z);
+    Complex w = logShifted * (Real(1) - std::log(Real(1) + logShifted) / (Real(2) + logShifted));
+    for (int iteration = 0; iteration < 64; ++iteration) {
+        const Complex exponential = std::exp(w), residual = w * exponential - z, wp1 = w + Real(1);
+        const Complex step = residual / (exponential * wp1 - (w + Real(2)) * residual / (Real(2) * wp1));
+        w -= step;
+        if (std::abs(step) <= 4 * std::numeric_limits<Real>::epsilon() * std::abs(w))
+            break;
+    }
+    return w;
 }
 
 template <std::floating_point Real>
@@ -769,6 +839,51 @@ inline Real MarcumQSeries(Real mu, Real x, Real y, Real logX, Real logY)
         shape += 1;
         delta *= y / shape;
         const Real term = weight * std::min(Real{1}, q);
+        sum += term;
+        decreasing = (term <= previousTerm) ? decreasing + 1 : 0;
+        if (decreasing >= 8 && term <= 4 * std::numeric_limits<Real>::epsilon() * sum)
+            break;
+        previousTerm = term;
+    }
+    return std::clamp(sum, Real{0}, Real{1});
+}
+
+/// Σ e^{-x} x^n / n! P(μ + n, y), summed outwards from the dominant Poisson term. Below that term the
+/// lower incomplete gamma function grows by the stable recurrence P(a - 1, y) = P(a, y) + y^{a-1} e^{-y} / Γ(a)
+template <std::floating_point Real>
+inline Real MarcumPSaddleSeries(Real mu, Real x, Real y, Real logX, Real logY)
+{
+    if (x <= 0)
+        return pgamma(mu, y, logY);
+    const Real saddle = Real{0.5} * (std::sqrt(mu * mu + 4 * x * y) - mu);
+    const int center = static_cast<int>(std::floor(std::max(x, saddle)));
+    const Real shape = mu + center;
+    const Real weight = std::exp(-x + center * logX - std::lgamma(center + 1.0));
+    const Real p = pgamma(shape, y, logY);
+    Real sum = weight * p;
+
+    Real lowerWeight = weight, lowerP = p;
+    Real delta = std::exp((shape - 1) * logY - y - std::lgamma(shape));
+    Real previousTerm = sum;
+    int decreasing = 0;
+    for (int n = center; n > 0; --n) {
+        lowerWeight *= n / x;
+        lowerP += delta;
+        delta *= (mu + n - 1) / y;
+        const Real term = lowerWeight * std::min(Real{1}, lowerP);
+        sum += term;
+        decreasing = (term <= previousTerm) ? decreasing + 1 : 0;
+        if (decreasing >= 8 && term <= 4 * std::numeric_limits<Real>::epsilon() * sum)
+            break;
+        previousTerm = term;
+    }
+
+    Real upperWeight = weight;
+    previousTerm = weight * p;
+    decreasing = 0;
+    for (int n = center + 1; n < 1000000; ++n) {
+        upperWeight *= x / n;
+        const Real term = upperWeight * pgamma(mu + n, y, logY);
         sum += term;
         decreasing = (term <= previousTerm) ? decreasing + 1 : 0;
         if (decreasing >= 8 && term <= 4 * std::numeric_limits<Real>::epsilon() * sum)
@@ -909,12 +1024,6 @@ inline Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<
                     std::type_identity_t<Real> sqrtX, std::type_identity_t<Real> sqrtY, std::type_identity_t<Real> logX,
                     std::type_identity_t<Real> logY)
 {
-    /* 1 - ok
-     * 2 - ok
-     * 3 - no
-     * 4 - no
-     * 5 - not yet
-     * */
     if (x < 0.0 || y <= 0.0)
         return 0.0;
     if (std::isinf(y))
@@ -924,6 +1033,12 @@ inline Real MarcumP(std::type_identity_t<Real> mu, Real x, std::type_identity_t<
 
     if (x < 30)
         return detail::MarcumPSeries(mu, x, y, logX, logY);
+
+    /// Saddle-centred Poisson mixtures: the lower tail directly below the mean μ + x, the complement above it
+    const Real saddle = Real{0.5} * (std::hypot(mu, 2 * sqrtX * sqrtY) - mu);
+    if (std::isfinite(saddle) && std::max(x, saddle) < std::numeric_limits<int>::max() - 1)
+        return (y < mu + x) ? detail::MarcumPSaddleSeries(mu, x, y, logX, logY)
+                            : 1 - detail::MarcumQSeries(mu, x, y, logX, logY);
 
     Real xi = 2 * sqrtX * sqrtY;
     if (xi > 30 && mu * mu < 2 * xi)
@@ -974,6 +1089,10 @@ inline Real MarcumQ(std::type_identity_t<Real> mu, Real x, std::type_identity_t<
     const Real saddle = Real{0.5} * (std::hypot(mu, 2 * sqrtX * sqrtY) - mu);
     if (!std::isfinite(saddle) || std::max(x, saddle) >= std::numeric_limits<int>::max() - 1)
         return 1 - MarcumP(mu, x, y, sqrtX, sqrtY, logX, logY);
+    /// Below the mean μ + x the complement of the lower-tail mixture is accurate where Q is close to 1,
+    /// and it agrees with MarcumP there
+    if (x >= 30 && y < mu + x)
+        return 1 - detail::MarcumPSaddleSeries(mu, x, y, logX, logY);
     return detail::MarcumQSeries(mu, x, y, logX, logY);
 }
 

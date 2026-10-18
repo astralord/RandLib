@@ -56,7 +56,11 @@ For \f$\xi\ne0\f$, write \f$g_r=\Gamma(1-r\xi)\f$. The finite first two moments 
  \quad(\xi<1/2).
 \f]
 
-The Gumbel limits are used exactly at \f$\xi=0\f$. For \f$\xi>-1\f$ the mode is
+The Gumbel limits are used exactly at \f$\xi=0\f$. For \f$0<|\xi|<0.05\f$ the differences of
+\f$g_r\f$ cancel, so the mean and variance use the series
+\f$\log\Gamma(1-z)=\gamma z+\sum_{k\ge2}\zeta(k)z^k/k\f$, in which
+\f$\log g_2-2\log g_1=\sum_{k\ge2}\zeta(k)\xi^k(2^k-2)/k\f$ has no cancellation, and skewness and
+excess kurtosis integrate the central moments of \f$(E^{-\xi}-1)/\xi\f$ directly. For \f$\xi>-1\f$ the mode is
 
 \f[
  \operatorname{Mode}[X]=\mu+\frac{\sigma}{\xi}

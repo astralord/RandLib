@@ -74,6 +74,14 @@ underflow and overflow are therefore possible for sufficiently heavy tails.
 ## Fitting
 
 `fit<LogStableRand>` requires positive observations, applies the stable McCulloch or MLE estimator
-to their logarithms, and returns S0 parameters. `CF(0)` is one, but nonzero characteristic-
-function arguments deliberately throw `randlib::not_implemented`: no production-quality
-oscillatory transform is included. There is no dedicated entropy member.
+to their logarithms, and returns S0 parameters. There is no dedicated entropy member.
+
+## Characteristic function
+
+No closed form is known. `CF(t)` integrates \f$f(x)e^{itx}\f$ with the shared half-period Fourier
+integrator, bounded by the survival function. The mass near zero, where the density of a log-Cauchy
+law decays only like \f$1/(x\log^2x)\f$, enters as \f$F(10^{-11}/t)\f$, which differs from its
+contribution by at most \f$10^{-11}F\f$. Heavy upper tails are summed by Wynn's epsilon algorithm.
+Independent references cover the log-normal case \f$\alpha=2\f$, the log-Cauchy and log-Levy laws,
+and totally left-skewed laws with \f$\alpha\le1\f$, whose moment series
+\f$\sum_n(it)^n\mathbb E[X^n]/n!\f$ converges.

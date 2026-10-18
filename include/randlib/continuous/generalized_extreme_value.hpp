@@ -136,6 +136,8 @@ public:
             return INFINITY;
         if (shape == 0)
             return location + scale * randlib::consts::egamma;
+        if (std::fabs(shape) < SMALL_SHAPE)
+            return location + scale * standardMean();
         return location + scale * (std::tgamma(1 - shape) - 1) / shape;
     }
 
@@ -146,6 +148,11 @@ public:
         if (shape == 0) {
             const long double value = randlib::consts::pi * scale;
             return value * value / 6;
+        }
+        if (std::fabs(shape) < SMALL_SHAPE) {
+            /// Γ(1 - 2ξ) - Γ(1 - ξ)² = Γ(1 - ξ)² expm1(ln Γ(1 - 2ξ) - 2 ln Γ(1 - ξ)) without cancellation
+            const long double scaled = std::exp(2 * logGammaOneMinusShape()) * std::expm1(logGammaExcess(2)) / shape;
+            return scale * scale * scaled / shape;
         }
         const long double first = std::tgamma(1 - shape);
         return scale * scale * (std::tgamma(1 - 2 * shape) - first * first) / (shape * shape);
@@ -170,6 +177,10 @@ public:
             return 12 * randlib::consts::sqrt2 * randlib::consts::sqrt3 * randlib::consts::apery /
                    (randlib::consts::pi_sq * randlib::consts::pi);
         }
+        if (std::fabs(shape) < SMALL_SHAPE) {
+            const long double mean = standardMean();
+            return standardCentralMoment(3, mean) / std::pow(standardCentralMoment(2, mean), 1.5L);
+        }
         const long double first = std::tgamma(1 - shape);
         const long double second = std::tgamma(1 - 2 * shape);
         const long double third = std::tgamma(1 - 3 * shape);
@@ -184,6 +195,11 @@ public:
             return INFINITY;
         if (shape == 0)
             return 2.4L;
+        if (std::fabs(shape) < SMALL_SHAPE) {
+            const long double mean = standardMean();
+            const long double variance = standardCentralMoment(2, mean);
+            return standardCentralMoment(4, mean) / (variance * variance) - 3;
+        }
         const long double first = std::tgamma(1 - shape);
         const long double second = std::tgamma(1 - 2 * shape);
         const long double third = std::tgamma(1 - 3 * shape);
@@ -197,6 +213,48 @@ public:
     [[nodiscard]] long double Entropy() const { return logScale + randlib::consts::egamma * (1 + shape) + 1; }
 
 private:
+    /// Below this |ξ| the moments in terms of Γ(1 - kξ) cancel, and series or quadrature replace them
+    static constexpr double SMALL_SHAPE = 0.05;
+
+    /// @return Σ_{k≥2} ζ(k) ξ^k (m^k - subtracted) / k
+    [[nodiscard]] long double zetaPowerSeries(int m, int subtracted) const
+    {
+        long double sum = 0, power = shape;
+        for (int k = 2; k < 64; ++k) {
+            power *= shape;
+            const long double term = math::riemannZeta(static_cast<long double>(k)) * power *
+                                     (std::pow(static_cast<long double>(m), k) - subtracted) / k;
+            sum += term;
+            if (std::fabs(term) <= std::numeric_limits<long double>::epsilon() * std::fabs(sum))
+                break;
+        }
+        return sum;
+    }
+
+    /// @return ln Γ(1 - mξ) - m ln Γ(1 - ξ), in which the Euler terms of ln Γ(1 - z) = γz + Σ ζ(k) z^k / k cancel
+    [[nodiscard]] long double logGammaExcess(int m) const { return zetaPowerSeries(m, m); }
+
+    /// @return ln Γ(1 - ξ)
+    [[nodiscard]] long double logGammaOneMinusShape() const
+    {
+        return randlib::consts::egamma * shape + zetaPowerSeries(1, 0);
+    }
+
+    /// @return E[(E^{-ξ} - 1) / ξ] for E ~ Exp(1)
+    [[nodiscard]] long double standardMean() const { return std::expm1(logGammaOneMinusShape()) / shape; }
+
+    /// @return E[(Z - mean)^order] for Z = expm1(-ξ L) / ξ, integrated over L = log E with density exp(L - e^L)
+    [[nodiscard]] long double standardCentralMoment(int order, long double mean) const
+    {
+        const double xi = shape, center = static_cast<double>(mean);
+        return math::integrate(
+            [xi, center, order](double logExponential) {
+                const double density = std::exp(logExponential - std::exp(logExponential));
+                return density == 0 ? 0.0 : std::pow(std::expm1(-xi * logExponential) / xi - center, order) * density;
+            },
+            -INFINITY, INFINITY);
+    }
+
     RealType quantileImpl(double p) const override
     {
         const double logExponential = std::log(-std::log(p));

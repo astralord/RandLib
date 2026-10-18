@@ -53,7 +53,11 @@ bool findMin(const std::function<double(RealType)> &funPtr, const Triplet<RealTy
     double w = x, v = x, fw = fx, fv = fx;
     double d = c - a, e = d;
     double u = a - 1;
+    /// The tolerance is relative beyond |x| = 1: an absolute one cannot be met once it is below the spacing of
+    /// doubles near the minimum, and the iteration would never end
+    auto tolerance = [epsilon](double point) { return epsilon * (1 + std::fabs(point)); };
     do {
+        const double tol = tolerance(x);
         double g = e;
         e = d;
         bool acceptParabolicU = false;
@@ -74,7 +78,7 @@ bool findMin(const std::function<double(RealType)> &funPtr, const Triplet<RealTy
                     u = parabolicMinimum<RealType>(w, v, x, fw, fv, fx);
             }
             double absumx = std::fabs(u - x);
-            if (u >= a + epsilon && u <= c - epsilon && absumx < 0.5 * g) {
+            if (u >= a + tol && u <= c - tol && absumx < 0.5 * g) {
                 acceptParabolicU = true; /// accept u
                 d = absumx;
             }
@@ -91,8 +95,8 @@ bool findMin(const std::function<double(RealType)> &funPtr, const Triplet<RealTy
             }
         }
 
-        if (std::fabs(u - x) < epsilon) {
-            u = x + epsilon * sign(u - x); /// setting the closest distance between u and x
+        if (std::fabs(u - x) < tol) {
+            u = x + ((u >= x) ? tol : -tol); /// setting the closest distance between u and x
         }
 
         double fu = funPtr(u);
@@ -122,7 +126,7 @@ bool findMin(const std::function<double(RealType)> &funPtr, const Triplet<RealTy
                 fv = fu;
             }
         }
-    } while (0.49 * (c - a) > epsilon);
+    } while (0.49 * (c - a) > tolerance(x));
     root = x;
     return true;
 }

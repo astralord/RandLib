@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <complex>
 #include <concepts>
 #include <numbers>
 #include <span>
@@ -85,6 +86,21 @@ TEST_CASE("Adaptive quadrature on finite and infinite intervals", "[numerics]")
     CHECK(math::integrate([](double x) { return x; }, 1, 0) == -math::integrate([](double x) { return x; }, 0, 1));
     CHECK_THAT(static_cast<double>(math::integrate<long double>([](long double x) { return x * x; }, 0, 3)),
                WithinRel(9.0, 1e-15));
+}
+
+TEST_CASE("Adaptive quadrature stops when rounding errors dominate", "[numerics]")
+{
+    /// The integrand carries deterministic noise of relative size 1e-13, so no subdivision can reach 1e-15
+    int evaluations = 0;
+    const double value = math::integrate(
+        [&evaluations](double x) {
+            ++evaluations;
+            const double noise = std::sin(1e7 * x) * 1e-13;
+            return std::exp(x) * (1 + noise);
+        },
+        0, 1, 1e-15, 262144);
+    CHECK_THAT(value, WithinRel(std::numbers::e - 1, 1e-12));
+    CHECK(evaluations < 21 * 2 * 200);
 }
 
 TEST_CASE("Noncentral t series, densities and moments match high-precision values", "[numerics][noncentral-t]")
@@ -171,6 +187,89 @@ TEST_CASE("Oscillatory quadrature accelerates semi-infinite Fourier integrals", 
     CHECK_THAT(pareto.real(), WithinAbs(0.605333341794216409742774, 1e-8));
     CHECK_THAT(pareto.imag(), WithinAbs(0.2963660538362012702997561, 1e-8));
     CHECK_THROWS_AS(math::integrateOscillatory([](double x) { return x; }, 0.0), std::invalid_argument);
+
+    /// A Gaussian bump many half-periods above the lower limit: empty half-periods do not end the walk
+    /// when the tail mass is known
+    const double center = 30, width = 0.1, frequency = 20;
+    auto bump = [=](double x) {
+        return std::exp(-0.5 * std::pow((x - center) / width, 2)) / (width * std::sqrt(2 * std::numbers::pi));
+    };
+    auto tail = [=](double x) { return 0.5 * std::erfc((x - center) / (width * std::numbers::sqrt2)); };
+    const auto shifted = math::integrateOscillatory(bump, frequency, 0.0, tail);
+    const std::complex<double> gaussian =
+        std::polar(std::exp(-0.5 * std::pow(width * frequency, 2)), frequency * center);
+    CHECK_THAT(std::abs(shifted - gaussian), WithinAbs(0.0, 1e-10));
+}
+
+TEST_CASE("Incomplete beta function keeps accuracy for rounded complements and large shapes", "[numerics]")
+{
+    /// x = 1 - 1e-30 rounds to 1; the logarithms carry the exact complement
+    const double tiny = 1e-30;
+    const double logBeta = math::logBeta(0.442, 0.0175);
+    CHECK_THAT(math::ibeta(1.0 - tiny, 0.442, 0.0175, logBeta, std::log1p(-tiny), std::log(tiny)),
+               WithinRel(0.71004226954528407701, 1e-14));
+    /// Binomial(2e9, 1e-8) needs about 2e9 terms of the finite continued fractions
+    const BinomialRand<int> binomial(2000000000, 1e-8);
+    CHECK_THAT(binomial.F(17), WithinRel(0.29702839678536085955, 1e-11));
+    CHECK_THAT(binomial.F(20), WithinRel(0.55909258423132520632, 1e-11));
+    CHECK_THAT(binomial.F(20) + binomial.S(20), WithinAbs(1.0, 1e-14));
+}
+
+TEST_CASE("Marcum functions are complementary for large noncentrality", "[numerics]")
+{
+    /// Rice(50, 0.1) has halfNoncentrality 125000, beyond the small-argument series
+    const RiceRand<double> rice(50, 0.1);
+    CHECK_THAT(rice.F(50), WithinRel(0.49960105752012697831, 1e-8));
+    CHECK_THAT(rice.S(50.8), WithinRel(6.2712828198160881433e-16, 1e-8));
+    for (double x : {49.0, 49.95, 50.0, 50.3})
+        CHECK_THAT(rice.F(x) + rice.S(x), WithinAbs(1.0, 4e-16));
+    const NoncentralChiSquaredRand<double> chiSquared(10, 40000);
+    CHECK_THAT(chiSquared.F(40010), WithinRel(0.5009972549393809418, 1e-9));
+    CHECK_THAT(chiSquared.F(40010) + chiSquared.S(40010), WithinAbs(1.0, 4e-16));
+}
+
+TEST_CASE("Logarithms of Bessel functions beyond the range of double", "[numerics]")
+{
+    CHECK_THAT(math::logBesselI<double>(0, 1000), WithinRel(995.62730888986946467, 1e-15));
+    CHECK_THAT(math::logBesselI<double>(268, 12.45), WithinRel(-743.89755522925462318, 1e-14));
+    CHECK_THAT(math::logBesselK<double>(0, 800), WithinRel(-803.11667066365989547, 1e-15));
+    CHECK_THAT(math::logBesselK<double>(-2.5, 3), WithinRel(-2.4762169313021237996, 1e-14));
+}
+
+TEST_CASE("Complex Lambert W function on the principal branch", "[numerics]")
+{
+    const auto unit = math::W0Lambert(std::complex<double>(0, -1));
+    CHECK_THAT(std::abs(unit - std::complex<double>(0.37469902073711749361, -0.57641272303143528315)),
+               WithinAbs(0.0, 1e-15));
+    const auto large = math::W0Lambert(std::complex<double>(0, -1e15));
+    CHECK_THAT(std::abs(large - std::complex<double>(31.100361073551926954, -1.5219002018854649007)),
+               WithinAbs(0.0, 1e-13));
+    for (std::complex<double> z : {std::complex<double>(0, 1e-12), {2, 3}, {-0.3, 0.1}, {1, 0}}) {
+        const auto w = math::W0Lambert(z);
+        CHECK_THAT(std::abs(w * std::exp(w) - z), WithinAbs(0.0, 1e-15 * std::abs(z)));
+    }
+}
+
+TEST_CASE("Sample statistics merge chunks of ten thousand observations", "[numerics]")
+{
+    std::vector<double> twoBlocks(20000);
+    for (std::size_t i = 0; i < twoBlocks.size(); ++i)
+        twoBlocks[i] = (i < 10000) ? 0.0 : 1.0;
+    const auto [mean, variance, skewness, excessKurtosis] = NormalRand<double>::GetSampleStatistics(twoBlocks);
+    CHECK_THAT(static_cast<double>(mean), WithinRel(0.5, 1e-15));
+    CHECK_THAT(static_cast<double>(variance), WithinRel(0.25, 1e-12));
+    CHECK_THAT(static_cast<double>(skewness), WithinAbs(0.0, 1e-12));
+    CHECK_THAT(static_cast<double>(excessKurtosis), WithinRel(-2.0, 1e-12));
+
+    std::vector<double> ramp(25000);
+    for (std::size_t i = 0; i < ramp.size(); ++i)
+        ramp[i] = static_cast<double>(i);
+    const double n = static_cast<double>(ramp.size());
+    const auto [rampMean, rampVariance, rampSkewness, rampKurtosis] = NormalRand<double>::GetSampleStatistics(ramp);
+    CHECK_THAT(static_cast<double>(rampMean), WithinRel((n - 1) / 2, 1e-15));
+    CHECK_THAT(static_cast<double>(rampVariance), WithinRel((n * n - 1) / 12, 1e-12));
+    CHECK_THAT(static_cast<double>(rampSkewness), WithinAbs(0.0, 1e-12));
+    CHECK_THAT(static_cast<double>(rampKurtosis), WithinRel(-1.2 * (n * n + 1) / (n * n - 1), 1e-9));
 }
 
 TEST_CASE("TOMS 748 finds bracketed roots to full precision", "[numerics]")

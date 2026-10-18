@@ -714,3 +714,175 @@ TEST_CASE("negative-hypergeometric moments do not overflow before conversion", "
     CHECK_THAT(static_cast<double>(distribution.Variance()), WithinRel(static_cast<double>(expectedVariance), 1e-15));
     CHECK(distribution.Variance() > 0);
 }
+
+TEST_CASE("beta-family distribution functions are complementary at the ends of the support", "[regression]")
+{
+    /// 1 - x rounds to 1 for x < 1e-16, which made S(x) = 1 while F(x) = 0.29
+    const BetaRand<double> beta(0.0175, 0.442);
+    CHECK_THAT(beta.F(1e-30), WithinRel(0.28995773045471592299, 1e-14));
+    CHECK_THAT(beta.S(1e-30), WithinRel(0.71004226954528407701, 1e-14));
+    /// x / (1 + x) rounds to 1 for large x, which made F(x) = 1 while S(x) = 1e-4
+    const BetaPrimeRand<double> betaPrime(8.97, 0.234);
+    CHECK_THAT(betaPrime.F(1.5e18), WithinRel(0.99989851563113950725, 1e-14));
+    CHECK_THAT(betaPrime.S(1.5e18), WithinRel(0.00010148436886049275311, 1e-13));
+    CHECK(betaPrime.F(INFINITY) == 1);
+    CHECK(betaPrime.S(INFINITY) == 0);
+    for (double shape : {0.281442, 0.5}) {
+        const ArcsineRand<double> arcsine(shape, -2, 5);
+        for (double x : {-1.9999999999, 4.9999999, std::nextafter(5.0, 0.0)})
+            CHECK_THAT(arcsine.F(x) + arcsine.S(x), WithinAbs(1.0, 2e-16));
+    }
+}
+
+TEST_CASE("Irwin-Hall upper tail uses the symmetric lower-half sum", "[regression]")
+{
+    const IrwinHallRand<double> distribution(28);
+    CHECK_THAT(distribution.S(26), WithinRel(8.804384711454354053e-22, 1e-12));
+    CHECK_THAT(distribution.S(24.5), WithinRel(5.6076188672235636108e-15, 1e-12));
+    CHECK(distribution.f(28) == 0);
+    CHECK_THAT(distribution.f(20), WithinRel(distribution.f(8), 1e-15));
+}
+
+TEST_CASE("Zeta survival function does not subtract from one", "[regression]")
+{
+    const ZetaRand<int> distribution(5);
+    CHECK_THAT(distribution.S(20), WithinRel(1.3624373201755622612e-6, 1e-14));
+    CHECK_THAT(distribution.S(1000), WithinRel(2.4061504326487821659e-13, 1e-14));
+    CHECK_THAT(distribution.F(15) + distribution.S(15), WithinAbs(1.0, 5e-16));
+}
+
+TEST_CASE("Planck survival function integrates the upper tail", "[regression]")
+{
+    const PlanckRand<double> distribution(12.8609, 1.45836);
+    CHECK_THAT(distribution.S(35), WithinRel(1.9193573707032127246e-10, 1e-12));
+}
+
+TEST_CASE("Skellam probabilities beyond the range of the Bessel function", "[regression]")
+{
+    const SkellamRand<int> distribution(190.832, 0.203018);
+    CHECK_THAT(distribution.P(275), WithinRel(1.8628462183563493992e-9, 1e-12));
+    CHECK_THAT(distribution.P(290), WithinRel(5.0207397258500101208e-12, 1e-12));
+}
+
+TEST_CASE("exponentially modified Gaussian lower tail with a large rate", "[regression]")
+{
+    /// erfc underflowed while the exponential factor overflowed: f and F returned NaN
+    const ExponentiallyModifiedGaussianRand<double> distribution(-7.65171, 62.6909, 10.4122);
+    CHECK_THAT(distribution.f(-50), WithinRel(2.9046476425714958643e-8, 1e-13));
+    CHECK_THAT(distribution.F(-50), WithinRel(4.1548525164977641925e-8, 1e-13));
+    CHECK_THAT(distribution.Quantile(1e-10), WithinRel(-57.926758974639725, 1e-12));
+}
+
+TEST_CASE("generalized extreme-value moments near the Gumbel limit", "[regression]")
+{
+    const GeneralizedExtremeValueRand<double> nearGumbel(1e-8, 2, 1);
+    CHECK_THAT(static_cast<double>(nearGumbel.Mean()), WithinRel(2.1544313495841858093, 1e-15));
+    CHECK_THAT(static_cast<double>(nearGumbel.Variance()), WithinRel(6.5797364395159995752, 1e-14));
+    CHECK_THAT(static_cast<double>(nearGumbel.Skewness()), WithinRel(1.1395471590707740121, 1e-13));
+    CHECK_THAT(static_cast<double>(nearGumbel.ExcessKurtosis()), WithinRel(2.4000002891768986698, 1e-13));
+    const GeneralizedExtremeValueRand<double> bounded(-1e-4, 2, 1);
+    CHECK_THAT(static_cast<double>(bounded.Skewness()), WithinRel(1.1389505609250348749, 1e-13));
+    CHECK_THAT(static_cast<double>(bounded.ExcessKurtosis()), WithinRel(2.3971097566600894297, 1e-13));
+}
+
+TEST_CASE("negative-binomial sampling with a small shape", "[regression]")
+{
+    /// the mixing gamma variate underflows to zero, the limit of a zero Poisson variate
+    NegativeBinomialRand<int, double> distribution(0.02, 0.2);
+    distribution.Reseed(3);
+    std::vector<int> sample(200000);
+    REQUIRE_NOTHROW(distribution.Sample(sample));
+    CHECK(std::ranges::all_of(sample, [](int value) { return value >= 0; }));
+}
+
+TEST_CASE("characteristic functions of narrow laws far from the origin", "[regression]")
+{
+    auto distance = [](std::complex<double> actual, double re, double im) {
+        return std::abs(actual - std::complex<double>(re, im));
+    };
+    CHECK(distance(FrechetRand<double>(18.4879, 2.91585, -1.59155).CF(5.093114), 0.45384760893887839673,
+                   0.43044296347465515653) < 1e-12);
+    CHECK(distance(RiceRand<double>(3.53436, 0.11411).CF(8.357852), -0.18155087820694433489, -0.60821636381094294381) <
+          1e-12);
+    CHECK(distance(GumbelRand<double>(100, 0.01).CF(30), -0.92900728149985855152, 0.054095335821230002033) < 1e-12);
+}
+
+TEST_CASE("Rice moments for a large offset-to-scale ratio", "[regression]")
+{
+    /// the Bessel functions in the mean overflow; their Hankel expansion keeps the mean exact
+    const RiceRand<double> distribution(50, 0.1);
+    CHECK_THAT(static_cast<double>(distribution.Mean()), WithinRel(50.0001000001000006, 1e-15));
+    CHECK_THAT(static_cast<double>(distribution.Variance()), WithinRel(0.00999997999991999912, 1e-9));
+    CHECK_THAT(static_cast<double>(distribution.Skewness()), WithinRel(8.0000960016200387772e-9, 1e-3));
+}
+
+TEST_CASE("log-normal characteristic function keeps its relative accuracy", "[regression]")
+{
+    auto relative = [](std::complex<double> actual, double re, double im) {
+        const std::complex<double> expected(re, im);
+        return std::abs(actual - expected) / std::abs(expected);
+    };
+    CHECK(relative(LogNormalRand<double>(0, 0.01).CF(100), -3.9894565854085051679e-13, -5.0063958950743116855e-13) <
+          1e-12);
+    CHECK(relative(LogNormalRand<double>(3, 0.01).CF(10), 8.2913213202566704761e-29, 3.0916895064135382773e-31) <
+          1e-12);
+    CHECK(relative(LogNormalRand<double>(0, 16).CF(1), 0.44363937308484652105, 0.15189506168865027344) < 1e-12);
+}
+
+TEST_CASE("bulk evaluations fill no more values than the output holds", "[regression]")
+{
+    const NormalRand<double> normal;
+    const std::vector<double> x = {-1, 0, 1};
+    std::vector<double> y(2, -1);
+    normal.ProbabilityDensityFunction(x, y);
+    CHECK(y == std::vector<double>{normal.f(-1), normal.f(0)});
+    normal.CumulativeDistributionFunction(x, y);
+    CHECK(y == std::vector<double>{normal.F(-1), normal.F(0)});
+    std::vector<double> quantiles(1);
+    normal.QuantileFunction(std::vector<double>{0.5, 0.9}, quantiles);
+    CHECK(quantiles[0] == 0);
+
+    const PoissonRand<int> poisson(2);
+    poisson.LogProbabilityMassFunction(std::vector<int>{0, 1, 2}, y);
+    CHECK(y == std::vector<double>{poisson.logP(0), poisson.logP(1)});
+}
+
+TEST_CASE("incomplete beta and stable quadrature avoid their slowest regimes", "[regression]")
+{
+    /// the incomplete beta series converge at the rate x near 1; maximum likelihood probes such degrees
+    const auto start = std::chrono::steady_clock::now();
+    const NoncentralTRand<double> tinyDegree(2.4598888848425963e-07, 40.274620841745602);
+    const NoncentralTRand<double> smallDegree(2.7885942799549225e-06, 26.469118041391997);
+    CHECK(std::isfinite(tinyDegree.logf(11)));
+    CHECK(std::isfinite(smallDegree.logf(1.659707541784905)));
+    /// nested stable integrals whose adaptive rule cannot reach the tolerance stop at the rounding floor
+    const StableCountRand<double> stableCount(0.498942);
+    CHECK_THAT(stableCount.S(20) + stableCount.F(20), WithinAbs(1.0, 1e-12));
+    CHECK(stableCount.S(50) > 0);
+    CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(2));
+}
+
+TEST_CASE("von Mises tails keep their relative accuracy", "[regression]")
+{
+    /// the Fourier series has an absolute error of a few ulps, which used to dominate both small tails
+    const VonMisesRand<double> distribution(0, 6.59014);
+    CHECK_THAT(distribution.F(-3.1), WithinRel(7.8900301649572674624e-8, 1e-12));
+    CHECK_THAT(distribution.S(2.9), WithinRel(4.8842392821740510472e-7, 1e-12));
+    CHECK(distribution.F(-1.0) + distribution.S(-1.0) == 1.0);
+}
+
+TEST_CASE("Brent minimization terminates far from the origin", "[regression]")
+{
+    /// an absolute tolerance below the spacing of doubles near 1e9 never ended the iteration
+    double root = 0;
+    math::findMin<double>([](double x) { return (x - 1e9) * (x - 1e9); }, 1e9 + 5, root);
+    CHECK_THAT(root, WithinRel(1e9, 1e-12));
+
+    /// a mean of 1e10 used to start the search for a mode of order one
+    const StableCountRand<double> stableCount(0.110525, 0.603312, -1.35676);
+    const double mode = stableCount.Mode();
+    const double step = 1e-4;
+    CHECK(stableCount.logf(mode) >= stableCount.logf(mode - step));
+    CHECK(stableCount.logf(mode) >= stableCount.logf(mode + step));
+    CHECK_THAT(StableCountRand<double>(0.5, 2, 1).Mode(), WithinRel(5.0, 1e-7));
+}

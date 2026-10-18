@@ -116,7 +116,10 @@ Real integrateFinite(const F &f, Real a, Real b, Real tolerance, int maxSubdivis
     Real absEstimate = 0;
     std::vector<Segment<Real>> heap{gaussKronrod21(f, a, b, absEstimate)};
     Real estimate = heap.front().estimate, error = heap.front().error;
-    for (int i = 0; i < maxSubdivisions; ++i) {
+    /// QUADPACK's roundoff detection: bisections that stop reducing the error mean that rounding
+    /// errors of the integrand dominate, and further subdivision cannot reach the tolerance
+    int stalledBisections = 0, growingBisections = 0;
+    for (int i = 0; i < maxSubdivisions && stalledBisections < 6 && growingBisections < 20; ++i) {
         Real limit = std::max(tolerance * std::fabs(estimate), 50 * std::numeric_limits<Real>::epsilon() * absEstimate);
         if (!(error > limit) || !std::isfinite(estimate))
             break;
@@ -132,6 +135,14 @@ Real integrateFinite(const F &f, Real a, Real b, Real tolerance, int maxSubdivis
         Real newAbs = 0;
         Segment<Real> left = gaussKronrod21(f, worst.a, middle, newAbs);
         Segment<Real> right = gaussKronrod21(f, middle, worst.b, newAbs);
+        const Real childEstimate = left.estimate + right.estimate, childError = left.error + right.error;
+        if (left.error > 0 && right.error > 0) {
+            if (std::fabs(worst.estimate - childEstimate) <= Real(1e-5) * std::fabs(childEstimate) &&
+                childError >= Real(0.99) * worst.error)
+                ++stalledBisections;
+            if (i >= 10 && childError > worst.error)
+                ++growingBisections;
+        }
         estimate += left.estimate + right.estimate - worst.estimate;
         error += left.error + right.error - worst.error;
         heap.push_back(left);
@@ -277,21 +288,12 @@ Real integrateTanhSinh(const F &f, std::type_identity_t<Real> a, std::type_ident
     return previous;
 }
 
-/**
- * QAWF-style Fourier integral on a semi-infinite interval. The interval is divided into
- * half-periods and the resulting alternating sequence is accelerated with Wynn's epsilon
- * algorithm.
- * @param amplitude non-oscillatory real amplitude
- * @param frequency positive angular frequency
- * @param lower finite lower limit
- * @param tolerance absolute convergence tolerance
- * @param maxCycles maximum number of half-periods
- * @return integral of amplitude(x) exp(i frequency x) from lower to infinity
- */
-template <std::floating_point Real = double, class F>
-std::complex<Real> integrateOscillatory(const F &amplitude, std::type_identity_t<Real> frequency,
-                                        std::type_identity_t<Real> lower = 0,
-                                        std::type_identity_t<Real> tolerance = 1e-10, int maxCycles = 512)
+namespace detail
+{
+
+template <std::floating_point Real, class F, class TailMass>
+std::complex<Real> integrateHalfPeriods(const F &amplitude, Real frequency, Real lower, Real tolerance, int maxCycles,
+                                        const TailMass &tailMass)
 {
     if (!(frequency > 0) || !std::isfinite(frequency) || !std::isfinite(lower) || !(tolerance > 0) || maxCycles < 4)
         throw std::invalid_argument("oscillatory quadrature requires finite limits, positive frequency and tolerance");
@@ -314,16 +316,65 @@ std::complex<Real> integrateOscillatory(const F &amplitude, std::type_identity_t
         sum += contribution;
         partialSums.push_back(sum);
 
-        negligibleCycles = (std::abs(contribution) <= tolerance) ? negligibleCycles + 1 : 0;
-        if (negligibleCycles >= 3)
+        /// A known bound on the remaining ∫|amplitude| replaces the negligible-cycle heuristic, which
+        /// mistakes empty half-periods below the bulk of the amplitude for a converged tail
+        const Real remaining = static_cast<Real>(tailMass(b));
+        if (std::isnan(remaining)) {
+            negligibleCycles = (std::abs(contribution) <= tolerance) ? negligibleCycles + 1 : 0;
+            if (negligibleCycles >= 3)
+                return sum;
+        } else if (remaining <= tolerance) {
             return sum;
-        if (partialSums.size() >= 12 && partialSums.size() % 4 == 0) {
-            const auto [estimate, error] = detail::accelerateOscillatorySums(partialSums);
+        }
+        if (!(remaining > Real{0.5}) && partialSums.size() >= 12 && partialSums.size() % 4 == 0) {
+            const auto [estimate, error] = accelerateOscillatorySums(partialSums);
             if (error <= tolerance * std::max(Real{1}, std::abs(estimate)))
                 return estimate;
         }
     }
-    return detail::accelerateOscillatorySums(partialSums).first;
+    return accelerateOscillatorySums(partialSums).first;
+}
+
+} // namespace detail
+
+/**
+ * QAWF-style Fourier integral on a semi-infinite interval. The interval is divided into
+ * half-periods and the resulting alternating sequence is accelerated with Wynn's epsilon
+ * algorithm.
+ * @param amplitude non-oscillatory real amplitude
+ * @param frequency positive angular frequency
+ * @param lower finite lower limit
+ * @param tolerance absolute convergence tolerance
+ * @param maxCycles maximum number of half-periods
+ * @return integral of amplitude(x) exp(i frequency x) from lower to infinity
+ */
+template <std::floating_point Real = double, class F>
+std::complex<Real> integrateOscillatory(const F &amplitude, std::type_identity_t<Real> frequency,
+                                        std::type_identity_t<Real> lower = 0,
+                                        std::type_identity_t<Real> tolerance = 1e-10, int maxCycles = 512)
+{
+    return detail::integrateHalfPeriods<Real>(amplitude, frequency, lower, tolerance, maxCycles,
+                                              [](Real) { return std::numeric_limits<Real>::quiet_NaN(); });
+}
+
+/**
+ * QAWF-style Fourier integral of an amplitude with a known tail bound: the half-period walk stops
+ * once the remaining mass is below the tolerance, and is accelerated only beyond half of the mass
+ * @param amplitude non-oscillatory real amplitude
+ * @param frequency positive angular frequency
+ * @param lower finite lower limit
+ * @param tailMass bound on the integral of |amplitude| from its argument to infinity
+ * @param tolerance absolute convergence tolerance
+ * @param maxCycles maximum number of half-periods
+ * @return integral of amplitude(x) exp(i frequency x) from lower to infinity
+ */
+template <std::floating_point Real = double, class F, class TailMass>
+    requires std::invocable<const TailMass &, Real>
+std::complex<Real> integrateOscillatory(const F &amplitude, std::type_identity_t<Real> frequency,
+                                        std::type_identity_t<Real> lower, const TailMass &tailMass,
+                                        std::type_identity_t<Real> tolerance = 1e-10, int maxCycles = 512)
+{
+    return detail::integrateHalfPeriods<Real>(amplitude, frequency, lower, tolerance, maxCycles, tailMass);
 }
 
 } // namespace randlib::math

@@ -47,9 +47,23 @@ logarithm; sampling exponentiates a normal variate. There is no elementary chara
  \exp\!\left(ite^y-\frac{(y-\mu)^2}{2\sigma^2}\right)dy.
 \f]
 
-For \f$\sigma^2<4\f$, RandLib evaluates the real and imaginary expectations with the ordinary
-adaptive infinite-interval quadrature. For \f$\sigma^2\geq4\f$, it switches to the half-period
-oscillatory integrator with Wynn epsilon acceleration.
+RandLib evaluates the Laplace transform at \f$-it\f$ in the exact saddle-point form of Asmussen,
+Jensen and Rojas-Nandayapa (2016). With the principal branch
+\f$W=W_0(-it\sigma^2e^{\mu})\f$ of the Lambert function, shifting the integration contour through
+the saddle point gives
+
+\f[
+ \phi(t)=\exp\!\left(-\frac{W^2+2W}{2\sigma^2}\right)
+ \mathbb{E}\!\left[\exp\!\left(-\frac W{\sigma^2}\bigl(e^{\sigma Z}-1-\sigma Z\bigr)\right)\right],
+ \qquad Z\sim\mathcal N(0,1).
+\f]
+
+Since \f$\operatorname{Re}W>0\f$ and \f$e^v-1-v\ge0\f$, the integrand is bounded by the normal density,
+so the expectation is smooth and of order one and is integrated by adaptive Gauss--Kronrod over
+\f$|z|\le10\f$. The prefactor carries the decay of \f$\phi\f$, which therefore keeps its relative
+accuracy where it is tiny: \f$\phi(10)\approx8.3\cdot10^{-29}\f$ for \f$\mu=3\f$, \f$\sigma^2=0.01\f$ is
+reproduced to fourteen digits. The complex Lambert function is refined by Halley's iteration from
+Winitzki's approximation. A non-finite result falls back to the half-period oscillatory integrator.
 
 Writing \f$v=e^{\sigma^2}\f$, the summaries are
 

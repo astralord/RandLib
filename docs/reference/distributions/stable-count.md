@@ -144,7 +144,8 @@ Writing \f$m_j=m_q|_{q=j}\f$ and \f$v=m_2-m_1^2\f$, the reported summaries are
 
 RandLib evaluates general \f$m_q\f$ through log-gamma differences to avoid intermediate overflow.
 The first four half-Gamma raw moments use their exact integer values so derived shape summaries are
-portable when `long double` is binary64. The class does not expose an unproved closed-form mode.
+portable when `long double` is binary64. The class does not expose an unproved closed-form mode; `Mode()` maximizes the standard density
+over \f$\log x\f$, where it stays well conditioned for small exponents.
 
 ## Sampling
 

@@ -891,14 +891,47 @@ class LogStable(Continuous):
     def sf(self, x):
         return self.stable.sf(mp.log(x)) if x > 0 else mp.mpf(1)
 
+    def _log_raw_moment(self, order):
+        """log E[Y^r] from the Laplace exponent, for alpha = 2 or beta = -1."""
+        if self.a == 1:
+            return order * self.mu + 2 / mp.pi * self.g * order * mp.log(order)
+        return order * self.mu - (self.g * order) ** self.a / mp.cos(mp.pi * self.a / 2)
+
+    def cf(self, t):
+        """Independent of the stable density: the log-normal integral for alpha = 2, and the
+        convergent moment series sum (it)^n E[Y^n] / n! for beta = -1 and alpha <= 1."""
+        t = mp.mpf(t)
+        if t == 0:
+            return mp.mpc(1)
+        if self.a == 2:
+            location, scale = self.mu, mp.sqrt(2) * self.g
+
+            def density(y):
+                return mp.npdf(y, location, scale)
+
+            boundary = mp.log(mp.pi / t)
+            head = mp.quad(lambda y: density(y) * mp.expj(t * mp.exp(y)), [-mp.inf, location, boundary])
+            tail = mp.quadosc(lambda x: density(mp.log(x)) / x * mp.expj(t * x), [mp.pi / t, mp.inf], omega=t)
+            return head + tail
+        if self.b != -1 or self.a > 1:
+            raise NotImplementedError("no density-independent characteristic function for this log-stable law")
+        with mp.workdps(mp.mp.dps + 30):
+            total, n = mp.mpc(1), 1
+            log_t = mp.log(t)
+            eps = mp.mpf(10) ** (-mp.mp.dps - 5)
+            while True:
+                log_size = n * log_t - mp.loggamma(n + 1) + self._log_raw_moment(n)
+                term = mp.exp(log_size) * mp.expj(n * mp.pi / 2)
+                total += term
+                if n > t and abs(term) < eps:
+                    return +total
+                n += 1
+
     def moments(self):
         if self.a != 2 and self.b != -1:
             return {}
 
-        def log_raw(order):
-            if self.a == 1:
-                return order * self.mu + 2 / mp.pi * self.g * order * mp.log(order)
-            return order * self.mu - (self.g * order) ** self.a / mp.cos(mp.pi * self.a / 2)
+        log_raw = self._log_raw_moment
 
         raw = [mp.exp(log_raw(order)) for order in range(1, 5)]
         mean = raw[0]

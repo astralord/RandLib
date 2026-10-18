@@ -1,15 +1,18 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
+#include <randlib/continuous/log_normal.hpp>
 #include <randlib/continuous/log_stable.hpp>
 #include <randlib/continuous/stable.hpp>
 
 #include <array>
 #include <cmath>
+#include <complex>
 #include <span>
 
 using Catch::Matchers::WithinAbs;
 using Catch::Matchers::WithinRel;
+using randlib::LogNormalRand;
 using randlib::LogStableRand;
 using randlib::Pcg64;
 using randlib::StableRand;
@@ -147,7 +150,22 @@ TEST_CASE("log-stable mode accounts for the exponential Jacobian", "[stable][log
     CHECK(levy.MinValue() == 1);
 
     CHECK(gaussian.CF(0) == std::complex<double>(1, 0));
-    CHECK_THROWS_AS(gaussian.CF(1), randlib::not_implemented);
+}
+
+TEST_CASE("log-stable characteristic function matches closed-form laws", "[stable][log-stable]")
+{
+    /// for alpha = 2 the law is log-normal with log-variance 2 gamma^2
+    const LogStableRand<double> gaussian(2, 0, 0.5, 0);
+    const LogNormalRand<double> logNormal(0, 0.5);
+    for (double t : {0.1, 1.0, 5.0})
+        CHECK(std::abs(gaussian.CF(t) - logNormal.CF(t)) < 1e-10);
+    CHECK(gaussian.CF(-1.0) == std::conj(gaussian.CF(1.0)));
+
+    /// log-Cauchy and log-Levy laws, from the closed-form stable densities
+    const auto logCauchy = LogStableRand<double>(1, 0, 1, 0).CF(1);
+    CHECK(std::abs(logCauchy - std::complex<double>(0.39485845991547092405, 0.3793836159978563538)) < 1e-10);
+    const auto logLevy = LogStableRand<double>(0.5, 1, 1, 0).CF(1);
+    CHECK(std::abs(logLevy - std::complex<double>(-0.10144877084216386722, 0.24312428644146792944)) < 1e-10);
 }
 
 TEST_CASE("log-stable short-tail quantiles preserve the finite skew-angle endpoint", "[stable][log-stable]")

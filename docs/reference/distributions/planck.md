@@ -35,7 +35,8 @@ Expanding the Bose--Einstein denominator gives the distribution functions
  \sum_{n=1}^{\infty}\frac{\Gamma(s,nbx)}{n^s}.
 \f]
 
-The current class evaluates \f$F\f$ by adaptive quadrature and inherits \f$S=1-F\f$. When
+The current class evaluates \f$F\f$ by adaptive quadrature and integrates the upper tail directly
+for \f$S\f$ when that tail holds less than half of the mass, otherwise returning \f$1-F\f$. When
 \f$a<1\f$, the density is singular at zero, so the implementation subtracts
 \f$1/(bx)\f$ from \f$1/(e^{bx}-1)\f$, integrates the regular remainder, and adds the singular
 power integral analytically. `expm1` and a dedicated `log(expm1)` kernel protect the density near

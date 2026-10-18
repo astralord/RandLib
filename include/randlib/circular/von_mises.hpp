@@ -35,6 +35,9 @@ public:
 
 private:
     double cdfSeries(double x) const;
+    /// P(X ≤ loc + d) for d ≤ 0 below CK: the series has an absolute error of a few ulps, so a small tail
+    /// is integrated directly
+    double lowerTail(double d) const;
     double cdfErfcAux(RealType x) const;
     double cdfErfc(RealType x) const;
     double ccdfErfc(RealType x) const;
@@ -170,7 +173,20 @@ double VonMisesRand<RealType>::F(const RealType &x) const
     if (x >= this->MaxValue())
         return 1.0;
     double xAdj = x - this->loc;
-    return (k < CK) ? cdfSeries(xAdj) : cdfErfc(xAdj);
+    if (k >= CK)
+        return cdfErfc(xAdj);
+    /// the density is symmetric about the location
+    return (xAdj <= 0) ? lowerTail(xAdj) : 1.0 - lowerTail(-xAdj);
+}
+
+template <typename RealType>
+double VonMisesRand<RealType>::lowerTail(double d) const
+{
+    static constexpr double SMALL_TAIL = 1e-3;
+    const double series = cdfSeries(d);
+    if (series >= SMALL_TAIL)
+        return series;
+    return math::integrate([this](double t) { return f(this->loc + t); }, -randlib::consts::pi, d);
 }
 
 template <typename RealType>
@@ -181,7 +197,9 @@ double VonMisesRand<RealType>::S(const RealType &x) const
     if (x >= this->MaxValue())
         return 0.0;
     double xAdj = x - this->loc;
-    return (k < CK) ? 1.0 - cdfSeries(xAdj) : ccdfErfc(xAdj);
+    if (k >= CK)
+        return ccdfErfc(xAdj);
+    return (xAdj >= 0) ? lowerTail(-xAdj) : 1.0 - lowerTail(xAdj);
 }
 
 template <typename RealType>

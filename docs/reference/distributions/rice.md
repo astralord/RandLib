@@ -69,7 +69,8 @@ Let \f$\kappa=\nu^2/(2\sigma^2)\f$ and \f$h=\kappa/2\f$. The implemented first t
 
 ## Fitting
 
-The mean is evaluated with logarithmic Bessel values and an \f$I_1/I_0\f$ ratio. The sampler is
+The mean is evaluated with logarithmic Bessel values and an \f$I_1/I_0\f$ ratio; where \f$I_\nu\f$
+overflows, its logarithm comes from the Hankel expansion truncated at the smallest term. The sampler is
 the defining `hypot` transform. At \f$\nu=0\f$ the mode is \f$\sigma\f$; otherwise the generic
 log-density minimizer finds it. Medians and quantiles use TOMS 748, the characteristic function uses
 the semi-infinite oscillatory integrator, and higher standardized moments use the common expectation

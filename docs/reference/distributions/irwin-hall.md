@@ -28,7 +28,9 @@
 \f]
 
 RandLib has direct branches for \f$n=1\f$ and \f$n=2\f$; the general finite sums use a cached
-log-factorial and recursively updated binomial coefficients. The characteristic function is
+log-factorial and recursively updated binomial coefficients. Since \f$n-X\f$ has the same law, the
+alternating sums are only evaluated for \f$x\le n/2\f$, where they cancel least: the upper tail is
+\f$S(x)=F(n-x)\f$ and the density \f$f(x)=f(n-x)\f$. The characteristic function is
 
 \f[
  \phi(t)=\left(\frac{e^{it}-1}{it}\right)^n
