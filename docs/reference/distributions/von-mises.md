@@ -32,7 +32,7 @@ survival function has its own complementary-`erfc` branch; below the crossover i
 At integer harmonic \f$m\f$, the trigonometric moments are
 
 \f[
- \operatorname{E}(e^{imX})=
+ \mathbb{E}[e^{imX}]=
  e^{im\mu}\frac{I_m(\kappa)}{I_0(\kappa)}.
 \f]
 
@@ -43,9 +43,9 @@ numerically integrates \f$e^{itx}f(x)\f$ over the representative interval.
 The circular summaries are
 
 \f[
- \operatorname{CMean}(X)=\mu,
+ \operatorname{CMean}[X]=\mu,
  \qquad
- \operatorname{CVar}(X)=1-\frac{I_1(\kappa)}{I_0(\kappa)}.
+ \operatorname{CVar}[X]=1-\frac{I_1(\kappa)}{I_0(\kappa)}.
 \f]
 
 The linear representative's median and mode are both \f$\mu\f$.

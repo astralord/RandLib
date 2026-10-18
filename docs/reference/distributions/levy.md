@@ -57,7 +57,7 @@ quantile at \f$p=1/2\f$. The mean and variance diverge, while standardized highe
 undefined. Its mathematical entropy is
 
 \f[
- h(X)=\frac12+\log(4\gamma\sqrt\pi)+\frac32\gamma_E,
+ h[X]=\frac12+\log(4\gamma\sqrt\pi)+\frac32\gamma_E,
 \f]
 
 although the class does not currently expose an entropy member.

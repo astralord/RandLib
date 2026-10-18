@@ -54,15 +54,15 @@ sum. `logF` and `logS` use `log1p` only on the complementary side of the switch.
 The principal summaries are
 
 \f[
- \operatorname{E}X=\sqrt{\frac\pi2}\log2,
+ \mathbb{E}[X]=\sqrt{\frac\pi2}\log2,
  \qquad
- \operatorname{Var}X=\frac{\pi^2}{12}-\frac\pi2(\log2)^2,
+ \operatorname{Var}[X]=\frac{\pi^2}{12}-\frac\pi2(\log2)^2,
 \f]
 
 \f[
- \operatorname{Mode}X\approx0.735467812776958,
+ \operatorname{Mode}[X]\approx0.735467812776958,
  \qquad
- \operatorname{Median}X\approx0.82757355518990761.
+ \operatorname{Median}[X]\approx0.82757355518990761.
 \f]
 
 The characteristic function and higher standardized moments use the common expectation quadrature.

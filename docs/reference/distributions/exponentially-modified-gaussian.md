@@ -57,15 +57,15 @@ Sampling adds the library's normal and exponential variates. The mean, variance,
 excess kurtosis are
 
 \f[
- \operatorname{E}Z=\mu+\frac1\lambda,\qquad
- \operatorname{Var}Z=\sigma^2+\frac1{\lambda^2},
+ \mathbb{E}[Z]=\mu+\frac1\lambda,\qquad
+ \operatorname{Var}[Z]=\sigma^2+\frac1{\lambda^2},
 \f]
 
 \f[
- \operatorname{Skew}Z=
+ \operatorname{Skew}[Z]=
  \frac{2\lambda^{-3}}{(\sigma^2+\lambda^{-2})^{3/2}},
  \qquad
- \operatorname{ExKurt}Z=
+ \operatorname{ExKurt}[Z]=
  \frac{6\lambda^{-4}}{(\sigma^2+\lambda^{-2})^2}.
 \f]
 

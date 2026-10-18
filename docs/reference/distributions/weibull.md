@@ -38,16 +38,16 @@ probability and quantile use `expm1` and `log1p`:
 ## Moments and shape
 
 Writing \f$g_r=\Gamma(1+r/k)\f$, the raw moments are
-\f$\operatorname{E}X^r=\lambda^r g_r\f$. In particular,
+\f$\mathbb{E}[X^r]=\lambda^r g_r\f$. In particular,
 
 \f[
- \operatorname{E}X=\lambda g_1,\qquad
- \operatorname{Var}X=\lambda^2(g_2-g_1^2),
+ \mathbb{E}[X]=\lambda g_1,\qquad
+ \operatorname{Var}[X]=\lambda^2(g_2-g_1^2),
 \f]
 
 \f[
- \operatorname{Median}X=\lambda(\log2)^{1/k},\qquad
- \operatorname{Mode}X=
+ \operatorname{Median}[X]=\lambda(\log2)^{1/k},\qquad
+ \operatorname{Mode}[X]=
  \begin{cases}
   0,&k\leq1,\\
   \lambda(1-1/k)^{1/k},&k>1,
@@ -58,7 +58,7 @@ and skewness and excess kurtosis are formed from \f$g_1,\ldots,g_4\f$ using the 
 moment identities. Its entropy is
 
 \f[
- h(X)=1+\gamma_E(1-1/k)+\log(\lambda/k).
+ h[X]=1+\gamma_E(1-1/k)+\log(\lambda/k).
 \f]
 
 For \f$k>1\f$, the characteristic function has the convergent power series

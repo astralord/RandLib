@@ -24,7 +24,7 @@ If \f$Y\sim\operatorname{Poisson}(\mu_1)\f$ and
 Its PMF is
 
 \f[
- P(X=k)=
+ \Pr[X=k]=
  e^{-(\mu_1+\mu_2)}
  \left(\frac{\mu_1}{\mu_2}\right)^{k/2}
  I_{|k|}\!\left(2\sqrt{\mu_1\mu_2}\right).
@@ -72,16 +72,16 @@ The generating functions are
 The principal summaries are
 
 \f[
- \operatorname{E}X=\mu_1-\mu_2,
+ \mathbb{E}[X]=\mu_1-\mu_2,
  \qquad
- \operatorname{Var}X=\mu_1+\mu_2,
+ \operatorname{Var}[X]=\mu_1+\mu_2,
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{\mu_1-\mu_2}{(\mu_1+\mu_2)^{3/2}},
  \qquad
- \operatorname{ExKurt}X=\frac1{\mu_1+\mu_2}.
+ \operatorname{ExKurt}[X]=\frac1{\mu_1+\mu_2}.
 \f]
 
 The median is found by discrete probability search initialized at the mean. The mode search starts

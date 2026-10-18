@@ -21,7 +21,7 @@
 For exponent \f$s>1\f$ and \f$k\in\{1,2,\ldots\}\f$,
 
 \f[
- P(X=k)=\frac{k^{-s}}{\zeta(s)},
+ \Pr[X=k]=\frac{k^{-s}}{\zeta(s)},
 \f]
 
 where \f$\zeta\f$ is the Riemann zeta function. With the generalized harmonic number
@@ -49,7 +49,7 @@ RandLib's generic discrete CF evaluator sums outward from the median and applies
 transform to the oscillatory remainder; it does not call a complex polylogarithm. More generally,
 
 \f[
- \operatorname{E}(X^m)=
+ \mathbb{E}[X^m]=
  \begin{cases}
  \dfrac{\zeta(s-m)}{\zeta(s)},&s>m+1,\\
  +\infty,&s\leq m+1.
@@ -59,11 +59,11 @@ transform to the oscillatory remainder; it does not call a complex polylogarithm
 Thus
 
 \f[
- \operatorname{E}X=\frac{\zeta(s-1)}{\zeta(s)}\quad(s>2),
+ \mathbb{E}[X]=\frac{\zeta(s-1)}{\zeta(s)}\quad(s>2),
 \f]
 
 \f[
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \frac{\zeta(s-2)}{\zeta(s)}-
  \left(\frac{\zeta(s-1)}{\zeta(s)}\right)^2
  \quad(s>3),

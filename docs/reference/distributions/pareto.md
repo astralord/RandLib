@@ -47,29 +47,29 @@ semi-infinite oscillatory quadrature directly to \f$e^{itx}f(x)\f$.
 The finite summaries are
 
 \f[
- \operatorname{E}X=\frac{\alpha\sigma}{\alpha-1}\quad(\alpha>1),
+ \mathbb{E}[X]=\frac{\alpha\sigma}{\alpha-1}\quad(\alpha>1),
 \qquad
- \operatorname{Var}X=\frac{\alpha\sigma^2}
+ \operatorname{Var}[X]=\frac{\alpha\sigma^2}
  {\left(\alpha-1\right)^2(\alpha-2)}\quad(\alpha>2),
 \f]
 
 \f[
- \operatorname{Median}X=\sigma2^{1/\alpha},\qquad
- \operatorname{Mode}X=\sigma,
+ \operatorname{Median}[X]=\sigma2^{1/\alpha},\qquad
+ \operatorname{Mode}[X]=\sigma,
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2(\alpha+1)}{\alpha-3}\sqrt{\frac{\alpha-2}{\alpha}}
  \quad(\alpha>3),
 \f]
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{6(\alpha^3+\alpha^2-6\alpha-2)}
  {\alpha(\alpha-3)(\alpha-4)}\quad(\alpha>4),
  \qquad
- h(X)=\log\frac{\sigma}{\alpha}+1+\frac1\alpha.
+ h[X]=\log\frac{\sigma}{\alpha}+1+\frac1\alpha.
 \f]
 
 Methods whose required moment does not exist report infinity; the variance is undefined and reports

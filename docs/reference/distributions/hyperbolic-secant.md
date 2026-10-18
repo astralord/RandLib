@@ -36,14 +36,14 @@ Sampling uses
 \f$(2/\pi)\log|C|\f$ for a standard Cauchy variate \f$C\f$. Finally,
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=0,\qquad
- \operatorname{Var}X=1,\qquad
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=2,
+ \mathbb{E}[X]=\operatorname{Median}[X]=\operatorname{Mode}[X]=0,\qquad
+ \operatorname{Var}[X]=1,\qquad
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=2,
 \f]
 
 \f[
- h(X)=\frac{4G}{\pi},
+ h[X]=\frac{4G}{\pi},
 \f]
 
 where \f$G\f$ is Catalan's constant. There are no parameters to fit.

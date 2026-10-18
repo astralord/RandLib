@@ -50,16 +50,16 @@ quadrature evaluates \f$\phi(t)=\int e^{itx}f(x)\,dx\f$.
 For \f$\xi\ne0\f$, write \f$g_r=\Gamma(1-r\xi)\f$. The finite first two moments are
 
 \f[
- \operatorname{E}X=\mu+\sigma\frac{g_1-1}{\xi}\quad(\xi<1),
+ \mathbb{E}[X]=\mu+\sigma\frac{g_1-1}{\xi}\quad(\xi<1),
 \qquad
- \operatorname{Var}X=\frac{\sigma^2}{\xi^2}(g_2-g_1^2)
+ \operatorname{Var}[X]=\frac{\sigma^2}{\xi^2}(g_2-g_1^2)
  \quad(\xi<1/2).
 \f]
 
 The Gumbel limits are used exactly at \f$\xi=0\f$. For \f$\xi>-1\f$ the mode is
 
 \f[
- \operatorname{Mode}X=\mu+\frac{\sigma}{\xi}
+ \operatorname{Mode}[X]=\mu+\frac{\sigma}{\xi}
  \left[(1+\xi)^{-\xi}-1\right],
 \f]
 
@@ -68,7 +68,7 @@ while for \f$\xi\leq-1\f$ the API returns the finite upper endpoint. Skewness ex
 \f$g_1,\ldots,g_4\f$ by central-moment identities. The entropy is
 
 \f[
- h(X)=1+\log\sigma+(1+\xi)\gamma_E.
+ h[X]=1+\log\sigma+(1+\xi)\gamma_E.
 \f]
 
 ## Fitting

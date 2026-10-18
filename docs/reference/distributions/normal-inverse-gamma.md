@@ -45,26 +45,26 @@ The marginals are
 where the second argument of the Student law is its scale. In particular,
 
 \f[
- \operatorname{E}V=\frac{\beta}{\alpha-1}\quad(\alpha>1),
+ \mathbb{E}[V]=\frac{\beta}{\alpha-1}\quad(\alpha>1),
  \qquad
- \operatorname{Var}V=
+ \operatorname{Var}[V]=
  \frac{\beta^2}{(\alpha-1)^2(\alpha-2)}\quad(\alpha>2),
 \f]
 
 and
 
 \f[
- \operatorname{E}X=\mu\quad(\alpha>1/2),
+ \mathbb{E}[X]=\mu\quad(\alpha>1/2),
  \qquad
- \operatorname{Var}X=\frac{\beta}{\lambda(\alpha-1)}\quad(\alpha>1).
+ \operatorname{Var}[X]=\frac{\beta}{\lambda(\alpha-1)}\quad(\alpha>1).
 \f]
 
-When both marginal variances exist, \f$\operatorname{Cov}(X,V)=0\f$ and the reported correlation
+When both marginal variances exist, \f$\operatorname{Cov}[X,V]=0\f$ and the reported correlation
 is zero. The variables are not independent. `Correlation()` returns NaN for \f$\alpha\leq2\f$,
 where correlation is not defined. The joint mode returned by the API is
 
 \f[
- \operatorname{mode}(X,V)=
+ \operatorname{Mode}[X,V]=
  \left(\mu,\frac{\beta}{\alpha+3/2}\right).
 \f]
 

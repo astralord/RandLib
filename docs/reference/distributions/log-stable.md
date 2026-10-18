@@ -41,7 +41,7 @@ Positive integer moments exist for the Gaussian case and for non-Gaussian laws w
 \f$\beta=-1\f$. Let \f$\mu_1\f$ be the S1 location. For \f$r>0\f$ their logarithms are
 
 \f[
- \log\operatorname{E}Y^r=
+ \log\mathbb{E}[Y^r]=
  \begin{cases}
  r\mu_1-\dfrac{(\gamma r)^\alpha}{\cos(\pi\alpha/2)},&\alpha\ne1,\\[7pt]
  r\mu_1+\dfrac{2\gamma}{\pi}r\log r,&\alpha=1.
@@ -55,12 +55,12 @@ skewness, and excess kurtosis with `expm1`-based differences. For \f$\alpha=2\f$
 the log-normal law with underlying variance \f$2\gamma^2\f$. For other skewnesses, `Mean()` and
 `Variance()` return infinity and standardized higher moments return NaN.
 
-The Jacobian means that the mode is not generally \f$e^{\operatorname{Mode}X}\f$. RandLib returns
+The Jacobian means that the mode is not generally \f$e^{\operatorname{Mode}[X]}\f$. RandLib returns
 zero when \f$\alpha<2\f$ and \f$\beta<1\f$, where the transformed density diverges at the boundary.
 For the Gaussian case,
 
 \f[
- \operatorname{Mode}Y=e^{\mu_1-2\gamma^2}.
+ \operatorname{Mode}[Y]=e^{\mu_1-2\gamma^2}.
 \f]
 
 The remaining totally right-skewed cases minimize

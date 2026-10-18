@@ -21,7 +21,7 @@
 For shape \f$\rho>0\f$ and \f$k\in\{1,2,\ldots\}\f$,
 
 \f[
- P(X=k)=\rho B(k,\rho+1)
+ \Pr[X=k]=\rho B(k,\rho+1)
  =\rho\frac{\Gamma(\rho+1)\Gamma(k)}{\Gamma(k+\rho+1)}.
 \f]
 
@@ -49,12 +49,12 @@ The generic discrete CF evaluator uses probability summation with an accelerated
 rather than evaluating the hypergeometric function. The principal summaries are
 
 \f[
- \operatorname{E}X=
+ \mathbb{E}[X]=
  \begin{cases}\dfrac{\rho}{\rho-1},&\rho>1,\\+\infty,&\rho\leq1,\end{cases}
 \f]
 
 \f[
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \begin{cases}
  \dfrac{\rho^2}{(\rho-1)^2(\rho-2)},&\rho>2,\\
  +\infty,&\rho\leq2,
@@ -62,13 +62,13 @@ rather than evaluating the hypergeometric function. The principal summaries are
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{(\rho+1)^2\sqrt{\rho-2}}{\rho(\rho-3)}
  \quad(\rho>3),
 \f]
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \rho+3+
  \frac{\rho(11\rho^2-49)-22}{\rho(\rho-4)(\rho-3)}
  \quad(\rho>4).

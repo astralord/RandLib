@@ -21,7 +21,7 @@
 For \f$0<p<1\f$ and \f$k\in\{1,2,\ldots\}\f$,
 
 \f[
- P(X=k)=-\frac{p^k}{k\log(1-p)}.
+ \Pr[X=k]=-\frac{p^k}{k\log(1-p)}.
 \f]
 
 Writing
@@ -55,9 +55,9 @@ The probability-generating and characteristic functions are
 With \f$q=1-p\f$, the implemented moments are
 
 \f[
- \operatorname{E}X=-\frac{p}{q\log q},
+ \mathbb{E}[X]=-\frac{p}{q\log q},
  \qquad
- \operatorname{Var}X=-\frac{p(p+\log q)}{q^2(\log q)^2}.
+ \operatorname{Var}[X]=-\frac{p(p+\log q)}{q^2(\log q)^2}.
 \f]
 
 The mode is one and the median is obtained by the generic discrete quantile search.

@@ -27,15 +27,15 @@ difference-of-exponentials sampler; the single-variate fast path equivalently dr
 magnitude and an independent sign bit. Its summaries reduce to
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=m,
+ \mathbb{E}[X]=\operatorname{Median}[X]=\operatorname{Mode}[X]=m,
  \qquad
- \operatorname{Var}X=2\gamma^2,
+ \operatorname{Var}[X]=2\gamma^2,
 \f]
 
 \f[
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=3,\qquad
- h(X)=1+\log(2\gamma).
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=3,\qquad
+ h[X]=1+\log(2\gamma).
 \f]
 
 ## Fitting

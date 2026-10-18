@@ -42,17 +42,17 @@ scaled beta-prime results.
 The main summaries are
 
 \f[
- \operatorname{E}X=\frac{d_2}{d_2-2}\quad(d_2>2),
+ \mathbb{E}[X]=\frac{d_2}{d_2-2}\quad(d_2>2),
 \f]
 
 \f[
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \frac{2d_2^2(d_1+d_2-2)}{d_1(d_2-2)^2(d_2-4)}
  \quad(d_2>4),
 \f]
 
 \f[
- \operatorname{Mode}X=
+ \operatorname{Mode}[X]=
  \begin{cases}
  \dfrac{d_2(d_1-2)}{d_1(d_2+2)},&d_1>2,\\
  0,&d_1\leq2,
@@ -60,14 +60,14 @@ The main summaries are
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2d_1+d_2-2}{d_2-6}
  \sqrt{\frac{8(d_2-4)}{d_1(d_1+d_2-2)}}
  \quad(d_2>6),
 \f]
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{12}{(d_2-6)(d_2-8)}
  \left[
  \frac{(d_2-2)^2(d_2-4)}{d_1(d_1+d_2-2)}+5d_2-22

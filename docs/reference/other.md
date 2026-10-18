@@ -8,7 +8,7 @@ template, so each entry explicitly states its measure and CDF conventions.
 
 For circular laws, ordinary linear moments depend on the chosen cut of the circle and RandLib
 returns NaN from `Mean()`, `Variance()`, `Skewness()` and `ExcessKurtosis()`. `CircularMean()` is an
-angle and `CircularVariance()` is \f$1-|\operatorname{E}e^{iX}|\f$. Densities and CDFs use the
+angle and `CircularVariance()` is \f$1-|\mathbb{E}[e^{iX}]|\f$. Densities and CDFs use the
 single representative interval reported by `MinValue()` and `MaxValue()`.
 
 <div class="reference-callout">

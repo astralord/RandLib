@@ -18,7 +18,7 @@
 and \f$k\in\{0,1,\ldots\}\f$,
 
 \f[
- P(X=k)=p q^k,
+ \Pr[X=k]=p q^k,
  \qquad
  F(k)=1-q^{k+1},
  \qquad
@@ -40,13 +40,13 @@ characteristic functions are
 Its principal summaries are
 
 \f[
- \operatorname{E}X=\frac qp,
+ \mathbb{E}[X]=\frac qp,
  \qquad
- \operatorname{Var}X=\frac q{p^2},
+ \operatorname{Var}[X]=\frac q{p^2},
  \qquad
- \operatorname{Skew}X=\frac{1+q}{\sqrt q},
+ \operatorname{Skew}[X]=\frac{1+q}{\sqrt q},
  \qquad
- \operatorname{ExKurt}X=6+\frac{p^2}{q},
+ \operatorname{ExKurt}[X]=6+\frac{p^2}{q},
 \f]
 
 with the standardized moments undefined at the deterministic endpoint \f$p=1\f$. The mode is zero

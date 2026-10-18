@@ -36,12 +36,12 @@ cardinal-sine factor, preserving the analytic limit instead of evaluating \f$0/0
 The mean, median, and mode all equal \f$\mu\f$, and
 
 \f[
- \operatorname{Var}X=s^2\left(\frac13-\frac{2}{\pi^2}\right),\qquad
- \operatorname{Skew}X=0,
+ \operatorname{Var}[X]=s^2\left(\frac13-\frac{2}{\pi^2}\right),\qquad
+ \operatorname{Skew}[X]=0,
 \f]
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{6(90-\pi^4)}{5(\pi^2-6)^2}.
 \f]
 

@@ -39,13 +39,13 @@ with the usual constant continuation outside the support, and
 Its mean, variance, median, skewness, excess kurtosis, and differential entropy are
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\frac{a+b}{2},\qquad
- \operatorname{Var}X=\frac{d^2}{12},\qquad
- \operatorname{Skew}X=0,
+ \mathbb{E}[X]=\operatorname{Median}[X]=\frac{a+b}{2},\qquad
+ \operatorname{Var}[X]=\frac{d^2}{12},\qquad
+ \operatorname{Skew}[X]=0,
 \f]
 
 \f[
- \operatorname{ExKurt}X=-\frac65,\qquad h(X)=\log d.
+ \operatorname{ExKurt}[X]=-\frac65,\qquad h[X]=\log d.
 \f]
 
 Every support point is a mode; `Mode()` returns the midpoint as a representative value.

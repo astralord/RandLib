@@ -67,13 +67,13 @@ Gauss--Kronrod integrator is called. The imaginary part uses the analogous subtr
 The principal moments are
 
 \f[
- \operatorname{E}X=a+d\frac{\alpha}{\alpha+\beta},\qquad
- \operatorname{Var}X=d^2\frac{\alpha\beta}
+ \mathbb{E}[X]=a+d\frac{\alpha}{\alpha+\beta},\qquad
+ \operatorname{Var}[X]=d^2\frac{\alpha\beta}
  {\left(\alpha+\beta\right)^2\left(\alpha+\beta+1\right)},
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2(\beta-\alpha)\sqrt{\alpha+\beta+1}}
  {(\alpha+\beta+2)\sqrt{\alpha\beta}},
 \f]
@@ -81,7 +81,7 @@ The principal moments are
 and
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{6\left[(\alpha-\beta)^2(\alpha+\beta+1)
  -\alpha\beta(\alpha+\beta+2)\right]}
  {\alpha\beta(\alpha+\beta+2)(\alpha+\beta+3)}.
@@ -90,7 +90,7 @@ and
 The mean absolute deviation about the mean is available as
 
 \f[
- \operatorname{E}|X-\operatorname{E}X|
+ \mathbb{E}[|X-\mathbb{E}[X]|]
  =\frac{2d\,\alpha^\alpha\beta^\beta}
  {B(\alpha,\beta)(\alpha+\beta)^{\alpha+\beta+1}}.
 \f]
@@ -99,8 +99,8 @@ The mean absolute deviation about the mean is available as
 \f$Y=(X-a)/d\f$:
 
 \f[
- \operatorname{E}\log Y=\psi(\alpha)-\psi(\alpha+\beta),\qquad
- \operatorname{Var}(\log Y)=\psi_1(\alpha)-\psi_1(\alpha+\beta).
+ \mathbb{E}[\log Y]=\psi(\alpha)-\psi(\alpha+\beta),\qquad
+ \operatorname{Var}[\log Y]=\psi_1(\alpha)-\psi_1(\alpha+\beta).
 \f]
 
 For \f$\alpha,\beta>1\f$ the unique mode is

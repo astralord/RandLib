@@ -19,7 +19,7 @@
 \f$\{0,\ldots,K-1\}\f$ and
 
 \f[
- P(X=k)=p_k,\qquad
+ \Pr[X=k]=p_k,\qquad
  F(k)=\sum_{j=0}^{k}p_j.
 \f]
 
@@ -38,9 +38,9 @@ functions are finite polynomials,
 The first two moments are
 
 \f[
- \operatorname{E}X=\sum_{k=0}^{K-1}kp_k,
+ \mathbb{E}[X]=\sum_{k=0}^{K-1}kp_k,
  \qquad
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \sum_{k=0}^{K-1}k^2p_k-\left(\sum_{k=0}^{K-1}kp_k\right)^2.
 \f]
 

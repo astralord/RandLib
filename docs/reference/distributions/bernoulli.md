@@ -17,7 +17,7 @@
 `BernoulliRand(probability)` accepts \f$0\leq p\leq1\f$ and has support \f$\{0,1\}\f$:
 
 \f[
- P(X=k)=
+ \Pr[X=k]=
  \begin{cases}
   1-p,&k=0,\\
   p,&k=1,\\
@@ -55,14 +55,14 @@ Its probability-generating and characteristic functions are
 The summaries are
 
 \f[
- \operatorname{E}X=p,\qquad
- \operatorname{Var}X=p(1-p),
+ \mathbb{E}[X]=p,\qquad
+ \operatorname{Var}[X]=p(1-p),
 \f]
 
 \f[
- \operatorname{Skew}X=\frac{1-2p}{\sqrt{p(1-p)}},
+ \operatorname{Skew}[X]=\frac{1-2p}{\sqrt{p(1-p)}},
  \qquad
- \operatorname{ExKurt}X=\frac{1}{p(1-p)}-6,
+ \operatorname{ExKurt}[X]=\frac{1}{p(1-p)}-6,
 \f]
 
 for non-degenerate \f$p\f$. The API median is zero when \f$p\leq1/2\f$ and one otherwise. Its

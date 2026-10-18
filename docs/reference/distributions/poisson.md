@@ -22,13 +22,13 @@
 \f$\{0,1,\ldots\}\f$:
 
 \f[
- P(X=k)=e^{-\lambda}\frac{\lambda^k}{k!}.
+ \Pr[X=k]=e^{-\lambda}\frac{\lambda^k}{k!}.
 \f]
 
 The interior log PMF uses Loader's saddle-point form,
 
 \f[
- \log P(X=k)=
+ \log \Pr[X=k]=
  -\operatorname{stirlerr}(k)-\operatorname{bd0}(k,\lambda)
  -\frac12\log(2\pi k),
 \f]
@@ -59,11 +59,11 @@ The probability-generating and characteristic functions are
 All cumulants equal \f$\lambda\f$, giving
 
 \f[
- \operatorname{E}X=\operatorname{Var}X=\lambda,
+ \mathbb{E}[X]=\operatorname{Var}[X]=\lambda,
  \qquad
- \operatorname{Skew}X=\lambda^{-1/2},
+ \operatorname{Skew}[X]=\lambda^{-1/2},
  \qquad
- \operatorname{ExKurt}X=\lambda^{-1}.
+ \operatorname{ExKurt}[X]=\lambda^{-1}.
 \f]
 
 The mode is \f$\lfloor\lambda\rfloor\f$; for positive integer \f$\lambda\f$,

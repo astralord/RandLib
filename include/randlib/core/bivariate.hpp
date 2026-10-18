@@ -57,8 +57,7 @@ LongDoubleTriplet BivariateDistribution<T1, T2, T>::Covariance() const
 {
     long double var1 = X.Variance();
     long double var2 = Y.Variance();
-    long double covariance =
-        (var1 == 0.0L || var2 == 0.0L) ? 0.0L : Correlation() * std::sqrt(var1) * std::sqrt(var2);
+    long double covariance = (var1 == 0.0L || var2 == 0.0L) ? 0.0L : Correlation() * std::sqrt(var1) * std::sqrt(var2);
     return std::make_tuple(var1, covariance, var2);
 }
 

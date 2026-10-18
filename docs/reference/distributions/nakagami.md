@@ -48,7 +48,7 @@ shape-dependent sampling dispatch.
 All raw moments are summarized by
 
 \f[
- \operatorname{E}X^r=
+ \mathbb{E}[X^r]=
  \frac{\Gamma(\mu+r/2)}{\Gamma(\mu)}
  \left(\frac{\omega}{\mu}\right)^{r/2},
  \qquad r>-2\mu.
@@ -57,14 +57,14 @@ All raw moments are summarized by
 In particular,
 
 \f[
- m=\operatorname{E}X=
+ m=\mathbb{E}[X]=
  \frac{\Gamma(\mu+1/2)}{\Gamma(\mu)}
  \sqrt{\frac\omega\mu},\qquad
- \operatorname{Var}X=\omega-m^2,
+ \operatorname{Var}[X]=\omega-m^2,
 \f]
 
 \f[
- \operatorname{Mode}X=
+ \operatorname{Mode}[X]=
  \begin{cases}
  \sqrt{\omega(1-1/(2\mu))},&\mu>1/2,\\
  0,&0<\mu\leq1/2.

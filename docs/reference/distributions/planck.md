@@ -54,7 +54,7 @@ The exact mixture sampler is
 with independent \f$N\f$ and \f$G\f$. Its raw moments are
 
 \f[
- \operatorname{E}X^r=\frac{\Gamma(s+r)}{\Gamma(s)b^r}
+ \mathbb{E}[X^r]=\frac{\Gamma(s+r)}{\Gamma(s)b^r}
  \frac{\zeta(s+r)}{\zeta(s)},\qquad r>-a.
 \f]
 
@@ -62,7 +62,7 @@ RandLib uses this identity for the first four raw moments and forms variance, sk
 kurtosis from the corresponding central moments. The mode is
 
 \f[
- \operatorname{Mode}X=
+ \operatorname{Mode}[X]=
  \begin{cases}
   0,&a\leq1,\\
   \dfrac{a+W_0(-ae^{-a})}{b},&a>1,

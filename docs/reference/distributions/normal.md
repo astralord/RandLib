@@ -59,15 +59,15 @@ ziggurat and then applies \f$\mu+\sigma Z\f$.
 The normal law has
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=\mu,
+ \mathbb{E}[X]=\operatorname{Median}[X]=\operatorname{Mode}[X]=\mu,
  \qquad
- \operatorname{Var}X=\sigma^2,
+ \operatorname{Var}[X]=\sigma^2,
 \f]
 
 \f[
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=0,\qquad
- h(X)=\frac12\log(2\pi e\sigma^2).
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=0,\qquad
+ h[X]=\frac12\log(2\pi e\sigma^2).
 \f]
 
 ## Moments and shape
@@ -75,7 +75,7 @@ The normal law has
 Raw integer moments are evaluated from
 
 \f[
- \operatorname{E}X^n=
+ \mathbb{E}[X^n]=
  \sum_{\substack{0\leq k\leq n\\k\ \mathrm{even}}}
  {n\choose k}\mu^{n-k}\sigma^k(k-1)!!,
 \f]

@@ -52,14 +52,14 @@ The closed-form characteristic function and summaries are
 \f]
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=0,
- \qquad \operatorname{Var}X=\frac{R^2}{4},
+ \mathbb{E}[X]=\operatorname{Median}[X]=\operatorname{Mode}[X]=0,
+ \qquad \operatorname{Var}[X]=\frac{R^2}{4},
 \f]
 
 \f[
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=-1,\qquad
- h(X)=\log(\pi R)-\frac12.
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=-1,\qquad
+ h[X]=\log(\pi R)-\frac12.
 \f]
 
 ## Fitting

@@ -33,7 +33,7 @@ Its continuous density on \f$[sa,sb]\f$ is
 When \f$\lambda>1\f$ the distribution also has an atom
 
 \f[
- P(X=0)=1-\frac1\lambda,
+ \Pr[X=0]=1-\frac1\lambda,
 \f]
 
 and the continuous component has total mass \f$1/\lambda\f$. `f(0)` returns infinity as an API
@@ -53,24 +53,24 @@ the latter's survival probability directly, and avoids cancellation at the lower
 The raw moments form a Narayana polynomial. For \f$n\geq1\f$,
 
 \f[
- \operatorname{E}X^n=s^n
+ \mathbb{E}[X^n]=s^n
  \sum_{k=0}^{n-1}\frac1{k+1}{n\choose k}{n-1\choose k}\lambda^k.
 \f]
 
 In particular,
 
 \f[
- \operatorname{E}X=s,\qquad
- \operatorname{Var}X=s^2\lambda,\qquad
- \operatorname{Skew}X=\sqrt\lambda,
+ \mathbb{E}[X]=s,\qquad
+ \operatorname{Var}[X]=s^2\lambda,\qquad
+ \operatorname{Skew}[X]=\sqrt\lambda,
  \qquad
- \operatorname{ExKurt}X=\lambda-1.
+ \operatorname{ExKurt}[X]=\lambda-1.
 \f]
 
 For \f$\lambda\leq1\f$ the continuous-density mode is
 
 \f[
- \operatorname{Mode}X=s\frac{(\lambda-1)^2}{\lambda+1};
+ \operatorname{Mode}[X]=s\frac{(\lambda-1)^2}{\lambda+1};
 \f]
 
 for \f$\lambda>1\f$ the atom makes zero the mode reported by the API.

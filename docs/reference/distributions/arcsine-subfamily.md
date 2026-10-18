@@ -29,8 +29,8 @@ Thus, for \f$0<y<1\f$,
 
 \f[
  \phi(t)=e^{ita}\,{}_1F_1(1-q;1;itd),\qquad
- \operatorname{E}X=a+d(1-q),\qquad
- \operatorname{Var}X=\frac{d^2q(1-q)}{2}.
+ \mathbb{E}[X]=a+d(1-q),\qquad
+ \operatorname{Var}[X]=\frac{d^2q(1-q)}{2}.
 \f]
 
 Only the default \f$q=1/2\f$ is the classical symmetric arcsine distribution. In that case,

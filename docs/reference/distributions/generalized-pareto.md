@@ -47,14 +47,14 @@ The characteristic function is evaluated as the defining expectation by the comm
 The moments and summaries implemented by the class are
 
 \f[
- \operatorname{E}X=\mu+\frac{\sigma}{1-\xi}\quad(\xi<1),
+ \mathbb{E}[X]=\mu+\frac{\sigma}{1-\xi}\quad(\xi<1),
 \qquad
- \operatorname{Var}X=\frac{\sigma^2}{(1-\xi)^2(1-2\xi)}
+ \operatorname{Var}[X]=\frac{\sigma^2}{(1-\xi)^2(1-2\xi)}
  \quad(\xi<1/2),
 \f]
 
 \f[
- \operatorname{Median}X=
+ \operatorname{Median}[X]=
  \begin{cases}
   \mu+\sigma\log2,&\xi=0,\\
   \mu+\dfrac{\sigma}{\xi}(2^\xi-1),&\xi\ne0,
@@ -62,15 +62,15 @@ The moments and summaries implemented by the class are
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2(1+\xi)\sqrt{1-2\xi}}{1-3\xi}\quad(\xi<1/3),
 \f]
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{3(1-2\xi)(2\xi^2+\xi+3)}{(1-3\xi)(1-4\xi)}-3
  \quad(\xi<1/4),
- \qquad h(X)=1+\xi+\log\sigma.
+ \qquad h[X]=1+\xi+\log\sigma.
 \f]
 
 The density is decreasing for \f$\xi>-1\f$, so its mode is \f$\mu\f$. At \f$\xi=-1\f$ it is

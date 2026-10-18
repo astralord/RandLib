@@ -14,7 +14,7 @@
 
 ## Definition and properties
 
-`DegenerateRand(value)` represents the point mass \f$P(X=a)=1\f$. It is retained in the continuous
+`DegenerateRand(value)` represents the point mass \f$\Pr[X=a]=1\f$. It is retained in the continuous
 class hierarchy for API composition, but it is singular with respect to Lebesgue measure. Its
 `f(a)` and `logf(a)` return positive infinity as a sentinel, while both return zero or negative
 infinity, respectively, away from \f$a\f$. Its actual distribution functions are
@@ -29,12 +29,12 @@ and
 
 \f[
  \phi(t)=e^{iat},\qquad
- \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=a,
- \qquad \operatorname{Var}X=0,
+ \mathbb{E}[X]=\operatorname{Median}[X]=\operatorname{Mode}[X]=a,
+ \qquad \operatorname{Var}[X]=0,
 \f]
 
 \f[
- h(X)=0.
+ h[X]=0.
 \f]
 
 Skewness and excess kurtosis are undefined and return NaN.

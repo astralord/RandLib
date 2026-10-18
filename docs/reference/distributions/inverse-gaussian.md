@@ -63,19 +63,19 @@ Return \f$Y\f$ with probability \f$\mu/(\mu+Y)\f$, and otherwise return \f$\mu^2
 The summaries are
 
 \f[
- \operatorname{E}X=\mu,\qquad
- \operatorname{Var}X=\frac{\mu^3}{\lambda},
+ \mathbb{E}[X]=\mu,\qquad
+ \operatorname{Var}[X]=\frac{\mu^3}{\lambda},
 \f]
 
 \f[
- \operatorname{Mode}X=\mu\left[
+ \operatorname{Mode}[X]=\mu\left[
  \sqrt{1+\frac{9\mu^2}{4\lambda^2}}-\frac{3\mu}{2\lambda}
  \right],
 \f]
 
 \f[
- \operatorname{Skew}X=3\sqrt{\frac{\mu}{\lambda}},\qquad
- \operatorname{ExKurt}X=\frac{15\mu}{\lambda}.
+ \operatorname{Skew}[X]=3\sqrt{\frac{\mu}{\lambda}},\qquad
+ \operatorname{ExKurt}[X]=\frac{15\mu}{\lambda}.
 \f]
 
 ## Fitting

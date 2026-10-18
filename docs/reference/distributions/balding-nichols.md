@@ -24,7 +24,7 @@ Beta law
 
 ## Fitting
 
-Consequently \f$\operatorname{E}X=p\f$ and \f$\operatorname{Var}X=Fp(1-p)\f$; its density, CDF,
+Consequently \f$\mathbb{E}[X]=p\f$ and \f$\operatorname{Var}[X]=Fp(1-p)\f$; its density, CDF,
 characteristic function, higher moments, quantiles, and sampler are the corresponding Beta formulas
 and algorithms above. The constructor order is \f$(F,p)\f$, despite the conventional notation often
 listing frequency first. There is currently no `fit<BaldingNicholsRand>` specialization.

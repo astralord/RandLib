@@ -59,12 +59,12 @@ which avoids overflow from forming \f$I_0(z)\f$ itself.
 Let \f$\kappa=\nu^2/(2\sigma^2)\f$ and \f$h=\kappa/2\f$. The implemented first two moments are
 
 \f[
- \operatorname{E}X=\sigma\sqrt{\frac\pi2}e^{-h}
+ \mathbb{E}[X]=\sigma\sqrt{\frac\pi2}e^{-h}
  \left[(1+\kappa)I_0(h)+\kappa I_1(h)\right],
 \f]
 
 \f[
- \operatorname{Var}X=2\sigma^2+\nu^2-(\operatorname{E}X)^2.
+ \operatorname{Var}[X]=2\sigma^2+\nu^2-(\mathbb{E}[X])^2.
 \f]
 
 ## Fitting

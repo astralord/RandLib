@@ -22,7 +22,7 @@
 \f$n=b-a+1\f$. On \f$\{a,\ldots,b\}\f$,
 
 \f[
- P(X=k)=\frac1n,
+ \Pr[X=k]=\frac1n,
  \qquad
  F(k)=\frac{k-a+1}{n}\quad(a\leq k\leq b).
 \f]
@@ -46,15 +46,15 @@ trigonometric values.
 For \f$n>1\f$,
 
 \f[
- \operatorname{E}X=\frac{a+b}{2},
+ \mathbb{E}[X]=\frac{a+b}{2},
  \qquad
- \operatorname{Var}X=\frac{n^2-1}{12},
+ \operatorname{Var}[X]=\frac{n^2-1}{12},
 \f]
 
 \f[
- \operatorname{Skew}X=0,
+ \operatorname{Skew}[X]=0,
  \qquad
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  -\frac{6(n^2+1)}{5(n^2-1)}.
 \f]
 

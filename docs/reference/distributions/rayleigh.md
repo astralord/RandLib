@@ -48,17 +48,17 @@ Sampling uses
 The summaries are
 
 \f[
- \operatorname{E}X=\sigma\sqrt{\frac\pi2},\qquad
- \operatorname{Var}X=\frac{4-\pi}{2}\sigma^2,\qquad
- \operatorname{Median}X=\sigma\sqrt{2\log2},\qquad
- \operatorname{Mode}X=\sigma,
+ \mathbb{E}[X]=\sigma\sqrt{\frac\pi2},\qquad
+ \operatorname{Var}[X]=\frac{4-\pi}{2}\sigma^2,\qquad
+ \operatorname{Median}[X]=\sigma\sqrt{2\log2},\qquad
+ \operatorname{Mode}[X]=\sigma,
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2\sqrt\pi(\pi-3)}{(4-\pi)^{3/2}},
  \qquad
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  -\frac{6\pi^2-24\pi+16}{(4-\pi)^2}.
 \f]
 
@@ -74,6 +74,6 @@ The summaries are
 \f]
 
 The correction follows from
-\f$\operatorname{E}R=\sigma\Gamma(n+1/2)/(\sqrt n\,\Gamma(n))\f$. RandLib evaluates the exact
+\f$\mathbb{E}[R]=\sigma\Gamma(n+1/2)/(\sqrt n\,\Gamma(n))\f$. RandLib evaluates the exact
 factor in the log domain through \f$n=100\f$ and uses its log-gamma-ratio asymptotic series for
 larger samples.

@@ -54,18 +54,18 @@ oscillatory integrator with Wynn epsilon acceleration.
 Writing \f$v=e^{\sigma^2}\f$, the summaries are
 
 \f[
- \operatorname{E}X=e^{\mu+\sigma^2/2},\qquad
- \operatorname{Var}X=(v-1)e^{2\mu+\sigma^2},
+ \mathbb{E}[X]=e^{\mu+\sigma^2/2},\qquad
+ \operatorname{Var}[X]=(v-1)e^{2\mu+\sigma^2},
 \f]
 
 \f[
- \operatorname{Median}X=e^\mu,\qquad
- \operatorname{Mode}X=e^{\mu-\sigma^2},\qquad
- \operatorname{Skew}X=(v+2)\sqrt{v-1},
+ \operatorname{Median}[X]=e^\mu,\qquad
+ \operatorname{Mode}[X]=e^{\mu-\sigma^2},\qquad
+ \operatorname{Skew}[X]=(v+2)\sqrt{v-1},
 \f]
 
 \f[
- \operatorname{ExKurt}X=v^4+2v^3+3v^2-6.
+ \operatorname{ExKurt}[X]=v^4+2v^3+3v^2-6.
 \f]
 
 ## Fitting

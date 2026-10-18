@@ -45,10 +45,10 @@ The marginals are
 and
 
 \f[
- \operatorname{E}\!\begin{bmatrix}X\\Y\end{bmatrix}
+ \mathbb{E}\!\left[\begin{bmatrix}X\\Y\end{bmatrix}\right]
  =\begin{bmatrix}\mu_1\\\mu_2\end{bmatrix},
  \qquad
- \operatorname{Cov}\!\begin{bmatrix}X\\Y\end{bmatrix}
+ \operatorname{Cov}\!\left[\begin{bmatrix}X\\Y\end{bmatrix}\right]
  =\begin{bmatrix}
    \sigma_1^2&\rho\sigma_1\sigma_2\\
    \rho\sigma_1\sigma_2&\sigma_2^2

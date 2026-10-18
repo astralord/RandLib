@@ -64,7 +64,7 @@ For a continuous random variable \f$X\f$,
  f(x)=\frac{d}{dx}\Pr[X\le x],\qquad
  F(x)=\Pr[X\le x],\qquad
  S(x)=\Pr[X>x],\qquad
- \phi(t)=\operatorname{E}[e^{itX}].
+ \phi(t)=\mathbb{E}[e^{itX}].
 \f]
 
 For a discrete random variable, \f$p(k)=\Pr[X=k]\f$ replaces the density. RandLib uses `f` for a

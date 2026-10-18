@@ -107,9 +107,9 @@ For \f$\alpha<1\f$ and \f$\beta=1\f$ the support is \f$[\mu_1,\infty)\f$; for
 For \f$\alpha<2\f$ the power-law tails are
 
 \f[
- P(X>x)\sim C_\alpha(1+\beta)\gamma^\alpha x^{-\alpha},
+ \Pr[X>x]\sim C_\alpha(1+\beta)\gamma^\alpha x^{-\alpha},
  \qquad
- P(X<-x)\sim C_\alpha(1-\beta)\gamma^\alpha x^{-\alpha},
+ \Pr[X<-x]\sim C_\alpha(1-\beta)\gamma^\alpha x^{-\alpha},
 \f]
 
 \f[
@@ -126,7 +126,7 @@ forms.
 The principal moments and summaries are
 
 \f[
- \operatorname{E}X=
+ \mathbb{E}[X]=
  \begin{cases}
   \mu_1,&\alpha>1,\\
   +\infty,&\alpha\leq1,\ \beta=1,\\
@@ -136,7 +136,7 @@ The principal moments and summaries are
 \f]
 
 \f[
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \begin{cases}
   2\gamma^2,&\alpha=2,\\
   \infty,&\alpha<2.

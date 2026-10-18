@@ -21,6 +21,29 @@ def main() -> int:
     labels: set[str] = set()
     card_labels: set[str] = set()
 
+    for source in sorted((root / "docs").rglob("*.md")):
+        if "legacy" in source.parts:
+            continue
+        text = source.read_text(encoding="utf-8")
+        if re.search(r"\\operatorname\{(?:E|Mean)\}", text, re.IGNORECASE):
+            fail(errors, f"{source.relative_to(root)}: expectations must use \\mathbb{{E}}")
+        unbracketed = re.search(
+            r"\\operatorname\{(?:Var|Variance|Cov|Covariance|Median|Mode|Skew|Skewness|Kurt|ExKurt|"
+            r"Corr|Correlation|CMean|CVar)\}"
+            r"\}*(?:\\!|\\,|\\;|\s)*(?:\\left\s*)?(?:\(|[A-Z])",
+            text,
+            re.IGNORECASE,
+        )
+        if unbracketed is not None:
+            fail(errors, f"{source.relative_to(root)}: statistical operators must use square brackets")
+        if re.search(
+            r"\\mathbb\{E\}(?:\\!|\\,|\\;|\s)*(?:\\left\s*)?(?:\(|[A-Za-z|]|\\begin)",
+            text,
+        ):
+            fail(errors, f"{source.relative_to(root)}: expectations must use square brackets")
+        if re.search(r"\\Pr(?:\\!|\\,|\\;|\s)*(?:\\left\s*)?\(", text):
+            fail(errors, f"{source.relative_to(root)}: probability operators must use square brackets")
+
     for source in sorted(source_dir.glob("*.md")):
         text = source.read_text(encoding="utf-8")
         title = re.fullmatch(r"# (.+) \{#([a-z0-9_]+)\}", text.splitlines()[0])

@@ -55,7 +55,6 @@
 \renewcommand{\theenumi}{\roman{enumi}}
 \renewcommand{\labelenumi}{(\theenumi)}
 
-\newcommand{\ME}{\mathbb{E}}
 \newcommand{\MR}{\mathbb{R}}
 \newcommand{\MP}{\mathbb{P}}
 \newcommand{\MN}{\mathbb{N}}
@@ -91,7 +90,7 @@
 	m_4' &= m_4 +  \delta^4 \frac{(n-1)(n^2-3n+3)}{n^3}+6\delta^2 \frac{m_2}{n^2}-4\delta\frac{m_3}{n}.
 	\end{aligned}
 	\]
-	Then $ m_1'$, $\frac{m_2}{n}$, $\operatorname{Skew}(X) = \frac{\sqrt{n}m_3'}{m_2'^{3/2}}$ and $\operatorname{Kurt}(X) = \frac{nm_4'}{m_2'^2}$ (we return excess kurtosis). 
+	Then $ m_1'$, $\frac{m_2}{n}$, $\operatorname{Skew}[X] = \frac{\sqrt{n}m_3'}{m_2'^{3/2}}$ and $\operatorname{Kurt}[X] = \frac{nm_4'}{m_2'^2}$ (we return excess kurtosis).
 	
 	\pagebreak
 	\part{Continuous univariate distributions}
@@ -116,9 +115,9 @@
 			\hline
 			$F(x)$ & $I_{y}(\alpha, \beta)$ for $y = \frac{x - a}{b - a}$\\
 			\hline
-			$\ME[X]$ & $a + (b-a)\frac{\alpha}{\alpha + \beta}$ \\
+			$\mathbb{E}[X]$ & $a + (b-a)\frac{\alpha}{\alpha + \beta}$ \\
 			\hline
-			$\Var(X)$ & $(b-a)^2\frac{ \alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$ \\
+			$\Var[X]$ & $(b-a)^2\frac{ \alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
@@ -149,7 +148,7 @@
 	\]
 	For shape parameters $<1$, $f(x)$ has singularity points at $0$ or $1$ or both of them, and numerical integration is impossible. Then we use the following technique: firstly, we can show that
 	\[
-	\phi(t|a, b) = \ME[e^{it(a + (b-a)X)}] = e^{ita} \phi(z|0, 1)
+	\phi(t|a, b) = \mathbb{E}[e^{it(a + (b-a)X)}] = e^{ita} \phi(z|0, 1)
 	\]
 	with $z = (b-a)t$. Hence, w.l.o.g. we can consider standard case $a=0$, $b=1$. Then
 	\[
@@ -266,9 +265,9 @@
 				\hline
 				$F(x)$ & $\frac{x - a}{b - a}$\\
 				\hline
-				$\ME[X]$ & $ \frac{a+b}{2}$ \\
+				$\mathbb{E}[X]$ & $ \frac{a+b}{2}$ \\
 				\hline
-				$\Var(X)$ & $\frac{(b-a)^2}{12}$ \\
+				$\Var[X]$ & $\frac{(b-a)^2}{12}$ \\
 				\hline
 				Median & $\frac{a+b}{2}$ \\
 				\hline
@@ -287,14 +286,14 @@
 	\mathcal{L}(a, b | X) = \frac{1}{(b-a)^n} \mathbf{1}_{ \{ X_i \in [a, b] \ \forall i = 1, \dots, n \} }.
 	\]
 	Therefore, $\mathcal{L}(a, b | X)$ is the largest for $\hat{b} = X_{(n)}$ and $\hat{a} = X_{(1)}$. However, using the fact that $X_{(k)} \sim B(k, n+1-k, a, b)$, these are biased estimators:
-	\[ \ME[X_{(1)}] = \frac{an + b}{n+1} \quad \text{and} \quad \ME[X_{(n)}] = \frac{a + bn}{n+1}.  \]
+	\[ \mathbb{E}[X_{(1)}] = \frac{an + b}{n+1} \quad \text{and} \quad \mathbb{E}[X_{(n)}] = \frac{a + bn}{n+1}.  \]
 	To get unbiased estimators we make the transformations:
 	\[ \tilde{a} = \frac{nX_{(1)} - X_{(n)} }{n-1} \quad \text{and} \quad  \tilde{b} = \frac{nX_{(n)} - X_{(1)} }{n-1}. \]
 	Then we get
 	\[ 
-	\ME[\tilde{a}] = \frac{n\ME[X_{(1)}] - \ME[X_{(n)}]}{n-1} = \frac{n(an+b)-(a+bn)}{n^2-1} = a.
+	\mathbb{E}[\tilde{a}] = \frac{n\mathbb{E}[X_{(1)}] - \mathbb{E}[X_{(n)}]}{n-1} = \frac{n(an+b)-(a+bn)}{n^2-1} = a.
 	\]
-	Analogously, $\ME[\tilde{b}] = b$.
+	Analogously, $\mathbb{E}[\tilde{b}] = b$.
 	\subparagraph{Bayesian inference.} Let us say, we try to estimate $\theta = b-a$ with known $a$. We set the prior distribution $\theta \sim \operatorname{Pareto}(\alpha, \sigma)$:
 	\[
 	h(\theta|\alpha, \sigma) = \frac{\alpha \sigma^\alpha}{\theta^{\alpha + 1}} \mathbf{1}_{\{\theta \geq \sigma\}}.
@@ -305,7 +304,7 @@
 	\]
 	Hence, Bayesian estimator is
 	\[  
-	\ME[\theta|X] = \frac{\alpha + n}{\alpha + n - 1}\max(\sigma, X_{(n)}-a)
+	\mathbb{E}[\theta|X] = \frac{\alpha + n}{\alpha + n - 1}\max(\sigma, X_{(n)}-a)
 	\]
 	and MAP estimator is
 	\[
@@ -334,9 +333,9 @@
 				\hline
 				$F(x)$ & $I_{\frac{x}{1+x}}(\alpha, \beta)$\\
 				\hline
-				$\ME[X]$ & $ \frac{\alpha}{\beta - 1}\mathbf{1}_{\{\beta > 1 \} } + \infty \mathbf{1}_{\{\beta \leq 1\} } $ \\
+				$\mathbb{E}[X]$ & $ \frac{\alpha}{\beta - 1}\mathbf{1}_{\{\beta > 1 \} } + \infty \mathbf{1}_{\{\beta \leq 1\} } $ \\
 				\hline
-				$\Var(X)$ & $\frac{ \alpha (\alpha +\beta - 1) }{ (\beta-2)(\beta-1)^2 }$, if $\beta > 1$ \\
+				$\Var[X]$ & $\frac{ \alpha (\alpha +\beta - 1) }{ (\beta-2)(\beta-1)^2 }$, if $\beta > 1$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -390,9 +389,9 @@
 			\hline
 			$F(x)$ &\pbox{\linewidth}{$ $ \\ $ \Phi(u,0,v)-e^{ -u + \frac{v^2}{2} +\log \Phi(u, v^2, v) }, $\\ where  $\Phi(x, \mu, \sigma)$ is Gaussian CDF, \\ $u=\lambda(x-\mu),$ \\ $v=\lambda \sigma$. } \\
 			\hline
-			$\ME[X]$ & $ \mu + 1 / \lambda$ \\
+			$\mathbb{E}[X]$ & $ \mu + 1 / \lambda$ \\
 			\hline
-			$\Var(X)$ & $\sigma^2 + 1/\lambda^2$ \\
+			$\Var[X]$ & $\sigma^2 + 1/\lambda^2$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
@@ -421,9 +420,9 @@
 				\hline
 				$F(x)$ & $ I_{\frac{d_1x}{d_1x+d_2}}\Big(\frac{d_1}{2},\frac{d_2}{2}\Big) $\\
 				\hline
-				$\ME[X]$ & $ \frac{d_2}{d_2-2}$ for $ d_2 > 2 $ \\
+				$\mathbb{E}[X]$ & $ \frac{d_2}{d_2-2}$ for $ d_2 > 2 $ \\
 				\hline
-				$\Var(X)$ & $\frac{2d_2^2(d_1+d_2-2)}{d_1(d_2-2)^2(d_2-4)}$ for $d_2 > 4$ \\
+				$\Var[X]$ & $\frac{2d_2^2(d_1+d_2-2)}{d_1(d_2-2)^2(d_2-4)}$ for $d_2 > 4$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -464,9 +463,9 @@
 				\hline
 				$F(x)$ & $P(\alpha, \beta x) $\\
 				\hline
-				$\ME[X]$ & $ \frac{\alpha}{\beta}$ \\
+				$\mathbb{E}[X]$ & $ \frac{\alpha}{\beta}$ \\
 				\hline
-				$\Var(X)$ & $\frac{\alpha}{\beta^2}$ \\
+				$\Var[X]$ & $\frac{\alpha}{\beta^2}$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -480,8 +479,8 @@
 	
 	\paragraph{More properties.}
 	\begin{itemize}
-		\item $\ME[\ln X] = \psi(\alpha) - \ln(\beta)$, $\Var(\ln X) = \psi^{(1)}(\alpha)$.
-		\item $\ME\big[ \frac{1}{X} \big] = \frac{\beta}{\alpha - 1}$.
+		\item $\mathbb{E}[\ln X] = \psi(\alpha) - \ln(\beta)$, $\Var[\ln X] = \psi^{(1)}(\alpha)$.
+		\item $\mathbb{E}\big[ \frac{1}{X} \big] = \frac{\beta}{\alpha - 1}$.
 		\item Let $X_i \sim \Gamma(\alpha_i, \beta)$ for $i = 1, \dots , n$. Then 
 		\[ \sum_{i=1}^n X_i \sim \Gamma\bigg(\sum_{i=1}^{n} \alpha_i, \beta\bigg). \]
 	\end{itemize}
@@ -513,7 +512,7 @@
 	Moreover, the maximum-likelihood estimation of rate $\beta$ is biased:
 	\[
 	\begin{aligned}
-	\ME[\hat{\beta}] & = \mathbb{\ME}\bigg[ \frac{\alpha n }{\sum_{i=1}^{n}X_i} \bigg] \\
+	\mathbb{E}[\hat{\beta}] & = \mathbb{E}\bigg[ \frac{\alpha n }{\sum_{i=1}^{n}X_i} \bigg] \\
 	& = \frac{\alpha n \beta}{\alpha n - 1}.
 	\end{aligned}
 	\]
@@ -531,7 +530,7 @@
 	\]
 	Therefore, Bayesian estimator is
 	\[
-	\ME[\beta|X] = \frac{\alpha n + \kappa}{\gamma +\sum_{i=1}^{n} X_i},
+	\mathbb{E}[\beta|X] = \frac{\alpha n + \kappa}{\gamma +\sum_{i=1}^{n} X_i},
 	\]
 	and MAP estimator is
 	\[
@@ -541,7 +540,7 @@
 	\paragraph{Exponential family parameterization}
 	Logarithm of probability mass function:
 	\[
-	\log \MP(X = x) = \alpha \log \beta - \log \Gamma(\alpha) + (\alpha - 1) \log x - \beta x.
+	\log \MP[X = x] = \alpha \log \beta - \log \Gamma(\alpha) + (\alpha - 1) \log x - \beta x.
 	\]
 	Therefore, sufficient statistics $T(x) = (\log x, x)^T$, natural parameters $\theta = (\alpha-1, -\beta)$, log-normalizer $F(\theta) = \log \Gamma (\theta_1 + 1) - (\theta_1 + 1) \log (-\theta_2)$, carrier measure $k(x) = 0$. Gradient of log-normalizer is $\nabla F(\theta) = \big(\psi(\theta_1 + 1) - \log(-\theta_2), -\frac{\theta_1+1}{\theta_2} \big)^T$ We conclude that adjusted cross-entropy is
 	\[
@@ -587,7 +586,7 @@
 	\]
 	The only difference between Gamma and Erlang distributions is that latter takes an integer number $k$ as a shape parameter.
 	Relation to other distributions: if $X \sim \operatorname{Erlang}(k, \beta)$ and $Y \sim \operatorname{Po}(\beta x)$, then 
-	\[\MP(X < x) = P(k, \beta x) = \MP(Y > k).\]
+	\[\MP[X < x] = P(k, \beta x) = \MP[Y > k].\]
 	
 	\subsection{Exponential distribution}
 	\begin{figure}[!htb]\centering
@@ -610,9 +609,9 @@
 			\hline
 			$F(x)$ & $1-e^{-\lambda x} $\\
 			\hline
-			$\ME[X]$ & $ \frac{1}{\lambda}$ \\
+			$\mathbb{E}[X]$ & $ \frac{1}{\lambda}$ \\
 			\hline
-			$\Var(X)$ & $\frac{1}{\lambda^2}$ \\
+			$\Var[X]$ & $\frac{1}{\lambda^2}$ \\
 			\hline
 			Median & $\frac{\ln(2)}{\lambda}$ \\
 			\hline
@@ -662,9 +661,9 @@
 				\hline
 				$F(x)$ & Calculated numerically \\
 				\hline
-				$\ME[X]$ & $ k + \lambda$ \\
+				$\mathbb{E}[X]$ & $ k + \lambda$ \\
 				\hline
-				$\Var(X)$ & $2(k+2\lambda)$ \\
+				$\Var[X]$ & $2(k+2\lambda)$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -710,9 +709,9 @@
 				\hline
 				$F(x)$ & Read text \\
 				\hline
-				$\ME[X]$ & $ \sigma^2 $ \\
+				$\mathbb{E}[X]$ & $ \sigma^2 $ \\
 				\hline
-				$\Var(X)$ & $\sigma^4 \lambda $ \\
+				$\Var[X]$ & $\sigma^4 \lambda $ \\
 				\hline
 				Median &
 				\pbox{\linewidth}{$0$ if $\lambda > 2$, \\ otherwise searched numerically} \\
@@ -765,9 +764,9 @@
 				\hline
 				$F(x)$ & $P(\mu, \mu x^2/\omega) $\\
 				\hline
-				$\ME[X]$ & $ \frac{\Gamma(\mu + 1/2)}{\Gamma(\mu)} \sqrt{\frac{\omega}{\mu}}  $ \\
+				$\mathbb{E}[X]$ & $ \frac{\Gamma(\mu + 1/2)}{\Gamma(\mu)} \sqrt{\frac{\omega}{\mu}}  $ \\
 				\hline
-				$\Var(X)$ & $\omega - (\ME[X])^2$ \\
+				$\Var[X]$ & $\omega - (\mathbb{E}[X])^2$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -794,7 +793,7 @@
 	\paragraph{Exponential family parameterization}
 	Logarithm of probability mass function:
 	\[
-	\log \MP(X = x) = \mu \log (\mu / \omega) - \log(\Gamma(\mu)/2) + (2 \mu - 1) \log x - \mu x^2/\omega.
+	\log \MP[X = x] = \mu \log (\mu / \omega) - \log(\Gamma(\mu)/2) + (2 \mu - 1) \log x - \mu x^2/\omega.
 	\]
 	Therefore, sufficient statistics $T(x) = (\log x, x^2)^T$, natural parameters 
 	\[\theta = (2\mu-1, -\mu / \omega),\]
@@ -917,9 +916,9 @@
 			\hline
 			$F(x)$ & $\operatorname{MarcumP}_{\frac{k}{2}}(\frac{\lambda}{2}, \frac{x}{2}) $\\
 			\hline
-			$\ME[X]$ & $ k + \lambda$ \\
+			$\mathbb{E}[X]$ & $ k + \lambda$ \\
 			\hline
-			$\Var(X)$ & $2(k+2\lambda)$ \\
+			$\Var[X]$ & $2(k+2\lambda)$ \\
 			\hline
 			Median & Searched numerically\\
 			\hline
@@ -963,9 +962,9 @@
 			\hline
 			$F(x)$ & $ 1-\big( \frac{\sigma}{x} \big)^\alpha $ \\
 			\hline
-			$\ME[X]$ & \pbox{\linewidth}{$ \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
+			$\mathbb{E}[X]$ & \pbox{\linewidth}{$ \frac{\alpha\sigma}{\alpha-1}$ for $\alpha > 1$, \\ $\infty$ otherwise} \\
 			\hline
-			$\Var(X)$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise  } \\
+			$\Var[X]$ & \pbox{\linewidth}{$\frac{\sigma^2 \alpha}{(\alpha-1)^2(\alpha-2)}$ for $\alpha > 2$, \\ $\infty$ otherwise  } \\
 			\hline
 			Median & $\sigma 2^{1/\alpha}$ \\
 			\hline
@@ -992,9 +991,9 @@ From this we conclude that the maximum-likelihood estimator of shape is
 \hat{\alpha} = \frac{1}{ \frac{1}{n} (\sum_{i=1}^{n} \ln X_i) - \ln \hat{\sigma} }.
 \]
 It is known that $\hat{\sigma} \sim \operatorname{Pareto}(n\alpha, \sigma)$ and $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n-1, n\alpha)$ and they are independent. Then
-\[ \ME[\hat{\sigma}] = \frac{ \sigma}{1-\frac{1}{n \alpha}}\]
+\[ \mathbb{E}[\hat{\sigma}] = \frac{ \sigma}{1-\frac{1}{n \alpha}}\]
 and
-\[ \ME[\hat{\alpha}] = \frac{n\alpha}{n-2}. \]
+\[ \mathbb{E}[\hat{\alpha}] = \frac{n\alpha}{n-2}. \]
 Therefore, in order to get unbiased estimators we need to make the following transformations:
 \[ \tilde{\alpha} = \frac{n-2}{n}\hat{\alpha} \quad \text{and} \quad \tilde{\sigma} = \hat{\sigma} \bigg(1 - \frac{1}{(n-1)\hat{\alpha}}\bigg). \]
 Note that if we estimate parameters separately, then $\hat{\alpha} \sim \operatorname{Inv-\Gamma}(n, n\alpha)$ and transformations are different.
@@ -1008,7 +1007,7 @@ The density of posterior distribution is
 f(\alpha | X) \propto \prod_{i=1}^n \frac{\sigma^\alpha}{{X_i}^{\alpha-1}} \cdot \alpha^{\kappa+n-1}e^{-\beta \alpha} \propto \alpha^{\kappa+n-1} e^{ -(\beta + \sum_{i=1}^n \ln (X_i/\sigma))\alpha }.
 \]
 Therefore, $\alpha |X \sim \Gamma(\kappa + n, \beta +\sum_{i=1}^n \ln (X_i/\sigma))$ and Bayesian estimator is
-\[ \ME[\alpha | X] = \frac{\kappa + n}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
+\[ \mathbb{E}[\alpha | X] = \frac{\kappa + n}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
 MAP estimator is
 \[ \alpha_{MAP} = \frac{\kappa + n-1}{ \beta +\sum_{i=1}^n \ln (X_i/\sigma) }. \]
 \textit{Note on fitting scale with Bayes:} let it be vice versa, $\alpha$ is known while $\sigma$ is not. Then we say that a priori $\sigma \sim \operatorname{Pareto}(\kappa, \theta)$:
@@ -1021,7 +1020,7 @@ f(\sigma|X) \propto \prod_{i=1}^n \frac{1}{{X_i}^{\alpha-1}} \cdot \sigma^{\alph
 \]
 This imposes the following additional constraints on the prior hyperparameters: $\kappa > \alpha n$ and $\theta < X_{(1)}$. Bayesian estimator:
 \[
-\ME[\sigma|X] = \frac{\theta^{\alpha'}}{1-\Big(\frac{\theta}{X_{(1)}}\Big)^{\alpha'}} \cdot \Big(\frac{\alpha'}{\alpha'-1}\Big)\cdot \bigg( \frac{1}{\theta^{\alpha'}} -\frac{1}{X_{(1)}^{\alpha'}} \bigg)
+\mathbb{E}[\sigma|X] = \frac{\theta^{\alpha'}}{1-\Big(\frac{\theta}{X_{(1)}}\Big)^{\alpha'}} \cdot \Big(\frac{\alpha'}{\alpha'-1}\Big)\cdot \bigg( \frac{1}{\theta^{\alpha'}} -\frac{1}{X_{(1)}^{\alpha'}} \bigg)
 \]
 with $\alpha'=\kappa - \alpha n$.
 MAP estimator is just
@@ -1054,9 +1053,9 @@ However, Bounded-Pareto distribution is not yet supported in RandLib.
 			\hline
 			$F(x)$ & Calculated numerically \\
 			\hline
-			$\ME[X]$ & $ \frac{(a+1)\zeta(a+2)}{b \zeta(a+1)}$ \\
+			$\mathbb{E}[X]$ & $ \frac{(a+1)\zeta(a+2)}{b \zeta(a+1)}$ \\
 			\hline
-			$\Var(X)$ & $\frac{(a+1)(a+2)\zeta(a+3)}{b^2 \zeta(a+1)}  - (\ME[X])^2$ \\
+			$\Var[X]$ & $\frac{(a+1)(a+2)\zeta(a+3)}{b^2 \zeta(a+1)}  - (\mathbb{E}[X])^2$ \\
 			\hline
 			Median & Searched numerically \\
 			\hline
@@ -1108,9 +1107,9 @@ However, Bounded-Pareto distribution is not yet supported in RandLib.
 			\hline
 			$F(x)$ & Calculated numerically \\
 			\hline
-			$\ME[X]$ & \pbox{\linewidth}{$ \mu$ for $\alpha > 1$,\\ otherwise undefined} \\
+			$\mathbb{E}[X]$ & \pbox{\linewidth}{$ \mu$ for $\alpha > 1$,\\ otherwise undefined} \\
 			\hline
-			$\Var(X)$ & $2 \gamma^2 1_{\{ \alpha = 2 \} } + \infty 1_{ \{ \alpha < 2 \} }  $ \\
+			$\Var[X]$ & $2 \gamma^2 1_{\{ \alpha = 2 \} } + \infty 1_{ \{ \alpha < 2 \} }  $ \\
 			\hline
 			Median & \pbox{\linewidth}{$\mu$ for $\beta = 0$,\\ otherwise searched numerically} \\
 			\hline
@@ -1148,9 +1147,9 @@ However, Bounded-Pareto distribution is not yet supported in RandLib.
 			\hline
 			$F(x)$ & $ \frac{1}{\pi} \operatorname{atan}\Big( \frac{x-\mu}{\gamma} \Big) + \frac{1}{2} $ \\
 			\hline
-			$\ME[X]$ & Undefined \\
+			$\mathbb{E}[X]$ & Undefined \\
 			\hline
-			$\Var(X)$ & $\infty $\\
+			$\Var[X]$ & $\infty $\\
 			\hline
 			Median & $\mu$ \\
 			\hline
@@ -1191,9 +1190,9 @@ Relation to Stable distribution:
 			\hline
 			$F(x)$ & $ \frac{1}{2} \operatorname{erfc}\Big( \frac{\mu-x}{\sqrt{2\sigma^2}} \Big) $ \\
 			\hline
-			$\ME[X]$ & $ \mu$ \\
+			$\mathbb{E}[X]$ & $ \mu$ \\
 			\hline
-			$\Var(X)$ & $\sigma^2$\\
+			$\Var[X]$ & $\sigma^2$\\
 			\hline
 			Median & $\mu$ \\
 			\hline
@@ -1220,7 +1219,7 @@ Moreover, if one is interested in estimating scale $\sigma$ with known $\mu$, th
 \]
 and
 \[
-\ME[\hat{\sigma}] = \frac{\sigma}{\sqrt{n}} \sqrt{2} \frac{\Gamma((n+1)/2)}{\Gamma(n/2)}.
+\mathbb{E}[\hat{\sigma}] = \frac{\sigma}{\sqrt{n}} \sqrt{2} \frac{\Gamma((n+1)/2)}{\Gamma(n/2)}.
 \]
 Then unbiased estimator is
 \[
@@ -1262,9 +1261,9 @@ Then unbiased estimator is
 				\hline
 				$F(x)$ & \pbox{\linewidth}{$ $ \\ $h(y)$, $y < 0$, \\ $ 1 - h(y)$, otherwise \\ with $h(y)=\frac{1}{2} I_\frac{\nu}{\nu+y^2}\big(\frac{\nu}{2}, \frac{1}{2}\big)$ \\ and $y=\frac{x-\mu}{\sigma}$}\\
 				\hline
-				$\ME[X]$ & $\mu$ \\
+				$\mathbb{E}[X]$ & $\mu$ \\
 				\hline
-				$\Var(X)$ & \pbox{\linewidth}{$\sigma^2 \frac{\nu}{\nu+2}$ for $\nu > 2$,\\ $\infty$, otherwise.} \\
+				$\Var[X]$ & \pbox{\linewidth}{$\sigma^2 \frac{\nu}{\nu+2}$ for $\nu > 2$,\\ $\infty$, otherwise.} \\
 				\hline
 				Median & $\mu$ \\
 				\hline
@@ -1307,9 +1306,9 @@ Relation to other distributions:
 			\hline
 			$F(x)$ & $ 1-\exp(-(x/\lambda)^k) $ \\
 			\hline
-			$\ME[X]$ & $ \lambda \Gamma(1+1/k)$ \\
+			$\mathbb{E}[X]$ & $ \lambda \Gamma(1+1/k)$ \\
 			\hline
-			$\Var(X)$ & $\lambda^2 \Gamma(1+2/k) - (\ME[X])^2$ \\
+			$\Var[X]$ & $\lambda^2 \Gamma(1+2/k) - (\mathbb{E}[X])^2$ \\
 			\hline
 			Median & $\lambda (\ln2)^{\frac{1}{k}}$ \\
 			\hline
@@ -1343,7 +1342,7 @@ f(\lambda^k| X) \propto \lambda^{-k(\alpha+1+n)} e^{-\frac{1}{\lambda^k} (\beta+
 \]
 Bayesian estimator:
 \[
-\ME[\lambda^k|X] = \frac{\beta+\sum_{i=1}^{n}X_i^k}{\alpha+n-1},
+\mathbb{E}[\lambda^k|X] = \frac{\beta+\sum_{i=1}^{n}X_i^k}{\alpha+n-1},
 \]
 MAP estimator:
 \[
@@ -1369,13 +1368,13 @@ MAP estimator:
 				\hline
 				Domain & $ k \in \{0, \dots, n  \} $  \\
 				\hline
-				$\MP(X = k)$ & $\binom{n}{k} \frac{B(k+\alpha, n-k+\beta)}{B(\alpha, \beta)}  $ \\
+				$\MP[X = k]$ & $\binom{n}{k} \frac{B(k+\alpha, n-k+\beta)}{B(\alpha, \beta)}  $ \\
 				\hline
-				$\MP(X \leq k)$ & Calculated numerically \\
+				$\MP[X \leq k]$ & Calculated numerically \\
 				\hline
-				$\ME[X]$ & $ n \frac{\alpha}{\alpha + \beta}$ \\
+				$\mathbb{E}[X]$ & $ n \frac{\alpha}{\alpha + \beta}$ \\
 				\hline
-				$\Var(X)$ & $\frac{n\alpha \beta (\alpha + \beta + n) }{(\alpha+\beta)^2(\alpha+\beta + 1)} $ \\
+				$\Var[X]$ & $\frac{n\alpha \beta (\alpha + \beta + n) }{(\alpha+\beta)^2(\alpha+\beta + 1)} $ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -1407,13 +1406,13 @@ MAP estimator:
 			\hline
 			Domain & $ k \in \{0, \dots, n  \} $  \\
 			\hline
-			$\MP(X = k)$ & $\binom{n}{k} p^k (1-p)^{n-k}$ \\
+			$\MP[X = k]$ & $\binom{n}{k} p^k (1-p)^{n-k}$ \\
 			\hline
-			$\MP(X \leq k)$ & $I_{1-p}(n-k, 1+k) $ \\
+			$\MP[X \leq k]$ & $I_{1-p}(n-k, 1+k) $ \\
 			\hline
-			$\ME[X]$ & $ np$ \\
+			$\mathbb{E}[X]$ & $ np$ \\
 			\hline
-			$\Var(X)$ & $np(1-p)$ \\
+			$\Var[X]$ & $np(1-p)$ \\
 			\hline
 			Median & $[np]$ \\
 			\hline
@@ -1456,7 +1455,7 @@ MAP estimator:
 	
 	\paragraph{Exponential family parameterization.}
 	Logarithm of probabilty mass function:
-	\[ \log \MP(X = x) = \log(n!) - \log(x!(n-x)!) + x \log \frac{p}{1-p} + n \log(1-p). \]
+	\[ \log \MP[X = x] = \log(n!) - \log(x!(n-x)!) + x \log \frac{p}{1-p} + n \log(1-p). \]
 	Therefore binomial distribution with fixed $n$ belongs to one-parameterized exponential family with sufficient statistics $T(x) = x$, natural parameter $\theta = \log \frac{p}{1-p}$, log-normalizer $F(\theta) = n \log (1 + \exp \theta) - \log(n!)$ and carrier measure $k(x)=-\log(x!(n-x)!)$. Gradient of log-normalizer: $\nabla F(\theta) = n \frac{\exp(\theta)}{1+\exp(\theta)}$. Adjusted cross-entropy is
 	\[ 
 	\begin{aligned}
@@ -1504,13 +1503,13 @@ MAP estimator:
 					\hline
 					Domain & $ \max(0, n+K-N) \leq k \leq \min(n, K) $  \\
 					\hline
-					$\MP(X = k)$ & $ \frac{\binom{K}{k}\binom{N-K}{n-k}  }{\binom{N}{n}}   $ \\
+					$\MP[X = k]$ & $ \frac{\binom{K}{k}\binom{N-K}{n-k}  }{\binom{N}{n}}   $ \\
 					\hline
-					$\MP(X \leq k)$ & Calculated numerically \\
+					$\MP[X \leq k]$ & Calculated numerically \\
 					\hline
-					$\ME[X]$ & $ \frac{nK}{N}$ \\
+					$\mathbb{E}[X]$ & $ \frac{nK}{N}$ \\
 					\hline
-					$\Var(X)$ & $ \frac{nK(N-K)(N-n)}{N^2(N-1)} $ \\
+					$\Var[X]$ & $ \frac{nK(N-K)(N-n)}{N^2(N-1)} $ \\
 					\hline
 					Median & Searched numerically \\
 					\hline
@@ -1556,13 +1555,13 @@ MAP estimator:
    				\hline
    				Domain & $ k \in \MN $  \\
    				\hline
-   				$\MP(X = k)$ & $  -\frac{p^k}{k \log(1-p)}   $ \\
+   				$\MP[X = k]$ & $  -\frac{p^k}{k \log(1-p)}   $ \\
    				\hline
-   				$\MP(X \leq k)$ & $1 + \frac{B(p, k+1, 0)}{\log(1-p)}$ \\
+   				$\MP[X \leq k]$ & $1 + \frac{B(p, k+1, 0)}{\log(1-p)}$ \\
    				\hline
-   				$\ME[X]$ & $ -\frac{p}{(1-p)\log(1-p)}r$ \\
+   				$\mathbb{E}[X]$ & $ -\frac{p}{(1-p)\log(1-p)}r$ \\
    				\hline
-   				$\Var(X)$ & $ -\frac{p(p + \log(1-p))}{(\log(1-p) (1-p))^2} $ \\
+   				$\Var[X]$ & $ -\frac{p(p + \log(1-p))}{(\log(1-p) (1-p))^2} $ \\
    				\hline
    				Median & Searched numerically \\
    				\hline
@@ -1593,13 +1592,13 @@ MAP estimator:
 				\hline
 				Domain & $ k \in \MN_0 $  \\
 				\hline
-				$\MP(X = k)$ & $  \binom{k+r-1}{k} p^r (1-p)^k   $ \\
+				$\MP[X = k]$ & $  \binom{k+r-1}{k} p^r (1-p)^k   $ \\
 				\hline
-				$\MP(X \leq k)$ & $I_p(r, k+1)$ \\
+				$\MP[X \leq k]$ & $I_p(r, k+1)$ \\
 				\hline
-				$\ME[X]$ & $ \frac{1-p}{p}r$ \\
+				$\mathbb{E}[X]$ & $ \frac{1-p}{p}r$ \\
 				\hline
-				$\Var(X)$ & $ \frac{1-p}{p^2}r $ \\
+				$\Var[X]$ & $ \frac{1-p}{p^2}r $ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -1646,13 +1645,13 @@ MAP estimator:
 					\hline
 					Domain & $ k \in \MN_0 $  \\
 					\hline
-					$\MP(X = k)$ & $\frac{\lambda^k e^{-\lambda}}{k!}$ \\
+					$\MP[X = k]$ & $\frac{\lambda^k e^{-\lambda}}{k!}$ \\
 					\hline
-					$\MP(X \leq k)$ & $Q(k+1, \lambda)$ \\
+					$\MP[X \leq k]$ & $Q(k+1, \lambda)$ \\
 					\hline
-					$\ME[X]$ & $ \lambda$ \\
+					$\mathbb{E}[X]$ & $ \lambda$ \\
 					\hline
-					$\Var(X)$ & $\lambda$ \\
+					$\Var[X]$ & $\lambda$ \\
 					\hline
 					Median & $\sim \max\big([\lambda + \frac{1}{3} - \frac{0.02}{\lambda}], 0\big) $ \\
 					\hline
@@ -1691,7 +1690,7 @@ MAP estimator:
 	\paragraph{Exponential family parameterization}
 	Logarithm of probability mass function:
 	\[
-	\log \MP(X = x) = x \log \lambda - \lambda - \log(x!).
+	\log \MP[X = x] = x \log \lambda - \lambda - \log(x!).
 	\]
 	Therefore, sufficient statistics $T(x) = x$, natural parameter $\theta = \log \lambda$, log-normalizer $F(\theta) = \exp(\theta)$, carrier measure $k(x) = \log(x!)$. We conclude that adjusted cross-entropy is
 	\[
@@ -1732,13 +1731,13 @@ MAP estimator:
 				\hline
 				Domain & $ k \in \MZ $  \\
 				\hline
-				$\MP(X = k)$. & $e^{-(\mu_1 + \mu_2)} \Big( \frac{\mu_1}{\mu_2} \Big)^{\frac{k}{2}} I_k(2\sqrt{\mu_1\mu_2}) $ \\
+				$\MP[X = k]$. & $e^{-(\mu_1 + \mu_2)} \Big( \frac{\mu_1}{\mu_2} \Big)^{\frac{k}{2}} I_k(2\sqrt{\mu_1\mu_2}) $ \\
 				\hline
-				$\MP(X \leq k)$ & \pbox{\linewidth}{$\operatorname{MarcumP}_{k+1}(\mu_2, \mu_1)$, $k \geq 0$ \\ $\operatorname{MarcumQ}_{-k}(\mu_1, \mu_2)$, $k < 0$ } \\
+				$\MP[X \leq k]$ & \pbox{\linewidth}{$\operatorname{MarcumP}_{k+1}(\mu_2, \mu_1)$, $k \geq 0$ \\ $\operatorname{MarcumQ}_{-k}(\mu_1, \mu_2)$, $k < 0$ } \\
 				\hline
-				$\ME[X]$ & $ \mu_1-\mu_2$ \\
+				$\mathbb{E}[X]$ & $ \mu_1-\mu_2$ \\
 				\hline
-				$\Var(X)$ & $\mu_1+\mu_2$ \\
+				$\Var[X]$ & $\mu_1+\mu_2$ \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -1772,13 +1771,13 @@ MAP estimator:
 				\hline
 				Domain & $ k \in \{a, \dots, b\} $  \\
 				\hline
-				$\MP(X = k)$ & $\frac{1}{n} $, where $n=b-a+1$. \\
+				$\MP[X = k]$ & $\frac{1}{n} $, where $n=b-a+1$. \\
 				\hline
-				$\MP(X \leq k)$ & $\frac{k-a+1}{n}$ \\
+				$\MP[X \leq k]$ & $\frac{k-a+1}{n}$ \\
 				\hline
-				$\ME[X]$ & $ \frac{a+b}{2} $ \\
+				$\mathbb{E}[X]$ & $ \frac{a+b}{2} $ \\
 				\hline
-				$\Var(X)$ & $ \frac{(n-1)(n+1)}{12}$\\
+				$\Var[X]$ & $ \frac{(n-1)(n+1)}{12}$\\
 				\hline
 				Median & $\frac{a+b}{2}$ \\
 				\hline
@@ -1810,13 +1809,13 @@ MAP estimator:
 				\hline
 				Domain & $ k \in \MN $  \\
 				\hline
-				$\MP(X = k)$ & $\rho \frac{ \Gamma(1+\rho) (k-1)! } {\Gamma(k+\rho+1)} $ \\
+				$\MP[X = k]$ & $\rho \frac{ \Gamma(1+\rho) (k-1)! } {\Gamma(k+\rho+1)} $ \\
 				\hline
-				$\MP(X \leq k)$ & $1-k \frac{ \Gamma(1+\rho) (k-1)! } {\Gamma(k+\rho+1)} $ \\
+				$\MP[X \leq k]$ & $1-k \frac{ \Gamma(1+\rho) (k-1)! } {\Gamma(k+\rho+1)} $ \\
 				\hline
-				$\ME[X]$ & \pbox{\linewidth}{$ \frac{\rho}{\rho - 1}$, $\rho > 1$ \\ $\infty$, otherwise } \\
+				$\mathbb{E}[X]$ & \pbox{\linewidth}{$ \frac{\rho}{\rho - 1}$, $\rho > 1$ \\ $\infty$, otherwise } \\
 				\hline
-				$\Var(X)$ & \pbox{\linewidth}{$ \frac{\rho^2}{(\rho - 1)^2(\rho-2)}$, $\rho > 2$ \\ $\infty$, otherwise } \\
+				$\Var[X]$ & \pbox{\linewidth}{$ \frac{\rho^2}{(\rho - 1)^2(\rho-2)}$, $\rho > 2$ \\ $\infty$, otherwise } \\
 				\hline
 				Median & Searched numerically \\
 				\hline
@@ -1847,13 +1846,13 @@ MAP estimator:
 					\hline
 					Domain & $ k \in \MN $  \\
 					\hline
-					$\MP(X = k)$ & $ \frac{1}{\zeta(s) k^s} $ \\
+					$\MP[X = k]$ & $ \frac{1}{\zeta(s) k^s} $ \\
 					\hline
-					$\MP(X \leq k)$ & $ \frac{H(s, k)}{\zeta(s)} $ \\
+					$\MP[X \leq k]$ & $ \frac{H(s, k)}{\zeta(s)} $ \\
 					\hline
-					$\ME[X]$ & \pbox{\linewidth}{$ \frac{\zeta(s-1)}{\zeta(s)}$, $s > 2$ \\ $\infty$, otherwise } \\
+					$\mathbb{E}[X]$ & \pbox{\linewidth}{$ \frac{\zeta(s-1)}{\zeta(s)}$, $s > 2$ \\ $\infty$, otherwise } \\
 					\hline
-					$\Var(X)$ & \pbox{\linewidth}{$ \frac{\zeta(s-2)}{\zeta(s)} - (\ME[X])^2$, $\rho > 3$ \\ $\infty$, otherwise } \\
+					$\Var[X]$ & \pbox{\linewidth}{$ \frac{\zeta(s-2)}{\zeta(s)} - (\mathbb{E}[X])^2$, $\rho > 3$ \\ $\infty$, otherwise } \\
 					\hline
 					Median & Searched numerically \\
 					\hline

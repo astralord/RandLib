@@ -51,29 +51,29 @@ This follows from the sampling representation
 which is also RandLib's sampler. The summaries are
 
 \f[
- \operatorname{E}X=m+\gamma(\kappa^{-1}-\kappa),
+ \mathbb{E}[X]=m+\gamma(\kappa^{-1}-\kappa),
  \qquad
- \operatorname{Var}X=\gamma^2(\kappa^{-2}+\kappa^2),
+ \operatorname{Var}[X]=\gamma^2(\kappa^{-2}+\kappa^2),
  \qquad
- \operatorname{Mode}X=m,
+ \operatorname{Mode}[X]=m,
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2(1-\kappa^6)}{(1+\kappa^4)^{3/2}},
  \qquad
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  6-\frac{12}{(\kappa^2+\kappa^{-2})^2},
 \f]
 
 \f[
- h(X)=1+\log\!\left[\gamma(\kappa+\kappa^{-1})\right].
+ h[X]=1+\log\!\left[\gamma(\kappa+\kappa^{-1})\right].
 \f]
 
 The median is obtained without root finding:
 
 \f[
- \operatorname{Median}X=
+ \operatorname{Median}[X]=
  \begin{cases}
   m+\gamma\kappa\log\!\left[(1+\kappa^{-2})/2\right],&\kappa>1,\\
   m-(\gamma/\kappa)\log\!\left[(1+\kappa^2)/2\right],&0<\kappa\leq1.

@@ -5,28 +5,6 @@ All notable changes to RandLib are documented here. The project follows
 
 ## [2.0.0] - Unreleased
 
-### Stable Count
-
-- Added the Tier 2 `StableCountRand<Real>` location-scale distribution for `0 < alpha < 1`, with
-  Wright/one-sided-stable density evaluation, direct reciprocal-stable probability tails, TOMS 748
-  quantiles, log-gamma moments, standard-URBG inverse sampling, and an exact
-  `Gamma(shape=3/2, scale=4)` half-stable fast path.
-- Added constrained maximum-likelihood fitting with fixed exponent, scale, or location; seeded
-  recovery and representative-alpha sampling checks; and a 218-value independent 40-digit mpmath
-  reference table covering central values, both tails, moments, and location-scale behavior.
-- Made the Stable Count oracle solve quantiles with guard precision and serialize exactly 40
-  significant digits, so a fresh five-case generation reproduces the committed table.
-- Switched moderate upper probabilities to the direct reciprocal-stable survival integral instead
-  of subtracting the lower CDF. This retains the one-percent tail on binary64-only extended-
-  precision platforms and restores portable `alpha = 0.2` upper quantiles.
-- Evaluated the first four exact half-Gamma raw moments without a log-gamma round trip, keeping
-  derived variance and kurtosis portable on Apple platforms where `long double` is binary64.
-- Extended `StableRand`'s valid exponent range from `[0.1, 2]` to `(0, 2]`, removing the historical
-  lower cutoff needed by the complete Stable Count parameter range.
-- Investigated the paper's "conjugate prior" claim and did not add a Bayesian overload. The paper
-  does not define the likelihood parameter or posterior update, and the exact half-stable natural
-  scale likelihood does not remain in the core Stable Count family.
-
 ### Mathematical reference
 
 - Added a current mathematical reference for every public distribution, with TeX definitions,
@@ -38,6 +16,7 @@ All notable changes to RandLib are documented here. The project follows
 
 ### Stable distributions
 
+- Extended `StableRand`'s valid exponent range from `[0.1, 2]` to `(0, 2]`.
 - Added Nolan's S0 parameterization alongside the source-compatible S1 default. Constructors,
   location accessors, setters, names, support endpoints, probability functions, characteristic
   functions and sampling consistently use the selected convention, including the special
@@ -58,6 +37,10 @@ All notable changes to RandLib are documented here. The project follows
 
 ### Distributions
 
+- Added the Tier 2 `StableCountRand<Real>` location-scale distribution for `0 < alpha < 1`, with
+  Wright/one-sided-stable density evaluation, direct reciprocal-stable probability tails, TOMS 748
+  quantiles, log-gamma moments, standard-URBG inverse sampling, an exact half-stable Gamma path,
+  constrained maximum-likelihood fitting, and independent 40-digit mpmath reference data.
 - Added the Tier 1 noncentral t distribution with centered Benton–Krishnamoorthy probability
   series, direct survival probabilities, recurrence and integral densities, transformed sampling,
   quantiles, moments, a conditional-normal characteristic function and constrained maximum-
@@ -102,14 +85,16 @@ All notable changes to RandLib are documented here. The project follows
 - Added a strict Doxygen build with the pinned Doxygen Awesome theme and a GitHub Pages deployment
   workflow. Redundant conversion-era `@fn` directives and incomplete public parameter comments were
   cleaned up so documentation warnings fail the build.
+- Standardized statistical formulas on square-bracket operator notation, with expectations written
+  as `\mathbb{E}[\,\cdot\,]`, and made the documentation build reject regressions.
 - Retired the generated legacy PDF. Its LaTeX source and figures remain under `docs/legacy/` as a
   clearly marked 1.x mathematical reference.
 
 ### Examples and packaging
 
 - Added warning-clean, CI-compiled examples for standard-engine sampling, parallel streams, fitted
-  model selection, and conjugate Bayesian updates. The stable-fitting example follows the Phase 5
-  stable estimator.
+  model selection, and conjugate Bayesian updates. The stable-fitting example uses the stable
+  estimator.
 - Added a locally validated vcpkg overlay port and Conan 2 header-only recipe with a compiled
   `test_package` consumer.
 - Added deterministic single-header generation and a CI smoke test. Tagged v2 releases extract their

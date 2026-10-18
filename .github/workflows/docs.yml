@@ -2,7 +2,7 @@ name: Documentation
 
 on:
   push:
-    branches: [master]
+    branches: [master, 2.x]
   pull_request:
     branches: [master]
   workflow_dispatch:
@@ -29,14 +29,14 @@ jobs:
           cmake -S . -B build-docs -G Ninja -DRANDLIB_BUILD_DOCS=ON -DRANDLIB_BUILD_TESTS=OFF -DRANDLIB_BUILD_EXAMPLES=OFF
           cmake --build build-docs --target randlib_docs
       - uses: actions/configure-pages@v5
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/2.x'
       - uses: actions/upload-pages-artifact@v4
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/2.x'
         with:
           path: build-docs/docs/html
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/2.x'
     needs: build
     runs-on: ubuntu-24.04
     permissions:

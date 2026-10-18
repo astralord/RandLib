@@ -41,9 +41,9 @@ At integer \f$t\f$, the wrap factor cancels and this reduces to
 \f$\lambda/(\lambda-it)\f$. The circular summaries are
 
 \f[
- \operatorname{CMean}(X)=\frac\pi2-\arctan\lambda,
+ \operatorname{CMean}[X]=\frac\pi2-\arctan\lambda,
  \qquad
- \operatorname{CVar}(X)=1-\frac{\lambda}{\sqrt{1+\lambda^2}}.
+ \operatorname{CVar}[X]=1-\frac{\lambda}{\sqrt{1+\lambda^2}}.
 \f]
 
 The representative mode is zero and its median is

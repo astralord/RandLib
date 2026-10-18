@@ -26,7 +26,7 @@ requires \f$n>0\f$, \f$p_1,p_2\geq0\f$, and \f$p_0=1-p_1-p_2\geq0\f$. With
 the joint mass is
 
 \f[
- P(X=x,Y=y)=
+ \Pr[X=x,Y=y]=
  \frac{n!}{x!\,y!\,(n-x-y)!}
  p_1^x p_2^y p_0^{n-x-y}.
 \f]
@@ -48,23 +48,23 @@ The marginals are \f$X\sim\operatorname{Binomial}(n,p_1)\f$ and
 \f$Y\sim\operatorname{Binomial}(n,p_2)\f$. Their joint moments are
 
 \f[
- \operatorname{E}X=np_1,
+ \mathbb{E}[X]=np_1,
  \qquad
- \operatorname{E}Y=np_2,
+ \mathbb{E}[Y]=np_2,
 \f]
 
 \f[
- \operatorname{Var}X=np_1(1-p_1),
+ \operatorname{Var}[X]=np_1(1-p_1),
  \qquad
- \operatorname{Var}Y=np_2(1-p_2),
+ \operatorname{Var}[Y]=np_2(1-p_2),
  \qquad
- \operatorname{Cov}(X,Y)=-np_1p_2,
+ \operatorname{Cov}[X,Y]=-np_1p_2,
 \f]
 
 and, when both marginal variances are positive,
 
 \f[
- \operatorname{Corr}(X,Y)=
+ \operatorname{Corr}[X,Y]=
  -\sqrt{\frac{p_1p_2}{(1-p_1)(1-p_2)}}.
 \f]
 
@@ -76,7 +76,7 @@ The CDF conditions on whichever marginal requires the shorter outer sum. For exa
 \f[
  F(x,y)=
  \sum_{j=0}^{y}
- \Pr(Y=j)\,
+ \Pr[Y=j]\,
  \Pr\!\left[
   \operatorname{Binomial}\!\left(n-j,\frac{p_1}{1-p_2}\right)\leq x
  \right],

@@ -41,27 +41,27 @@ depend on subtracting from one. The characteristic function is
 The moments and principal summaries are
 
 \f[
- \operatorname{E}X=\frac{\alpha}{\beta},\qquad
- \operatorname{Var}X=\frac{\alpha}{\beta^2},\qquad
- \operatorname{Mode}X=\frac{\max\{\alpha-1,0\}}{\beta},
+ \mathbb{E}[X]=\frac{\alpha}{\beta},\qquad
+ \operatorname{Var}[X]=\frac{\alpha}{\beta^2},\qquad
+ \operatorname{Mode}[X]=\frac{\max\{\alpha-1,0\}}{\beta},
 \f]
 
 \f[
- \operatorname{Skew}X=\frac{2}{\sqrt\alpha},\qquad
- \operatorname{ExKurt}X=\frac{6}{\alpha}.
+ \operatorname{Skew}[X]=\frac{2}{\sqrt\alpha},\qquad
+ \operatorname{ExKurt}[X]=\frac{6}{\alpha}.
 \f]
 
 `GeometricMean()` and `GeometricVariance()` return log-moments:
 
 \f[
- \operatorname{E}\log X=\psi(\alpha)-\log\beta,
- \qquad \operatorname{Var}(\log X)=\psi_1(\alpha).
+ \mathbb{E}[\log X]=\psi(\alpha)-\log\beta,
+ \qquad \operatorname{Var}[\log X]=\psi_1(\alpha).
 \f]
 
 The differential entropy exposed through the exponential-family API is
 
 \f[
- h(X)=\alpha-\log\beta+\log\Gamma(\alpha)+(1-\alpha)\psi(\alpha).
+ h[X]=\alpha-\log\beta+\log\Gamma(\alpha)+(1-\alpha)\psi(\alpha).
 \f]
 
 Except at \f$\alpha=1\f$, where the exponential formula applies, medians and quantiles are found by

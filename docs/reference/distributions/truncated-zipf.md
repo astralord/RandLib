@@ -18,7 +18,7 @@
 \f$s>1\f$ and \f$n>0\f$. With \f$H_{n,s}=\sum_{j=1}^n j^{-s}\f$,
 
 \f[
- P(X=k)=\frac{k^{-s}}{H_{n,s}},
+ \Pr[X=k]=\frac{k^{-s}}{H_{n,s}},
  \qquad
  F(k)=\frac{H_{k,s}}{H_{n,s}}\quad(1\leq k<n).
 \f]
@@ -34,15 +34,15 @@ Its generating functions are the finite sums
 The CF implementation evaluates the latter sum directly. All raw moments exist and satisfy
 
 \f[
- \operatorname{E}(X^m)=\frac{H_{n,s-m}}{H_{n,s}}.
+ \mathbb{E}[X^m]=\frac{H_{n,s-m}}{H_{n,s}}.
 \f]
 
 In particular,
 
 \f[
- \operatorname{E}X=\frac{H_{n,s-1}}{H_{n,s}},
+ \mathbb{E}[X]=\frac{H_{n,s-1}}{H_{n,s}},
  \qquad
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \frac{H_{n,s-2}}{H_{n,s}}-
  \left(\frac{H_{n,s-1}}{H_{n,s}}\right)^2.
 \f]

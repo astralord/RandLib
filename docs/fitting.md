@@ -54,18 +54,6 @@ for MLE rather than as a final estimate.
 and location. Stable likelihoods are materially more expensive than ordinary light-tailed models.
 Fix known parameters through `FitOptions::fixed`, and use the quantile fit when latency matters.
 
-### Stable Count
-
-`fit<StableCountRand<double>>(observations)` jointly optimizes exponent, scale, and location under
-`0 < exponent < 1` and positive scale. Any of `"exponent"`, `"scale"`, and `"location"` may be held
-fixed. Stable Count likelihoods can take the slower direct-quadrature path, so fixing known
-parameters materially reduces fitting cost.
-
-Stable Count is not registered as a conjugate prior for `StableRand`. The cited construction does
-not specify a normalized likelihood or prove posterior closure, and the exact half-stable case is a
-counterexample for the natural stable-subordinator scale likelihood. See the
-[Stable Count research outcome](reference/distributions/stable-count.md#conjugacy-research-outcome).
-
 ## Other estimators
 
 `fit_moments<Distribution>(sample)` selects the named method-of-moments entry point. Conjugate

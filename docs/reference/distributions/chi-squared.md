@@ -25,14 +25,14 @@ from the Gamma implementation. In particular,
 
 \f[
  \phi(t)=(1-2it)^{-k/2},\qquad
- \operatorname{E}X=k,\qquad
- \operatorname{Var}X=2k,
+ \mathbb{E}[X]=k,\qquad
+ \operatorname{Var}[X]=2k,
 \f]
 
 \f[
- \operatorname{Mode}X=\max\{k-2,0\},\qquad
- \operatorname{Skew}X=\sqrt{\frac8k},\qquad
- \operatorname{ExKurt}X=\frac{12}{k}.
+ \operatorname{Mode}[X]=\max\{k-2,0\},\qquad
+ \operatorname{Skew}[X]=\sqrt{\frac8k},\qquad
+ \operatorname{ExKurt}[X]=\frac{12}{k}.
 \f]
 
 ## Fitting

@@ -46,10 +46,6 @@ The executable tolerance registry in `tests/data/reference_tolerances.csv` is au
 reference generation is deliberately expensive; see [the accuracy policy](accuracy-policy.md) before
 changing a result or tolerance.
 
-The positive one-sided stable kernel below exponent `0.1` is also used by the
-[Stable Count distribution](reference/distributions/stable-count.md). The most extreme exponents
-can be substantially slower than the primary stable reference grid.
-
 Geometric stable laws use an exponential mixture of stable laws. Alpha-one tail expansions keep
 that mixture practical even when it probes stable probabilities at enormous arguments.
 
@@ -73,10 +69,13 @@ auto estimate = randlib::fit<LogStable>(sample, randlib::Method::Quantile);
 Positive moments of a non-Gaussian log-stable law exist only for `beta = -1`. Writing `mu1` for the
 S1 location, their logarithms are
 
-```text
-log E[Y^r] = r mu1 - (gamma r)^alpha / cos(pi alpha / 2)  (alpha != 1)
-log E[Y^r] = r mu1 + (2 gamma / pi) r log(r)              (alpha == 1)
-```
+\f[
+ \log \mathbb{E}[Y^r]=
+ \begin{cases}
+  r\mu_1-(\gamma r)^\alpha/\cos(\pi\alpha/2),&\alpha\ne1,\\
+  r\mu_1+(2\gamma/\pi)r\log r,&\alpha=1.
+ \end{cases}
+\f]
 
 The Gaussian `alpha = 2` case has moments for every beta because beta does not change that law. For
 other non-Gaussian skewnesses, `Mean()` and `Variance()` return infinity and standardized higher

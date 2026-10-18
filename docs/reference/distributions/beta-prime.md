@@ -67,25 +67,25 @@ epsilon acceleration on the density over \f$[0,\infty)\f$.
 The principal moments, with their existence conditions, are
 
 \f[
- \operatorname{E}X=\frac{\alpha}{\beta-1}\quad(\beta>1),
+ \mathbb{E}[X]=\frac{\alpha}{\beta-1}\quad(\beta>1),
 \qquad
- \operatorname{Var}X=\frac{\alpha(\alpha+\beta-1)}
+ \operatorname{Var}[X]=\frac{\alpha(\alpha+\beta-1)}
  { (\beta-2)(\beta-1)^2}\quad(\beta>2),
 \f]
 
 \f[
- \operatorname{Mode}X=\max\!\left\{\frac{\alpha-1}{\beta+1},0\right\},
+ \operatorname{Mode}[X]=\max\!\left\{\frac{\alpha-1}{\beta+1},0\right\},
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2(2\alpha+\beta-1)}{\beta-3}
  \sqrt{\frac{\beta-2}{\alpha(\alpha+\beta-1)}}
  \quad(\beta>3),
 \f]
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{6}{(\beta-3)(\beta-4)}
  \left[
  \frac{(\beta-1)^2(\beta-2)}{\alpha(\alpha+\beta-1)}+5\beta-11

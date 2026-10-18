@@ -60,7 +60,7 @@ is ill-conditioned. The integrand is evaluated in the log domain.
 For
 \f$|x|>\max(100,10|\delta|+10)\f$, an eight-term inverse-power expansion supplies the relevant
 tail. Its coefficients are positive-part normal moments
-\f$\operatorname{E}[(Z+\delta)_+^r]\f$, which are themselves evaluated by log-scaled quadrature
+\f$\mathbb{E}[(Z+\delta)_+^r]\f$, which are themselves evaluated by log-scaled quadrature
 split at the integrand saddle. This avoids the very long incomplete-beta series required in the far
 tail.
 
@@ -90,7 +90,7 @@ denominator.
 For \f$r<\nu\f$, define
 
 \f[
- m_r=\operatorname{E}[W^{-r}]
+ m_r=\mathbb{E}[W^{-r}]
  =\left(\frac\nu2\right)^{r/2}
  \frac{\Gamma((\nu-r)/2)}{\Gamma(\nu/2)}.
 \f]
@@ -100,9 +100,9 @@ For \f$r<\nu\f$, define
 The first two moments are
 
 \f[
- \operatorname{E}T=\delta m_1\quad(\nu>1),
+ \mathbb{E}[T]=\delta m_1\quad(\nu>1),
 \qquad
- \operatorname{Var}T=(1+\delta^2)m_2-\delta^2m_1^2
+ \operatorname{Var}[T]=(1+\delta^2)m_2-\delta^2m_1^2
  \quad(\nu>2).
 \f]
 
@@ -118,12 +118,12 @@ For compact higher-moment formulas, let
 Then, when \f$\nu>3\f$ and \f$\nu>4\f$, respectively,
 
 \f[
- \operatorname{Skew}T=
+ \operatorname{Skew}[T]=
  \frac{r_3-3r_1r_2+2r_1^3}{(r_2-r_1^2)^{3/2}},
 \f]
 
 \f[
- \operatorname{ExKurt}T=
+ \operatorname{ExKurt}[T]=
  \frac{r_4-4r_1r_3+6r_1^2r_2-3r_1^4}{(r_2-r_1^2)^2}-3.
 \f]
 

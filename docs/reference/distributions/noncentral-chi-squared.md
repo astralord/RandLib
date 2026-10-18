@@ -75,15 +75,15 @@ whereas for \f$k<1\f$,
 The exact central gamma sampler is used at \f$\lambda=0\f$. The summaries are
 
 \f[
- \operatorname{E}X=k+\lambda,\qquad
- \operatorname{Var}X=2(k+2\lambda),
+ \mathbb{E}[X]=k+\lambda,\qquad
+ \operatorname{Var}[X]=2(k+2\lambda),
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2\sqrt2(k+3\lambda)}{(k+2\lambda)^{3/2}},
  \qquad
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{12(k+4\lambda)}{(k+2\lambda)^2}.
 \f]
 

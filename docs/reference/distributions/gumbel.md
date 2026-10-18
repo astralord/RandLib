@@ -39,19 +39,19 @@ The class currently evaluates the characteristic function through the common exp
 rather than a dedicated complex-gamma path. Its summaries are
 
 \f[
- \operatorname{E}X=\mu+\beta\gamma_E,\qquad
- \operatorname{Var}X=\frac{\pi^2\beta^2}{6},
+ \mathbb{E}[X]=\mu+\beta\gamma_E,\qquad
+ \operatorname{Var}[X]=\frac{\pi^2\beta^2}{6},
 \f]
 
 \f[
- \operatorname{Median}X=\mu-\beta\log(\log2),\qquad
- \operatorname{Mode}X=\mu,
+ \operatorname{Median}[X]=\mu-\beta\log(\log2),\qquad
+ \operatorname{Mode}[X]=\mu,
 \f]
 
 \f[
- \operatorname{Skew}X=\frac{12\sqrt6\,\zeta(3)}{\pi^3},\qquad
- \operatorname{ExKurt}X=\frac{12}{5},\qquad
- h(X)=1+\gamma_E+\log\beta.
+ \operatorname{Skew}[X]=\frac{12\sqrt6\,\zeta(3)}{\pi^3},\qquad
+ \operatorname{ExKurt}[X]=\frac{12}{5},\qquad
+ h[X]=1+\gamma_E+\log\beta.
 \f]
 
 ## Fitting

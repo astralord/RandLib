@@ -5,7 +5,7 @@ The discrete reference covers `BernoulliRand`, `BetaBinomialRand`, `BinomialRand
 `NegativeHyperGeometricRand`, `PoissonRand`, `RademacherRand`, `SkellamRand`, `UniformDiscreteRand`,
 `YuleRand`, `ZetaRand` and `ZipfRand`.
 
-For every class, `F(k)` means \f$P(X\leq k)\f$ and `S(k)` means \f$P(X>k)\f$. Classes with a
+For every class, `F(k)` means \f$\Pr[X\leq k]\f$ and `S(k)` means \f$\Pr[X>k]\f$. Classes with a
 dedicated `S` evaluate that upper tail directly; otherwise the shared implementation returns
 \f$1-F(k)\f$. Discrete quantiles are the smallest integers whose CDF reaches the requested
 probability. The generic characteristic-function path sums outward from the median and uses an

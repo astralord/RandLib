@@ -30,9 +30,9 @@ Thus
 \f]
 
 \f[
- \operatorname{E}X=\sqrt2\frac{\Gamma((k+1)/2)}{\Gamma(k/2)},\qquad
- \operatorname{Var}X=k-(\operatorname{E}X)^2,\qquad
- \operatorname{Mode}X=\sqrt{k-1}.
+ \mathbb{E}[X]=\sqrt2\frac{\Gamma((k+1)/2)}{\Gamma(k/2)},\qquad
+ \operatorname{Var}[X]=k-(\mathbb{E}[X])^2,\qquad
+ \operatorname{Mode}[X]=\sqrt{k-1}.
 \f]
 
 ## Fitting

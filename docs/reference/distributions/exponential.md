@@ -47,17 +47,17 @@ ziggurat by \f$1/\beta\f$.
 The mean, variance, median, mode, skewness, excess kurtosis, entropy, and raw integer moments are
 
 \f[
- \operatorname{E}X=\frac1\beta,\quad
- \operatorname{Var}X=\frac1{\beta^2},\quad
- \operatorname{Median}X=\frac{\log2}{\beta},\quad
- \operatorname{Mode}X=0,
+ \mathbb{E}[X]=\frac1\beta,\quad
+ \operatorname{Var}[X]=\frac1{\beta^2},\quad
+ \operatorname{Median}[X]=\frac{\log2}{\beta},\quad
+ \operatorname{Mode}[X]=0,
 \f]
 
 \f[
- \operatorname{Skew}X=2,\qquad
- \operatorname{ExKurt}X=6,\qquad
- h(X)=1-\log\beta,\qquad
- \operatorname{E}X^r=\frac{r!}{\beta^r}\quad(r=0,1,\ldots).
+ \operatorname{Skew}[X]=2,\qquad
+ \operatorname{ExKurt}[X]=6,\qquad
+ h[X]=1-\log\beta,\qquad
+ \mathbb{E}[X^r]=\frac{r!}{\beta^r}\quad(r=0,1,\ldots).
 \f]
 
 ## Fitting

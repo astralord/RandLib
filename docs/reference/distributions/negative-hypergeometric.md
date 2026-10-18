@@ -23,7 +23,7 @@ are \f$N>0\f$ and \f$1\leq m\leq M\leq N\f$; the support is
 \f$k\in\{0,\ldots,N-M\}\f$. Its PMF is
 
 \f[
- P(X=k)=
+ \Pr[X=k]=
  \frac{\binom{k+m-1}{k}\binom{N-m-k}{M-m}}{\binom NM}.
 \f]
 
@@ -44,11 +44,11 @@ functions are the finite sums
 which the generic finite-support routine evaluates numerically. The implemented moments are
 
 \f[
- \operatorname{E}X=\frac{m(N-M)}{M+1},
+ \mathbb{E}[X]=\frac{m(N-M)}{M+1},
 \f]
 
 \f[
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \frac{m(N+1)(N-M)(M-m+1)}{(M+1)^2(M+2)}.
 \f]
 

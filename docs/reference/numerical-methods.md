@@ -98,7 +98,7 @@ central differences with steps proportional to \f$\epsilon^{1/4}\f$.
 For fitted parameters \f$\hat\theta\f$, the covariance estimate is the inverse observed information
 
 \f[
- \widehat{\operatorname{Cov}}(\hat\theta)
+ \widehat{\operatorname{Cov}}[\hat\theta]
    =\left[-\nabla^2\ell(\hat\theta)\right]^{-1},
 \f]
 

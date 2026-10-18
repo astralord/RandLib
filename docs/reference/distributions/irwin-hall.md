@@ -40,10 +40,10 @@ log-factorial and recursively updated binomial coefficients. The characteristic 
 Sampling explicitly sums \f$n\f$ independent uniforms. Other summaries are
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\frac n2,\qquad
- \operatorname{Var}X=\frac n{12},\qquad
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=-\frac6{5n}.
+ \mathbb{E}[X]=\operatorname{Median}[X]=\frac n2,\qquad
+ \operatorname{Var}[X]=\frac n{12},\qquad
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=-\frac6{5n}.
 \f]
 
 ## Fitting

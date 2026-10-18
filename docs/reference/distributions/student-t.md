@@ -66,17 +66,17 @@ Cauchy sampler is used.
 The summaries are
 
 \f[
- \operatorname{E}X=\mu\quad(\nu>1),\qquad
- \operatorname{Var}X=\frac{\nu\sigma^2}{\nu-2}\quad(\nu>2),
+ \mathbb{E}[X]=\mu\quad(\nu>1),\qquad
+ \operatorname{Var}[X]=\frac{\nu\sigma^2}{\nu-2}\quad(\nu>2),
 \f]
 
 \f[
- \operatorname{Median}X=\operatorname{Mode}X=\mu,
- \qquad \operatorname{Skew}X=0\quad(\nu>3),
+ \operatorname{Median}[X]=\operatorname{Mode}[X]=\mu,
+ \qquad \operatorname{Skew}[X]=0\quad(\nu>3),
 \f]
 
 \f[
- \operatorname{ExKurt}X=\frac6{\nu-4}\quad(\nu>4).
+ \operatorname{ExKurt}[X]=\frac6{\nu-4}\quad(\nu>4).
 \f]
 
 The API distinguishes an infinite variance or fourth moment from summaries that are undefined
@@ -84,7 +84,7 @@ because a lower moment is absent. The differential entropy, although not exposed
 member, is
 
 \f[
- h(X)=\log\!\left[\sigma\sqrt\nu\,B(\nu/2,1/2)\right]
+ h[X]=\log\!\left[\sigma\sqrt\nu\,B(\nu/2,1/2)\right]
  +\frac{\nu+1}{2}\left[
  \psi((\nu+1)/2)-\psi(\nu/2)
  \right].

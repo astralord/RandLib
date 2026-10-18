@@ -10,34 +10,18 @@
   <span role="listitem"><strong>Kind</strong>Continuous</span>
   <span role="listitem"><strong>Family</strong>Stable families</span>
   <span role="listitem"><strong>C++ type</strong><code>StableCountRand</code></span>
-  <span role="listitem"><strong>Accuracy tier</strong>Tier 2</span>
 </div>
+
+## Definition and properties
 
 `StableCountRand<Real>(exponent, scale, location)` implements the core Stable Count law for
 \f$0<\alpha<1\f$, \f$\sigma>0\f$, and finite \f$\mu\f$. If \f$X\f$ is standard Stable Count, the
 returned variate is \f$Y=\mu+\sigma X\f$ and has support \f$(\mu,\infty)\f$.
 
-```cpp
-#include <randlib/randlib.hpp>
-
-#include <random>
-
-std::mt19937_64 engine(42);
-randlib::StableCountRand<double> count(0.8, 2.0, -1.0);
-double draw = count(engine);
-double density = count.f(1.0);
-double upper_tail = count.S(3.0);
-```
-
-The generalized four-parameter family \f$(\alpha,\sigma,d,p)\f$ proposed in later work is not part
-of this API.
-
-## Definition and properties
-
 Let \f$L_\alpha\f$ denote the positive \f$\alpha\f$-stable density normalized by
 
 \f[
- \operatorname{E}\!\left[e^{-sL_\alpha}\right]=e^{-s^\alpha}.
+ \mathbb{E}\!\left[e^{-sL_\alpha}\right]=e^{-s^\alpha}.
 \f]
 
 The standard Stable Count density is
@@ -135,7 +119,7 @@ unverified asymptotic shortcut.
 Every standard raw moment of order \f$q>-1\f$ exists and is
 
 \f[
- m_q=\operatorname{E}[X^q]
+ m_q=\mathbb{E}[X^q]
  =\frac{\Gamma((q+1)/\alpha)}
         {\Gamma(q+1)\Gamma(1/\alpha)}.
 \f]
@@ -143,18 +127,18 @@ Every standard raw moment of order \f$q>-1\f$ exists and is
 Writing \f$m_j=m_q|_{q=j}\f$ and \f$v=m_2-m_1^2\f$, the reported summaries are
 
 \f[
- \operatorname{E}Y=\mu+\sigma m_1,
+ \mathbb{E}[Y]=\mu+\sigma m_1,
  \qquad
- \operatorname{Var}Y=\sigma^2v,
+ \operatorname{Var}[Y]=\sigma^2v,
 \f]
 
 \f[
- \operatorname{Skew}Y=
+ \operatorname{Skew}[Y]=
  \frac{m_3-3m_1m_2+2m_1^3}{v^{3/2}},
 \f]
 
 \f[
- \operatorname{ExKurt}Y=
+ \operatorname{ExKurt}[Y]=
  \frac{m_4-4m_1m_3+6m_1^2m_2-3m_1^4}{v^2}-3.
 \f]
 
@@ -169,73 +153,9 @@ The exact half case uses the Gamma decomposition. There is no renewal cutoff, di
 stable draw, mutable static state, or library-owned engine, so seeded standard engines remain
 reproducible.
 
-## Independent reference data
-
-`tools/refdata/distributions.py` implements the published Wright series independently of the C++
-stable kernel. It uses mpmath 1.3.0 with 40 decimal digits, 120 guard digits, compensated arbitrary-
-precision summation, a 20,000-term bound, and precision-doubling confirmation for tiny values. The
-half case is evaluated independently with the incomplete gamma function. The committed table covers
-\f$\alpha=0.2,0.5,0.8,0.95\f$, a location-scale case, both probability tails, quantiles, and moments.
-
-Generation is per-case cached, bounded, resumable, and exactly verifiable:
-
-```sh
-uv run --with mpmath==1.3.0 python tools/refdata/generate.py \
-  --only StableCountRand --jobs 5 --cache /tmp/randlib-stable-count-refcache
-uv run --with mpmath==1.3.0 python tools/refdata/generate.py \
-  --only StableCountRand --jobs 5 --cache /tmp/randlib-stable-count-refcache --verify
-```
-
 ## Fitting
 
 `fit<StableCountRand<double>>(sample)` performs constrained maximum likelihood over exponent, scale,
 and location. `FitOptions::fixed` accepts `"exponent"`, `"scale"`, and `"location"`. Initialization
 uses exponent \f$1/2\f$, a location just below the sample minimum, and moment-scaled spread. Empty,
 non-finite, or constant samples fail cleanly.
-
-## Conjugacy research outcome
-
-No `fit_bayes<StableRand>` overload is provided. Lihn's
-[Stable Count paper](https://arxiv.org/abs/2405.04693) describes a conjugate-prior direction but
-does not specify a normalized likelihood, identify which stable parameter is random, or derive a
-posterior update. Its renewal, inverse-variable, product, ratio, and subordination identities do
-not by themselves establish Bayesian posterior closure.
-
-The exact half-stable case gives a concrete closure check. If observations have the natural stable-
-subordinator likelihood
-
-\f[
- \operatorname{E}[e^{-sY}\mid\lambda]=e^{-\lambda\sqrt{s}},
- \qquad
- f(y\mid\lambda)=
- \frac{\lambda}{2\sqrt{\pi}}y^{-3/2}
- \exp\!\left(-\frac{\lambda^2}{4y}\right).
-\f]
-
-and \f$\lambda\f$ has the standard Stable Count prior, then
-
-\f[
- \pi(\lambda)=
- \operatorname{Gamma}\!\left(\frac32,\text{rate}=\frac14\right),
-\f]
-
-\f[
- \pi(\lambda\mid y_1,\ldots,y_n)
- \propto
- \lambda^{n+1/2}
- \exp\!\left[
-  -\frac{\lambda^2}{4}\sum_{j=1}^n\frac1{y_j}
-  -\frac{\lambda}{4}
- \right].
-\f]
-
-The quadratic term and changed power show that the posterior is not a location-scale Stable Count
-law. Assigning the prior directly to \f$c=\lambda^2\f$ instead gives a Gamma likelihood update whose
-shape changes with \f$n\f$, again leaving the fixed-shape core Stable Count family.
-Reciprocal-scale choices add the corresponding Jacobian and do not repair closure. The paper's
-random count is a latent renewal index, not a normalized likelihood parameter for an observed
-stable sample.
-
-Conjugacy is therefore **not established**. A future Bayesian API would require a new normalized
-likelihood, a proved posterior family, a posterior-predictive construction, and independent
-quadrature evidence.

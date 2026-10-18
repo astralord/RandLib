@@ -39,7 +39,7 @@ For \f$\alpha=1\f$, the S1 scale law includes its usual logarithmic location cor
  \end{cases}
 \f]
 
-Since \f$\operatorname{E}e^{-W\psi}=1/(1+\psi)\f$, the characteristic function is
+Since \f$\mathbb{E}[e^{-W\psi}]=1/(1+\psi)\f$, the characteristic function is
 
 \f[
  \phi(t)=\frac1{1+\psi(t)}.
@@ -88,7 +88,7 @@ quantile searches use the same asymptotic seed.
 The mean follows
 
 \f[
- \operatorname{E}X=
+ \mathbb{E}[X]=
  \begin{cases}
   \mu,&\alpha>1,\\
   +\infty,&\alpha\leq1,\ \beta=1,\\
@@ -100,16 +100,16 @@ The mean follows
 Only \f$\alpha=2\f$ has finite variance:
 
 \f[
- \operatorname{Var}X=\mu^2+2\gamma^2.
+ \operatorname{Var}[X]=\mu^2+2\gamma^2.
 \f]
 
 In that case
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2(1-\kappa^6)}{(1+\kappa^4)^{3/2}},
  \qquad
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  6-\frac{12}{(\kappa^2+\kappa^{-2})^2}.
 \f]
 

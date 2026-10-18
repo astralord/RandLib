@@ -10,7 +10,7 @@ probability
 The inherited `S({x, y})` is \f$1-F(x,y)\f$, the probability of the complement of that lower
 orthant. It is not the upper-right joint survival probability \f$\Pr[X>x,Y>y]\f$. `Mean()` returns
 the two marginal means, while `Covariance()` returns the tuple
-\f$(\operatorname{Var}X,\operatorname{Cov}(X,Y),\operatorname{Var}Y)\f$. The public bivariate API
+\f$(\operatorname{Var}[X],\operatorname{Cov}[X,Y],\operatorname{Var}[Y])\f$. The public bivariate API
 does not define vector quantiles or expose a joint characteristic-function member.
 
 <div class="reference-callout">

@@ -67,24 +67,24 @@ when cancellation makes the small-\f$t\f$ numerator indistinguishable from zero.
 The principal summaries are
 
 \f[
- \operatorname{E}X=\frac{a+b+c}{3},\qquad
- \operatorname{Var}X=\frac{a^2+b^2+c^2-ab-ac-bc}{18},
+ \mathbb{E}[X]=\frac{a+b+c}{3},\qquad
+ \operatorname{Var}[X]=\frac{a^2+b^2+c^2-ab-ac-bc}{18},
 \f]
 
 \f[
- \operatorname{Median}X=
+ \operatorname{Median}[X]=
  \begin{cases}
   a+\sqrt{(b-a)(c-a)/2},&2c>a+b,\\
   b-\sqrt{(b-a)(b-c)/2},&2c\leq a+b,
  \end{cases}
- \qquad \operatorname{Mode}X=c,
+ \qquad \operatorname{Mode}[X]=c,
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{\sqrt2(a+b-2c)(2a-b-c)(a-2b+c)}
  {5\left(a^2+b^2+c^2-ab-ac-bc\right)^{3/2}},
- \qquad \operatorname{ExKurt}X=-\frac35.
+ \qquad \operatorname{ExKurt}[X]=-\frac35.
 \f]
 
 ## Fitting

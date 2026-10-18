@@ -31,13 +31,13 @@ shared numerical tolerance; it returns immediately when \f$x\f$ falls in a remov
 The principal summaries are
 
 \f[
- \operatorname{E}X=\frac12,
+ \mathbb{E}[X]=\frac12,
  \qquad
- \operatorname{Var}X=\frac18,
+ \operatorname{Var}[X]=\frac18,
  \qquad
- \operatorname{Skew}X=0,
+ \operatorname{Skew}[X]=0,
  \qquad
- \operatorname{ExKurt}X=-\frac85.
+ \operatorname{ExKurt}[X]=-\frac85.
 \f]
 
 The lower median is \f$1/3\f$. A density-based mode is not defined, so the singular base returns

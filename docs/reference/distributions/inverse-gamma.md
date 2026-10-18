@@ -49,22 +49,22 @@ Fourier integrator.
 The moments and shape summaries are
 
 \f[
- \operatorname{E}X=\frac\beta{\alpha-1}\quad(\alpha>1),
+ \mathbb{E}[X]=\frac\beta{\alpha-1}\quad(\alpha>1),
  \qquad
- \operatorname{Var}X=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}
+ \operatorname{Var}[X]=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}
  \quad(\alpha>2),
 \f]
 
 \f[
- \operatorname{Mode}X=\frac\beta{\alpha+1},\qquad
- \operatorname{Median}X=\frac{1}{\operatorname{Median}(Y)},
+ \operatorname{Mode}[X]=\frac\beta{\alpha+1},\qquad
+ \operatorname{Median}[X]=\frac{1}{\operatorname{Median}[Y]},
 \f]
 
 \f[
- \operatorname{Skew}X=\frac{4\sqrt{\alpha-2}}{\alpha-3}
+ \operatorname{Skew}[X]=\frac{4\sqrt{\alpha-2}}{\alpha-3}
  \quad(\alpha>3),
  \qquad
- \operatorname{ExKurt}X=\frac{30\alpha-66}{(\alpha-3)(\alpha-4)}
+ \operatorname{ExKurt}[X]=\frac{30\alpha-66}{(\alpha-3)(\alpha-4)}
  \quad(\alpha>4).
 \f]
 

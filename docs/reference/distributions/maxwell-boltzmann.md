@@ -44,16 +44,16 @@ the missing factor in the archived document. RandLib specializes the density and
 The summaries are
 
 \f[
- \operatorname{E}X=2\sigma\sqrt{\frac2\pi},\qquad
- \operatorname{Var}X=\sigma^2\left(3-\frac8\pi\right),\qquad
- \operatorname{Mode}X=\sqrt2\,\sigma,
+ \mathbb{E}[X]=2\sigma\sqrt{\frac2\pi},\qquad
+ \operatorname{Var}[X]=\sigma^2\left(3-\frac8\pi\right),\qquad
+ \operatorname{Mode}[X]=\sqrt2\,\sigma,
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{2\sqrt2(16-5\pi)}{(3\pi-8)^{3/2}},
  \qquad
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{4\left[\pi(40-3\pi)-96\right]}{(3\pi-8)^2}.
 \f]
 

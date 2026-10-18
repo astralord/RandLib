@@ -30,7 +30,7 @@
 and therefore
 
 \f[
- P(X=k)={n\choose k}
+ \Pr[X=k]={n\choose k}
  \frac{B(k+\alpha,n-k+\beta)}{B(\alpha,\beta)},
  \qquad k=0,\ldots,n.
 \f]
@@ -50,11 +50,11 @@ probability-generating function is
 The first two moments are
 
 \f[
- \operatorname{E}X=\frac{n\alpha}{\alpha+\beta},
+ \mathbb{E}[X]=\frac{n\alpha}{\alpha+\beta},
 \f]
 
 \f[
- \operatorname{Var}X=
+ \operatorname{Var}[X]=
  \frac{n\alpha\beta(\alpha+\beta+n)}
  {(\alpha+\beta)^2(\alpha+\beta+1)}.
 \f]
@@ -62,7 +62,7 @@ The first two moments are
 Its skewness is
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{(\alpha+\beta+2n)(\beta-\alpha)}
  {\alpha+\beta+2}
  \sqrt{\frac{\alpha+\beta+1}
@@ -72,7 +72,7 @@ Its skewness is
 For completeness, with \f$s=\alpha+\beta\f$, the implemented excess kurtosis is
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{s^2(s+1)}
  {n\alpha\beta(s+2)(s+3)(s+n)}
  \left\{

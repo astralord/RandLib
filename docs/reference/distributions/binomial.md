@@ -22,7 +22,7 @@
 \f$k=0,\ldots,n\f$,
 
 \f[
- P(X=k)={n\choose k}p^k(1-p)^{n-k}.
+ \Pr[X=k]={n\choose k}p^k(1-p)^{n-k}.
 \f]
 
 ## Numerical evaluation and quantiles
@@ -50,14 +50,14 @@ The generating functions are
 Writing \f$q=1-p\f$,
 
 \f[
- \operatorname{E}X=np,\qquad
- \operatorname{Var}X=npq,
+ \mathbb{E}[X]=np,\qquad
+ \operatorname{Var}[X]=npq,
 \f]
 
 \f[
- \operatorname{Skew}X=\frac{q-p}{\sqrt{npq}},
+ \operatorname{Skew}[X]=\frac{q-p}{\sqrt{npq}},
  \qquad
- \operatorname{ExKurt}X=\frac{1/(pq)-6}{n}.
+ \operatorname{ExKurt}[X]=\frac{1/(pq)-6}{n}.
 \f]
 
 The standardized moments apply for \f$0<p<1\f$.

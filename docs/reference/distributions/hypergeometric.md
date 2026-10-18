@@ -29,7 +29,7 @@ population of size \f$N\f$ containing \f$K\f$ successes. RandLib requires
 and its PMF is
 
 \f[
- P(X=k)=\frac{\binom Kk\binom{N-K}{n-k}}{\binom Nn}.
+ \Pr[X=k]=\frac{\binom Kk\binom{N-K}{n-k}}{\binom Nn}.
 \f]
 
 ## Numerical evaluation and quantiles
@@ -53,13 +53,13 @@ The generic finite-support characteristic-function routine evaluates this sum nu
 principal moments are
 
 \f[
- \operatorname{E}X=\frac{nK}{N},
+ \mathbb{E}[X]=\frac{nK}{N},
  \qquad
- \operatorname{Var}X=\frac{nK(N-K)(N-n)}{N^2(N-1)},
+ \operatorname{Var}[X]=\frac{nK(N-K)(N-n)}{N^2(N-1)},
 \f]
 
 \f[
- \operatorname{Skew}X=
+ \operatorname{Skew}[X]=
  \frac{(N-2K)(N-2n)\sqrt{N-1}}
  {(N-2)\sqrt{nK(N-K)(N-n)}}.
 \f]
@@ -67,7 +67,7 @@ principal moments are
 Writing \f$A=nK(N-K)(N-n)\f$, the implemented excess kurtosis is
 
 \f[
- \operatorname{ExKurt}X=
+ \operatorname{ExKurt}[X]=
  \frac{
   N^2(N-1)\{N(N+1)-6[K(N-K)+n(N-n)]\}
   +6A(5N-6)}

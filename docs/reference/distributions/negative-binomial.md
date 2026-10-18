@@ -23,7 +23,7 @@ RandLib counts failures before the \f$r\f$th success. `PascalRand<Int>` is the i
 \f$k\in\{0,1,\ldots\}\f$,
 
 \f[
- P(X=k)=
+ \Pr[X=k]=
  \frac{\Gamma(k+r)}{\Gamma(r)\,\Gamma(k+1)}p^r q^k.
 \f]
 
@@ -48,15 +48,15 @@ and the log PMF uses `lgamma` and `lfact`. Its generating functions are
 The principal summaries are
 
 \f[
- \operatorname{E}X=\frac{rq}{p},
+ \mathbb{E}[X]=\frac{rq}{p},
  \qquad
- \operatorname{Var}X=\frac{rq}{p^2},
+ \operatorname{Var}[X]=\frac{rq}{p^2},
 \f]
 
 \f[
- \operatorname{Skew}X=\frac{1+q}{\sqrt{rq}},
+ \operatorname{Skew}[X]=\frac{1+q}{\sqrt{rq}},
  \qquad
- \operatorname{ExKurt}X=\frac6r+\frac{p^2}{rq}.
+ \operatorname{ExKurt}[X]=\frac6r+\frac{p^2}{rq}.
 \f]
 
 The reported mode is

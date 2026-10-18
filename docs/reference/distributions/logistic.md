@@ -41,15 +41,15 @@ variate. The characteristic function and summaries are
 \f]
 
 \f[
- \operatorname{E}X=\operatorname{Median}X=\operatorname{Mode}X=\mu,
+ \mathbb{E}[X]=\operatorname{Median}[X]=\operatorname{Mode}[X]=\mu,
  \qquad
- \operatorname{Var}X=\frac{\pi^2s^2}{3},
+ \operatorname{Var}[X]=\frac{\pi^2s^2}{3},
 \f]
 
 \f[
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=\frac65,\qquad
- h(X)=2+\log s.
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=\frac65,\qquad
+ h[X]=2+\log s.
 \f]
 
 ## Fitting

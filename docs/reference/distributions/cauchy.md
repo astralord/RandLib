@@ -37,7 +37,7 @@ The characteristic function and entropy are
 
 \f[
  \phi(t)=e^{i\mu t-\gamma|t|},\qquad
- h(X)=\log(4\pi\gamma).
+ h[X]=\log(4\pi\gamma).
 \f]
 
 ## Sampling

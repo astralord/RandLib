@@ -17,7 +17,7 @@
 The parameter-free Rademacher law has
 
 \f[
- P(X=-1)=P(X=1)=\frac12,
+ \Pr[X=-1]=\Pr[X=1]=\frac12,
 \f]
 
 \f[
@@ -38,10 +38,10 @@ Its generating functions and summaries are
 \f]
 
 \f[
- \operatorname{E}X=0,\qquad
- \operatorname{Var}X=1,\qquad
- \operatorname{Skew}X=0,\qquad
- \operatorname{ExKurt}X=-2.
+ \mathbb{E}[X]=0,\qquad
+ \operatorname{Var}[X]=1,\qquad
+ \operatorname{Skew}[X]=0,\qquad
+ \operatorname{ExKurt}[X]=-2.
 \f]
 
 Both support points are modes and medians under common set-valued definitions; RandLib consistently
