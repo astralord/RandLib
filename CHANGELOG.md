@@ -169,6 +169,12 @@ All notable changes to RandLib are documented here. The project follows
   binomial number of uniforms that set it. This is exactly the law of the explicit sum, at about
   3 µs per draw for any `n` instead of about 5.6 ns per term.
 - Kept the polar Cauchy sampler, which measured faster than a ratio of two normal variates.
+- Fixed three sampling failures found by a parameter sweep. `YuleRand` with a small shape threw when
+  its mixing success probability underflowed and could overflow when the geometric variate
+  saturated; it now saturates at the integer maximum. `MarchenkoPasturRand` with a ratio above 3.3
+  scaled its rejection test by `1 / ratio` and failed for large ratios (for example `1e6`); both
+  envelopes are now tight, which also speeds up ratios between 1 and 3.3. `ZipfRand` tail inversion
+  could return values above `n` when the partial sums rounded short; it now stops at `n`.
 
 ### Examples and packaging
 

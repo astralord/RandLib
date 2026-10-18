@@ -128,15 +128,15 @@ template <std::uniform_random_bit_generator G>
 IntType ZipfRand<IntType>::operator()(G &g) const
 {
     double U = detail::uniform01<double>(g);
-    int k = 1;
-    /// if we didn't manage to hash values for such U
+    IntType k = 1;
+    /// if we didn't manage to hash values for such U; the bound keeps rounding of the sum within the support
     if (U > table[hashedVarNum - 1]) {
         k = hashedVarNum;
         double sum = table[hashedVarNum - 1];
-        do {
+        while (sum < U && k < n) {
             ++k;
             sum += std::pow(k, -s) * invHarmonicNumber;
-        } while (sum < U);
+        }
     } else {
         while (k <= hashedVarNum && table[k - 1] < U)
             ++k;

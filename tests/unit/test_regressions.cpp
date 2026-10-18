@@ -10,10 +10,12 @@
 #include <chrono>
 #include <cmath>
 #include <complex>
+#include <cstdint>
 #include <limits>
 #include <memory>
 #include <numeric>
 #include <random>
+#include <utility>
 #include <vector>
 
 using namespace randlib;
@@ -255,6 +257,56 @@ TEST_CASE("categorical guide-table inversion equals sequential search", "[regres
     }
     for (double p : {1e-300, 0.5, 1 - 1e-16})
         CHECK(categorical.Quantile(p) == sequential(p));
+}
+
+TEST_CASE("Zipf inversion stays within the support when the partial sums round short", "[regression]")
+{
+    struct LargestOutputEngine
+    {
+        using result_type = std::uint64_t;
+        static constexpr result_type min() { return 0; }
+        static constexpr result_type max() { return std::numeric_limits<result_type>::max(); }
+        result_type operator()() { return max(); }
+    };
+    LargestOutputEngine engine;
+    for (auto [exponent, number] : {std::pair{1.5, 50}, std::pair{1.1, 1000}, std::pair{4.0, 10000}}) {
+        ZipfRand<int> zipf(exponent, number);
+        CHECK(zipf(engine) <= number);
+    }
+}
+
+TEST_CASE("Yule samples with small shapes saturate instead of throwing", "[regression]")
+{
+    constexpr double shape = 0.01;
+    constexpr int sampleSize = 20000;
+    constexpr int largest = std::numeric_limits<int>::max();
+    YuleRand<int> yule(shape);
+    std::mt19937_64 engine(20231010);
+    int saturated = 0, staticSaturated = 0;
+    for (int i = 0; i < sampleSize; ++i) {
+        const int value = yule(engine), staticValue = YuleRand<int>::Variate(shape, engine);
+        REQUIRE(value >= 1);
+        REQUIRE(staticValue >= 1);
+        saturated += value == largest;
+        staticSaturated += staticValue == largest;
+    }
+    const double expected = yule.S(largest - 1) * sampleSize;
+    const double tolerance = 5 * std::sqrt(expected);
+    CHECK(std::fabs(saturated - expected) < tolerance);
+    CHECK(std::fabs(staticSaturated - expected) < tolerance);
+}
+
+TEST_CASE("Marchenko-Pastur sampling succeeds for large ratios", "[regression]")
+{
+    constexpr double ratio = 1e6;
+    MarchenkoPasturRand<double> marchenkoPastur(ratio, 1);
+    const double lower = (1 - std::sqrt(ratio)) * (1 - std::sqrt(ratio));
+    const double upper = (1 + std::sqrt(ratio)) * (1 + std::sqrt(ratio));
+    std::mt19937_64 engine(20231010);
+    for (int i = 0; i < 1000000; ++i) {
+        const double value = marchenkoPastur(engine);
+        REQUIRE((value == 0 || (value >= lower && value <= upper)));
+    }
 }
 
 TEST_CASE("invalid parameters are not silently replaced", "[regression]")

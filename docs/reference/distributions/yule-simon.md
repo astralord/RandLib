@@ -89,5 +89,11 @@ Sampling uses the exact mixture
  X=1+\operatorname{Geometric}(1/Y).
 \f]
 
-Both constructed and static samplers implement that transformation. There is currently no fitting
-specialization or dedicated entropy member.
+Both constructed and static samplers implement that transformation. For small \f$\rho\f$ the success
+probability \f$1/Y\f$ can underflow to zero; the geometric variate then lies far beyond the integer
+range, and the result saturates at the result type's maximum, as do geometric variates that
+overflow it.
+
+## Fitting
+
+There is currently no fitting specialization or dedicated entropy member.

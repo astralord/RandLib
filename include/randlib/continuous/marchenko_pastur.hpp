@@ -146,16 +146,16 @@ void MarchenkoPasturRand<RealType>::SetParameters(double ratio, double scale)
     logLambda = std::log(lambda);
 
     GENERATOR_ID genId = getIdOfUsedGenerator();
+    /// the continuous part has density proportional to sqrt((b - x)(x - a)) / x for every ratio; M makes the
+    /// largest acceptance probability one, since a smaller M only multiplies the expected number of iterations
     if (genId == TINY_RATIO || genId == HUGE_RATIO) {
         BetaRV.SetShapes(1.5, 1.5);
         BetaRV.SetSupport(a, b);
-        M = std::min(a / lambda, a);
+        M = a;
     } else {
         BetaRV.SetShapes(0.5, 1.5);
         BetaRV.SetSupport(0, b);
         M = 0.25 * b / sqrtLambda;
-        if (lambda > 1)
-            M /= lambda * lambda;
     }
 }
 

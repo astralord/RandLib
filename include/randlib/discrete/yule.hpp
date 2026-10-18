@@ -52,6 +52,10 @@ public:
     [[nodiscard]] IntType Mode() const override;
     [[nodiscard]] long double Skewness() const override;
     [[nodiscard]] long double ExcessKurtosis() const override;
+
+private:
+    template <std::uniform_random_bit_generator G>
+    static IntType variateGivenPareto(double pareto, G &g);
 };
 
 } // namespace randlib
@@ -124,8 +128,7 @@ template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType YuleRand<IntType>::operator()(G &g) const
 {
-    double prob = 1.0 / X(g);
-    return GeometricRand<IntType>::Variate(prob, g) + 1;
+    return variateGivenPareto(X(g), g);
 }
 
 template <typename IntType>
@@ -134,8 +137,20 @@ IntType YuleRand<IntType>::Variate(double shape, G &g)
 {
     if (!(shape > 0.0))
         throw std::invalid_argument("Yule distribution: shape should be positive");
-    double prob = 1.0 / ParetoRand<double>::StandardVariate(shape, g);
-    return GeometricRand<IntType>::Variate(prob, g) + 1;
+    return variateGivenPareto(ParetoRand<double>::StandardVariate(shape, g), g);
+}
+
+template <typename IntType>
+template <std::uniform_random_bit_generator G>
+IntType YuleRand<IntType>::variateGivenPareto(double pareto, G &g)
+{
+    /// a success probability 1 / pareto that underflows leaves a geometric variate far beyond the integer range
+    constexpr IntType largest = std::numeric_limits<IntType>::max();
+    const double probability = 1.0 / pareto;
+    if (!(probability > 0))
+        return largest;
+    const IntType failures = GeometricRand<IntType>::Variate(probability, g);
+    return (failures < largest) ? failures + 1 : largest;
 }
 
 template <typename IntType>

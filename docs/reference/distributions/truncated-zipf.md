@@ -55,5 +55,9 @@ discrete quantile search.
 
 Sampling is exact CDF inversion. Construction caches the first \f$\min(n,16)\f$ cumulative masses;
 a uniform in that prefix is resolved from the table, while a uniform in the remaining tail extends
-the cumulative sum one integer at a time. There is currently no fitting specialization or dedicated
-entropy member.
+the cumulative sum one integer at a time, stopping at \f$n\f$ when rounding leaves the summed masses
+just below the uniform.
+
+## Fitting
+
+There is currently no fitting specialization or dedicated entropy member.

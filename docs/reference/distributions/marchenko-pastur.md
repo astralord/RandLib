@@ -79,8 +79,10 @@ for \f$\lambda>1\f$ the atom makes zero the mode reported by the API.
 
 Sampling uses beta rejection envelopes selected by ratio. For \f$\lambda<0.3\f$ or
 \f$\lambda>3.3\f$, the proposal is a shifted/scaled Beta \f$(3/2,3/2)\f$ law on \f$[a,b]\f$;
-intermediate ratios use Beta \f$(1/2,3/2)\f$ on \f$[0,b]\f$. When \f$\lambda>1\f$, an initial
-uniform draw returns the zero atom with probability \f$1-1/\lambda\f$.
+intermediate ratios use Beta \f$(1/2,3/2)\f$ on \f$[0,b]\f$. Both envelopes are scaled so that the
+largest acceptance probability is one, which keeps the expected number of iterations bounded for
+every ratio. When \f$\lambda>1\f$, an initial uniform draw returns the zero atom with probability
+\f$1-1/\lambda\f$.
 
 Quantiles account for the zero atom before applying TOMS 748 to the continuous component. The
 characteristic function is evaluated from
