@@ -67,9 +67,8 @@ The reported mode is
 
 and the median is found by the generic discrete quantile search.
 
-For integer \f$r\f$, sampling sums \f$r\f$ geometric variates, using the table or exponential
-method described above. For noninteger \f$r\f$ and the remaining parameter region it uses the exact
-gamma--Poisson mixture
+For integer \f$r\leq4\f$, sampling sums \f$r\f$ geometric variates, using the table or exponential
+method described above. For larger or noninteger \f$r\f$ it uses the exact gamma--Poisson mixture
 
 \f[
  \Lambda\sim\operatorname{Gamma}\!\left(r,\frac p q\right),
@@ -77,8 +76,10 @@ gamma--Poisson mixture
  X\mid\Lambda\sim\operatorname{Poisson}(\Lambda),
 \f]
 
-where the gamma parameter shown is a rate. Overflowing geometric sums saturate at the integer
-result type's maximum.
+where the gamma parameter shown is a rate and the Poisson variate comes from inversion for
+\f$\Lambda<10\f$ and from Hörmann's transformed rejection (PTRS, 1993) otherwise. Unlike the
+\f$r\f$-term sum, its expected work is bounded in \f$r\f$ (Devroye, 1986, p. 543). Overflowing
+geometric sums saturate at the integer result type's maximum.
 
 ## Fitting
 

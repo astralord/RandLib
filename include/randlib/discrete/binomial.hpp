@@ -128,6 +128,10 @@ private:
     static IntType variateWaiting(IntType number, double probability, G &g);
     template <std::uniform_random_bit_generator G>
     static IntType variateBernoulliSum(IntType number, double probability, G &g);
+    template <std::uniform_random_bit_generator G>
+    static IntType variateInversion(IntType number, double probability, G &g);
+    template <std::uniform_random_bit_generator G>
+    static IntType variateTransformedRejection(IntType number, double probability, G &g);
 
 public:
     template <std::uniform_random_bit_generator G>
@@ -562,9 +566,63 @@ IntType BinomialDistribution<IntType>::Variate(IntType number, double probabilit
 
     if (number < 10)
         return variateBernoulliSum(number, probability, g);
-    if (probability < 0.5)
-        return variateWaiting(number, probability, g);
-    return number - variateWaiting(number, 1.0 - probability, g);
+    const bool complement = probability >= 0.5;
+    const double q = complement ? 1.0 - probability : probability;
+    const IntType var = (number * q < 10) ? variateInversion(number, q, g) : variateTransformedRejection(number, q, g);
+    return complement ? number - var : var;
+}
+
+template <typename IntType>
+template <std::uniform_random_bit_generator G>
+IntType BinomialDistribution<IntType>::variateInversion(IntType number, double probability, G &g)
+{
+    /// sequential inversion from zero, n * p < 10 and p <= 1/2: about n * p + 1 steps without logarithms
+    const double ratio = probability / (1.0 - probability), first = std::exp(number * std::log1p(-probability));
+    for (size_t iter = 0; iter < ProbabilityDistribution<IntType>::MAX_ITER_REJECTION; ++iter) {
+        const double u = detail::uniform01<double>(g);
+        double probabilityOfK = first, cumulative = first;
+        IntType k = 0;
+        while (u > cumulative && probabilityOfK > 0 && k < number) {
+            ++k;
+            probabilityOfK *= ratio * static_cast<double>(number - k + 1) / k;
+            cumulative += probabilityOfK;
+        }
+        /// a uniform beyond the representable mass is redrawn
+        if (u <= cumulative)
+            return k;
+    }
+    throw std::runtime_error("Binomial distribution: sampling failed");
+}
+
+template <typename IntType>
+template <std::uniform_random_bit_generator G>
+IntType BinomialDistribution<IntType>::variateTransformedRejection(IntType number, double probability, G &g)
+{
+    /// BTRS: transformed rejection with squeeze (Hörmann, 1993), which needs no setup tables and has a bounded
+    /// expected number of iterations for n * p >= 10, p <= 1/2
+    const double q = 1.0 - probability, spq = std::sqrt(number * probability * q);
+    const double b = 1.15 + 2.53 * spq, a = -0.0873 + 0.0248 * b + 0.01 * probability;
+    const double c = number * probability + 0.5, squeeze = 0.92 - 4.2 / b, alpha = (2.83 + 5.1 / b) * spq;
+    const double n = number, mode = std::floor((n + 1) * probability);
+    const double logOddsAtMode = std::log((n - mode + 1) * probability / ((mode + 1) * q));
+    auto correction = [](double x) { return math::stirlingError<double>(static_cast<size_t>(x) + 1); };
+    const double peakCorrection = correction(mode) + correction(n - mode);
+    for (size_t iter = 0; iter < 1000 * ProbabilityDistribution<IntType>::MAX_ITER_REJECTION; ++iter) {
+        const double u = detail::uniform01<double>(g) - 0.5, v = detail::uniform01<double>(g);
+        const double us = 0.5 - std::fabs(u);
+        const double x = std::floor((2 * a / us + b) * u + c);
+        if (x < 0 || x > n)
+            continue;
+        if (us >= 0.07 && v <= squeeze)
+            return static_cast<IntType>(x);
+        /// log(P(x) / P(mode)) through Stirling's series, free of the cancellation of large log-factorials
+        const double logRatio = (x + 0.5) * std::log1p((mode - x) / (x + 1)) +
+                                (n - x + 0.5) * std::log1p((x - mode) / (n - x + 1)) + (x - mode) * logOddsAtMode +
+                                peakCorrection - correction(x) - correction(n - x);
+        if (std::log(v * alpha / (a / (us * us) + b)) <= logRatio)
+            return static_cast<IntType>(x);
+    }
+    throw std::runtime_error("Binomial distribution: sampling failed");
 }
 
 template <typename IntType>

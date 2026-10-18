@@ -3,6 +3,7 @@
 #include <randlib/math/constants.hpp>
 #include <randlib/math/functions.hpp>
 #include <randlib/core/errors.hpp>
+#include <randlib/continuous/beta.hpp>
 #include <randlib/core/discrete.hpp>
 
 namespace randlib
@@ -23,7 +24,7 @@ class NegativeHyperGeometricRand final : public DiscreteDistribution<IntType>
     IntType M = 1; ///< total amount of successes
     IntType m = 1; ///< limiting number of successes
     double pmfCoef = 1; ///< C(N, M)
-    double p0 = 1; ///< M / N
+    BetaRand<double> successFraction{}; ///< Beta(m, M - m + 1) mixing law of the beta-binomial representation
 
 public:
     NegativeHyperGeometricRand(IntType totalSize = 1, IntType totalSuccessesNum = 1, IntType limitSuccessesNum = 1);
@@ -45,11 +46,18 @@ public:
 
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
+
+private:
+    /// below this expected number of sequential draws the urn is sampled directly
+    static constexpr double SMALL_URN = 16;
+    template <std::uniform_random_bit_generator G>
+    IntType variateByUrn(G &g) const;
 };
 
 } // namespace randlib
 
 #include <randlib/discrete/bernoulli.hpp>
+#include <randlib/discrete/binomial.hpp>
 
 namespace randlib
 {
@@ -85,7 +93,7 @@ void NegativeHyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntTy
     M = totalSuccessesNum;
     m = limitSuccessesNum;
 
-    p0 = static_cast<double>(M) / N;
+    successFraction.SetShapes(m, M - m + 1);
     pmfCoef = math::lfact(M);
     pmfCoef += math::lfact(N - M);
     pmfCoef -= math::lfact(m - 1);
@@ -138,7 +146,18 @@ template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType NegativeHyperGeometricRand<IntType>::operator()(G &g) const
 {
-    double p = p0;
+    /// NHG(N, M, m) is the beta-binomial law with N - M trials and shapes (m, M - m + 1)
+    const double expectedDraws = m * (static_cast<double>(N) + 1) / (static_cast<double>(M) + 1);
+    if (expectedDraws < SMALL_URN)
+        return variateByUrn(g);
+    return BinomialDistribution<IntType>::Variate(N - M, successFraction(g), g);
+}
+
+template <typename IntType>
+template <std::uniform_random_bit_generator G>
+IntType NegativeHyperGeometricRand<IntType>::variateByUrn(G &g) const
+{
+    double p = static_cast<double>(M) / N;
     IntType successesNum = 0;
     IntType num = 0;
     while (successesNum < m) {

@@ -125,6 +125,56 @@ public:
 namespace randlib
 {
 
+namespace detail
+{
+
+/**
+ * Poisson variate for a rate that changes from call to call, as in mixtures: the setup is a few elementary
+ * functions instead of the incomplete gamma function of PoissonRand. Below rate 10 it inverts the
+ * distribution function with the probability recurrence; above, it uses the transformed rejection with
+ * squeeze PTRS of Hörmann (1993), whose expected number of iterations is bounded uniformly in the rate.
+ * @param rate positive rate
+ * @param g engine
+ * @return Poisson variate, saturated at the largest IntType
+ */
+template <typename IntType, std::uniform_random_bit_generator G>
+IntType poissonVariate(double rate, G &g)
+{
+    if (rate < 10) {
+        const double u = uniform01<double>(g);
+        double probability = std::exp(-rate), cumulative = probability;
+        IntType k = 0;
+        /// the tail beyond 1000 has probability below 1e-1400 for these rates; the bound only guards rounding
+        while (u > cumulative && k < 1000) {
+            ++k;
+            probability *= rate / k;
+            cumulative += probability;
+        }
+        return k;
+    }
+    const double sqrtRate = std::sqrt(rate), halfLog2Pi = 0.5 * std::log(2 * randlib::consts::pi);
+    const double b = 0.931 + 2.53 * sqrtRate, a = -0.059 + 0.02483 * b;
+    const double logInverseAlpha = std::log(1.1239 + 1.1328 / (b - 3.4)), squeeze = 0.9277 - 3.6224 / (b - 2);
+    const double largest = static_cast<double>(std::numeric_limits<IntType>::max());
+    for (;;) {
+        const double u = uniform01<double>(g) - 0.5, v = uniform01<double>(g);
+        const double us = 0.5 - std::fabs(u);
+        const double x = std::floor((2 * a / us + b) * u + rate + 0.43);
+        if (us >= 0.07 && v <= squeeze)
+            return (x < largest) ? static_cast<IntType>(x) : std::numeric_limits<IntType>::max();
+        if (x < 0 || (us < 0.013 && v > us))
+            continue;
+        /// log P(x) through Stirling's series, free of the cancellation of x log(rate) and log(x!)
+        const double logProbability = (x + 1 - rate) + x * std::log1p((rate - x - 1) / (x + 1)) -
+                                      0.5 * std::log(x + 1) - halfLog2Pi -
+                                      math::stirlingError<double>(static_cast<std::size_t>(std::min(x, largest)) + 1);
+        if (std::log(v) + logInverseAlpha - std::log(a / (us * us) + b) <= logProbability)
+            return (x < largest) ? static_cast<IntType>(x) : std::numeric_limits<IntType>::max();
+    }
+}
+
+} // namespace detail
+
 template <typename IntType>
 PoissonRand<IntType>::PoissonRand(double rate)
 {

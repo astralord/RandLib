@@ -46,11 +46,11 @@ finite sums
  \phi(t)=G(e^{it}).
 \f]
 
-The generic finite-support characteristic-function routine evaluates this sum numerically. The
+The generic finite-support characteristic-function routine evaluates this sum numerically.
 
 ## Moments and shape
 
-principal moments are
+The principal moments are
 
 \f[
  \mathbb{E}[X]=\frac{nK}{N},
@@ -87,8 +87,11 @@ and the median uses the generic discrete quantile search.
 
 ## Sampling
 
-Sampling performs the draws sequentially. After \f$i\f$ objects have been considered and \f$s\f$
-successes observed, the next Bernoulli probability is \f$(K-s)/(N-i)\f$; the routine stops early
-once every population success has already been selected. Thus the algorithm is exact and uses at
-most \f$n\f$ engine draws. There is currently no fitting specialization or dedicated entropy
-member.
+Sampling first applies the symmetries \f$X(N,n,K)\overset{d}{=}K-X(N,N-n,K)\f$ and
+\f$X(N,n,K)\overset{d}{=}n-X(N,n,N-K)\f$, so that both the number of draws and the number of
+successes are at most \f$N/2\f$. Fewer than 10 remaining draws are simulated sequentially: after
+\f$i\f$ objects and \f$s\f$ successes, the next Bernoulli probability is \f$(K-s)/(N-i)\f$. Larger
+samples use Stadlober's ratio-of-uniforms method (HRUA; Stadlober, 1989 and 1990), whose expected
+number of iterations is bounded for all parameters; its acceptance test sums log-factorial ratios
+from Stirling's series rather than differencing large log-factorials. Both paths are exact. There is
+currently no fitting specialization or dedicated entropy member.

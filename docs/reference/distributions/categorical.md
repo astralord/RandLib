@@ -57,8 +57,13 @@ although the class does not expose a dedicated entropy member.
 
 ## Sampling
 
+Sampling is inverse transform with a guide table (Chen and Asau, 1974). Setting the probabilities
+stores their partial sums and, for each \f$j<K\f$, the first category whose partial sum reaches
+\f$j/K\f$. One uniform draw \f$U\f$ starts the search at the entry for \f$\lfloor KU\rfloor\f$, so
+the expected number of comparisons is below two for every probability vector, after
+\f$O(K)\f$ setup. The result equals plain sequential inversion of the same uniform, so the engine
+advancement and the sampled values are unchanged from linear search.
+
 ## Fitting
 
-Sampling is inverse transform: one uniform draw is accumulated through the stored probabilities
-until the corresponding category is reached. This is linear in \f$K\f$ and does not construct an
-alias table. There is currently no `fit<CategoricalRand>` specialization.
+There is currently no `fit<CategoricalRand>` specialization.

@@ -67,6 +67,14 @@ template <std::floating_point Real = double>
 Real stirlingError(size_t n);
 
 /**
+ * @param x non-negative integer number
+ * @param y non-negative integer number
+ * @return log(x! / y!), through Stirling's series instead of a difference of large log-factorials
+ */
+template <std::floating_point Real = double>
+Real logFactorialRatio(size_t x, size_t y);
+
+/**
  * Deviance term of the saddle-point expansions of Poisson and binomial probabilities
  * (C. Loader, "Fast and accurate computation of binomial probabilities", 2000)
  * @param x non-negative number
@@ -593,6 +601,19 @@ inline Real stirlingError(size_t n)
         return lgammaCorrection(static_cast<Real>(n));
     long double x = n;
     return lfact(n) - (x + 0.5l) * std::log(x) + x - 0.5l * std::log(2 * randlib::consts::pi);
+}
+
+template <std::floating_point Real>
+inline Real logFactorialRatio(size_t x, size_t y)
+{
+    if (x <= LOGFACTORIAL_TABLESIZE && y <= LOGFACTORIAL_TABLESIZE)
+        return lfact<Real>(x) - lfact<Real>(y);
+    /// log(x!) = (x + 1/2) log(x + 1) - (x + 1) + log(2π) / 2 + stirlingError(x + 1)
+    const Real difference = static_cast<Real>(x) - static_cast<Real>(y), yp1 = static_cast<Real>(y) + 1;
+    const Real logQuotient =
+        (2 * std::fabs(difference) < yp1) ? std::log1p(difference / yp1) : std::log((static_cast<Real>(x) + 1) / yp1);
+    return (yp1 - Real{0.5}) * logQuotient + difference * (std::log(static_cast<Real>(x) + 1) - 1) +
+           stirlingError<Real>(x + 1) - stirlingError<Real>(y + 1);
 }
 
 template <std::floating_point Real>

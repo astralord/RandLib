@@ -89,9 +89,11 @@ the median and characteristic function use the generic finite-support algorithms
 
 ## Sampling
 
+Sampling draws \f$P\f$ from the beta law and then a conditional binomial variate through
+`BinomialRand::Variate`, whose expected work is bounded in \f$n\f$. When \f$\alpha=\beta=1\f$, the
+beta-binomial law is exactly uniform on \f$\{0,\ldots,n\}\f$, so the implementation samples that
+integer directly.
+
 ## Fitting
 
-Sampling draws \f$P\f$ from the beta law and then a conditional binomial variate. When
-\f$\alpha=\beta=1\f$, the beta-binomial law is exactly uniform on
-\f$\{0,\ldots,n\}\f$, so the implementation samples that integer directly. There is currently no
-`fit<BetaBinomialRand>` specialization or dedicated entropy member.
+There is currently no `fit<BetaBinomialRand>` specialization or dedicated entropy member.

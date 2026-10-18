@@ -77,11 +77,18 @@ The rejection branch first samples at the nearby lattice probability
 needed, and reflects the result for \f$p>1/2\f$. Exact \f$p=0\f$ and \f$p=1\f$ bulk samples are
 filled without consuming the engine.
 
+The static `BinomialRand::Variate(n, p, g)` builds no tables, because callers such as the
+beta-binomial, negative-hypergeometric and trinomial samplers change \f$p\f$ on every draw. For
+\f$n\geq10\f$ it uses sequential inversion from zero when \f$n\min(p,q)<10\f$ and Hörmann's
+transformed rejection with squeeze (BTRS, 1993) otherwise, so its expected work is bounded in
+\f$n\f$; the acceptance test evaluates \f$\log(P(k)/P(\text{mode}))\f$ through Stirling's series
+instead of differences of large log-factorials.
+
 Sampling stays exact for small \f$p\f$ instead of switching to a Poisson approximation. The
 total-variation distance of \f$\operatorname{Poisson}(np)\f$ from the binomial law is at most
 \f$p(1-e^{-np})\f$ (Barbour and Hall, 1984), so an approximation indistinguishable in double
 precision would require \f$p\lesssim 2\cdot10^{-13}\f$ even for \f$n=2^{31}\f$; there the
-waiting-time sampler already draws a single geometric variate. Measured for \f$np\f$ from 0.1 to
+cached waiting-time sampler already draws a single geometric variate. Measured for \f$np\f$ from 0.1 to
 \f$10^4\f$, the exact samplers cost 1.1 to 2.8 times a Poisson variate of the same mean.
 
 ## Fitting

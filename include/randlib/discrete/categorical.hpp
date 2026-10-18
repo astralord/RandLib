@@ -27,6 +27,9 @@ class CategoricalRand final : public DiscreteDistribution<IntType>
 
     std::vector<double> prob{1.0}; ///< vector of probabilities
     IntType K = 1; ///< number of possible outcomes
+    std::vector<double> lower{1.0}; ///< lower[k] = P(X ≤ k), summed upwards
+    std::vector<double> upper{1.0}; ///< upper[k] = P(X ≥ k), summed downwards
+    std::vector<IntType> guide{0}; ///< guide[j] = smallest k with lower[k] ≥ j / K
 
 public:
     explicit CategoricalRand(std::vector<double> &&probabilities = {1.0});
@@ -41,6 +44,7 @@ public:
     [[nodiscard]] double P(const IntType &k) const override;
     [[nodiscard]] double logP(const IntType &k) const override;
     [[nodiscard]] double F(const IntType &k) const override;
+    [[nodiscard]] double S(const IntType &k) const override;
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
@@ -90,6 +94,25 @@ void CategoricalRand<IntType>::SetProbabilities(std::vector<double> &&probabilit
         throw std::invalid_argument("Categorical distribution: probability parameters should sum to 1");
     prob = std::move(probabilities);
     K = prob.size();
+
+    /// cumulative sums in the order of sequential search, and the guide table of Chen and Asau (Devroye,
+    /// pp. 96-98): inversion then inspects at most two entries in expectation instead of O(K)
+    lower.resize(K);
+    upper.resize(K);
+    double partial = 0.0;
+    for (IntType k = 0; k != K; ++k)
+        lower[k] = (partial += prob[k]);
+    partial = 0.0;
+    for (IntType k = K - 1; k >= 0; --k)
+        upper[k] = (partial += prob[k]);
+    guide.resize(K);
+    IntType k = 0;
+    for (IntType j = 0; j != K; ++j) {
+        const double level = static_cast<double>(j) / K;
+        while (k < K - 1 && lower[k] < level)
+            ++k;
+        guide[j] = k;
+    }
 }
 
 template <typename IntType>
@@ -109,18 +132,19 @@ double CategoricalRand<IntType>::F(const IntType &k) const
 {
     if (k < 0)
         return 0.0;
-    if (k >= K)
+    if (k >= K - 1)
         return 1.0;
-    if (2 * k <= K) {
-        double sum = 0.0;
-        for (int i = 0; i <= k; ++i)
-            sum += prob[i];
-        return sum;
-    }
-    double sum = 1.0;
-    for (int i = K - 1; i > k; --i)
-        sum -= prob[i];
-    return sum;
+    return (2 * k <= K) ? lower[k] : 1.0 - upper[k + 1];
+}
+
+template <typename IntType>
+double CategoricalRand<IntType>::S(const IntType &k) const
+{
+    if (k < 0)
+        return 1.0;
+    if (k >= K - 1)
+        return 0.0;
+    return (2 * k <= K) ? 1.0 - lower[k] : upper[k + 1];
 }
 
 template <typename IntType>
@@ -162,27 +186,29 @@ IntType CategoricalRand<IntType>::Mode() const
 template <typename IntType>
 IntType CategoricalRand<IntType>::quantileImpl(double p) const
 {
-    /// smallest k with F(k) ≥ p
-    double sum = 0.0;
-    for (IntType i = 0; i != K; ++i) {
-        sum += prob[i];
-        if (sum >= p)
-            return i;
-    }
-    return K - 1;
+    /// smallest k with F(k) ≥ p, starting from the guide entry; the backward step covers p * K rounded up
+    const IntType j = std::min(static_cast<IntType>(p * K), K - 1);
+    IntType k = guide[j];
+    while (k > 0 && lower[k - 1] >= p)
+        --k;
+    while (k < K - 1 && lower[k] < p)
+        ++k;
+    return k;
 }
 
 template <typename IntType>
 IntType CategoricalRand<IntType>::quantileImpl1m(double p) const
 {
-    /// smallest k with S(k) ≤ p, where S(k - 1) = S(k) + P(k)
-    double tail = 0.0;
-    for (IntType k = K - 1; k > 0; --k) {
-        tail += prob[k];
-        if (tail > p)
-            return k;
+    /// smallest k with S(k) ≤ p: the largest k ≥ 1 with P(X ≥ k) > p, where P(X ≥ k) decreases in k
+    IntType low = 0, high = K;
+    while (high - low > 1) {
+        const IntType middle = low + (high - low) / 2;
+        if (upper[middle] > p)
+            low = middle;
+        else
+            high = middle;
     }
-    return 0;
+    return low;
 }
 
 template <typename IntType>

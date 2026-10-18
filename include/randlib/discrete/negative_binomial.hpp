@@ -73,15 +73,16 @@ protected:
     };
 
     /**
-     * If r is small, we use two different generators for two different cases:
-     * If p < 0.08 then the tail is too heavy (probability to be in main body is smaller than 0.75),
-     * then we return highest integer, smaller than variate from exponential distribution.
-     * Otherwise we choose table method
+     * For a small integer r the variate is a sum of r geometric variates, drawn by a table or, for p < 0.08
+     * where the tail is too heavy for the table, as the integer part of an exponential variate. Otherwise a
+     * Poisson variate with a gamma-distributed rate takes the same time for every r (Devroye, p. 543)
      * @return id of generator
      */
     [[nodiscard]] GENERATOR_ID GetIdOfUsedGenerator() const
     {
-        if ((r < 10 || GammaRV.Mean() > 10) && r == std::round(r))
+        /// measured crossover: four geometric variates cost about as much as one gamma and one Poisson variate
+        static constexpr T LARGEST_SUMMED_NUMBER = 4;
+        if (r <= LARGEST_SUMMED_NUMBER && r == std::round(r))
             return (p < 0.08) ? EXPONENTIAL : TABLE;
         return GAMMA_POISSON;
     }
@@ -254,7 +255,7 @@ IntType NegativeBinomialDistribution<IntType, T>::variateThroughGammaPoisson(G &
 {
     /// For small shapes the gamma rate underflows to zero, the limit in which the Poisson variate is zero
     const float rate = GammaRV(g);
-    return (rate > 0) ? PoissonRand<IntType>::Variate(rate, g) : 0;
+    return (rate > 0) ? detail::poissonVariate<IntType>(rate, g) : 0;
 }
 
 template <typename IntType, typename T>

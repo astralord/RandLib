@@ -23,7 +23,6 @@ class HyperGeometricRand final : public DiscreteDistribution<IntType>
     IntType K = 1; /// number of possible successes
     IntType n = 1; /// number of draws
     double pmfCoef = 1; ///< C(N, n)
-    double p0 = 1; ///< K/N
 
 public:
     HyperGeometricRand(IntType totalSize = 1, IntType drawsNum = 1, IntType successesNum = 1);
@@ -43,6 +42,15 @@ public:
     template <std::uniform_random_bit_generator G>
     [[nodiscard]] IntType operator()(G &g) const;
 
+private:
+    /// below this many draws, after the symmetries, the urn is sampled directly
+    static constexpr IntType SMALL_SAMPLE = 10;
+    template <std::uniform_random_bit_generator G>
+    IntType variateByUrn(IntType draws, IntType successes, G &g) const;
+    template <std::uniform_random_bit_generator G>
+    IntType variateRatioOfUniforms(IntType draws, IntType successes, G &g) const;
+
+public:
     [[nodiscard]] long double Mean() const override;
     [[nodiscard]] long double Variance() const override;
     [[nodiscard]] IntType Mode() const override;
@@ -85,7 +93,6 @@ void HyperGeometricRand<IntType>::SetParameters(IntType totalSize, IntType draws
     n = drawsNum;
     K = successesNum;
 
-    p0 = static_cast<double>(K) / N;
     pmfCoef = math::lfact(K);
     pmfCoef += math::lfact(N - K);
     pmfCoef += math::lfact(N - n);
@@ -138,17 +145,70 @@ template <typename IntType>
 template <std::uniform_random_bit_generator G>
 IntType HyperGeometricRand<IntType>::operator()(G &g) const
 {
-    double p = p0;
+    /// X(N, n, K) has the law of X(N, K, n), K - X(N, N - n, K) and n - X(N, n, N - K): the draws and the
+    /// successes are both reduced to at most half of the population first
+    const bool complementDraws = 2 * n > N, complementSuccesses = 2 * K > N;
+    const IntType draws = complementDraws ? N - n : n;
+    const IntType successes = complementSuccesses ? N - K : K;
+    const IntType reduced =
+        (draws < SMALL_SAMPLE) ? variateByUrn(draws, successes, g) : variateRatioOfUniforms(draws, successes, g);
+    IntType result = complementSuccesses ? draws - reduced : reduced;
+    if (complementDraws)
+        result = K - result;
+    return result;
+}
+
+template <typename IntType>
+template <std::uniform_random_bit_generator G>
+IntType HyperGeometricRand<IntType>::variateByUrn(IntType draws, IntType successes, G &g) const
+{
+    /// sequential draws without replacement, at most draws < SMALL_SAMPLE of them
     IntType sum = 0;
-    for (IntType i = 1; i <= n; ++i) {
-        if (BernoulliRand::Variate(p, g) && ++sum >= K)
-            return sum;
-        if (i < n) {
-            p = K - sum;
-            p /= N - i;
-        }
+    for (IntType i = 0; i < draws && sum < successes; ++i) {
+        const double p = static_cast<double>(successes - sum) / (N - i);
+        if (BernoulliRand::Variate(p, g))
+            ++sum;
     }
     return sum;
+}
+
+template <typename IntType>
+template <std::uniform_random_bit_generator G>
+IntType HyperGeometricRand<IntType>::variateRatioOfUniforms(IntType draws, IntType successes, G &g) const
+{
+    /// HRUA: ratio of uniforms under Stadlober's table-mountain hat (Stadlober, 1989 and 1990), whose expected
+    /// number of iterations is bounded for all parameters; draws, successes ≤ N / 2
+    static constexpr double D1 = 1.7155277699214135, D2 = 0.8989161620588988;
+    const IntType failures = N - successes;
+    const double p = static_cast<double>(successes) / N, q = static_cast<double>(failures) / N;
+    const double a = draws * p + 0.5;
+    const double c = std::sqrt(static_cast<double>(N - draws) * draws * p * q / (N - 1) + 0.5);
+    const double h = D1 * c + D2;
+    const IntType mode = static_cast<IntType>(std::floor((draws + 1.0) * (successes + 1.0) / (N + 2.0)));
+    /// log(P(k) / P(mode)) as a sum of log-factorial ratios, free of the cancellation of large log-factorials
+    auto logRatioToPeak = [draws, successes, failures, mode](IntType k) {
+        auto ratio = [](IntType x, IntType y) {
+            return math::logFactorialRatio(static_cast<size_t>(x), static_cast<size_t>(y));
+        };
+        return ratio(mode, k) + ratio(successes - mode, successes - k) + ratio(draws - mode, draws - k) +
+               ratio(failures - draws + mode, failures - draws + k);
+    };
+    const double end = static_cast<double>(std::min(draws, successes)) + 1;
+    for (size_t iter = 0; iter < 1000 * ProbabilityDistribution<IntType>::MAX_ITER_REJECTION; ++iter) {
+        const double u = detail::uniform01<double>(g), v = detail::uniform01<double>(g);
+        const double x = a + h * (v - 0.5) / u;
+        if (x < 0 || x >= end)
+            continue;
+        const IntType k = static_cast<IntType>(std::floor(x));
+        const double t = logRatioToPeak(k);
+        if (u * (4 - u) - 3 <= t)
+            return k;
+        if (u * (u - t) >= 1)
+            continue;
+        if (2 * std::log(u) <= t)
+            return k;
+    }
+    throw std::runtime_error("HyperGeometric distribution: sampling failed");
 }
 
 template <typename IntType>

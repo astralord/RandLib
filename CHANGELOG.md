@@ -141,6 +141,33 @@ All notable changes to RandLib are documented here. The project follows
 - Retired the generated legacy PDF. Its LaTeX source and figures remain under `docs/legacy/` as a
   clearly marked 1.x mathematical reference.
 
+### Sampling efficiency
+
+- Replaced samplers whose expected work grew with a parameter by generators with bounded expected
+  work (Devroye, 1986). Sampled streams change for the affected parameter regions; categorical
+  streams do not.
+  - `CategoricalRand` inverts through a guide table built with the probabilities: below two
+    expected comparisons per draw for any `K`, with values identical to sequential search.
+  - Integer negative binomial (Pascal) sampling sums geometric variates only for `r <= 4`. Larger
+    shapes, which previously took `r` geometric draws whenever the mean exceeded 10, use the
+    gamma--Poisson mixture with a PTRS Poisson variate; `r = 1000` takes about 85 ns instead of
+    7--17 µs.
+  - `HyperGeometricRand` reduces draws and successes to at most `N / 2` by symmetry, keeps the urn
+    for fewer than 10 draws and otherwise uses Stadlober's HRUA ratio-of-uniforms method. Large
+    populations take under 0.6 µs instead of time linear in the sample size.
+  - Static `BinomialRand::Variate`, used by the beta-binomial, negative-hypergeometric and
+    trinomial samplers with a new probability per draw, uses sequential inversion for
+    `n min(p, q) < 10` and BTRS transformed rejection otherwise, instead of `n min(p, q) + 1`
+    geometric waiting times.
+  - `NegativeHyperGeometricRand` samples its beta-binomial representation unless the urn needs
+    fewer than 16 expected draws, removing the cost linear in the population size.
+- The new rejection samplers evaluate their acceptance tests through Stirling's series, using the
+  new `math::logFactorialRatio`, instead of differences of log-factorials near `10^10`. Those
+  differences kept only about six significant digits in double precision, and fewer where
+  `long double` is binary64.
+- Kept the polar Cauchy sampler, which measured faster than a ratio of two normal variates, and the
+  exact Irwin--Hall sum, whose sublinear exact alternatives are substantially more complex.
+
 ### Examples and packaging
 
 - Added warning-clean, CI-compiled examples for standard-engine sampling, parallel streams, fitted

@@ -13,6 +13,7 @@
 #include <cmath>
 #include <complex>
 #include <map>
+#include <numeric>
 #include <sstream>
 
 using namespace randlib_test;
@@ -265,6 +266,62 @@ TEST_CASE("Stable Count inverse samples match independent quartiles", "[statisti
         INFO("alpha = " << exponent);
         CHECK(chiSquaredSurvival(statistic, 3) > MIN_P_VALUE);
     }
+}
+
+TEST_CASE("Static binomial variates follow the binomial law", "[statistical][discrete]")
+{
+    struct BinomialCase
+    {
+        int number;
+        double probability;
+    };
+    constexpr std::array cases{BinomialCase{12, 0.3},  BinomialCase{50, 0.15},      BinomialCase{50, 0.85},
+                               BinomialCase{200, 0.3}, BinomialCase{1000000, 1e-5}, BinomialCase{1000000, 0.4}};
+    for (std::size_t caseIndex = 0; caseIndex < cases.size(); ++caseIndex) {
+        const auto [number, probability] = cases[caseIndex];
+        const BinomialRand<int> distribution(number, probability);
+        Pcg64 engine(BASE_SEED + caseIndex);
+        std::map<int, std::size_t> counts;
+        for (std::size_t i = 0; i < SAMPLE_SIZE; ++i)
+            ++counts[BinomialRand<int>::Variate(number, probability, engine)];
+        double statistic = 0, expected = distribution.F(counts.begin()->first - 1) * SAMPLE_SIZE, observed = 0;
+        int cells = 0;
+        for (int k = counts.begin()->first; k <= counts.rbegin()->first; ++k) {
+            expected += distribution.P(k) * SAMPLE_SIZE;
+            observed += counts.contains(k) ? counts[k] : 0;
+            if (expected >= 20) {
+                statistic += (observed - expected) * (observed - expected) / expected;
+                ++cells;
+                expected = observed = 0;
+            }
+        }
+        expected += distribution.S(counts.rbegin()->first) * SAMPLE_SIZE;
+        statistic += (observed - expected) * (observed - expected) / std::max(expected, 1.0);
+        INFO("Binomial(" << number << ", " << probability << ")");
+        CHECK(chiSquaredSurvival(statistic, cells) > MIN_P_VALUE);
+    }
+}
+
+TEST_CASE("Samplers with large parameters keep bounded work", "[statistical][discrete]")
+{
+    /// each of these took time linear in a parameter of order 10^8 per draw before
+    constexpr std::size_t sampleSize = 4000;
+    auto check = [](const std::string &name, const auto &distribution, unsigned long seed) {
+        Pcg64 engine(seed);
+        std::vector<long long> sample(sampleSize);
+        for (auto &x : sample)
+            x = distribution(engine);
+        const double mean = std::accumulate(sample.begin(), sample.end(), 0.0) / sampleSize;
+        const double standardError = std::sqrt(static_cast<double>(distribution.Variance()) / sampleSize);
+        INFO(name << ": sample mean " << mean << ", Mean() " << static_cast<double>(distribution.Mean()));
+        CHECK(std::fabs(mean - static_cast<double>(distribution.Mean())) < MAX_STANDARD_ERRORS * standardError);
+    };
+    check("Pascal(100000000, 0.5)", PascalRand<long long>(100000000, 0.5), BASE_SEED);
+    check("HyperGeometric(1000000000, 300000000, 600000000)",
+          HyperGeometricRand<long long>(1000000000, 300000000, 600000000), BASE_SEED + 1);
+    check("NegativeHyperGeometric(1000000000, 500000000, 200000000)",
+          NegativeHyperGeometricRand<long long>(1000000000, 500000000, 200000000), BASE_SEED + 2);
+    check("BetaBinomial(1000000000, 3, 4)", BetaBinomialRand<long long>(1000000000, 3, 4), BASE_SEED + 3);
 }
 
 TEST_CASE("Singular samples follow their distribution", "[statistical]")

@@ -12,6 +12,7 @@
 #include <complex>
 #include <limits>
 #include <memory>
+#include <numeric>
 #include <random>
 #include <vector>
 
@@ -227,6 +228,33 @@ TEST_CASE("discrete distribution functions and medians", "[regression]")
     CHECK(bernoulli.logP(2) == -INFINITY);
     CategoricalRand<int> categorical({0.2, 0.3, 0.5});
     CHECK(categorical.Quantile1m(0.5) == 1);
+}
+
+TEST_CASE("categorical guide-table inversion equals sequential search", "[regression]")
+{
+    std::vector<double> probabilities(1000);
+    for (std::size_t i = 0; i < probabilities.size(); ++i)
+        probabilities[i] = 1.0 + static_cast<double>((i * 7919) % 101);
+    probabilities.front() = probabilities.back() = 0;
+    const double total = std::accumulate(probabilities.begin(), probabilities.end(), 0.0);
+    for (double &probability : probabilities)
+        probability /= total;
+    CategoricalRand<int> categorical{std::vector<double>(probabilities)};
+    auto sequential = [&probabilities](double p) {
+        double cumulative = 0;
+        int k = 0;
+        while ((cumulative += probabilities[k]) < p && k + 1 < static_cast<int>(probabilities.size()))
+            ++k;
+        return k;
+    };
+    std::mt19937_64 engine(20231010);
+    std::uniform_real_distribution<double> uniform;
+    for (int i = 0; i < 20000; ++i) {
+        const double p = uniform(engine);
+        CHECK(categorical.Quantile(p) == sequential(p));
+    }
+    for (double p : {1e-300, 0.5, 1 - 1e-16})
+        CHECK(categorical.Quantile(p) == sequential(p));
 }
 
 TEST_CASE("invalid parameters are not silently replaced", "[regression]")

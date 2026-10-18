@@ -15,9 +15,6 @@
 ## Definition and properties
 
 `NegativeHyperGeometricRand(N, M, m)` counts failures observed before the \f$m\f$th success when
-
-## Sampling
-
 sampling without replacement from \f$N\f$ objects containing \f$M\f$ successes. The constraints
 are \f$N>0\f$ and \f$1\leq m\leq M\leq N\f$; the support is
 \f$k\in\{0,\ldots,N-M\}\f$. Its PMF is
@@ -39,9 +36,11 @@ functions are the finite sums
  \phi(t)=G(e^{it}),
 \f]
 
+which the generic finite-support routine evaluates numerically.
+
 ## Moments and shape
 
-which the generic finite-support routine evaluates numerically. The implemented moments are
+The implemented moments are
 
 \f[
  \mathbb{E}[X]=\frac{m(N-M)}{M+1},
@@ -55,6 +54,17 @@ which the generic finite-support routine evaluates numerically. The implemented 
 The median and mode use the generic discrete probability searches; skewness, kurtosis, entropy,
 and fitting do not have dedicated implementations.
 
-Sampling updates the remaining-success fraction after each draw and stops at the \f$m\f$th
-success. If every failure must occur before that stopping success, it returns \f$N-M\f$ early.
-The method is exact and requires at most \f$N\f$ sequential Bernoulli draws.
+## Sampling
+
+The law is a beta-binomial mixture:
+
+\f[
+ P\sim\operatorname{Beta}(m,M-m+1),
+ \qquad
+ X\mid P\sim\operatorname{Binomial}(N-M,P).
+\f]
+
+When the expected number of sequential draws, \f$m(N+1)/(M+1)\f$, is below 16, the sampler
+simulates the urn directly, updating the remaining-success fraction after each draw. Otherwise it
+draws \f$P\f$ and then a binomial variate, so the expected work no longer grows with \f$N\f$.
+Both paths are exact.
