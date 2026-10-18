@@ -87,9 +87,11 @@ The characteristic function has the hypergeometric representation
 
 ## Numerical evaluation and quantiles
 
-## Fitting
-
 RandLib evaluates the defining real and imaginary expectations by adaptive infinite-interval
 quadrature. When \f$\mu<1/2\f$, the density is singular at zero; the real part is then regularized as
 \f$1+\int_0^\infty(\cos(tx)-1)f(x)\,dx\f$. This corrects the archived document's broader
-\f$\mu<1\f$ threshold. There is currently no `fit<NakagamiRand>` specialization.
+\f$\mu<1\f$ threshold.
+
+## Fitting
+
+There is currently no `fit<NakagamiRand>` specialization.

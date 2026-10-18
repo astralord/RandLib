@@ -77,8 +77,10 @@ with \f$0\log0=0\f$, so the deterministic endpoints return zero.
 
 ## Sampling
 
+Sampling compares one uniform variate with \f$p\f$. Bulk sampling at \f$p=1/2\f$ instead consumes
+one unbiased random bit per result.
+
 ## Fitting
 
-Sampling compares one uniform variate with \f$p\f$. Bulk sampling at \f$p=1/2\f$ instead consumes
-one unbiased random bit per result. `fit<BernoulliRand>` supports closed-form MLE and
+`fit<BernoulliRand>` supports closed-form MLE and
 method-of-moments fitting, both with \f$\widehat p=\bar x\f$.

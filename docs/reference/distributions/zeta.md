@@ -47,7 +47,11 @@ The generating functions are
 \f]
 
 RandLib's generic discrete CF evaluator sums outward from the median and applies a short Euler
-transform to the oscillatory remainder; it does not call a complex polylogarithm. More generally,
+transform to the oscillatory remainder; it does not call a complex polylogarithm.
+
+## Moments and shape
+
+The raw moments are
 
 \f[
  \mathbb{E}[X^m]=
@@ -69,8 +73,6 @@ Thus
  \left(\frac{\zeta(s-1)}{\zeta(s)}\right)^2
  \quad(s>3),
 \f]
-
-## Moments and shape
 
 and the absent moments are reported as infinity. Skewness and excess kurtosis are assembled from
 the first four raw zeta-ratio moments and therefore require \f$s>4\f$ and \f$s>5\f$,

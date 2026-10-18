@@ -133,10 +133,12 @@ made undefined by a missing lower moment.
 
 ## Numerical evaluation and quantiles
 
-## Fitting
-
 Quantiles use TOMS 748 over the direct tails, starting at the mean when it exists and at
 \f$\delta\f$ otherwise. Exact probability levels at zero return zero without root finding. The mode
-uses the common log-density minimizer. `fit<NoncentralTRand>` performs constrained MLE for
+uses the common log-density minimizer.
+
+## Fitting
+
+`fit<NoncentralTRand>` performs constrained MLE for
 \f$(\nu,\delta)\f$; it starts at \f$\nu=10\f$ unless the degree is fixed, and scales the sample
 median by \f$m_1\f$ to initialize \f$\delta\f$. There is no dedicated entropy member.

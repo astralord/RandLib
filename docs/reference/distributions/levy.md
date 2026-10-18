@@ -49,11 +49,11 @@ and the characteristic function is
  \phi(t)=\exp\!\left(i\mu t-\sqrt{-2i\gamma t}\right),
 \f]
 
-with the principal square root. The mode is \f$\mu+\gamma/3\f$ and the median is the displayed
+with the principal square root.
 
 ## Moments and shape
 
-quantile at \f$p=1/2\f$. The mean and variance diverge, while standardized higher moments are
+The mode is \f$\mu+\gamma/3\f$ and the median is the displayed quantile at \f$p=1/2\f$. The mean and variance diverge, while standardized higher moments are
 undefined. Its mathematical entropy is
 
 \f[

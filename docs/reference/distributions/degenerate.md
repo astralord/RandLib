@@ -41,8 +41,9 @@ Skewness and excess kurtosis are undefined and return NaN.
 
 ## Sampling
 
+Sampling always returns \f$a\f$.
+
 ## Fitting
 
-Sampling always returns \f$a\f$.
 `fit<DegenerateRand>` supports MLE for a nonempty sample only when all observations are exactly
 equal; the common observation becomes the fitted point mass.

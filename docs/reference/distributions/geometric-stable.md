@@ -126,7 +126,8 @@ directly. For \f$\alpha\ne1\f$ this is
  \qquad Z\sim S_1(\alpha,\beta,1,0),
 \f]
 
+with specialized but equivalent forms at \f$\alpha=1/2\f$ and \f$\alpha=1\f$.
+
 ## Fitting
 
-with specialized but equivalent forms at \f$\alpha=1/2\f$ and \f$\alpha=1\f$. There is currently
-no `fit<GeometricStableRand>` specialization or dedicated entropy member.
+There is currently no `fit<GeometricStableRand>` specialization or dedicated entropy member.

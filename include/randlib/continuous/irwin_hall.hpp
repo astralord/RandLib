@@ -54,12 +54,16 @@ public:
     [[nodiscard]] long double ExcessKurtosis() const override;
 
 private:
+    /// from this many terms on, the sum is assembled from binomial counts of the uniforms' random bits
+    static constexpr int SMALL_SUM = 600;
     /// alternating sum of the density (power n - 1) or distribution function (power n) for x ≤ n / 2
     double lowerHalfSum(double x, int power) const;
     std::complex<double> CFImpl(double t) const override;
 };
 
 } // namespace randlib
+
+#include <randlib/discrete/binomial.hpp>
 
 namespace randlib
 {
@@ -157,9 +161,18 @@ template <typename RealType>
 template <std::uniform_random_bit_generator G>
 RealType IrwinHallRand<RealType>::operator()(G &g) const
 {
-    RealType sum = 0.0;
-    for (int i = 0; i != n; ++i)
-        sum += U(g);
+    if (n < SMALL_SUM) {
+        RealType sum = 0.0;
+        for (int i = 0; i != n; ++i)
+            sum += U(g);
+        return sum;
+    }
+    /// a standard uniform variate is (k + 1/2) / 2^b for b random bits k, so a sum of n of them is
+    /// (n / 2 + sum_j 2^j B_j) / 2^b with independent B_j ~ Binomial(n, 1/2): b draws instead of n
+    constexpr int b = std::numeric_limits<RealType>::digits - 1;
+    RealType sum = std::ldexp(static_cast<RealType>(n) / 2, -b);
+    for (int j = 0; j != b; ++j)
+        sum += std::ldexp(static_cast<RealType>(BinomialDistribution<int>::Variate(n, 0.5, g)), j - b);
     return sum;
 }
 

@@ -92,8 +92,10 @@ member, is
 
 ## Numerical evaluation and quantiles
 
+Quantiles are analytic for \f$\nu=1,2,4\f$; all other degrees use the shared TOMS 748 inversion of
+the direct tails.
+
 ## Fitting
 
-Quantiles are analytic for \f$\nu=1,2,4\f$; all other degrees use the shared TOMS 748 inversion of
-the direct tails. `fit<StudentTRand>` performs constrained three-parameter MLE, initialized with
+`fit<StudentTRand>` performs constrained three-parameter MLE, initialized with
 \f$\nu=5\f$, the sample median, and an interquartile scale estimate.

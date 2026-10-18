@@ -59,8 +59,9 @@ The summaries are
 
 ## Sampling
 
+Sampling uses \f$\sigma\sqrt{2E+Z^2}\f$ with an independent unit exponential \f$E\f$ and standard
+normal \f$Z\f$. Quantiles and the characteristic function use the general Nakagami paths.
+
 ## Fitting
 
-Sampling uses \f$\sigma\sqrt{2E+Z^2}\f$ with an independent unit exponential \f$E\f$ and standard
-normal \f$Z\f$. Quantiles and the characteristic function use the general Nakagami paths. There is
-currently no `fit<MaxwellBoltzmannRand>` specialization.
+There is currently no `fit<MaxwellBoltzmannRand>` specialization.

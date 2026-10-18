@@ -37,9 +37,9 @@ alternating sums are only evaluated for \f$x\le n/2\f$, where they cancel least:
  =e^{int/2}\left[\frac{\sin(t/2)}{t/2}\right]^n.
 \f]
 
-## Sampling
+## Moments and shape
 
-Sampling explicitly sums \f$n\f$ independent uniforms. Other summaries are
+The principal summaries are
 
 \f[
  \mathbb{E}[X]=\operatorname{Median}[X]=\frac n2,\qquad
@@ -48,7 +48,23 @@ Sampling explicitly sums \f$n\f$ independent uniforms. Other summaries are
  \operatorname{ExKurt}[X]=-\frac6{5n}.
 \f]
 
+The API returns \f$n/2\f$ as a representative mode; for \f$n=1\f$ the density is constant and the
+mode is not unique. Quantiles use TOMS 748.
+
+## Sampling
+
+For \f$n<600\f$, sampling sums \f$n\f$ independent standard uniforms. Each of them is
+\f$(k+1/2)2^{-b}\f$ for \f$b\f$ random bits \f$k\f$ (\f$b=52\f$ for `double`), so for larger \f$n\f$
+the sampler draws the number of set bits at each of the \f$b\f$ positions instead:
+
+\f[
+ X=2^{-b}\left(\frac n2+\sum_{j=0}^{b-1}2^jB_j\right),
+ \qquad B_j\sim\operatorname{Binomial}(n,1/2)\ \text{independent}.
+\f]
+
+This has exactly the law of the explicit sum of those uniforms, and its cost, \f$b\f$ binomial
+variates, does not grow with \f$n\f$.
+
 ## Fitting
 
-The API returns \f$n/2\f$ as a representative mode; for \f$n=1\f$ the density is constant and the
-mode is not unique. Quantiles use TOMS 748, and there is no `fit<IrwinHallRand>` specialization.
+There is no `fit<IrwinHallRand>` specialization.

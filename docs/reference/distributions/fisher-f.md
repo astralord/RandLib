@@ -75,10 +75,10 @@ The main summaries are
  \quad(d_2>8).
 \f]
 
-## Moments and shape
+Undefined higher moments are reported as infinity.
 
 ## Fitting
 
-Undefined higher moments are reported as infinity. `fit<FisherFRand>` treats both degrees as
+`fit<FisherFRand>` treats both degrees as
 discrete and searches the likelihood grid from one through 80 for each unfixed degree. This finite
 implementation search bound is part of the fitting API behavior, not a property of the law.

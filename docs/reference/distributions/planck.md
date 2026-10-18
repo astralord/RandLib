@@ -50,9 +50,11 @@ The exact mixture sampler is
  X=G/N,
 \f]
 
+with independent \f$N\f$ and \f$G\f$.
+
 ## Moments and shape
 
-with independent \f$N\f$ and \f$G\f$. Its raw moments are
+Its raw moments are
 
 \f[
  \mathbb{E}[X^r]=\frac{\Gamma(s+r)}{\Gamma(s)b^r}

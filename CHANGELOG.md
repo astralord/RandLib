@@ -165,8 +165,10 @@ All notable changes to RandLib are documented here. The project follows
   new `math::logFactorialRatio`, instead of differences of log-factorials near `10^10`. Those
   differences kept only about six significant digits in double precision, and fewer where
   `long double` is binary64.
-- Kept the polar Cauchy sampler, which measured faster than a ratio of two normal variates, and the
-  exact Irwin--Hall sum, whose sublinear exact alternatives are substantially more complex.
+- `IrwinHallRand` with `n >= 600` draws, for each of the 52 random bits of a standard uniform, the
+  binomial number of uniforms that set it. This is exactly the law of the explicit sum, at about
+  3 µs per draw for any `n` instead of about 5.6 ns per term.
+- Kept the polar Cauchy sampler, which measured faster than a ratio of two normal variates.
 
 ### Examples and packaging
 

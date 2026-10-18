@@ -65,10 +65,12 @@ moment.
 
 ## Sampling
 
+Sampling uses rejection-based `uniformBelow`, so reducing raw engine output modulo \f$n\f$ cannot
+introduce bias.
+
 ## Fitting
 
-Sampling uses rejection-based `uniformBelow`, so reducing raw engine output modulo \f$n\f$ cannot
-introduce bias. `fit<UniformDiscreteRand>` provides the closed-form MLE
+`fit<UniformDiscreteRand>` provides the closed-form MLE
 
 \f[
  \widehat a=\min_jx_j,\qquad

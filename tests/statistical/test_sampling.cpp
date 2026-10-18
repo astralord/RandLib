@@ -302,15 +302,15 @@ TEST_CASE("Static binomial variates follow the binomial law", "[statistical][dis
     }
 }
 
-TEST_CASE("Samplers with large parameters keep bounded work", "[statistical][discrete]")
+TEST_CASE("Samplers with large parameters keep bounded work", "[statistical][large-parameters]")
 {
-    /// each of these took time linear in a parameter of order 10^8 per draw before
+    /// each of these took time linear in a parameter of order 10^8 per draw before; the sample mean is checked
     constexpr std::size_t sampleSize = 4000;
     auto check = [](const std::string &name, const auto &distribution, unsigned long seed) {
         Pcg64 engine(seed);
-        std::vector<long long> sample(sampleSize);
-        for (auto &x : sample)
-            x = distribution(engine);
+        std::vector<double> sample(sampleSize);
+        for (double &x : sample)
+            x = static_cast<double>(distribution(engine));
         const double mean = std::accumulate(sample.begin(), sample.end(), 0.0) / sampleSize;
         const double standardError = std::sqrt(static_cast<double>(distribution.Variance()) / sampleSize);
         INFO(name << ": sample mean " << mean << ", Mean() " << static_cast<double>(distribution.Mean()));
@@ -322,6 +322,7 @@ TEST_CASE("Samplers with large parameters keep bounded work", "[statistical][dis
     check("NegativeHyperGeometric(1000000000, 500000000, 200000000)",
           NegativeHyperGeometricRand<long long>(1000000000, 500000000, 200000000), BASE_SEED + 2);
     check("BetaBinomial(1000000000, 3, 4)", BetaBinomialRand<long long>(1000000000, 3, 4), BASE_SEED + 3);
+    check("IrwinHall(100000000)", IrwinHallRand<double>(100000000), BASE_SEED + 4);
 }
 
 TEST_CASE("Singular samples follow their distribution", "[statistical]")

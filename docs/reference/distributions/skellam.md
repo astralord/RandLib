@@ -90,7 +90,8 @@ truncating \f$\mu_1-\mu_2\f$ is not generally correct.
 
 ## Sampling
 
+Sampling subtracts independent draws from two cached `PoissonRand` objects.
+
 ## Fitting
 
-Sampling subtracts independent draws from two cached `PoissonRand` objects. There is currently no
-`fit<SkellamRand>` specialization or dedicated entropy member.
+There is currently no `fit<SkellamRand>` specialization or dedicated entropy member.
